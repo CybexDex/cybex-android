@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:autofit="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:elevation="3dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/watch_list_item">
+
+            <LinearLayout
+                android:id="@+id/coinpair_linear_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+            <TextView
+                android:id="@+id/quote_currency_watchlist"
+                style="@style/white_font_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XRP" />
+
+            <TextView
+                android:id="@+id/base_currency_watchlist"
+                style="@style/small_grey_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/USD" />
+            </LinearLayout>
+
+
+            <me.grantland.widget.AutofitTextView
+                android:id="@+id/current_price_watchlist"
+                style="@style/white_font_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@id/coinpair_linear_layout"
+                android:maxLines="1"
+                android:layout_marginEnd="111dp"
+                android:layout_marginTop="14dp"
+                autofit:autoSizeMinTextSize="8sp"
+                android:text="$11,309.109" />
+
+            <TextView
+                android:id="@+id/volume"
+                style="@style/small_grey_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/coinpair_linear_layout"
+                android:layout_below="@id/coinpair_linear_layout"
+                android:layout_marginTop="2dp"
+                android:text="Volume:288,980,254" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/current_price_watchlist"
+                android:layout_below="@id/current_price_watchlist"
+                android:layout_alignBottom="@id/volume"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textSize="12sp"
+                    android:textColor="@color/grey_unselected_font_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingMultiplier="1.67"
+                    android:text="+21.35%" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/change_rate_watchlist"
+                android:layout_width="80dp"
+                android:layout_height="32dp"
+                android:textColor="@color/primary_color_white"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:background="@color/increasing_color"
+                android:layout_alignParentEnd="true"
+                android:textSize="16sp"
+                android:text="+130.28%"/>
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>
+

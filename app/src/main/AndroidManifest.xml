@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cybexmobile">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <application
+        android:name=".MainApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".Activities.SplashActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+        <activity
+            android:name=".Activities.BottomNavigationActivity"
+            android:label="@string/title_activity_nav_button"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.MarketsActivity"
+            android:label="@string/title_activity_markets"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.ChooseLanguageActivity"
+            android:label="@string/title_activity_choose_language"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.ChooseThemeActivity"
+            android:label="@string/title_activity_choose_theme"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.RegisterActivity" />
+        <activity
+            android:name=".Activities.SettingActivity"
+            android:label="@string/title_setting_activity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.WalletIntroductionActivity" />
+        <activity android:name=".Activities.OpenOrdersActivity" />
+        <activity android:name=".Activities.PortfolioActivity"></activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:id="@+id/coin_pair_item_card_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardElevation="3dp"
+    app:cardUseCompatPadding="true"
+    app:cardCornerRadius="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/account_portfolio_item_background"
+        android:layout_width="232dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/market_coin_pair_unselected"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/account_portfolio_item_asset_image"
+                android:src="@drawable/ic_cyb_grey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"/>
+
+            <TextView
+                android:id="@+id/account_portfolio_item_asset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/white_font_bold"
+                android:layout_marginStart="8dp"
+                android:text="BTC"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/account_portfolio_item_asset_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:textSize="16sp"
+            android:text="12.9833"
+            android:textColor="@color/primary_color_white"/>
+
+        <TextView
+            android:id="@+id/account_portfolio_item_cny_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="14dp"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="12sp"
+            />
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

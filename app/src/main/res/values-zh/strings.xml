@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CybexDex</string>
+
+    <!-- Bottom Navigation Title -->
+    <string name="title_watchlist">行情</string>
+    <string name="title_explorer">探索</string>
+    <string name="title_setting">设置</string>
+    <string name="title_faq">申请</string>
+    <string name="title_account">账户</string>
+    <string name="title_dashboard">个人中心</string>
+
+    <!-- Watch List Page -->
+    <string name="popular_title">最热</string>
+    <string name="watch_list_name_vol">名称/成交量</string>
+    <string name="watch_list_new_price_title">最新价格</string>
+    <string name="watch_list_vibration_range_title">24h涨跌幅</string>
+
+    <!-- account page -->
+    <string name="log_in_cybex">您好，请登录  ></string>
+    <string name="account_introduction_text">CYBEX是一个旨在提高加密资产流动性的去中心化交易所，能够提供更多的透明性、更高的效率性和更好的安全性。</string>
+    <string name="register_create_cloud_wallet">创建您的云钱包账户</string>
+    <string name="account_balance">您的总余额 （CYB）：</string>
+    <string name="account_available_asset">可用资产</string>
+    <string name="account_view_all">查看全部 ></string>
+    <string name="account_other_asset">其他资产</string>
+    <string name="account_hello">您好,</string>
+    <string name="account_membership_basic">基本会员</string>
+    <string name="account_membership_lifetime">终身会员</string>
+
+    <!-- Open Orders Page -->
+    <string name="open_order_asset_amount">资产/委托数量</string>
+    <string name="open_order_order_value">委托单价</string>
+    <string name="open_order_buy">买入</string>
+    <string name="open_order_sell">卖出</string>
+
+    <!-- Markets Page -->
+    <string name="markets_title">交易中心</string>
+    <string name="market_page_order_book">买卖单</string>
+    <string name="market_page_trade_history">交易历史</string>
+
+    <!-- Setting page -->
+    <string name="setting_language">语言</string>
+    <string name="language_select">选择</string>
+    <string name="setting_theme">主题</string>
+    <string name="setting_version">版本</string>
+    <string name="setting_theme_dark">夜晚 ></string>
+    <string name="setting_theme_light">白天 ></string>
+    <string name="select_theme">选择主题</string>
+
+    <!-- Login/Register -->
+    <string name="create_account">注册</string>
+    <string name="register_dialog_title">注意事项</string>
+    <string name="register_dialog_confirm">我记住了</string>
+    <string name="prompt_pin_code">验证码</string>
+    <string name="create_account_account_name_empty">还未填写账号名</string>
+    <string name="create_account_password_empty">还未填写密码</string>
+    <string name="create_account_password_confirm_empty">请再填写一次密码</string>
+    <string name="create_account_pin_code_empty">验证码没填写</string>
+
+    <string name="import_activity_unknown_error">发现错误</string>
+    <string name="import_activity_private_key_invalid">私钥不正确</string>
+    <string name="import_activity_account_invalid">账号不存在</string>
+    <string name="import_activity_account_not_match_key">账号密码不匹配</string>
+    <string name="import_activity_account_name_invalid">找不到账号名</string>
+    <string name="import_activity_connect_failed">无法连接到服务器</string>
+    <string name="import_activity_file_failed">从文件中读取不到信息</string>
+    <string name="import_activity_password_invalid">密码错误</string>
+    <string name="import_activity_file_bin_password_invalid">钱包文件或者密码错误</string>
+
+    <!-- Open Orders Page Related -->
+    <string name="open_orders_all">全部</string>
+    <string name="open_orders_buy">买入</string>
+    <string name="open_orders_sell">卖出</string>
+
+    <!-- Portfolio Page Related -->
+    <string name="portfolio_price">价格(CYB)</string>
+    <string name="portfolio_24h">24h涨跌幅</string>
+</resources>

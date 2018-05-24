@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/language_select_english"
+    android:background="@drawable/watch_list_item"
+    android:layout_width="wrap_content"
+    android:layout_height="48dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/theme_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/white_font_bold"
+        android:layout_marginLeft="12dp"
+        android:layout_centerVertical="true"/>
+    <RadioButton
+        android:id="@+id/theme_radio_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:checked="false"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="@drawable/ic_check"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="12dp" />
+</RelativeLayout>

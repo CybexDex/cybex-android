@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:background="@color/darkColorPrimary"
+    tools:context=".Activities.WalletIntroductionActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="云钱包模式"
+            android:textColor="@color/primary_color_white"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Cybex移动端仅支持注册云钱包模式账户。云钱包模式使用密码和账户名衍生出私钥，这使您可以从不同的电脑、移动终端或浏览器登录。但此模式存在面对黑客暴力破解攻击的风险。因此，我们强烈推荐您使用长密码!"
+            android:textColor="#ccffffff"
+            android:lineSpacingMultiplier="1.5"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cloud Wallet"
+            android:textColor="@color/primary_color_white"
+            android:layout_marginTop="25dp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="You can register using a cloud wallet. It uses a password in combination with your account name to generate your private keys on the fly. It restricts you to only logging in with one account at a time, in return for ease of use and convenience. But your password is vulnerable to brute-force attacks which means it is important to use a very long password, ideally 20+ characters!"
+            android:textColor="#ccffffff"
+            android:lineSpacingMultiplier="1.5"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="darkColorPrimary">#F7F8FA</color>
+    <color name="itemBackground">#FFFFFF</color>
+    <color name="horizontalItemBackground">#CCFFFFFF</color>
+
+    <!-- font color -->
+    <color name="primary_color_white">#1B2230</color>
+    <color name="kline_header_color">#EFF1F4</color>
+</resources>

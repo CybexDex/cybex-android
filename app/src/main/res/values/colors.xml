@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--   color for the app bar and other primary UI elements -->
+    <color name="colorPrimary">#3F51B5</color>
+
+    <!--   a darker variant of the primary color, used for
+           the status bar (on Android 5.0+) and contextual app bars -->
+    <color name="colorPrimaryDark">#303F9F</color>
+
+    <!--   a secondary color for controls like checkboxes and text fields -->
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="activityBackgroud">#000</color>
+
+    <color name="darkColorPrimary">#171D2A</color>
+    <color name="darkColorPrimaryDark">#141831</color>
+    <color name="darkColorAccent">#2aac4b</color>
+    <color name="itemBackground">#1B2230</color>
+    <color name="horizontalItemBackground">#1B2230</color>
+
+    <!-- Font color -->
+    <color name="primary_orange">#FFFF9143</color>
+    <color name="grey_unselected_font_color">#78819A</color>
+    <color name="primary_color_white">#FFFFFF</color>
+
+    <!-- Market Page -->
+    <color name="kline_header_color">#111621</color>
+    <color name="kline_x_axis_text_color">#4D78819A</color>
+    <color name="decreasing_color">#D04833</color>
+    <color name="increasing_color">#6DBB49</color>
+    <color name="no_change_color">#B3FFFFFF</color>
+    <color name="ma_5_color">#2B756C</color>
+    <color name="ma_10_color">#60408A</color>
+    <color name="ma_20_color">#245C2A</color>
+    <color name="fade_background_green">#336DBB49</color>
+    <color name="fade_background_red">#33BE4634</color>
+    <color name="marker_line_bg">#78819A</color>
+
+    <!-- Login/Register Page -->
+    <color name="text_hint_color">#8078819a</color>
+    <color name="login_button_color">#4D78819a</color>
+    <color name="login_text_color">#4Dffffff</color>
+    <color name="login_register_color">#ff9143</color>
+    <color name="register_dialog_title_background">#f7f8fa</color>
+    <color name="register_pin_code_color">#fec985</color>
+
+    <!-- action bar cloud wallet introduction -->
+    <color name="faded_orange">#e7ac5f</color>
+    <color name="dusty_orange">#e76536</color>
+
+</resources>

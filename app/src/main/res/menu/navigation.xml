@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_watchlist"
+        android:icon="@drawable/watch_list_selector"
+        android:title="@string/title_watchlist" />
+
+    <!--<item-->
+        <!--android:id="@+id/navigation_explorer"-->
+        <!--android:icon="@drawable/ic_exlorer_24px"-->
+        <!--android:title="@string/title_explorer" />-->
+
+    <item
+        android:id="@+id/navigation_faq"
+        android:icon="@drawable/faq_selector"
+        android:title="@string/title_faq" />
+    <item
+        android:id="@+id/navigation_account"
+        android:icon="@drawable/account_selector"
+        android:title="@string/title_account">
+    </item>
+
+</menu>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/small_grey_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:text="@string/market_page_trade_history_price" />
+
+        <TextView
+            android:id="@+id/market_page_trade_history_quote"
+            style="@style/small_grey_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="128dp"
+            android:text="@string/market_page_trade_history_quote"/>
+
+        <TextView
+            android:id="@+id/market_page_trade_history_base"
+            style="@style/small_grey_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="128dp"
+            android:text="@string/market_page_trade_history_base"/>
+
+        <TextView
+            style="@style/small_grey_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="25dp"
+            android:text="@string/market_page_trade_history_date" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/trade_history_list"
+        android:name="com.cybexmobile.Fragments.MarketTradeHistory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="com.cybexmobile.Fragments.MarketTradeHistoryFragment"
+        tools:listitem="@layout/trade_history_item" />
+
+</LinearLayout>

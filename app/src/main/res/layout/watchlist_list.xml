@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/watch_list_coin_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:tabIndicatorColor="#FF9143"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/primary_color_white"
+        app:tabTextColor="@color/grey_unselected_font_color" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/grey_unselected_font_color"
+            android:text="@string/watch_list_name_vol"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/watch_list_new_price_title"
+            android:textColor="@color/grey_unselected_font_color"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="111dp"
+            android:layout_alignParentEnd="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/grey_unselected_font_color"
+            android:layout_alignParentEnd="true"
+            android:text="@string/watch_list_vibration_range_title"/>
+    </RelativeLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!--<TextView-->
+            <!--android:id="@+id/most_popular"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:lineSpacingMultiplier="1.71"-->
+            <!--android:layout_marginStart="25dp"-->
+            <!--android:layout_marginLeft="25dp"-->
+            <!--style="@style/most_popular"-->
+            <!--android:text="Most Popular"/>-->
+            <ProgressBar
+                android:id="@+id/watch_list_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:name="com.cybexmobile.Fragments.ItemFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.cybexmobile.Fragments.WatchLIstFragment"
+                tools:listitem="@layout/watch_list_item" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>
+

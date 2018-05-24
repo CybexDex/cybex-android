@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        android:id="@+id/open_orders_segmented_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="14dp"
+        android:layout_marginStart="14dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:sc_border_width="1dp"
+        app:sc_checked_text_color="@color/primary_color_white"
+        app:sc_corner_radius="4dp"
+        app:sc_tint_color="@color/grey_unselected_font_color">
+
+        <RadioButton
+            android:id="@+id/open_orders_segment_all"
+            style="@style/RadioButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/open_orders_all" />
+
+        <RadioButton
+            android:id="@+id/open_orders_segment_buy"
+            style="@style/RadioButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/open_orders_buy" />
+
+        <RadioButton
+            android:id="@+id/open_orders_segment_sell"
+            style="@style/RadioButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/open_orders_sell" />
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/open_orders_segment_frame"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+    <TextView
+        android:id="@+id/open_orders_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/grey_unselected_font_color"
+        android:alpha="0.5"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="25dp"
+        android:text="Sell Total Value"/>
+    <TextView
+        android:id="@+id/open_orders_total_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/primary_color_white"
+        android:text="≈¥103,550.20"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:text="@string/open_order_asset_amount"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="12sp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:text="@string/open_order_order_value"
+            android:layout_alignParentEnd="true"
+            android:textSize="12sp"
+            android:textColor="@color/grey_unselected_font_color"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/open_orders_recycler_view"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginEnd="13dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
