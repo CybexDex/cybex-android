@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize"
     android:background="@color/darkColorPrimary"
-    tools:context=".Activities.WalletIntroductionActivity">
+    tools:context=".activity.WalletIntroductionActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

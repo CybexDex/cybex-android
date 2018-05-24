@@ -105,7 +105,7 @@ public class Base58 {
 
    /**
     * Encode an array of bytes as Base58 with an appended checksum as in Bitcoin
-    * address encoding
+    * Address encoding
     */
    public static String encodeWithChecksum(byte[] input) {
       byte[] b = new byte[input.length + 4];

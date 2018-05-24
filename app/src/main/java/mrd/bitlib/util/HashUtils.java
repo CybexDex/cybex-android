@@ -106,10 +106,10 @@ public class HashUtils {
 
    /**
     * Calculate the RipeMd160 value of the SHA-256 of an array of bytes. This is
-    * how a Bitcoin address is derived from public key bytes.
+    * how a Bitcoin Address is derived from public key bytes.
     *
     * @param pubkeyBytes A Bitcoin public key as an array of bytes.
-    * @return The Bitcoin address as an array of bytes.
+    * @return The Bitcoin Address as an array of bytes.
     */
    public static byte[] addressHash(byte[] pubkeyBytes) {
       byte[] sha256 = getSha256Digest().digest(pubkeyBytes);

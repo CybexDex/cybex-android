@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.cybexmobile.Fragments.MarketTradeHistoryFragment"
+        tools:context="com.cybexmobile.fragment.MarketTradeHistoryFragment"
         tools:listitem="@layout/trade_history_item" />
 
 </LinearLayout>

@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 
-import Rijndael.Rijndael;
+import rijndael.Rijndael;
 import mrd.bitlib.bitcoinj.Base58;
 import mrd.bitlib.lambdaworks.crypto.SCrypt;
 import mrd.bitlib.lambdaworks.crypto.SCryptProgress;
@@ -405,10 +405,10 @@ public class Bip38 {
    }
 
    /**
-    * Calculate scrypt salt from Bitcoin address
+    * Calculate scrypt salt from Bitcoin Address
     * <p/>
-    * BIP38 uses a scrypt salt which depends on the Bitcoin address. This method
-    * takes a Bitcoin address and calculates the BIP38 salt.
+    * BIP38 uses a scrypt salt which depends on the Bitcoin Address. This method
+    * takes a Bitcoin Address and calculates the BIP38 salt.
     */
    public static byte[] calculateScryptSalt(Address address) {
       Sha256Hash hash = HashUtils.doubleSha256(address.toString().getBytes());

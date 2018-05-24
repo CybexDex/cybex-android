@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.DisplayMetrics;
 
-import com.cybexmobile.HelperClass.StoreLanguageHelper;
+import com.cybexmobile.helper.StoreLanguageHelper;
 
 import java.util.Locale;
 

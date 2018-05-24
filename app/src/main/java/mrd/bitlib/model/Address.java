@@ -81,8 +81,8 @@ public class Address implements Serializable, Comparable<Address> {
    }
 
    /**
-    * @param address string representation of an address
-    * @return an Address if address could be decoded with valid checksum and length of 21 bytes
+    * @param address string representation of an Address
+    * @return an Address if Address could be decoded with valid checksum and length of 21 bytes
     *         null else
     */
    public static Address fromString(String address) {
@@ -120,11 +120,11 @@ public class Address implements Serializable, Comparable<Address> {
    }
 
    /**
-    * Construct a Bitcoin address from an array of bytes containing both the
-    * address version and address bytes, but without the checksum (1 + 20 = 21
+    * Construct a Bitcoin Address from an array of bytes containing both the
+    * Address version and Address bytes, but without the checksum (1 + 20 = 21
     * bytes).
     *
-    * @param bytes containing the full address representation 1 + 20 bytes.
+    * @param bytes containing the full Address representation 1 + 20 bytes.
     */
    public Address(byte[] bytes) {
       _bytes = bytes;
@@ -132,15 +132,15 @@ public class Address implements Serializable, Comparable<Address> {
    }
 
    /**
-    * Construct a Bitcoin address from an array of bytes and the string
-    * representation of the address. The byte array contains both the address
-    * version and address bytes, but without the checksum (1 + 20 = 21 bytes).
+    * Construct a Bitcoin Address from an array of bytes and the string
+    * representation of the Address. The byte array contains both the Address
+    * version and Address bytes, but without the checksum (1 + 20 = 21 bytes).
     * <p/>
     * Note: No attempt is made to verify that the byte array and string
     * representation match.
     *
-    * @param bytes         containing the full address representation 1 + 20 bytes.
-    * @param stringAddress the string representation of a Bitcoin address
+    * @param bytes         containing the full Address representation 1 + 20 bytes.
+    * @param stringAddress the string representation of a Bitcoin Address
     */
    public Address(byte[] bytes, String stringAddress) {
       _bytes = bytes;
@@ -148,7 +148,7 @@ public class Address implements Serializable, Comparable<Address> {
    }
 
    /**
-    * Validate that an address is a valid address on the specified network
+    * Validate that an Address is a valid Address on the specified network
     */
    public boolean isValidAddress(NetworkParameters network) {
       byte version = getVersion();
@@ -168,10 +168,10 @@ public class Address implements Serializable, Comparable<Address> {
    }
 
    /**
-    * Get the address as an array of bytes. The array contains the one byte
-    * address type and the 20 address bytes, totaling 21 bytes.
+    * Get the Address as an array of bytes. The array contains the one byte
+    * Address type and the 20 Address bytes, totaling 21 bytes.
     *
-    * @return The address as an array of 21 bytes.
+    * @return The Address as an array of 21 bytes.
     */
    public byte[] getAllAddressBytes() {
       return _bytes;
@@ -230,7 +230,7 @@ public class Address implements Serializable, Comparable<Address> {
 
    @Override
    public int compareTo(Address other) {
-      // We sort on the actual address bytes.
+      // We sort on the actual Address bytes.
       // We wish to achieve consistent sorting, the exact order is not
       // important.
       for (int i = 0; i < NUM_ADDRESS_BYTES; i++) {

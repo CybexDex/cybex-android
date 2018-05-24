@@ -16,7 +16,7 @@
 
 package mrd.bitlib.crypto;
 
-import Rijndael.Rijndael;
+import rijndael.Rijndael;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
@@ -804,7 +804,7 @@ public class MrdExport {
       }
 
       /**
-       * Calculate the checksum from sha256 hash of the bitcoin address of a
+       * Calculate the checksum from sha256 hash of the bitcoin Address of a
        * private key
        */
       private static byte[] calculatePrivateKeyChecksum(InMemoryPrivateKey key, NetworkParameters network) {

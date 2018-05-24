@@ -50,9 +50,9 @@ public class ScriptOutputP2SH extends ScriptOutput implements Serializable {
    }
 
    /**
-    * Get the raw_type p2sh address that this output is for.
+    * Get the raw_type p2sh Address that this output is for.
     * 
-    * @return The raw_type p2sh address that this output is for.
+    * @return The raw_type p2sh Address that this output is for.
     */
    public byte[] getP2SHAddressBytes() {
       return _p2shAddressBytes;

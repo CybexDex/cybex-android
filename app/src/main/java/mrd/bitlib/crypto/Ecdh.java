@@ -28,7 +28,7 @@ public class Ecdh {
 
    /**
     * Calculate a shared secret using the Elliptic curve variant of
-    * Diffie-Hellman applied with Sha256
+    * Diffie-Hellman applied with Sha256Object
     * 
     * @param foreignPublicKey
     *           the public key of the other party

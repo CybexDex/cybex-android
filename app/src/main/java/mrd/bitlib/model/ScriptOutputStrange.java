@@ -30,7 +30,7 @@ public class ScriptOutputStrange extends ScriptOutput implements Serializable {
 
    @Override
    public Address getAddress(NetworkParameters network) {
-      // We cannot determine the address from scripts we do not understand
+      // We cannot determine the Address from scripts we do not understand
       return Address.getNullAddress(network);
    }
 

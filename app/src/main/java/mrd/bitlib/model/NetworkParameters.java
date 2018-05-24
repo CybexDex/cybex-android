@@ -75,12 +75,12 @@ public class NetworkParameters implements Serializable {
    }
 
    /**
-    * The first byte of a base58 encoded bitcoin standard address.
+    * The first byte of a base58 encoded bitcoin standard Address.
     */
    private int _standardAddressHeader;
 
    /**
-    * The first byte of a base58 encoded bitcoin multisig address.
+    * The first byte of a base58 encoded bitcoin multisig Address.
     */
    private int _multisigAddressHeader;
 
@@ -107,7 +107,7 @@ public class NetworkParameters implements Serializable {
          _port = 8333;
          _packetMagic = 0xf9beb4d9;
          _packetMagicBytes = new byte[] { (byte) 0xf9, (byte) 0xbe, (byte) 0xb4, (byte) 0xd9 };
-         _blockchain_explorer_address = "https://blockchain.info/address/";
+         _blockchain_explorer_address = "https://blockchain.info/Address/";
          _blockchain_explorer_transaction = "https://blockchain.info/tx/";
          _bip44_coin_type = HdKeyPath.BIP44_PRODNET;
       } else if (networkType == NetworkType.TESTNET) {
@@ -117,7 +117,7 @@ public class NetworkParameters implements Serializable {
          _port = 18333;
          _packetMagic = 0x0b110907;
          _packetMagicBytes = new byte[] { (byte) 0x0b, (byte) 0x11, (byte) 0x09, (byte) 0x07 };
-         _blockchain_explorer_address = "http://tbtc.blockr.io/address/info/";
+         _blockchain_explorer_address = "http://tbtc.blockr.io/Address/info/";
          _blockchain_explorer_transaction = "http://tbtc.blockr.io/tx/info/";
          _bip44_coin_type = HdKeyPath.BIP44_TESTNET;
       } else if (networkType == NetworkType.REGTEST) {
@@ -136,19 +136,19 @@ public class NetworkParameters implements Serializable {
    }
 
    /**
-    * Get the first byte of a base58 encoded bitcoin address as an integer.
+    * Get the first byte of a base58 encoded bitcoin Address as an integer.
     * 
-    * @return The first byte of a base58 encoded bitcoin address as an integer.
+    * @return The first byte of a base58 encoded bitcoin Address as an integer.
     */
    public int getStandardAddressHeader() {
       return _standardAddressHeader;
    }
 
    /**
-    * Get the first byte of a base58 encoded bitcoin multisig address as an
+    * Get the first byte of a base58 encoded bitcoin multisig Address as an
     * integer.
     * 
-    * @return The first byte of a base58 encoded bitcoin multisig address as an
+    * @return The first byte of a base58 encoded bitcoin multisig Address as an
     *         integer.
     */
    public int getMultisigAddressHeader() {

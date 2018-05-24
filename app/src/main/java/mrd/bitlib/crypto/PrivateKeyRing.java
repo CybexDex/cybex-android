@@ -39,7 +39,7 @@ public class PrivateKeyRing extends PublicKeyRing implements IPrivateKeyRing {
    }
 
    /**
-    * Add a private and public key pair along with the corresponding address to
+    * Add a private and public key pair along with the corresponding Address to
     * the key ring.
     */
    public void addPrivateKey(PrivateKey privateKey, PublicKey publicKey, Address address) {

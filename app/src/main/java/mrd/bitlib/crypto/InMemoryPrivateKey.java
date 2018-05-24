@@ -206,7 +206,7 @@ public class InMemoryPrivateKey extends PrivateKey implements KeyExporter, Seria
       if (checkHash[0] != 0x00) {
          return Optional.absent();
       }
-      // Now get the Sha256 hash and use it as the private key
+      // Now get the Sha256Object hash and use it as the private key
       Sha256Hash privateKeyBytes = HashUtils.sha256(base58.getBytes());
       try {
          InMemoryPrivateKey key = new InMemoryPrivateKey(privateKeyBytes, false);

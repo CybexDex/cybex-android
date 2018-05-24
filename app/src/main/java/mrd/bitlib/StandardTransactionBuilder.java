@@ -137,7 +137,7 @@ public class StandardTransactionBuilder {
             if (!(f.script instanceof ScriptOutputStandard)) {
                throw new RuntimeException("Unsupported script");
             }
-            // Find the address of the funding
+            // Find the Address of the funding
             byte[] addressBytes = ((ScriptOutputStandard) f.script).getAddressBytes();
             Address address = Address.fromStandardBytes(addressBytes, _network);
 
@@ -281,13 +281,13 @@ public class StandardTransactionBuilder {
    /**
     * Create an unsigned transaction and automatically calculate the miner fee.
     * <p>
-    * If null is specified as the change address the 'richest' address that is part of the funding is selected as the
-    * change address. This way the change always goes to the address contributing most, and the change will be less
+    * If null is specified as the change Address the 'richest' Address that is part of the funding is selected as the
+    * change Address. This way the change always goes to the Address contributing most, and the change will be less
     * than the contribution.
     *
     * @param inventory     The list of unspent transaction outputs that can be used as
     *                      funding
-    * @param changeAddress The address to send any change to, can be null
+    * @param changeAddress The Address to send any change to, can be null
     * @param keyRing       The public key ring matching the unspent outputs
     * @param network       The network we are working on
     * @param minerFeeToUse The miner fee in sat to pay for every kilobytes of transaction size
@@ -320,7 +320,7 @@ public class StandardTransactionBuilder {
       long toSend = fee + outputSum;
 
       if (changeAddress == null) {
-         // If no change address is specified, get the richest address from the
+         // If no change Address is specified, get the richest Address from the
          // funding set
          changeAddress = getRichest(funding, network);
       }

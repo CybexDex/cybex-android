@@ -48,7 +48,7 @@ public class ScriptOutputOpReturn extends ScriptOutput implements Serializable {
 
    @Override
    public Address getAddress(NetworkParameters network) {
-      // there is no address associated with this output
+      // there is no Address associated with this output
       return Address.getNullAddress(network);
    }
 }

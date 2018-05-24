@@ -49,7 +49,7 @@ public class PublicKeyRing implements IPublicKeyRing {
    }
 
    /**
-    * Add a public key and its corresponding Bitcoin address to the key ring.
+    * Add a public key and its corresponding Bitcoin Address to the key ring.
     */
    public void addPublicKey(PublicKey key, Address address) {
       _addresses.add(address);

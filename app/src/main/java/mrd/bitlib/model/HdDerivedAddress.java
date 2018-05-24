@@ -4,7 +4,7 @@ package mrd.bitlib.model;
 import mrd.bitlib.model.hdpath.HdKeyPath;
 
 /**
- * Subclass for address to additional keep the info where this address is generated from
+ * Subclass for Address to additional keep the info where this Address is generated from
  *
  */
 public class HdDerivedAddress extends Address {

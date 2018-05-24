@@ -66,7 +66,7 @@ public class BitlibJsonModule extends SimpleModule {
          JsonNode node = oc.readTree(jp);
          Sha256Hash hash = Sha256Hash.fromString(node.asText());
          if (hash == null) {
-            throw new JsonParseException("Failed to convert string '" + node.asText() + "' into a Sha256 hash",
+            throw new JsonParseException("Failed to convert string '" + node.asText() + "' into a Sha256Object hash",
                   JsonLocation.NA);
          }
          return hash;
@@ -96,7 +96,7 @@ public class BitlibJsonModule extends SimpleModule {
          JsonNode node = oc.readTree(jp);
          Address address = Address.fromString(node.asText());
          if (address == null) {
-            throw new JsonParseException("Failed to convert string '" + node.asText() + "' into an address",
+            throw new JsonParseException("Failed to convert string '" + node.asText() + "' into an Address",
                   JsonLocation.NA);
          }
          return address;

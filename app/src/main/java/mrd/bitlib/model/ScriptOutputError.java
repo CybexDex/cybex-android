@@ -30,7 +30,7 @@ public class ScriptOutputError extends ScriptOutput implements Serializable {
 
    @Override
    public Address getAddress(NetworkParameters network) {
-      // We cannot determine the address from scripts with errors
+      // We cannot determine the Address from scripts with errors
       return Address.getNullAddress(network);
    }
 
