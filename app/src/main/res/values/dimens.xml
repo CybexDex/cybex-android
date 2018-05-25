@@ -13,4 +13,8 @@
     <!-- Action Bar design -->
     <dimen name="action_bar_back_close_button_margin">13dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+
+
+    <dimen name="toolbar_title_text_size"></dimen>
 </resources>

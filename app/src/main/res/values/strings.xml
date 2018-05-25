@@ -119,5 +119,11 @@
     <string name="portfolio_price">Price(CYB)</string>
     <string name="portfolio_24h">24h</string>
 
+    <!-- Activity Lock Assets -->
+    <string name="assets_amount">assets/amount</string>
+    <string name="progress_expire_date">progress/data</string>
+    <string name="locked_assets">Locked Assets</string>
+
+
 
 </resources>

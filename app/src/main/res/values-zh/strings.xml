@@ -76,4 +76,9 @@
     <!-- Portfolio Page Related -->
     <string name="portfolio_price">价格(CYB)</string>
     <string name="portfolio_24h">24h涨跌幅</string>
+    
+    <!-- Activity Lock Assets -->
+    <string name="assets_amount">资产/数量</string>
+    <string name="progress_expire_date">进度/到期时间</string>
+    <string name="locked_assets">锁定期资产</string>
 </resources>

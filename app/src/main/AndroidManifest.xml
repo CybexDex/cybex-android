@@ -31,7 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
         <activity
             android:name=".activity.BottomNavigationActivity"
             android:label="@string/title_activity_nav_button"
@@ -61,6 +60,12 @@
         <activity android:name=".activity.WalletIntroductionActivity" />
         <activity android:name=".activity.OpenOrdersActivity" />
         <activity android:name=".activity.PortfolioActivity"></activity>
+
+        <activity
+            android:name=".activity.LockAssetsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_choose_theme"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

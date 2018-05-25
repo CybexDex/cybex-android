@@ -19,7 +19,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.cybexmobile"
@@ -30,6 +30,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        multiDexEnabled  true
     }
     splits {
         abi {
@@ -77,27 +78,25 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.g00fy2:versioncompare:1.2.7'
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.google.guava:guava:23.0-android'
-    compile "com.android.support:cardview-v7:26.1.0"
-    compile 'com.android.support:recyclerview-v7:26.1.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'me.grantland:autofittextview:0.2.+'
-    compile 'info.hoang8f:android-segmented:1.0.6'
-    compile 'com.pixplicity.sharp:library:1.1.0'
-    compile 'com.madgag.spongycastle:core:1.56.0.0'
-    compile 'com.madgag.spongycastle:prov:1.56.0.0'
-    compile 'com.madgag.spongycastle:pkix:1.51.0.0'
-    compile 'com.madgag.spongycastle:pg:1.51.0.0'
-    compile 'org.bitcoinj:bitcoinj-core:0.14.7'
-    compile 'com.github.bilthon:graphenej:0.4.2'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.1'
-    compile 'com.pixplicity.sharp:library:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.google.guava:guava:23.0-android'
+    implementation "com.android.support:cardview-v7:26.1.0"
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'me.grantland:autofittextview:0.2.+'
+    implementation 'info.hoang8f:android-segmented:1.0.6'
+    implementation 'com.pixplicity.sharp:library:1.1.0'
+    implementation 'com.madgag.spongycastle:core:1.56.0.0'
+    implementation 'com.madgag.spongycastle:prov:1.56.0.0'
+    implementation 'com.madgag.spongycastle:pkix:1.51.0.0'
+    implementation 'com.madgag.spongycastle:pg:1.51.0.0'
+    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
+    implementation 'com.github.bilthon:graphenej:0.4.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.5.1'
+    implementation 'com.pixplicity.sharp:library:1.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    //compile 'com.kaopiz:kprogresshud:1.0.2'
-    compile project(':MPChartLib')
+    implementation project(':MPChartLib')
 }
 
 // Run this once to be able to run the application with BUCK

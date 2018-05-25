@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybexmobile.activity.LockAssetsActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.activity.LoginActivity;
 import com.cybexmobile.activity.OpenOrdersActivity;
@@ -45,7 +46,7 @@ public class AccountFragment extends Fragment {
     private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTotalAccountTextView;
     private WebView mAvatarWebView;
     private ImageView mAvatarImageView;
-    private LinearLayout mBeforeLoginLayout, mAfterLoginLayout, mOpenOrderLayout;
+    private LinearLayout mBeforeLoginLayout, mAfterLoginLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
     private RecyclerView.LayoutManager mPortfolioRecycerViewManager;
     private SharedPreferences mSharedPreference;
     private List<AccountBalanceObject> mAccountObjectBalance = new ArrayList<>();
@@ -90,6 +91,7 @@ public class AccountFragment extends Fragment {
         mAvatarWebView = view.findViewById(R.id.account_avatar_webview);
         mTotalAccountTextView = view.findViewById(R.id.account_balance);
         mOpenOrderLayout = view.findViewById(R.id.account_open_order_item_background);
+        mOpenLockAssetsLayout = view.findViewById(R.id.account_lockup_item_background);
     }
 
     private void setViews() {
@@ -193,6 +195,13 @@ public class AccountFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), OpenOrdersActivity.class);
+                startActivity(intent);
+            }
+        });
+        mOpenLockAssetsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), LockAssetsActivity.class);
                 startActivity(intent);
             }
         });
