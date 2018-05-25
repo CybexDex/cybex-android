@@ -1,6 +1,8 @@
 package com.cybexmobile.api;
 
 
+import android.util.Log;
+
 import com.cybexmobile.constant.ErrorCode;
 import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.exception.NetworkStatusException;
@@ -1095,17 +1097,19 @@ public class WalletApi {
         if (accountObject != null) {
             return ErrorCode.ERROR_ACCOUNT_OBJECT_EXIST;
         }
-
-        CreateAccountObject createAccountObject = new CreateAccountObject();
-        CreateAccountObject.cpa cpaObject = new CreateAccountObject.cpa();
-        cpaObject.id = capId;
-        cpaObject.captcha = pinCode;
+        CreateAccountObject account = new CreateAccountObject();
+        CreateAccountObject.account createAccountObject = new CreateAccountObject.account();
+        CreateAccountObject.cap capObject = new CreateAccountObject.cap();
+        capObject.id = capId;
+        capObject.captcha = pinCode;
+        account.cap = capObject;
         createAccountObject.name = strAccountName;
         createAccountObject.active_key = publicActiveKeyType;
         createAccountObject.owner_key = publicOwnerKeyType;
         createAccountObject.memo_key = publicActiveKeyType;
         createAccountObject.refcode = null;
         createAccountObject.referrer = null;
+        account.account = createAccountObject;
         Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
 
         String strAddress = strServerUrl;
@@ -1113,8 +1117,10 @@ public class WalletApi {
 
         RequestBody requestBody = RequestBody.create(
                 MediaType.parse("application/json"),
-                gson.toJson(createAccountObject)
+                gson.toJson(account)
         );
+        Log.e("request",gson.toJson(account) );
+        Log.e("request",requestBody.toString());
 
         Request request = new Request.Builder()
                 .url(strAddress)

@@ -19,14 +19,20 @@ public class CreateAccountObject {
         public Object account;
         public response_error error;
     }
-    public static class cpa {
+    public static class cap {
         public String id;
         public String captcha;
     }
-    public String name;
-    public Types.public_key_type owner_key;
-    public Types.public_key_type active_key;
-    public Types.public_key_type memo_key;
-    public String refcode;
-    public String referrer;
+    public static class account {
+        public String name;
+        public Types.public_key_type owner_key;
+        public Types.public_key_type active_key;
+        public Types.public_key_type memo_key;
+        public String refcode;
+        public String referrer;
+    }
+
+    public cap cap;
+    public account account;
+
 }

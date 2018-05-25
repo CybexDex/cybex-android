@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.activity.LockAssetsActivity;
@@ -34,6 +36,11 @@ import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.kaopiz.kprogresshud.KProgressHUD;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +54,12 @@ public class AccountFragment extends Fragment {
     private WebView mAvatarWebView;
     private ImageView mAvatarImageView;
     private LinearLayout mBeforeLoginLayout, mAfterLoginLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
+    private RelativeLayout mPortfolioTitleLayout;
     private RecyclerView.LayoutManager mPortfolioRecycerViewManager;
     private SharedPreferences mSharedPreference;
     private List<AccountBalanceObject> mAccountObjectBalance = new ArrayList<>();
     private List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
-
+    private KProgressHUD mProcessHud;
     public AccountFragment() {
         // Required empty public constructor
     }
@@ -66,6 +74,7 @@ public class AccountFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -73,10 +82,37 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         initViews(view);
-        setViews();
         setClickListener();
-
+        mProcessHud = KProgressHUD.create(getActivity())
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Please Wait")
+                .setCancellable(false)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f);
+        mProcessHud.show();
+        setViews();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mProcessHud.dismiss();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(String string) {
+        switch (string) {
+            case "logout":
+                setViews();
+                break;
+        }
+
     }
 
     private void initViews(View view) {
@@ -92,6 +128,7 @@ public class AccountFragment extends Fragment {
         mTotalAccountTextView = view.findViewById(R.id.account_balance);
         mOpenOrderLayout = view.findViewById(R.id.account_open_order_item_background);
         mOpenLockAssetsLayout = view.findViewById(R.id.account_lockup_item_background);
+        mPortfolioTitleLayout = view.findViewById(R.id.portfolio_title_layout);
     }
 
     private void setViews() {
@@ -137,6 +174,7 @@ public class AccountFragment extends Fragment {
     private void setRecyclerViews(List<String> nameList) {
         mPortfolioRecycerViewManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         mPortfolioRecyclerView.setLayoutManager(mPortfolioRecycerViewManager);
+        mAccountObjectBalance.clear();
         mAccountObjectBalance.addAll(getAccountBalance(nameList));
         mPortfolioRecyclerViewAdapter = new PortfolioRecyclerViewAdapter(mAccountObjectBalance);
         mPortfolioRecyclerView.setAdapter(mPortfolioRecyclerViewAdapter);
@@ -169,8 +207,11 @@ public class AccountFragment extends Fragment {
             double price = LimitOrderObject.for_sale / Math.pow(10, 5);
             mTotal += price;
         }
-
-        mTotalAccountTextView.setText(String.valueOf(mTotal));
+        if (mTotal == 0) {
+            mTotalAccountTextView.setText("--");
+        } else {
+            mTotalAccountTextView.setText(String.valueOf(mTotal));
+        }
 
     }
 
@@ -187,7 +228,6 @@ public class AccountFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PortfolioActivity.class);
-//                intent.putExtra("BalanceList",(Serializable)mAccountObjectBalance);
                 startActivity(intent);
             }
         });
@@ -223,25 +263,14 @@ public class AccountFragment extends Fragment {
                 if (data.getBooleanExtra("LogIn", false)) {
                     nameList.add(data.getStringExtra("name"));
                     processLogIn(data.getStringExtra("name"), nameList);
-//                    mAfterLoginLayout.setVisibility(View.VISIBLE);
-//                    mBeforeLoginLayout.setVisibility(View.GONE);
-//
-//                    updateViews(data.getStringExtra("name"));
                 }
             }
         }
     }
 
-    private void updateViews(String name) {
-        List<String> names = new ArrayList<>();
-        names.add(name);
-        List<AccountBalanceObject> fullAccountBalances = getAccountBalance(names);
-        mAccountObjectBalance.addAll(fullAccountBalances);
-        mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
-    }
-
     private List<FullAccountObject> getFullAccount(List<String> names, boolean subscribe) {
-        if (BitsharesWalletWraper.getInstance().getMyFullAccountInstance().size() == 0) {
+        if (BitsharesWalletWraper.getInstance().getMyFullAccountInstance().size() == 0 ||
+                !BitsharesWalletWraper.getInstance().getMyFullAccountInstance().get(0).account.name.equals(names.get(0))) {
             try {
                 return BitsharesWalletWraper.getInstance().get_full_accounts(names, subscribe);
             } catch (NetworkStatusException e) {
@@ -256,8 +285,10 @@ public class AccountFragment extends Fragment {
         FullAccountObjects = getFullAccount(names, true);
         if (FullAccountObjects.size() != 0) {
             FullAccountObject fullAccountObject = FullAccountObjects.get(0);
+            mPortfolioTitleLayout.setVisibility(View.VISIBLE);
             return fullAccountObject.balances;
         }
+        mPortfolioTitleLayout.setVisibility(View.GONE);
         return new ArrayList<AccountBalanceObject>();
 
     }
@@ -274,7 +305,13 @@ public class AccountFragment extends Fragment {
 
 
     private String getMembershipExpirationDate(List<String> names) {
-        return getFullAccount(names, true).get(0).account.membership_expiration_date;
+       List<FullAccountObject> full_account_objects;
+       full_account_objects = getFullAccount(names, true);
+       if (full_account_objects.size() != 0) {
+           FullAccountObject fullAccountObject = full_account_objects.get(0);
+           return fullAccountObject.account.membership_expiration_date;
+       }
+        return null;
     }
 
     private void loadWebView(WebView webView, int size, String encryptText) {
@@ -303,6 +340,7 @@ public class AccountFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        EventBus.getDefault().unregister(this);
     }
 
     /**

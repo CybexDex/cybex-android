@@ -72,10 +72,11 @@
     <!-- Strings related to login -->
     <string name="create_account">Create Account</string>
     <string name="have_account_login">Already have an account? </string>
-    <string name="prompt_email">Email</string>
+    <string name="prompt_user_name">User Name</string>
     <string name="prompt_password">Password </string>
     <string name="prompt_pin_code">Pin Code</string>
     <string name="action_sign_in">Log In</string>
+    <string name="action_log_out">Log Out</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -108,6 +109,15 @@
     <string name="create_account_activity_account_object_exist">The account has already existed</string>
     <string name="create_account_activity_response_fail">Server failed to response</string>
     <string name="create_account_activity_create_fail">Failed to sign up</string>
+
+    <string name="create_account_account_name_error_full_letter">The account name cannot contain only letters</string>
+    <string name="create_account_account_name_too_short">The account name is too short</string>
+    <string name="create_account_account_name_error_start_letter">The account name should start with a letter</string>
+    <string name="create_account_account_name_error_dash_end">The account name can not end with a dash</string>
+
+    <string name="create_account_password_requirement">The password should include more than 12 characters with at least 1 capital letter and 1 number</string>
+    <string name="create_account_password_confirm_error">Two passwords do not match</string>
+
 
 
     <!-- Open Orders Page Related -->

@@ -29,7 +29,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
         ImageView mAssetImage;
         TextView mAssetName;
         TextView mAssetPrice;
-        TextView mAssetPriceCny;
+        TextView mAssetPriceCYB;
 
         ViewHolder(View view) {
             super(view);
@@ -37,7 +37,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
             mAssetImage = view.findViewById(R.id.account_portfolio_item_asset_image);
             mAssetName = view.findViewById(R.id.account_portfolio_item_asset);
             mAssetPrice = view.findViewById(R.id.account_portfolio_item_asset_price);
-            mAssetPriceCny = view.findViewById(R.id.account_portfolio_item_cny_price);
+            mAssetPriceCYB = view.findViewById(R.id.account_portfolio_item_cyb_price);
         }
     }
 
@@ -61,13 +61,13 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
             }
             double price = mAssetList.get(position).balance / Math.pow(10, mAssetObject.precision);
             if (mAssetObject.symbol.contains("JADE")) {
-                holder.mAssetName.setText(mAssetObject.symbol.substring(0, 5));
+                holder.mAssetName.setText(mAssetObject.symbol.substring(5,mAssetObject.symbol.length()));
             } else {
                 holder.mAssetName.setText(mAssetObject.symbol);
             }
             loadImage(mAssetList.get(position).asset_type.toString(), holder.mAssetImage);
-            holder.mAssetPrice.setText(String.valueOf(mAssetList.get(position).balance / Math.pow(10 ,mAssetObject.precision)));
-            holder.mAssetPriceCny.setText(String.valueOf(price * priceCyb));
+            holder.mAssetPrice.setText(String.valueOf(price));
+            holder.mAssetPriceCYB.setText(String.valueOf(price * priceCyb));
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }

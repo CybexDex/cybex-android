@@ -211,7 +211,9 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mWatchListRecyclerViewAdapter.setItemToPosition(newWatchListData, i);
+                        if (watchListDataList.size() > i) {
+                            mWatchListRecyclerViewAdapter.setItemToPosition(newWatchListData, i);
+                        }
                     }
                 });
             }

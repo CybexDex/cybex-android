@@ -45,6 +45,7 @@ import java.util.List;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.helper.ActionBarTitleHelper;
 import com.cybexmobile.R;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -76,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private TextView mCreateAccountView, mSignInToCloudWalletTextView;
-
+    private KProgressHUD mProcessHud;
     private int nRet;
 
     @Override
@@ -87,6 +88,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             ActionBarTitleHelper.centeredActionBarTitle(this);
             setActionBarTitle();
         }
+
+        mProcessHud = KProgressHUD.create(this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Please Wait")
+                .setCancellable(false)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f);
 
         mSignInToCloudWalletTextView = findViewById(R.id.sign_in_to_cloud_wallet_text_view);
         mSignInToCloudWalletTextView.setVisibility(View.VISIBLE);

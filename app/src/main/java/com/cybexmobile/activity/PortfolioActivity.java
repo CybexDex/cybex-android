@@ -22,7 +22,6 @@ public class PortfolioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portfolio);
         mPortfolioRecyclerView = findViewById(R.id.portfolio_page_recycler_view);
-//        mAccountBalanceObjectList = (List<AccountBalanceObject>) getIntent().getSerializableExtra("BalanceList");
         mAccountBalanceObjectList = BitsharesWalletWraper.getInstance().getMyFullAccountInstance().get(0).balances;
         mPortfolioListAdapter = new PortfolioListRecyclerViewAdapter(mAccountBalanceObjectList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);

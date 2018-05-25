@@ -166,6 +166,9 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
             case "get_message":
                 // recreate();
                 break;
+            case "THEME_CHANGED":
+                recreate();
+                break;
         }
 
     }
@@ -181,10 +184,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
         if (mFaqFragment.isAdded()) {
             fm.putFragment(outState, FaqFragment.class.getSimpleName(), mFaqFragment);
         }
-//        if (mSettingFragment.isAdded()) {
-//            fm.putFragment(outState, SettingFragment.class.getSimpleName(), mSettingFragment);
-//        }
-
         if (mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
         }
@@ -204,12 +203,10 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
         if (savedInstanceState == null) {
             mWatchListFragment = new WatchLIstFragment();
             mFaqFragment = new FaqFragment();
-//            mSettingFragment = new SettingFragment();
             mAccountFragment = new AccountFragment();
         } else {
             mWatchListFragment = (WatchLIstFragment) fragmentManager.getFragment(savedInstanceState, WatchLIstFragment.class.getSimpleName());
             mFaqFragment = (FaqFragment) fragmentManager.getFragment(savedInstanceState, FaqFragment.class.getSimpleName());
-//            mSettingFragment = (SettingFragment) fragmentManager.getFragment(savedInstanceState, SettingFragment.class.getSimpleName());
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
             mChooseThemeFragment = (ChooseThemeFragment) fragmentManager.getFragment(savedInstanceState, ChooseThemeFragment.class.getSimpleName());
         }
@@ -224,11 +221,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
                     .add(R.id.frame_container, mFaqFragment, FaqFragment.class.getSimpleName())
                     .commit();
         }
-//        if (!mSettingFragment.isAdded()) {
-//            fragmentManager.beginTransaction()
-//                    .add(R.id.frame_container, mSettingFragment, SettingFragment.class.getSimpleName())
-//                    .commit();
-//        }
         if (!mAccountFragment.isAdded()) {
             fragmentManager.beginTransaction()
                     .add(R.id.frame_container, mAccountFragment, AccountFragment.class.getSimpleName())
@@ -323,9 +315,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
     @Override
     protected void onResume() {
         super.onResume();
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().getCustomView().findViewById(R.id.action_bar_arrow_back_button).setVisibility(View.GONE);
-//        }
     }
 
     @Override

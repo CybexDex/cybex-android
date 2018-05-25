@@ -154,9 +154,11 @@ public class MarketsActivity extends AppCompatActivity implements MarketStat.OnM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_markets);
         ActionBarTitleHelper.centeredActionBarTitle(this);
-        setActionBarTitle(getResources().getString(R.string.markets_title));
         Intent intent = getIntent();
         mWatchListData = (WatchListData) intent.getSerializableExtra("watchListData");
+        String base = intent.getStringExtra("base");
+        String quote = intent.getStringExtra("quote");
+        setActionBarTitle(quote + ":" + base);
         int id = getIntent().getIntExtra("id", 0);
         mMarketStat = MarketStat.getInstance();
         mMarketStat.subscribe(mWatchListData.getBase(), mWatchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 5, mDuration, this);

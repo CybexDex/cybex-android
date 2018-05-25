@@ -1,8 +1,10 @@
 package com.cybexmobile.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +44,8 @@ import okhttp3.Response;
 public class SettingActivity extends AppCompatActivity {
 
     private CardView mLanguageSettingView, mThemeSettingView, mSettingVersionView;
+    private Button mLogOutButton;
+    private SharedPreferences mSharedPreference;
 
     private Handler mHandler = new Handler();
 
@@ -54,12 +59,14 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         ActionBarTitleHelper.centeredActionBarTitle(this);
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
         setBackButton();
         initViews();
         onClickListener();
         displayLanguage();
         displayTheme();
         displayVersionNumber();
+        displayLogOutButton();
         if (getSupportActionBar() != null) {
             ActionBar supportActionBar = getSupportActionBar();
             TextView titile = supportActionBar.getCustomView().findViewById(R.id.actionbar_title);
@@ -114,6 +121,7 @@ public class SettingActivity extends AppCompatActivity {
         mLanguageSettingView = findViewById(R.id.setting_language);
         mThemeSettingView = findViewById(R.id.setting_theme);
         mSettingVersionView = findViewById(R.id.setting_version);
+        mLogOutButton = findViewById(R.id.log_out);
     }
 
     private void onClickListener() {
@@ -138,6 +146,13 @@ public class SettingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 checkIfNeedToUpdate();
             }
+        });
+
+        mLogOutButton.setOnClickListener(v -> {
+            mSharedPreference.edit().putBoolean("isLoggedIn", false).apply();
+            mSharedPreference.edit().putString("name", null).apply();
+            EventBus.getDefault().post("logout");
+            finish();
         });
     }
 
@@ -169,6 +184,14 @@ public class SettingActivity extends AppCompatActivity {
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNumber = mSettingVersionView.findViewById(R.id.setting_version_content);
         versionNumber.setText(getResources().getString(R.string.setting_version_value, versionName));
+    }
+
+    private void displayLogOutButton() {
+        if (mSharedPreference.getBoolean("isLoggedIn", false)) {
+            mLogOutButton.setVisibility(View.VISIBLE);
+        } else {
+            mLogOutButton.setVisibility(View.GONE);
+        }
     }
 
     private void checkIfNeedToUpdate() {

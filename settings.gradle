@@ -1,4 +1,3 @@
 rootProject.name = 'cybexMobile'
 include ':MPChartLib'
-
 include ':app'

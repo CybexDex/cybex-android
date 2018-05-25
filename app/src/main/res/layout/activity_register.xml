@@ -70,7 +70,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -78,18 +79,33 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_avatar_24_px" />
 
-                    <AutoCompleteTextView
-                        android:id="@+id/user_name"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@android:color/transparent"
-                        android:hint="@string/prompt_email"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColor="@color/primary_color_white"
-                        android:textColorHint="@color/text_hint_color"
-                        android:textCursorDrawable="@null" />
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/user_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@android:color/transparent"
+                            android:hint="@string/prompt_user_name"
+                            android:inputType="textEmailAddress"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/primary_color_white"
+                            android:textColorHint="@color/text_hint_color"
+                            android:textCursorDrawable="@null" />
+
+                        <ImageView
+                            android:id="@+id/user_name_check"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="18dp"
+                            android:src="@drawable/register_check"
+                            android:visibility="gone" />
+                    </RelativeLayout>
                 </LinearLayout>
 
             </android.support.design.widget.TextInputLayout>
@@ -110,21 +126,37 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_lock_outline_24_px" />
 
-                    <EditText
-                        android:id="@+id/password"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@android:color/transparent"
-                        android:hint="@string/prompt_password"
-                        android:imeActionId="6"
-                        android:imeActionLabel="@string/action_sign_in_short"
-                        android:imeOptions="actionUnspecified"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColor="@color/primary_color_white"
-                        android:textColorHint="@color/text_hint_color"
-                        android:textCursorDrawable="@null" />
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@android:color/transparent"
+                            android:hint="@string/prompt_password"
+                            android:imeActionId="6"
+                            android:imeActionLabel="@string/action_sign_in_short"
+                            android:imeOptions="actionUnspecified"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/primary_color_white"
+                            android:textColorHint="@color/text_hint_color"
+                            android:textCursorDrawable="@null" />
+
+                        <ImageView
+                            android:id="@+id/password_check"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="18dp"
+                            android:src="@drawable/register_check"
+                            android:visibility="gone" />
+
+                    </RelativeLayout>
                 </LinearLayout>
 
             </android.support.design.widget.TextInputLayout>
@@ -146,21 +178,36 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_lock_outline_24_px" />
 
-                    <EditText
-                        android:id="@+id/password_confirm"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@android:color/transparent"
-                        android:hint="@string/prompt_password"
-                        android:imeActionId="6"
-                        android:imeActionLabel="@string/action_sign_in_short"
-                        android:imeOptions="actionUnspecified"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColor="@color/primary_color_white"
-                        android:textColorHint="@color/text_hint_color"
-                        android:textCursorDrawable="@null" />
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/password_confirm"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@android:color/transparent"
+                            android:hint="@string/prompt_password"
+                            android:imeActionId="6"
+                            android:imeActionLabel="@string/action_sign_in_short"
+                            android:imeOptions="actionUnspecified"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/primary_color_white"
+                            android:textColorHint="@color/text_hint_color"
+                            android:textCursorDrawable="@null" />
+
+                        <ImageView
+                            android:id="@+id/password_confirm_check"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="18dp"
+                            android:src="@drawable/register_check"
+                            android:visibility="gone" />
+                    </RelativeLayout>
                 </LinearLayout>
 
             </android.support.design.widget.TextInputLayout>
@@ -182,28 +229,33 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_pincode_24_px" />
 
-                    <EditText
-                        android:id="@+id/register_pin_code"
-                        android:layout_width="226dp"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@android:color/transparent"
-                        android:hint="@string/prompt_pin_code"
-                        android:imeActionId="6"
-                        android:imeActionLabel="@string/action_sign_in_short"
-                        android:imeOptions="actionUnspecified"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColor="@color/primary_color_white"
-                        android:textColorHint="@color/text_hint_color"
-                        android:textCursorDrawable="@null" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/register_pin_code_image"
-                        android:layout_width="99dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:background="@color/register_pin_code_color" />
+                        <EditText
+                            android:id="@+id/register_pin_code"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@android:color/transparent"
+                            android:hint="@string/prompt_pin_code"
+                            android:imeActionId="6"
+                            android:imeActionLabel="@string/action_sign_in_short"
+                            android:imeOptions="actionUnspecified"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/primary_color_white"
+                            android:textColorHint="@color/text_hint_color"
+                            android:textCursorDrawable="@null" />
+
+                        <ImageView
+                            android:id="@+id/register_pin_code_image"
+                            android:layout_width="99dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/btn_color_orange" />
+                    </RelativeLayout>
                 </LinearLayout>
 
             </android.support.design.widget.TextInputLayout>
@@ -218,7 +270,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/complete"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/register_error_text"
@@ -226,8 +278,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/register_error_sign"
                     android:textColor="@color/primary_color_white"
-                    android:textSize="12sp"
-                   />
+                    android:textSize="12sp" />
             </RelativeLayout>
 
             <Button

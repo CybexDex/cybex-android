@@ -43,17 +43,17 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         NumberFormat formatter = MyUtils.getSuitableDecimalFormat(holder.mItem != null ? holder.mItem.getQuote() : "");
         NumberFormat formatter2 = new DecimalFormat("0.00");
         holder.mItem = mValues.get(position);
-        if (mValues.get(position).getBase().contains("JADE")) {
-            holder.mBaseCurrency.setText(mValues.get(position).getBase().substring(5, mValues.get(position).getBase().length()));
-        } else {
-            holder.mBaseCurrency.setText(mValues.get(position).getBase());
-        }
         if (mValues.get(position).getQuote().contains("JADE")) {
-            holder.mQuoteCurrency.setText(String.format("/%s", mValues.get(position).getQuote().substring(5, mValues.get(position).getQuote().length())));
+            holder.mQuoteCurrency.setText(mValues.get(position).getQuote().substring(5, mValues.get(position).getQuote().length()));
         } else {
-            holder.mQuoteCurrency.setText(String.format("/%s", mValues.get(position).getQuote()));
+            holder.mQuoteCurrency.setText(mValues.get(position).getQuote());
         }
-        holder.mVolume.setText(holder.mItem.getVol() == 0.f ? "-" : String.format("Volume:%s", MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getVol())));
+        if (mValues.get(position).getBase().contains("JADE")) {
+            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBase().substring(5, mValues.get(position).getBase().length())));
+        } else {
+            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBase()));
+        }
+        holder.mVolume.setText(holder.mItem.getVol() == 0.f ? "-" : String.format("Vol %s", MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getVol())));
         holder.mCurrentPrice.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.valueOf(formatter.format(mValues.get(position).getCurrentPrice())));
 
         double change = 0.f;
@@ -76,6 +76,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             holder.mChangeRate.setText("0.00%");
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.no_change_color));
         }
+        loadImage(mValues.get(position).getQuoteId(), holder.mSymboleView);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +103,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         TextView mCurrentPrice;
         TextView mVolume;
         TextView mChangeRate;
+        ImageView mSymboleView;
 
         public ViewHolder(View view) {
             super(view);
@@ -111,6 +113,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             mCurrentPrice = (TextView) view.findViewById(R.id.current_price_watchlist);
             mVolume = (TextView) view.findViewById(R.id.volume);
             mChangeRate = (TextView) view.findViewById(R.id.change_rate_watchlist);
+            mSymboleView = view.findViewById(R.id.watch_list_coin_symbol);
         }
 
         @Override
