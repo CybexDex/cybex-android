@@ -1,0 +1,20 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="bottom_navigation_bar_margin">56dp</dimen>
+
+    <!-- screen margin per UI design-->
+    <dimen name="popular_margin">25dp</dimen>
+
+    <dimen name="text_size_10sp">10sp</dimen>
+
+    <!-- Action Bar design -->
+    <dimen name="action_bar_back_close_button_margin">13dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+
+
+    <dimen name="toolbar_title_text_size"></dimen>
+</resources>

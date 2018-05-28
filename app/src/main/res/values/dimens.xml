@@ -17,4 +17,52 @@
 
 
     <dimen name="toolbar_title_text_size"></dimen>
+
+    <!-- Splash Activity -->
+    <dimen name="text_splash_margin_bottom">10dp</dimen>
+    <dimen name="text_splash_text_size">12sp</dimen>
+
+    <!-- Watch List Fragment -->
+    <dimen name="layout_hint_padding_start_end">14dp</dimen>
+    <dimen name="layout_hint_padding_top_bottom">12dp</dimen>
+    <dimen name="text_hint_margin_end">111dp</dimen>
+    <dimen name="text_hint_text_size">12sp</dimen>
+
+    <!-- Watch List Item -->
+    <dimen name="item_padding_start_end">14dp</dimen>
+    <dimen name="item_padding_top_bottom">18dp</dimen>
+    <dimen name="item_elevation">3dp</dimen>
+    <dimen name="text_rate_width">80dp</dimen>
+    <dimen name="text_rate_height">32dp</dimen>
+    <dimen name="text_price_margin_end">111dp</dimen>
+    <dimen name="text_quote_margin_start">8dp</dimen>
+    <dimen name="text_volume_margin_top">5dp</dimen>
+    <dimen name="text_price_min_text_size">8sp</dimen>
+
+    <!-- Account Fragment -->
+
+    <!-- Login Activity -->
+    <dimen name="image_logo_margin_top_bottom">15dp</dimen>
+    <dimen name="layout_login_margin_top">50dp</dimen>
+    <dimen name="layout_login_padding_margin">13dp</dimen>
+    <dimen name="btn_login_margin_top">74dp</dimen>
+    <dimen name="text_register_margin_bottom">40dp</dimen>
+
+    <!-- Register Activity -->
+    <dimen name="layout_register_margin_top">22dp</dimen>
+    <dimen name="image_success_margin_end">6dp</dimen>
+    <dimen name="image_pin_code_width">99dp</dimen>
+    <dimen name="image_pin_code_height">33dp</dimen>
+    <dimen name="layout_error_hint_margin_top">13dp</dimen>
+    <dimen name="layout_error_hint_height">54dp</dimen>
+    <dimen name="btn_register_margin_top">7dp</dimen>
+
+    <!-- Wallet Introduction Activity -->
+    <dimen name="layout_padding">20dp</dimen>
+
+    <!-- Load Dialog -->
+    <dimen name="dialog_width_height">80dp</dimen>
+    <dimen name="dialog_progress_width_height">40dp</dimen>
+
+
 </resources>

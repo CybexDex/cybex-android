@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -109,6 +110,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, mColumnCount));
         }
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mRecyclerView.setAdapter(mWatchListRecyclerViewAdapter);
         return view;
     }

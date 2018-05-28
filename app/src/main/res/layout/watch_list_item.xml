@@ -1,112 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:autofit="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/item_padding_start_end"
+    android:paddingEnd="@dimen/item_padding_start_end"
+    android:paddingTop="@dimen/item_padding_top_bottom"
+    android:paddingBottom="@dimen/item_padding_top_bottom"
+    android:background="@drawable/watch_list_item"
+    android:elevation="@dimen/item_elevation">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:elevation="3dp">
+    <LinearLayout
+        android:id="@+id/coinpair_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/watch_list_coin_symbol"
+            android:src="@drawable/ic_cyb_grey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/quote_currency_watchlist"
+            style="@style/white_font_bold"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/watch_list_item">
+            android:text="XRP"
+            android:layout_marginStart="@dimen/text_quote_margin_start"/>
 
-            <LinearLayout
-                android:id="@+id/coinpair_linear_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
+        <TextView
+            android:id="@+id/base_currency_watchlist"
+            style="@style/small_grey_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/USD" />
+    </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/watch_list_coin_symbol"
-                    android:src="@drawable/ic_cyb_grey"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/current_price_watchlist"
+        style="@style/white_font_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/coinpair_linear_layout"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/text_price_margin_end"
+        android:maxLines="1"
+        android:text="$11,309.109"
+        autofit:autoSizeMinTextSize="@dimen/text_price_min_text_size" />
 
-                <TextView
-                    android:id="@+id/quote_currency_watchlist"
-                    style="@style/white_font_bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="XRP"
-                    android:layout_marginStart="8dp"/>
+    <TextView
+        android:id="@+id/volume"
+        style="@style/small_grey_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/coinpair_linear_layout"
+        android:layout_below="@id/coinpair_linear_layout"
+        android:layout_marginTop="@dimen/text_volume_margin_top"
+        android:text="Volume:288,980,254" />
 
-                <TextView
-                    android:id="@+id/base_currency_watchlist"
-                    style="@style/small_grey_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="/USD" />
-            </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/small_grey_text"
+        android:lineSpacingMultiplier="1.67"
+        android:text="+21.35%"
+        android:layout_alignBottom="@+id/volume"
+        android:layout_alignEnd="@id/current_price_watchlist" />
 
+    <TextView
+        android:id="@+id/change_rate_watchlist"
+        style="@style/white_font_bold"
+        android:layout_width="@dimen/text_rate_width"
+        android:layout_height="@dimen/text_rate_height"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@color/increasing_color"
+        android:gravity="center"
+        android:text="+130.28%" />
 
-            <me.grantland.widget.AutofitTextView
-                android:id="@+id/current_price_watchlist"
-                style="@style/white_font_bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/coinpair_linear_layout"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="111dp"
-                android:layout_marginTop="14dp"
-                android:maxLines="1"
-                android:text="$11,309.109"
-                autofit:autoSizeMinTextSize="8sp" />
-
-            <TextView
-                android:id="@+id/volume"
-                style="@style/small_grey_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@id/coinpair_linear_layout"
-                android:layout_below="@id/coinpair_linear_layout"
-                android:layout_marginTop="2dp"
-                android:text="Volume:288,980,254" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/volume"
-                android:layout_alignEnd="@id/current_price_watchlist"
-                android:layout_below="@id/current_price_watchlist"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:lineSpacingMultiplier="1.67"
-                    android:text="+21.35%"
-                    android:textColor="@color/grey_unselected_font_color"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/change_rate_watchlist"
-                android:layout_width="80dp"
-                android:layout_height="32dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@color/increasing_color"
-                android:gravity="center"
-                android:text="+130.28%"
-                android:textColor="@color/primary_color_white"
-                android:textSize="16sp" />
-
-
-        </RelativeLayout>
-
-
-    </RelativeLayout>
-
-
-</LinearLayout>
-
+</RelativeLayout>

@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
@@ -51,14 +51,17 @@
             android:label="@string/title_activity_choose_theme"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.SplashActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.RegisterActivity" />
         <activity
             android:name=".activity.SettingActivity"
             android:label="@string/title_setting_activity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.WalletIntroductionActivity" />
+        <activity
+            android:name=".activity.WalletIntroductionActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activity.OpenOrdersActivity" />
         <activity android:name=".activity.PortfolioActivity"></activity>
 

@@ -88,4 +88,8 @@
     <string name="assets_amount">资产/数量</string>
     <string name="progress_expire_date">进度/到期时间</string>
     <string name="locked_assets">锁定期资产</string>
+
+    <!-- Activity Register -->
+    <string name="have_account_login">已注册? </string>
+    <string name="action_sign_in">登录</string>
 </resources>

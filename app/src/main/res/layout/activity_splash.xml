@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imgLogo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
         android:src="@drawable/start" />
 
     <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:textSize="12dp"
-        android:textColor="#454545"
-        android:gravity="center_horizontal"
-        android:layout_alignParentBottom="true"
-        android:text="Cycbex Mobile" />
+        android:layout_marginBottom="@dimen/text_splash_margin_bottom"
+        android:textSize="@dimen/text_splash_text_size"
+        android:textColor="@color/splash_text_color"
+        android:layout_gravity="bottom|center"
+        android:text="Cybex Mobile" />
 
-</RelativeLayout>
+</merge>

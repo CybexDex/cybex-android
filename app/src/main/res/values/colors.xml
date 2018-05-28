@@ -48,4 +48,10 @@
     <color name="faded_orange">#e7ac5f</color>
     <color name="dusty_orange">#e76536</color>
 
+    <!-- Splash Activity -->
+    <color name="splash_text_color">#454545</color>
+
+    <!-- Watch List Fragment -->
+    <color name="tab_indicator_color">#FF9143</color>
+
 </resources>
