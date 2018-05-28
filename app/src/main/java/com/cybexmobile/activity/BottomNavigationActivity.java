@@ -93,7 +93,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
         initFragments(savedInstanceState);
         if (mWatchListFragment != null) {
             if (MarketStat.getInstance().getmWatchListDataListHashMap().size() == 0)
-                MarketStat.getInstance().startRun(mWatchListFragment,"1.3.0");
+                MarketStat.getInstance().startRun(mWatchListFragment,"1.3.0","CYB");
         }
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
 

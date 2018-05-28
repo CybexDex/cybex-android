@@ -14,6 +14,8 @@ import com.cybexmobile.R;
 import com.cybexmobile.utils.MyUtils;
 import com.squareup.picasso.Picasso;
 
+import org.decimal4j.util.DoubleRounder;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -78,6 +80,8 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         }
         loadImage(mValues.get(position).getQuoteId(), holder.mSymboleView);
 
+        holder.mRmbPriceTextView.setText(String.format("≈ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +107,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         TextView mCurrentPrice;
         TextView mVolume;
         TextView mChangeRate;
+        TextView mRmbPriceTextView;
         ImageView mSymboleView;
 
         public ViewHolder(View view) {
@@ -114,6 +119,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             mVolume = (TextView) view.findViewById(R.id.volume);
             mChangeRate = (TextView) view.findViewById(R.id.change_rate_watchlist);
             mSymboleView = view.findViewById(R.id.watch_list_coin_symbol);
+            mRmbPriceTextView = view.findViewById(R.id.watch_list_rmb_price);
         }
 
         @Override

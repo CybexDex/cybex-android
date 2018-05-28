@@ -62,6 +62,7 @@
         android:text="Volume:288,980,254" />
 
     <TextView
+        android:id="@+id/watch_list_rmb_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/small_grey_text"

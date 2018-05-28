@@ -14,9 +14,6 @@ public class RegisterDialog {
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-
-        dialog.setContentView(R.layout.register_pin_code_dialog);
-
         Button dialogButton = (Button) dialog.findViewById(R.id.register_dialog_button);
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override

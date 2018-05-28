@@ -119,7 +119,9 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAuthTask.cancel(true);
+        if (mAuthTask != null) {
+            mAuthTask.cancel(true);
+        }
     }
 
     private void setActionBarTitle() {
@@ -219,10 +221,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             mUserNameView.setError(getString(R.string.error_field_required));
             focusView = mUserNameView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mUserNameView.setError(getString(R.string.error_invalid_email));
-            focusView = mUserNameView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -235,10 +233,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             mAuthTask = new UserLoginTask(email, password, this);
             mAuthTask.execute((Void) null);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        return email.contains("-");
     }
 
     private boolean isPasswordValid(String password) {

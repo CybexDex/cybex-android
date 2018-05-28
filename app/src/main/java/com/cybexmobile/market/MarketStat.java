@@ -7,14 +7,17 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.fragment.data.WatchListData;
+import com.cybexmobile.api.RetrofitApi;
 import com.cybexmobile.exception.NetworkStatusException;
+import com.cybexmobile.fragment.data.WatchListData;
 import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.Price;
+import com.cybexmobile.graphene.chain.Utils;
 import com.cybexmobile.manager.ThreadPoolManager;
 import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.Utils;
@@ -46,6 +49,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class MarketStat {
     private static final String TAG = "MarketStat";
@@ -64,6 +68,7 @@ public class MarketStat {
 
     private List<WatchListData> mWatchListDateList = new ArrayList<WatchListData>();
     private HashMap<String, List<WatchListData>> mWatchListDataListHashMap = new HashMap<>();
+    private HashMap<String, Integer> mRMBValueHashMap = new HashMap<>();
 
     private HashMap<String, Subscription> subscriptionHashMap = new HashMap<>();
     private HashMap<String, List<List<String>>> mCoinListHashMap = new HashMap<>();
@@ -170,13 +175,7 @@ public class MarketStat {
             }
         });
     }
-
-    public void onTabSelected(getResultListener listener, String baseAsset) {
-        mWatchListDataListHashMap.get(baseAsset).clear();
-
-
-    }
-    public void startRun(final getResultListener listener, final String baseAsset) {
+    public void startRun(final getResultListener listener, final String baseAsset, String tabSymbol) {
         //mWatchListDateList.clear();
         if (mWatchListDataListHashMap.get(baseAsset) != null) {
             mWatchListDataListHashMap.get(baseAsset).clear();
@@ -186,7 +185,7 @@ public class MarketStat {
          for (int i = 0; i < mCoinListHashMap.get(baseAsset).size(); i++) {
             String base = mCoinListHashMap.get(baseAsset).get(i).get(0);
             String quote = mCoinListHashMap.get(baseAsset).get(i).get(1);
-            executorService.execute(new Task(base, quote, listener));
+            executorService.execute(new Task(base, quote, listener, tabSymbol));
         }
 
         if (mCoinListHashMap.get(baseAsset).size() == 0) {
@@ -204,19 +203,21 @@ public class MarketStat {
         private String mQuote;
         private String mBase;
         private getResultListener mListener;
+        private String mTabSymbol;
 
-        public Task(String base, String quote, getResultListener listener) {
+        public Task(String base, String quote, getResultListener listener, String tabSymbol) {
             super();
             mQuote = quote;
             mBase = base;
             mListener = listener;
+            mTabSymbol = tabSymbol;
         }
 
         @Override
         public void run() {
             try {
                 String subscribeId = wraper.subscribe_to_market(mBase, mQuote);
-                mWatchListDataListHashMap.get(mBase).add(getWatchLIstData(mBase, mQuote, subscribeId));
+                mWatchListDataListHashMap.get(mBase).add(getWatchLIstData(mBase, mQuote, subscribeId, mTabSymbol));
                 if (mWatchListDataListHashMap.get(mBase).size() == mCoinListHashMap.get(mBase).size()) {
                     Collections.sort(mWatchListDataListHashMap.get(mBase), new Comparator<WatchListData>() {
                         @Override
@@ -689,15 +690,34 @@ public class MarketStat {
         }
     }
 
-    public WatchListData getWatchLIstData(String base, String quote, String subscribeId) {
+    public WatchListData getWatchLIstData(String base, String quote, String subscribeId, String tabSymbol) {
+        retrofit2.Call<ResponseBody> call = RetrofitApi.getCnyInterface().getCny();
         try {
+            retrofit2.Response<ResponseBody> response = call.execute();
+            String responseString = response.body().string();
+            Log.e("rmb", responseString);
+
+            JSONObject jsonObject = new JSONObject(responseString);
+            JSONArray prices = jsonObject.getJSONArray("prices");
+            double rmb = 0;
+            for(int i = 0; i < prices.length(); i++) {
+                JSONObject price = prices.getJSONObject(i);
+                if (price.getString("name").equals(tabSymbol)) {
+                    rmb = price.getDouble("value");
+                    break;
+                }
+            }
             AssetObject baseAssetLocal = wraper.get_objects(base);
             AssetObject quoteAssetLocal = wraper.get_objects(quote);
             MarketTicker marketTicker;
             List<HistoryPrice> historyPriceList = requestFor24HoursMarketHistory(baseAssetLocal, quoteAssetLocal);
             marketTicker = wraper.get_ticker(base, quote);
-            return CalculateWatchListData(baseAssetLocal, quoteAssetLocal, historyPriceList, marketTicker, subscribeId);
+            return CalculateWatchListData(baseAssetLocal, quoteAssetLocal, historyPriceList, marketTicker, subscribeId, rmb);
         } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -738,7 +758,7 @@ public class MarketStat {
     }
 
 
-    private WatchListData CalculateWatchListData(AssetObject base, AssetObject quote, List<HistoryPrice> historyPriceList, MarketTicker marketTicker, String subscribeId) {
+    private WatchListData CalculateWatchListData(AssetObject base, AssetObject quote, List<HistoryPrice> historyPriceList, MarketTicker marketTicker, String subscribeId, double rmb) {
         WatchListData watchListData = new WatchListData();
         watchListData.setBaseId(base.id.toString());
         watchListData.setQuoteId(quote.id.toString());
@@ -746,6 +766,7 @@ public class MarketStat {
         Log.e("id", base.id.toString() + " " + quote.id.toString());
         watchListData.setBase(base.symbol);
         watchListData.setQuote(quote.symbol);
+        watchListData.setRmbPrice(rmb);
         if (historyPriceList != null && historyPriceList.size() != 0) {
             watchListData.setHigh(getHighFromPriceList(historyPriceList));
             watchListData.setLow(getLowFromPriceList(historyPriceList));

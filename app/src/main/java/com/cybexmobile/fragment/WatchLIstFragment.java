@@ -48,6 +48,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
 
     private String[] mTabs = new String[]{"CYB", "ETH", "BTC", "EOS"};
     private String[] mAssetCode = new String[]{"1.3.0", "1.3.2", "1.3.3", "1.3.4", "1.3.5"};
+    private String mTab;
     private WatchListRecyclerViewAdapter mWatchListRecyclerViewAdapter;
     private OnListFragmentInteractionListener mListener;
 
@@ -126,6 +127,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 final String baseAsset = getAssetFromTab(tab.getText().toString());
+                mTab  = (String) tab.getText();
                 if (marketStat.getmCoinListHashMap().get(baseAsset) == null) {
                     mProgressBar.setVisibility(View.VISIBLE);
                     mRecyclerView.setVisibility(View.GONE);
@@ -133,7 +135,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
                         @Override
                         public void continueGetWebSocketConnect() {
                             EventBus.getDefault().unregister(WatchLIstFragment.this);
-                            marketStat.startRun(WatchLIstFragment.this, baseAsset);
+                            marketStat.startRun(WatchLIstFragment.this, baseAsset, mTab);
                         }
                     }, baseAsset);
 
@@ -175,7 +177,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
                 result = "1.3.4";
                 break;
             case "BTC":
-                result = "1.3.1";
+                result = "1.3.3";
                 break;
         }
         return result;
@@ -209,7 +211,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
         Thread mThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                final WatchListData newWatchListData = marketStat.getWatchLIstData(watchListData.getBaseId(), watchListData.getQuoteId(), watchListData.getSubscribeId());
+                final WatchListData newWatchListData = marketStat.getWatchLIstData(watchListData.getBaseId(), watchListData.getQuoteId(), watchListData.getSubscribeId(), mTab);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

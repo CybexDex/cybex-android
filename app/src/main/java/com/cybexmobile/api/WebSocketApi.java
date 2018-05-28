@@ -233,7 +233,7 @@ public class WebSocketApi extends WebSocketListener {
                 }
                 mHashMapIdToProcess.clear();
             }
-            connect();
+            //connect();
             //EventBus.getDefault().post("onReconnect");
         }
     }

@@ -25,7 +25,7 @@
     <string name="account_view_all">查看全部 ></string>
     <string name="account_other_asset">其他资产</string>
     <string name="account_hello">您好,</string>
-    <string name="account_membership_basic">基本会员</string>
+    <string name="account_membership_basic">普通会员</string>
     <string name="account_membership_lifetime">终身会员</string>
 
     <!-- Open Orders Page -->
