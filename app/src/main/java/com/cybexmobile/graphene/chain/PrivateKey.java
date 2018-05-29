@@ -59,7 +59,7 @@ public class PrivateKey {
         return null;
     }
 
-    public PublicKey get_public_key() {
+    public PublicKey get_public_key(boolean isCompressed) {
         try {
             Security.addProvider(new BouncyCastleProvider());
             ECNamedCurveParameterSpec secp256k1 = org.spongycastle.jce.ECNamedCurveTable.getParameterSpec("secp256k1");
@@ -78,9 +78,9 @@ public class PrivateKey {
             java.security.PublicKey publicKey = keyFactory.generatePublic(new org.spongycastle.jce.spec.ECPublicKeySpec(ecpubPoint, secp256k1));
 
             BCECPublicKey bcecPublicKey = (BCECPublicKey)publicKey;
-            byte bytePublic[] = bcecPublicKey.getQ().getEncoded(true);
+            byte bytePublic[] = bcecPublicKey.getQ().getEncoded(isCompressed);
 
-            return new PublicKey(bytePublic);
+            return new PublicKey(bytePublic, isCompressed);
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException(e);
         } catch (NoSuchAlgorithmException e) {
@@ -139,7 +139,7 @@ public class PrivateKey {
     }
 
     public Sha512Object get_shared_secret(PublicKey publicKey) {
-        ECKey ecPublicKey = ECKey.fromPublicOnly(publicKey.getKeyByte());
+        ECKey ecPublicKey = ECKey.fromPublicOnly(publicKey.getKeyByte(true));
         ECKey ecPrivateKey = ECKey.fromPrivate(key_data);
 
         byte[] secret = ecPublicKey.getPubKeyPoint().multiply(ecPrivateKey.getPrivKey())

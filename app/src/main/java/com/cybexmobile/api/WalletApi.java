@@ -1,6 +1,7 @@
 package com.cybexmobile.api;
 
 
+import android.content.Context;
 import android.util.Log;
 
 import com.cybexmobile.constant.ErrorCode;
@@ -21,6 +22,7 @@ import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
@@ -90,7 +92,8 @@ public class WalletApi {
     private boolean mbLogin = false;
     private HashMap<Types.public_key_type, Types.private_key_type> mHashMapPub2Priv = new HashMap<>();
     private Sha512Object mCheckSum = new Sha512Object();
-
+    private String unCompressedOwnerKey;
+    private Context mContext;
     static class plain_keys {
         Map<Types.public_key_type, String> keys;
         Sha512Object checksum;
@@ -142,6 +145,11 @@ public class WalletApi {
     }
 
     public WalletApi() {
+
+    }
+
+    public WalletApi(Context context) {
+        mContext = context;
 
     }
 
@@ -554,9 +562,32 @@ public class WalletApi {
         PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
         PrivateKey privateMemoKey = PrivateKey.from_seed(strAccountName + "memo" + strPassword);
 
-        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key());
-        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key());
-        Types.public_key_type publicMemoKeyTyep = new Types.public_key_type(privateMemoKey.get_public_key());
+        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
+        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
+        Types.public_key_type publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true);
+
+        Types.public_key_type publicActiveKeyTypeUnCompressed = new Types.public_key_type(privateActiveKey.get_public_key(false), false);
+        Types.public_key_type publicOwnerKeyTypeUnCompressed = new Types.public_key_type(privateOwnerKey.get_public_key(false), false);
+        Types.public_key_type publicMemoKeyTypeUnCompressed = new Types.public_key_type(privateMemoKey.get_public_key(false), false);
+
+        String address = publicActiveKeyType.getAddress();
+        String ownerAddress = publicOwnerKeyType.getAddress();
+        String memoAddress = publicMemoKeyType.getAddress();
+        String PTSAddress = publicActiveKeyType.getPTSAddress(publicActiveKeyType.key_data);
+        String owerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
+        String memoPtsAddress = publicMemoKeyType.getPTSAddress(publicMemoKeyType.key_data);
+        String uncompresedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
+        unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
+        String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
+        Log.e("Address", address);
+        Log.e("OwnerAddress", ownerAddress);
+        Log.e("ActivePTSAddress", PTSAddress);
+        Log.e("OwnerPtsAddress", owerPtsAddress);
+        Log.e("MemoAddress", memoAddress);
+        Log.e("MemoPTSAddress", memoPtsAddress);
+        Log.e("uncompressedActive", uncompresedPts);
+        Log.e("uncompressedOwner", unCompressedOwnerKey);
+        Log.e("uncompressedMemo", unCompressedMemo);
 
         AccountObject accountObject = get_account(strAccountName);
         if (accountObject == null) {
@@ -1077,6 +1108,11 @@ public class WalletApi {
         return mWebSocketApi.get_limit_orders(base, quote, limit);
     }
 
+    public List<LockUpAssetObject> get_balance_objects(List<String> addresses) throws NetworkStatusException {
+        return mWebSocketApi.get_balance_objects(addresses);
+
+    }
+
     public List<FullAccountObject> get_full_accounts(List<String> names, boolean subscribe)
             throws NetworkStatusException {
         return mWebSocketApi.get_full_accounts(names, subscribe);
@@ -1090,8 +1126,8 @@ public class WalletApi {
         PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
         PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
 
-        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key());
-        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key());
+        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
+        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
 
         AccountObject accountObject = get_account(strAccountName);
         if (accountObject != null) {
@@ -1170,5 +1206,9 @@ public class WalletApi {
             }
             return ERROR_SERVER_CREATE_ACCOUNT_FAIL;
         }
+    }
+
+    public String getUnCompressedOwnerKey() {
+        return unCompressedOwnerKey;
     }
 }

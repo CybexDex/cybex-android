@@ -80,7 +80,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         }
         loadImage(mValues.get(position).getQuoteId(), holder.mSymboleView);
 
-        holder.mRmbPriceTextView.setText(String.format("≈ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
+        holder.mRmbPriceTextView.setText(mValues.get(position).getRmbPrice() == 0.0 ? "≈¥ 0.00" : String.format("≈¥ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

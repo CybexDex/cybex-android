@@ -26,15 +26,15 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/account_portfolio_item_asset_image"
+                android:id="@+id/lock_up_asset_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_cyb_grey" />
 
             <TextView
-                android:id="@+id/account_portfolio_item_asset"
                 style="@style/font_white_dark_bold_large"
+                android:id="@+id/lock_up_asset_symbol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -50,6 +50,7 @@
 
             <TextView
                 style="@style/font_white_dark_bold_large"
+                android:id="@+id/lock_up_asset_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/layout_progress_bar"
@@ -64,6 +65,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/lock_up_asset_progress_text"
                     style="@style/font_gray_bold_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -71,6 +73,7 @@
                     android:text="50%" />
 
                 <ProgressBar
+                    android:id="@+id/lock_up_asset_progress_bar"
                     style="@android:style/Widget.ProgressBar.Horizontal"
                     android:layout_width="60dp"
                     android:layout_height="5dp"
@@ -86,12 +89,14 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/lock_up_asset_rmb"
                 style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="≈¥519,283,314.98" />
 
             <TextView
+                android:id="@+id/lock_up_asset_expire_date"
                 style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

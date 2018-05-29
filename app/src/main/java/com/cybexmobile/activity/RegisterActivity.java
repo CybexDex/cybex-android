@@ -354,6 +354,7 @@ public class RegisterActivity extends BaseActivity {
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RegisterActivity.this);
                     sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
                     sharedPreferences.edit().putString("name", strAccount).apply();
+                    sharedPreferences.edit().putString("password", strPassword).apply();
                     intent.setFlags(FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }, throwable -> {

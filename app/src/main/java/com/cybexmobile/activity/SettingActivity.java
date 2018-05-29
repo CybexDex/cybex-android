@@ -146,6 +146,7 @@ public class SettingActivity extends BaseActivity {
         mLogOutButton.setOnClickListener(v -> {
             mSharedPreference.edit().putBoolean("isLoggedIn", false).apply();
             mSharedPreference.edit().putString("name", null).apply();
+            mSharedPreference.edit().putString("password", null).apply();
             EventBus.getDefault().post("logout");
             finish();
         });

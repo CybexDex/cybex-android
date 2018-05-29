@@ -340,6 +340,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
                 sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
                 sharedPreferences.edit().putString("name", mEmail).apply();
+                sharedPreferences.edit().putString("password", mPassword).apply();
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

@@ -15,6 +15,7 @@ import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.market.MarketTrade;
@@ -766,6 +767,27 @@ public class WebSocketApi extends WebSocketListener {
         Reply<List<LimitOrderObject>> replyObject = sendForReply(callObject, replyObjectProcess);
 
         return replyObject.result;
+    }
+
+    public List<LockUpAssetObject> get_balance_objects(List<String> addresses) throws NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mnCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nDatabaseId);
+        callObject.params.add("get_balance_objects");
+
+        List<Object> listParams = new ArrayList<>();
+        listParams.add(addresses);
+        callObject.params.add(listParams);
+
+        ReplyObjectProcess<Reply<List<LockUpAssetObject>>> replyObjectProcess =
+                new ReplyObjectProcess<>(new TypeToken<Reply<List<LockUpAssetObject>>>() {
+                }.getType());
+        Reply<List<LockUpAssetObject>> replyObject = sendForReply(callObject, replyObjectProcess);
+
+        return replyObject.result;
+
     }
 
     public String subscribe_to_market(String base, String quote)

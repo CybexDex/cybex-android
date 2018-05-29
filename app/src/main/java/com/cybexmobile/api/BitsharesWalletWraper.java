@@ -1,6 +1,8 @@
 package com.cybexmobile.api;
 
 
+import android.util.Log;
+
 import com.cybexmobile.constant.ErrorCode;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.faucet.CreateAccountException;
@@ -10,8 +12,11 @@ import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.OperationHistoryObject;
+import com.cybexmobile.graphene.chain.PrivateKey;
+import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.market.MarketTrade;
 
@@ -34,7 +39,7 @@ public class BitsharesWalletWraper {
     private String mstrWalletFilePath;
     private List<FullAccountObject> mFullAccountObjects = new ArrayList<>();
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
-
+    private List<String> addressList = new ArrayList<>();
     private int mnStatus = STATUS_INVALID;
 
     private static final int STATUS_INVALID = -1;
@@ -534,6 +539,10 @@ public class BitsharesWalletWraper {
         return mWalletApi.get_limit_orders(base, quote, limit);
     }
 
+    public List<LockUpAssetObject> get_balance_objects(List<String> addresses) throws NetworkStatusException {
+        return mWalletApi.get_balance_objects(addresses);
+    }
+
 //    public signed_transaction sell_asset(String amountToSell, String symbolToSell,
 //                                         String minToReceive, String symbolToReceive,
 //                                         int timeoutSecs, boolean fillOrKill)
@@ -627,6 +636,57 @@ public class BitsharesWalletWraper {
         } catch (NetworkStatusException e) {
             e.printStackTrace();
             return ErrorCode.ERROR_NETWORK_FAIL;
+        }
+    }
+
+    private List<String> getAddressesForLockAsset(String strAccountName, String strPassword) {
+        PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
+        PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
+        PrivateKey privateMemoKey = PrivateKey.from_seed(strAccountName + "memo" + strPassword);
+
+        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
+        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
+        Types.public_key_type publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true);
+
+        Types.public_key_type publicActiveKeyTypeUnCompressed = new Types.public_key_type(privateActiveKey.get_public_key(false), false);
+        Types.public_key_type publicOwnerKeyTypeUnCompressed = new Types.public_key_type(privateOwnerKey.get_public_key(false), false);
+        Types.public_key_type publicMemoKeyTypeUnCompressed = new Types.public_key_type(privateMemoKey.get_public_key(false), false);
+
+        String address = publicActiveKeyType.getAddress();
+        addressList.add(address);
+        String ownerAddress = publicOwnerKeyType.getAddress();
+        addressList.add(ownerAddress);
+        String memoAddress = publicMemoKeyType.getAddress();
+        addressList.add(memoAddress);
+        String PTSAddress = publicActiveKeyType.getPTSAddress(publicActiveKeyType.key_data);
+        addressList.add(PTSAddress);
+        String owerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
+        addressList.add(owerPtsAddress);
+        String memoPtsAddress = publicMemoKeyType.getPTSAddress(publicMemoKeyType.key_data);
+        addressList.add(memoPtsAddress);
+        String uncompresedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
+        addressList.add(uncompresedPts);
+        String unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
+        addressList.add(unCompressedOwnerKey);
+        String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
+        addressList.add(unCompressedMemo);
+        Log.e("Address", address);
+        Log.e("OwnerAddress", ownerAddress);
+        Log.e("ActivePTSAddress", PTSAddress);
+        Log.e("OwnerPtsAddress", owerPtsAddress);
+        Log.e("MemoAddress", memoAddress);
+        Log.e("MemoPTSAddress", memoPtsAddress);
+        Log.e("uncompressedActive", uncompresedPts);
+        Log.e("uncompressedOwner", unCompressedOwnerKey);
+        Log.e("uncompressedMemo", unCompressedMemo);
+        return addressList;
+    }
+
+    public List<String> getAddressList(String userName, String passWord) {
+        if (addressList.size() != 0) {
+            return addressList;
+        } else {
+            return getAddressesForLockAsset(userName, passWord);
         }
     }
 }

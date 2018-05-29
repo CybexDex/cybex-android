@@ -10,6 +10,7 @@ import com.google.gson.JsonSerializer;
 
 import org.spongycastle.crypto.digests.RIPEMD160Digest;
 import org.spongycastle.crypto.digests.SHA256Digest;
+import org.spongycastle.crypto.digests.SHA512Digest;
 
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
@@ -127,6 +128,7 @@ public class Types {
 
     public static class public_key_type {
         public byte[] key_data = new byte[33];
+        public byte[] key_data_uncompressed = new byte[65];
 
         public public_key_type() {
 
@@ -143,8 +145,79 @@ public class Types {
             return Arrays.equals(key_data, publicKeyType.key_data);
         }
 
-        public public_key_type(PublicKey publicKey) {
-            key_data = publicKey.getKeyByte();
+        public public_key_type(PublicKey publicKey, boolean isCompressed) {
+            if (isCompressed) {
+                key_data = publicKey.getKeyByte(isCompressed);
+            } else {
+                key_data_uncompressed = publicKey.getKeyByte(isCompressed);
+            }
+        }
+
+        public String getAddress() {
+            SHA512Digest sha512Digest = new SHA512Digest();
+            RIPEMD160Digest ripemd160Digest = new RIPEMD160Digest();
+            sha512Digest.update(key_data, 0, key_data.length);
+            byte[] out = new byte[64];
+            sha512Digest.doFinal(out, 0);
+
+            ripemd160Digest.update(out,0,out.length);
+            byte[] outRipOne = new byte[20];
+            ripemd160Digest.doFinal(outRipOne, 0);
+
+            ripemd160Digest.update(outRipOne, 0, outRipOne.length);
+            byte[] outRipTwo = new byte[20];
+            ripemd160Digest.doFinal(outRipTwo, 0);
+
+            byte[] result = new byte[24];
+            System.arraycopy(outRipOne, 0, result, 0, outRipOne.length);
+            System.arraycopy(outRipTwo, 0, result, outRipOne.length, 4);
+            String strResult = GRAPHENE_ADDRESS_PREFIX;
+            strResult += Base58.encode(result);
+            return strResult;
+        }
+
+        public String getPTSAddress(byte[] publicKey) {
+            SHA256Digest sha256Digest = new SHA256Digest();
+            RIPEMD160Digest ripemd160Digest = new RIPEMD160Digest();
+            sha256Digest.update(publicKey, 0, publicKey.length);
+            byte[] out = new byte[32];
+            sha256Digest.doFinal(out, 0);
+
+            ripemd160Digest.update(out, 0, out.length);
+            byte[] rep = new byte[20];
+            ripemd160Digest.doFinal(rep, 0);
+
+            byte[] addr = new byte[21];
+            addr[0] = (byte)(0x38);
+            System.arraycopy(rep, 0, addr, 1, rep.length);
+
+            sha256Digest.update(addr,0, addr.length);
+            byte[] check = new byte[32];
+            sha256Digest.doFinal(check,0);
+
+            sha256Digest.update(check, 0, check.length);
+            byte[] checkResult = new byte[32];
+            sha256Digest.doFinal(checkResult, 0);
+
+            byte[] result = new byte[25];
+            System.arraycopy(addr, 0, result, 0, addr.length);
+            System.arraycopy(checkResult, 0, result, addr.length, 4);
+
+            byte[] ripResult = new byte[20];
+            ripemd160Digest.update(result,0, result.length);
+            ripemd160Digest.doFinal(ripResult, 0);
+
+            byte[] ripResult2 = new byte[20];
+            ripemd160Digest.update(ripResult, 0, ripResult.length);
+            ripemd160Digest.doFinal(ripResult2,0);
+
+            byte[] finalResult = new byte[24];
+            System.arraycopy(ripResult, 0, finalResult, 0 , ripResult.length );
+            System.arraycopy(ripResult2, 0, finalResult, ripResult.length, 4);
+
+            String strResult = GRAPHENE_ADDRESS_PREFIX;
+            strResult += Base58.encode(finalResult);
+            return strResult;
         }
 
         @Override
@@ -185,7 +258,7 @@ public class Types {
         }
 
         public PublicKey getPublicKey() {
-            return new PublicKey(key_data);
+            return new PublicKey(key_data, true);
         }
 
         public boolean compare(public_key_type publicKeyType) {

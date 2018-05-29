@@ -3,13 +3,22 @@ package com.cybexmobile.graphene.chain;
 public class PublicKey {
 
     private byte[] key_data = new byte[33];
+    private byte[] key_data_uncompressed = new byte[65];
 
-    public PublicKey(byte[] key) {
-        System.arraycopy(key, 0, key_data, 0, key_data.length);
+    public PublicKey(byte[] key, boolean isCompressed) {
+        if (isCompressed) {
+            System.arraycopy(key, 0, key_data, 0, key_data.length);
+        } else {
+            System.arraycopy(key, 0, key_data_uncompressed, 0, key_data_uncompressed.length);
+        }
     }
 
-    public byte[] getKeyByte() {
-        return key_data;
+    public byte[] getKeyByte(boolean isCompressed) {
+        if (isCompressed) {
+            return key_data;
+        } else {
+            return key_data_uncompressed;
+        }
     }
 
     public static boolean is_canonical(CompactSignature c) {
