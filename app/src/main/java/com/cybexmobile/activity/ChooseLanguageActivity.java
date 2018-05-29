@@ -4,15 +4,13 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cybexmobile.helper.ActionBarTitleHelper;
+import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
 
@@ -22,15 +20,15 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 
-public class ChooseLanguageActivity extends AppCompatActivity {
+public class ChooseLanguageActivity extends BaseActivity {
 
-    ActionBar mActionBar;
     RelativeLayout mChineseLanguageLayout;
     RelativeLayout mEnglishLanguageLayout;
     TextView mTextViewEnglish;
     TextView mTextViewChinese;
     ImageView mImageViewEnglish;
     ImageView mImageViewChinese;
+    private Toolbar mToolbar;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -41,46 +39,18 @@ public class ChooseLanguageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_language);
-        ActionBarTitleHelper.centeredActionBarTitle(this);
-        setBackbutton();
         mChineseLanguageLayout = (RelativeLayout) findViewById(R.id.language_select_chinese);
         mEnglishLanguageLayout = (RelativeLayout) findViewById(R.id.language_select_english);
         mTextViewEnglish = (TextView) findViewById(R.id.language_select_text_view_english);
         mTextViewChinese = (TextView) findViewById(R.id.language_select_text_view_chinese);
         mImageViewEnglish = (ImageView) findViewById(R.id.language_select_image_view_english);
         mImageViewChinese = (ImageView) findViewById(R.id.language_select_image_view_chinese);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         clickChineseChange();
         clickEnglishChange();
         getDefaultLanguage();
         EventBus.getDefault().register(this);
-    }
-
-    private void setBackbutton() {
-        ImageView backButton;
-        TextView mTitile;
-        if (getSupportActionBar() != null) {
-            backButton = (ImageView) getSupportActionBar().getCustomView().findViewById(R.id.action_bar_arrow_back_button);
-            mTitile = (TextView) getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title);
-            backButton.setVisibility(View.VISIBLE);
-            mTitile.setText(getResources().getString(R.string.title_setting));
-            backButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private Context updateResources(Context context) {

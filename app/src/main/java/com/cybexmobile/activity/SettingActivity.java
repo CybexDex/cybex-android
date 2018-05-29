@@ -1,6 +1,5 @@
 package com.cybexmobile.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,17 +10,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybexmobile.BuildConfig;
-import com.cybexmobile.helper.ActionBarTitleHelper;
+import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
 import com.g00fy2.versioncompare.Version;
@@ -41,11 +39,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class SettingActivity extends AppCompatActivity {
+public class SettingActivity extends BaseActivity {
 
     private CardView mLanguageSettingView, mThemeSettingView, mSettingVersionView;
     private Button mLogOutButton;
     private SharedPreferences mSharedPreference;
+    private Toolbar mToolbar;
 
     private Handler mHandler = new Handler();
 
@@ -58,7 +57,6 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        ActionBarTitleHelper.centeredActionBarTitle(this);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
         setBackButton();
         initViews();
@@ -67,11 +65,6 @@ public class SettingActivity extends AppCompatActivity {
         displayTheme();
         displayVersionNumber();
         displayLogOutButton();
-        if (getSupportActionBar() != null) {
-            ActionBar supportActionBar = getSupportActionBar();
-            TextView titile = supportActionBar.getCustomView().findViewById(R.id.actionbar_title);
-            titile.setText(getResources().getString(R.string.title_setting));
-        }
         EventBus.getDefault().register(this);
     }
 
@@ -122,6 +115,8 @@ public class SettingActivity extends AppCompatActivity {
         mThemeSettingView = findViewById(R.id.setting_theme);
         mSettingVersionView = findViewById(R.id.setting_version);
         mLogOutButton = findViewById(R.id.log_out);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
     }
 
     private void onClickListener() {

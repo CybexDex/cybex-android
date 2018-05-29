@@ -8,67 +8,99 @@
     tools:context="com.cybexmobile.activity.ChooseLanguageActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/select"
-        style="@style/font_grey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/language_select"
-        android:textAllCaps="false"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="25dp"
-        android:textSize="14sp" />
-    <RelativeLayout
-        android:id="@+id/language_select_english"
-        android:background="@drawable/watch_list_item"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginLeft="13dp"
-        android:layout_marginRight="13dp"
-        android:layout_marginTop="8dp">
-        <TextView
-            android:id="@+id/language_select_text_view_english"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="English"
-            style="@style/white_font_bold"
-            android:layout_marginLeft="12dp"
-            android:layout_centerVertical="true"/>
-        <ImageView
-            android:id="@+id/language_select_image_view_english"
-            app:srcCompat="@drawable/ic_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="13dp"
-            android:visibility="gone"/>
-    </RelativeLayout>
+        android:layout_height="?actionBarSize"
+        app:subtitleTextColor="@color/grey_unselected_font_color"
+        app:titleTextColor="@color/grey_unselected_font_color"
+        app:navigationIcon="@drawable/ic_arrow_forward_16px">
 
-    <RelativeLayout
-        android:id="@+id/language_select_chinese"
-        android:background="@drawable/watch_list_item"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginLeft="13dp"
-        android:layout_marginRight="13dp"
-        >
         <TextView
-            android:id="@+id/language_select_text_view_chinese"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="简体中文"
-            style="@style/white_font_bold"
-            android:layout_marginLeft="12dp"
-            android:layout_centerVertical="true"/>
-        <ImageView
-            android:id="@+id/language_select_image_view_chinese"
-            app:srcCompat="@drawable/ic_check"
+            android:text="@string/title_setting"
+            android:layout_gravity="center"
+            android:textColor="@color/primary_orange"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/layout_setting_padding"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/select"
+            style="@style/font_grey_large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:visibility="gone"
-            android:layout_marginRight="13dp"/>
-    </RelativeLayout>
+            android:text="@string/language_select"
+            android:textAllCaps="false"
+            android:paddingStart="@dimen/cardview_padding_start_end"
+            android:paddingEnd="@dimen/cardview_padding_start_end"
+            android:textSize="14sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/watch_list_item"
+            android:layout_marginTop="@dimen/cardview_hint_margin_top"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/language_select_english"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/layout_setting_padding">
+                <TextView
+                    android:id="@+id/language_select_text_view_english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="English"
+                    style="@style/font_white_dark_bold_large"
+                    android:layout_centerVertical="true"/>
+                <ImageView
+                    android:id="@+id/language_select_image_view_english"
+                    app:srcCompat="@drawable/ic_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/darkColorPrimary"/>
+
+            <RelativeLayout
+                android:id="@+id/language_select_chinese"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/layout_setting_padding">
+                <TextView
+                    android:id="@+id/language_select_text_view_chinese"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="简体中文"
+                    style="@style/font_white_dark_bold_large"
+                    android:layout_centerVertical="true"/>
+                <ImageView
+                    android:id="@+id/language_select_image_view_chinese"
+                    app:srcCompat="@drawable/ic_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </LinearLayout>

@@ -3,19 +3,18 @@ package com.cybexmobile.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.cybexmobile.helper.ActionBarTitleHelper;
+import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.helper.StoreThemeHelper;
 import com.cybexmobile.R;
 
@@ -24,26 +23,25 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChooseThemeActivity extends AppCompatActivity {
+public class ChooseThemeActivity extends BaseActivity {
 
     private ListView mListView;
     private List<String> mThemeList;
     private int selectedPosition = 0;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_theme);
-        if (getSupportActionBar() != null) {
-            ActionBarTitleHelper.centeredActionBarTitle(this);
-        }
         initView();
         initData();
-        setBackButton();
     }
 
     private void initView() {
         mListView = (ListView) findViewById(R.id.select_theme_list);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
     }
 
     private void initData() {
@@ -74,23 +72,6 @@ public class ChooseThemeActivity extends AppCompatActivity {
         });
     }
 
-    private void setBackButton() {
-        ImageView backButton;
-        TextView mTitile;
-        if (getSupportActionBar() != null) {
-            backButton = (ImageView) getSupportActionBar().getCustomView().findViewById(R.id.action_bar_arrow_back_button);
-            mTitile = (TextView) getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title);
-            backButton.setVisibility(View.VISIBLE);
-            mTitile.setText(getResources().getString(R.string.title_setting));
-            backButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
-    }
-
     public class ThemeAdapter extends BaseAdapter {
         Context mContext;
         List<String> mList;
@@ -103,8 +84,6 @@ public class ChooseThemeActivity extends AppCompatActivity {
             mPosiion = position;
             inflater =(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
-
-
 
         @Override
         public int getCount() {

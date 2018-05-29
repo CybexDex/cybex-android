@@ -41,14 +41,14 @@
 
             <TextView
                 android:id="@+id/buy_price"
-                style="@style/small_grey_text"
+                style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                  />
 
             <TextView
                 android:id="@+id/order_volume"
-                style="@style/small_grey_text"
+                style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="35dp"
@@ -94,14 +94,14 @@
 
             <TextView
                 android:id="@+id/sell_price"
-                style="@style/small_grey_text"
+                style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"/>
 
             <TextView
                 android:id="@+id/sell_order_volume"
-                style="@style/small_grey_text"
+                style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="35dp"

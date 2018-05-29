@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="13dp"
             android:layout_marginStart="13dp"
-            style="@style/white_font_bold"
+            style="@style/font_white_dark_bold_large"
             android:textSize="34sp"
             android:text="Settings"
             android:visibility="gone"/>
@@ -35,7 +35,7 @@
                     android:id="@+id/setting_language_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/white_font_bold"
+                    style="@style/font_white_dark_bold_large"
                     android:text="@string/setting_language"
                     android:layout_marginLeft="12dp"
                     android:layout_marginStart="12dp"
@@ -50,7 +50,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_marginEnd="12dp"
                     android:layout_centerHorizontal="true"
-                    style="@style/font_grey"
+                    style="@style/font_grey_large"
                     android:text="English >"/>
             </RelativeLayout>
 
@@ -75,7 +75,7 @@
                     android:id="@+id/setting_theme_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/white_font_bold"
+                    style="@style/font_white_dark_bold_large"
                     android:text="@string/setting_theme"
                     android:layout_marginLeft="12dp"
                     android:layout_marginStart="12dp"
@@ -90,7 +90,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_marginEnd="12dp"
                     android:layout_centerHorizontal="true"
-                    style="@style/font_grey"
+                    style="@style/font_grey_large"
                     android:text="@string/setting_theme_dark"/>
             </RelativeLayout>
 
@@ -115,7 +115,7 @@
                     android:id="@+id/setting_version_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/white_font_bold"
+                    style="@style/font_white_dark_bold_large"
                     android:text="@string/setting_version"
                     android:layout_marginLeft="12dp"
                     android:layout_marginStart="12dp"
@@ -130,7 +130,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_marginEnd="12dp"
                     android:layout_centerHorizontal="true"
-                    style="@style/font_grey" />
+                    style="@style/font_grey_large" />
             </RelativeLayout>
 
 

@@ -34,31 +34,39 @@
         </activity>
         <activity
             android:name=".activity.BottomNavigationActivity"
-            android:label="@string/title_activity_nav_button"
+            android:label=""
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.MarketsActivity"
-            android:label="@string/title_activity_markets"
+            android:label=""
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ChooseLanguageActivity"
-            android:label="@string/title_activity_choose_language"
-            android:theme="@style/AppTheme" />
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ChooseThemeActivity"
-            android:label="@string/title_activity_choose_theme"
-            android:theme="@style/AppTheme" />
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".activity.RegisterActivity" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""/>
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""/>
         <activity
             android:name=".activity.SettingActivity"
-            android:label="@string/title_setting_activity"
-            android:theme="@style/AppTheme" />
+            android:screenOrientation="portrait"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.WalletIntroductionActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
@@ -68,7 +76,7 @@
         <activity
             android:name=".activity.LockAssetsActivity"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_choose_theme"
+            android:label=""
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

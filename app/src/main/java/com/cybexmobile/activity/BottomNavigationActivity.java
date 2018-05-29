@@ -13,22 +13,21 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.ChooseThemeFragment;
 import com.cybexmobile.fragment.data.WatchListData;
 import com.cybexmobile.fragment.FaqFragment;
 import com.cybexmobile.fragment.SettingFragment;
 import com.cybexmobile.fragment.WatchLIstFragment;
-import com.cybexmobile.helper.ActionBarTitleHelper;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
@@ -41,7 +40,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 import java.util.Locale;
 
-public class BottomNavigationActivity extends AppCompatActivity implements WatchLIstFragment.OnListFragmentInteractionListener, SettingFragment.OnFragmentInteractionListener, FaqFragment.OnFragmentInteractionListener,
+public class BottomNavigationActivity extends BaseActivity implements WatchLIstFragment.OnListFragmentInteractionListener, SettingFragment.OnFragmentInteractionListener, FaqFragment.OnFragmentInteractionListener,
         AccountFragment.OnAccountFragmentInteractionListener {
 
     private BottomNavigationView mBottomNavigationView;
@@ -52,6 +51,8 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
     private SettingFragment mSettingFragment;
     private AccountFragment mAccountFragment;
     private ChooseThemeFragment mChooseThemeFragment;
+    private TextView mTvTitle;
+    private Toolbar mToolbar;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -61,18 +62,15 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_watchlist:
-                    setActionBarTitle(getResources().getString(R.string.title_watchlist));
+                    mTvTitle.setText(R.string.title_watchlist);
                     showFragment(mWatchListFragment);
                     return true;
-//                case R.id.navigation_explorer:
-//                    setActionBarTitle(getResources().getString(R.string.title_explorer));
-//                    return true;
                 case R.id.navigation_faq:
-                    setActionBarTitle(getResources().getString(R.string.title_faq));
+                    mTvTitle.setText(R.string.title_faq);
                     showFragment(mFaqFragment);
                     return true;
                 case R.id.navigation_account:
-                    setActionBarTitle(getResources().getString(R.string.title_dashboard));
+                    mTvTitle.setText(R.string.title_dashboard);
                     showFragment(mAccountFragment);
                     return true;
             }
@@ -95,6 +93,9 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
             if (MarketStat.getInstance().getmWatchListDataListHashMap().size() == 0)
                 MarketStat.getInstance().startRun(mWatchListFragment,"1.3.0","CYB");
         }
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        mTvTitle = findViewById(R.id.tv_title);
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
 
         BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
@@ -102,22 +103,21 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 //        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) mBottomNavigationView.getLayoutParams();
 //        layoutParams.setBehavior(new BottomNavigationBehavior());
-        ActionBarTitleHelper.centeredActionBarTitle(this);
         if (savedInstanceState != null) {
             int id = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
             switch (id) {
                 case R.id.navigation_watchlist:
-                    setActionBarTitle(getResources().getString(R.string.title_watchlist));
+                    mTvTitle.setText(R.string.title_watchlist);
                     showFragment(mWatchListFragment);
                     mBottomNavigationView.setVisibility(View.VISIBLE);
                     break;
                 case R.id.navigation_faq:
-                    setActionBarTitle(getResources().getString(R.string.title_faq));
+                    mTvTitle.setText(R.string.title_faq);
                     showFragment(mFaqFragment);
                     mBottomNavigationView.setVisibility(View.VISIBLE);
                     break;
                 case R.id.navigation_account:
-                    setActionBarTitle(getResources().getString(R.string.title_dashboard));
+                    mTvTitle.setText(R.string.title_dashboard);
                     if (mChooseThemeFragment != null) {
                         getSupportFragmentManager().beginTransaction()
                                 .hide(mChooseThemeFragment)
@@ -127,7 +127,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
                     }
                     showFragment(mAccountFragment);
                     mBottomNavigationView.setVisibility(View.VISIBLE);
-//                    }
                     break;
             }
         } else {
@@ -229,18 +228,7 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
 
     }
 
-    private void setActionBarTitle(String actionBarTitle) {
-        if (getSupportActionBar() != null) {
-            TextView actionBarTextView = (TextView) getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title);
-            actionBarTextView.setText(actionBarTitle);
-        }
-    }
-
     private void showFragment(Fragment fragment) {
-        ActionBar supportActionBar = getSupportActionBar();
-        ImageView settingButton = supportActionBar.getCustomView().findViewById(R.id.action_bar_setting_button);
-        settingButton.setVisibility(View.GONE);
-        supportActionBar.setElevation(8);
         FragmentManager fm = getSupportFragmentManager();
         if (fragment instanceof WatchLIstFragment) {
             fm.beginTransaction()
@@ -261,15 +249,6 @@ public class BottomNavigationActivity extends AppCompatActivity implements Watch
                     .hide(mFaqFragment)
                     .hide(mWatchListFragment)
                     .commit();
-            supportActionBar.setElevation(0);
-            settingButton.setVisibility(View.VISIBLE);
-            settingButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(BottomNavigationActivity.this, SettingActivity.class);
-                    startActivity(intent);
-                }
-            });
         }
     }
 

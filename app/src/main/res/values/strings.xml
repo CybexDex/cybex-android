@@ -71,9 +71,10 @@
 
     <!-- Strings related to login -->
     <string name="create_account">Create Account</string>
-    <string name="have_account_login">Already have an account? </string>
+    <string name="have_account_login">Already have an account?</string>
     <string name="prompt_user_name">User Name</string>
-    <string name="prompt_password">Password </string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
     <string name="prompt_pin_code">Pin Code</string>
     <string name="action_sign_in">Log In</string>
     <string name="action_log_out">Log Out</string>
@@ -114,8 +115,9 @@
     <string name="create_account_account_name_too_short">The account name is too short</string>
     <string name="create_account_account_name_error_start_letter">The account name should start with a letter</string>
     <string name="create_account_account_name_error_dash_end">The account name can not end with a dash</string>
+    <string name="create_account_account_name_should_not_contain_continuous_dashes">The account name should not contain continuous dashes</string>
 
-    <string name="create_account_password_requirement">The password should include more than 12 characters with at least 1 capital letter and 1 number</string>
+    <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>
     <string name="create_account_password_confirm_error">Two passwords do not match</string>
 
 
@@ -133,6 +135,8 @@
     <string name="assets_amount">assets/amount</string>
     <string name="progress_expire_date">progress/data</string>
     <string name="locked_assets">Locked Assets</string>
+
+    <string name="edittext_user_name_digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-</string>
 
 
 

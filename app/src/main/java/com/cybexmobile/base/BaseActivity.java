@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.base;
 
 import android.content.Intent;
 import android.os.Bundle;

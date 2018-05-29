@@ -5,7 +5,7 @@
 
     <TextView
         android:id="@+id/market_page_trade_history_price_value"
-        style="@style/small_grey_text"
+        style="@style/font_gray_bold_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -13,7 +13,7 @@
 
     <TextView
         android:id="@+id/market_page_trade_history_quote_volume"
-        style="@style/small_grey_text"
+        style="@style/font_gray_bold_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="120dp"
@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/market_page_trade_history_base_volume"
-        style="@style/small_grey_text"
+        style="@style/font_gray_bold_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -29,7 +29,7 @@
 
     <TextView
         android:id="@+id/market_page_trade_history_date_value"
-        style="@style/small_grey_text"
+        style="@style/font_gray_bold_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

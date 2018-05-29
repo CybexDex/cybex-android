@@ -19,6 +19,7 @@
     <!-- account page -->
     <string name="log_in_cybex">您好，请登录  ></string>
     <string name="account_introduction_text">CYBEX是一个旨在提高加密资产流动性的去中心化交易所，能够提供更多的透明性、更高的效率性和更好的安全性。</string>
+    <string name="login_cloud_wallet">云钱包帐户登录</string>
     <string name="register_create_cloud_wallet">创建您的云钱包账户</string>
     <string name="account_balance">您的总余额 （CYB）：</string>
     <string name="account_available_asset">可用资产</string>
@@ -50,11 +51,12 @@
     <string name="action_log_out">登出</string>
 
     <!-- Login/Register -->
-    <string name="create_account">注册</string>
+    <string name="create_account">创建新账号</string>
     <string name="register_dialog_title">注意事项</string>
     <string name="register_dialog_confirm">我记住了</string>
-    <string name="prompt_user_name">用户名</string>
-    <string name="prompt_password">密码 </string>
+    <string name="prompt_user_name">帐户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="prompt_confirm_password">确认密码</string>
     <string name="prompt_pin_code">验证码</string>
     <string name="create_account_account_name_empty">还未填写账号名</string>
     <string name="create_account_password_empty">还未填写密码</string>
@@ -71,9 +73,12 @@
     <string name="import_activity_password_invalid">密码错误</string>
     <string name="import_activity_file_bin_password_invalid">钱包文件或者密码错误</string>
 
-    <string name="create_account_account_name_error_full_letter">用户名不能只包含字母</string>
-    <string name="create_account_account_name_too_short">用户名过短</string>
-    <string name="create_account_account_name_error_start_letter">用户名需要以字母开头</string>
+    <string name="create_account_account_name_error_full_letter">帐户名不能只包含字母</string>
+    <string name="create_account_account_name_too_short">帐户名过短</string>
+    <string name="create_account_account_name_error_dash_end">帐户名不能以横杠结尾</string>
+    <string name="create_account_account_name_should_not_contain_continuous_dashes">帐户名不能包含连续的横杠</string>
+    <string name="create_account_account_name_error_start_letter">帐户名需要以字母开头</string>
+    <string name="create_account_password_must_at_least_12_characters">输入12位以上的密码</string>
 
     <!-- Open Orders Page Related -->
     <string name="open_orders_all">全部</string>
@@ -90,6 +95,6 @@
     <string name="locked_assets">锁定期资产</string>
 
     <!-- Activity Register -->
-    <string name="have_account_login">已注册? </string>
+    <string name="have_account_login">已注册?</string>
     <string name="action_sign_in">登录</string>
 </resources>

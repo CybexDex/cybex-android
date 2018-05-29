@@ -22,8 +22,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -31,15 +36,14 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.helper.ActionBarTitleHelper;
 import com.cybexmobile.R;
+import com.cybexmobile.base.BaseActivity;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -68,23 +72,58 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     // UI references.
     private AutoCompleteTextView mUserNameView;
     private EditText mPasswordView;
-    private TextView mCreateAccountView;
+    private TextView mTvRegister;
+    private Button mBtnSignIn;
+    private Toolbar mToolbar;
     private int nRet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        if (getSupportActionBar() != null) {
-            ActionBarTitleHelper.centeredActionBarTitle(this);
-            setActionBarTitle();
-        }
+
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         // Set up the login form.
         mUserNameView = findViewById(R.id.user_name);
+        mUserNameView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                setLoginButtonEnable(!TextUtils.isEmpty(editable.toString().trim()) &&
+                        !TextUtils.isEmpty(mPasswordView.getText().toString().trim()));
+            }
+        });
         populateAutoComplete();
 
         mPasswordView = findViewById(R.id.password);
+        mPasswordView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                setLoginButtonEnable(!TextUtils.isEmpty(editable.toString().trim()) &&
+                        !TextUtils.isEmpty(mUserNameView.getText().toString().trim()));
+            }
+        });
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -96,17 +135,16 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
         });
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        mBtnSignIn = findViewById(R.id.email_sign_in_button);
+        mBtnSignIn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
             }
         });
 
-        mCreateAccountView = findViewById(R.id.create_account);
-        mCreateAccountView.setVisibility(View.VISIBLE);
-        mCreateAccountView.setOnClickListener(new OnClickListener() {
+        mTvRegister = findViewById(R.id.tv_register);
+        mTvRegister.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -117,30 +155,27 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_setting, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_setting:
+                Intent intent = new Intent(LoginActivity.this, SettingActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mAuthTask != null) {
             mAuthTask.cancel(true);
-        }
-    }
-
-    private void setActionBarTitle() {
-        if (getSupportActionBar() != null) {
-            ImageView backButton = getSupportActionBar().getCustomView().findViewById(R.id.action_bar_close_button);
-            ImageView settingButton = getSupportActionBar().getCustomView().findViewById(R.id.action_bar_setting_button);
-            backButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
-            settingButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(LoginActivity.this, SettingActivity.class);
-                    startActivity(intent);
-                }
-            });
         }
     }
 
@@ -150,6 +185,10 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         }
 
         getLoaderManager().initLoader(0, null, this);
+    }
+
+    private void setLoginButtonEnable(boolean enabled){
+        mBtnSignIn.setEnabled(enabled);
     }
 
     private boolean mayRequestContacts() {
@@ -197,46 +236,14 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         if (mAuthTask != null) {
             return;
         }
-
-        // Reset errors.
-        mUserNameView.setError(null);
-        mPasswordView.setError(null);
-
         // Store values at the time of the login attempt.
-        String email = mUserNameView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
+        String email = mUserNameView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
+            return;
         }
-
-        // Check for a valid email Address.
-        if (TextUtils.isEmpty(email)) {
-            mUserNameView.setError(getString(R.string.error_field_required));
-            focusView = mUserNameView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            mAuthTask = new UserLoginTask(email, password, this);
-            mAuthTask.execute((Void) null);
-        }
-    }
-
-    private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        mAuthTask = new UserLoginTask(email, password, this);
+        mAuthTask.execute((Void) null);
     }
 
     @Override

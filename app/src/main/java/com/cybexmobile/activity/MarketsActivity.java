@@ -13,9 +13,9 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.cybexmobile.adapter.CoinPairRecyclerViewAdapter;
 import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
+import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.constant.ConstantTest;
 import com.cybexmobile.data.DataParse;
 import com.cybexmobile.data.KLineBean;
@@ -71,7 +72,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MarketsActivity extends AppCompatActivity implements MarketStat.OnMarketStatUpdateListener, CoinPairRecyclerViewAdapter.updateDataListener, OrderHistoryListFragment.OnListFragmentInteractionListener,
+public class MarketsActivity extends BaseActivity implements MarketStat.OnMarketStatUpdateListener, CoinPairRecyclerViewAdapter.updateDataListener, OrderHistoryListFragment.OnListFragmentInteractionListener,
         MarketTradeHistoryFragment.OnListFragmentInteractionListener {
 
     private static final long MARKET_STAT_INTERVAL_MILLIS_5_MIN = TimeUnit.MINUTES.toSeconds(5);
@@ -96,6 +97,8 @@ public class MarketsActivity extends AppCompatActivity implements MarketStat.OnM
     protected ProgressBar mProgressBar;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
+    private Toolbar mToolbar;
+    private TextView mTvTitle;
     private OrderHistoryFragmentPageAdapter mOrderHistoryFragmentPageAdapter;
     protected List<MarketStat.HistoryPrice> mHistoryPriceList;
     protected WatchListData mWatchListData;
@@ -153,12 +156,14 @@ public class MarketsActivity extends AppCompatActivity implements MarketStat.OnM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_markets);
-        ActionBarTitleHelper.centeredActionBarTitle(this);
+        mToolbar = findViewById(R.id.toolbar);
+        mTvTitle = findViewById(R.id.tv_title);
+        setSupportActionBar(mToolbar);
         Intent intent = getIntent();
         mWatchListData = (WatchListData) intent.getSerializableExtra("watchListData");
         String base = intent.getStringExtra("base");
         String quote = intent.getStringExtra("quote");
-        setActionBarTitle(quote + ":" + base);
+        mTvTitle.setText(quote + ":" + base);
         int id = getIntent().getIntExtra("id", 0);
         mMarketStat = MarketStat.getInstance();
         mMarketStat.subscribe(mWatchListData.getBase(), mWatchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 5, mDuration, this);
@@ -250,20 +255,6 @@ public class MarketsActivity extends AppCompatActivity implements MarketStat.OnM
             min = Math.min(historyPrice.low, min);
         }
         return min;
-    }
-
-    private void setActionBarTitle(String actionBarTitle) {
-        if (getSupportActionBar() != null) {
-            TextView actionBarTextView = (TextView) getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title);
-            ImageView backButton = (ImageView) getSupportActionBar().getCustomView().findViewById(R.id.action_bar_back_button);
-            actionBarTextView.setText(actionBarTitle);
-            backButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
     }
 
     private void initViews() {

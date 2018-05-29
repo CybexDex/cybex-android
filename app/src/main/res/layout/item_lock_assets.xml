@@ -34,7 +34,7 @@
 
             <TextView
                 android:id="@+id/account_portfolio_item_asset"
-                style="@style/white_font_bold"
+                style="@style/font_white_dark_bold_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -49,7 +49,7 @@
             android:paddingBottom="5dp">
 
             <TextView
-                style="@style/white_font_bold"
+                style="@style/font_white_dark_bold_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/layout_progress_bar"
@@ -64,7 +64,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/small_grey_text"
+                    style="@style/font_gray_bold_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -86,13 +86,13 @@
             android:layout_height="wrap_content">
 
             <TextView
-                style="@style/small_grey_text"
+                style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="≈¥519,283,314.98" />
 
             <TextView
-                style="@style/small_grey_text"
+                style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

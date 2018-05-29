@@ -6,10 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -19,11 +18,11 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.exception.ErrorCodeException;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.faucet.CreateAccountException;
 import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.helper.ActionBarTitleHelper;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.pixplicity.sharp.Sharp;
 
@@ -56,11 +55,12 @@ import static com.cybexmobile.constant.ErrorCode.ERROR_SERVER_CREATE_ACCOUNT_FAI
 import static com.cybexmobile.constant.ErrorCode.ERROR_SERVER_RESPONSE_FAIL;
 import static com.cybexmobile.constant.ErrorCode.ERROR_UNKNOWN;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends BaseActivity {
     ImageView mCloudWalletIntroductionQuestionMarker, mPinCodeImageView, mUserNameChecker, mPasswordChecker, mPasswordConfirmChecker, mRegisterErrorSign;
-    TextView mAlreadyHaveAccountTextView, mRegisterErrorText;
+    TextView mTvLoginIn, mRegisterErrorText;
     EditText mPassWordTextView, mConfirmationTextView, mPinCodeTextView, mUserNameTextView;
     Button mSignInButton;
+    private Toolbar mToolbar;
     String mCapId;
     Timer mTimer = new Timer();
     Task mTask = new Task();
@@ -70,10 +70,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getSupportActionBar() != null) {
-            ActionBarTitleHelper.centeredActionBarTitle(this);
-            setActionBarTitle();
-        }
         mProcessHud = KProgressHUD.create(this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setLabel("Please Wait")
@@ -95,18 +91,9 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void setActionBarTitle() {
-        if (getSupportActionBar() != null) {
-            ImageView backButton = getSupportActionBar().getCustomView().findViewById(R.id.action_bar_close_button);
-            ImageView settingButton = getSupportActionBar().getCustomView().findViewById(R.id.action_bar_setting_button);
-            settingButton.setVisibility(View.GONE);
-            backButton.setOnClickListener(v -> finish());
-        }
-    }
-
     private void initViews() {
         mCloudWalletIntroductionQuestionMarker = findViewById(R.id.register_cloud_wallet_question_marker);
-        mAlreadyHaveAccountTextView = findViewById(R.id.have_account_log_in);
+        mTvLoginIn = findViewById(R.id.tv_login_in);
         mUserNameTextView = findViewById(R.id.user_name);
         mPassWordTextView = findViewById(R.id.password);
         mConfirmationTextView = findViewById(R.id.password_confirm);
@@ -118,11 +105,11 @@ public class RegisterActivity extends AppCompatActivity {
         mPasswordChecker = findViewById(R.id.password_check);
         mPasswordConfirmChecker = findViewById(R.id.password_confirm_check);
         mRegisterErrorSign = findViewById(R.id.register_error_sign);
+        mToolbar =findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
     }
 
     private void setViews() {
-        InputFilter lowercaseFilter = (source, start, end, dest, dstart, dend) -> source.toString().toLowerCase();
-        mUserNameTextView.setFilters(new InputFilter[] {lowercaseFilter, new InputFilter.LengthFilter(63)});
         mUserNameTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -140,16 +127,19 @@ public class RegisterActivity extends AppCompatActivity {
                 if (strAccountName.isEmpty()) {
                     return;
                 }
-
                 if (!Character.isLetter(strAccountName.charAt(0))) {
                     mRegisterErrorText.setText(R.string.create_account_account_name_error_start_letter);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
-                } else if (strAccountName.length() <= 4) {
+                } else if (strAccountName.length() < 3) {
                     mRegisterErrorText.setText(R.string.create_account_account_name_too_short);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
-                } else if (strAccountName.endsWith("-")) {
+                } else if(strAccountName.contains("--")){
+                    mRegisterErrorText.setText(R.string.create_account_account_name_should_not_contain_continuous_dashes);
+                    mRegisterErrorSign.setVisibility(View.VISIBLE);
+                    mUserNameChecker.setVisibility(View.GONE);
+                }else if (strAccountName.endsWith("-")) {
                     mRegisterErrorText.setText(R.string.create_account_account_name_error_dash_end);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
@@ -192,22 +182,13 @@ public class RegisterActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String strPassword = s.toString();
                 if (strPassword.length() < 12) {
-                    mRegisterErrorText.setText(R.string.create_account_password_requirement);
-                    mPasswordChecker.setVisibility(View.VISIBLE);
+                    mRegisterErrorText.setText(R.string.create_account_password_must_at_least_12_characters);
+                    mPasswordChecker.setVisibility(View.GONE);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                 } else {
-                    boolean bDigit = strPassword.matches(".*\\d+.*");
-                    boolean bUpperCase = strPassword.matches(".*[A-Z]+.*");
-                    boolean bLowerCase = strPassword.matches(".*[a-z]+.*");
-                    if (!(bDigit && bUpperCase && bLowerCase)) {
-                        mRegisterErrorText.setText(R.string.create_account_password_requirement);
-                        mPasswordChecker.setVisibility(View.VISIBLE);
-                        mRegisterErrorSign.setVisibility(View.VISIBLE);
-                    } else {
-                        mRegisterErrorText.setText("");
-                        mPasswordChecker.setVisibility(View.VISIBLE);
-                        mRegisterErrorSign.setVisibility(View.GONE);
-                    }
+                    mRegisterErrorText.setText("");
+                    mPasswordChecker.setVisibility(View.VISIBLE);
+                    mRegisterErrorSign.setVisibility(View.GONE);
                 }
             }
         });
@@ -225,7 +206,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String strPassword = mConfirmationTextView.getText().toString();
+                String strPassword = mPassWordTextView.getText().toString();
                 String strPasswordConfirm = s.toString();
                 if (strPassword.compareTo(strPasswordConfirm) == 0) {
                     mPasswordConfirmChecker.setVisibility(View.VISIBLE);
@@ -267,14 +248,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setViewValue() {
-        setViewValueForLogInTextView();
         setButtonConfigure();
-    }
-
-    private void setViewValueForLogInTextView() {
-        String text1 = getResources().getString(R.string.have_account_login);
-        String text2 = getResources().getString(R.string.action_sign_in);
-        mAlreadyHaveAccountTextView.setText(Html.fromHtml("<font color=\"#FFFFFF\">" + text1 + "</font>  " + "<font color=\"#ff9143\">" + text2 + "</font>"));
     }
 
     private void setButtonConfigure() {
@@ -286,7 +260,7 @@ public class RegisterActivity extends AppCompatActivity {
             Intent intent = new Intent(RegisterActivity.this, WalletIntroductionActivity.class);
             startActivity(intent);
         });
-        mAlreadyHaveAccountTextView.setOnClickListener(v -> onBackPressed());
+        mTvLoginIn.setOnClickListener(v -> onBackPressed());
         mSignInButton.setOnClickListener(v -> {
             mProcessHud.show();
             String account = mUserNameTextView.getText().toString();

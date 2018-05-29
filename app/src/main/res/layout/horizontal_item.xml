@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lineSpacingMultiplier="1.13"
-            style="@style/white_font_bold"
+            style="@style/font_white_dark_bold_large"
             android:text="BTC"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
@@ -37,7 +37,7 @@
             android:layout_alignBottom="@id/base_currency_market_horizontal_view"
             android:text="/USD"
             android:textColor="#B3FFFFFF"
-            style="@style/white_font_bold"/>
+            style="@style/font_white_dark_bold_large"/>
         <TextView
             android:id="@+id/coin_pair_card_view_percentage"
             android:layout_width="wrap_content"

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="true">
+        <shape>
+            <gradient
+                android:angle="45"
+                android:startColor="@color/btn_orange_start"
+                android:endColor="@color/btn_orange_end" />
+        </shape>
+    </item>
+
+    <item android:state_enabled="false">
+        <shape>
+            <gradient
+                android:angle="45"
+                android:startColor="@color/btn_grey_start"
+                android:endColor="@color/btn_grey_end" />
+        </shape>
+    </item>
+
+</selector>

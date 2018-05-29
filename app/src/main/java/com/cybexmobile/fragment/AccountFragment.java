@@ -14,6 +14,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
@@ -24,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.activity.LockAssetsActivity;
+import com.cybexmobile.activity.SettingActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.activity.LoginActivity;
 import com.cybexmobile.activity.OpenOrdersActivity;
@@ -76,6 +80,7 @@ public class AccountFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         EventBus.getDefault().register(this);
     }
 
@@ -351,6 +356,23 @@ public class AccountFragment extends Fragment {
         super.onDetach();
         mListener = null;
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_setting, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_setting:
+                Intent intent = new Intent(getContext(), SettingActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

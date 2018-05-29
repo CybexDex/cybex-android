@@ -54,4 +54,10 @@
     <!-- Watch List Fragment -->
     <color name="tab_indicator_color">#FF9143</color>
 
+    <color name="btn_orange_start">#ffc478</color>
+    <color name="btn_orange_end">#ff9143</color>
+    <color name="btn_grey_start">#A9A9A9</color>
+    <color name="btn_grey_end">#78819a</color>
+
+
 </resources>

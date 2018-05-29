@@ -10,7 +10,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
@@ -18,7 +18,7 @@
 
         <TextView
             android:id="@+id/market_page_trade_history_quote"
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="128dp"
@@ -26,7 +26,7 @@
 
         <TextView
             android:id="@+id/market_page_trade_history_base"
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -34,7 +34,7 @@
             android:text="@string/market_page_trade_history_base"/>
 
         <TextView
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

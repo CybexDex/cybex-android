@@ -7,52 +7,67 @@
     android:orientation="vertical"
     tools:context="com.cybexmobile.activity.MarketsActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:subtitleTextColor="@color/grey_unselected_font_color"
+        app:titleTextColor="@color/grey_unselected_font_color"
+        app:navigationIcon="@drawable/ic_arrow_forward_16px">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/primary_orange"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </android.support.v7.widget.Toolbar>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/coin_pair_horizontal_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginStart="13dp"
         android:orientation="horizontal" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp">
+        android:padding="@dimen/layout_markets_padding">
 
         <TextView
             android:id="@+id/market_page_current_money"
-            style="@style/white_font_bold"
+            style="@style/font_white_dark_bold_large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
             android:text="$11,309.109"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/market_page_exchange_variation"
-            style="@style/increase"
+            style="@style/font_green_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/market_page_current_money"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="13dp"
             android:text="25.25%"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/market_page_high_price"
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/market_page_current_money"
             android:layout_below="@id/market_page_current_money"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/text_kline_header_price_margin_top"
             android:text="High:$11,984.124" />
 
         <TextView
             android:id="@+id/market_page_volume_base"
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/market_page_high_price"
@@ -61,7 +76,7 @@
 
         <TextView
             android:id="@+id/market_page_low_price"
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/market_page_high_price"
@@ -70,7 +85,7 @@
 
         <TextView
             android:id="@+id/market_page_volume_quote"
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/market_page_low_price"
@@ -90,12 +105,7 @@
             android:background="@color/kline_header_color"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <include layout="@layout/kline_type_header" />
-            </RelativeLayout>
+            <include layout="@layout/kline_type_header" />
             <include layout="@layout/view_kline_chart_top_ma" />
 
             <ProgressBar
@@ -108,43 +118,36 @@
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_k"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="@dimen/layout_kline_height"
                 android:layout_weight="2"
                 android:visibility="gone" />
 
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_volume"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/layout_volume_height"
                 android:layout_weight="2"
                 android:visibility="gone" />
 
+            <com.cybexmobile.mychart.MyCombinedChart
+                android:id="@+id/kline_chart_chart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
-            <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="33dp"-->
-                <!--android:layout_weight="1"-->
-                <!--android:visibility="gone">-->
-
-                <com.cybexmobile.mychart.MyCombinedChart
-                    android:id="@+id/kline_chart_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone" />
-            <!--</RelativeLayout>-->
-
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="17dp"
+                android:layout_marginTop="@dimen/layout_time_page_margin_top"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/market_page_5_min"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
+                    android:layout_weight="1"
                     android:text="5m"
+                    android:gravity="center"
                     android:textColor="@color/kline_header_selector"
                     android:textSize="14sp" />
 
@@ -152,7 +155,8 @@
                     android:id="@+id/market_page_1_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:text="1h"
                     android:textColor="@color/kline_header_selector"
                     android:textSize="14sp" />
@@ -161,19 +165,18 @@
                     android:id="@+id/market_page_1_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="24dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:text="1d"
                     android:textColor="@color/kline_header_selector"
                     android:textSize="14sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/market_page_tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="@dimen/tab_order_margin_top"
                 android:background="@android:color/transparent"
                 app:tabIndicatorColor="#FF9143"
                 app:tabMode="fixed"
@@ -183,7 +186,7 @@
             <android.support.v4.view.ViewPager
                 android:id="@+id/market_page_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="343dp"
+                android:layout_height="@dimen/viewpager_order_height"
                 android:background="@android:color/transparent" />
 
         </LinearLayout>

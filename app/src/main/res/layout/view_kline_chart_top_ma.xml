@@ -2,68 +2,58 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:paddingStart="@dimen/layout_markets_padding"
+    android:paddingEnd="@dimen/layout_markets_padding"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:text="@string/k_ma5"
+        android:textColor="@color/grey_unselected_font_color"
+        android:textSize="@dimen/text_size_10sp"
+        android:background="#0FFFFFFF"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/k_ma5"
-            android:layout_marginStart="13dp"
-            android:textColor="@color/grey_unselected_font_color"
-            android:textSize="@dimen/text_size_10sp"
-            android:background="#0FFFFFFF"/>
+    <TextView
+        android:id="@+id/view_kline_tv_ma5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/ma_5_color"
+        android:text="0.00"
+        android:textSize="@dimen/text_size_10sp" />
 
-        <TextView
-            android:id="@+id/view_kline_tv_ma5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-            android:textColor="@color/ma_5_color"
-            android:text="0.00"
-            android:textSize="@dimen/text_size_10sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey_unselected_font_color"
+        android:layout_marginStart="@dimen/text_kline_header_margin_start"
+        android:text="@string/k_ma10"
+        android:textSize="@dimen/text_size_10sp"
+        android:background="#0FFFFFFF"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/grey_unselected_font_color"
-            android:text="@string/k_ma10"
-            android:textSize="@dimen/text_size_10sp"
-            android:background="#0FFFFFFF"/>
+    <TextView
+        android:id="@+id/view_kline_tv_ma10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/ma_10_color"
+        android:text="0.00"
+        android:textSize="@dimen/text_size_10sp" />
 
-        <TextView
-            android:id="@+id/view_kline_tv_ma10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-            android:textColor="@color/ma_10_color"
-            android:text="0.00"
-            android:textSize="@dimen/text_size_10sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey_unselected_font_color"
+        android:layout_marginStart="@dimen/text_kline_header_margin_start"
+        android:text="@string/k_ma20"
+        android:textSize="@dimen/text_size_10sp"
+        android:background="#0FFFFFFF"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/grey_unselected_font_color"
-            android:text="@string/k_ma20"
-            android:textSize="@dimen/text_size_10sp"
-            android:background="#0FFFFFFF"/>
-
-        <TextView
-            android:id="@+id/view_kline_tv_ma20"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="10dp"
-            android:textColor="@color/ma_20_color"
-            android:text="0.00"
-            android:textSize="@dimen/text_size_10sp" />
-
-    </LinearLayout>
-
-
-
+    <TextView
+        android:id="@+id/view_kline_tv_ma20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/ma_20_color"
+        android:text="0.00"
+        android:textSize="@dimen/text_size_10sp" />
 
 </LinearLayout>

@@ -25,7 +25,7 @@
 
         <TextView
             android:id="@+id/quote_currency_watchlist"
-            style="@style/white_font_bold"
+            style="@style/font_white_dark_bold_large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="XRP"
@@ -33,7 +33,7 @@
 
         <TextView
             android:id="@+id/base_currency_watchlist"
-            style="@style/small_grey_text"
+            style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="/USD" />
@@ -41,7 +41,7 @@
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/current_price_watchlist"
-        style="@style/white_font_bold"
+        style="@style/font_white_dark_bold_large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/coinpair_linear_layout"
@@ -53,7 +53,7 @@
 
     <TextView
         android:id="@+id/volume"
-        style="@style/small_grey_text"
+        style="@style/font_gray_bold_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/coinpair_linear_layout"
@@ -65,7 +65,7 @@
         android:id="@+id/watch_list_rmb_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/small_grey_text"
+        style="@style/font_gray_bold_small"
         android:lineSpacingMultiplier="1.67"
         android:text="+21.35%"
         android:layout_alignBottom="@+id/volume"
@@ -73,7 +73,7 @@
 
     <TextView
         android:id="@+id/change_rate_watchlist"
-        style="@style/white_font_bold"
+        style="@style/font_white_dark_bold_large"
         android:layout_width="@dimen/text_rate_width"
         android:layout_height="@dimen/text_rate_height"
         android:layout_alignParentEnd="true"
