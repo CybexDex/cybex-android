@@ -83,7 +83,7 @@ public class MyUtils {
                 result = String.format(Locale.US, "%.2fB", number);
             }
         } else {
-            NumberFormat formatter = new DecimalFormat("#,###0.00000");
+            NumberFormat formatter = new DecimalFormat("#,###0.00");
             result = String.valueOf(formatter.format(number));
         }
         return result;
