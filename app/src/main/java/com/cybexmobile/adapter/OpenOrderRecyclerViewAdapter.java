@@ -19,12 +19,19 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
     private List<Boolean> mBooleanList;
     private List<List<AssetObject>> mAssetObjectList;
     private Context mContext;
+    private double mTotal;
+    private getTotalValueInterface mListener;
 
-    public OpenOrderRecyclerViewAdapter(List<LimitOrderObject> dataList, List<Boolean> booleanList, Context context, List<List<AssetObject>> assetObjectList) {
+    public interface getTotalValueInterface {
+        void displayTotalValue(double total);
+    }
+
+    public OpenOrderRecyclerViewAdapter(List<LimitOrderObject> dataList, List<Boolean> booleanList, Context context, List<List<AssetObject>> assetObjectList, getTotalValueInterface listener) {
         mDataList = dataList;
         mBooleanList = booleanList;
         mContext = context;
         mAssetObjectList = assetObjectList;
+        mListener = listener;
     }
 
 
@@ -55,30 +62,45 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         AssetObject quote = mAssetObjectList.get(position).get(0);
         AssetObject base = mAssetObjectList.get(position).get(1);
         LimitOrderObject data = mDataList.get(position);
+        double amount;
+        double price;
+        if (position == 0) {
+            mTotal = 0;
+        }
         if (mBooleanList.get(position)) {
             holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
             holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.sell_item_background));
             if (data.sell_price.base.asset_id.equals(base.id)) {
-                holder.mVolumeTextView.setText(String.valueOf(data.sell_price.base.amount / Math.pow(10, base.precision)));
+                amount = data.sell_price.base.amount / Math.pow(10, base.precision);
+                holder.mVolumeTextView.setText(String.valueOf(amount));
             } else {
-                holder.mVolumeTextView.setText(String.valueOf(data.sell_price.quote.amount / Math.pow(10, base.precision)));
+                amount = data.sell_price.quote.amount / Math.pow(10, base.precision);
+                holder.mVolumeTextView.setText(String.valueOf(amount));
             }
         } else {
             holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
             holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.buy_item_background));
             if (data.sell_price.quote.asset_id.equals(quote.id)) {
-                holder.mVolumeTextView.setText(String.valueOf(data.sell_price.quote.amount / Math.pow(10, quote.precision)));
+                amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
+                holder.mVolumeTextView.setText(String.valueOf(amount));
             } else {
-                holder.mVolumeTextView.setText(String.valueOf(data.sell_price.base.amount / Math.pow(10, quote.precision)));
+                amount = data.sell_price.base.amount / Math.pow(10, quote.precision);
+                holder.mVolumeTextView.setText(String.valueOf(amount));
             }
         }
         if (data.sell_price.base.asset_id.equals(base.id)) {
-            holder.mPriceTextView.setText(String.valueOf((data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision))));
+            price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
+            holder.mPriceTextView.setText(String.valueOf(price));
         } else {
-            holder.mPriceTextView.setText(String.valueOf((data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision))));
+            price = (data.sell_price.quote.amount / Math.pow(10, base.precision)) / (data.sell_price.base.amount / Math.pow(10, quote.precision));
+            holder.mPriceTextView.setText(String.valueOf(price));
         }
+        mTotal += price * amount;
         holder.mQuoteTextView.setText(quote.symbol);
         holder.mBaseTextView.setText(String.format("/%s", base.symbol));
+        if (position == mDataList.size() - 1) {
+            mListener.displayTotalValue(mTotal);
+        }
     }
 
     @Override

@@ -1,30 +1,35 @@
 package com.cybexmobile.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
-import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.R;
+import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
+import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.market.MarketStat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import info.hoang8f.android.segmented.SegmentedGroup;
 
-public class OpenOrdersActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
+public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, OpenOrderRecyclerViewAdapter.getTotalValueInterface {
 
     private SegmentedGroup mSegmentedGroup;
     private RadioButton mAllSegment, mBuySegment, mSellSegment;
+    private TextView mOpenOrderTotalValue;
     private RecyclerView mRecyclerView;
     private OpenOrderRecyclerViewAdapter mOpenOrcerRecycerViewAdapter;
     private List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
@@ -34,14 +39,17 @@ public class OpenOrdersActivity extends AppCompatActivity implements RadioGroup.
     private HashMap<String, List<LimitOrderObject>> mLimitOrderHashMap = new HashMap<>();
     private HashMap<String, List<List<AssetObject>>> mAssetObjectHashMap = new HashMap<>();
     private HashMap<String, List<Boolean>> mBooleanHashMap = new HashMap<>();
+    private Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_orders);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         initWidget();
         mLimitOrderObjectList = BitsharesWalletWraper.getInstance().getMyFullAccountInstance().get(0).limit_orders;
         mBooleanList = isSell(mLimitOrderObjectList, compareList);
-        mOpenOrcerRecycerViewAdapter = new OpenOrderRecyclerViewAdapter(mLimitOrderObjectList, mBooleanList, this, mAssetObjectList);
+        mOpenOrcerRecycerViewAdapter = new OpenOrderRecyclerViewAdapter(mLimitOrderObjectList, mBooleanList, this, mAssetObjectList, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mOpenOrcerRecycerViewAdapter);
@@ -55,6 +63,7 @@ public class OpenOrdersActivity extends AppCompatActivity implements RadioGroup.
         mBuySegment = findViewById(R.id.open_orders_segment_buy);
         mSellSegment = findViewById(R.id.open_orders_segment_sell);
         mRecyclerView = findViewById(R.id.open_orders_recycler_view);
+        mOpenOrderTotalValue = findViewById(R.id.open_orders_total_value);
         mSegmentedGroup.setOnCheckedChangeListener(this);
 
     }
@@ -98,6 +107,14 @@ public class OpenOrdersActivity extends AppCompatActivity implements RadioGroup.
                 break;
 
         }
+    }
+
+    @Override
+    public void displayTotalValue(double total) {
+        double rmbPrice = MarketStat.getInstance().getRMBPriceFromHashMap("CYB");
+        int precision = 5;
+        String form = "%." + precision + "f\n";
+        mOpenOrderTotalValue.setText(String.format(Locale.US,"≈¥" + form, total * rmbPrice ));
     }
 
     private List<Boolean> isSell (List<LimitOrderObject> limitOrderList, String[] compareList) {

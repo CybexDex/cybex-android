@@ -68,10 +68,10 @@ public class MarketStat {
 
     private List<WatchListData> mWatchListDateList = new ArrayList<WatchListData>();
     private HashMap<String, List<WatchListData>> mWatchListDataListHashMap = new HashMap<>();
-    private HashMap<String, Integer> mRMBValueHashMap = new HashMap<>();
 
     private HashMap<String, Subscription> subscriptionHashMap = new HashMap<>();
     private HashMap<String, List<List<String>>> mCoinListHashMap = new HashMap<>();
+    private HashMap<String, Double> mRmbListHashMap = new HashMap<>();
     private static boolean isDeserializerRegistered = false;
     private List<List<String>> mCoinPairList = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class MarketStat {
     }
 
     public interface getResultListener {
-        void getResultListener(HashMap<String,List<WatchListData>> watchListData, String baseAsset);
+        void getResultListener(HashMap<String, List<WatchListData>> watchListData, String baseAsset);
     }
 
     public interface startFirstActivityListener {
@@ -159,7 +159,7 @@ public class MarketStat {
                     JSONObject jsonObject = new JSONObject(myResponse);
                     JSONArray jsonArray = jsonObject.getJSONArray("data");
                     List<List<String>> coinPairArrayList = new ArrayList<>();
-                    for(int i = 0; i < jsonArray.length(); i++) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         final List<String> coinPairList = new ArrayList<>();
                         coinPairList.add(baseAsset);
                         coinPairList.add(jsonArray.getString(i));
@@ -175,6 +175,7 @@ public class MarketStat {
             }
         });
     }
+
     public void startRun(final getResultListener listener, final String baseAsset, String tabSymbol) {
         //mWatchListDateList.clear();
         if (mWatchListDataListHashMap.get(baseAsset) != null) {
@@ -182,19 +183,19 @@ public class MarketStat {
         }
         //Log.e("coinPair", mCoinPairList.toString());
         mWatchListDataListHashMap.put(baseAsset, new ArrayList<WatchListData>());
-         for (int i = 0; i < mCoinListHashMap.get(baseAsset).size(); i++) {
+        for (int i = 0; i < mCoinListHashMap.get(baseAsset).size(); i++) {
             String base = mCoinListHashMap.get(baseAsset).get(i).get(0);
             String quote = mCoinListHashMap.get(baseAsset).get(i).get(1);
             executorService.execute(new Task(base, quote, listener, tabSymbol));
         }
 
         if (mCoinListHashMap.get(baseAsset).size() == 0) {
-             mHandler.post(new Runnable() {
-                 @Override
-                 public void run() {
-                     listener.getResultListener(mWatchListDataListHashMap, baseAsset);
-                 }
-             });
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.getResultListener(mWatchListDataListHashMap, baseAsset);
+                }
+            });
         }
 
     }
@@ -465,7 +466,7 @@ public class MarketStat {
                 marketTrade.base = base;
                 marketTrade.quote = quote;
                 String paysAmount = String.format("%s", pays.get("amount"));
-                String receiveAmount = String .format("%s", receives.get("amount"));
+                String receiveAmount = String.format("%s", receives.get("amount"));
 
                 if (pays.get("asset_id").equals(baseAsset.id.toString())) {
                     marketTrade.baseAmount = Double.parseDouble(paysAmount) / Math.pow(10, baseAsset.precision);
@@ -691,34 +692,18 @@ public class MarketStat {
     }
 
     public WatchListData getWatchLIstData(String base, String quote, String subscribeId, String tabSymbol) {
-        retrofit2.Call<ResponseBody> call = RetrofitApi.getCnyInterface().getCny();
-        try {
-            retrofit2.Response<ResponseBody> response = call.execute();
-            String responseString = response.body().string();
-            Log.e("rmb", responseString);
+        double rmb = getRmbPrice(tabSymbol);
 
-            JSONObject jsonObject = new JSONObject(responseString);
-            JSONArray prices = jsonObject.getJSONArray("prices");
-            double rmb = 0;
-            for(int i = 0; i < prices.length(); i++) {
-                JSONObject price = prices.getJSONObject(i);
-                if (price.getString("name").equals(tabSymbol)) {
-                    rmb = price.getDouble("value");
-                    break;
-                }
-            }
-            AssetObject baseAssetLocal = wraper.get_objects(base);
+        AssetObject baseAssetLocal;
+        try {
+            baseAssetLocal = wraper.get_objects(base);
             AssetObject quoteAssetLocal = wraper.get_objects(quote);
             MarketTicker marketTicker;
             List<HistoryPrice> historyPriceList = requestFor24HoursMarketHistory(baseAssetLocal, quoteAssetLocal);
             marketTicker = wraper.get_ticker(base, quote);
             return CalculateWatchListData(baseAssetLocal, quoteAssetLocal, historyPriceList, marketTicker, subscribeId, rmb);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (NetworkStatusException e1) {
+            e1.printStackTrace();
         }
         return null;
     }
@@ -915,5 +900,38 @@ public class MarketStat {
 
     public List<List<String>> getCoinList() {
         return mCoinPairList;
+    }
+
+    private double getRmbPrice(String assetSymbol) {
+        double rmb = 0;
+        retrofit2.Call<ResponseBody> call = RetrofitApi.getCnyInterface().getCny();
+        try {
+            retrofit2.Response<ResponseBody> response = call.execute();
+            String responseString = response.body().string();
+            Log.e("rmb", responseString);
+
+            JSONObject jsonObject = new JSONObject(responseString);
+            JSONArray prices = jsonObject.getJSONArray("prices");
+            for (int i = 0; i < prices.length(); i++) {
+                JSONObject price = prices.getJSONObject(i);
+                if (price.getString("name").equals(assetSymbol)) {
+                    rmb = price.getDouble("value");
+                    mRmbListHashMap.put(assetSymbol, rmb);
+                    break;
+                }
+            }
+            return rmb;
+        } catch (JSONException | IOException e1) {
+            e1.printStackTrace();
+        }
+        return rmb;
+    }
+
+    public double getRMBPriceFromHashMap(String symbol) {
+        if (mRmbListHashMap.get(symbol) == null) {
+            return getRmbPrice(symbol);
+        } else {
+            return mRmbListHashMap.get(symbol);
+        }
     }
 }

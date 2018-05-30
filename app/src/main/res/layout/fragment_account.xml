@@ -9,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/layout_account_padding"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/layout_account_padding">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -59,14 +59,28 @@
                     android:padding="@dimen/text_membership_padding"
                     android:textColor="@color/grey_unselected_font_color" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/text_balance_margin_top"
-                    android:alpha="0.5"
-                    android:text="@string/account_balance"
-                    android:textColor="@color/grey_unselected_font_color"
-                    android:textSize="12sp" />
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/text_balance_margin_top">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.5"
+                        android:text="@string/account_balance"
+                        android:textColor="@color/grey_unselected_font_color"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:id="@+id/balance_info_question_marker"
+                        android:src="@drawable/cloud_wallet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/account_balance"
@@ -80,8 +94,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/layout_portfolio_header_margin_top"
-                    android:paddingTop="@dimen/layout_account_padding"
-                    android:paddingBottom="@dimen/layout_account_padding">
+                    android:paddingBottom="@dimen/layout_account_padding"
+                    android:paddingTop="@dimen/layout_account_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -110,13 +124,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/layout_portfolio_header_margin_top"
                     android:alpha="0.5"
+                    android:paddingBottom="@dimen/layout_account_padding"
+                    android:paddingTop="@dimen/layout_account_padding"
                     android:text="@string/account_other_asset"
                     android:textColor="@color/grey_unselected_font_color"
-                    android:textSize="14sp"
-                    android:layout_marginTop="@dimen/layout_portfolio_header_margin_top"
-                    android:paddingTop="@dimen/layout_account_padding"
-                    android:paddingBottom="@dimen/layout_account_padding"/>
+                    android:textSize="14sp" />
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"

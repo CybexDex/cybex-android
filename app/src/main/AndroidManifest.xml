@@ -70,8 +70,10 @@
         <activity
             android:name=".activity.WalletIntroductionActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.OpenOrdersActivity" />
-        <activity android:name=".activity.PortfolioActivity"></activity>
+        <activity android:name=".activity.OpenOrdersActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activity.PortfolioActivity"/>
 
         <activity
             android:name=".activity.LockAssetsActivity"

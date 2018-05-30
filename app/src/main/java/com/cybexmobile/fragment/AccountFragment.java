@@ -34,6 +34,7 @@ import com.cybexmobile.activity.OpenOrdersActivity;
 import com.cybexmobile.activity.PortfolioActivity;
 import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
 import com.cybexmobile.crypto.Sha256Object;
+import com.cybexmobile.dialog.RegisterDialog;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.R;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
@@ -57,7 +58,7 @@ public class AccountFragment extends Fragment {
     private PortfolioRecyclerViewAdapter mPortfolioRecyclerViewAdapter;
     private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTotalAccountTextView;
     private WebView mAvatarWebView;
-    private ImageView mAvatarImageView;
+    private ImageView mAvatarImageView, mBalanceInfoImageView;
     private LinearLayout mBeforeLoginLayout, mAfterLoginLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
     private RelativeLayout mPortfolioTitleLayout;
     private RecyclerView.LayoutManager mPortfolioRecycerViewManager;
@@ -136,6 +137,7 @@ public class AccountFragment extends Fragment {
         mOpenOrderLayout = view.findViewById(R.id.account_open_order_item_background);
         mOpenLockAssetsLayout = view.findViewById(R.id.account_lockup_item_background);
         mPortfolioTitleLayout = view.findViewById(R.id.portfolio_title_layout);
+        mBalanceInfoImageView = view.findViewById(R.id.balance_info_question_marker);
     }
 
     private void setViews() {
@@ -256,6 +258,13 @@ public class AccountFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), LockAssetsActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mBalanceInfoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RegisterDialog.showDialog(getActivity(), null);
             }
         });
     }

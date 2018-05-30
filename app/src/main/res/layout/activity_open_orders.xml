@@ -5,6 +5,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:subtitleTextColor="@color/grey_unselected_font_color"
+        app:titleTextColor="@color/grey_unselected_font_color"
+        app:title=""
+        app:navigationIcon="@drawable/ic_arrow_forward_16px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/open_orders_title"
+            android:textColor="@color/primary_color_white"
+            android:textSize="14sp"
+            android:layout_gravity="center"/>
+    </android.support.v7.widget.Toolbar>
+
     <info.hoang8f.android.segmented.SegmentedGroup
         android:id="@+id/open_orders_segmented_group"
         android:layout_width="match_parent"
@@ -93,8 +111,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/open_orders_recycler_view"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="13dp"
-        android:layout_marginEnd="13dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

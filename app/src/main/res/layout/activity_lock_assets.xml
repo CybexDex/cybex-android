@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/locked_assets"
-            android:textColor="@android:color/white"
+            android:textColor="@color/primary_color_white"
             android:textSize="14sp"
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
