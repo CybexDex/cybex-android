@@ -34,7 +34,7 @@ import com.cybexmobile.activity.OpenOrdersActivity;
 import com.cybexmobile.activity.PortfolioActivity;
 import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
 import com.cybexmobile.crypto.Sha256Object;
-import com.cybexmobile.dialog.RegisterDialog;
+import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.R;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
@@ -59,8 +59,8 @@ public class AccountFragment extends Fragment {
     private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTotalAccountTextView;
     private WebView mAvatarWebView;
     private ImageView mAvatarImageView, mBalanceInfoImageView;
-    private LinearLayout mBeforeLoginLayout, mAfterLoginLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
-    private RelativeLayout mPortfolioTitleLayout;
+    private LinearLayout mBeforeLoginLayout, mAfterLoginLayout;
+    private RelativeLayout mPortfolioTitleLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
     private RecyclerView.LayoutManager mPortfolioRecycerViewManager;
     private SharedPreferences mSharedPreference;
     private List<AccountBalanceObject> mAccountObjectBalance = new ArrayList<>();
@@ -264,7 +264,7 @@ public class AccountFragment extends Fragment {
         mBalanceInfoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RegisterDialog.showDialog(getActivity(), null);
+                CybexDialog.showBalanceDialog(getActivity());
             }
         });
     }

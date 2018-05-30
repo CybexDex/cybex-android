@@ -48,7 +48,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/text_price_margin_end"
         android:maxLines="1"
-        android:text="$11,309.109"
+        android:text="11,309.109"
         autofit:autoSizeMinTextSize="@dimen/text_price_min_text_size" />
 
     <LinearLayout
@@ -82,7 +82,7 @@
         android:layout_height="wrap_content"
         style="@style/font_gray_bold_small"
         android:lineSpacingMultiplier="1.67"
-        android:text="￥23.15"
+        android:text="≈￥23.15"
         android:layout_alignBottom="@+id/layout_volume"
         android:layout_alignEnd="@id/current_price_watchlist" />
 

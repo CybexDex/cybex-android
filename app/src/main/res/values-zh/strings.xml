@@ -16,11 +16,11 @@
     <string name="watch_list_vibration_range_title">24h涨跌幅</string>
 
     <!-- account page -->
-    <string name="log_in_cybex">您好，请登录  ></string>
+    <string name="log_in_cybex">您好，请登录</string>
     <string name="account_introduction_text">CYBEX是一个旨在提高加密资产流动性的去中心化交易所，能够提供更多的透明性、更高的效率性和更好的安全性。</string>
     <string name="login_cloud_wallet">登录您的云钱包帐户</string>
     <string name="register_create_cloud_wallet">创建您的云钱包账户</string>
-    <string name="account_balance">您的总余额 （CYB）：</string>
+    <string name="account_balance">账户总余额(CYB):</string>
     <string name="account_available_asset">可用资产</string>
     <string name="account_view_all">查看全部 ></string>
     <string name="account_other_asset">其他资产</string>
@@ -30,6 +30,9 @@
     <string name="account_balance_dialog_title">账户总余额</string>
     <string name="account_balance_dialog_content">这是你所有资产的估值，包含了在界面中设置了隐藏的资产、委单中的资产、债仓及抵押物。估值采用实时获得的区块链上的价格，可能不那么精确。</string>
     <string name="account_balance_dialog_button">我知道了</string>
+    <string name="text_opened_orders">委单</string>
+    <string name="text_lockup_assets">锁定期资产</string>
+
     <!-- Open Orders Page -->
     <string name="open_order_asset_amount">资产/委托数量</string>
     <string name="open_order_order_value">委托单价</string>
@@ -62,7 +65,7 @@
     <string name="setting_version">版本</string>
     <string name="setting_theme_dark">夜晚 ></string>
     <string name="setting_theme_light">白天 ></string>
-    <string name="action_log_out">登出</string>
+    <string name="action_log_out">退出登录</string>
     <string name="action_sign_in_short">登录</string>
     <string name="error_incorrect_password">帐户名或密码错误</string>
     <string name="text_ok">确定</string>

@@ -21,6 +21,12 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="font_grey_medium">
+        <item name="android:fontFamily">Rubik</item>
+        <item name="android:textColor">#78819A</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <!-- font white dark -->
     <style name="font_white_dark_bold_large" parent="font_white_dark_large">
         <item name="android:textStyle">bold</item>
@@ -75,7 +81,10 @@
         <item name="android:fontFamily">Roboto Condensed</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_white_large" parent="font_white_medium">
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">

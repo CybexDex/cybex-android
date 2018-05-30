@@ -38,7 +38,7 @@
     <color name="login_button_color">#4D78819a</color>
     <color name="login_text_color">#4Dffffff</color>
     <color name="login_register_color">#ff9143</color>
-    <color name="register_dialog_title_background">#f7f8fa</color>
+    <color name="dialog_title_background_color">#f7f8fa</color>
     <color name="register_pin_code_color">#fec985</color>
 
     <!-- action bar cloud wallet introduction -->

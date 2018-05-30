@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        style="@style/font_grey_large"
+        android:background="@color/dialog_title_background_color"
+        android:gravity="center"
+        android:text="@string/account_balance_dialog_title"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dialog_content_padding"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/font_grey_medium"
+            android:text="@string/account_balance_dialog_content"
+            android:lineSpacingExtra="10dp" />
+
+        <Button
+            android:id="@+id/account_balance_dialog_button"
+            android:background="@drawable/btn_orange_gradient_enabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/font_white_large"
+            android:text="@string/account_balance_dialog_button"
+            android:layout_marginTop="@dimen/dialog_button_margin_top"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+</LinearLayout>

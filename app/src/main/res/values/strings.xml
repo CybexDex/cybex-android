@@ -15,8 +15,8 @@
     <string name="watch_list_vibration_range_title">24h Chg%</string>
 
     <!-- Account page -->
-    <string name="log_in_cybex">Log in Cybex ></string>
-    <string name="account_balance">You Total Balance (CYB)</string>
+    <string name="log_in_cybex">Log in Cybex</string>
+    <string name="account_balance">Your Total Balance(CYB):</string>
     <string name="account_introduction_text">CYBEX is a decentralized exchange that seeks to improve the liquidity of crypto-assets that’s more transparent, highly efficient and secure.</string>
     <string name="account_available_asset">Your Portfolio</string>
     <string name="account_view_all">View All ></string>
@@ -27,6 +27,8 @@
     <string name="account_balance_dialog_title">BALANCE</string>
     <string name="account_balance_dialog_content">This is the estimated value of all your assets,including any hidden assets,open orders,debt and collateral.The estimate is done using only live blockchain data and may not be perfectly accurate.</string>
     <string name="account_balance_dialog_button">OK</string>
+    <string name="text_opened_orders">Opened\nOrders</string>
+    <string name="text_lockup_assets">Lockup\nAssets</string>
 
     <!-- Open Orders Page -->
     <string name="open_order_asset_amount">Asset/Amount</string>

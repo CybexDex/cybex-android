@@ -2,6 +2,7 @@ package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,12 +76,11 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.decreasing_color));
 
         } else {
-            holder.mChangeRate.setText("0.00%");
+            holder.mChangeRate.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : "0.00%");
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.no_change_color));
         }
         loadImage(mValues.get(position).getQuoteId(), holder.mSymboleView);
-
-        holder.mRmbPriceTextView.setText(mValues.get(position).getRmbPrice() == 0.0 ? "≈¥ 0.00" : String.format("≈¥ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
+        holder.mRmbPriceTextView.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.format("≈¥ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

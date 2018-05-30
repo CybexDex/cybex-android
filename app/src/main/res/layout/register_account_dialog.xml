@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@color/register_dialog_title_background"
+        android:background="@color/dialog_title_background_color"
         android:layout_height="50dp">
         <TextView
             android:layout_width="wrap_content"
