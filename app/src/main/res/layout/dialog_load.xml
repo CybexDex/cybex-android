@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/dialog_width_height"
-    android:layout_height="@dimen/dialog_width_height"
-    android:background="@drawable/bg_load_dialog">
+    android:layout_height="@dimen/dialog_width_height">
 
     <ProgressBar
         android:id="@+id/load_progressbar"

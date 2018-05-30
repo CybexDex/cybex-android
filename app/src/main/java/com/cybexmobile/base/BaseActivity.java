@@ -1,21 +1,37 @@
 package com.cybexmobile.base;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import com.cybexmobile.R;
 import com.cybexmobile.dialog.LoadDialog;
+import com.cybexmobile.helper.StoreLanguageHelper;
+
+import java.util.Locale;
 
 public class BaseActivity extends AppCompatActivity {
 
     private final String TAG = BaseActivity.class.getSimpleName();
 
     private LoadDialog mLoadDialog;
+    private AlertDialog mHintDialog;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        initAppLanguage();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,19 +116,54 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    protected final void showHintDialog(@StringRes int messageId){
+        if(mHintDialog == null){
+            mHintDialog = new AlertDialog.Builder(this, R.style.LoadDialog)
+                .setMessage(messageId)
+                .create();
+        }
+        mHintDialog.setMessage(getString(messageId));
+        mHintDialog.show();
+    }
+
+    protected final void hideHintDialog(){
+        if(mHintDialog != null && mHintDialog.isShowing()){
+            mHintDialog.dismiss();
+        }
+    }
+
     //show load dialog
-    protected void showLoadDialog(){
+    protected final void showLoadDialog(){
         if(mLoadDialog == null){
             mLoadDialog = new LoadDialog(this, R.style.LoadDialog);
-            mLoadDialog.setCanceledOnTouchOutside(false);
+            mLoadDialog.setCancelable(false);
         }
         mLoadDialog.show();
     }
 
     //hide load dialog
-    protected void hideLoadDialog(){
+    protected final void hideLoadDialog(){
         if(mLoadDialog != null && mLoadDialog.isShowing()){
             mLoadDialog.dismiss();
         }
+    }
+
+    protected void initAppLanguage() {
+        String language = StoreLanguageHelper.getLanguageLocal(this);
+        Resources resources = getResources();
+        Configuration config = resources.getConfiguration();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        if(language.equals(config.locale.getLanguage())){
+            return;
+        }
+        switch (language){
+            case "en":
+                config.locale = Locale.ENGLISH;
+                break;
+            case "zh":
+                config.locale = Locale.SIMPLIFIED_CHINESE;
+                break;
+        }
+        resources.updateConfiguration(config, dm);
     }
 }

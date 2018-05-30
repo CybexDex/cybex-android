@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.R;
 import com.g00fy2.versioncompare.Version;
@@ -28,7 +29,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class SplashActivity extends AppCompatActivity implements MarketStat.startFirstActivityListener {
+public class SplashActivity extends BaseActivity implements MarketStat.startFirstActivityListener {
 
     private Handler mHandler = new Handler();
 
@@ -36,9 +37,6 @@ public class SplashActivity extends AppCompatActivity implements MarketStat.star
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
         if (!isNetworkAvailable()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);

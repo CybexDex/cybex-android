@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.Html;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -80,7 +80,6 @@ public class RegisterActivity extends BaseActivity {
         initViews();
         mTimer.schedule(mTask, 0, 120 * 1000 );
         setViews();
-        setViewValue();
         setOnClickListener();
     }
 
@@ -144,14 +143,7 @@ public class RegisterActivity extends BaseActivity {
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
                 } else {
-                    boolean bCombineAccount = false;
-                    for (char c : strAccountName.toCharArray()) {
-                        if (!Character.isLetter(c)) {
-                            bCombineAccount = true;
-                        }
-                    }
-
-                    if (!bCombineAccount) {
+                    if (strAccountName.matches("^[A-Za-z]+$")) {
                         mRegisterErrorText.setText(R.string.create_account_account_name_error_full_letter);
                         mRegisterErrorSign.setVisibility(View.VISIBLE);
                         mUserNameChecker.setVisibility(View.GONE);
@@ -161,6 +153,10 @@ public class RegisterActivity extends BaseActivity {
                         mUserNameChecker.setVisibility(View.VISIBLE);
                         processCheckAccount(strAccountName);
                     }
+                    setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                            mPasswordChecker.getVisibility() == View.VISIBLE &&
+                            mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                            !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
                 }
 
 
@@ -190,6 +186,10 @@ public class RegisterActivity extends BaseActivity {
                     mPasswordChecker.setVisibility(View.VISIBLE);
                     mRegisterErrorSign.setVisibility(View.GONE);
                 }
+                setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                        mPasswordChecker.getVisibility() == View.VISIBLE &&
+                        mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                        !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
             }
         });
 
@@ -217,6 +217,29 @@ public class RegisterActivity extends BaseActivity {
                     mRegisterErrorText.setText(R.string.create_account_password_confirm_error);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                 }
+                setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                        mPasswordChecker.getVisibility() == View.VISIBLE &&
+                        mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                        !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
+            }
+        });
+        mPinCodeTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                        mPasswordChecker.getVisibility() == View.VISIBLE &&
+                        mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                        !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
             }
         });
     }
@@ -247,14 +270,6 @@ public class RegisterActivity extends BaseActivity {
         }).start();
     }
 
-    private void setViewValue() {
-        setButtonConfigure();
-    }
-
-    private void setButtonConfigure() {
-        mSignInButton.setText(getResources().getString(R.string.create_account));
-    }
-
     private void setOnClickListener() {
         mCloudWalletIntroductionQuestionMarker.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterActivity.this, WalletIntroductionActivity.class);
@@ -263,41 +278,22 @@ public class RegisterActivity extends BaseActivity {
         mTvLoginIn.setOnClickListener(v -> onBackPressed());
         mSignInButton.setOnClickListener(v -> {
             mProcessHud.show();
-            String account = mUserNameTextView.getText().toString();
-            String password = mPassWordTextView.getText().toString();
+            String account = mUserNameTextView.getText().toString().trim();
+            String password = mPassWordTextView.getText().toString().trim();
             String passwordConfirm = mConfirmationTextView.getText().toString();
-            String pinCode = mPinCodeTextView.getText().toString();
-
-            boolean bError = false;
-            if (account.isEmpty()) {
-                mRegisterErrorText.setText(R.string.create_account_account_name_empty);
-                bError = true;
+            String pinCode = mPinCodeTextView.getText().toString().trim();
+            if(TextUtils.isEmpty(account) || TextUtils.isEmpty(password) ||
+                    TextUtils.isEmpty(passwordConfirm) || TextUtils.isEmpty(pinCode)){
+                return;
             }
-
-            if (!account.isEmpty() && password.isEmpty()) {
-                mRegisterErrorText.setText(R.string.create_account_password_empty);
-                bError = true;
-            }
-
-            if (!account.isEmpty() && !password.isEmpty() && passwordConfirm.isEmpty()) {
-                mRegisterErrorText.setText(R.string.create_account_password_confirm_empty);
-                bError = true;
-            }
-
-            if (!account.isEmpty() && !password.isEmpty() && !passwordConfirm.isEmpty() && pinCode.isEmpty()) {
-                mRegisterErrorText.setText(R.string.create_account_pin_code_empty);
-            }
-
-            if (!bError && mRegisterErrorText.getText().length() == 0 && mRegisterErrorText.getText().length() == 0) {
-                processCreateAccount(account, password, passwordConfirm, pinCode, mCapId);
-
-            } else {
-                mProcessHud.dismiss();
-            }
-
+            processCreateAccount(account, password, passwordConfirm, pinCode, mCapId);
         });
 
         mPinCodeImageView.setOnClickListener(v -> requestForPinCode());
+    }
+
+    private void setRegisterButtonEnable(boolean enabled){
+        mSignInButton.setEnabled(enabled);
     }
 
     @SuppressLint("CheckResult")
@@ -428,9 +424,11 @@ public class RegisterActivity extends BaseActivity {
                             public void run() {
                                 if (accountObect == null) {
                                     mUserNameChecker.setVisibility(View.VISIBLE);
+                                    mRegisterErrorSign.setVisibility(View.GONE);
                                 } else {
                                     if (strAccount.compareTo(accountObect.name) == 0) {
                                         mRegisterErrorText.setText(R.string.create_account_activity_account_object_exist);
+                                        mRegisterErrorSign.setVisibility(View.VISIBLE);
                                         mUserNameChecker.setVisibility(View.GONE);
                                     }
                                 }

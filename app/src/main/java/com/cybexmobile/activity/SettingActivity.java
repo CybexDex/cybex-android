@@ -1,11 +1,8 @@
 package com.cybexmobile.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +28,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,11 +43,6 @@ public class SettingActivity extends BaseActivity {
     private Toolbar mToolbar;
 
     private Handler mHandler = new Handler();
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(updateResources(newBase));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +71,6 @@ public class SettingActivity extends BaseActivity {
                 recreate();
                 break;
             case "EVENT_REFRESH_LANGUAGE":
-                updateResources(getBaseContext());
                 recreate();
                 break;
         }
@@ -179,7 +169,7 @@ public class SettingActivity extends BaseActivity {
     private void displayVersionNumber() {
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNumber = mSettingVersionView.findViewById(R.id.setting_version_content);
-        versionNumber.setText(getResources().getString(R.string.setting_version_value, versionName));
+        versionNumber.setText(versionName);
     }
 
     private void displayLogOutButton() {
@@ -255,18 +245,5 @@ public class SettingActivity extends BaseActivity {
             }
         });
     }
-
-    private Context updateResources(Context context) {
-        String language = StoreLanguageHelper.getLanguageLocal(context);
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-
-        Resources res = context.getResources();
-        Configuration config = new Configuration(res.getConfiguration());
-        config.setLocale(locale);
-        context = context.createConfigurationContext(config);
-        return context;
-    }
-
 
 }

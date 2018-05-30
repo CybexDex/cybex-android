@@ -1,10 +1,5 @@
 <resources>
     <string name="app_name">CybexDex</string>
-    <string name="title_activity_nav_button">NavButtonActivity</string>
-    <string name="title_activity_markets">MarketsActivity</string>
-    <string name="title_activity_choose_language">ChooseLanguageActivity</string>
-    <string name="title_activity_choose_theme">ChooseThemeActivity</string>
-
 
     <!-- Bottom Navigation Title -->
     <string name="title_watchlist">WatchList</string>
@@ -12,8 +7,6 @@
     <string name="title_setting">Settings</string>
     <string name="title_account">Account</string>
     <string name="title_faq">Application</string>
-    <string name="title_dashboard">DashBoard</string>
-
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>
@@ -42,6 +35,7 @@
     <string name="markets_title">Market</string>
     <string name="market_page_buy_price">Buy Price</string>
     <string name="market_page_volume">Volume</string>
+    <string name="market_page_volume_short">Vol</string>
     <string name="market_page_sell_price">Sell Price</string>
     <string name="market_page_trade_history_price">Price</string>
     <string name="market_page_trade_history_date">Date</string>
@@ -60,41 +54,32 @@
     <string name="setting_language">Language</string>
     <string name="setting_language_english">English ></string>
     <string name="setting_language_chinese">简体中文 ></string>
-    <string name="language_select">Select</string>
     <string name="setting_theme">Theme</string>
     <string name="setting_version">version</string>
-    <string name="setting_version_value">%s ></string>
     <string name="setting_theme_dark">Dark ></string>
     <string name="setting_theme_light">Light ></string>
-    <string name="select_theme">Select Theme</string>
-    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
     <string name="create_account">Create Account</string>
     <string name="have_account_login">Already have an account?</string>
-    <string name="prompt_user_name">User Name</string>
+    <string name="prompt_user_name">Account Name</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_confirm_password">Confirm Password</string>
     <string name="prompt_pin_code">Pin Code</string>
     <string name="action_sign_in">Log In</string>
     <string name="action_log_out">Log Out</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
-    <string name="login_cloud_wallet">Sign in to Cloud Wallet</string>
+    <string name="error_incorrect_password">Incorrect Password or Account</string>
+    <string name="text_ok">OK</string>
+    <string name="permission_rationale">Contacts permissions are needed for providing email completions.</string>
+    <string name="login_cloud_wallet">Use Cloud Wallet mode to login Account</string>
     <string name="register_create_cloud_wallet">Use Cloud Wallet mode to create Account</string>
-    <string name="title_setting_activity">SettingActivity</string>
     <string name="register_dialog_title">ATTENTIONS</string>
     <string name="register_dialog_confirm">CONFIRM</string>
-    <string name="create_account_account_name_empty">The account name is empty</string>
-    <string name="create_account_password_empty">The password is empty</string>
-    <string name="create_account_password_confirm_empty">The confirmation password is empty</string>
-    <string name="create_account_pin_code_empty">The Pin Code is Empty</string>
+    <!--<string name="create_account_account_name_empty">The account name is empty</string>-->
+    <!--<string name="create_account_password_empty">The password is empty</string>-->
+    <!--<string name="create_account_password_confirm_empty">The confirmation password is empty</string>-->
+    <!--<string name="create_account_pin_code_empty">The Pin Code is Empty</string>-->
 
     <string name="import_activity_unknown_error">Some error occurred.</string>
     <string name="import_activity_private_key_invalid">Invalid private key.</string>
@@ -120,8 +105,6 @@
     <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>
     <string name="create_account_password_confirm_error">Two passwords do not match</string>
 
-
-
     <!-- Open Orders Page Related -->
     <string name="open_orders_all">All</string>
     <string name="open_orders_buy">Buy</string>
@@ -137,7 +120,5 @@
     <string name="locked_assets">Locked Assets</string>
 
     <string name="edittext_user_name_digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-</string>
-
-
 
 </resources>

@@ -2,10 +2,10 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Dark theme base colours -->
-        <item name="colorPrimary">@color/darkColorPrimary</item>
-        <item name="colorPrimaryDark">@color/darkColorPrimaryDark</item>
-        <item name="colorAccent">@color/darkColorAccent</item>
-        <item name="android:windowBackground">@color/darkColorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="android:windowAnimationStyle">@style/Animation.Activity</item>
     </style>
 
@@ -13,13 +13,6 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat" />
-
-
-    <style name="lightTheme" parent="Theme.AppCompat.Light" />
 
     <!-- coin pair style -->
     <style name="font_grey_large">
@@ -104,12 +97,20 @@
     <!-- Load Dialog Style -->
     <style name="LoadDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">@drawable/bg_load_dialog</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:textColor">@color/dialog_font_color</item>
+        <item name="android:textColorPrimary">@color/dialog_font_color</item>
+        <item name="android:buttonStyle">@style/DialogButton</item>
+
+    </style>
+
+    <style name="DialogButton">
+        <item name="android:textColor">@color/dialog_font_color</item>
     </style>
 
 </resources>

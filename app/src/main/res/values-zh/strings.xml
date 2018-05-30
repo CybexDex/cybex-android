@@ -8,7 +8,6 @@
     <string name="title_setting">设置</string>
     <string name="title_faq">申请</string>
     <string name="title_account">账户</string>
-    <string name="title_dashboard">个人中心</string>
 
     <!-- Watch List Page -->
     <string name="popular_title">最热</string>
@@ -19,7 +18,7 @@
     <!-- account page -->
     <string name="log_in_cybex">您好，请登录  ></string>
     <string name="account_introduction_text">CYBEX是一个旨在提高加密资产流动性的去中心化交易所，能够提供更多的透明性、更高的效率性和更好的安全性。</string>
-    <string name="login_cloud_wallet">云钱包帐户登录</string>
+    <string name="login_cloud_wallet">登录您的云钱包帐户</string>
     <string name="register_create_cloud_wallet">创建您的云钱包账户</string>
     <string name="account_balance">您的总余额 （CYB）：</string>
     <string name="account_available_asset">可用资产</string>
@@ -37,18 +36,34 @@
 
     <!-- Markets Page -->
     <string name="markets_title">交易中心</string>
+    <string name="market_page_buy_price">买价</string>
+    <string name="market_page_sell_price">卖价</string>
+    <string name="market_page_volume">成交量</string>
+    <string name="market_page_volume_short">成交量</string>
+    <string name="market_page_trade_history_price">价格</string>
+    <string name="market_page_trade_history_date">时间</string>
+    <string name="market_page_trade_history_base">Base</string>
+    <string name="market_page_trade_history_quote">Quote</string>
     <string name="market_page_order_book">买卖单</string>
     <string name="market_page_trade_history">交易历史</string>
+    <string name="k_ma">MA(5):</string>
+    <string name="k_ma5">MA(5):</string>
+    <string name="k_ma10">MA(10):</string>
+    <string name="k_ma20">MA(20):</string>
 
     <!-- Setting page -->
     <string name="setting_language">语言</string>
-    <string name="language_select">选择</string>
+    <string name="setting_language_english">English ></string>
+    <string name="setting_language_chinese">简体中文 ></string>
     <string name="setting_theme">主题</string>
     <string name="setting_version">版本</string>
     <string name="setting_theme_dark">夜晚 ></string>
     <string name="setting_theme_light">白天 ></string>
-    <string name="select_theme">选择主题</string>
     <string name="action_log_out">登出</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="error_incorrect_password">帐户名或密码错误</string>
+    <string name="text_ok">确定</string>
+    <string name="permission_rationale">提供电子邮件完成需要联系人权限.</string>
 
     <!-- Login/Register -->
     <string name="create_account">创建新账号</string>
@@ -73,12 +88,18 @@
     <string name="import_activity_password_invalid">密码错误</string>
     <string name="import_activity_file_bin_password_invalid">钱包文件或者密码错误</string>
 
+    <string name="create_account_activity_network_fail">服务器连接失败</string>
+    <string name="create_account_activity_account_object_exist">帐户名已存在</string>
+    <string name="create_account_activity_response_fail">服务器无响应</string>
+    <string name="create_account_activity_create_fail">注册失败</string>
+
     <string name="create_account_account_name_error_full_letter">帐户名不能只包含字母</string>
     <string name="create_account_account_name_too_short">帐户名过短</string>
     <string name="create_account_account_name_error_dash_end">帐户名不能以横杠结尾</string>
     <string name="create_account_account_name_should_not_contain_continuous_dashes">帐户名不能包含连续的横杠</string>
     <string name="create_account_account_name_error_start_letter">帐户名需要以字母开头</string>
     <string name="create_account_password_must_at_least_12_characters">输入12位以上的密码</string>
+    <string name="create_account_password_confirm_error">密码输入不一致</string>
 
     <!-- Open Orders Page Related -->
     <string name="open_orders_all">全部</string>
@@ -97,4 +118,7 @@
     <!-- Activity Register -->
     <string name="have_account_login">已注册?</string>
     <string name="action_sign_in">登录</string>
+
+    <string name="edittext_user_name_digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-</string>
+
 </resources>

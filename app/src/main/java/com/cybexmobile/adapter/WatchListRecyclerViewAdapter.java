@@ -55,7 +55,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         } else {
             holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBase()));
         }
-        holder.mVolume.setText(holder.mItem.getVol() == 0.f ? "-" : String.format("Vol %s", MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getVol())));
+        holder.mVolume.setText(holder.mItem.getVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getVol()));
         holder.mCurrentPrice.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.valueOf(formatter.format(mValues.get(position).getCurrentPrice())));
 
         double change = 0.f;

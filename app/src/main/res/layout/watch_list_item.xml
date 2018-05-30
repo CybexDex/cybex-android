@@ -51,15 +51,30 @@
         android:text="$11,309.109"
         autofit:autoSizeMinTextSize="@dimen/text_price_min_text_size" />
 
-    <TextView
-        android:id="@+id/volume"
-        style="@style/font_gray_bold_small"
+    <LinearLayout
+        android:id="@+id/layout_volume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/coinpair_linear_layout"
         android:layout_below="@id/coinpair_linear_layout"
         android:layout_marginTop="@dimen/text_volume_margin_top"
-        android:text="Volume:288,980,254" />
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/font_gray_bold_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/market_page_volume_short" />
+
+        <TextView
+            android:id="@+id/volume"
+            style="@style/font_gray_bold_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:text="288,980,254" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/watch_list_rmb_price"
@@ -67,8 +82,8 @@
         android:layout_height="wrap_content"
         style="@style/font_gray_bold_small"
         android:lineSpacingMultiplier="1.67"
-        android:text="+21.35%"
-        android:layout_alignBottom="@+id/volume"
+        android:text="￥23.15"
+        android:layout_alignBottom="@+id/layout_volume"
         android:layout_alignEnd="@id/current_price_watchlist" />
 
     <TextView

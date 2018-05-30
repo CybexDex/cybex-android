@@ -3,8 +3,6 @@ package com.cybexmobile.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -14,7 +12,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -23,13 +20,10 @@ import android.widget.TextView;
 
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.fragment.AccountFragment;
-import com.cybexmobile.fragment.ChooseThemeFragment;
 import com.cybexmobile.fragment.data.WatchListData;
 import com.cybexmobile.fragment.FaqFragment;
-import com.cybexmobile.fragment.SettingFragment;
 import com.cybexmobile.fragment.WatchLIstFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
-import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
 import com.cybexmobile.market.MarketStat;
 
@@ -38,9 +32,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
-import java.util.Locale;
 
-public class BottomNavigationActivity extends BaseActivity implements WatchLIstFragment.OnListFragmentInteractionListener, SettingFragment.OnFragmentInteractionListener, FaqFragment.OnFragmentInteractionListener,
+public class BottomNavigationActivity extends BaseActivity implements WatchLIstFragment.OnListFragmentInteractionListener, FaqFragment.OnFragmentInteractionListener,
         AccountFragment.OnAccountFragmentInteractionListener {
 
     private BottomNavigationView mBottomNavigationView;
@@ -48,9 +41,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
 
     private WatchLIstFragment mWatchListFragment;
     private FaqFragment mFaqFragment;
-    private SettingFragment mSettingFragment;
     private AccountFragment mAccountFragment;
-    private ChooseThemeFragment mChooseThemeFragment;
     private TextView mTvTitle;
     private Toolbar mToolbar;
 
@@ -70,18 +61,13 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
                     showFragment(mFaqFragment);
                     return true;
                 case R.id.navigation_account:
-                    mTvTitle.setText(R.string.title_dashboard);
+                    mTvTitle.setText(R.string.title_account);
                     showFragment(mAccountFragment);
                     return true;
             }
             return false;
         }
     };
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(updateResources(base));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,14 +103,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
                     mBottomNavigationView.setVisibility(View.VISIBLE);
                     break;
                 case R.id.navigation_account:
-                    mTvTitle.setText(R.string.title_dashboard);
-                    if (mChooseThemeFragment != null) {
-                        getSupportFragmentManager().beginTransaction()
-                                .hide(mChooseThemeFragment)
-                                .remove(mChooseThemeFragment)
-                                .commit();
-                        mBottomNavigationView.setVisibility(View.GONE);
-                    }
+                    mTvTitle.setText(R.string.title_account);
                     showFragment(mAccountFragment);
                     mBottomNavigationView.setVisibility(View.VISIBLE);
                     break;
@@ -133,19 +112,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
             showFragment(mWatchListFragment);
         }
         EventBus.getDefault().register(this);
-    }
-
-
-    private Context updateResources(Context context) {
-        String language = StoreLanguageHelper.getLanguageLocal(context);
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-
-        Resources res = context.getResources();
-        Configuration config = new Configuration(res.getConfiguration());
-        config.setLocale(locale);
-        context = context.createConfigurationContext(config);
-        return context;
     }
 
     private boolean isNetworkAvailable() {
@@ -159,7 +125,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     public void onEvent(String string) {
         switch (string) {
             case "EVENT_REFRESH_LANGUAGE":
-                updateResources(getBaseContext());
                 recreate();
                 break;
             case "get_message":
@@ -186,9 +151,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
         if (mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
         }
-        if (mChooseThemeFragment != null && mChooseThemeFragment.isVisible()) {
-            fm.putFragment(outState, ChooseThemeFragment.class.getSimpleName(), mChooseThemeFragment);
-        }
     }
 
     @Override
@@ -207,7 +169,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
             mWatchListFragment = (WatchLIstFragment) fragmentManager.getFragment(savedInstanceState, WatchLIstFragment.class.getSimpleName());
             mFaqFragment = (FaqFragment) fragmentManager.getFragment(savedInstanceState, FaqFragment.class.getSimpleName());
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
-            mChooseThemeFragment = (ChooseThemeFragment) fragmentManager.getFragment(savedInstanceState, ChooseThemeFragment.class.getSimpleName());
         }
 
         if (!mWatchListFragment.isAdded()) {
@@ -254,35 +215,25 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
 
     @Override
     public void onBackPressed() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.frame_container);
-        if (fragment instanceof ChooseThemeFragment) {
-            super.onBackPressed();
-            mBottomNavigationView.setVisibility(View.VISIBLE);
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setCancelable(false);
-            builder.setMessage("Do you want to Exit?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //if user pressed "yes", then he is allowed to exit from application
-                    finish();
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //if user select "No", just cancel this dialog and continue with app
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
-
-        }
-
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage("Do you want to Exit?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //if user pressed "yes", then he is allowed to exit from application
+                finish();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //if user select "No", just cancel this dialog and continue with app
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void loadFragment(android.support.v4.app.Fragment fragment) {
@@ -304,18 +255,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
         intent.putExtra("watchListData", item);
         intent.putExtra("id", position);
         startActivity(intent);
-    }
-
-    @Override
-    public void onFragmentInteraction(Fragment fragment) {
-        mBottomNavigationView.setVisibility(View.GONE);
-        mChooseThemeFragment = (ChooseThemeFragment) fragment;
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.frame_container, mChooseThemeFragment, "chooseFragment")
-                .hide(mSettingFragment)
-                .addToBackStack(null)
-                .commit();
-
     }
 
     @Override

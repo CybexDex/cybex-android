@@ -1,9 +1,6 @@
 package com.cybexmobile.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -18,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,8 +28,6 @@ import com.cybexmobile.fragment.data.WatchListData;
 import com.cybexmobile.fragment.MarketTradeHistoryFragment;
 import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
-import com.cybexmobile.helper.ActionBarTitleHelper;
-import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.mychart.CoupleChartGestureListener;
@@ -69,7 +63,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MarketsActivity extends BaseActivity implements MarketStat.OnMarketStatUpdateListener, CoinPairRecyclerViewAdapter.updateDataListener, OrderHistoryListFragment.OnListFragmentInteractionListener,
@@ -132,25 +125,6 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
             mChartCharts.invalidate();
         }
     };
-
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(updateResources(base));
-    }
-
-    private Context updateResources(Context context) {
-        String language = StoreLanguageHelper.getLanguageLocal(context);
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-
-        Resources res = context.getResources();
-        Configuration config = new Configuration(res.getConfiguration());
-        config.setLocale(locale);
-        context = context.createConfigurationContext(config);
-        return context;
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

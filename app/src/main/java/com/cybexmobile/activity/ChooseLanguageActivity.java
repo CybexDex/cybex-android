@@ -1,8 +1,5 @@
 package com.cybexmobile.activity;
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -18,8 +15,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Locale;
-
 public class ChooseLanguageActivity extends BaseActivity {
 
     RelativeLayout mChineseLanguageLayout;
@@ -29,11 +24,6 @@ public class ChooseLanguageActivity extends BaseActivity {
     ImageView mImageViewEnglish;
     ImageView mImageViewChinese;
     private Toolbar mToolbar;
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(updateResources(base));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,23 +43,10 @@ public class ChooseLanguageActivity extends BaseActivity {
         EventBus.getDefault().register(this);
     }
 
-    private Context updateResources(Context context) {
-        String language = StoreLanguageHelper.getLanguageLocal(context);
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-
-        Resources res = context.getResources();
-        Configuration config = new Configuration(res.getConfiguration());
-        config.setLocale(locale);
-        context = context.createConfigurationContext(config);
-        return context;
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(String string) {
         switch (string) {
             case "EVENT_REFRESH_LANGUAGE":
-                updateResources(getBaseContext());
                 recreate();
                 break;
         }

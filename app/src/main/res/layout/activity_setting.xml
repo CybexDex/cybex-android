@@ -39,6 +39,7 @@
             app:cardBackgroundColor="@color/itemBackground"
             app:cardCornerRadius="4dp"
             app:contentPadding="@dimen/cardview_padding_start_end"
+            android:elevation="2dp"
             android:layout_marginTop="@dimen/cardview_margin_top">
             <RelativeLayout
                 android:layout_width="match_parent"

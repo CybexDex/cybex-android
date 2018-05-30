@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_setting"
+            android:text="@string/setting_theme"
             android:layout_gravity="center"
             android:textColor="@color/primary_orange"
             android:textSize="16sp"
@@ -30,22 +30,13 @@
         android:padding="@dimen/layout_setting_padding"
         android:orientation="vertical">
 
-        <TextView
-            style="@style/font_grey_large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/cardview_padding_start_end"
-            android:paddingEnd="@dimen/cardview_padding_start_end"
-            android:textSize="14sp"
-            android:text="@string/select_theme"/>
-
         <ListView
             android:id="@+id/select_theme_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
             android:layout_marginTop="@dimen/cardview_hint_margin_top"
-            android:divider="@color/darkColorPrimary"
+            android:divider="@color/colorPrimary"
             android:dividerHeight="1dp"
             android:background="@drawable/watch_list_item"
             android:cacheColorHint="@android:color/transparent"

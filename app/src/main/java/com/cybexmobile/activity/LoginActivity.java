@@ -3,14 +3,12 @@ package com.cybexmobile.activity;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
@@ -44,6 +42,10 @@ import java.util.List;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.R;
 import com.cybexmobile.base.BaseActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -81,7 +83,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        EventBus.getDefault().register(this);
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
@@ -177,6 +179,20 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         if (mAuthTask != null) {
             mAuthTask.cancel(true);
         }
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(String string) {
+        switch (string) {
+            case "EVENT_REFRESH_LANGUAGE":
+                recreate();
+                break;
+            case "THEME_CHANGED":
+                recreate();
+                break;
+        }
+
     }
 
     private void populateAutoComplete() {
@@ -343,21 +359,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 sharedPreferences.edit().putString("password", mPassword).apply();
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setCancelable(false);
-                builder.setMessage("Incorrect Password or User Name");
-                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //if user pressed "yes", then he is allowed to exit from application
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
+                showHintDialog(R.string.error_incorrect_password);
             }
         }
 
