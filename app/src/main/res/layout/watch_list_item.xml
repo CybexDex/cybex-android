@@ -39,7 +39,7 @@
             android:text="/USD" />
     </LinearLayout>
 
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/current_price_watchlist"
         style="@style/font_white_dark_bold_large"
         android:layout_width="wrap_content"
@@ -48,8 +48,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/text_price_margin_end"
         android:maxLines="1"
-        android:text="11,309.109"
-        autofit:autoSizeMinTextSize="@dimen/text_price_min_text_size" />
+        android:text="$11,309.109" />
 
     <LinearLayout
         android:id="@+id/layout_volume"

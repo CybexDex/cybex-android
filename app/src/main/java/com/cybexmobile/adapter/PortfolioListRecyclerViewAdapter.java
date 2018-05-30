@@ -12,9 +12,11 @@ import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.R;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.market.MarketStat;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 public class PortfolioListRecyclerViewAdapter extends RecyclerView.Adapter<PortfolioListRecyclerViewAdapter.ViewHolder> {
 
@@ -30,6 +32,7 @@ public class PortfolioListRecyclerViewAdapter extends RecyclerView.Adapter<Portf
         TextView mAssetName;
         TextView mAssetPrice;
         TextView mAssetPriceCYB;
+        TextView mAssetRmb;
 
         ViewHolder(View view) {
             super(view);
@@ -38,6 +41,7 @@ public class PortfolioListRecyclerViewAdapter extends RecyclerView.Adapter<Portf
             mAssetName = view.findViewById(R.id.account_portfolio_item_asset);
             mAssetPrice = view.findViewById(R.id.account_portfolio_item_asset_price);
             mAssetPriceCYB = view.findViewById(R.id.portfolio_price_cyb);
+            mAssetRmb = view.findViewById(R.id.portfolio_page_rmb);
         }
     }
 
@@ -60,10 +64,11 @@ public class PortfolioListRecyclerViewAdapter extends RecyclerView.Adapter<Portf
                 priceCyb = 1;
             }
             double price = mAccountBalanceObjectList.get(position).balance / Math.pow(10, mAssetObject.precision);
-            holder.mAssetName.setText(mAssetObject.symbol);
+            holder.mAssetName.setText(mAssetObject.symbol.contains("JADE") ? mAssetObject.symbol.substring(5, mAssetObject.symbol.length()) : mAssetObject.symbol);
             loadImage(mAccountBalanceObjectList.get(position).asset_type.toString(), holder.mAssetImage);
-            holder.mAssetPrice.setText(String.valueOf(mAccountBalanceObjectList.get(position).balance / Math.pow(10 ,mAssetObject.precision)));
-            holder.mAssetPriceCYB.setText(String.valueOf(price * priceCyb));
+            holder.mAssetPrice.setText(String.format(Locale.US, "%.5f", mAccountBalanceObjectList.get(position).balance / Math.pow(10 ,mAssetObject.precision)));
+            holder.mAssetPriceCYB.setText(String.format(Locale.US, "%.5fCYB", price * priceCyb));
+            holder.mAssetRmb.setText(String.format(Locale.US, "≈¥%.2f", MarketStat.getInstance().getRMBPriceFromHashMap("CYB") * price * priceCyb));
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }

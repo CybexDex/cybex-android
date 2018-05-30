@@ -227,6 +227,7 @@ public class WebSocketApi extends WebSocketListener {
             synchronized (mWebsocket) {
                 mnConnectStatus = WEBSOCKET_CONNECT_FAIL;
                 mWebsocket.notify();
+                close();
             }
             synchronized (mHashMapIdToProcess) {
                 for (Map.Entry<Integer, IReplyObjectProcess> entry : mHashMapIdToProcess.entrySet()) {
@@ -234,8 +235,6 @@ public class WebSocketApi extends WebSocketListener {
                 }
                 mHashMapIdToProcess.clear();
             }
-            //connect();
-            //EventBus.getDefault().post("onReconnect");
         }
     }
 
@@ -263,7 +262,9 @@ public class WebSocketApi extends WebSocketListener {
                     JSONObject noticeObject = new JSONObject(text);
                     JSONArray params = noticeObject.getJSONArray("params");
                     int id = params.getInt(0);
-                    EventBus.getDefault().post(String.valueOf(id));
+                    if (mWebsocket != null) {
+                        EventBus.getDefault().post(String.valueOf(id));
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -10,7 +10,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="?android:actionBarSize"
         app:subtitleTextColor="@color/grey_unselected_font_color"
         app:titleTextColor="@color/grey_unselected_font_color"
         app:navigationIcon="@drawable/ic_arrow_forward_16px">
@@ -66,7 +66,7 @@
             android:text="High:$11,984.124" />
 
         <TextView
-            android:id="@+id/market_page_volume_base"
+            android:id="@+id/market_page_volume_quote"
             style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,12 +84,12 @@
             android:text="Low: $10671.400" />
 
         <TextView
-            android:id="@+id/market_page_volume_quote"
+            android:id="@+id/market_page_volume_base"
             style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/market_page_low_price"
-            android:layout_alignRight="@id/market_page_volume_base"
+            android:layout_alignEnd="@id/market_page_volume_quote"
             android:text="$1,005,620,329.539" />
     </RelativeLayout>
 

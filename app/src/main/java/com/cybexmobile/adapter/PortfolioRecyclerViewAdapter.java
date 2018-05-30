@@ -12,9 +12,11 @@ import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.R;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.market.MarketStat;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<PortfolioRecyclerViewAdapter.ViewHolder> {
     private List<AccountBalanceObject> mAssetList;
@@ -30,6 +32,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
         TextView mAssetName;
         TextView mAssetPrice;
         TextView mAssetPriceCYB;
+        TextView mAssetPriceRmb;
 
         ViewHolder(View view) {
             super(view);
@@ -38,6 +41,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
             mAssetName = view.findViewById(R.id.account_portfolio_item_asset);
             mAssetPrice = view.findViewById(R.id.account_portfolio_item_asset_price);
             mAssetPriceCYB = view.findViewById(R.id.account_portfolio_item_cyb_price);
+            mAssetPriceRmb = view.findViewById(R.id.account_portfolio_item_cny_price);
         }
     }
 
@@ -68,6 +72,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
             loadImage(mAssetList.get(position).asset_type.toString(), holder.mAssetImage);
             holder.mAssetPrice.setText(String.valueOf(price));
             holder.mAssetPriceCYB.setText(String.valueOf(price * priceCyb));
+            holder.mAssetPriceRmb.setText(String.format(Locale.US, "≈¥%.2f", MarketStat.getInstance().getRMBPriceFromHashMap("CYB") * price *priceCyb));
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }

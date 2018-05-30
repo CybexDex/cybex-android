@@ -41,6 +41,7 @@ import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.market.MarketStat;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.decimal4j.util.DoubleRounder;
@@ -50,13 +51,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class AccountFragment extends Fragment {
 
     private OnAccountFragmentInteractionListener mListener;
     private RecyclerView mPortfolioRecyclerView;
     private PortfolioRecyclerViewAdapter mPortfolioRecyclerViewAdapter;
-    private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTotalAccountTextView;
+    private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTotalAccountTextView, mAccountTotalRmbTextView;
     private WebView mAvatarWebView;
     private ImageView mAvatarImageView, mBalanceInfoImageView;
     private LinearLayout mBeforeLoginLayout, mAfterLoginLayout;
@@ -138,6 +140,7 @@ public class AccountFragment extends Fragment {
         mOpenLockAssetsLayout = view.findViewById(R.id.account_lockup_item_background);
         mPortfolioTitleLayout = view.findViewById(R.id.portfolio_title_layout);
         mBalanceInfoImageView = view.findViewById(R.id.balance_info_question_marker);
+        mAccountTotalRmbTextView = view.findViewById(R.id.account_balance_total_rmb);
     }
 
     private void setViews() {
@@ -225,7 +228,9 @@ public class AccountFragment extends Fragment {
         if (mTotal == 0) {
             mTotalAccountTextView.setText("0.00000≈¥0.00");
         } else {
-            mTotalAccountTextView.setText(String.valueOf(DoubleRounder.round(mTotal,5)));
+            double rmb = MarketStat.getInstance().getRMBPriceFromHashMap("CYB");
+            mTotalAccountTextView.setText(String.format(Locale.US, "%.5fCYB", mTotal));
+            mAccountTotalRmbTextView.setText(String.format(Locale.US, "≈¥%.2f", rmb * mTotal));
         }
 
     }
@@ -375,7 +380,7 @@ public class AccountFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_setting:
                 Intent intent = new Intent(getContext(), SettingActivity.class);
                 startActivity(intent);

@@ -73,7 +73,9 @@
         <activity android:name=".activity.OpenOrdersActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.PortfolioActivity"/>
+        <activity android:name=".activity.PortfolioActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".activity.LockAssetsActivity"

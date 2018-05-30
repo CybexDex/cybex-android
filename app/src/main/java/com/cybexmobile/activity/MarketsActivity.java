@@ -137,7 +137,9 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
         mWatchListData = (WatchListData) intent.getSerializableExtra("watchListData");
         String base = intent.getStringExtra("base");
         String quote = intent.getStringExtra("quote");
-        mTvTitle.setText(quote + ":" + base);
+        String trimedBase = base.contains("JADE") ? base.substring(5, base.length()) : base;
+        String trimedQuote = quote.contains("JADE") ? quote.substring(5, quote.length()) : quote;
+        mTvTitle.setText(String.format("%s/%s", trimedQuote, trimedBase));
         int id = getIntent().getIntExtra("id", 0);
         mMarketStat = MarketStat.getInstance();
         mMarketStat.subscribe(mWatchListData.getBase(), mWatchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 5, mDuration, this);
@@ -262,16 +264,18 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
     private void addContentToView(WatchListData watchListData) {
         NumberFormat formatter = MyUtils.getSuitableDecimalFormat(watchListData.getQuote());
         NumberFormat formatter2 = new DecimalFormat("0.00");
+        String trimmedBase = watchListData.getBase().contains("JADE") ? watchListData.getBase().substring(5, watchListData.getBase().length()) : watchListData.getBase();
+        String trimmedQuote = watchListData.getQuote().contains("JADE") ? watchListData.getQuote().substring(5, watchListData.getQuote().length()) : watchListData.getQuote();
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" : String.valueOf(formatter.format(watchListData.getCurrentPrice())));
         mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High:%s", String.valueOf(formatter.format(watchListData.getHigh()))));
         mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low:%s", String.valueOf(formatter.format(watchListData.getLow()))));
-        mVolumeBaseView.setText(watchListData.getVol() == 0.f ? "-" : String.format("Vol:%s", MyUtils.getNumberKMGExpressionFormat(watchListData.getVol())));
+        mVolumeBaseView.setText(watchListData.getVol() == 0.f ? "-" : String.format("%1$s :%2$s", trimmedBase, MyUtils.getNumberKMGExpressionFormat(watchListData.getVol())));
 
         double volQuote = 0.f;
         if (watchListData.getCurrentPrice() != 0.f) {
             volQuote = watchListData.getVol() / watchListData.getCurrentPrice();
         }
-        mVolumeQuoteView.setText(volQuote == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(watchListData.getQuoteVol()));
+        mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s :%2$s", trimmedQuote, MyUtils.getNumberKMGExpressionFormat(watchListData.getQuoteVol())));
 
         double change = 0.f;
         if (watchListData.getChange() != null) {

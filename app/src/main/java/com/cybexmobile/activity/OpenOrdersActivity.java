@@ -112,7 +112,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     @Override
     public void displayTotalValue(double total) {
         double rmbPrice = MarketStat.getInstance().getRMBPriceFromHashMap("CYB");
-        int precision = 5;
+        int precision = 2;
         String form = "%." + precision + "f\n";
         mOpenOrderTotalValue.setText(String.format(Locale.US,"≈¥" + form, total * rmbPrice ));
     }

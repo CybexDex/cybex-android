@@ -96,8 +96,8 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
             holder.mPriceTextView.setText(String.valueOf(price));
         }
         mTotal += price * amount;
-        holder.mQuoteTextView.setText(quote.symbol);
-        holder.mBaseTextView.setText(String.format("/%s", base.symbol));
+        holder.mQuoteTextView.setText(quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol);
+        holder.mBaseTextView.setText(String.format("/%s", base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol));
         if (position == mDataList.size() - 1) {
             mListener.displayTotalValue(mTotal);
         }

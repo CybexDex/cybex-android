@@ -61,8 +61,8 @@
     <string name="setting_language_chinese">简体中文 ></string>
     <string name="setting_theme">Theme</string>
     <string name="setting_version">version</string>
-    <string name="setting_theme_dark">Dark ></string>
-    <string name="setting_theme_light">Light ></string>
+    <string name="setting_theme_dark">Dark</string>
+    <string name="setting_theme_light">Light</string>
 
     <!-- Strings related to login -->
     <string name="create_account">Create Account</string>
@@ -117,10 +117,12 @@
     <string name="open_orders_buy">Buy</string>
     <string name="open_orders_sell">Sell</string>
     <string name="open_orders_title">Opened Orders</string>
+    <string name="open_orders_total_value">Sell Total Value:</string>
 
     <!-- Portfolio Page Related -->
     <string name="portfolio_price">Price(CYB)</string>
     <string name="portfolio_24h">24h</string>
+    <string name="portfolio_title">Your Portfolio</string>
 
     <!-- Activity Lock Assets -->
     <string name="assets_amount">assets/amount</string>

@@ -907,17 +907,20 @@ public class MarketStat {
         retrofit2.Call<ResponseBody> call = RetrofitApi.getCnyInterface().getCny();
         try {
             retrofit2.Response<ResponseBody> response = call.execute();
-            String responseString = response.body().string();
-            Log.e("rmb", responseString);
+            if (response.body() != null) {
 
-            JSONObject jsonObject = new JSONObject(responseString);
-            JSONArray prices = jsonObject.getJSONArray("prices");
-            for (int i = 0; i < prices.length(); i++) {
-                JSONObject price = prices.getJSONObject(i);
-                if (price.getString("name").equals(assetSymbol)) {
-                    rmb = price.getDouble("value");
-                    mRmbListHashMap.put(assetSymbol, rmb);
-                    break;
+                String responseString = response.body().string();
+                Log.e("rmb", responseString);
+
+                JSONObject jsonObject = new JSONObject(responseString);
+                JSONArray prices = jsonObject.getJSONArray("prices");
+                for (int i = 0; i < prices.length(); i++) {
+                    JSONObject price = prices.getJSONObject(i);
+                    if (price.getString("name").equals(assetSymbol)) {
+                        rmb = price.getDouble("value");
+                        mRmbListHashMap.put(assetSymbol, rmb);
+                        break;
+                    }
                 }
             }
             return rmb;

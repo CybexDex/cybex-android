@@ -159,9 +159,9 @@ public class SettingActivity extends BaseActivity {
         boolean isNight = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("night_mode", false);
         TextView textView = (TextView) mThemeSettingView.findViewById(R.id.setting_theme_content);
         if (isNight) {
-            textView.setText(getResources().getString(R.string.setting_theme_light));
+            textView.setText(String.format("%s >", getResources().getString(R.string.setting_theme_light)));
         } else {
-            textView.setText(getResources().getString(R.string.setting_theme_dark));
+            textView.setText(String.format("%s >", getResources().getString(R.string.setting_theme_dark)));
         }
 
     }
@@ -169,7 +169,7 @@ public class SettingActivity extends BaseActivity {
     private void displayVersionNumber() {
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNumber = mSettingVersionView.findViewById(R.id.setting_version_content);
-        versionNumber.setText(versionName);
+        versionNumber.setText(String.format("%s >", versionName));
     }
 
     private void displayLogOutButton() {
