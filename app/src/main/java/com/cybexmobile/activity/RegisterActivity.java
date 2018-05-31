@@ -19,11 +19,11 @@ import android.widget.TextView;
 import com.cybexmobile.R;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.exception.ErrorCodeException;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.faucet.CreateAccountException;
 import com.cybexmobile.graphene.chain.AccountObject;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.pixplicity.sharp.Sharp;
 
 import org.json.JSONException;
@@ -41,8 +41,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.webkit.WebViewClient.ERROR_FILE_NOT_FOUND;
 import static com.cybexmobile.constant.ErrorCode.ERROR_ACCOUNT_OBJECT_EXIST;
 import static com.cybexmobile.constant.ErrorCode.ERROR_FILE_READ_FAIL;
@@ -64,18 +62,11 @@ public class RegisterActivity extends BaseActivity {
     String mCapId;
     Timer mTimer = new Timer();
     Task mTask = new Task();
-    private KProgressHUD mProcessHud;
     Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProcessHud = KProgressHUD.create(this)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Please Wait")
-                .setCancellable(false)
-                .setAnimationSpeed(2)
-                .setDimAmount(0.5f);
         setContentView(R.layout.activity_register);
         initViews();
         mTimer.schedule(mTask, 0, 120 * 1000 );
@@ -277,7 +268,7 @@ public class RegisterActivity extends BaseActivity {
         });
         mTvLoginIn.setOnClickListener(v -> onBackPressed());
         mSignInButton.setOnClickListener(v -> {
-            mProcessHud.show();
+            showLoadDialog();
             String account = mUserNameTextView.getText().toString().trim();
             String password = mPassWordTextView.getText().toString().trim();
             String passwordConfirm = mConfirmationTextView.getText().toString();
@@ -345,16 +336,20 @@ public class RegisterActivity extends BaseActivity {
             return nRet;
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    mProcessHud.dismiss();
-                    Intent intent = new Intent(RegisterActivity.this, BottomNavigationActivity.class);
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RegisterActivity.this);
-                    sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
-                    sharedPreferences.edit().putString("name", strAccount).apply();
-                    sharedPreferences.edit().putString("password", strPassword).apply();
-                    intent.setFlags(FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    hideLoadDialog();
+                    CybexDialog.showRegisterDialog(this, strPassword, new View.OnClickListener(){
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(RegisterActivity.this, BottomNavigationActivity.class);
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RegisterActivity.this);
+                            sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
+                            sharedPreferences.edit().putString("name", strAccount).apply();
+                            sharedPreferences.edit().putString("password", strPassword).apply();
+                            startActivity(intent);
+                        }
+                    });
                 }, throwable -> {
-                    mProcessHud.dismiss();
+                    hideLoadDialog();
                     if (throwable instanceof NetworkStatusException) {
                         processErrorCode(ERROR_NETWORK_FAIL);
                     } else if (throwable instanceof CreateAccountException) {

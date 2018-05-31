@@ -22,7 +22,7 @@
     <string name="register_create_cloud_wallet">创建您的云钱包账户</string>
     <string name="account_balance">账户总余额(CYB):</string>
     <string name="account_available_asset">可用资产</string>
-    <string name="account_view_all">查看全部 ></string>
+    <string name="account_view_all">查看全部</string>
     <string name="account_other_asset">其他资产</string>
     <string name="account_hello">您好,</string>
     <string name="account_membership_basic">普通会员</string>
@@ -59,8 +59,8 @@
 
     <!-- Setting page -->
     <string name="setting_language">语言</string>
-    <string name="setting_language_english">English ></string>
-    <string name="setting_language_chinese">简体中文 ></string>
+    <string name="setting_language_english">English</string>
+    <string name="setting_language_chinese">简体中文</string>
     <string name="setting_theme">主题</string>
     <string name="setting_version">版本</string>
     <string name="setting_theme_dark">黑色</string>
@@ -70,9 +70,14 @@
     <string name="error_incorrect_password">帐户名或密码错误</string>
     <string name="text_ok">确定</string>
     <string name="permission_rationale">提供电子邮件完成需要联系人权限.</string>
+    <string name="setting_version_is_the_latest">当前为最新版本</string>
+    <string name="setting_version_update_available">版本更新</string>
+    <string name="setting_version_update_next_time">下次</string>
+    <string name="setting_version_update_now">更新</string>
 
     <!-- Login/Register -->
     <string name="create_account">创建新账号</string>
+    <string name="create_account_register">注册</string>
     <string name="register_dialog_title">注意事项</string>
     <string name="register_dialog_confirm">我记住了</string>
     <string name="prompt_user_name">帐户名</string>
@@ -106,6 +111,12 @@
     <string name="create_account_account_name_error_start_letter">帐户名需要以字母开头</string>
     <string name="create_account_password_must_at_least_12_characters">输入12位以上的密码</string>
     <string name="create_account_password_confirm_error">密码输入不一致</string>
+
+    <string name="register_dialog_content_current_password">当前密码:</string>
+    <string name="register_dialog_content_attentions">
+        • 我明确知晓，一旦忘记密码，我将会失去获取并使用该账户资金的途径\n
+        • 我明确知晓，一旦忘记或丢失了密码，将没有任何人能够帮助我恢复\n
+        • 我已经记录下来，或者用其它方式保存了我的密码</string>
 
     <!-- Open Orders Page Related -->
     <string name="open_orders_all">全部</string>

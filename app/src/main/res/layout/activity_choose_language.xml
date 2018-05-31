@@ -21,9 +21,7 @@
             android:layout_height="wrap_content"
             android:text="@string/setting_language"
             android:layout_gravity="center"
-            android:textColor="@color/primary_orange"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/font_orange_bold_large" />
 
     </android.support.v7.widget.Toolbar>
 

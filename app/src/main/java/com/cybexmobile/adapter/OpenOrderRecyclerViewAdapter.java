@@ -111,7 +111,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.open_order_item, parent, false);
+                .inflate(R.layout.item_open_order, parent, false);
         return new ViewHolder(view);
     }
 }

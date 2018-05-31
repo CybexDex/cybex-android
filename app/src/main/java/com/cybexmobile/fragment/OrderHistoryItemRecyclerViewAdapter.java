@@ -42,7 +42,7 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.order_history_item, parent, false);
+                .inflate(R.layout.item_order_history, parent, false);
         return new ViewHolder(view);
     }
 

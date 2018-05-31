@@ -48,7 +48,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.account_portfolio_item, parent, false);
+                .inflate(R.layout.item_account_portfolio, parent, false);
         return new ViewHolder(view);
     }
 

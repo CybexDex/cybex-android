@@ -24,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -359,7 +361,9 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 sharedPreferences.edit().putString("password", mPassword).apply();
                 finish();
             } else {
-                showHintDialog(R.string.error_incorrect_password);
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.error_incorrect_password, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
             }
         }
 

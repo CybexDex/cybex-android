@@ -75,7 +75,7 @@ public class OrderHistoryListFragment extends Fragment implements MarketStat.OnM
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.order_history_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_order_history, container, false);
         Context context = view.getContext();
         mOrderBook = (OrderBook) getArguments().getSerializable(ORDER_BOOK);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);

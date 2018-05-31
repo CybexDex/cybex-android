@@ -19,7 +19,7 @@
     <string name="account_balance">Your Total Balance(CYB):</string>
     <string name="account_introduction_text">CYBEX is a decentralized exchange that seeks to improve the liquidity of crypto-assets that’s more transparent, highly efficient and secure.</string>
     <string name="account_available_asset">Your Portfolio</string>
-    <string name="account_view_all">View All ></string>
+    <string name="account_view_all">View All</string>
     <string name="account_other_asset">Asset Operations</string>
     <string name="account_hello">Hello,</string>
     <string name="account_membership_basic">Basic Member</string>
@@ -57,15 +57,21 @@
     <!-- Setting Strings -->
 
     <string name="setting_language">Language</string>
-    <string name="setting_language_english">English ></string>
-    <string name="setting_language_chinese">简体中文 ></string>
+    <string name="setting_language_english">English</string>
+    <string name="setting_language_chinese">简体中文</string>
     <string name="setting_theme">Theme</string>
-    <string name="setting_version">version</string>
+    <string name="setting_version">Version</string>
     <string name="setting_theme_dark">Dark</string>
     <string name="setting_theme_light">Light</string>
+    <string name="setting_version_is_the_latest">The current version is the latest one</string>
+    <string name="setting_version_update_available">Update Available</string>
+    <string name="setting_version_update_content">A new version of CybexDex is available,Please update to newest version now.</string>
+    <string name="setting_version_update_next_time">Next</string>
+    <string name="setting_version_update_now">Update</string>
 
     <!-- Strings related to login -->
     <string name="create_account">Create Account</string>
+    <string name="create_account_register">Register</string>
     <string name="have_account_login">Already have an account?</string>
     <string name="prompt_user_name">Account Name</string>
     <string name="prompt_password">Password</string>
@@ -81,10 +87,11 @@
     <string name="register_create_cloud_wallet">Use Cloud Wallet mode to create Account</string>
     <string name="register_dialog_title">ATTENTIONS</string>
     <string name="register_dialog_confirm">CONFIRM</string>
-    <!--<string name="create_account_account_name_empty">The account name is empty</string>-->
-    <!--<string name="create_account_password_empty">The password is empty</string>-->
-    <!--<string name="create_account_password_confirm_empty">The confirmation password is empty</string>-->
-    <!--<string name="create_account_pin_code_empty">The Pin Code is Empty</string>-->
+    <string name="register_dialog_content_current_password">Current Password:</string>
+    <string name="register_dialog_content_attentions">
+        • I understand that i will lose access to my funds if i LOSE my password\n
+        • I understand that no one can RECOVER my password if i lose or forget it\n
+        • I have WRITTEN DOWN or otherwise STORED my password</string>
 
     <string name="import_activity_unknown_error">Some error occurred.</string>
     <string name="import_activity_private_key_invalid">Invalid private key.</string>

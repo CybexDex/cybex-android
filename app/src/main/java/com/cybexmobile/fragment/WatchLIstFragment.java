@@ -91,7 +91,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.watchlist_list, container, false);
+        view = inflater.inflate(R.layout.fragment_watchlist, container, false);
         mContext = view.getContext();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
         mTabLayout = view.findViewById(R.id.watch_list_coin_tab);

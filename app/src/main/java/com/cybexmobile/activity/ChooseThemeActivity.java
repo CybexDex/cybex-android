@@ -104,7 +104,7 @@ public class ChooseThemeActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder = null;
             if(convertView == null) {
-                convertView = inflater.inflate(R.layout.theme_item_adapter, parent, false);
+                convertView = inflater.inflate(R.layout.item_theme, parent, false);
                 viewHolder = new ViewHolder();
                 viewHolder.name = (TextView) convertView.findViewById(R.id.theme_name);
                 viewHolder.select = (RadioButton) convertView.findViewById(R.id.theme_radio_button);

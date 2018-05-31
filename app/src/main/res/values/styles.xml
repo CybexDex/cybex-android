@@ -27,6 +27,37 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <!-- font orange -->
+    <style name="font_orange_bold_large" parent="font_orange_large">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_orange_large">
+        <item name="android:fontFamily">Rubik</item>
+        <item name="android:textColor">@color/primary_orange</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="font_orange_bold_medium" parent="font_orange_medium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_orange_medium">
+        <item name="android:fontFamily">Rubik</item>
+        <item name="android:textColor">@color/primary_orange</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="font_orange_bold_small" parent="font_orange_small">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_orange_small">
+        <item name="android:fontFamily">Rubik</item>
+        <item name="android:textColor">@color/primary_orange</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <!-- font white dark -->
     <style name="font_white_dark_bold_large" parent="font_white_dark_large">
         <item name="android:textStyle">bold</item>

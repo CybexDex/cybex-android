@@ -36,7 +36,7 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.trade_history_item, parent, false);
+                .inflate(R.layout.item_trade_history, parent, false);
         return new ViewHolder(view);
     }
 

@@ -49,6 +49,6 @@
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.cybexmobile.fragment.OrderHistoryListFragment"
-        tools:listitem="@layout/order_history_item" />
+        tools:listitem="@layout/item_order_history" />
 
 </LinearLayout>
