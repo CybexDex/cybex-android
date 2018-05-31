@@ -275,7 +275,7 @@
                                 android:layout_height="@dimen/image_pin_code_height"
                                 android:layout_centerVertical="true"
                                 android:layout_alignParentEnd="true"
-                                android:background="@drawable/btn_color_orange" />
+                                android:background="@drawable/btn_orange_gradient_enabled" />
                         </RelativeLayout>
                     </LinearLayout>
 
@@ -311,7 +311,7 @@
                 android:layout_marginTop="@dimen/btn_register_margin_top"
                 android:background="@drawable/btn_orange_gradient_enabled"
                 android:enabled="false"
-                android:text="@string/create_account"
+                android:text="@string/create_account_register"
                 android:textColor="@color/login_text_color"
                 android:textStyle="bold" />
 

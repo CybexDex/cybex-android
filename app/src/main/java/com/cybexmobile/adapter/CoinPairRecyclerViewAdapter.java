@@ -59,7 +59,7 @@ public class CoinPairRecyclerViewAdapter extends RecyclerView.Adapter<CoinPairRe
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.horizontal_item, parent, false);
+                .inflate(R.layout.item_horizontal, parent, false);
         return new ViewHolder(view);
     }
 

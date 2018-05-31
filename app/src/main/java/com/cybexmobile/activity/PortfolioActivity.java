@@ -1,6 +1,5 @@
 package com.cybexmobile.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +11,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PortfolioActivity extends BaseActivity {

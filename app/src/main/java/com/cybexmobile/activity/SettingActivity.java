@@ -10,10 +10,12 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.base.BaseActivity;
@@ -49,7 +51,6 @@ public class SettingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
-        setBackButton();
         initViews();
         onClickListener();
         displayLanguage();
@@ -83,23 +84,6 @@ public class SettingActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    private void setBackButton() {
-        ImageView backButton;
-        TextView mTitile;
-        if (getSupportActionBar() != null) {
-            backButton = getSupportActionBar().getCustomView().findViewById(R.id.action_bar_arrow_back_button);
-            mTitile = getSupportActionBar().getCustomView().findViewById(R.id.actionbar_title);
-            backButton.setVisibility(View.VISIBLE);
-            mTitile.setText(getResources().getString(R.string.title_setting));
-            backButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
-    }
-
     private void initViews() {
         mLanguageSettingView = findViewById(R.id.setting_language);
         mThemeSettingView = findViewById(R.id.setting_theme);
@@ -129,6 +113,7 @@ public class SettingActivity extends BaseActivity {
         mSettingVersionView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showLoadDialog();
                 checkIfNeedToUpdate();
             }
         });
@@ -159,9 +144,9 @@ public class SettingActivity extends BaseActivity {
         boolean isNight = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("night_mode", false);
         TextView textView = (TextView) mThemeSettingView.findViewById(R.id.setting_theme_content);
         if (isNight) {
-            textView.setText(String.format("%s >", getResources().getString(R.string.setting_theme_light)));
+            textView.setText(getString(R.string.setting_theme_light));
         } else {
-            textView.setText(String.format("%s >", getResources().getString(R.string.setting_theme_dark)));
+            textView.setText(getString(R.string.setting_theme_dark));
         }
 
     }
@@ -169,7 +154,7 @@ public class SettingActivity extends BaseActivity {
     private void displayVersionNumber() {
         String versionName = BuildConfig.VERSION_NAME;
         TextView versionNumber = mSettingVersionView.findViewById(R.id.setting_version_content);
-        versionNumber.setText(String.format("%s >", versionName));
+        versionNumber.setText(versionName);
     }
 
     private void displayLogOutButton() {
@@ -199,44 +184,36 @@ public class SettingActivity extends BaseActivity {
                     jsonObject = new JSONObject(versionResponse);
                     String versionName = jsonObject.getString("version");
                     final String updateUrl = jsonObject.getString("url");
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                     Version localVersion = new Version(BuildConfig.VERSION_NAME);
                     Version remoteVersion = new Version(versionName);
-                    if (localVersion.isLowerThan(remoteVersion)) {
-                        builder.setCancelable(false);
-                        builder.setTitle("Update Available");
-                        builder.setMessage("A new version of CybexDex is available. Please update to newest version now");
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
-                                startActivity(browseIntent);
-                            }
-                        });
-                        builder.setNegativeButton("NextTime", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //if user select "No", just cancel this dialog and continue with app
-                                dialog.cancel();
-                            }
-                        });
-
-                    } else {
-                        builder.setCancelable(false);
-                        builder.setTitle("No Update Available");
-                        builder.setMessage("the current version is the latest one");
-                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                    }
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                            hideLoadDialog();
+                            if (localVersion.isLowerThan(remoteVersion)) {
+                                new AlertDialog.Builder(SettingActivity.this)
+                                .setCancelable(false)
+                                .setTitle(R.string.setting_version_update_available)
+                                .setMessage(R.string.setting_version_update_content)
+                                .setPositiveButton(R.string.setting_version_update_next_time, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+                                        startActivity(browseIntent);
+                                    }
+                                })
+                                .setNegativeButton(R.string.setting_version_update_now, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                }).show();
+                            } else {
+                                Toast toast = Toast.makeText(getApplicationContext(), R.string.setting_version_is_the_latest, Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER, 0, 0);
+                                toast.show();
+                            }
+
                         }
                     });
                 } catch (JSONException e) {

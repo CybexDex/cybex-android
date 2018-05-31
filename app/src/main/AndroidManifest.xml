@@ -36,6 +36,7 @@
             android:name=".activity.BottomNavigationActivity"
             android:label=""
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.MarketsActivity"
@@ -69,7 +70,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.WalletIntroductionActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""/>
         <activity android:name=".activity.OpenOrdersActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"/>

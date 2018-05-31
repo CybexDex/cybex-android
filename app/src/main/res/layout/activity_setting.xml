@@ -19,9 +19,7 @@
             android:layout_height="wrap_content"
             android:text="@string/title_setting"
             android:layout_gravity="center"
-            android:textColor="@color/primary_orange"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/font_orange_bold_large" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -59,7 +57,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerHorizontal="true"
                     style="@style/font_grey_large"
-                    android:text="English >"/>
+                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
+                    android:text="English"/>
             </RelativeLayout>
 
 
@@ -91,6 +90,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerHorizontal="true"
                     style="@style/font_grey_large"
+                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
                     android:text="@string/setting_theme_dark"/>
             </RelativeLayout>
 
@@ -121,6 +121,7 @@
                     android:layout_alignBottom="@id/setting_version_title"
                     android:layout_alignParentRight="true"
                     android:layout_centerHorizontal="true"
+                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
                     style="@style/font_grey_large" />
             </RelativeLayout>
 
@@ -132,7 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/cardview_margin_top"
-            android:background="@drawable/btn_color_orange"
+            android:background="@drawable/btn_orange_gradient_enabled"
             android:clickable="false"
             android:text="@string/action_log_out"
             android:textColor="@color/login_text_color"

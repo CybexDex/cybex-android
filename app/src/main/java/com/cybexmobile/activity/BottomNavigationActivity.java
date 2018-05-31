@@ -159,6 +159,13 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        //register after recreate that activity
+        recreate();
+    }
+
     private void initFragments(Bundle savedInstanceState) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState == null) {

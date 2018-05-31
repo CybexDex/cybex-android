@@ -82,7 +82,7 @@ public class MarketTradeHistoryFragment extends Fragment implements MarketStat.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.trade_history_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_trade_history, container, false);
 
         // Set the adapter
         Context context = view.getContext();

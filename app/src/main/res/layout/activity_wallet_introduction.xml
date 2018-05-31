@@ -11,11 +11,10 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="@drawable/action_bar_gradient"
-        app:subtitleTextColor="@android:color/white"
-        app:titleTextColor="@android:color/white"
-        app:title="@string/create_account"
-        app:navigationIcon="@drawable/ic_arrow_forward_white_16px"/>
+        app:subtitleTextColor="@color/grey_unselected_font_color"
+        app:titleTextColor="@color/grey_unselected_font_color"
+        app:title=""
+        app:navigationIcon="@drawable/ic_arrow_forward_16px"/>
 
     <ScrollView
         android:layout_width="match_parent"

@@ -42,9 +42,7 @@ import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.market.MarketStat;
-import com.kaopiz.kprogresshud.KProgressHUD;
 
-import org.decimal4j.util.DoubleRounder;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -67,7 +65,6 @@ public class AccountFragment extends Fragment {
     private SharedPreferences mSharedPreference;
     private List<AccountBalanceObject> mAccountObjectBalance = new ArrayList<>();
     private List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
-    private KProgressHUD mProcessHud;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -93,13 +90,6 @@ public class AccountFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         initViews(view);
         setClickListener();
-        mProcessHud = KProgressHUD.create(getActivity())
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Please Wait")
-                .setCancellable(false)
-                .setAnimationSpeed(2)
-                .setDimAmount(0.5f);
-        mProcessHud.show();
         setViews();
         return view;
     }
@@ -112,7 +102,6 @@ public class AccountFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mProcessHud.dismiss();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -229,7 +218,7 @@ public class AccountFragment extends Fragment {
             mTotalAccountTextView.setText("0.00000≈¥0.00");
         } else {
             double rmb = MarketStat.getInstance().getRMBPriceFromHashMap("CYB");
-            mTotalAccountTextView.setText(String.format(Locale.US, "%.5fCYB", mTotal));
+            mTotalAccountTextView.setText(String.format(Locale.US, "%.5f", mTotal));
             mAccountTotalRmbTextView.setText(String.format(Locale.US, "≈¥%.2f", rmb * mTotal));
         }
 
