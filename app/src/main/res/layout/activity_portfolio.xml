@@ -21,6 +21,34 @@
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
 
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="11dp"
+        android:paddingEnd="21dp"
+        android:paddingStart="21dp"
+        android:paddingTop="11dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/assets_amount"
+            android:textColor="@color/text_hint_color"
+            android:textSize="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/portfolio_price"
+            android:textColor="@color/text_hint_color"
+            android:textSize="12dp" />
+
+    </RelativeLayout>
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/portfolio_page_recycler_view"
         android:layout_width="match_parent"

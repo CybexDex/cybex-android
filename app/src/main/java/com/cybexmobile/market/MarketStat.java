@@ -19,8 +19,6 @@ import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.Price;
 import com.cybexmobile.graphene.chain.Utils;
 import com.cybexmobile.manager.ThreadPoolManager;
-import com.cybexmobile.graphene.chain.Asset;
-import com.cybexmobile.graphene.chain.Utils;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.greenrobot.eventbus.EventBus;
@@ -126,7 +124,7 @@ public class MarketStat {
                         });
                     }
                 }
-            }, "1.3.0");
+            }, "1.3.2");
         }
     }
 
@@ -752,6 +750,8 @@ public class MarketStat {
         watchListData.setBase(base.symbol);
         watchListData.setQuote(quote.symbol);
         watchListData.setRmbPrice(rmb);
+        watchListData.setBasePrecision(base.precision);
+        watchListData.setQuotePrecision(quote.precision);
         if (historyPriceList != null && historyPriceList.size() != 0) {
             watchListData.setHigh(getHighFromPriceList(historyPriceList));
             watchListData.setLow(getLowFromPriceList(historyPriceList));

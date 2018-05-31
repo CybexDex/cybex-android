@@ -65,6 +65,10 @@ public class MyUtils {
         }
     }
 
+    public static String getPrecisedFomatter(int precision) {
+        return "%." + precision + "f";
+    }
+
     public static String getNumberKMGExpressionFormat(double number) {
 
         String result = null;

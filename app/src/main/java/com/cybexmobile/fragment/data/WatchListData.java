@@ -18,8 +18,10 @@ public class WatchListData implements Serializable{
     private String quoteId;
     private String subscribeId;
     private double rmbPrice;
+    private int basePrecision;
+    private int quotePrecision;
 
-    public WatchListData(long time, double high, double low, double vol, double quoteVol, double currentPrice, String base, String quote, String change, String baseId, String quoteId, String subscribeId, double rmbPrice) {
+    public WatchListData(long time, double high, double low, double vol, double quoteVol, double currentPrice, String base, String quote, String change, String baseId, String quoteId, String subscribeId, double rmbPrice, int basePrecision, int quotePrecision) {
         this.high = high;
         this.low = low;
         this.vol = vol;
@@ -33,6 +35,8 @@ public class WatchListData implements Serializable{
         this.quoteId = quoteId;
         this.subscribeId = subscribeId;
         this.rmbPrice = rmbPrice;
+        this.basePrecision = basePrecision;
+        this.quotePrecision = quotePrecision;
     }
 
     public WatchListData() {
@@ -141,5 +145,21 @@ public class WatchListData implements Serializable{
 
     public void setRmbPrice(double rmbPrice) {
         this.rmbPrice = rmbPrice;
+    }
+
+    public int getBasePrecision() {
+        return basePrecision;
+    }
+
+    public void setBasePrecision(int basePrecision) {
+        this.basePrecision = basePrecision;
+    }
+
+    public int getQuotePrecision() {
+        return quotePrecision;
+    }
+
+    public void setQuotePrecision(int quotePrecision) {
+        this.quotePrecision = quotePrecision;
     }
 }

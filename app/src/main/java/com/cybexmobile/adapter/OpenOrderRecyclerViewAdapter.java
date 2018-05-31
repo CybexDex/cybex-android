@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.cybexmobile.R;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.utils.MyUtils;
 
 import java.util.List;
 
@@ -62,6 +63,10 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         AssetObject quote = mAssetObjectList.get(position).get(0);
         AssetObject base = mAssetObjectList.get(position).get(1);
         LimitOrderObject data = mDataList.get(position);
+        String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
+        String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
+        String basePrecision = MyUtils.getPrecisedFomatter(base.precision);
+        String quotePrecision = MyUtils.getPrecisedFomatter(quote.precision);
         double amount;
         double price;
         if (position == 0) {
@@ -72,32 +77,32 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
             holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
             if (data.sell_price.base.asset_id.equals(base.id)) {
                 amount = data.sell_price.base.amount / Math.pow(10, base.precision);
-                holder.mVolumeTextView.setText(String.valueOf(amount));
+                holder.mVolumeTextView.setText(String.format(basePrecision, amount) + " " + baseSymbol);
             } else {
                 amount = data.sell_price.quote.amount / Math.pow(10, base.precision);
-                holder.mVolumeTextView.setText(String.valueOf(amount));
+                holder.mVolumeTextView.setText(String.format(quotePrecision, amount) + " " + quoteSymbol);
             }
         } else {
             holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
             holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
             if (data.sell_price.quote.asset_id.equals(quote.id)) {
                 amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                holder.mVolumeTextView.setText(String.valueOf(amount));
+                holder.mVolumeTextView.setText(String.format(quotePrecision, amount) + " " + quoteSymbol);
             } else {
                 amount = data.sell_price.base.amount / Math.pow(10, quote.precision);
-                holder.mVolumeTextView.setText(String.valueOf(amount));
+                holder.mVolumeTextView.setText(String.format(basePrecision, amount) + " " + baseSymbol);
             }
         }
         if (data.sell_price.base.asset_id.equals(base.id)) {
             price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
-            holder.mPriceTextView.setText(String.valueOf(price));
+            holder.mPriceTextView.setText(String.format(basePrecision, price));
         } else {
             price = (data.sell_price.quote.amount / Math.pow(10, base.precision)) / (data.sell_price.base.amount / Math.pow(10, quote.precision));
-            holder.mPriceTextView.setText(String.valueOf(price));
+            holder.mPriceTextView.setText(String.format(quotePrecision, price));
         }
         mTotal += price * amount;
-        holder.mQuoteTextView.setText(quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol);
-        holder.mBaseTextView.setText(String.format("/%s", base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol));
+        holder.mQuoteTextView.setText(quoteSymbol);
+        holder.mBaseTextView.setText(String.format("/%s", baseSymbol));
         if (position == mDataList.size() - 1) {
             mListener.displayTotalValue(mTotal);
         }

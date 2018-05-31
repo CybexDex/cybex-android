@@ -43,7 +43,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        NumberFormat formatter = MyUtils.getSuitableDecimalFormat(holder.mItem != null ? holder.mItem.getQuote() : "");
+        String precisinFormatter = MyUtils.getPrecisedFomatter(holder.mItem.getBasePrecision());
         NumberFormat formatter2 = new DecimalFormat("0.00");
         holder.mItem = mValues.get(position);
         if (mValues.get(position).getQuote().contains("JADE")) {
@@ -57,7 +57,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBase()));
         }
         holder.mVolume.setText(holder.mItem.getVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getVol()));
-        holder.mCurrentPrice.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.valueOf(formatter.format(mValues.get(position).getCurrentPrice())));
+        holder.mCurrentPrice.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.format(precisinFormatter, holder.mItem.getCurrentPrice()));
 
         double change = 0.f;
         if(mValues.get(position).getChange()!= null) {
@@ -66,6 +66,11 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        if (change > 10) {
+            holder.mChangeRate.setTextSize(12);
+        } else {
+            holder.mChangeRate.setTextSize(16);
         }
         if( change > 0.f) {
             holder.mChangeRate.setText(String.format("+%s%%",String.valueOf(formatter2.format(change * 100))));
@@ -100,7 +105,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+        final View mView;
         public WatchListData mItem;
         TextView mBaseCurrency;
         TextView mQuoteCurrency;
@@ -130,7 +135,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
-        Picasso.get().load("https://cybex.io/icons/" + quoteIdWithUnderLine +"_grey.png").into(mCoinSymbol);
+        Picasso.get().load("https://app.cybex.io/icons/" + quoteIdWithUnderLine +"_grey.png").into(mCoinSymbol);
     }
 
     public void setItemToPosition(WatchListData watchListData, int position) {

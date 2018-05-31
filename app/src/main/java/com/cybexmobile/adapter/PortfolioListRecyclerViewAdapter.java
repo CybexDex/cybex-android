@@ -67,7 +67,7 @@ public class PortfolioListRecyclerViewAdapter extends RecyclerView.Adapter<Portf
             holder.mAssetName.setText(mAssetObject.symbol.contains("JADE") ? mAssetObject.symbol.substring(5, mAssetObject.symbol.length()) : mAssetObject.symbol);
             loadImage(mAccountBalanceObjectList.get(position).asset_type.toString(), holder.mAssetImage);
             holder.mAssetPrice.setText(String.format(Locale.US, "%.5f", mAccountBalanceObjectList.get(position).balance / Math.pow(10 ,mAssetObject.precision)));
-            holder.mAssetPriceCYB.setText(String.format(Locale.US, "%.5fCYB", price * priceCyb));
+            holder.mAssetPriceCYB.setText(String.format(Locale.US, "%.5f CYB", price * priceCyb));
             holder.mAssetRmb.setText(String.format(Locale.US, "≈¥%.2f", MarketStat.getInstance().getRMBPriceFromHashMap("CYB") * price * priceCyb));
         } catch (NetworkStatusException e) {
             e.printStackTrace();

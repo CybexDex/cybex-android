@@ -71,7 +71,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
             }
             loadImage(mAssetList.get(position).asset_type.toString(), holder.mAssetImage);
             holder.mAssetPrice.setText(String.valueOf(price));
-            holder.mAssetPriceCYB.setText(String.format(Locale.US, "%.5fCYB", price * priceCyb));
+            holder.mAssetPriceCYB.setText(String.format(Locale.US, "%.5f CYB", price * priceCyb));
             holder.mAssetPriceRmb.setText(String.format(Locale.US, "≈¥%.2f", MarketStat.getInstance().getRMBPriceFromHashMap("CYB") * price *priceCyb));
         } catch (NetworkStatusException e) {
             e.printStackTrace();

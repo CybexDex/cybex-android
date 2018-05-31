@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -50,6 +51,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import mrd.bitlib.util.StringUtils;
 
 public class AccountFragment extends Fragment {
 
@@ -187,7 +190,7 @@ public class AccountFragment extends Fragment {
     }
 
     private void setSayHelloView(String name) {
-        mSayHelloTextView.setText(String.format("%s %s", getActivity().getResources().getString(R.string.account_hello), name));
+        mSayHelloTextView.setText(name);
     }
 
     private void setTotalBalance(List<String> nameList) {
@@ -216,12 +219,29 @@ public class AccountFragment extends Fragment {
         }
         if (mTotal == 0) {
             mTotalAccountTextView.setText("0.00000≈¥0.00");
+            mAccountTotalRmbTextView.setText("");
         } else {
-            double rmb = MarketStat.getInstance().getRMBPriceFromHashMap("CYB");
             mTotalAccountTextView.setText(String.format(Locale.US, "%.5f", mTotal));
-            mAccountTotalRmbTextView.setText(String.format(Locale.US, "≈¥%.2f", rmb * mTotal));
+            setRmbTotalValue(mTotal);
         }
 
+    }
+
+    private void setRmbTotalValue(double total) {
+        final Handler handler = new Handler();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                double rmb = MarketStat.getInstance().getRMBPriceFromHashMap("CYB");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAccountTotalRmbTextView.setText(String.format(Locale.US, "≈¥%.2f", rmb * total));
+                    }
+                });
+            }
+        });
+        thread.start();
     }
 
 

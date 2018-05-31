@@ -46,8 +46,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
     private int mColumnCount = 1;
     private Handler mHandler;
 
-    private String[] mTabs = new String[]{"CYB", "ETH", "BTC", "EOS"};
-    private String[] mAssetCode = new String[]{"1.3.0", "1.3.2", "1.3.3", "1.3.4", "1.3.5"};
+    private String[] mTabs = new String[]{"ETH", "BTC", "USDT", "CYB"};
     private String mTab;
     private WatchListRecyclerViewAdapter mWatchListRecyclerViewAdapter;
     private OnListFragmentInteractionListener mListener;
@@ -98,10 +97,10 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
         addTabsToTabLayout(mTabs);
         setOnClickListenerToTab();
         mProgressBar = (ProgressBar) view.findViewById(R.id.watch_list_progress_bar);
-        if (marketStat.getmWatchListDataListHashMap().get("1.3.0").size() == 0) {
+        if (marketStat.getmWatchListDataListHashMap().get("1.3.2").size() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
         }
-        watchListDataList.addAll(marketStat.getmWatchListDataListHashMap().get("1.3.0"));
+        watchListDataList.addAll(marketStat.getmWatchListDataListHashMap().get("1.3.2"));
         mWatchListRecyclerViewAdapter = new WatchListRecyclerViewAdapter(watchListDataList, mListener, getContext());
         if (mColumnCount <= 1) {
             RecyclerView.LayoutManager layoutManager = new GridLayoutManager(mContext, 1);
@@ -165,7 +164,7 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
     }
 
     private String getAssetFromTab(String tabName) {
-        String result = "1.3.0";
+        String result = "1.3.2";
         switch (tabName) {
             case "CYB":
                 result = "1.3.0";
@@ -173,8 +172,8 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
             case "ETH":
                 result = "1.3.2";
                 break;
-            case "EOS":
-                result = "1.3.4";
+            case "USDT":
+                result = "1.3.27";
                 break;
             case "BTC":
                 result = "1.3.3";

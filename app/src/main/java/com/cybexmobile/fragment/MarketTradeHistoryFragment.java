@@ -94,8 +94,10 @@ public class MarketTradeHistoryFragment extends Fragment implements MarketStat.O
         mBaseName = getArguments().getString(BASE_NAME);
         mQuoteName = getArguments().getString(QUOTE_NAME);
         if(mMarketTradeList != null && mMarketTradeList.size() > 0) {
-            mBaseTextView.setText(mMarketTradeList.get(0).base);
-            mQuoteTextView.setText(mMarketTradeList.get(0).quote);
+            String displayBaseName = mMarketTradeList.get(0).base;
+            String displayQuoteName = mMarketTradeList.get(0).quote;
+            mBaseTextView.setText(displayBaseName.contains("JADE") ? displayBaseName.substring(5, displayBaseName.length()) : displayBaseName);
+            mQuoteTextView.setText(displayQuoteName.contains("JADE") ? displayQuoteName.substring(5, displayQuoteName.length()) : displayQuoteName);
         }
         if (mColumnCount <= 1) {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(context));

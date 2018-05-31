@@ -262,13 +262,13 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
     }
 
     private void addContentToView(WatchListData watchListData) {
-        NumberFormat formatter = MyUtils.getSuitableDecimalFormat(watchListData.getQuote());
-        NumberFormat formatter2 = new DecimalFormat("0.00");
+        String precisionFormatter = MyUtils.getPrecisedFomatter(watchListData.getBasePrecision());
+        NumberFormat twoDecimalFormatter = new DecimalFormat("0.00");
         String trimmedBase = watchListData.getBase().contains("JADE") ? watchListData.getBase().substring(5, watchListData.getBase().length()) : watchListData.getBase();
         String trimmedQuote = watchListData.getQuote().contains("JADE") ? watchListData.getQuote().substring(5, watchListData.getQuote().length()) : watchListData.getQuote();
-        mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" : String.valueOf(formatter.format(watchListData.getCurrentPrice())));
-        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High:%s", String.valueOf(formatter.format(watchListData.getHigh()))));
-        mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low:%s", String.valueOf(formatter.format(watchListData.getLow()))));
+        mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" : String.format(precisionFormatter, watchListData.getCurrentPrice()));
+        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High:" + precisionFormatter, watchListData.getHigh() ));
+        mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low: " + precisionFormatter, watchListData.getLow()));
         mVolumeBaseView.setText(watchListData.getVol() == 0.f ? "-" : String.format("%1$s :%2$s", trimmedBase, MyUtils.getNumberKMGExpressionFormat(watchListData.getVol())));
 
         double volQuote = 0.f;
@@ -287,10 +287,10 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
         }
 
         if (change > 0.f) {
-            mChangeRateView.setText(String.format("+%s%%", String.valueOf(formatter2.format(change * 100))));
+            mChangeRateView.setText(String.format("+%s%%", String.valueOf(twoDecimalFormatter.format(change * 100))));
             mChangeRateView.setTextColor(getResources().getColor(R.color.increasing_color));
         } else if (change < 0.f) {
-            mChangeRateView.setText(String.format("%s%%", String.valueOf(formatter2.format(change * 100))));
+            mChangeRateView.setText(String.format("%s%%", String.valueOf(twoDecimalFormatter.format(change * 100))));
             mChangeRateView.setTextColor(getResources().getColor(R.color.decreasing_color));
         } else {
             mChangeRateView.setText("--");

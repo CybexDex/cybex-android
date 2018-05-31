@@ -71,7 +71,7 @@ public class SplashActivity extends BaseActivity implements MarketStat.startFirs
     private void checkVersion() {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://cybex.io/Android_update.json")
+                .url("https://app.cybex.io/Android_update.json")
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
