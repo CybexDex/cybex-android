@@ -63,13 +63,15 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
+                            android:id="@+id/log_in_account_name_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_avatar_24_px" />
+                            android:src="@drawable/ic_avatar_24_px"
+                            android:alpha="0.5"/>
 
                         <AutoCompleteTextView
-                            android:id="@+id/user_name"
+                            android:id="@+id/register_et_account_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:backgroundTint="@android:color/transparent"
@@ -99,13 +101,15 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/log_in_password_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_lock_outline_24_px" />
+                            android:src="@drawable/ic_lock_outline_24_px"
+                            android:alpha="0.5"/>
 
                         <EditText
-                            android:id="@+id/password"
+                            android:id="@+id/register_et_password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:backgroundTint="@android:color/transparent"

@@ -35,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +79,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private EditText mPasswordView;
     private TextView mTvRegister;
     private Button mBtnSignIn;
+    ImageView mAccountIcon, mPasswordIcon;
     private Toolbar mToolbar;
     private int nRet;
 
@@ -90,7 +92,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         setSupportActionBar(mToolbar);
 
         // Set up the login form.
-        mUserNameView = findViewById(R.id.user_name);
+        mUserNameView = findViewById(R.id.register_et_account_name);
+        mAccountIcon = findViewById(R.id.log_in_account_name_icon);
         mUserNameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -108,9 +111,20 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                         !TextUtils.isEmpty(mPasswordView.getText().toString().trim()));
             }
         });
+        mUserNameView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    mAccountIcon.setAlpha(1f);
+                } else {
+                    mAccountIcon.setAlpha(0.5f);
+                }
+            }
+        });
         populateAutoComplete();
 
-        mPasswordView = findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.register_et_password);
+        mPasswordIcon = findViewById(R.id.log_in_password_icon);
         mPasswordView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -126,6 +140,17 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             public void afterTextChanged(Editable editable) {
                 setLoginButtonEnable(!TextUtils.isEmpty(editable.toString().trim()) &&
                         !TextUtils.isEmpty(mUserNameView.getText().toString().trim()));
+            }
+        });
+
+        mPasswordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mPasswordIcon.setAlpha(1f);
+                } else {
+                    mPasswordIcon.setAlpha(0.5f);
+                }
             }
         });
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {

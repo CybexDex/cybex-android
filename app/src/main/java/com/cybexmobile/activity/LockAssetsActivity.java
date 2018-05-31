@@ -4,33 +4,32 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WalletApi;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.exception.NetworkStatusException;
-import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class LockAssetsActivity extends BaseActivity {
 
-    private Toolbar mToolbar;
-    private RecyclerView mRecyclerView;
-    private SharedPreferences mSharedPreference;
+    Toolbar mToolbar;
+    RecyclerView mRecyclerView;
+    SharedPreferences mSharedPreference;
     private List<String> nameList = new ArrayList<>();
     private List<LockUpAssetObject> mLockupAssetObjects = new ArrayList<>();
 
@@ -63,15 +62,18 @@ public class LockAssetsActivity extends BaseActivity {
         }
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(this, mLockupAssetObjects);
+        CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(mLockupAssetObjects);
         mRecyclerView.setAdapter(adapter);
     }
 
     private long getTimeStamp(String strTimeStamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        Calendar calendar = new GregorianCalendar();
+        TimeZone mTimeZone = calendar.getTimeZone();
+        int mOffset = mTimeZone.getRawOffset();
         try {
             Date parsedDate = dateFormat.parse(strTimeStamp);
-            return parsedDate.getTime();
+            return parsedDate.getTime() + mOffset;
         } catch (ParseException e) {
             e.printStackTrace();
         }

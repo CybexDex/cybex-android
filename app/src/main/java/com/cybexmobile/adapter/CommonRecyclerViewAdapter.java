@@ -16,17 +16,20 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
+import com.cybexmobile.market.MarketStat;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecyclerViewAdapter.ViewHolder> {
 
-    private Context mContext;
     private List<LockUpAssetObject> mDatas;
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
@@ -51,8 +54,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     }
 
 
-    public CommonRecyclerViewAdapter(Context context, List<LockUpAssetObject> datas) {
-        mContext = context;
+    public CommonRecyclerViewAdapter(List<LockUpAssetObject> datas) {
         mDatas = datas;
     }
 
@@ -71,6 +73,11 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             try {
                 AssetObject assetObject = BitsharesWalletWraper.getInstance().get_objects(mDatas.get(position).balance.asset_id.toString());
                 loadImage(assetObject.id.toString(), holder.mAssetSymbol);
+                String precisionFormmatter ="%." + assetObject.precision + "f";
+                double price = (mDatas.get(position).balance.amount) / Math.pow(10, assetObject.precision);
+                holder.mAssetPrice.setText(String.format(Locale.US, precisionFormmatter, price));
+                holder.mRmbPrice.setText(String.format(Locale.US, "≈¥%.2f", MarketStat.getInstance().getRMBPriceFromHashMap("CYB") * price ));
+
                 if (assetObject.symbol.contains("JADE")) {
                     holder.mAssetText.setText(assetObject.symbol.substring(5, assetObject.symbol.length()));
                 } else {
@@ -83,8 +90,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             long time = (currentTimeStamp - timeStamp) / 1000;
             holder.mProgressbar.setProgress((int) (100 * time / duration));
             holder.mProgressText.setText(String.format("%s%%", String.valueOf((100 * time / duration))));
-        } else {
-            //mDatas.remove(position);
+            holder.mExpirationDate.setText(getDate(timeStamp + duration * 1000));
         }
     }
 
@@ -99,10 +105,13 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     }
 
     private long getTimeStamp(String timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        Calendar calendar = new GregorianCalendar();
+        TimeZone mTimeZone = calendar.getTimeZone();
+        int mOffset = mTimeZone.getRawOffset();
         try {
             Date parsedDate = dateFormat.parse(timestamp);
-            return parsedDate.getTime();
+            return parsedDate.getTime() + mOffset;
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -111,12 +120,19 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
-        Picasso.get().load("https://cybex.io/icons/" + quoteIdWithUnderLine +"_grey.png").into(mCoinSymbol);
+        Picasso.get().load("https://cybex.io/icons/" + quoteIdWithUnderLine + "_grey.png").into(mCoinSymbol);
     }
 
-    private void deleteItem(int index) {
-        mDatas.remove(index);
-        notifyItemRemoved(index);
+    private String getDate(long timeStamp){
+
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            Date netDate = (new Date(timeStamp));
+            return sdf.format(netDate);
+        }
+        catch(Exception ex){
+            return "xx";
+        }
     }
 
 }

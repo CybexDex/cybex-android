@@ -55,6 +55,7 @@ import static com.cybexmobile.constant.ErrorCode.ERROR_UNKNOWN;
 
 public class RegisterActivity extends BaseActivity {
     ImageView mCloudWalletIntroductionQuestionMarker, mPinCodeImageView, mUserNameChecker, mPasswordChecker, mPasswordConfirmChecker, mRegisterErrorSign;
+    ImageView mUserNameicon, mPasswordIcon, mPasswordConfirmIcon, mPinCodeIcon;
     TextView mTvLoginIn, mRegisterErrorText;
     EditText mPassWordTextView, mConfirmationTextView, mPinCodeTextView, mUserNameTextView;
     Button mSignInButton;
@@ -69,7 +70,7 @@ public class RegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         initViews();
-        mTimer.schedule(mTask, 0, 120 * 1000 );
+        mTimer.schedule(mTask, 0, 120 * 1000);
         setViews();
         setOnClickListener();
     }
@@ -84,18 +85,22 @@ public class RegisterActivity extends BaseActivity {
     private void initViews() {
         mCloudWalletIntroductionQuestionMarker = findViewById(R.id.register_cloud_wallet_question_marker);
         mTvLoginIn = findViewById(R.id.tv_login_in);
-        mUserNameTextView = findViewById(R.id.user_name);
-        mPassWordTextView = findViewById(R.id.password);
-        mConfirmationTextView = findViewById(R.id.password_confirm);
+        mUserNameTextView = findViewById(R.id.register_et_account_name);
+        mPassWordTextView = findViewById(R.id.register_et_password);
+        mConfirmationTextView = findViewById(R.id.register_et_password_confirmation);
         mSignInButton = findViewById(R.id.email_sign_in_button);
         mPinCodeImageView = findViewById(R.id.register_pin_code_image);
-        mPinCodeTextView = findViewById(R.id.register_pin_code);
+        mPinCodeTextView = findViewById(R.id.register_et_pin_code);
         mRegisterErrorText = findViewById(R.id.register_error_text);
         mUserNameChecker = findViewById(R.id.user_name_check);
         mPasswordChecker = findViewById(R.id.password_check);
         mPasswordConfirmChecker = findViewById(R.id.password_confirm_check);
         mRegisterErrorSign = findViewById(R.id.register_error_sign);
-        mToolbar =findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
+        mUserNameicon = findViewById(R.id.register_account_icon);
+        mPasswordIcon = findViewById(R.id.register_password_icon);
+        mPasswordConfirmIcon = findViewById(R.id.register_password_confirmation_icon);
+        mPinCodeIcon = findViewById(R.id.register_pin_code_icon);
         setSupportActionBar(mToolbar);
     }
 
@@ -125,11 +130,11 @@ public class RegisterActivity extends BaseActivity {
                     mRegisterErrorText.setText(R.string.create_account_account_name_too_short);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
-                } else if(strAccountName.contains("--")){
+                } else if (strAccountName.contains("--")) {
                     mRegisterErrorText.setText(R.string.create_account_account_name_should_not_contain_continuous_dashes);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
-                }else if (strAccountName.endsWith("-")) {
+                } else if (strAccountName.endsWith("-")) {
                     mRegisterErrorText.setText(R.string.create_account_account_name_error_dash_end);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
@@ -153,6 +158,8 @@ public class RegisterActivity extends BaseActivity {
 
             }
         });
+
+        mUserNameTextView.setOnFocusChangeListener(onFocusChangeListener);
 
         mPassWordTextView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -184,7 +191,9 @@ public class RegisterActivity extends BaseActivity {
             }
         });
 
-           mConfirmationTextView.addTextChangedListener(new TextWatcher() {
+        mPassWordTextView.setOnFocusChangeListener(onFocusChangeListener);
+
+        mConfirmationTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -214,6 +223,8 @@ public class RegisterActivity extends BaseActivity {
                         !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
             }
         });
+
+        mConfirmationTextView.setOnFocusChangeListener(onFocusChangeListener);
         mPinCodeTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -233,7 +244,30 @@ public class RegisterActivity extends BaseActivity {
                         !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
             }
         });
+
+        mPinCodeTextView.setOnFocusChangeListener(onFocusChangeListener);
+
     }
+
+    private View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            switch (v.getId()) {
+                case R.id.register_et_account_name:
+                    mUserNameicon.setAlpha(hasFocus ? 1f : 0.5f);
+                    break;
+                case R.id.register_et_password:
+                    mPasswordIcon.setAlpha(hasFocus ? 1f : 0.5f);
+                    break;
+                case R.id.register_et_password_confirmation:
+                    mPasswordConfirmIcon.setAlpha(hasFocus ? 1f : 0.5f);
+                    break;
+                case R.id.register_et_pin_code:
+                    mPinCodeIcon.setAlpha(hasFocus ? 1f : 0.5f);
+                    break;
+            }
+        }
+    };
 
     private void requestForPinCode() {
         new Thread(() -> {
@@ -273,8 +307,8 @@ public class RegisterActivity extends BaseActivity {
             String password = mPassWordTextView.getText().toString().trim();
             String passwordConfirm = mConfirmationTextView.getText().toString();
             String pinCode = mPinCodeTextView.getText().toString().trim();
-            if(TextUtils.isEmpty(account) || TextUtils.isEmpty(password) ||
-                    TextUtils.isEmpty(passwordConfirm) || TextUtils.isEmpty(pinCode)){
+            if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password) ||
+                    TextUtils.isEmpty(passwordConfirm) || TextUtils.isEmpty(pinCode)) {
                 return;
             }
             processCreateAccount(account, password, passwordConfirm, pinCode, mCapId);
@@ -283,7 +317,7 @@ public class RegisterActivity extends BaseActivity {
         mPinCodeImageView.setOnClickListener(v -> requestForPinCode());
     }
 
-    private void setRegisterButtonEnable(boolean enabled){
+    private void setRegisterButtonEnable(boolean enabled) {
         mSignInButton.setEnabled(enabled);
     }
 
