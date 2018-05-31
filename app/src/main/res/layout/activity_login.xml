@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/img_logo"
             android:layout_marginTop="@dimen/layout_login_margin_top"
-            android:padding="@dimen/layout_login_padding_margin"
+            android:padding="@dimen/activity_padding"
             android:orientation="vertical">
 
             <TextView
@@ -49,9 +49,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="@dimen/layout_login_padding_margin"
-                android:paddingStart="@dimen/layout_login_padding_margin"
-                android:paddingEnd="@dimen/layout_login_padding_margin"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:paddingStart="@dimen/activity_padding"
+                android:paddingEnd="@dimen/activity_padding"
                 android:background="@drawable/market_coin_pair_unselected">
 
                 <android.support.design.widget.TextInputLayout
@@ -135,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/btn_login_margin_top"
-                android:background="@drawable/btn_orange_gradient_enabled"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
                 android:enabled="false"
                 android:text="@string/action_sign_in"
                 android:textColor="@color/login_text_color"

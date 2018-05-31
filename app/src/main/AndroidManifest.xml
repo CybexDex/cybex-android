@@ -57,11 +57,13 @@
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"
             android:label=""/>
         <activity
             android:name=".activity.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"
             android:label=""/>
         <activity
             android:name=".activity.SettingActivity"

@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:autofit="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/item_padding_start_end"
-    android:paddingEnd="@dimen/item_padding_start_end"
-    android:paddingTop="@dimen/item_padding_top_bottom"
-    android:paddingBottom="@dimen/item_padding_top_bottom"
-    android:background="@drawable/watch_list_item"
-    android:elevation="@dimen/item_elevation">
+    android:padding="@dimen/activity_padding"
+    android:background="@color/itemBackground">
 
     <LinearLayout
         android:id="@+id/coinpair_linear_layout"
@@ -87,7 +81,7 @@
 
     <TextView
         android:id="@+id/change_rate_watchlist"
-        style="@style/font_white_dark_bold_large"
+        style="@style/font_white_bold_large"
         android:layout_width="@dimen/text_rate_width"
         android:layout_height="@dimen/text_rate_height"
         android:layout_alignParentEnd="true"

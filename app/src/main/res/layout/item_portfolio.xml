@@ -3,27 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="9dp"
-    android:layout_marginStart="9dp"
+    android:layout_marginStart="@dimen/activity_margin"
+    android:layout_marginEnd="@dimen/activity_margin"
+    android:layout_marginBottom="@dimen/activity_margin"
+    app:cardBackgroundColor="@color/itemBackground"
     android:clickable="true"
     android:focusable="true"
     app:cardCornerRadius="4dp"
-    app:cardElevation="3dp"
-    app:cardUseCompatPadding="true">
+    app:cardElevation="3dp">
 
     <LinearLayout
         android:id="@+id/account_portfolio_item_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/market_coin_pair_unselected"
+        android:padding="@dimen/activity_padding"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -61,28 +59,25 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="@dimen/activity_margin">
 
-        <TextView
-            android:id="@+id/account_portfolio_item_asset_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="12.9833"
-            android:textColor="@color/grey_unselected_font_color"
-            android:textSize="16sp" />
+            <TextView
+                android:id="@+id/account_portfolio_item_asset_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12.9833"
+                android:textColor="@color/grey_unselected_font_color"
+                android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/portfolio_page_rmb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="≈¥519,283,314.9833"
-            android:textColor="@color/grey_unselected_font_color"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/portfolio_page_rmb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="≈¥519,283,314.9833"
+                android:textColor="@color/grey_unselected_font_color"
+                android:textSize="12sp" />
         </RelativeLayout>
 
     </LinearLayout>

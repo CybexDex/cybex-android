@@ -71,7 +71,7 @@
 
     <!-- Strings related to login -->
     <string name="create_account">Create Account</string>
-    <string name="create_account_register">Register</string>
+    <string name="create_account_register">Sign Up</string>
     <string name="have_account_login">Already have an account?</string>
     <string name="prompt_user_name">Account Name</string>
     <string name="prompt_password">Password</string>
@@ -113,6 +113,7 @@
     <string name="create_account_account_name_error_start_letter">The account name should start with a letter</string>
     <string name="create_account_account_name_error_dash_end">The account name can not end with a dash</string>
     <string name="create_account_account_name_should_not_contain_continuous_dashes">The account name should not contain continuous dashes</string>
+    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">The account name should only contain letter,dash and numbers</string>
 
     <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>
     <string name="create_account_password_confirm_error">Two passwords do not match</string>
@@ -124,7 +125,9 @@
     <string name="open_orders_buy">Buy</string>
     <string name="open_orders_sell">Sell</string>
     <string name="open_orders_title">Opened Orders</string>
-    <string name="open_orders_total_value">Sell Total Value:</string>
+    <string name="open_orders_total_value">Total Value:</string>
+    <string name="open_orders_sell_total_value">Sell Total Value:</string>
+    <string name="open_orders_buy_total_value">Buy Total Value:</string>
 
     <!-- Portfolio Page Related -->
     <string name="portfolio_price">Price(CYB)</string>
@@ -132,10 +135,8 @@
     <string name="portfolio_title">Your Portfolio</string>
 
     <!-- Activity Lock Assets -->
-    <string name="assets_amount">assets/amount</string>
-    <string name="progress_expire_date">progress/data</string>
-    <string name="locked_assets">Locked Assets</string>
-
-    <string name="edittext_user_name_digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-</string>
+    <string name="assets_amount">Assets/Amount</string>
+    <string name="progress_expire_date">Progress/Expiration Time</string>
+    <string name="locked_assets">Lockup Assets</string>
 
 </resources>

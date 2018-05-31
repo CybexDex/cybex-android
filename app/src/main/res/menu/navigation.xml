@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/navigation_watchlist"
-        android:icon="@drawable/watch_list_selector"
+        android:icon="@drawable/ic_watch_list_selector"
         android:title="@string/title_watchlist" />
 
     <!--<item-->
@@ -13,11 +13,11 @@
 
     <item
         android:id="@+id/navigation_faq"
-        android:icon="@drawable/faq_selector"
+        android:icon="@drawable/ic_application_selector"
         android:title="@string/title_faq" />
     <item
         android:id="@+id/navigation_account"
-        android:icon="@drawable/account_selector"
+        android:icon="@drawable/ic_account_selector"
         android:title="@string/title_account">
     </item>
 

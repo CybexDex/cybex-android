@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/locked_assets"
-            style="@style/font_orange_bold_large"
+            style="@style/font_white_dark_bold_large"
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
 
@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
-        tools:listitem="@layout/item_lock_assets"
+        tools:listitem="@layout/item_lockup_assets"
         tools:itemCount="3"/>
 
 </LinearLayout>

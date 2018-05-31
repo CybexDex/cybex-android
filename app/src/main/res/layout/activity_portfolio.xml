@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/portfolio_title"
-            style="@style/font_orange_bold_large"
+            style="@style/font_white_dark_bold_large"
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
 

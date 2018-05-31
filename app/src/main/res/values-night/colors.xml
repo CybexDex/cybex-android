@@ -15,6 +15,9 @@
     <color name="dialogBackground">#1B2230</color>
     <color name="dialog_font_color">#FFFFFF</color>
 
+    <!-- Watch List Fragment -->
+    <color name="divider_color">#1c78819a</color>
+
     <!-- font color -->
     <color name="primary_color_white">#1B2230</color>
     <color name="kline_header_color">#EFF1F4</color>

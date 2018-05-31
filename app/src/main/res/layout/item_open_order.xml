@@ -1,82 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:autofit="http://schemas.android.com/tools">
+    android:background="@color/itemBackground"
+    android:padding="@dimen/activity_padding">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@drawable/watch_list_item"
-        android:elevation="3dp">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="13dp"
-            android:layout_marginEnd="13dp"
-            >
+        <LinearLayout
+            android:id="@+id/coinpair_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:id="@+id/coinpair_linear_layout"
+            <TextView
+                android:id="@+id/sell_or_buy_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="BUY"
+                android:textSize="9sp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_btn_buy"/>
 
-                <TextView
-                    android:id="@+id/sell_or_buy_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="BUY"
-                    android:textSize="9sp"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/buy_item_background"/>
-
-                <TextView
-                    android:id="@+id/quote_currency_open_order"
-                    style="@style/font_white_dark_bold_large"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="XRP" />
-
-                <TextView
-                    android:id="@+id/base_currency_open_order"
-                    style="@style/font_gray_bold_small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="/USD" />
-            </LinearLayout>
-
-
-            <me.grantland.widget.AutofitTextView
-                android:id="@+id/current_price_open_order"
+            <TextView
+                android:id="@+id/quote_currency_open_order"
                 style="@style/font_white_dark_bold_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignBottom="@id/coinpair_linear_layout"
-                android:maxLines="1"
-                android:layout_marginTop="14dp"
-                autofit:autoSizeMinTextSize="12sp"
-                android:text="$11,309.109" />
+                android:layout_marginStart="8dp"
+                android:text="XRP" />
 
             <TextView
-                android:id="@+id/volume"
+                android:id="@+id/base_currency_open_order"
                 style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@id/coinpair_linear_layout"
-                android:layout_below="@id/coinpair_linear_layout"
-                android:layout_marginTop="4dp"
-                android:text="Volume:288,980,254" />
+                android:text="/USD" />
+        </LinearLayout>
 
-        </RelativeLayout>
 
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/current_price_open_order"
+            style="@style/font_white_dark_bold_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@id/coinpair_linear_layout"
+            android:maxLines="1"
+            android:layout_marginTop="14dp"
+            autofit:autoSizeMinTextSize="12sp"
+            android:text="$11,309.109" />
+
+        <TextView
+            android:id="@+id/volume"
+            style="@style/font_gray_bold_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/coinpair_linear_layout"
+            android:layout_below="@id/coinpair_linear_layout"
+            android:layout_marginTop="4dp"
+            android:text="Volume:288,980,254" />
 
     </RelativeLayout>
 
-
-</LinearLayout>
+</RelativeLayout>

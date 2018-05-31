@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
+    app:cardBackgroundColor="@color/itemBackground"
     app:cardCornerRadius="4dp"
     app:cardElevation="3dp"
     app:cardUseCompatPadding="true">
@@ -14,7 +15,6 @@
         android:id="@+id/account_portfolio_item_background"
         android:layout_width="232dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/market_coin_pair_unselected"
         android:orientation="vertical">
 
         <RelativeLayout

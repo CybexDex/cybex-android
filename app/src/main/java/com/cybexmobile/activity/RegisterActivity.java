@@ -3,6 +3,7 @@ package com.cybexmobile.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -11,9 +12,11 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
@@ -60,10 +63,14 @@ public class RegisterActivity extends BaseActivity {
     EditText mPassWordTextView, mConfirmationTextView, mPinCodeTextView, mUserNameTextView;
     Button mSignInButton;
     private Toolbar mToolbar;
+    private LinearLayout mLayoutContainer, mLayoutError;
     String mCapId;
     Timer mTimer = new Timer();
     Task mTask = new Task();
     Handler mHandler = new Handler();
+    private boolean mIsKeyShowing;
+    private int mLastInvisibleHeight;
+    private int mLastScrollHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +108,8 @@ public class RegisterActivity extends BaseActivity {
         mPasswordIcon = findViewById(R.id.register_password_icon);
         mPasswordConfirmIcon = findViewById(R.id.register_password_confirmation_icon);
         mPinCodeIcon = findViewById(R.id.register_pin_code_icon);
+        mLayoutContainer = findViewById(R.id.register_ll_container);
+        mLayoutError = findViewById(R.id.register_ll_error);
         setSupportActionBar(mToolbar);
     }
 
@@ -124,6 +133,10 @@ public class RegisterActivity extends BaseActivity {
                 }
                 if (!Character.isLetter(strAccountName.charAt(0))) {
                     mRegisterErrorText.setText(R.string.create_account_account_name_error_start_letter);
+                    mRegisterErrorSign.setVisibility(View.VISIBLE);
+                    mUserNameChecker.setVisibility(View.GONE);
+                } else if(!strAccountName.matches("^[A-Za-z0-9-]+$")){
+                    mRegisterErrorText.setText(R.string.create_account_account_name_should_only_contain_letter_dash_and_numbers);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
                 } else if (strAccountName.length() < 3) {
@@ -315,6 +328,29 @@ public class RegisterActivity extends BaseActivity {
         });
 
         mPinCodeImageView.setOnClickListener(v -> requestForPinCode());
+        mLayoutContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect rect = new Rect();
+                mLayoutContainer.getWindowVisibleDisplayFrame(rect);
+                int invisibleHeight = mLayoutContainer.getRootView().getHeight() - rect.bottom;
+                if(invisibleHeight > 100){
+                    if(mIsKeyShowing && mLastInvisibleHeight == invisibleHeight){return;}
+                    mLastInvisibleHeight = invisibleHeight;
+                    int[] location = new int[2];
+                    mLayoutError.getLocationInWindow(location);
+                    int scrollHeight = location[1] + mLayoutError.getHeight() - rect.bottom;
+                    mLastScrollHeight += scrollHeight;
+                    mLayoutContainer.scrollTo(0, mLastScrollHeight);
+                    mIsKeyShowing = true;
+                }else{
+                    mLayoutContainer.scrollTo(0, 0);
+                    mLastScrollHeight = 0;
+                    mLastInvisibleHeight = 0;
+                    mIsKeyShowing = false;
+                }
+            }
+        });
     }
 
     private void setRegisterButtonEnable(boolean enabled) {

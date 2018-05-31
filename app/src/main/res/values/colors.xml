@@ -50,6 +50,7 @@
 
     <!-- Watch List Fragment -->
     <color name="tab_indicator_color">#FF9143</color>
+    <color name="divider_color">#0affffff</color>
 
     <color name="btn_orange_start">#ffc478</color>
     <color name="btn_orange_end">#ff9143</color>

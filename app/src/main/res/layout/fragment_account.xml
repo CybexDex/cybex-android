@@ -11,12 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="@dimen/layout_account_padding">
+        android:padding="@dimen/activity_padding">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/layout_account_padding">
+            android:padding="@dimen/activity_padding">
 
             <ImageView
                 android:id="@+id/account_avatar"
@@ -35,7 +35,7 @@
             android:id="@+id/account_logged_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/layout_account_padding"
+            android:paddingTop="@dimen/activity_padding"
             android:orientation="vertical">
 
             <TextView
@@ -46,8 +46,8 @@
                 android:lineSpacingExtra="7sp"
                 android:text="@string/log_in_cybex"
                 android:textColor="@color/primary_color_white"
-                android:layout_marginStart="@dimen/layout_account_padding"
-                android:layout_marginEnd="@dimen/layout_account_padding"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginEnd="@dimen/activity_margin"
                 android:textSize="34sp" />
 
             <TextView
@@ -56,16 +56,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_membership_margin_top"
                 android:padding="@dimen/text_membership_padding"
-                android:layout_marginStart="@dimen/layout_account_padding"
-                android:layout_marginEnd="@dimen/layout_account_padding"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginEnd="@dimen/activity_margin"
                 android:textColor="@color/grey_unselected_font_color" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_balance_margin_top"
-                android:layout_marginStart="@dimen/layout_account_padding"
-                android:layout_marginEnd="@dimen/layout_account_padding"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginEnd="@dimen/activity_margin"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -87,8 +87,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/layout_account_padding"
-                android:layout_marginEnd="@dimen/layout_account_padding"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginEnd="@dimen/activity_margin"
                 android:orientation="horizontal">
 
                 <TextView
@@ -111,11 +111,11 @@
                 android:id="@+id/portfolio_title_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_portfolio_header_margin_top"
-                android:layout_marginStart="@dimen/layout_account_padding"
-                android:layout_marginEnd="@dimen/layout_account_padding"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginEnd="@dimen/activity_margin"
                 android:paddingBottom="@dimen/layout_portfolio_header_padding_bottom"
-                android:paddingTop="@dimen/layout_account_padding">
+                android:paddingTop="@dimen/activity_padding">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -144,12 +144,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/font_grey_medium"
-                android:layout_marginTop="@dimen/layout_portfolio_header_margin_top"
-                android:layout_marginStart="@dimen/layout_account_padding"
-                android:layout_marginEnd="@dimen/layout_account_padding"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginEnd="@dimen/activity_padding"
                 android:alpha="0.5"
                 android:paddingBottom="@dimen/layout_portfolio_header_padding_bottom"
-                android:paddingTop="@dimen/layout_account_padding"
+                android:paddingTop="@dimen/activity_padding"
                 android:text="@string/account_other_asset" />
 
             <LinearLayout
@@ -162,14 +162,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     app:cardCornerRadius="4dp"
+                    app:cardBackgroundColor="@color/itemBackground"
                     app:cardUseCompatPadding="true">
 
                     <RelativeLayout
                         android:id="@+id/account_open_order_item_background"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/layout_asset_operations_height"
-                        android:background="@drawable/market_coin_pair_unselected"
-                        android:paddingStart="@dimen/layout_asset_operations_padding_start"
+                        android:paddingStart="@dimen/activity_padding"
                         android:paddingEnd="@dimen/layout_asset_operations_padding_end"
                         android:orientation="horizontal">
 
@@ -199,14 +199,14 @@
                     android:layout_weight="1"
                     app:cardCornerRadius="4dp"
                     app:cardElevation="3dp"
+                    app:cardBackgroundColor="@color/itemBackground"
                     app:cardUseCompatPadding="true">
 
                     <RelativeLayout
                         android:id="@+id/account_lockup_item_background"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/layout_asset_operations_height"
-                        android:background="@drawable/market_coin_pair_unselected"
-                        android:paddingStart="@dimen/layout_asset_operations_padding_start"
+                        android:paddingStart="@dimen/activity_padding"
                         android:paddingEnd="@dimen/layout_asset_operations_padding_end"
                         android:orientation="horizontal">
 
@@ -236,7 +236,7 @@
             android:id="@+id/account_no_log_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/layout_account_padding"
+            android:padding="@dimen/activity_padding"
             android:orientation="vertical"
             android:visibility="gone">
 

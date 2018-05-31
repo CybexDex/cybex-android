@@ -1,8 +1,6 @@
 package com.cybexmobile.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +9,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.adapter.viewholder.CommonViewHolder;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -60,7 +57,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lock_assets, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lockup_assets, parent, false);
         return new ViewHolder(view);
     }
 

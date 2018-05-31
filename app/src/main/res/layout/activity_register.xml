@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:id="@+id/register_ll_container"
     tools:context=".activity.LoginActivity">
 
     <android.support.v7.widget.Toolbar
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/img_logo"
             android:layout_marginTop="@dimen/layout_register_margin_top"
-            android:padding="@dimen/layout_login_padding_margin"
+            android:padding="@dimen/activity_padding"
             android:orientation="vertical">
 
             <LinearLayout
@@ -63,9 +64,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="@dimen/layout_login_padding_margin"
-                android:paddingStart="@dimen/layout_login_padding_margin"
-                android:paddingEnd="@dimen/layout_login_padding_margin"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:paddingStart="@dimen/activity_padding"
+                android:paddingEnd="@dimen/activity_padding"
                 android:background="@drawable/market_coin_pair_unselected">
 
                 <android.support.design.widget.TextInputLayout
@@ -98,7 +99,6 @@
                                 android:hint="@string/prompt_user_name"
                                 android:maxLines="1"
                                 android:maxLength="63"
-                                android:digits="@string/edittext_user_name_digits"
                                 android:singleLine="true"
                                 android:textColor="@color/primary_color_white"
                                 android:textColorHint="@color/text_hint_color"
@@ -283,7 +283,7 @@
                                 android:layout_height="@dimen/image_pin_code_height"
                                 android:layout_centerVertical="true"
                                 android:layout_alignParentEnd="true"
-                                android:background="@drawable/btn_orange_gradient_enabled" />
+                                android:background="@drawable/bg_btn_orange_gradient_enabled" />
                         </RelativeLayout>
                     </LinearLayout>
 
@@ -292,10 +292,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/register_ll_error"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/layout_error_hint_height"
                 android:orientation="horizontal"
-                android:layout_marginTop="@dimen/layout_error_hint_margin_top">
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/btn_register_margin_top">
 
                 <ImageView
                     android:id="@+id/register_error_sign"
@@ -317,7 +319,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/btn_register_margin_top"
-                android:background="@drawable/btn_orange_gradient_enabled"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
                 android:enabled="false"
                 android:text="@string/create_account_register"
                 android:textColor="@color/login_text_color"

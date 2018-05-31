@@ -20,9 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/primary_orange"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            style="@style/font_white_dark_bold_large" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -35,7 +33,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/layout_markets_padding">
+        android:padding="@dimen/activity_padding">
 
         <TextView
             android:id="@+id/market_page_current_money"
@@ -136,7 +134,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_time_page_margin_top"
+                android:layout_marginTop="@dimen/activity_margin"
                 android:orientation="horizontal">
 
                 <TextView

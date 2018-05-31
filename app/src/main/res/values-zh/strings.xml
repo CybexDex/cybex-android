@@ -111,6 +111,7 @@
     <string name="create_account_account_name_error_start_letter">帐户名需要以字母开头</string>
     <string name="create_account_password_must_at_least_12_characters">输入12位以上的密码</string>
     <string name="create_account_password_confirm_error">密码输入不一致</string>
+    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">帐户名仅能包含字母、数字、横杠</string>
 
     <string name="register_dialog_content_current_password">当前密码:</string>
     <string name="register_dialog_content_attentions">
@@ -122,7 +123,9 @@
     <string name="open_orders_all">全部</string>
     <string name="open_orders_buy">买入</string>
     <string name="open_orders_sell">卖出</string>
-    <string name="open_orders_total_value">全部金额：</string>
+    <string name="open_orders_total_value">全部金额:</string>
+    <string name="open_orders_sell_total_value">卖单金额:</string>
+    <string name="open_orders_buy_total_value">买单金额:</string>
 
 
     <!-- Portfolio Page Related -->
@@ -138,7 +141,5 @@
     <!-- Activity Register -->
     <string name="have_account_login">已注册?</string>
     <string name="action_sign_in">登录</string>
-
-    <string name="edittext_user_name_digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-</string>
 
 </resources>

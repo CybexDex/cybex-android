@@ -69,7 +69,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         }
         if (mBooleanList.get(position)) {
             holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
-            holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.sell_item_background));
+            holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
             if (data.sell_price.base.asset_id.equals(base.id)) {
                 amount = data.sell_price.base.amount / Math.pow(10, base.precision);
                 holder.mVolumeTextView.setText(String.valueOf(amount));
@@ -79,7 +79,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
             }
         } else {
             holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
-            holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.buy_item_background));
+            holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
             if (data.sell_price.quote.asset_id.equals(quote.id)) {
                 amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
                 holder.mVolumeTextView.setText(String.valueOf(amount));

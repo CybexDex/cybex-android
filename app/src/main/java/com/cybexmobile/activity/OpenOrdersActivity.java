@@ -1,6 +1,7 @@
 package com.cybexmobile.activity;
 
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +30,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     private SegmentedGroup mSegmentedGroup;
     private RadioButton mAllSegment, mBuySegment, mSellSegment;
-    private TextView mOpenOrderTotalValue;
+    private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
     private RecyclerView mRecyclerView;
     private OpenOrderRecyclerViewAdapter mOpenOrcerRecycerViewAdapter;
     private List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
@@ -53,6 +54,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mOpenOrcerRecycerViewAdapter);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         initEvent();
     }
@@ -64,6 +66,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mSellSegment = findViewById(R.id.open_orders_segment_sell);
         mRecyclerView = findViewById(R.id.open_orders_recycler_view);
         mOpenOrderTotalValue = findViewById(R.id.open_orders_total_value);
+        mTvOpenOrderTotalTitle = findViewById(R.id.open_orders_title);
         mSegmentedGroup.setOnCheckedChangeListener(this);
 
     }
@@ -84,6 +87,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 mLimitOrderObjectList.addAll(mLimitOrderHashMap.get("All"));
                 mBooleanList.addAll(mBooleanHashMap.get("All"));
                 mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
+                mTvOpenOrderTotalTitle.setText(R.string.open_orders_total_value);
                 break;
 
             case R.id.open_orders_segment_buy:
@@ -94,6 +98,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 mLimitOrderObjectList.addAll(mLimitOrderHashMap.get("Buy"));
                 mBooleanList.addAll(mBooleanHashMap.get("Buy"));
                 mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
+                mTvOpenOrderTotalTitle.setText(R.string.open_orders_buy_total_value);
                 break;
 
             case R.id.open_orders_segment_sell:
@@ -104,6 +109,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 mLimitOrderObjectList.addAll(mLimitOrderHashMap.get("Sell"));
                 mBooleanList.addAll(mBooleanHashMap.get("Sell"));
                 mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
+                mTvOpenOrderTotalTitle.setText(R.string.open_orders_sell_total_value);
                 break;
 
         }
