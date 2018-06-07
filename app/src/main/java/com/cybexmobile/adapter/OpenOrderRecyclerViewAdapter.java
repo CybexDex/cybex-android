@@ -35,8 +35,6 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         mListener = listener;
     }
 
-
-
     class ViewHolder extends RecyclerView.ViewHolder {
         View mView;
         TextView mSellOrBuyTextView;
@@ -44,8 +42,6 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         TextView mQuoteTextView;
         TextView mVolumeTextView;
         TextView mPriceTextView;
-
-
 
         ViewHolder(View view) {
             super(view);

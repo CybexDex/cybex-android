@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitFactory {
 
     public static final String baseUrl = "https://app.cybex.io/";
-    public static final String url_pin_code = "https://faucet.cybex.io/";
+    public static final String url_pin_code = "https://faucet.cybex.io/captcha";
     public static final String url_register = "https://faucet.cybex.io/register";
 
     private CybexHttpApi cybexHttpApi;
@@ -20,9 +20,9 @@ public class RetrofitFactory {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 //.cache(new Cache(10*1024*1024))
                 .addInterceptor(interceptor)

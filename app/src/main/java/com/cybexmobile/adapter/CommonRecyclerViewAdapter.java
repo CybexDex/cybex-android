@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
+import com.cybexmobile.activity.LockAssetsActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -27,7 +28,7 @@ import java.util.TimeZone;
 
 public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecyclerViewAdapter.ViewHolder> {
 
-    private List<LockUpAssetObject> mDatas;
+    private List<LockAssetsActivity.LockUpAssetItem> mDatas;
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mAssetSymbol;
@@ -51,7 +52,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     }
 
 
-    public CommonRecyclerViewAdapter(List<LockUpAssetObject> datas) {
+    public CommonRecyclerViewAdapter(List<LockAssetsActivity.LockUpAssetItem> datas) {
         mDatas = datas;
     }
 
@@ -63,32 +64,31 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        long timeStamp = getTimeStamp(mDatas.get(position).vesting_policy.begin_timestamp);
-        long currentTimeStamp = System.currentTimeMillis();
-        long duration = mDatas.get(position).vesting_policy.vesting_duration_seconds;
-        if (timeStamp + duration * 1000 > currentTimeStamp) {
-//            try {
-                AssetObject assetObject = null;//BitsharesWalletWraper.getInstance().get_objects(mDatas.get(position).balance.asset_id.toString());
-                loadImage(assetObject.id.toString(), holder.mAssetSymbol);
-                String precisionFormmatter ="%." + assetObject.precision + "f";
-                double price = (mDatas.get(position).balance.amount) / Math.pow(10, assetObject.precision);
-                holder.mAssetPrice.setText(String.format(Locale.US, precisionFormmatter, price));
-                holder.mRmbPrice.setText(String.format(Locale.US, "≈¥%.2f", MarketStat.getInstance().getRMBPriceFromHashMap("CYB") * price ));
-
-                if (assetObject.symbol.contains("JADE")) {
-                    holder.mAssetText.setText(assetObject.symbol.substring(5, assetObject.symbol.length()));
-                } else {
-                    holder.mAssetText.setText(assetObject.symbol);
-                }
-//            } catch (NetworkStatusException e) {
-//                e.printStackTrace();
-//            }
-
+        LockAssetsActivity.LockUpAssetItem item = mDatas.get(position);
+        LockUpAssetObject lockUpAssetObject = item.lockUpAssetobject;
+        if(lockUpAssetObject != null){
+            loadImage(lockUpAssetObject.balance.asset_id.toString(), holder.mAssetSymbol);
+            long timeStamp = getTimeStamp(lockUpAssetObject.vesting_policy.begin_timestamp);
+            long currentTimeStamp = System.currentTimeMillis();
+            long duration = lockUpAssetObject.vesting_policy.vesting_duration_seconds;
             long time = (currentTimeStamp - timeStamp) / 1000;
             holder.mProgressbar.setProgress((int) (100 * time / duration));
             holder.mProgressText.setText(String.format("%s%%", String.valueOf((100 * time / duration))));
             holder.mExpirationDate.setText(getDate(timeStamp + duration * 1000));
         }
+        AssetObject assetObject = item.assetObject;
+        if(assetObject != null){
+            String precisionFormmatter ="%." + assetObject.precision + "f";
+            double price = (lockUpAssetObject.balance.amount) / Math.pow(10, assetObject.precision);
+            holder.mAssetPrice.setText(String.format(Locale.US, precisionFormmatter, price));
+            holder.mRmbPrice.setText(String.format(Locale.US, "≈¥%.2f", item.cybRmbPrice * price ));
+            if (assetObject.symbol.contains("JADE")) {
+                holder.mAssetText.setText(assetObject.symbol.substring(5, assetObject.symbol.length()));
+            } else {
+                holder.mAssetText.setText(assetObject.symbol);
+            }
+        }
+
     }
 
     @Override
