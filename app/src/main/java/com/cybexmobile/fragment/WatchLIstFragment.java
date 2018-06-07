@@ -1,29 +1,45 @@
 package com.cybexmobile.fragment;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
-import com.cybexmobile.fragment.data.WatchListData;
+import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.api.WebSocketClient;
+import com.cybexmobile.event.Event;
+import com.cybexmobile.exception.NetworkStatusException;
+import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
+import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.market.MarketStat;
+import com.cybexmobile.market.MarketTicker;
+import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.utils.PriceUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,123 +48,134 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketStatUpdateListener, MarketStat.getResultListener {
+public class WatchLIstFragment extends Fragment {
 
     private static final String TAG = "WatchListFragment";
     private MarketStat marketStat;
-    private List<WatchListData> watchListDataList = new ArrayList<>();
+    private List<WatchlistData> mWatchlistData = new ArrayList<>();
     protected RecyclerView mRecyclerView;
     private TabLayout mTabLayout;
-    private Context mContext;
     private View view;
     private ProgressBar mProgressBar;
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    private int mColumnCount = 1;
-    private Handler mHandler;
 
     private String[] mTabs = new String[]{"ETH", "BTC", "USDT", "CYB"};
-    private String mTab;
+    private String mCurrentTab;
+    private String mCurrentBaseAssetId;
     private WatchListRecyclerViewAdapter mWatchListRecyclerViewAdapter;
     private OnListFragmentInteractionListener mListener;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public WatchLIstFragment() {
-        marketStat = MarketStat.getInstance();
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static WatchLIstFragment newInstance(int columnCount) {
-        WatchLIstFragment fragment = new WatchLIstFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    private WebSocketService mWebSocketService;
+    private boolean mIsViewCreated;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+        EventBus.getDefault().register(this);
+        marketStat = MarketStat.getInstance();
+        Intent intent = new Intent(getContext(), WebSocketService.class);
+        getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_watchlist, container, false);
-        mContext = view.getContext();
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+        mRecyclerView = view.findViewById(R.id.list);
         mTabLayout = view.findViewById(R.id.watch_list_coin_tab);
-        addTabsToTabLayout(mTabs);
-        setOnClickListenerToTab();
-        mProgressBar = (ProgressBar) view.findViewById(R.id.watch_list_progress_bar);
-        if (marketStat.getmWatchListDataListHashMap().get("1.3.2").size() == 0) {
-            mProgressBar.setVisibility(View.VISIBLE);
-        }
-        watchListDataList.addAll(marketStat.getmWatchListDataListHashMap().get("1.3.2"));
-        mWatchListRecyclerViewAdapter = new WatchListRecyclerViewAdapter(watchListDataList, mListener, getContext());
-        if (mColumnCount <= 1) {
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(mContext, 1);
-            mRecyclerView.setHasFixedSize(true);
-            mRecyclerView.setLayoutManager(layoutManager);
-            mRecyclerView.setNestedScrollingEnabled(false);
-        } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, mColumnCount));
-        }
+        mProgressBar = view.findViewById(R.id.watch_list_progress_bar);
+        mWatchListRecyclerViewAdapter = new WatchListRecyclerViewAdapter(mWatchlistData, mListener, getContext());
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mRecyclerView.setAdapter(mWatchListRecyclerViewAdapter);
+        initTabs(mTabs);
         return view;
     }
 
-    private void addTabsToTabLayout(String[] tabs) {
-        for (String tab : tabs) {
-            mTabLayout.addTab(mTabLayout.newTab().setText(tab));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mIsViewCreated = true;
+        loadWatchlistData();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        getContext().unbindService(mConnection);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(String string) {
+        if(mWebSocketService != null){
+            mWebSocketService.loadWatchlistData(mCurrentBaseAssetId);
         }
     }
 
-    private void setOnClickListenerToTab() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateWatchlist(Event.UpdateWatchlist event){
+        WatchlistData data = event.getData();
+        int index = mWatchlistData.indexOf(data);
+        if(index != -1){
+            mWatchlistData.set(index, data);
+            mWatchListRecyclerViewAdapter.notifyItemChanged(index);
+        }
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateWatchlists(Event.UpdateWatchlists event){
+        mProgressBar.setVisibility(View.GONE);
+        mWatchlistData.clear();
+        mWatchlistData.addAll(event.getData());
+        mWatchListRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    private void loadWatchlistData(){
+        if(mWebSocketService != null && mIsViewCreated){
+            mWebSocketService.loadWatchlistData(mCurrentBaseAssetId);
+        }
+
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
+            loadWatchlistData();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
+
+    private void initTabs(String[] tabs) {
+        setTabListener();
+        for (String tab : tabs) {
+            mTabLayout.addTab(mTabLayout.newTab().setText(tab));
+        }
+
+    }
+
+    private void setTabListener() {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                final String baseAsset = getAssetFromTab(tab.getText().toString());
-                mTab  = (String) tab.getText();
-                if (marketStat.getmCoinListHashMap().get(baseAsset) == null) {
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    mRecyclerView.setVisibility(View.GONE);
-                    marketStat.getCoinPairConfiguration(new MarketStat.callBackListener() {
-                        @Override
-                        public void continueGetWebSocketConnect() {
-                            EventBus.getDefault().unregister(WatchLIstFragment.this);
-                            marketStat.startRun(WatchLIstFragment.this, baseAsset, mTab);
-                        }
-                    }, baseAsset);
-
-                } else {
-                    if (!EventBus.getDefault().isRegistered(WatchLIstFragment.this) && marketStat.getmWatchListDataListHashMap().get(baseAsset).size() != 0) {
-                        EventBus.getDefault().register(WatchLIstFragment.this);
-                    }
-                    if (watchListDataList != null) {
-                        watchListDataList.clear();
-                        watchListDataList.addAll(marketStat.getmWatchListDataListHashMap().get(baseAsset));
-                    }
-                    mWatchListRecyclerViewAdapter.notifyDataSetChanged();
-                }
-
+                mCurrentTab = tab.getText().toString();
+                mCurrentBaseAssetId = getAssetId(mCurrentTab);
+                mProgressBar.setVisibility(View.VISIBLE);
+                loadWatchlistData();
             }
 
             @Override
@@ -163,9 +190,9 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
         });
     }
 
-    private String getAssetFromTab(String tabName) {
+    private String getAssetId(String assetName) {
         String result = "1.3.2";
-        switch (tabName) {
+        switch (assetName) {
             case "CYB":
                 result = "1.3.0";
                 break;
@@ -183,56 +210,8 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
     }
 
     @Override
-    public void getResultListener(HashMap<String, List<WatchListData>> DataList, String baseAsset) {
-        if (!EventBus.getDefault().isRegistered(WatchLIstFragment.this) && DataList.get(baseAsset).size() != 0) {
-            EventBus.getDefault().register(WatchLIstFragment.this);
-        }
-        if (watchListDataList != null) {
-            watchListDataList.clear();
-            watchListDataList.addAll(DataList.get(baseAsset));
-        }
-        mWatchListRecyclerViewAdapter.notifyDataSetChanged();
-        mProgressBar.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        for (int i = 0; i < watchListDataList.size(); i++) {
-            if (string.equals(watchListDataList.get(i).getSubscribeId())) {
-                updateWatchListData(watchListDataList.get(i), i);
-            }
-        }
-    }
-
-    private void updateWatchListData(final WatchListData watchListData, final int i) {
-        final Handler handler = new Handler();
-        Thread mThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final WatchListData newWatchListData = marketStat.getWatchLIstData(watchListData.getBaseId(), watchListData.getQuoteId(), watchListData.getSubscribeId(), mTab);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (watchListDataList.size() > i) {
-                            mWatchListRecyclerViewAdapter.setItemToPosition(newWatchListData, i);
-                        }
-                    }
-                });
-            }
-        });
-        mThread.start();
-
-    }
-
-    @Override
-    public void onMarketStatUpdate(MarketStat.Stat stat) {
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -265,6 +244,8 @@ public class WatchLIstFragment extends Fragment implements MarketStat.OnMarketSt
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(WatchListData item, List<WatchListData> dataList, int position);
+        void onListFragmentInteraction(WatchlistData item, List<WatchlistData> dataList, int position);
     }
+
+
 }

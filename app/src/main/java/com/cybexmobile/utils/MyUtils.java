@@ -6,11 +6,6 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class MyUtils {
-    /**
-     * Prevent class instantiation.
-     */
-    private MyUtils() {
-    }
 
     public static String getVolUnit(float num) {
 
@@ -70,7 +65,6 @@ public class MyUtils {
     }
 
     public static String getNumberKMGExpressionFormat(double number) {
-
         String result = null;
         int e = (int) Math.floor(Math.log10(number));
 

@@ -24,18 +24,10 @@ public class FullNodeServerSelect {
             "wss://secure.freedomledger.com/ws",
             "wss://dexnode.net/ws",
             "wss://altcap.io/ws",
-//            "wss://bitshares.crypto.fans/ws"
             "wss://hongkong.cybex.io/"
     );
 
     public String getServer() {
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BitsharesApplication.getInstance());
-//        String strServer = sharedPreferences.getString("full_node_api_server", "autoselect");
-//        if (strServer.equals("autoselect")) {
-//            return getAutoSelectServer();
-//        } else {
-//            return strServer;
-//        }
         return "wss://hongkong.cybex.io/";
     }
 

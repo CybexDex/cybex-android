@@ -2,7 +2,6 @@ package com.cybexmobile.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -44,7 +42,10 @@ import java.util.List;
 
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.R;
+import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.exception.NetworkStatusException;
+import com.cybexmobile.graphene.chain.AccountObject;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -69,10 +70,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mUserNameView;
@@ -157,7 +154,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    login();
                     return true;
                 }
                 return false;
@@ -168,7 +165,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         mBtnSignIn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                login();
             }
         });
 
@@ -203,9 +200,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mAuthTask != null) {
-            mAuthTask.cancel(true);
-        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -257,7 +251,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     /**
-     * Callback received when a permissions request has been completed.
+     * MessageCallback received when a permissions request has been completed.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -275,18 +269,52 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+    private void login() {
         // Store values at the time of the login attempt.
         String email = mUserNameView.getText().toString().trim();
         String password = mPasswordView.getText().toString().trim();
         if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
             return;
         }
-        mAuthTask = new UserLoginTask(email, password, this);
-        mAuthTask.execute((Void) null);
+        showLoadDialog();
+        try {
+            BitsharesWalletWraper.getInstance().get_account_object(email, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+                @Override
+                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                    AccountObject accountObject = reply.result;
+                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, email, password);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideLoadDialog();
+                            if (result == 0) {
+                                Intent returnIntent = new Intent();
+                                returnIntent.putExtra("LogIn", true);
+                                returnIntent.putExtra("name", email);
+                                setResult(Activity.RESULT_OK, returnIntent);
+                                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
+                                sharedPreferences.edit().putString("name", email).apply();
+                                sharedPreferences.edit().putString("password", password).apply();
+                                finish();
+                            } else {
+                                Toast toast = Toast.makeText(getApplicationContext(), R.string.error_incorrect_password, Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER, 0, 0);
+                                toast.show();
+                            }
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure() {
+                    hideLoadDialog();
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -341,62 +369,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-        private final Context mContext;
-
-        UserLoginTask(String email, String password, Context context) {
-            mEmail = email;
-            mPassword = password;
-            mContext = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showLoadDialog();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            nRet = BitsharesWalletWraper.getInstance().import_account_password(mEmail, mPassword);
-            return nRet == 0 ? true : false;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            hideLoadDialog();
-            if (success) {
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("LogIn", true);
-                returnIntent.putExtra("name", mEmail);
-                setResult(Activity.RESULT_OK, returnIntent);
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-                sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
-                sharedPreferences.edit().putString("name", mEmail).apply();
-                sharedPreferences.edit().putString("password", mPassword).apply();
-                finish();
-            } else {
-                Toast toast = Toast.makeText(getApplicationContext(), R.string.error_incorrect_password, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            hideLoadDialog();
-            mAuthTask = null;
-        }
     }
 }
 

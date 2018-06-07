@@ -9,49 +9,42 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.market.MarketStat;
+import com.cybexmobile.data.AppVersion;
 import com.cybexmobile.R;
-import com.g00fy2.versioncompare.Version;
+import com.cybexmobile.service.WebSocketService;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-public class SplashActivity extends BaseActivity implements MarketStat.startFirstActivityListener {
-
-    private Handler mHandler = new Handler();
+public class SplashActivity extends BaseActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        if (!isNetworkAvailable()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setCancelable(false);
-            builder.setMessage("No Internet Connection, Please turn on Internet");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
-        } else {
-            checkVersion();
-        }
+        Intent intent = new Intent(SplashActivity.this, WebSocketService.class);
+        startService(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent i = new Intent(SplashActivity.this, BottomNavigationActivity.class);
+                startActivity(i);
+                finish();
+            }
+        }, 2000);
     }
 
     private boolean isNetworkAvailable() {
@@ -61,84 +54,58 @@ public class SplashActivity extends BaseActivity implements MarketStat.startFirs
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    @Override
-    public void startToRunFirstActivity() {
-        Intent i = new Intent(SplashActivity.this, BottomNavigationActivity.class);
-        startActivity(i);
-        finish();
-    }
-
     private void checkVersion() {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://app.cybex.io/Android_update.json")
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                call.cancel();
-            }
+        RetrofitFactory.getInstance()
+                .api()
+                .checkAppUpdate()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AppVersion>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            @Override
-            public void onResponse(final Call call, Response response) throws IOException {
-                final String versionResponse = response.body().string();
-                Log.e("mydata", versionResponse);
-                JSONObject jsonObject;
-                try {
-                    jsonObject = new JSONObject(versionResponse);
-                    String versionName = jsonObject.getString("version");
-                    final String updateUrl = jsonObject.getString("url");
-                    JSONObject forceObject = jsonObject.getJSONObject("force");
-                    boolean ifForce = forceObject.getBoolean(versionName);
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(SplashActivity.this);
-                    Version localVersion = new Version(BuildConfig.VERSION_NAME);
-                    Version remoteVersion = new Version(versionName);
-                    if (localVersion.isLowerThan(remoteVersion)) {
-                        builder.setCancelable(false);
-                        builder.setTitle("Update Available");
-                        builder.setMessage("A new version of CybexDex is available. Please update to newest version now");
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
-                                startActivity(browseIntent);
-                            }
-                        });
-                        if (!ifForce) {
-                            builder.setNegativeButton("Next Time", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            MarketStat.getInstance().getWebSocketConnect(SplashActivity.this);
-
-                                        }
-                                    }, 2000);
-                                }
-                            });
-                        }
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                builder.create().show();
-                            }
-                        });
-
-                    } else {
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                MarketStat.getInstance().getWebSocketConnect(SplashActivity.this);
-                            }
-                        }, 2000);
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    @Override
+                    public void onNext(AppVersion appVersion) {
+                        if(appVersion.compareVersion(BuildConfig.VERSION_NAME)){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(SplashActivity.this)
+                                    .setCancelable(false)
+                                    .setTitle(R.string.setting_version_update_available)
+                                    .setMessage(R.string.setting_version_update_content)
+                                    .setPositiveButton(R.string.setting_version_update_now, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(appVersion.getUrl()));
+                                            startActivity(browseIntent);
+                                        }
+                                    });
+                            if(!appVersion.isForceUpdate()){
+                                builder.setNegativeButton(R.string.setting_version_update_next_time, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                            builder.show();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(), R.string.setting_version_is_the_latest, Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        hideLoadDialog();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        hideLoadDialog();
+                    }
+                });
     }
+
 }

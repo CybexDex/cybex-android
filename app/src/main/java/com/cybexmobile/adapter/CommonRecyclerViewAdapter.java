@@ -67,8 +67,8 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         long currentTimeStamp = System.currentTimeMillis();
         long duration = mDatas.get(position).vesting_policy.vesting_duration_seconds;
         if (timeStamp + duration * 1000 > currentTimeStamp) {
-            try {
-                AssetObject assetObject = BitsharesWalletWraper.getInstance().get_objects(mDatas.get(position).balance.asset_id.toString());
+//            try {
+                AssetObject assetObject = null;//BitsharesWalletWraper.getInstance().get_objects(mDatas.get(position).balance.asset_id.toString());
                 loadImage(assetObject.id.toString(), holder.mAssetSymbol);
                 String precisionFormmatter ="%." + assetObject.precision + "f";
                 double price = (mDatas.get(position).balance.amount) / Math.pow(10, assetObject.precision);
@@ -80,9 +80,9 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
                 } else {
                     holder.mAssetText.setText(assetObject.symbol);
                 }
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
-            }
+//            } catch (NetworkStatusException e) {
+//                e.printStackTrace();
+//            }
 
             long time = (currentTimeStamp - timeStamp) / 1000;
             holder.mProgressbar.setProgress((int) (100 * time / duration));

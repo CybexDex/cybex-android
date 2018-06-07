@@ -86,6 +86,8 @@
             android:screenOrientation="portrait"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <service android:name=".service.WebSocketService"/>
     </application>
 
 </manifest>

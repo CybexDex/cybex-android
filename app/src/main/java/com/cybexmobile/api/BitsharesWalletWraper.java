@@ -3,14 +3,12 @@ package com.cybexmobile.api;
 
 import android.util.Log;
 
-import com.cybexmobile.constant.ErrorCode;
 import com.cybexmobile.exception.NetworkStatusException;
-import com.cybexmobile.faucet.CreateAccountException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
-import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
@@ -18,7 +16,6 @@ import com.cybexmobile.graphene.chain.OperationHistoryObject;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
-import com.cybexmobile.market.MarketTrade;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,13 +34,8 @@ public class BitsharesWalletWraper {
     private Map<ObjectId<AccountObject>, List<OperationHistoryObject>> mMapAccountId2History = new ConcurrentHashMap<>();
     private Map<ObjectId<AssetObject>, AssetObject> mMapAssetId2Object = new ConcurrentHashMap<>();
     private String mstrWalletFilePath;
-    private List<FullAccountObject> mFullAccountObjects = new ArrayList<>();
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
-    private int mnStatus = STATUS_INVALID;
-
-    private static final int STATUS_INVALID = -1;
-    private static final int STATUS_INITIALIZED = 0;
 
     private BitshareData mBitshareData;
 
@@ -60,17 +52,12 @@ public class BitsharesWalletWraper {
         mWalletApi.reset();
         mWalletApi = new WalletApi();
         mMapAccountId2Object.clear();
-        ;
         mMapAccountId2Asset.clear();
-        ;
         mMapAccountId2History.clear();
         mMapAssetId2Object.clear();
-        ;
 
         File file = new File(mstrWalletFilePath);
         file.delete();
-
-        mnStatus = STATUS_INVALID;
     }
 
     public AccountObject get_account() {
@@ -98,18 +85,8 @@ public class BitsharesWalletWraper {
         return mWalletApi.save_wallet_file(mstrWalletFilePath);
     }
 
-    public synchronized int build_connect() {
-        if (mnStatus == STATUS_INITIALIZED) {
-            return 0;
-        }
-
-        int nRet = mWalletApi.initialize();
-        if (nRet != 0) {
-            return nRet;
-        }
-
-        mnStatus = STATUS_INITIALIZED;
-        return 0;
+    public void build_connect() {
+        mWalletApi.initialize();
     }
 
 
@@ -233,26 +210,16 @@ public class BitsharesWalletWraper {
 //        return nRet;
 //    }
 
-    public int import_account_password(String strAccountName,
-                                       String strPassword) {
+    public int import_account_password(AccountObject accountObject, String strAccountName, String strPassword) {
         mWalletApi.set_password(strPassword);
-        try {
-            int nRet = mWalletApi.import_account_password(strAccountName, strPassword);
-            if (nRet != 0) {
-                return nRet;
+        int nRet = mWalletApi.import_account_password(accountObject, strAccountName, strPassword);
+        if(nRet == 0){
+            save_wallet_file();
+            for (AccountObject account : list_my_accounts()) {
+                mMapAccountId2Object.put(account.id, account);
             }
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-            return -1;
         }
-
-        save_wallet_file();
-
-        for (AccountObject accountObject : list_my_accounts()) {
-            mMapAccountId2Object.put(accountObject.id, accountObject);
-        }
-
-        return 0;
+        return nRet;
 
     }
 
@@ -264,27 +231,27 @@ public class BitsharesWalletWraper {
 //        return mWalletApi.lock();
 //    }
 
-    public List<Asset> list_balances(boolean bRefresh) throws NetworkStatusException {
-        List<Asset> listAllAsset = new ArrayList<>();
-        for (AccountObject accountObject : list_my_accounts()) {
-            List<Asset> listAsset = list_account_balance(accountObject.id, bRefresh);
+//    public List<Asset> list_balances(boolean bRefresh) throws NetworkStatusException {
+//        List<Asset> listAllAsset = new ArrayList<>();
+//        for (AccountObject accountObject : list_my_accounts()) {
+//            List<Asset> listAsset = list_account_balance(accountObject.id, bRefresh);
+//
+//            listAllAsset.addAll(listAsset);
+//        }
+//
+//        return listAllAsset;
+//    }
 
-            listAllAsset.addAll(listAsset);
-        }
-
-        return listAllAsset;
-    }
-
-    public List<Asset> list_account_balance(ObjectId<AccountObject> accountObjectId,
-                                            boolean bRefresh) throws NetworkStatusException {
-        List<Asset> listAsset = mMapAccountId2Asset.get(accountObjectId);
-        if (bRefresh || listAsset == null) {
-            listAsset = mWalletApi.list_account_balance(accountObjectId);
-            mMapAccountId2Asset.put(accountObjectId, listAsset);
-        }
-
-        return listAsset;
-    }
+//    public List<Asset> list_account_balance(ObjectId<AccountObject> accountObjectId,
+//                                            boolean bRefresh) throws NetworkStatusException {
+//        List<Asset> listAsset = mMapAccountId2Asset.get(accountObjectId);
+//        if (bRefresh || listAsset == null) {
+//            listAsset = mWalletApi.list_account_balance(accountObjectId);
+//            mMapAccountId2Asset.put(accountObjectId, listAsset);
+//        }
+//
+//        return listAsset;
+//    }
 
 //    public List<OperationHistoryObject> get_history(boolean bRefresh) throws NetworkStatusException {
 //        List<OperationHistoryObject> listAllHistoryObject = new ArrayList<>();
@@ -312,65 +279,70 @@ public class BitsharesWalletWraper {
 //        return listHistoryObject;
 //    }
 
-    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
-        return mWalletApi.list_assets(strLowerBound, nLimit);
+//    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
+//        return mWalletApi.list_assets(strLowerBound, nLimit);
+//    }
+
+//    public Map<ObjectId<AssetObject>, AssetObject> get_assets(List<ObjectId<AssetObject>> listAssetObjectId) throws NetworkStatusException {
+//        Map<ObjectId<AssetObject>, AssetObject> mapId2Object = new HashMap<>();
+//
+//        List<ObjectId<AssetObject>> listRequestId = new ArrayList<>();
+//        for (ObjectId<AssetObject> objectId : listAssetObjectId) {
+//            AssetObject assetObject = mMapAssetId2Object.get(objectId);
+//            if (assetObject != null) {
+//                mapId2Object.put(objectId, assetObject);
+//            } else {
+//                listRequestId.add(objectId);
+//            }
+//        }
+//
+//        if (listRequestId.isEmpty() == false) {
+//            List<AssetObject> listAssetObject = mWalletApi.get_assets(listRequestId);
+//            for (AssetObject assetObject : listAssetObject) {
+//                mapId2Object.put(assetObject.id, assetObject);
+//                mMapAssetId2Object.put(assetObject.id, assetObject);
+//            }
+//        }
+//
+//        return mapId2Object;
+//    }
+
+    public void lookup_asset_symbols(String strAssetSymbol, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+        mWalletApi.lookup_asset_symbols(strAssetSymbol, callback);
     }
 
-    public Map<ObjectId<AssetObject>, AssetObject> get_assets(List<ObjectId<AssetObject>> listAssetObjectId) throws NetworkStatusException {
-        Map<ObjectId<AssetObject>, AssetObject> mapId2Object = new HashMap<>();
-
-        List<ObjectId<AssetObject>> listRequestId = new ArrayList<>();
-        for (ObjectId<AssetObject> objectId : listAssetObjectId) {
-            AssetObject assetObject = mMapAssetId2Object.get(objectId);
-            if (assetObject != null) {
-                mapId2Object.put(objectId, assetObject);
-            } else {
-                listRequestId.add(objectId);
-            }
-        }
-
-        if (listRequestId.isEmpty() == false) {
-            List<AssetObject> listAssetObject = mWalletApi.get_assets(listRequestId);
-            for (AssetObject assetObject : listAssetObject) {
-                mapId2Object.put(assetObject.id, assetObject);
-                mMapAssetId2Object.put(assetObject.id, assetObject);
-            }
-        }
-
-        return mapId2Object;
+    //get asset detail
+    public void get_objects(String objectId, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_objects(objectId, callback);
     }
 
-    public AssetObject lookup_asset_symbols(String strAssetSymbol) throws NetworkStatusException {
-        return mWalletApi.lookup_asset_symbols(strAssetSymbol);
+    public void get_objects(List<String> objectIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_objects(objectIds, callback);
     }
 
-    public AssetObject get_objects(String objectId) throws NetworkStatusException {
-        return mWalletApi.get_objects(objectId);
-    }
-
-    public Map<ObjectId<AccountObject>, AccountObject> get_accounts(List<ObjectId<AccountObject>> listAccountObjectId) throws NetworkStatusException {
-        Map<ObjectId<AccountObject>, AccountObject> mapId2Object = new HashMap<>();
-
-        List<ObjectId<AccountObject>> listRequestId = new ArrayList<>();
-        for (ObjectId<AccountObject> objectId : listAccountObjectId) {
-            AccountObject accountObject = mMapAccountId2Object.get(objectId);
-            if (accountObject != null) {
-                mapId2Object.put(objectId, accountObject);
-            } else {
-                listRequestId.add(objectId);
-            }
-        }
-
-        if (listRequestId.isEmpty() == false) {
-            List<AccountObject> listAccountObject = mWalletApi.get_accounts(listRequestId);
-            for (AccountObject accountObject : listAccountObject) {
-                mapId2Object.put(accountObject.id, accountObject);
-                mMapAccountId2Object.put(accountObject.id, accountObject);
-            }
-        }
-
-        return mapId2Object;
-    }
+//    public Map<ObjectId<AccountObject>, AccountObject> get_accounts(List<ObjectId<AccountObject>> listAccountObjectId) throws NetworkStatusException {
+//        Map<ObjectId<AccountObject>, AccountObject> mapId2Object = new HashMap<>();
+//
+//        List<ObjectId<AccountObject>> listRequestId = new ArrayList<>();
+//        for (ObjectId<AccountObject> objectId : listAccountObjectId) {
+//            AccountObject accountObject = mMapAccountId2Object.get(objectId);
+//            if (accountObject != null) {
+//                mapId2Object.put(objectId, accountObject);
+//            } else {
+//                listRequestId.add(objectId);
+//            }
+//        }
+//
+//        if (listRequestId.isEmpty() == false) {
+//            List<AccountObject> listAccountObject = mWalletApi.get_accounts(listRequestId);
+//            for (AccountObject accountObject : listAccountObject) {
+//                mapId2Object.put(accountObject.id, accountObject);
+//                mMapAccountId2Object.put(accountObject.id, accountObject);
+//            }
+//        }
+//
+//        return mapId2Object;
+//    }
 
 //    public block_header get_block_header(int nBlockNumber) throws NetworkStatusException {
 //        return mWalletApi.get_block_header(nBlockNumber);
@@ -502,45 +474,45 @@ public class BitsharesWalletWraper {
 //        return mapId2BucketObject;
 //    }
 
-    public List<BucketObject> get_market_history(ObjectId<AssetObject> assetObjectId1,
-                                                 ObjectId<AssetObject> assetObjectId2,
-                                                 int nBucket, Date dateStart,
-                                                 Date dateEnd) throws NetworkStatusException {
-        return mWalletApi.get_market_history(
-                assetObjectId1, assetObjectId2, nBucket, dateStart, dateEnd);
+    public void get_market_history(ObjectId<AssetObject> baseAssetId,
+                                   ObjectId<AssetObject> quoteAssetId,
+                                   int nBucket, Date dateStart, Date dateEnd,
+                                   WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_market_history(baseAssetId, quoteAssetId, nBucket, dateStart, dateEnd, callback);
     }
 
-    public String subscribe_to_market(String base, String quote) throws NetworkStatusException {
-        return mWalletApi.subscribe_to_market(base, quote);
+    public void subscribe_to_market(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<Object>> callback) throws NetworkStatusException {
+        mWalletApi.subscribe_to_market(base, quote, callback);
     }
 
-    public void set_subscribe_market(boolean filter) throws NetworkStatusException {
-        mWalletApi.set_subscribe_market(filter);
+//    public void set_subscribe_market(boolean filter) throws NetworkStatusException {
+//        mWalletApi.set_subscribe_market(filter);
+//    }
+
+    //
+    public void get_ticker(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>> callback) throws NetworkStatusException {
+        mWalletApi.get_ticker(base, quote, callback);
     }
 
-    public MarketTicker get_ticker(String base, String quote) throws NetworkStatusException {
-        return mWalletApi.get_ticker(base, quote);
+//    public List<MarketTrade> get_trade_history(String base, String quote, Date start, Date end, int limit)
+//            throws NetworkStatusException {
+//        return mWalletApi.get_trade_history(base, quote, start, end, limit);
+//    }
+
+    public void get_fill_order_history(ObjectId<AssetObject> base,
+                                       ObjectId<AssetObject> quote,
+                                       int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<HashMap<String, Object>>>> callback) throws NetworkStatusException {
+        mWalletApi.get_fill_order_history(base, quote, limit, callback);
     }
 
-    public List<MarketTrade> get_trade_history(String base, String quote, Date start, Date end, int limit)
-            throws NetworkStatusException {
-        return mWalletApi.get_trade_history(base, quote, start, end, limit);
+    public void get_limit_orders(ObjectId<AssetObject> base,
+                                 ObjectId<AssetObject> quote,
+                                 int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_limit_orders(base, quote, limit, callback);
     }
 
-    public List<HashMap<String, Object>> get_fill_order_history(ObjectId<AssetObject> base,
-                                                                ObjectId<AssetObject> quote,
-                                                                int limit) throws NetworkStatusException {
-        return mWalletApi.get_fill_order_history(base, quote, limit);
-    }
-
-    public List<LimitOrderObject> get_limit_orders(ObjectId<AssetObject> base,
-                                                   ObjectId<AssetObject> quote,
-                                                   int limit) throws NetworkStatusException {
-        return mWalletApi.get_limit_orders(base, quote, limit);
-    }
-
-    public List<LockUpAssetObject> get_balance_objects(List<String> addresses) throws NetworkStatusException {
-        return mWalletApi.get_balance_objects(addresses);
+    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockUpAssetObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_balance_objects(addresses, callback);
     }
 
 //    public signed_transaction sell_asset(String amountToSell, String symbolToSell,
@@ -585,12 +557,12 @@ public class BitsharesWalletWraper {
 //        return mWalletApi.buy(base, quote, rate, amount, timeoutSecs);
 //    }
 
-    public BitshareData getBitshareData() {
-        return mBitshareData;
-    }
+//    public BitshareData getBitshareData() {
+//        return mBitshareData;
+//    }
 
-    public AccountObject get_account_object(String strAccount) throws NetworkStatusException {
-        return mWalletApi.get_account(strAccount);
+    public void get_account_object(String strAccount, WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>> callback) throws NetworkStatusException {
+        mWalletApi.get_account(strAccount, callback);
     }
 
 //    public Asset transfer_calculate_fee(String strAmount,
@@ -603,15 +575,11 @@ public class BitsharesWalletWraper {
 //        return mWalletApi.decrypt_memo_message(memoData);
 //    }
 
-    public List<FullAccountObject> get_full_accounts(List<String> names, boolean subscribe)
-            throws NetworkStatusException {
-        mFullAccountObjects.addAll(mWalletApi.get_full_accounts(names, subscribe));
-        return mFullAccountObjects;
+    public void get_full_accounts(List<String> names, boolean subscribe,
+                                                     WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>> callback) throws NetworkStatusException {
+        mWalletApi.get_full_accounts(names, subscribe, callback);
     }
 
-    public List<FullAccountObject> getMyFullAccountInstance() {
-        return mFullAccountObjects;
-    }
     //Todo: add asset_object_to_id_map
 //    public List<ObjectId<AssetObject>> getObjectList() {
 //        if (mObjectList.size() == 0) {
@@ -628,16 +596,6 @@ public class BitsharesWalletWraper {
 //    public global_property_object get_global_properties() throws NetworkStatusException {
 //        return mWalletApi.get_global_properties();
 //    }
-
-    public int create_account_with_password(String strAccountName,
-                                            String strPassword, String pinCode, String capId) throws CreateAccountException {
-        try {
-            return mWalletApi.create_account_with_password(strAccountName, strPassword, pinCode, capId);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-            return ErrorCode.ERROR_NETWORK_FAIL;
-        }
-    }
 
     private List<String> getAddressesForLockAsset(String strAccountName, String strPassword) {
         PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);

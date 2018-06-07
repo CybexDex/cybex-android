@@ -56,10 +56,10 @@ public class PortfolioListRecyclerViewAdapter extends RecyclerView.Adapter<Portf
     public void onBindViewHolder(ViewHolder holder, int position) {
         AssetObject mAssetObject;
         double priceCyb;
-        try {
-            mAssetObject = BitsharesWalletWraper.getInstance().get_objects(mAccountBalanceObjectList.get(position).asset_type.toString());
+//       s
+            mAssetObject = null;//BitsharesWalletWraper.getInstance().get_objects(mAccountBalanceObjectList.get(position).asset_type.toString());
             if (!mAssetObject.symbol.equals("CYB")) {
-                priceCyb = BitsharesWalletWraper.getInstance().get_ticker("1.3.0", mAssetObject.id.toString()).latest;
+                priceCyb = 0;//BitsharesWalletWraper.getInstance().get_ticker("1.3.0", mAssetObject.id.toString()).latest;
             } else {
                 priceCyb = 1;
             }
@@ -69,9 +69,9 @@ public class PortfolioListRecyclerViewAdapter extends RecyclerView.Adapter<Portf
             holder.mAssetPrice.setText(String.format(Locale.US, "%.5f", mAccountBalanceObjectList.get(position).balance / Math.pow(10 ,mAssetObject.precision)));
             holder.mAssetPriceCYB.setText(String.format(Locale.US, "%.5f CYB", price * priceCyb));
             holder.mAssetRmb.setText(String.format(Locale.US, "≈¥%.2f", MarketStat.getInstance().getRMBPriceFromHashMap("CYB") * price * priceCyb));
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
+//        } catch (NetworkStatusException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

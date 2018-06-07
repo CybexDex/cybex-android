@@ -1,6 +1,5 @@
 package com.cybexmobile.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -21,12 +20,18 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.api.RetrofitFactory;
+import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.exception.ErrorCodeException;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.faucet.CreateAccountException;
+import com.cybexmobile.faucet.CreateAccountRequest;
+import com.cybexmobile.faucet.CreateAccountResponse;
 import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybexmobile.graphene.chain.PrivateKey;
+import com.cybexmobile.graphene.chain.Types;
 import com.pixplicity.sharp.Sharp;
 
 import org.json.JSONException;
@@ -36,13 +41,13 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static android.webkit.WebViewClient.ERROR_FILE_NOT_FOUND;
 import static com.cybexmobile.constant.ErrorCode.ERROR_ACCOUNT_OBJECT_EXIST;
@@ -283,29 +288,42 @@ public class RegisterActivity extends BaseActivity {
     };
 
     private void requestForPinCode() {
-        new Thread(() -> {
-            OkHttpClient okHttpClient = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url("https://faucet.cybex.io/captcha")
-                    .build();
-            JSONObject jsonObject;
-            try {
-                Response response = okHttpClient.newCall(request).execute();
-                if (response.isSuccessful()) {
-                    jsonObject = new JSONObject(response.body().string());
-                    final String svgString = jsonObject.getString("data");
-                    mCapId = jsonObject.getString("id");
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
+        RetrofitFactory.getInstance()
+                .api()
+                .getPinCode(RetrofitFactory.url_pin_code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(responseBody.string());
+                            String svgString = jsonObject.getString("data");
+                            mCapId = jsonObject.getString("id");
                             Sharp.loadString(svgString).into(mPinCodeImageView);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    });
-                }
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-        }).start();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void setOnClickListener() {
@@ -315,7 +333,6 @@ public class RegisterActivity extends BaseActivity {
         });
         mTvLoginIn.setOnClickListener(v -> onBackPressed());
         mSignInButton.setOnClickListener(v -> {
-            showLoadDialog();
             String account = mUserNameTextView.getText().toString().trim();
             String password = mPassWordTextView.getText().toString().trim();
             String passwordConfirm = mConfirmationTextView.getText().toString();
@@ -357,79 +374,119 @@ public class RegisterActivity extends BaseActivity {
         mSignInButton.setEnabled(enabled);
     }
 
-    @SuppressLint("CheckResult")
+
+    private CreateAccountRequest parseAccount(String strAccountName,
+                                              String strPassword,
+                                              String pinCode,
+                                              String capId){
+        PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
+        PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
+        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
+        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
+        CreateAccountRequest createAccountRequest = new CreateAccountRequest();
+        CreateAccountRequest.Account account = new CreateAccountRequest.Account();
+        CreateAccountRequest.Cap cap = new CreateAccountRequest.Cap();
+        cap.id = capId;
+        cap.captcha = pinCode;
+        createAccountRequest.cap = cap;
+        account.name = strAccountName;
+        account.active_key = publicActiveKeyType;
+        account.owner_key = publicOwnerKeyType;
+        account.memo_key = publicActiveKeyType;
+        account.refcode = null;
+        account.referrer = null;
+        createAccountRequest.account = account;
+        return createAccountRequest;
+    }
+
     private void processCreateAccount(final String strAccount, final String strPassword, String strPasswordConfirm, String pinCode, String capId) {
         if (strPassword.compareTo(strPasswordConfirm) != 0) {
             processErrorCode(ERROR_PASSWORD_CONFIRM_FAIL);
             return;
         }
-
-        Flowable.just(0)
-                .subscribeOn(Schedulers.io())
-                .map(integer -> {
-                    int nRet = BitsharesWalletWraper.getInstance().build_connect();
-                    if (nRet != 0) {
-                        throw new NetworkStatusException("it failed to connect to server");
-                    }
-
-                    nRet = BitsharesWalletWraper.getInstance().create_account_with_password(
-                            strAccount,
-                            strPassword,
-                            pinCode,
-                            capId
-                    );
-                    if (nRet != 0) {
-                        Observable.error(new ErrorCodeException(nRet, "it failed to create account"));
-                    }
-                    return nRet;
-                }).map(result -> {
-            int nCount = 0;
-            int nRet;
-            do {
-                // 进入导入帐号流程
-                nRet = BitsharesWalletWraper.getInstance().import_account_password(
-                        strAccount,
-                        strPassword
-                );
-                nCount++;
-                if (nRet == ERROR_NO_ACCOUNT_OBJECT) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } while (nRet == ERROR_NO_ACCOUNT_OBJECT && nCount < 10);
-            if (nRet != 0) { // 一切就绪，进入首页
-                Observable.error(new ErrorCodeException(nRet, "it failed to import account"));
-            }
-            return nRet;
-        }).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(integer -> {
-                    hideLoadDialog();
-                    CybexDialog.showRegisterDialog(this, strPassword, new View.OnClickListener(){
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(RegisterActivity.this, BottomNavigationActivity.class);
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RegisterActivity.this);
-                            sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
-                            sharedPreferences.edit().putString("name", strAccount).apply();
-                            sharedPreferences.edit().putString("password", strPassword).apply();
-                            startActivity(intent);
+        showLoadDialog();
+        RetrofitFactory.getInstance()
+                .api()
+                .register(RetrofitFactory.url_register, parseAccount(strAccount, strPassword, pinCode, capId))
+                .map(new Function<CreateAccountResponse, CreateAccountResponse>() {
+                    @Override
+                    public CreateAccountResponse apply(CreateAccountResponse createAccountResponse) {
+                        if(!TextUtils.isEmpty(createAccountResponse.error)){
+                            Observable.error(new CreateAccountException(createAccountResponse.error));
                         }
-                    });
-                }, throwable -> {
-                    hideLoadDialog();
-                    if (throwable instanceof NetworkStatusException) {
-                        processErrorCode(ERROR_NETWORK_FAIL);
-                    } else if (throwable instanceof CreateAccountException) {
-                        processExceptionMessage(throwable.getMessage());
-                    } else if (throwable instanceof ErrorCodeException) {
-                        ErrorCodeException errorCodeException = (ErrorCodeException) throwable;
-                        processErrorCode(errorCodeException.getErrorCode());
+                        return createAccountResponse;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        login(strAccount, strPassword);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        hideLoadDialog();
+                        if (e instanceof NetworkStatusException) {
+                            processErrorCode(ERROR_NETWORK_FAIL);
+                        } else if (e instanceof CreateAccountException) {
+                            processExceptionMessage(e.getMessage());
+                        } else if (e instanceof ErrorCodeException) {
+                            ErrorCodeException errorCodeException = (ErrorCodeException) e;
+                            processErrorCode(errorCodeException.getErrorCode());
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
+    }
 
+    private void login(String account, String password){
+        try {
+            BitsharesWalletWraper.getInstance().get_account_object(account, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+                @Override
+                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                    AccountObject accountObject = reply.result;
+                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, account, password);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideLoadDialog();
+                            if (result == 0) {
+                                hideLoadDialog();
+                                CybexDialog.showRegisterDialog(RegisterActivity.this, password, new View.OnClickListener(){
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(RegisterActivity.this, BottomNavigationActivity.class);
+                                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RegisterActivity.this);
+                                        sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
+                                        sharedPreferences.edit().putString("name", account).apply();
+                                        sharedPreferences.edit().putString("password", password).apply();
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure() {
+                    hideLoadDialog();
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
     }
 
     private void processErrorCode(final int nErrorCode) {
@@ -477,34 +534,37 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void processCheckAccount(final String strAccount) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int nRet = BitsharesWalletWraper.getInstance().build_connect();
-                if (nRet == 0) {
-                    try {
-                        final AccountObject accountObect = BitsharesWalletWraper.getInstance().get_account_object(strAccount);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (accountObect == null) {
-                                    mUserNameChecker.setVisibility(View.VISIBLE);
-                                    mRegisterErrorSign.setVisibility(View.GONE);
-                                } else {
-                                    if (strAccount.compareTo(accountObect.name) == 0) {
-                                        mRegisterErrorText.setText(R.string.create_account_activity_account_object_exist);
-                                        mRegisterErrorSign.setVisibility(View.VISIBLE);
-                                        mUserNameChecker.setVisibility(View.GONE);
-                                    }
+        try {
+            BitsharesWalletWraper.getInstance().get_account_object(strAccount, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+                @Override
+                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                    AccountObject accountObject = reply.result;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (accountObject == null) {
+                                mUserNameChecker.setVisibility(View.VISIBLE);
+                                mRegisterErrorSign.setVisibility(View.GONE);
+                            } else {
+                                if (strAccount.compareTo(accountObject.name) == 0) {
+                                    mRegisterErrorText.setText(R.string.create_account_activity_account_object_exist);
+                                    mRegisterErrorSign.setVisibility(View.VISIBLE);
+                                    mUserNameChecker.setVisibility(View.GONE);
                                 }
                             }
-                        });
-
-                    } catch (NetworkStatusException e) {
-                        e.printStackTrace();
-                    }
+                        }
+                    });
                 }
-            }
-        }).start();
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+
+
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
     }
 }

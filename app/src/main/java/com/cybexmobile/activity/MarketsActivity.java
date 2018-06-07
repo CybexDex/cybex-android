@@ -1,33 +1,32 @@
 package com.cybexmobile.activity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cybexmobile.adapter.CoinPairRecyclerViewAdapter;
 import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
+import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.constant.ConstantTest;
 import com.cybexmobile.data.DataParse;
 import com.cybexmobile.data.KLineBean;
-import com.cybexmobile.fragment.data.WatchListData;
+import com.cybexmobile.event.Event;
+import com.cybexmobile.exception.NetworkStatusException;
+import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.MarketTradeHistoryFragment;
 import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
+import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.mychart.CoupleChartGestureListener;
@@ -37,6 +36,7 @@ import com.cybexmobile.mychart.MyHMarkerView;
 import com.cybexmobile.mychart.MyLeftMarkerView;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.MyUtils;
+import com.cybexmobile.utils.PriceUtil;
 import com.cybexmobile.utils.VolFormatter;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.components.Legend;
@@ -55,27 +55,25 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MarketsActivity extends BaseActivity implements MarketStat.OnMarketStatUpdateListener, CoinPairRecyclerViewAdapter.updateDataListener, OrderHistoryListFragment.OnListFragmentInteractionListener,
+public class MarketsActivity extends BaseActivity implements OrderHistoryListFragment.OnListFragmentInteractionListener,
         MarketTradeHistoryFragment.OnListFragmentInteractionListener {
 
     private static final long MARKET_STAT_INTERVAL_MILLIS_5_MIN = TimeUnit.MINUTES.toSeconds(5);
     private static final long MARKET_STAT_INTERVAL_MILLIS_1_HOUR = TimeUnit.HOURS.toSeconds(1);
     private static final long MARKET_STAT_INTERVAL_MILLIS_1_DAY = TimeUnit.DAYS.toSeconds(1);
-
-
-    protected RecyclerView mRecyclerView;
-    protected RecyclerView.LayoutManager mRecyeclerViewLayoutManager;
-    protected CoinPairRecyclerViewAdapter mCoinPairRecyclerViewAdapter;
 
     protected MyCombinedChart mChartKline;
     protected MyCombinedChart mChartVolume;
@@ -94,13 +92,8 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
     private TextView mTvTitle;
     private OrderHistoryFragmentPageAdapter mOrderHistoryFragmentPageAdapter;
     protected List<MarketStat.HistoryPrice> mHistoryPriceList;
-    protected WatchListData mWatchListData;
-    protected MarketStat.OnMarketStatUpdateListener mListener;
-    protected OrderHistoryListFragment mOrderHistoryListFragment;
+    protected WatchlistData mWatchListData;
     private long mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
-
-    protected String base;
-    protected String quote;
 
     private DataParse mData;
     private DataParse mCacheData;
@@ -109,22 +102,8 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
 
     private ArrayList<KLineBean> kLineDatas;
 
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            mChartKline.setAutoScaleMinMaxEnabled(true);
-            mChartVolume.setAutoScaleMinMaxEnabled(true);
-            mChartCharts.setAutoScaleMinMaxEnabled(true);
-
-            mChartKline.notifyDataSetChanged();
-            mChartVolume.notifyDataSetChanged();
-            mChartCharts.notifyDataSetChanged();
-
-            mChartKline.invalidate();
-            mChartVolume.invalidate();
-            mChartCharts.invalidate();
-        }
-    };
+    //
+    private static final int MAXBUCKETCOUNT = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,78 +112,11 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
         mToolbar = findViewById(R.id.toolbar);
         mTvTitle = findViewById(R.id.tv_title);
         setSupportActionBar(mToolbar);
-        Intent intent = getIntent();
-        mWatchListData = (WatchListData) intent.getSerializableExtra("watchListData");
-        String base = intent.getStringExtra("base");
-        String quote = intent.getStringExtra("quote");
-        String trimedBase = base.contains("JADE") ? base.substring(5, base.length()) : base;
-        String trimedQuote = quote.contains("JADE") ? quote.substring(5, quote.length()) : quote;
-        mTvTitle.setText(String.format("%s/%s", trimedQuote, trimedBase));
-        int id = getIntent().getIntExtra("id", 0);
-        mMarketStat = MarketStat.getInstance();
-        mMarketStat.subscribe(mWatchListData.getBase(), mWatchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 5, mDuration, this);
+        mWatchListData = (WatchlistData) getIntent().getSerializableExtra("watchListData");
         initViews();
-        addContentToView(mWatchListData);
-        mListener = this;
-        mDuration1dView.setSelected(true);
-        mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
-
-        mRecyeclerViewLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mRecyeclerViewLayoutManager);
-        mCoinPairRecyclerViewAdapter = new CoinPairRecyclerViewAdapter(this, mMarketStat.getWatchListDataList(), id, this);
-        mRecyclerView.setAdapter(mCoinPairRecyclerViewAdapter);
-        mRecyclerView.scrollToPosition(id);
-
-
-        initChartKline();
-        initChartVolume();
-        initChartChart();
-        setChartListener();
-        mProgressBar.setVisibility(View.VISIBLE);
-//        EventBus.getDefault().register(this);
-//        initChartData(mHistoryPriceList);
-//
-//        setKlineByChart(mChartKline);
-//        setVolumeByChart(mChartVolume);
-//        setMACDByChart(mChartCharts);
-//        mChartKline.moveViewToX(kLineDatas.size() - 1);
-//        mChartVolume.moveViewToX(kLineDatas.size() - 1);
-//        mChartCharts.moveViewToX(kLineDatas.size() - 1);
-//        setOnClickListener();
-//        handler.sendEmptyMessageDelayed(0, 300);
-
-    }
-
-    @Override
-    public void onClickHorizontalItem(WatchListData watchListData) {
-        addContentToView(watchListData);
-        mWatchListData = watchListData;
-        mMarketStat.subscribe(watchListData.getBase(), watchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 300, MARKET_STAT_INTERVAL_MILLIS_1_DAY, this);
-        mProgressBar.setVisibility(View.VISIBLE);
-        mChartKline.setVisibility(View.GONE);
-        mChartVolume.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onMarketStatUpdate(MarketStat.Stat stat) {
-        if (stat.prices != null && stat.prices.length != 0) {
-            mHistoryPriceList = Arrays.asList(stat.prices);
-            initChartData(mHistoryPriceList, mDuration);
-            setKlineByChart(mChartKline);
-            setVolumeByChart(mChartVolume);
-            setMACDByChart(mChartCharts);
-            mChartKline.moveViewToX(kLineDatas.size() - 1);
-            mChartVolume.moveViewToX(kLineDatas.size() - 1);
-            mChartCharts.moveViewToX(kLineDatas.size() - 1);
-            setOnClickListener();
-            mChartKline.setVisibility(View.VISIBLE);
-            mChartVolume.setVisibility(View.VISIBLE);
-            handler.sendEmptyMessageDelayed(0, 300);
-        }
-        mProgressBar.setVisibility(View.GONE);
         mOrderHistoryFragmentPageAdapter = new OrderHistoryFragmentPageAdapter(getSupportFragmentManager());
-        mOrderHistoryFragmentPageAdapter.addFragment(OrderHistoryListFragment.newInstance(1, stat.orderBook, mWatchListData), getResources().getString(R.string.market_page_order_book));
-        mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(1, stat.marketTradeList, mWatchListData), getResources().getString(R.string.market_page_trade_history));
+        mOrderHistoryFragmentPageAdapter.addFragment(OrderHistoryListFragment.newInstance(1, mWatchListData), getResources().getString(R.string.market_page_order_book));
+        mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(1, mWatchListData), getResources().getString(R.string.market_page_trade_history));
         mViewPager.setAdapter(mOrderHistoryFragmentPageAdapter);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -223,6 +135,76 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
             }
         });
         mTabLayout.setupWithViewPager(mViewPager);
+        addContentToView(mWatchListData);
+        mDuration1dView.setSelected(true);
+        mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
+        initChartKline();
+        initChartVolume();
+        initChartChart();
+        setChartListener();
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void loadMarketHistory(){
+        if(mWatchListData == null){
+            return;
+        }
+        Date startDate = new Date(System.currentTimeMillis() - mDuration * MAXBUCKETCOUNT * 1000);
+        Date endDate = new Date(System.currentTimeMillis());
+        try {
+            BitsharesWalletWraper.getInstance().get_market_history(mWatchListData.getBaseAsset().id, mWatchListData.getQuoteAsset().id, (int) mDuration, startDate, endDate, mMarketHistoryCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>> mMarketHistoryCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
+            List<BucketObject> bucketObjects = reply.result;
+            if(bucketObjects == null || bucketObjects.size() == 0){
+                return;
+            }
+            List<MarketStat.HistoryPrice> prices = new ArrayList<>();
+            for (int i = 0; i < bucketObjects.size(); i++) {
+                BucketObject bucket = bucketObjects.get(i);
+                prices.add(PriceUtil.priceFromBucket(mWatchListData.getBaseAsset(), mWatchListData.getQuoteAsset(), bucket));
+            }
+            mHistoryPriceList = prices;
+            initChartData(mHistoryPriceList, mDuration);
+            EventBus.getDefault().post(new Event.UpdateKLineChar());
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateKLineChar(Event.UpdateKLineChar event){
+        setKlineByChart(mChartKline);
+        setVolumeByChart(mChartVolume);
+        setMACDByChart(mChartCharts);
+        mChartKline.moveViewToX(kLineDatas.size() - 1);
+        mChartVolume.moveViewToX(kLineDatas.size() - 1);
+        mChartCharts.moveViewToX(kLineDatas.size() - 1);
+        setOnClickListener();
+        mChartKline.setVisibility(View.VISIBLE);
+        mChartVolume.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+
+        mChartKline.setAutoScaleMinMaxEnabled(true);
+        mChartVolume.setAutoScaleMinMaxEnabled(true);
+        mChartCharts.setAutoScaleMinMaxEnabled(true);
+
+        mChartKline.notifyDataSetChanged();
+        mChartVolume.notifyDataSetChanged();
+        mChartCharts.notifyDataSetChanged();
+
+        mChartKline.invalidate();
+        mChartVolume.invalidate();
+        mChartCharts.invalidate();
     }
 
     private double getLowFromPriceList(List<MarketStat.HistoryPrice> historyPriceList) {
@@ -234,7 +216,6 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
     }
 
     private void initViews() {
-        mRecyclerView = (RecyclerView) findViewById(R.id.coin_pair_horizontal_recycler_view);
         mChartKline = (MyCombinedChart) findViewById(R.id.kline_chart_k);
         mChartVolume = (MyCombinedChart) findViewById(R.id.kline_chart_volume);
         mChartCharts = (MyCombinedChart) findViewById(R.id.kline_chart_chart);
@@ -261,22 +242,24 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
         mTvKMa20 = (TextView) findViewById(R.id.view_kline_tv_ma20);
     }
 
-    private void addContentToView(WatchListData watchListData) {
+    private void addContentToView(WatchlistData watchListData) {
+        if(mWatchListData == null){
+            return;
+        }
+        mTvTitle.setText(String.format("%s/%s", mWatchListData.getQuoteSymbol(), mWatchListData.getBaseSymbol()));
         String precisionFormatter = MyUtils.getPrecisedFomatter(watchListData.getBasePrecision());
         NumberFormat twoDecimalFormatter = new DecimalFormat("0.00");
-        String trimmedBase = watchListData.getBase().contains("JADE") ? watchListData.getBase().substring(5, watchListData.getBase().length()) : watchListData.getBase();
-        String trimmedQuote = watchListData.getQuote().contains("JADE") ? watchListData.getQuote().substring(5, watchListData.getQuote().length()) : watchListData.getQuote();
+        String trimmedBase = watchListData.getBaseSymbol().contains("JADE") ? watchListData.getBaseSymbol().substring(5, watchListData.getBaseSymbol().length()) : watchListData.getBaseSymbol();
+        String trimmedQuote = watchListData.getQuoteSymbol().contains("JADE") ? watchListData.getQuoteSymbol().substring(5, watchListData.getQuoteSymbol().length()) : watchListData.getQuoteSymbol();
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" : String.format(precisionFormatter, watchListData.getCurrentPrice()));
-        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High:" + precisionFormatter, watchListData.getHigh() ));
+        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High: " + precisionFormatter, watchListData.getHigh() ));
         mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low: " + precisionFormatter, watchListData.getLow()));
-        mVolumeBaseView.setText(watchListData.getVol() == 0.f ? "-" : String.format("%1$s :%2$s", trimmedBase, MyUtils.getNumberKMGExpressionFormat(watchListData.getVol())));
-
+        mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase, MyUtils.getNumberKMGExpressionFormat(watchListData.getBaseVol())));
         double volQuote = 0.f;
         if (watchListData.getCurrentPrice() != 0.f) {
-            volQuote = watchListData.getVol() / watchListData.getCurrentPrice();
+            volQuote = watchListData.getBaseVol() / watchListData.getCurrentPrice();
         }
-        mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s :%2$s", trimmedQuote, MyUtils.getNumberKMGExpressionFormat(watchListData.getQuoteVol())));
-
+        mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s: %2$s", trimmedQuote, MyUtils.getNumberKMGExpressionFormat(watchListData.getQuoteVol())));
         double change = 0.f;
         if (watchListData.getChange() != null) {
             try {
@@ -285,7 +268,6 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
                 e.printStackTrace();
             }
         }
-
         if (change > 0.f) {
             mChangeRateView.setText(String.format("+%s%%", String.valueOf(twoDecimalFormatter.format(change * 100))));
             mChangeRateView.setTextColor(getResources().getColor(R.color.increasing_color));
@@ -562,12 +544,9 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
     private void initChartData(List<MarketStat.HistoryPrice> historyPriceList, long duration) {
         getOffLineData(historyPriceList, duration);
         setKLineDatas();
-
-        //setMarkerViewButtom(mData, mChartKline);
     }
 
     private void getOffLineData(List<MarketStat.HistoryPrice> historyPriceList, long duraton) {
-        /*方便测试，加入假数据*/
         mData = new DataParse();
         JSONObject object = null;
         try {
@@ -1021,17 +1000,20 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
         mDuration5mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mDuration5mView.isSelected()){
+                    return;
+                }
                 mDuration5mView.setSelected(true);
                 mDuration1hView.setSelected(false);
                 mDuration1dView.setSelected(false);
                 mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mMarketStat.subscribe(mWatchListData.getBase(), mWatchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 300, MARKET_STAT_INTERVAL_MILLIS_5_MIN, mListener);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_5_MIN;
                 mProgressBar.setVisibility(View.VISIBLE);
                 mChartKline.setVisibility(View.GONE);
                 mChartVolume.setVisibility(View.GONE);
+                loadMarketHistory();
             }
         });
 
@@ -1044,11 +1026,11 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
                 mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
-                mMarketStat.subscribe(mWatchListData.getBase(), mWatchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 300, MARKET_STAT_INTERVAL_MILLIS_1_HOUR, mListener);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_1_HOUR;
                 mProgressBar.setVisibility(View.VISIBLE);
                 mChartKline.setVisibility(View.GONE);
                 mChartVolume.setVisibility(View.GONE);
+                loadMarketHistory();
             }
         });
 
@@ -1061,12 +1043,11 @@ public class MarketsActivity extends BaseActivity implements MarketStat.OnMarket
                 mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mMarketStat.subscribe(mWatchListData.getBase(), mWatchListData.getQuote(), MarketStat.STAT_MARKET_HISTORY, (long) 300, MARKET_STAT_INTERVAL_MILLIS_1_DAY, mListener);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
                 mProgressBar.setVisibility(View.VISIBLE);
                 mChartKline.setVisibility(View.GONE);
                 mChartVolume.setVisibility(View.GONE);
-
+                loadMarketHistory();
             }
         });
     }

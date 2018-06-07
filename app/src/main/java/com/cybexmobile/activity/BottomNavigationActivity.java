@@ -20,12 +20,11 @@ import android.widget.TextView;
 
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.fragment.AccountFragment;
-import com.cybexmobile.fragment.data.WatchListData;
+import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.FaqFragment;
 import com.cybexmobile.fragment.WatchLIstFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.R;
-import com.cybexmobile.market.MarketStat;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -44,7 +43,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     private AccountFragment mAccountFragment;
     private TextView mTvTitle;
     private Toolbar mToolbar;
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -75,20 +73,14 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_nav_button);
         initFragments(savedInstanceState);
-        if (mWatchListFragment != null) {
-            if (MarketStat.getInstance().getmWatchListDataListHashMap().size() == 0)
-                MarketStat.getInstance().startRun(mWatchListFragment,"1.3.2","ETH");
-        }
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mTvTitle = findViewById(R.id.tv_title);
-        mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        mBottomNavigationView = findViewById(R.id.navigation);
 
         BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
         mBottomNavigationView.setItemIconTintList(null);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-//        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) mBottomNavigationView.getLayoutParams();
-//        layoutParams.setBehavior(new BottomNavigationBehavior());
         if (savedInstanceState != null) {
             int id = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
             switch (id) {
@@ -255,10 +247,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     }
 
     @Override
-    public void onListFragmentInteraction(WatchListData item, List<WatchListData> dataList, int position) {
-        Intent intent = new Intent(BottomNavigationActivity.this, MarketsActivity.class);
-        intent.putExtra("base", item.getBase());
-        intent.putExtra("quote", item.getQuote());
+    public void onListFragmentInteraction(WatchlistData item, List<WatchlistData> dataList, int position) {
+        Intent intent = new Intent(BottomNavigationActivity.this, MarketsActivity.class);;
         intent.putExtra("watchListData", item);
         intent.putExtra("id", position);
         startActivity(intent);
@@ -273,4 +263,5 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 }

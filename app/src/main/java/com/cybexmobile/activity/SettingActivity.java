@@ -13,15 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.data.AppVersion;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
-import com.g00fy2.versioncompare.Version;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,11 +31,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 public class SettingActivity extends BaseActivity {
 
@@ -114,7 +115,7 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 showLoadDialog();
-                checkIfNeedToUpdate();
+                checkVersion();
             }
         });
 
@@ -165,62 +166,55 @@ public class SettingActivity extends BaseActivity {
         }
     }
 
-    private void checkIfNeedToUpdate() {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://app.cybex.io/iOS_update.json")
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                call.cancel();
-            }
+    private void checkVersion() {
+        RetrofitFactory.getInstance()
+                .api()
+                .checkAppUpdate()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AppVersion>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String versionResponse = response.body().string();
-                JSONObject jsonObject;
-                try {
-                    jsonObject = new JSONObject(versionResponse);
-                    String versionName = jsonObject.getString("version");
-                    final String updateUrl = jsonObject.getString("url");
-                    Version localVersion = new Version(BuildConfig.VERSION_NAME);
-                    Version remoteVersion = new Version(versionName);
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            hideLoadDialog();
-                            if (localVersion.isLowerThan(remoteVersion)) {
-                                new AlertDialog.Builder(SettingActivity.this)
-                                .setCancelable(false)
-                                .setTitle(R.string.setting_version_update_available)
-                                .setMessage(R.string.setting_version_update_content)
-                                .setPositiveButton(R.string.setting_version_update_next_time, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
-                                        startActivity(browseIntent);
-                                    }
-                                })
-                                .setNegativeButton(R.string.setting_version_update_now, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                }).show();
-                            } else {
-                                Toast toast = Toast.makeText(getApplicationContext(), R.string.setting_version_is_the_latest, Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();
-                            }
+                    }
 
+                    @Override
+                    public void onNext(AppVersion appVersion) {
+                        if(appVersion.compareVersion(BuildConfig.VERSION_NAME)){
+                            new AlertDialog.Builder(SettingActivity.this)
+                                    .setCancelable(false)
+                                    .setTitle(R.string.setting_version_update_available)
+                                    .setMessage(R.string.setting_version_update_content)
+                                    .setPositiveButton(R.string.setting_version_update_now, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(appVersion.getUrl()));
+                                            startActivity(browseIntent);
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.setting_version_update_next_time, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    }).show();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(), R.string.setting_version_is_the_latest, Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
                         }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        hideLoadDialog();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        hideLoadDialog();
+                    }
+                });
     }
 
 }

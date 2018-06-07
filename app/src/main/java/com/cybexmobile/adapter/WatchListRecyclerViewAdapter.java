@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cybexmobile.fragment.data.WatchListData;
+import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.WatchLIstFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.MyUtils;
@@ -19,15 +19,14 @@ import org.decimal4j.util.DoubleRounder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchListRecyclerViewAdapter.ViewHolder> {
 
-    private final List<WatchListData> mValues;
+    private final List<WatchlistData> mValues;
     private final OnListFragmentInteractionListener mListener;
     private Context mContext;
 
-    public WatchListRecyclerViewAdapter(List<WatchListData> items, OnListFragmentInteractionListener listener, Context context) {
+    public WatchListRecyclerViewAdapter(List<WatchlistData> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;
@@ -46,17 +45,17 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         String precisinFormatter = MyUtils.getPrecisedFomatter(holder.mItem.getBasePrecision());
         NumberFormat formatter2 = new DecimalFormat("0.00");
         holder.mItem = mValues.get(position);
-        if (mValues.get(position).getQuote().contains("JADE")) {
-            holder.mQuoteCurrency.setText(mValues.get(position).getQuote().substring(5, mValues.get(position).getQuote().length()));
+        if (mValues.get(position).getQuoteSymbol().contains("JADE")) {
+            holder.mQuoteCurrency.setText(mValues.get(position).getQuoteSymbol().substring(5, mValues.get(position).getQuoteSymbol().length()));
         } else {
-            holder.mQuoteCurrency.setText(mValues.get(position).getQuote());
+            holder.mQuoteCurrency.setText(mValues.get(position).getQuoteSymbol());
         }
-        if (mValues.get(position).getBase().contains("JADE")) {
-            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBase().substring(5, mValues.get(position).getBase().length())));
+        if (mValues.get(position).getBaseSymbol().contains("JADE")) {
+            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBaseSymbol().substring(5, mValues.get(position).getBaseSymbol().length())));
         } else {
-            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBase()));
+            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBaseSymbol()));
         }
-        holder.mVolume.setText(holder.mItem.getVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getVol()));
+        holder.mVolume.setText(holder.mItem.getBaseVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getBaseVol()));
         holder.mCurrentPrice.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.format(precisinFormatter, holder.mItem.getCurrentPrice()));
 
         double change = 0.f;
@@ -106,7 +105,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        public WatchListData mItem;
+        public WatchlistData mItem;
         TextView mBaseCurrency;
         TextView mQuoteCurrency;
         TextView mCurrentPrice;
@@ -138,7 +137,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         Picasso.get().load("https://app.cybex.io/icons/" + quoteIdWithUnderLine +"_grey.png").into(mCoinSymbol);
     }
 
-    public void setItemToPosition(WatchListData watchListData, int position) {
+    public void setItemToPosition(WatchlistData watchListData, int position) {
         mValues.set(position, watchListData);
         notifyItemChanged(position);
     }

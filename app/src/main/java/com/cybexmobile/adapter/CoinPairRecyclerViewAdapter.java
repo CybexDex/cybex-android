@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cybexmobile.fragment.data.WatchListData;
+import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
 
 import java.text.DecimalFormat;
@@ -17,14 +17,14 @@ import java.util.List;
 
 public class CoinPairRecyclerViewAdapter extends RecyclerView.Adapter<CoinPairRecyclerViewAdapter.ViewHolder> {
     Context mContext;
-    private final List<WatchListData> mData;
+    private final List<WatchlistData> mData;
     private int rowIndex;
     private updateDataListener mListener;
 
     public interface updateDataListener {
-        void onClickHorizontalItem(WatchListData watchListData);
+        void onClickHorizontalItem(WatchlistData watchListData);
     }
-    public CoinPairRecyclerViewAdapter(Context context, List<WatchListData> data, int id, updateDataListener listener) {
+    public CoinPairRecyclerViewAdapter(Context context, List<WatchlistData> data, int id, updateDataListener listener) {
         mContext = context;
         mData = data;
         rowIndex = id;
@@ -33,7 +33,7 @@ public class CoinPairRecyclerViewAdapter extends RecyclerView.Adapter<CoinPairRe
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        WatchListData mItem;
+        WatchlistData mItem;
         TextView mChangeView;
         TextView mBaseCoinView;
         TextView mQuoteCoinView;
@@ -74,8 +74,8 @@ public class CoinPairRecyclerViewAdapter extends RecyclerView.Adapter<CoinPairRe
 
         holder.mItem = mData.get(position);
 
-        holder.mBaseCoinView.setText(holder.mItem.getBase());
-        holder.mQuoteCoinView.setText(String.format("/%s", holder.mItem.getQuote()));
+        holder.mBaseCoinView.setText(holder.mItem.getBaseSymbol());
+        holder.mQuoteCoinView.setText(String.format("/%s", holder.mItem.getQuoteSymbol()));
 
         double change = 0.f;
 

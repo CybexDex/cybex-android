@@ -9,17 +9,14 @@ import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.crypto.Aes;
 import com.cybexmobile.crypto.Sha512Object;
-import com.cybexmobile.faucet.CreateAccountException;
-import com.cybexmobile.faucet.CreateAccountObject;
 import com.cybexmobile.fc.io.BaseEncoder;
 import com.cybexmobile.fc.io.DataStreamEncoder;
 import com.cybexmobile.fc.io.DataStreamSizeEncoder;
 import com.cybexmobile.fc.io.RawType;
 import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
-import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
@@ -27,7 +24,6 @@ import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
-import com.cybexmobile.market.MarketTrade;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -47,16 +43,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import static com.cybexmobile.constant.ErrorCode.ERROR_NETWORK_FAIL;
-import static com.cybexmobile.constant.ErrorCode.ERROR_SERVER_CREATE_ACCOUNT_FAIL;
-import static com.cybexmobile.constant.ErrorCode.ERROR_SERVER_RESPONSE_FAIL;
 
 public class WalletApi {
 
@@ -87,7 +73,7 @@ public class WalletApi {
         }
     }
 
-    private WebSocketApi mWebSocketApi = new WebSocketApi();
+    private WebSocketClient mWebSocketClient = new WebSocketClient();
     private wallet_object mWalletObject;
     private boolean mbLogin = false;
     private HashMap<Types.public_key_type, Types.private_key_type> mHashMapPub2Priv = new HashMap<>();
@@ -153,33 +139,34 @@ public class WalletApi {
 
     }
 
-    public int initialize() {
-        int nRet = mWebSocketApi.connect();
-        if (nRet == 0) {
-            Sha256Object sha256Object = null;
-            try {
-                sha256Object = mWebSocketApi.get_chain_id();
-                if (mWalletObject == null) {
-                    mWalletObject = new wallet_object();
-                    mWalletObject.chain_id = sha256Object;
-                } else if (mWalletObject.chain_id != null &&
-                        mWalletObject.chain_id.equals(sha256Object) == false) {
-                    nRet = -1;
-                }
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
-                nRet = -1;
-            }
-        }
-        return nRet;
+    public void initialize() {
+        mWebSocketClient.connect();
+//        try {
+//            mWebSocketClient.get_chain_id(new WebSocketClient.MessageCallback<WebSocketClient.Reply<Sha256Object>>() {
+//                @Override
+//                public void onMessage(WebSocketClient.Reply<Sha256Object> reply) {
+//                    Sha256Object sha256Object = reply.result;
+//                    if (mWalletObject == null) {
+//                        mWalletObject = new wallet_object();
+//                        mWalletObject.chain_id = sha256Object;
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure() {
+//
+//                }
+//            });
+//        } catch (NetworkStatusException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public int reset() {
-        mWebSocketApi.close();
-
+        mWebSocketClient.close();
         mWalletObject = null;
         mbLogin = false;
-        mHashMapPub2Priv.clear();;
+        mHashMapPub2Priv.clear();
         mCheckSum = new Sha512Object();
 
         return 0;
@@ -215,9 +202,6 @@ public class WalletApi {
         ByteBuffer byteResult = Aes.encrypt(byteKey, ivBytes, encoder.getData());
 
         mWalletObject.cipher_keys = byteResult;
-
-        return;
-
     }
 
     public int lock() {
@@ -312,7 +296,6 @@ public class WalletApi {
 
     public int set_password(String strPassword) {
         mCheckSum = Sha512Object.create_from_string(strPassword);
-
         return 0;
     }
 
@@ -322,27 +305,27 @@ public class WalletApi {
         }
 
         if (mWalletObject != null) {
-            mbLogin = mWebSocketApi.login(
+            mbLogin = mWebSocketClient.login(
                     mWalletObject.ws_user,
                     mWalletObject.ws_password
             );
         } else {
             mWalletObject = new wallet_object();
-            mbLogin = mWebSocketApi.login(
+            mbLogin = mWebSocketClient.login(
                     strUserName,
                     strPassowrd
             );
         }
 
         if (mbLogin) {
-            mWebSocketApi.get_database_api_id();
-            mWebSocketApi.get_history_api_id();
-            mWebSocketApi.get_broadcast_api_id();
+            mWebSocketClient.get_database_api_id();
+            mWebSocketClient.get_history_api_id();
+            mWebSocketClient.get_broadcast_api_id();
 
 
             mWalletObject.ws_user = strUserName;
             mWalletObject.ws_password = strPassowrd;
-            Sha256Object sha256Object = mWebSocketApi.get_chain_id();
+            Sha256Object sha256Object = mWebSocketClient.get_chain_id();
             if (mWalletObject.chain_id != null &&
                     mWalletObject.chain_id.equals(sha256Object) == false) {
                 return -1; // 之前的chain_id与当前的chain_id不一致
@@ -361,63 +344,53 @@ public class WalletApi {
         return accountObjectList;
     }
 
-    public AccountObject get_account(String strAccountNameOrId) throws NetworkStatusException {
-        // 判定这类型
-        ObjectId<AccountObject> accountObjectId = ObjectId.create_from_string(strAccountNameOrId);
-
-        List<AccountObject> listAccountObject = null;
-        if (accountObjectId == null) {
-            return get_account_by_name(strAccountNameOrId);
-        } else {
-            List<ObjectId<AccountObject>> listAccountObjectId = new ArrayList<>();
-            listAccountObjectId.add(accountObjectId);
-            listAccountObject = mWebSocketApi.get_accounts(listAccountObjectId);
-        }
-
-        if (listAccountObject.isEmpty()) {
-            return null;
-        }
-
-        return listAccountObject.get(0);
+    public void get_account(String strAccountNameOrId, WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>> callback) throws NetworkStatusException {
+        get_account_by_name(strAccountNameOrId, callback);
     }
 
-    public List<AccountObject> get_accounts(List<ObjectId<AccountObject>> listAccountObjectId) throws NetworkStatusException {
-        return mWebSocketApi.get_accounts(listAccountObjectId);
+//    public List<AccountObject> get_accounts(List<ObjectId<AccountObject>> listAccountObjectId) throws NetworkStatusException {
+//        return mWebSocketClient.get_accounts(listAccountObjectId);
+//    }
+
+//    public void lookup_account_names(String strAccountName, WebSocketClient.MessageCallback callback) throws NetworkStatusException {
+//        mWebSocketClient.lookup_account_names(strAccountName, callback);
+//    }
+
+    public void get_account_by_name(String strAccountName, WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_account_by_name(strAccountName, callback);
     }
 
-    public List<AccountObject> lookup_account_names(String strAccountName) throws NetworkStatusException {
-        return mWebSocketApi.lookup_account_names(strAccountName);
-    }
-
-    public AccountObject get_account_by_name(String strAccountName) throws NetworkStatusException {
-        return mWebSocketApi.get_account_by_name(strAccountName);
-    }
-
-    public List<Asset> list_account_balance(ObjectId<AccountObject> accountId) throws NetworkStatusException {
-        return mWebSocketApi.list_account_balances(accountId);
-    }
+//    public List<Asset> list_account_balance(ObjectId<AccountObject> accountId) throws NetworkStatusException {
+//        return mWebSocketClient.list_account_balances(accountId);
+//    }
 
 //    public List<OperationHistoryObject> get_account_history(ObjectId<AccountObject> accountId, int nLimit) throws NetworkStatusException {
-//        return mWebSocketApi.get_account_history(accountId, nLimit);
+//        return mWebSocketClient.get_account_history(accountId, nLimit);
 //    }
 
-    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
-        return mWebSocketApi.list_assets(strLowerBound, nLimit);
-    }
-    public List<AssetObject> get_assets(List<ObjectId<AssetObject>> listAssetObjectId) throws NetworkStatusException {
-        return mWebSocketApi.get_assets(listAssetObjectId);
-    }
+//    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
+//        return mWebSocketClient.list_assets(strLowerBound, nLimit);
+//    }
+//    public List<AssetObject> get_assets(List<ObjectId<AssetObject>> listAssetObjectId) throws NetworkStatusException {
+//        return mWebSocketClient.get_assets(listAssetObjectId);
+//    }
 
 //    public block_header get_block_header(int nBlockNumber) throws NetworkStatusException {
-//        return mWebSocketApi.get_block_header(nBlockNumber);
+//        return mWebSocketClient.get_block_header(nBlockNumber);
 //    }
 
-    public AssetObject lookup_asset_symbols(String strAssetSymbol) throws NetworkStatusException {
-        return mWebSocketApi.lookup_asset_symbols(strAssetSymbol);
+    public void lookup_asset_symbols(String strAssetSymbol, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+        mWebSocketClient.lookup_asset_symbols(strAssetSymbol, callback);
     }
 
-    public AssetObject get_objects(String objectId) throws NetworkStatusException {
-        return mWebSocketApi.get_object(objectId);
+    public void get_objects(String objectId, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+        List<String> objectIds = new ArrayList<>();
+        objectIds.add(objectId);
+        get_objects(objectIds, callback);
+    }
+
+    public void get_objects(List<String> objectIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_objects(objectIds, callback);
     }
 
 //    public int import_brain_key(String strAccountNameOrId, String strBrainKey) throws NetworkStatusException {
@@ -556,8 +529,10 @@ public class WalletApi {
 //        return 0;
 //    }
 
-    public int import_account_password(String strAccountName,
-                                       String strPassword) throws NetworkStatusException {
+    public int import_account_password(AccountObject accountObject, String strAccountName, String strPassword) {
+        if (accountObject == null) {
+            return ErrorCode.ERROR_NO_ACCOUNT_OBJECT;
+        }
         PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
         PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
         PrivateKey privateMemoKey = PrivateKey.from_seed(strAccountName + "memo" + strPassword);
@@ -579,25 +554,20 @@ public class WalletApi {
         String uncompresedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
         unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
         String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
-        Log.e("Address", address);
-        Log.e("OwnerAddress", ownerAddress);
-        Log.e("ActivePTSAddress", PTSAddress);
-        Log.e("OwnerPtsAddress", owerPtsAddress);
-        Log.e("MemoAddress", memoAddress);
-        Log.e("MemoPTSAddress", memoPtsAddress);
-        Log.e("uncompressedActive", uncompresedPts);
-        Log.e("uncompressedOwner", unCompressedOwnerKey);
-        Log.e("uncompressedMemo", unCompressedMemo);
+        Log.v("Address", address);
+        Log.v("OwnerAddress", ownerAddress);
+        Log.v("ActivePTSAddress", PTSAddress);
+        Log.v("OwnerPtsAddress", owerPtsAddress);
+        Log.v("MemoAddress", memoAddress);
+        Log.v("MemoPTSAddress", memoPtsAddress);
+        Log.v("uncompressedActive", uncompresedPts);
+        Log.v("uncompressedOwner", unCompressedOwnerKey);
+        Log.v("uncompressedMemo", unCompressedMemo);
 
-        AccountObject accountObject = get_account(strAccountName);
-        if (accountObject == null) {
-            return ErrorCode.ERROR_NO_ACCOUNT_OBJECT;
-        }
-
-        if (accountObject.active.is_public_key_type_exist(publicActiveKeyType) == false &&
-                accountObject.active.is_public_key_type_exist(publicOwnerKeyType) == false &&
-                accountObject.owner.is_public_key_type_exist(publicActiveKeyType) == false &&
-                accountObject.owner.is_public_key_type_exist(publicOwnerKeyType) == false){
+        if (!accountObject.active.is_public_key_type_exist(publicActiveKeyType)&&
+            !accountObject.active.is_public_key_type_exist(publicOwnerKeyType) &&
+            !accountObject.owner.is_public_key_type_exist(publicActiveKeyType)&&
+            !accountObject.owner.is_public_key_type_exist(publicOwnerKeyType)){
             return ErrorCode.ERROR_PASSWORD_INVALID;
         }
 
@@ -823,7 +793,7 @@ public class WalletApi {
 //    public signed_transaction cancel_order(ObjectId<LimitOrderObject> id)
 //            throws NetworkStatusException {
 //        operations.limit_order_cancel_operation op = new operations.limit_order_cancel_operation();
-//        op.fee_paying_account = mWebSocketApi.get_limit_order(id).seller;
+//        op.fee_paying_account = mWebSocketClient.get_limit_order(id).seller;
 //        op.order = id;
 //        op.extensions = new HashSet<>();
 //
@@ -842,11 +812,11 @@ public class WalletApi {
 //    }
 
 //    public global_property_object get_global_properties() throws NetworkStatusException {
-//        return mWebSocketApi.get_global_properties();
+//        return mWebSocketClient.get_global_properties();
 //    }
 
 //    public dynamic_global_property_object get_dynamic_global_properties() throws NetworkStatusException {
-//        return mWebSocketApi.get_dynamic_global_properties();
+//        return mWebSocketClient.get_dynamic_global_properties();
 //    }
 
 //    public void create_account_with_private_key(PrivateKey privateOwnerKey,
@@ -880,8 +850,8 @@ public class WalletApi {
 //        operation.registrar = accountRegistrar.id;
 //        operation.referrer_percent = accountReferr.referrer_rewards_percentage;
 //
-//        global_property_object globalPropertyObject = mWebSocketApi.get_global_properties();
-//        dynamic_global_property_object dynamicGlobalPropertyObject = mWebSocketApi.get_dynamic_global_properties();
+//        global_property_object globalPropertyObject = mWebSocketClient.get_global_properties();
+//        dynamic_global_property_object dynamicGlobalPropertyObject = mWebSocketClient.get_dynamic_global_properties();
 //
 //    }
 
@@ -954,7 +924,7 @@ public class WalletApi {
 //        }
 //
 //        // 发出tx，进行广播，这里也涉及到序列化
-//        int nRet = mWebSocketApi.broadcast_transaction(tx);
+//        int nRet = mWebSocketClient.broadcast_transaction(tx);
 //        if (nRet == 0) {
 //            return tx;
 //        } else {
@@ -962,18 +932,12 @@ public class WalletApi {
 //        }
 //    }
 
-    public List<BucketObject> get_market_history(ObjectId<AssetObject> assetObjectId1,
-                                                 ObjectId<AssetObject> assetObjectId2,
+    public void get_market_history(ObjectId<AssetObject> baseAssetId,
+                                                 ObjectId<AssetObject> quoteAssetId,
                                                  int nBucket,
-                                                 Date dateStart,
-                                                 Date dateEnd) throws NetworkStatusException {
-        return mWebSocketApi.get_market_history(
-                assetObjectId1,
-                assetObjectId2,
-                nBucket,
-                dateStart,
-                dateEnd
-        );
+                                                 Date dateStart, Date dateEnd,
+                                                 WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_market_history(baseAssetId, quoteAssetId, nBucket, dateStart, dateEnd, callback);
     }
 
 //    private void set_operation_fees(signed_transaction tx, fee_schedule feeSchedule) {
@@ -1045,170 +1009,46 @@ public class WalletApi {
 //        return strMessage;
 //    }
 
-    public int create_account_with_password(String strAccountName,
-                                            String strPassword,
-                                            String pinCode,
-                                            String capId) throws NetworkStatusException, CreateAccountException {
-        String[] strAddress = {"https://faucet.cybex.io/register"};
-
-        int nRet = -1;
-        for (int i = 0; i < strAddress.length; ++i) {
-            try {
-                nRet = create_account_with_password(
-                        strAddress[i],
-                        strAccountName,
-                        strPassword,
-                        pinCode,
-                        capId
-                );
-                if (nRet == 0) {
-                    break;
-                }
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
-                if (i == strAddress.length - 1) {
-                    throw e;
-                }
-            } catch (CreateAccountException e) {
-                e.printStackTrace();
-                if (i == strAddress.length - 1) {
-                    throw e;
-                }
-            }
-        }
-        return nRet;
+    public void subscribe_to_market(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<Object>> callback) throws NetworkStatusException {
+        mWebSocketClient.subscribe_to_market(base, quote, callback);
     }
 
-    public String subscribe_to_market(String base, String quote) throws NetworkStatusException {
-        return mWebSocketApi.subscribe_to_market(base, quote);
+//    public void set_subscribe_market(boolean filter) throws NetworkStatusException {
+//        mWebSocketClient.set_subscribe_callback(filter);
+//    }
+
+    public void get_ticker(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_ticker(base, quote, callback);
     }
 
-    public void set_subscribe_market(boolean filter) throws NetworkStatusException {
-        mWebSocketApi.set_subscribe_callback(filter);
-    }
+//    public List<MarketTrade> get_trade_history(String base, String quote, Date start, Date end, int limit)
+//            throws NetworkStatusException {
+//        return mWebSocketClient.get_trade_history(base, quote, start, end, limit);
+//    }
 
-    public MarketTicker get_ticker(String base, String quote) throws NetworkStatusException {
-        return mWebSocketApi.get_ticker(base, quote);
-    }
-
-    public List<MarketTrade> get_trade_history(String base, String quote, Date start, Date end, int limit)
-            throws NetworkStatusException {
-        return mWebSocketApi.get_trade_history(base, quote, start, end, limit);
-    }
-
-    public List<HashMap<String, Object>> get_fill_order_history(ObjectId<AssetObject> base,
+    public void get_fill_order_history(ObjectId<AssetObject> base,
                                                                 ObjectId<AssetObject> quote,
-                                                                int limit) throws NetworkStatusException {
-        return mWebSocketApi.get_fill_order_history(base, quote,limit);
+                                                                int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<HashMap<String, Object>>>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_fill_order_history(base, quote,limit, callback);
     }
 
-    public List<LimitOrderObject> get_limit_orders(ObjectId<AssetObject> base,
+    public void get_limit_orders(ObjectId<AssetObject> base,
                                                    ObjectId<AssetObject> quote,
-                                                   int limit) throws NetworkStatusException {
-        return mWebSocketApi.get_limit_orders(base, quote, limit);
+                                                   int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_limit_orders(base, quote, limit, callback);
     }
 
-    public List<LockUpAssetObject> get_balance_objects(List<String> addresses) throws NetworkStatusException {
-        return mWebSocketApi.get_balance_objects(addresses);
-
+    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockUpAssetObject>>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_balance_objects(addresses, callback);
     }
 
-    public List<FullAccountObject> get_full_accounts(List<String> names, boolean subscribe)
+    public void get_full_accounts(List<String> names, boolean subscribe,
+                                                     WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>> callback)
             throws NetworkStatusException {
-        return mWebSocketApi.get_full_accounts(names, subscribe);
+        mWebSocketClient.get_full_accounts(names, subscribe, callback);
     }
 
-    public int create_account_with_password(String strServerUrl,
-                                            String strAccountName,
-                                            String strPassword,
-                                            String pinCode,
-                                            String capId) throws NetworkStatusException, CreateAccountException {
-        PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
-        PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
-
-        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
-        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
-
-        AccountObject accountObject = get_account(strAccountName);
-        if (accountObject != null) {
-            return ErrorCode.ERROR_ACCOUNT_OBJECT_EXIST;
-        }
-        CreateAccountObject account = new CreateAccountObject();
-        CreateAccountObject.account createAccountObject = new CreateAccountObject.account();
-        CreateAccountObject.cap capObject = new CreateAccountObject.cap();
-        capObject.id = capId;
-        capObject.captcha = pinCode;
-        account.cap = capObject;
-        createAccountObject.name = strAccountName;
-        createAccountObject.active_key = publicActiveKeyType;
-        createAccountObject.owner_key = publicOwnerKeyType;
-        createAccountObject.memo_key = publicActiveKeyType;
-        createAccountObject.refcode = null;
-        createAccountObject.referrer = null;
-        account.account = createAccountObject;
-        Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-
-        String strAddress = strServerUrl;
-        OkHttpClient okHttpClient = new OkHttpClient();
-
-        RequestBody requestBody = RequestBody.create(
-                MediaType.parse("application/json"),
-                gson.toJson(account)
-        );
-        Log.e("request",gson.toJson(account) );
-        Log.e("request",requestBody.toString());
-
-        Request request = new Request.Builder()
-                .url(strAddress)
-                .addHeader("Accept", "application/json")
-                .post(requestBody)
-                .build();
-
-        CreateAccountObject.create_account_response createAccountResponse = null;
-        try {
-            Response response = okHttpClient.newCall(request).execute();
-            if (response.isSuccessful()) {
-                createAccountResponse = gson.fromJson(
-                        response.body().string(),
-                        CreateAccountObject.create_account_response.class
-                );
-            } else {
-                if (response.body().contentLength() != 0) {
-                    String strResponse = response.body().string();
-
-                    try {
-                        CreateAccountObject.response_fail_error error = gson.fromJson(
-                                strResponse,
-                                CreateAccountObject.response_fail_error.class
-                        );
-                        for (Map.Entry<String, List<String>> errorEntrySet : error.error.entrySet()) {
-                            throw new CreateAccountException(errorEntrySet.getValue().get(0));
-                        }
-                    } catch (JsonSyntaxException e) {  // 解析失败，直接抛出原有的内容
-                        throw new CreateAccountException(strResponse);
-                    }
-                }
-
-                return ERROR_SERVER_RESPONSE_FAIL;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            return ERROR_NETWORK_FAIL;
-        }
-
-        if (createAccountResponse.account != null) {
-            return 0;
-        } else {
-            if (createAccountResponse.error.base.isEmpty() == false) {
-                String strError = createAccountResponse.error.base.get(0);
-                throw new CreateAccountException(strError);
-            }
-            return ERROR_SERVER_CREATE_ACCOUNT_FAIL;
-        }
-    }
-
-    public String getUnCompressedOwnerKey() {
-        return unCompressedOwnerKey;
-    }
+//    public String getUnCompressedOwnerKey() {
+//        return unCompressedOwnerKey;
+//    }
 }
