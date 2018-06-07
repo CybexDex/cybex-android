@@ -49,21 +49,21 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         NumberFormat formatter = MyUtils.getSuitableDecimalFormat(mQuoteName);
-        if(position < mValues.bids.size()) {
+        if (position < mValues.bids.size()) {
             holder.mBuyPrice.setText(String.valueOf(formatter.format(mValues.bids.get(position).price)));
             holder.mVolume.setText(String.valueOf(MyUtils.getNumberKMGExpressionFormat(mValues.bids.get(position).quote)));
         }
-        if(position < mValues.asks.size()) {
+        if (position < mValues.asks.size()) {
             holder.mSellPrice.setText(String.valueOf(formatter.format(mValues.asks.get(position).price)));
             holder.mSellVolume.setText(String.valueOf(MyUtils.getNumberKMGExpressionFormat(mValues.asks.get(position).quote)));
         }
 
         float percentageBids = 0f;
-        if(position < mValues.bids.size()) {
+        if (position < mValues.bids.size()) {
             percentageBids = (float) getPercentage(mValues.bids, position);
         }
         float percentageAsks = 0f;
-        if(position < mValues.asks.size()) {
+        if (position < mValues.asks.size()) {
             percentageAsks = (float) getPercentage(mValues.asks, position);
         }
         LinearLayout.LayoutParams barpar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, percentageBids);
@@ -93,14 +93,18 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
 
     @Override
     public int getItemCount() {
-        if (mValues.asks.size() > 20 || mValues.bids.size() > 20) {
-            return 20;
-        } else {
-            if (mValues.asks.size() >= mValues.bids.size()) {
-                return mValues.asks.size();
+        if (mValues != null) {
+            if (mValues.asks.size() > 20 || mValues.bids.size() > 20) {
+                return 20;
             } else {
-                return mValues.bids.size();
+                if (mValues.asks.size() >= mValues.bids.size()) {
+                    return mValues.asks.size();
+                } else {
+                    return mValues.bids.size();
+                }
             }
+        } else {
+            return 0;
         }
 
     }
@@ -108,7 +112,6 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
     public void setmValues(OrderBook orderBook) {
         this.mValues = orderBook;
         notifyDataSetChanged();
-
     }
 
     private double getPercentage(List<Order> orderList, int position) {

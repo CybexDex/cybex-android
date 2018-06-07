@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
+import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -115,16 +116,16 @@ public class WatchLIstFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(String string) {
-        if(mWebSocketService != null){
+        if (mWebSocketService != null) {
             mWebSocketService.loadWatchlistData(mCurrentBaseAssetId);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateWatchlist(Event.UpdateWatchlist event){
+    public void onUpdateWatchlist(Event.UpdateWatchlist event) {
         WatchlistData data = event.getData();
         int index = mWatchlistData.indexOf(data);
-        if(index != -1){
+        if (index != -1) {
             mWatchlistData.set(index, data);
             mWatchListRecyclerViewAdapter.notifyItemChanged(index);
         }
@@ -132,15 +133,41 @@ public class WatchLIstFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateWatchlists(Event.UpdateWatchlists event){
+    public void onUpdateWatchlists(Event.UpdateWatchlists event) {
         mProgressBar.setVisibility(View.GONE);
         mWatchlistData.clear();
         mWatchlistData.addAll(event.getData());
         mWatchListRecyclerViewAdapter.notifyDataSetChanged();
     }
 
-    private void loadWatchlistData(){
-        if(mWebSocketService != null && mIsViewCreated){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateRmbPrice(Event.UpdateRmbPrice event) {
+        List<AssetRmbPrice> assetRmbPrices = event.getData();
+        if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
+            return;
+        }
+        AssetRmbPrice assetRmbPrice = null;
+        for (AssetRmbPrice rmbPrice : assetRmbPrices) {
+            if (rmbPrice.getName().equals(mCurrentTab)) {
+                assetRmbPrice = rmbPrice;
+                break;
+            }
+        }
+        if (assetRmbPrice == null) {
+            return;
+        }
+        if(assetRmbPrice.getValue() != mWatchlistData.get(0).getRmbPrice()){
+            for (WatchlistData watchlistData : mWatchlistData) {
+                watchlistData.setRmbPrice(assetRmbPrice.getValue());
+            }
+            mWatchListRecyclerViewAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+
+    private void loadWatchlistData() {
+        if (mWebSocketService != null && mIsViewCreated) {
             mWebSocketService.loadWatchlistData(mCurrentBaseAssetId);
         }
 

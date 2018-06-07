@@ -42,16 +42,26 @@
             android:layout_height="wrap_content"
             android:text="$11,309.109"
             android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/market_page_exchange_variation"
-            style="@style/font_green_bold_small"
+        <LinearLayout
+            android:id="@+id/market_page_change_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignBottom="@id/market_page_current_money"
-            android:layout_alignParentRight="true"
-            android:text="25.25%"
-            android:textSize="20sp" />
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/market_page_change_symbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
+            <TextView
+                android:id="@+id/market_page_exchange_variation"
+                style="@style/font_green_bold_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25.25%"
+                android:textSize="20sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/market_page_high_price"
@@ -69,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/market_page_high_price"
-            android:layout_alignRight="@id/market_page_exchange_variation"
+            android:layout_alignRight="@id/market_page_change_layout"
             android:text="Vol: 125,980.213 BTC" />
 
         <TextView
@@ -177,7 +187,8 @@
                 app:tabIndicatorColor="#FF9143"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/primary_color_white"
-                app:tabTextColor="@color/grey_unselected_font_color" />
+                app:tabTextColor="@color/grey_unselected_font_color"
+                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"/>
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/market_page_view_pager"

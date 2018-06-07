@@ -19,13 +19,13 @@
         android:focusable="true"/>
 
     <TextView
-        android:id="@+id/kline_boll"
+        android:id="@+id/kline_ema"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/text_kline_header_margin_start"
         android:background="@drawable/bg_kline_ma"
         android:gravity="center"
-        android:text="BOLL"
+        android:text="EMA"
         android:textSize="12sp"
         android:clickable="true"
         android:focusable="true"
@@ -45,14 +45,14 @@
         android:textColor="@color/kline_header_selector" />
 
     <TextView
-        android:id="@+id/kline_ema"
+        android:id="@+id/kline_boll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_kline_ma"
         android:layout_marginStart="@dimen/text_kline_header_margin_start"
         android:gravity="center"
         android:textSize="12sp"
-        android:text="EMA"
+        android:text="BOLL"
         android:clickable="true"
         android:focusable="true"
         android:textColor="@color/kline_header_selector" />

@@ -56,6 +56,9 @@
     <string name="k_ma5">MA(5):</string>
     <string name="k_ma10">MA(10):</string>
     <string name="k_ma20">MA(20):</string>
+    <string name="k_boll">BOLL:</string>
+    <string name="k_ema5">EMA(5):</string>
+    <string name="k_ema10">EMA(10)</string>
 
     <!-- Setting page -->
     <string name="setting_language">语言</string>
@@ -70,7 +73,7 @@
     <string name="error_incorrect_password">帐户名或密码错误</string>
     <string name="text_ok">确定</string>
     <string name="permission_rationale">提供电子邮件完成需要联系人权限.</string>
-    <string name="setting_version_is_the_latest">当前版本是最新版本</string>
+    <string name="setting_version_is_the_latest">当前为最新版本</string>
     <string name="setting_version_update_available">版本更新</string>
     <string name="setting_version_update_next_time">下次</string>
     <string name="setting_version_update_now">更新</string>
@@ -112,6 +115,7 @@
     <string name="create_account_password_must_at_least_12_characters">输入12位以上的密码</string>
     <string name="create_account_password_confirm_error">密码输入不一致</string>
     <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">帐户名仅能包含字母、数字、横杠</string>
+    <string name="create_account_pin_code_not_correct">验证码不正确</string>
 
     <string name="register_dialog_content_current_password">当前密码:</string>
     <string name="register_dialog_content_attentions">
@@ -123,9 +127,9 @@
     <string name="open_orders_all">全部</string>
     <string name="open_orders_buy">买入</string>
     <string name="open_orders_sell">卖出</string>
-    <string name="open_orders_total_value">全部金额:</string>
-    <string name="open_orders_sell_total_value">卖单金额:</string>
-    <string name="open_orders_buy_total_value">买单金额:</string>
+    <string name="open_orders_total_value">全部总额:</string>
+    <string name="open_orders_sell_total_value">卖单总额:</string>
+    <string name="open_orders_buy_total_value">买单总额:</string>
 
 
     <!-- Portfolio Page Related -->

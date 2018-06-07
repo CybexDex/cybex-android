@@ -1,6 +1,7 @@
 package com.cybexmobile.fragment.data;
 
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.PriceUtil;
@@ -13,7 +14,7 @@ public class WatchlistData implements Serializable{
 
     private AssetObject baseAsset;
     private AssetObject quoteAsset;
-    private List<MarketStat.HistoryPrice> historyPrices;
+    private List<HistoryPrice> historyPrices;
     private MarketTicker marketTicker;
 
     //最高价
@@ -62,7 +63,7 @@ public class WatchlistData implements Serializable{
         parseMarketTicker(marketTicker);
     }
 
-    public WatchlistData(List<MarketStat.HistoryPrice> historyPrices){
+    public WatchlistData(List<HistoryPrice> historyPrices){
         this.historyPrices = historyPrices;
         parseHistoryPrice(historyPrices);
     }
@@ -223,16 +224,16 @@ public class WatchlistData implements Serializable{
         parseQuoteAsset(quoteAsset);
     }
 
-    public List<MarketStat.HistoryPrice> getHistoryPrices() {
+    public List<HistoryPrice> getHistoryPrices() {
         return historyPrices;
     }
 
-    public void setHistoryPrices(List<MarketStat.HistoryPrice> historyPrices) {
+    public void setHistoryPrices(List<HistoryPrice> historyPrices) {
         this.historyPrices = historyPrices;
         parseHistoryPrice(historyPrices);
     }
 
-    public void addHistoryPrice(int index, MarketStat.HistoryPrice historyPrice){
+    public void addHistoryPrice(int index,HistoryPrice historyPrice){
         this.historyPrices.add(index, historyPrice);
         parseHistoryPrice(historyPrices);
     }
@@ -277,7 +278,7 @@ public class WatchlistData implements Serializable{
         this.quoteVol = marketTicker.quote_volume;
     }
 
-    private void parseHistoryPrice(List<MarketStat.HistoryPrice> historyPrices){
+    private void parseHistoryPrice(List<HistoryPrice> historyPrices){
         if(historyPrices == null || historyPrices.size() == 0){
             return;
         }

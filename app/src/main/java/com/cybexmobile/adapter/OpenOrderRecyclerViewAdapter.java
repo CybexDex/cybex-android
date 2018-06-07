@@ -65,8 +65,8 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         LimitOrderObject data = mDataList.get(position);
         String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
         String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
-        String basePrecision = MyUtils.getPrecisedFomatter(base.precision);
-        String quotePrecision = MyUtils.getPrecisedFomatter(quote.precision);
+        String basePrecision = MyUtils.getPrecisedFormatter(base.precision);
+        String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
         double amount;
         double price;
         if (position == 0) {

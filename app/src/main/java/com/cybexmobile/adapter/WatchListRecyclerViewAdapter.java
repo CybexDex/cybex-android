@@ -42,7 +42,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        String precisinFormatter = MyUtils.getPrecisedFomatter(holder.mItem.getBasePrecision());
+        String precisinFormatter = MyUtils.getPrecisedFormatter(holder.mItem.getBasePrecision());
         NumberFormat formatter2 = new DecimalFormat("0.00");
         holder.mItem = mValues.get(position);
         if (mValues.get(position).getQuoteSymbol().contains("JADE")) {
@@ -84,7 +84,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.no_change_color));
         }
         loadImage(mValues.get(position).getQuoteId(), holder.mSymboleView);
-        holder.mRmbPriceTextView.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.format("≈¥ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
+        holder.mRmbPriceTextView.setText(holder.mItem.getRmbPrice() * holder.mItem.getCurrentPrice() == 0 ? "-" : String.format("≈¥ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

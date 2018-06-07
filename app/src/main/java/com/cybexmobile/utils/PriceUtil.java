@@ -3,6 +3,7 @@ package com.cybexmobile.utils;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.Utils;
+import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
 
 import java.util.List;
@@ -15,9 +16,9 @@ public final class PriceUtil {
      * @param historyPrices
      * @return
      */
-    public static double getHighPrice(List<MarketStat.HistoryPrice> historyPrices) {
+    public static double getHighPrice(List<HistoryPrice> historyPrices) {
         double max = 0;
-        for (MarketStat.HistoryPrice historyPrice : historyPrices) {
+        for (HistoryPrice historyPrice : historyPrices) {
             max = Math.max(historyPrice.high, max);
         }
         return max;
@@ -28,9 +29,9 @@ public final class PriceUtil {
      * @param historyPrices
      * @return
      */
-    public static double getLowPrice(List<MarketStat.HistoryPrice> historyPrices) {
-        double min = 0;
-        for (MarketStat.HistoryPrice historyPrice : historyPrices) {
+    public static double getLowPrice(List<HistoryPrice> historyPrices) {
+        double min = historyPrices.get(0).low;
+        for (HistoryPrice historyPrice : historyPrices) {
             min = Math.min(historyPrice.low, min);
         }
         return min;
@@ -41,7 +42,7 @@ public final class PriceUtil {
      * @param historyPriceList
      * @return
      */
-    public static double getCurrentPrice(List<MarketStat.HistoryPrice> historyPriceList) {
+    public static double getCurrentPrice(List<HistoryPrice> historyPriceList) {
         return historyPriceList.get(historyPriceList.size() - 1).close;
     }
 
@@ -50,7 +51,7 @@ public final class PriceUtil {
      * @param historyPriceList
      * @return
      */
-    public static String getChange(List<MarketStat.HistoryPrice> historyPriceList) {
+    public static String getChange(List<HistoryPrice> historyPriceList) {
         String change;
         double open = historyPriceList.get(0).open;
         double close = historyPriceList.get(historyPriceList.size() - 1).close;
@@ -65,8 +66,8 @@ public final class PriceUtil {
      * @param bucket
      * @return
      */
-    public static MarketStat.HistoryPrice priceFromBucket(AssetObject baseAsset, AssetObject quoteAsset, BucketObject bucket) {
-        MarketStat.HistoryPrice price = new MarketStat.HistoryPrice();
+    public static HistoryPrice priceFromBucket(AssetObject baseAsset, AssetObject quoteAsset, BucketObject bucket) {
+       HistoryPrice price = new HistoryPrice();
         price.date = bucket.key.open;
         if (bucket.key.quote.equals(quoteAsset.id)) {
             price.high = Utils.get_asset_price(bucket.high_base, baseAsset,
@@ -112,17 +113,17 @@ public final class PriceUtil {
         return price;
     }
 
-    private double getVolFromPriceList(List<MarketStat.HistoryPrice> historyPrices) {
+    private double getVolFromPriceList(List<HistoryPrice> historyPrices) {
         double vol = 0;
-        for (MarketStat.HistoryPrice historyPrice : historyPrices) {
+        for (HistoryPrice historyPrice : historyPrices) {
             vol += historyPrice.volume;
         }
         return vol;
     }
 
-    private double getQuoteVolFromPriceList(List<MarketStat.HistoryPrice> historyPrices) {
+    private double getQuoteVolFromPriceList(List<HistoryPrice> historyPrices) {
         double vol = 0;
-        for (MarketStat.HistoryPrice historyPrice : historyPrices) {
+        for (HistoryPrice historyPrice : historyPrices) {
             vol += historyPrice.quoteVolume;
         }
         return vol;

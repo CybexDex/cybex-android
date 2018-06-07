@@ -4,54 +4,58 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp">
+        android:orientation="horizontal"
+        android:weightSum="4">
 
         <TextView
             style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
+            android:gravity="center"
             android:text="@string/market_page_trade_history_price" />
 
         <TextView
             android:id="@+id/market_page_trade_history_quote"
             style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:layout_height="wrap_content"
-            android:layout_marginStart="128dp"
             android:text="@string/market_page_trade_history_quote"/>
 
         <TextView
             android:id="@+id/market_page_trade_history_base"
             style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="128dp"
             android:text="@string/market_page_trade_history_base"/>
 
         <TextView
             style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="25dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/market_page_trade_history_date" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/trade_history_list"
         android:name="com.cybexmobile.Fragments.MarketTradeHistory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="LinearLayoutManager"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         tools:context="com.cybexmobile.fragment.MarketTradeHistoryFragment"
         tools:listitem="@layout/item_trade_history" />
 

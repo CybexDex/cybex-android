@@ -4,6 +4,7 @@ import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.market.OrderBook;
@@ -113,20 +114,21 @@ public class Event {
 
     //更新K线图
     public static class UpdateKLineChar{
-        private List<MarketStat.HistoryPrice> data;
+        private List<HistoryPrice> data;
 
         public UpdateKLineChar() {
+
         }
 
-        public UpdateKLineChar(List<MarketStat.HistoryPrice> data) {
+        public UpdateKLineChar(List<HistoryPrice> data) {
             this.data = data;
         }
 
-        public List<MarketStat.HistoryPrice> getData() {
+        public List<HistoryPrice> getData() {
             return data;
         }
 
-        public void setData(List<MarketStat.HistoryPrice> data) {
+        public void setData(List<HistoryPrice> data) {
             this.data = data;
         }
     }

@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,16 +73,6 @@ public class MarketStat {
 
     private static String makeMarketName(String base, String quote) {
         return String.format("%s_%s", base.toLowerCase(), quote.toLowerCase());
-    }
-
-    public static class HistoryPrice {
-        public double high;
-        public double low;
-        public double open;
-        public double close;
-        public double volume;
-        public double quoteVolume;
-        public Date date;
     }
 
     public static class Stat {

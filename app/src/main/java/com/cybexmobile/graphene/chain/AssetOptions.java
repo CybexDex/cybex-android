@@ -1,10 +1,11 @@
 package com.cybexmobile.graphene.chain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static com.cybexmobile.graphene.chain.Config.GRAPHENE_MAX_SHARE_SUPPLY;
 
-public class AssetOptions {
+public class AssetOptions implements Serializable {
 
     /// The maximum supply of this Asset which may exist at any given time. This can be as large as
     /// GRAPHENE_MAX_SHARE_SUPPLY

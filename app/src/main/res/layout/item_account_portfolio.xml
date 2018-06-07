@@ -31,9 +31,10 @@
 
                 <ImageView
                     android:id="@+id/account_portfolio_item_asset_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/ic_cyb_grey" />
 
                 <TextView
@@ -64,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
-            android:textColor="@color/grey_unselected_font_color"
+            android:textColor="@color/primary_color_white"
             android:textSize="12sp" />
 
         <TextView

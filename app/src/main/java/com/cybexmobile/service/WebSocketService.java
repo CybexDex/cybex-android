@@ -23,6 +23,7 @@ import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.ObjectId;
+import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.PriceUtil;
@@ -280,13 +281,6 @@ public class WebSocketService extends Service {
             }
             if(watchlistData != null){
                 watchlistData.setMarketTicker(marketTicker);
-                //交易排序
-                Collections.sort(mWatchlistHashMap.get(marketTicker.base), new Comparator<WatchlistData>() {
-                    @Override
-                    public int compare(WatchlistData o1, WatchlistData o2) {
-                        return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
-                    }
-                });
                 EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
             }
         }
@@ -313,10 +307,17 @@ public class WebSocketService extends Service {
             }
             WatchlistData watchlistData = getWatchlist(mWatchlistHashMap, buckets.get(0));
             if(watchlistData != null){
-                List<MarketStat.HistoryPrice> historyPrices = new ArrayList<>();
+                List<HistoryPrice> historyPrices = new ArrayList<>();
                 for(BucketObject bucket : buckets){
                     historyPrices.add(PriceUtil.priceFromBucket(watchlistData.getBaseAsset(), watchlistData.getQuoteAsset(), bucket));
                 }
+                //交易排序
+                Collections.sort(mWatchlistHashMap.get(watchlistData.getBaseId()), new Comparator<WatchlistData>() {
+                    @Override
+                    public int compare(WatchlistData o1, WatchlistData o2) {
+                        return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
+                    }
+                });
                 watchlistData.setHistoryPrices(historyPrices);
             }
             EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
@@ -457,7 +458,7 @@ public class WebSocketService extends Service {
         if(mSubscription != null){
             return;
         }
-        Flowable.interval(0, 10, TimeUnit.SECONDS)
+        Flowable.interval(0, 5, TimeUnit.SECONDS)
                 .flatMap(new Function<Long, Publisher<CnyResponse>>() {
                     @Override
                     public Publisher<CnyResponse> apply(Long aLong) {
@@ -479,6 +480,7 @@ public class WebSocketService extends Service {
                     public void onSubscribe(Subscription s) {
                         Log.v(TAG, "getAssetsRmbPrice: onSubscribe");
                         mSubscription = s;
+                        s.request(Long.MAX_VALUE);
                     }
 
                     @Override

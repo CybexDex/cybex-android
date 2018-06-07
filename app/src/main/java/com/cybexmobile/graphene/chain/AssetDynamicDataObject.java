@@ -1,7 +1,9 @@
 package com.cybexmobile.graphene.chain;
 
 
-public class AssetDynamicDataObject {
+import java.io.Serializable;
+
+public class AssetDynamicDataObject implements Serializable {
 
     //static const uint8_t space_id = implementation_ids;
     //static const uint8_t type_id  = impl_asset_dynamic_data_type;

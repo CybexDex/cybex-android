@@ -1,6 +1,8 @@
 package com.cybexmobile.market;
 
-public class MarketTicker {
+import java.io.Serializable;
+
+public class MarketTicker implements Serializable {
     public String base;
     public String quote;
     public double latest;

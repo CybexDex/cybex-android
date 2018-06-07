@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class AssetObject implements Serializable {
 
-    public class asset_object_legible {
+    public class asset_object_legible implements Serializable {
         public String count;
         public String decimal;
         public String symbol;

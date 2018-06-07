@@ -32,7 +32,7 @@
 
     <!-- Open Orders Page -->
     <string name="open_order_asset_amount">Asset/Amount</string>
-    <string name="open_order_order_value">Order Value</string>
+    <string name="open_order_order_value">Price</string>
     <string name="open_order_buy">Buy</string>
     <string name="open_order_sell">Sell</string>
 
@@ -52,6 +52,9 @@
     <string name="k_ma5">MA(5):</string>
     <string name="k_ma10">MA(10):</string>
     <string name="k_ma20">MA(20):</string>
+    <string name="k_boll">BOLL:</string>
+    <string name="k_ema5">EMA(5):</string>
+    <string name="k_ema10">EMA(10)</string>
 
 
     <!-- Setting Strings -->
@@ -66,7 +69,7 @@
     <string name="setting_version_is_the_latest">The current version is the latest one</string>
     <string name="setting_version_update_available">Update Available</string>
     <string name="setting_version_update_content">A new version of CybexDex is available,Please update to newest version now.</string>
-    <string name="setting_version_update_next_time">Next Time</string>
+    <string name="setting_version_update_next_time">Next</string>
     <string name="setting_version_update_now">Update</string>
 
     <!-- Strings related to login -->
@@ -114,7 +117,7 @@
     <string name="create_account_account_name_error_dash_end">The account name can not end with a dash</string>
     <string name="create_account_account_name_should_not_contain_continuous_dashes">The account name should not contain continuous dashes</string>
     <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">The account name should only contain letter,dash and numbers</string>
-
+    <string name="create_account_pin_code_not_correct">Incorrect verify code</string>
     <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>
     <string name="create_account_password_confirm_error">Two passwords do not match</string>
 

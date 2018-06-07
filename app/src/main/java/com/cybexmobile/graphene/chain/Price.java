@@ -1,7 +1,9 @@
 package com.cybexmobile.graphene.chain;
 
 
-public class Price {
+import java.io.Serializable;
+
+public class Price implements Serializable {
 
     public Asset base;
     public Asset quote;

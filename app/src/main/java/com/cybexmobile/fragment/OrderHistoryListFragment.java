@@ -98,7 +98,7 @@ public class OrderHistoryListFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateOrderBook(Event.UpdateOrderBook event){
         mOrderBook = event.getData();
-        mOrderHistoryItemRecycerViewAdapter.notifyDataSetChanged();
+        mOrderHistoryItemRecycerViewAdapter.setmValues(mOrderBook);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class ObjectId<T> implements Serializable{
-    static class ObjectIdManager {
+    static class ObjectIdManager implements Serializable {
         private HashMap<Type, Integer> mMapTypeToId = new HashMap<>();
 
         ObjectIdManager() {

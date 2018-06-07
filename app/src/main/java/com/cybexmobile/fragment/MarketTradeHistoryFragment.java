@@ -173,7 +173,8 @@ public class MarketTradeHistoryFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateMarketTrade(Event.UpdateMarketTrade event) {
-        mMarketTradeList = event.getData();
+        mMarketTradeList.clear();
+        mMarketTradeList.addAll(event.getData());
         mTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
     }
 

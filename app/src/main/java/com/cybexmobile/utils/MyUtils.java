@@ -60,7 +60,7 @@ public class MyUtils {
         }
     }
 
-    public static String getPrecisedFomatter(int precision) {
+    public static String getPrecisedFormatter(int precision) {
         return "%." + precision + "f";
     }
 

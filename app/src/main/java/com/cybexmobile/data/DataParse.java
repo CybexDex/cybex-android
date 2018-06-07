@@ -2,6 +2,7 @@ package com.cybexmobile.data;
 
 import android.util.SparseArray;
 
+import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.CandleEntry;
@@ -143,7 +144,7 @@ public class DataParse {
         kDatas.addAll(kLineBeans);
     }
 
-    public void parseKlineHistoryData(List<MarketStat.HistoryPrice> historyPriceList, long duration) {
+    public void parseKlineHistoryData(List<HistoryPrice> historyPriceList, long duration) {
         ArrayList<KLineBean> kLineBeans = new ArrayList<>();
         SimpleDateFormat simpleDateFormat;
         if(duration == 300) {
@@ -156,7 +157,7 @@ public class DataParse {
         if(historyPriceList != null) {
             int count = historyPriceList.size();
             for(int i = 0; i < count; i++) {
-                MarketStat.HistoryPrice historyPrice = historyPriceList.get(i);
+                HistoryPrice historyPrice = historyPriceList.get(i);
                 KLineBean kLineBean = new KLineBean();
                 kLineBean.date = String.valueOf(simpleDateFormat.format(historyPrice.date));
                 kLineBean.open = (float) historyPrice.open;

@@ -1,55 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_bold_small"
-            android:layout_marginStart="25dp"
-            android:text="@string/market_page_buy_price"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_bold_small"
-            android:layout_marginStart="100dp"
-            android:text="@string/market_page_volume"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_bold_small"
-            android:text="@string/market_page_sell_price"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="128dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_bold_small"
-            android:layout_alignParentEnd="true"
-            android:text="@string/market_page_volume"
-            android:layout_marginRight="50dp"/>
+        android:orientation="horizontal"
+        android:weightSum="4">
 
-    </RelativeLayout>
+        <TextView
+            style="@style/font_gray_bold_small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/market_page_buy_price" />
+
+        <TextView
+            style="@style/font_gray_bold_small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/market_page_volume" />
+
+        <TextView
+            style="@style/font_gray_bold_small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/market_page_sell_price" />
+
+        <TextView
+            style="@style/font_gray_bold_small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/market_page_volume" />
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
-        android:layout_weight="1"
         android:name="com.cybexmobile.Fragments.orderHistoryListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layoutManager="LinearLayoutManager"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         tools:context="com.cybexmobile.fragment.OrderHistoryListFragment"
         tools:listitem="@layout/item_order_history" />
 

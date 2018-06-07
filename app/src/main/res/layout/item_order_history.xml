@@ -36,21 +36,25 @@
             android:id="@+id/text_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:weightSum="2"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/buy_price"
                 style="@style/font_gray_bold_small"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
                  />
 
             <TextView
                 android:id="@+id/order_volume"
                 style="@style/font_gray_bold_small"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="35dp"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:singleLine="true"/>
 
         </LinearLayout>
@@ -89,21 +93,25 @@
             android:id="@+id/text_linear_layout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:weightSum="2"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/sell_price"
                 style="@style/font_gray_bold_small"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:singleLine="true"/>
 
             <TextView
                 android:id="@+id/sell_order_volume"
                 style="@style/font_gray_bold_small"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="35dp"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:singleLine="true"/>
         </LinearLayout>
     </FrameLayout>

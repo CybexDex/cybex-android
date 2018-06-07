@@ -10,6 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ import com.cybexmobile.fragment.MarketTradeHistoryFragment;
 import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.mychart.CoupleChartGestureListener;
@@ -66,6 +69,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MarketsActivity extends BaseActivity implements OrderHistoryListFragment.OnListFragmentInteractionListener,
@@ -82,16 +86,22 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected YAxis axisLeftKline, axisLeftVolume, axisLeftCharts;
     protected YAxis axisRightKline, axisRightVolume, axisRightCharts;
 
+
+    protected TextView mBOLLTv1, mBOLLTv2, mBOLLTv3;
+    protected TextView mEMA5Tv, mEMA10Tv;
     protected TextView mMAView, mMACDView, mBOLLView, mEMAView, mRSIView;
     protected TextView mTvKMa5, mTvKMa10, mTvKMa20;
     protected TextView mCurrentPriceView, mHighPriceView, mLowPriceView, mChangeRateView, mVolumeBaseView, mVolumeQuoteView, mDuration5mView, mDuration1hView, mDuration1dView;
+    protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart;
+    protected ImageView mChangeSymbol;
+
     protected ProgressBar mProgressBar;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private Toolbar mToolbar;
     private TextView mTvTitle;
     private OrderHistoryFragmentPageAdapter mOrderHistoryFragmentPageAdapter;
-    protected List<MarketStat.HistoryPrice> mHistoryPriceList;
+    protected List<HistoryPrice> mHistoryPriceList;
     protected WatchlistData mWatchListData;
     private long mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
 
@@ -143,6 +153,14 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         initChartChart();
         setChartListener();
         mProgressBar.setVisibility(View.VISIBLE);
+        EventBus.getDefault().register(this);
+        loadMarketHistory();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void loadMarketHistory(){
@@ -165,7 +183,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             if(bucketObjects == null || bucketObjects.size() == 0){
                 return;
             }
-            List<MarketStat.HistoryPrice> prices = new ArrayList<>();
+            List<HistoryPrice> prices = new ArrayList<>();
             for (int i = 0; i < bucketObjects.size(); i++) {
                 BucketObject bucket = bucketObjects.get(i);
                 prices.add(PriceUtil.priceFromBucket(mWatchListData.getBaseAsset(), mWatchListData.getQuoteAsset(), bucket));
@@ -193,6 +211,9 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.setVisibility(View.VISIBLE);
         mChartVolume.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+        if(mData != null) {
+            setDefaultMALine();
+        }
 
         mChartKline.setAutoScaleMinMaxEnabled(true);
         mChartVolume.setAutoScaleMinMaxEnabled(true);
@@ -207,9 +228,9 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartCharts.invalidate();
     }
 
-    private double getLowFromPriceList(List<MarketStat.HistoryPrice> historyPriceList) {
+    private double getLowFromPriceList(List<HistoryPrice> historyPriceList) {
         double min = historyPriceList.get(0).low;
-        for (MarketStat.HistoryPrice historyPrice : historyPriceList) {
+        for (HistoryPrice historyPrice : historyPriceList) {
             min = Math.min(historyPrice.low, min);
         }
         return min;
@@ -236,10 +257,22 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mDuration1dView = (TextView) findViewById(R.id.market_page_1_day);
         mViewPager = (ViewPager) findViewById(R.id.market_page_view_pager);
         mTabLayout = (TabLayout) findViewById(R.id.market_page_tab_layout);
+        mChangeSymbol = findViewById(R.id.market_page_change_symbol);
 
         mTvKMa5 = (TextView) findViewById(R.id.view_kline_tv_ma5);
         mTvKMa10 = (TextView) findViewById(R.id.view_kline_tv_ma10);
         mTvKMa20 = (TextView) findViewById(R.id.view_kline_tv_ma20);
+
+
+        mBOLLTv1 = findViewById(R.id.view_boll_tv_1);
+        mBOLLTv2 = findViewById(R.id.view_boll_tv_2);
+        mBOLLTv3 = findViewById(R.id.view_boll_tv_3);
+        mEMA5Tv = findViewById(R.id.view_ema_tv_5);
+        mEMA10Tv = findViewById(R.id.view_ema_tv_10);
+        mHeaderKlineChart = findViewById(R.id.header_kline_chart);
+        mHeaderBOLLChart = findViewById(R.id.header_kline_boll);
+        mHeaderEMAChart = findViewById(R.id.k_line_header_ema_layout);
+
     }
 
     private void addContentToView(WatchlistData watchListData) {
@@ -247,13 +280,12 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             return;
         }
         mTvTitle.setText(String.format("%s/%s", mWatchListData.getQuoteSymbol(), mWatchListData.getBaseSymbol()));
-        String precisionFormatter = MyUtils.getPrecisedFomatter(watchListData.getBasePrecision());
-        NumberFormat twoDecimalFormatter = new DecimalFormat("0.00");
+        String precisionFormatter = MyUtils.getPrecisedFormatter(watchListData.getBasePrecision());
         String trimmedBase = watchListData.getBaseSymbol().contains("JADE") ? watchListData.getBaseSymbol().substring(5, watchListData.getBaseSymbol().length()) : watchListData.getBaseSymbol();
         String trimmedQuote = watchListData.getQuoteSymbol().contains("JADE") ? watchListData.getQuoteSymbol().substring(5, watchListData.getQuoteSymbol().length()) : watchListData.getQuoteSymbol();
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" : String.format(precisionFormatter, watchListData.getCurrentPrice()));
-        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High: " + precisionFormatter, watchListData.getHigh() ));
-        mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low: " + precisionFormatter, watchListData.getLow()));
+        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High :" + precisionFormatter, watchListData.getHigh()));
+        mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low :" + precisionFormatter, watchListData.getLow()));
         mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase, MyUtils.getNumberKMGExpressionFormat(watchListData.getBaseVol())));
         double volQuote = 0.f;
         if (watchListData.getCurrentPrice() != 0.f) {
@@ -269,13 +301,15 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             }
         }
         if (change > 0.f) {
-            mChangeRateView.setText(String.format("+%s%%", String.valueOf(twoDecimalFormatter.format(change * 100))));
+            mChangeRateView.setText(String.format(Locale.US, "+%.2f%%", change * 100));
             mChangeRateView.setTextColor(getResources().getColor(R.color.increasing_color));
+            mChangeSymbol.setBackground(getResources().getDrawable(R.drawable.ic_arrow_drop_up_24px));
         } else if (change < 0.f) {
-            mChangeRateView.setText(String.format("%s%%", String.valueOf(twoDecimalFormatter.format(change * 100))));
             mChangeRateView.setTextColor(getResources().getColor(R.color.decreasing_color));
+            mChangeRateView.setText(String.format(Locale.US, "%.2f%%", change * 100));
+            mChangeSymbol.setBackground(getResources().getDrawable(R.drawable.ic_arrow_drop_down_24px));
         } else {
-            mChangeRateView.setText("--");
+            mChangeRateView.setText(volQuote == 0.f ? "--" : "0.00%");
             mChangeRateView.setTextColor(getResources().getColor(R.color.no_change_color));
         }
     }
@@ -456,6 +490,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartCharts.highlightValues(new Highlight[]{highlight2});
 
                 updateText(e.getXIndex());
+                updateBOLL(e.getXIndex());
             }
 
             @Override
@@ -493,6 +528,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartCharts.highlightValues(new Highlight[]{highlight2});
 
                 updateText(e.getXIndex());
+                updateBOLL(e.getXIndex());
             }
 
             @Override
@@ -530,6 +566,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartKline.highlightValues(new Highlight[]{highlight2});
 
                 updateText(e.getXIndex());
+                updateBOLL(e.getXIndex());
             }
 
             @Override
@@ -541,12 +578,12 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
 
     }
 
-    private void initChartData(List<MarketStat.HistoryPrice> historyPriceList, long duration) {
+    private void initChartData(List<HistoryPrice> historyPriceList, long duration) {
         getOffLineData(historyPriceList, duration);
         setKLineDatas();
     }
 
-    private void getOffLineData(List<MarketStat.HistoryPrice> historyPriceList, long duraton) {
+    private void getOffLineData(List<HistoryPrice> historyPriceList, long duraton) {
         mData = new DataParse();
         JSONObject object = null;
         try {
@@ -897,6 +934,36 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         }
     }
 
+    private void updateBOLL(int index) {
+        int newIndex = index;
+        if (null != mData.getBollDataDN() && mData.getBollDataDN().size() > 0) {
+            if (newIndex >= 0 && newIndex < mData.getBollDataDN().size())
+                mBOLLTv1.setText(MyUtils.getDecimalFormatVol(mData.getBollDataDN().get(newIndex).getVal()));
+        }
+
+        if (null != mData.getBollDataMB() && mData.getBollDataMB().size() > 0) {
+            if (newIndex >= 0 && newIndex < mData.getBollDataMB().size())
+                mBOLLTv2.setText(MyUtils.getDecimalFormatVol(mData.getBollDataMB().get(newIndex).getVal()));
+        }
+        if (null != mData.getBollDataUP() && mData.getBollDataUP().size() > 0) {
+            if (newIndex >= 0 && newIndex < mData.getBollDataUP().size())
+                mBOLLTv3.setText(MyUtils.getDecimalFormatVol(mData.getBollDataUP().get(newIndex).getVal()));
+        }
+    }
+
+    private void updateEMA(int index) {
+        if (null != mData.getExpmaData5() && mData.getExpmaData5().size() > 0) {
+            if (index >= 0 && index < mData.getExpmaData5().size())
+                mEMA5Tv.setText(MyUtils.getDecimalFormatVol(mData.getExpmaData5().get(index).getVal()));
+        }
+
+        if (null != mData.getExpmaData10() && mData.getExpmaData10().size() > 0) {
+            if (index >= 0 && index < mData.getExpmaData10().size())
+                mEMA10Tv.setText(MyUtils.getDecimalFormatVol(mData.getExpmaData10().get(index).getVal()));
+        }
+    }
+
+
     private void setOnClickListener() {
         mMAView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -922,6 +989,11 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartKline.invalidate();
                 mChartCharts.setVisibility(View.GONE);
 //                setHandler(mChartKline);
+                mHeaderKlineChart.setVisibility(View.VISIBLE);
+                mHeaderBOLLChart.setVisibility(View.GONE);
+                mHeaderEMAChart.setVisibility(View.GONE);
+                updateText(mData.getMa5DataL().size() - 1);
+
 
             }
         });
@@ -936,6 +1008,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 setMACDByChart(mChartCharts);
                 mChartCharts.setVisibility(View.VISIBLE);
                 mChartCharts.invalidate();
+                mHeaderKlineChart.setVisibility(View.GONE);
+                mHeaderBOLLChart.setVisibility(View.GONE);
+                mHeaderEMAChart.setVisibility(View.GONE);
+
             }
         });
 
@@ -960,6 +1036,11 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartKline.setData(combinedData);
                 mChartKline.invalidate();
                 mChartCharts.setVisibility(View.GONE);
+                mHeaderKlineChart.setVisibility(View.GONE);
+                mHeaderBOLLChart.setVisibility(View.VISIBLE);
+                mHeaderEMAChart.setVisibility(View.GONE);
+                updateBOLL(mData.getBollDataUP().size() - 1);
+
 
             }
         });
@@ -986,6 +1067,11 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartKline.setData(combinedData);
                 mChartKline.invalidate();
                 mChartCharts.setVisibility(View.GONE);
+                mHeaderKlineChart.setVisibility(View.GONE);
+                mHeaderBOLLChart.setVisibility(View.GONE);
+                mHeaderEMAChart.setVisibility(View.VISIBLE);
+                updateEMA(mData.getExpmaData5().size() - 1);
+
             }
         });
 
@@ -1051,6 +1137,31 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             }
         });
     }
+
+    private void setDefaultMALine() {
+        mMAView.setSelected(true);
+        mBOLLView.setSelected(false);
+        mMACDView.setSelected(false);
+        mEMAView.setSelected(false);
+        mData.initKLineMA(kLineDatas);
+        ArrayList<ILineDataSet> sets = new ArrayList<>();
+        /******此处修复如果显示的点的个数达不到MA均线的位置所有的点都从0开始计算最小值的问题******************************/
+        sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
+        sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
+        sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
+
+
+        LineData lineData = new LineData(mData.getXVals(), sets);
+        CombinedData combinedData = new CombinedData(mData.getXVals());
+        combinedData.setData(lineData);
+        combinedData.setData(mCandleData);
+        mChartKline.setData(combinedData);
+        mChartKline.notifyDataSetChanged();
+        mChartKline.invalidate();
+        mChartCharts.setVisibility(View.GONE);
+        updateText(mData.getMa5DataL().size() - 1);
+    }
+
 
     @Override
     public void onListFragmentInteraction(MarketTrade item) {

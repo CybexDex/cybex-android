@@ -1,8 +1,9 @@
 package com.cybexmobile.graphene.chain;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class Asset {
+public class Asset implements Serializable {
 
     public long amount;
     public ObjectId<AssetObject> asset_id;

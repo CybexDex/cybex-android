@@ -1,59 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="@dimen/activity_padding"
-    android:paddingEnd="@dimen/activity_padding"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/header_kline_chart"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/k_ma5"
-        android:textColor="@color/grey_unselected_font_color"
-        android:textSize="@dimen/text_size_10sp"
-        android:background="#0FFFFFFF"/>
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/activity_padding"
+        android:paddingStart="@dimen/activity_padding"
+        android:visibility="visible">
 
-    <TextView
-        android:id="@+id/view_kline_tv_ma5"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#0FFFFFFF"
+            android:text="@string/k_ma5"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:id="@+id/view_kline_tv_ma5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textColor="@color/ma_5_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:background="#0FFFFFFF"
+            android:text="@string/k_ma10"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:id="@+id/view_kline_tv_ma10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textColor="@color/ma_10_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:background="#0FFFFFFF"
+            android:text="@string/k_ma20"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:id="@+id/view_kline_tv_ma20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textColor="@color/ma_20_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/header_kline_boll"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/ma_5_color"
-        android:text="0.00"
-        android:textSize="@dimen/text_size_10sp" />
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/activity_padding"
+        android:paddingStart="@dimen/activity_padding"
+        android:visibility="gone">
 
-    <TextView
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#0FFFFFFF"
+            android:text="@string/k_boll"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:id="@+id/view_boll_tv_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:text="0.00"
+            android:textColor="@color/ma_5_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:id="@+id/view_boll_tv_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:text="0.00"
+            android:textColor="@color/ma_10_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+        <TextView
+            android:id="@+id/view_boll_tv_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:text="0.00"
+            android:textColor="@color/ma_20_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/k_line_header_ema_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/grey_unselected_font_color"
-        android:layout_marginStart="@dimen/text_kline_header_margin_start"
-        android:text="@string/k_ma10"
-        android:textSize="@dimen/text_size_10sp"
-        android:background="#0FFFFFFF"/>
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/activity_padding"
+        android:paddingStart="@dimen/activity_padding"
+        android:visibility="gone">
 
-    <TextView
-        android:id="@+id/view_kline_tv_ma10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/ma_10_color"
-        android:text="0.00"
-        android:textSize="@dimen/text_size_10sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#0FFFFFFF"
+            android:text="@string/k_ema5"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="@dimen/text_size_10sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/grey_unselected_font_color"
-        android:layout_marginStart="@dimen/text_kline_header_margin_start"
-        android:text="@string/k_ma20"
-        android:textSize="@dimen/text_size_10sp"
-        android:background="#0FFFFFFF"/>
+        <TextView
+            android:id="@+id/view_ema_tv_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:text="0.00"
+            android:textColor="@color/ma_5_color"
+            android:textSize="@dimen/text_size_10sp" />
 
-    <TextView
-        android:id="@+id/view_kline_tv_ma20"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/ma_20_color"
-        android:text="0.00"
-        android:textSize="@dimen/text_size_10sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:background="#0FFFFFFF"
+            android:text="@string/k_ema10"
+            android:textColor="@color/grey_unselected_font_color"
+            android:textSize="@dimen/text_size_10sp" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/view_ema_tv_10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:text="0.00"
+            android:textColor="@color/ma_10_color"
+            android:textSize="@dimen/text_size_10sp" />
+
+
+    </LinearLayout>
+</RelativeLayout>
