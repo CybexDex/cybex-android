@@ -20,6 +20,7 @@ import com.cybexmobile.BuildConfig;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AppVersion;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
 
@@ -123,7 +124,7 @@ public class SettingActivity extends BaseActivity {
             mSharedPreference.edit().putBoolean("isLoggedIn", false).apply();
             mSharedPreference.edit().putString("name", null).apply();
             mSharedPreference.edit().putString("password", null).apply();
-            EventBus.getDefault().post("logout");
+            EventBus.getDefault().post(new Event.LoginOut());
             finish();
         });
     }

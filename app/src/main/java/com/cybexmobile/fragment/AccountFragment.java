@@ -79,7 +79,7 @@ public class AccountFragment extends BaseFragment {
     //所有委单
     private volatile List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
     private volatile double mTotalCyb;
-    private List<String> mNameList = new ArrayList<>();
+    private boolean mIsLoginIn;
     private String mName;
     private String mMembershipExpirationDate;
 
@@ -104,8 +104,12 @@ public class AccountFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         EventBus.getDefault().register(this);
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mIsLoginIn = mSharedPreference.getBoolean("isLoggedIn", false);
+        mName = mSharedPreference.getString("name", "");
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -122,9 +126,10 @@ public class AccountFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mIsViewCreated = true;
-        showLoadDialog();
-        if(mWebSocketService != null){
-            loadData(mWebSocketService.getFullAccount());
+        if(mIsLoginIn){
+            if(mWebSocketService != null){
+                loadData(mWebSocketService.getFullAccount(mName));
+            }
         }
     }
 
@@ -134,13 +139,10 @@ public class AccountFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        switch (string) {
-            case "logout":
-                setViews();
-                break;
-        }
-
+    public void onLoginOut(Event.LoginOut event) {
+        mIsLoginIn = false;
+        mName = null;
+        setViews();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -176,10 +178,10 @@ public class AccountFragment extends BaseFragment {
                         mTotalAccountTextView.setText("0.00000≈¥0.00");
                         mAccountTotalRmbTextView.setText("");
                     } else {
-                        hideLoadDialog();
                         mTotalAccountTextView.setText(String.format(Locale.US, "%.5f", mTotalCyb));
                         if(mWebSocketService != null){
-                            mCybRmbPrice = mWebSocketService.getAssetRmbPrice("CYB").getValue();
+                            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
+                            mCybRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
                         }
                         setTotalRmbTextView(mTotalCyb * mCybRmbPrice);
                     }
@@ -244,7 +246,7 @@ public class AccountFragment extends BaseFragment {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             if(mIsViewCreated){
-                loadData(mWebSocketService.getFullAccount());
+                loadData(mWebSocketService.getFullAccount(mName));
             }
         }
 
@@ -279,11 +281,7 @@ public class AccountFragment extends BaseFragment {
     }
 
     private void setViews() {
-        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean ifLoggedIn = mSharedPreference.getBoolean("isLoggedIn", false);
-        mName = mSharedPreference.getString("name", "");
-        mNameList.add(mName);
-        if (ifLoggedIn) {
+        if (mIsLoginIn) {
             processLogIn();
         } else {
             mAvatarImageView.setVisibility(View.VISIBLE);
@@ -391,11 +389,10 @@ public class AccountFragment extends BaseFragment {
             if (resultCode == Activity.RESULT_OK) {
                 if (data.getBooleanExtra("LogIn", false)) {
                     mName = data.getStringExtra("name");
-                    mNameList.clear();
-                    mNameList.add(mName);
+                    mIsLoginIn = true;
                     processLogIn();
                     if(mWebSocketService != null){
-                        loadData(mWebSocketService.getFullAccount());
+                        loadData(mWebSocketService.getFullAccount(mName));
                     }
                 }
             }
@@ -404,9 +401,9 @@ public class AccountFragment extends BaseFragment {
 
     private void loadData(FullAccountObject fullAccountObject){
         if(fullAccountObject == null){
-            hideLoadDialog();
             return;
         }
+        hideLoadDialog();
         mLimitOrderObjectList = fullAccountObject.limit_orders;
         mAccountObjectBalance = fullAccountObject.balances;
         mMembershipExpirationDate  = fullAccountObject.account.membership_expiration_date;

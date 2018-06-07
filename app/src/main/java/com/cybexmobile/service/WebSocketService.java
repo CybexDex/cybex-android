@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -443,8 +444,18 @@ public class WebSocketService extends Service {
         }, 10*1000);
     }
 
-    public FullAccountObject getFullAccount(){
-        return mFullAccount;
+    public FullAccountObject getFullAccount(boolean isLoginIn) {
+        return isLoginIn ? mFullAccount : null;
+    }
+
+    public FullAccountObject getFullAccount(String name){
+        if(mFullAccount != null){
+            return mFullAccount;
+        }
+        if(!TextUtils.isEmpty(name)){
+            callFullAccount(name);
+        }
+        return null;
     }
 
     public void cancelCallFullAccount(){

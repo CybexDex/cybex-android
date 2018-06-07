@@ -184,6 +184,9 @@ public class WebSocketClient extends WebSocketListener {
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         super.onFailure(webSocket, t, response);
         Log.v(TAG, "onFailure: WebSocket on failure", t);
+        if(t instanceof SocketTimeoutException){
+            //websocket连接超时
+        }
         mConnectStatus = WEBSOCKET_CONNECT_FAIL;
         _nDatabaseId = -1;
         _nBroadcastId = -1;

@@ -39,7 +39,6 @@ import info.hoang8f.android.segmented.SegmentedGroup;
 public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, OpenOrderRecyclerViewAdapter.getTotalValueInterface {
 
     private SegmentedGroup mSegmentedGroup;
-    private RadioButton mAllSegment, mBuySegment, mSellSegment;
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
     private RecyclerView mRecyclerView;
     private OpenOrderRecyclerViewAdapter mOpenOrcerRecycerViewAdapter;
@@ -65,7 +64,6 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mOpenOrcerRecycerViewAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mAllSegment.setChecked(true);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection , BIND_AUTO_CREATE);
     }
@@ -78,6 +76,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(mConnection);
         EventBus.getDefault().unregister(this);
     }
 
@@ -86,10 +85,11 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            mLimitOrderObjectList = mWebSocketService.getFullAccount().limit_orders;
+            mLimitOrderObjectList = mWebSocketService.getFullAccount(true).limit_orders;
             if(mLimitOrderObjectList == null || mLimitOrderObjectList.size() == 0){
                 return;
             }
+
             mBooleanList = isSell(mLimitOrderObjectList, mCompareList);
             mapBuyOrSellSegment();
             mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
@@ -103,9 +103,6 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     private void initViews() {
         mSegmentedGroup = findViewById(R.id.open_orders_segmented_group);
-        mAllSegment = findViewById(R.id.open_orders_segment_all);
-        mBuySegment = findViewById(R.id.open_orders_segment_buy);
-        mSellSegment = findViewById(R.id.open_orders_segment_sell);
         mRecyclerView = findViewById(R.id.open_orders_recycler_view);
         mOpenOrderTotalValue = findViewById(R.id.open_orders_total_value);
         mTvOpenOrderTotalTitle = findViewById(R.id.open_orders_title);

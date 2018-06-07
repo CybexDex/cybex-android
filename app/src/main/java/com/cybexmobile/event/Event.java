@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Event {
 
+    //更新币价格
     public static class UpdateRmbPrice{
         private List<AssetRmbPrice> data;
 
@@ -131,6 +132,7 @@ public class Event {
         }
     }
 
+    //加载AssertAbject
     public static class LoadAsset{
         private AssetObject data;
 
@@ -146,4 +148,35 @@ public class Event {
             this.data = data;
         }
     }
+
+    //登出
+    public static class LoginOut{
+
+    }
+
+    //http请求超时
+    public static class HttpTimeOut{
+
+    }
+
+    //websocket请求超时
+    public static class WebSocketTimeOut{}
+
+    //线程调度
+    public static class ThreadScheduler<T>{
+        private T data;
+
+        public ThreadScheduler(T data) {
+            this.data = data;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public void setData(T data) {
+            this.data = data;
+        }
+    }
 }
+

@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -30,8 +31,10 @@ import com.cybexmobile.faucet.CreateAccountException;
 import com.cybexmobile.faucet.CreateAccountRequest;
 import com.cybexmobile.faucet.CreateAccountResponse;
 import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybexmobile.graphene.chain.GlobalConfigObject;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
+import com.google.gson.Gson;
 import com.pixplicity.sharp.Sharp;
 
 import org.json.JSONException;
@@ -47,6 +50,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 import static android.webkit.WebViewClient.ERROR_FILE_NOT_FOUND;
@@ -62,6 +67,7 @@ import static com.cybexmobile.constant.ErrorCode.ERROR_SERVER_RESPONSE_FAIL;
 import static com.cybexmobile.constant.ErrorCode.ERROR_UNKNOWN;
 
 public class RegisterActivity extends BaseActivity {
+    private static final String TAG = "RegisterActivity";
     ImageView mCloudWalletIntroductionQuestionMarker, mPinCodeImageView, mUserNameChecker, mPasswordChecker, mPasswordConfirmChecker, mRegisterErrorSign;
     ImageView mUserNameicon, mPasswordIcon, mPasswordConfirmIcon, mPinCodeIcon;
     TextView mTvLoginIn, mRegisterErrorText;
@@ -72,7 +78,6 @@ public class RegisterActivity extends BaseActivity {
     String mCapId;
     Timer mTimer = new Timer();
     Task mTask = new Task();
-    Handler mHandler = new Handler();
     private boolean mIsKeyShowing;
     private int mLastInvisibleHeight;
     private int mLastScrollHeight;
@@ -172,7 +177,6 @@ public class RegisterActivity extends BaseActivity {
                             mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
                             !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
                 }
-
 
             }
         });
@@ -296,11 +300,12 @@ public class RegisterActivity extends BaseActivity {
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        Log.v(TAG, "onSubscribe");
                     }
 
                     @Override
                     public void onNext(ResponseBody responseBody) {
+                        Log.v(TAG, "onNext");
                         JSONObject jsonObject = null;
                         try {
                             jsonObject = new JSONObject(responseBody.string());
@@ -316,12 +321,12 @@ public class RegisterActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.v(TAG, "onError");
                     }
 
                     @Override
                     public void onComplete() {
-
+                        Log.v(TAG, "onComplete");
                     }
                 });
     }
@@ -375,7 +380,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
 
-    private CreateAccountRequest parseAccount(String strAccountName,
+    private String parseAccount(String strAccountName,
                                               String strPassword,
                                               String pinCode,
                                               String capId){
@@ -396,7 +401,9 @@ public class RegisterActivity extends BaseActivity {
         account.refcode = null;
         account.referrer = null;
         createAccountRequest.account = account;
-        return createAccountRequest;
+        Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
+        Log.v(TAG, gson.toJson(createAccountRequest));
+        return gson.toJson(createAccountRequest);
     }
 
     private void processCreateAccount(final String strAccount, final String strPassword, String strPasswordConfirm, String pinCode, String capId) {
@@ -407,7 +414,7 @@ public class RegisterActivity extends BaseActivity {
         showLoadDialog();
         RetrofitFactory.getInstance()
                 .api()
-                .register(RetrofitFactory.url_register, parseAccount(strAccount, strPassword, pinCode, capId))
+                .register(RetrofitFactory.url_register, RequestBody.create(MediaType.parse("application/json"), parseAccount(strAccount, strPassword, pinCode, capId)))
                 .map(new Function<CreateAccountResponse, CreateAccountResponse>() {
                     @Override
                     public CreateAccountResponse apply(CreateAccountResponse createAccountResponse) {
@@ -422,16 +429,18 @@ public class RegisterActivity extends BaseActivity {
                 .subscribe(new Observer<Object>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        Log.v(TAG, "processCreateAccount: onSubscribe");
                     }
 
                     @Override
                     public void onNext(Object o) {
+                        Log.v(TAG, "processCreateAccount: onNext");
                         login(strAccount, strPassword);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.v(TAG, "processCreateAccount: onError");
                         hideLoadDialog();
                         if (e instanceof NetworkStatusException) {
                             processErrorCode(ERROR_NETWORK_FAIL);
@@ -445,6 +454,7 @@ public class RegisterActivity extends BaseActivity {
 
                     @Override
                     public void onComplete() {
+                        Log.v(TAG, "processCreateAccount: onComplete");
 
                     }
                 });

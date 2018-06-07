@@ -134,10 +134,15 @@ public class BaseActivity extends AppCompatActivity {
 
     //show load dialog
     protected final void showLoadDialog(){
+        this.showLoadDialog(false);
+
+    }
+
+    protected final void showLoadDialog(boolean isCancelable){
         if(mLoadDialog == null){
             mLoadDialog = new LoadDialog(this, R.style.LoadDialog);
-            mLoadDialog.setCancelable(false);
         }
+        mLoadDialog.setCancelable(isCancelable);
         mLoadDialog.show();
     }
 

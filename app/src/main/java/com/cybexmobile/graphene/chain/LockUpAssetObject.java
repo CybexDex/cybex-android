@@ -4,6 +4,8 @@ public class LockUpAssetObject {
     public ObjectId<LockUpAssetObject> id;
     public String owner;
     public balance balance;
+    public String last_claim_date;
+    public vesting_policy vesting_policy;
 
     public class balance {
         public double amount;
@@ -17,7 +19,4 @@ public class LockUpAssetObject {
         public double begin_balance;
 
     }
-
-    public String last_claim_date;
-    public vesting_policy vesting_policy;
 }

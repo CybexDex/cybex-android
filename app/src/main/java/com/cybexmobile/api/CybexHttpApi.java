@@ -9,6 +9,7 @@ import com.cybexmobile.faucet.CreateAccountResponse;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -28,7 +29,7 @@ public interface CybexHttpApi {
     Observable<ResponseBody> getPinCode(@Url String url);
 
     @POST
-    Observable<CreateAccountResponse> register(@Url String url, @Body CreateAccountRequest re);
+    Observable<CreateAccountResponse> register(@Url String url, @Body RequestBody body);
 
     @GET("market_list")
     Observable<AssetsPairResponse> getAssetsPair(@Query("base") String base);

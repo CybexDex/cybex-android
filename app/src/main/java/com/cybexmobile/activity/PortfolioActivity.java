@@ -45,7 +45,7 @@ public class PortfolioActivity extends BaseActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             WebSocketService webSocketService = binder.getService();
-            mAccountBalanceObjectList = webSocketService.getFullAccount().balances;
+            mAccountBalanceObjectList = webSocketService.getFullAccount(true).balances;
             if(mPortfolioListAdapter != null){
                 mPortfolioListAdapter.notifyDataSetChanged();
             }

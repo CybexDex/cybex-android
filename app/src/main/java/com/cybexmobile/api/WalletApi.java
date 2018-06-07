@@ -136,30 +136,29 @@ public class WalletApi {
 
     public WalletApi(Context context) {
         mContext = context;
-
     }
 
     public void initialize() {
         mWebSocketClient.connect();
-//        try {
-//            mWebSocketClient.get_chain_id(new WebSocketClient.MessageCallback<WebSocketClient.Reply<Sha256Object>>() {
-//                @Override
-//                public void onMessage(WebSocketClient.Reply<Sha256Object> reply) {
-//                    Sha256Object sha256Object = reply.result;
-//                    if (mWalletObject == null) {
-//                        mWalletObject = new wallet_object();
-//                        mWalletObject.chain_id = sha256Object;
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure() {
-//
-//                }
-//            });
-//        } catch (NetworkStatusException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            mWebSocketClient.get_chain_id(new WebSocketClient.MessageCallback<WebSocketClient.Reply<Sha256Object>>() {
+                @Override
+                public void onMessage(WebSocketClient.Reply<Sha256Object> reply) {
+                    Sha256Object sha256Object = reply.result;
+                    if (mWalletObject == null) {
+                        mWalletObject = new wallet_object();
+                        mWalletObject.chain_id = sha256Object;
+                    }
+                }
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
     }
 
     public int reset() {
