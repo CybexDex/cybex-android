@@ -18,6 +18,7 @@ import com.cybexmobile.market.OrderBook;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -48,14 +49,13 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        NumberFormat formatter = MyUtils.getSuitableDecimalFormat(mQuoteName);
         if (position < mValues.bids.size()) {
-            holder.mBuyPrice.setText(String.valueOf(formatter.format(mValues.bids.get(position).price)));
-            holder.mVolume.setText(String.valueOf(MyUtils.getNumberKMGExpressionFormat(mValues.bids.get(position).quote)));
+            holder.mBuyPrice.setText(String.format(Locale.US,"%.6f", mValues.bids.get(position).price));
+            holder.mVolume.setText(String.format(Locale.US, "%.4f", mValues.bids.get(position).quote));
         }
         if (position < mValues.asks.size()) {
-            holder.mSellPrice.setText(String.valueOf(formatter.format(mValues.asks.get(position).price)));
-            holder.mSellVolume.setText(String.valueOf(MyUtils.getNumberKMGExpressionFormat(mValues.asks.get(position).quote)));
+            holder.mSellPrice.setText(String.format(Locale.US, "%.6f", mValues.asks.get(position).price));
+            holder.mSellVolume.setText(String.format(Locale.US, "%.4f", mValues.asks.get(position).quote));
         }
 
         float percentageBids = 0f;

@@ -94,6 +94,7 @@ public class WatchLIstFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        mRecyclerView.getItemAnimator().setChangeDuration(0);
         mRecyclerView.setAdapter(mWatchListRecyclerViewAdapter);
         initTabs(mTabs);
         return view;

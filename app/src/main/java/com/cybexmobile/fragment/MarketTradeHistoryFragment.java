@@ -86,10 +86,13 @@ public class MarketTradeHistoryFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mColumnCount));
         }
+        String trimmedBase = mWatchlistData.getBaseSymbol().contains("JADE") ? mWatchlistData.getBaseSymbol().substring(5, mWatchlistData.getBaseSymbol().length()) : mWatchlistData.getBaseSymbol();
+        String trimmedQuote = mWatchlistData.getQuoteSymbol().contains("JADE") ? mWatchlistData.getQuoteSymbol().substring(5, mWatchlistData.getQuoteSymbol().length()) : mWatchlistData.getQuoteSymbol();
+
         if(mWatchlistData != null){
-            mBaseTextView.setText(mWatchlistData.getBaseSymbol());
-            mQuoteTextView.setText(mWatchlistData.getQuoteSymbol());
-            mTradeHistoryRecyclerViewAdapter = new TradeHistoryRecyclerViewAdapter(mMarketTradeList, mListener, getContext());
+            mBaseTextView.setText(trimmedBase);
+            mQuoteTextView.setText(trimmedQuote);
+            mTradeHistoryRecyclerViewAdapter = new TradeHistoryRecyclerViewAdapter(mMarketTradeList, mListener, mWatchlistData.getBasePrecision(), mWatchlistData.getQuotePrecision(), getContext());
             mRecyclerView.setAdapter(mTradeHistoryRecyclerViewAdapter);
         }
         return view;

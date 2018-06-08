@@ -15,6 +15,7 @@ import com.cybexmobile.utils.MyUtils;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -26,11 +27,15 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
     private final List<MarketTrade> mValues;
     private final OnListFragmentInteractionListener mListener;
     private final Context mContext;
+    private int mBasePrecision;
+    private int mQuotePrecision;
 
-    TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, OnListFragmentInteractionListener listener, Context context) {
+    TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, OnListFragmentInteractionListener listener, int basePrecision, int quotePrecision, Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;
+        mBasePrecision = basePrecision;
+        mQuotePrecision = quotePrecision;
     }
 
     @Override
@@ -43,10 +48,11 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        NumberFormat formatter = MyUtils.getSuitableDecimalFormat(holder.mItem != null ? holder.mItem.quote : "");
-        holder.mPriceView.setText(String.valueOf(formatter.format(mValues.get(position).price)));
-        holder.mBaseView.setText(String.valueOf(MyUtils.getNumberKMGExpressionFormat(mValues.get(position).baseAmount)));
-        holder.mQuoteView.setText(String.valueOf(MyUtils.getNumberKMGExpressionFormat(mValues.get(position).quoteAmount)));
+        String basePrecisionFormatter = MyUtils.getPrecisedFormatter(mBasePrecision);
+        String quotePrecisionFormatter = MyUtils.getPrecisedFormatter(mQuotePrecision);
+        holder.mPriceView.setText(String.format(Locale.US, basePrecisionFormatter, mValues.get(position).price));
+        holder.mBaseView.setText(String.format(Locale.US, basePrecisionFormatter, mValues.get(position).baseAmount));
+        holder.mQuoteView.setText(String.format(Locale.US, quotePrecisionFormatter, mValues.get(position).quoteAmount));
         holder.mDateView.setText(mValues.get(position).date);
         if(mValues.get(position).showRed.equals("showRed")) {
             holder.mPriceView.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));

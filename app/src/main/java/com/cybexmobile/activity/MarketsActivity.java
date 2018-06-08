@@ -279,10 +279,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         if(mWatchListData == null){
             return;
         }
-        mTvTitle.setText(String.format("%s/%s", mWatchListData.getQuoteSymbol(), mWatchListData.getBaseSymbol()));
-        String precisionFormatter = MyUtils.getPrecisedFormatter(watchListData.getBasePrecision());
         String trimmedBase = watchListData.getBaseSymbol().contains("JADE") ? watchListData.getBaseSymbol().substring(5, watchListData.getBaseSymbol().length()) : watchListData.getBaseSymbol();
         String trimmedQuote = watchListData.getQuoteSymbol().contains("JADE") ? watchListData.getQuoteSymbol().substring(5, watchListData.getQuoteSymbol().length()) : watchListData.getQuoteSymbol();
+        mTvTitle.setText(String.format("%s/%s", trimmedQuote, trimmedBase));
+        String precisionFormatter = MyUtils.getPrecisedFormatter(watchListData.getBasePrecision());
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" : String.format(precisionFormatter, watchListData.getCurrentPrice()));
         mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High :" + precisionFormatter, watchListData.getHigh()));
         mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low :" + precisionFormatter, watchListData.getLow()));
