@@ -22,13 +22,11 @@ public class MainApplication extends Application {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
-//        changeAppLanguage();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-//        changeAppLanguage();
     }
 
     @Override
@@ -46,21 +44,5 @@ public class MainApplication extends Application {
         config.setLocale(locale);
         context = context.createConfigurationContext(config);
         return context;
-    }
-
-    private void changeAppLanguage() {
-        String sta = StoreLanguageHelper.getLanguageLocal(this);
-        if (sta != null && !"".equals(sta)) {
-            Locale myLocale = new Locale(sta);
-            Resources res = getResources();
-            DisplayMetrics dm = res.getDisplayMetrics();
-            Configuration conf = res.getConfiguration();
-//            if(Build.VERSION.SDK_INT >= 17) {
-            conf.locale = myLocale;
-            res.updateConfiguration(conf, dm);
-//            }
-//            conf.setLocale(myLocale);
-//            this.createConfigurationContext(conf);
-        }
     }
 }

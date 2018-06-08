@@ -200,7 +200,7 @@ public class SettingActivity extends BaseActivity {
                                         }
                                     }).show();
                         } else {
-                            Toast toast = Toast.makeText(getApplicationContext(), R.string.setting_version_is_the_latest, Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.setting_version_is_the_latest), Toast.LENGTH_SHORT);
                             toast.setGravity(Gravity.CENTER, 0, 0);
                             toast.show();
                         }

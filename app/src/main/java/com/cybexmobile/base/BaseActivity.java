@@ -29,8 +29,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
-        initAppLanguage();
+        super.attachBaseContext(updateResources(newBase));
     }
 
     @Override
@@ -153,22 +152,15 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void initAppLanguage() {
-        String language = StoreLanguageHelper.getLanguageLocal(this);
-        Resources resources = getResources();
-        Configuration config = resources.getConfiguration();
-        DisplayMetrics dm = resources.getDisplayMetrics();
-        if(language.equals(config.locale.getLanguage())){
-            return;
-        }
-        switch (language){
-            case "en":
-                config.locale = Locale.ENGLISH;
-                break;
-            case "zh":
-                config.locale = Locale.SIMPLIFIED_CHINESE;
-                break;
-        }
-        resources.updateConfiguration(config, dm);
+    private Context updateResources(Context context) {
+        String language = StoreLanguageHelper.getLanguageLocal(context);
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+
+        Resources res = context.getResources();
+        Configuration config = new Configuration(res.getConfiguration());
+        config.setLocale(locale);
+        context = context.createConfigurationContext(config);
+        return context;
     }
 }

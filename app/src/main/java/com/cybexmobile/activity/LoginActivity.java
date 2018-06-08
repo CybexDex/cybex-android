@@ -298,7 +298,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                                 sharedPreferences.edit().putString("password", password).apply();
                                 finish();
                             } else {
-                                Toast toast = Toast.makeText(getApplicationContext(), R.string.error_incorrect_password, Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_incorrect_password), Toast.LENGTH_SHORT);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();
                             }
