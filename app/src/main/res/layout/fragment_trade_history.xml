@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="@dimen/layout_header_order_history_margin_top"
         android:weightSum="4">
 
         <TextView

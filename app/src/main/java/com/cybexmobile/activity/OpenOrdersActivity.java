@@ -20,8 +20,10 @@ import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.market.MarketStat;
+import com.cybexmobile.market.OpenOrder;
 import com.cybexmobile.service.WebSocketService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -42,8 +44,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
     private RecyclerView mRecyclerView;
     private OpenOrderRecyclerViewAdapter mOpenOrcerRecycerViewAdapter;
-    private List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
-    private String[] mCompareList = new String[]{"JADE.ETH", "JADE.BTC", "JADE.EOS", "CYB"};
+    private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.ETH", "JADE.BTC", "JADE.EOS", "CYB"});
     private List<Boolean> mBooleanList = new ArrayList<>();
     private List<List<AssetObject>> mAssetObjectList = new ArrayList<>();
     private HashMap<String, List<LimitOrderObject>> mLimitOrderHashMap = new HashMap<>();
@@ -51,6 +52,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private HashMap<String, List<Boolean>> mBooleanHashMap = new HashMap<>();
     private Toolbar mToolbar;
     private WebSocketService mWebSocketService;
+
+    private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +62,14 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         initViews();
-        mOpenOrcerRecycerViewAdapter = new OpenOrderRecyclerViewAdapter(mLimitOrderObjectList, mBooleanList, this, mAssetObjectList, this);
+        mOpenOrcerRecycerViewAdapter = new OpenOrderRecyclerViewAdapter(mOpenOrderItems, this, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mOpenOrcerRecycerViewAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection , BIND_AUTO_CREATE);
+        showLoadDialog();
     }
 
     @Override
@@ -85,19 +89,37 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            mLimitOrderObjectList = mWebSocketService.getFullAccount(true).limit_orders;
-            if(mLimitOrderObjectList == null || mLimitOrderObjectList.size() == 0){
+            //AccountFragment已经获取了FullAccount数据
+            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(true);
+            List<LimitOrderObject> limitOrderObjects = fullAccountObject == null ? null : fullAccountObject.limit_orders;
+            if(limitOrderObjects == null || limitOrderObjects.size() == 0){
+                hideLoadDialog();
                 return;
             }
-
-            mBooleanList = isSell(mLimitOrderObjectList, mCompareList);
-            mapBuyOrSellSegment();
+            for(LimitOrderObject limitOrderObject : limitOrderObjects){
+                OpenOrderItem item = new OpenOrderItem();
+                OpenOrder openOrder = new OpenOrder();
+                openOrder.setLimitOrder(limitOrderObject);
+                String baseId = limitOrderObject.sell_price.base.asset_id.toString();
+                String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
+                List<AssetObject> assetObjects = mWebSocketService.getAssetObjects(baseId, quoteId);
+                if(assetObjects != null && assetObjects.size() == 2){
+                    String baseSymbol = assetObjects.get(0).symbol;
+                    String quoteSymbol = assetObjects.get(1).symbol;
+                    item.isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
+                    openOrder.setBaseObject(item.isSell ? assetObjects.get(1) : assetObjects.get(0));
+                    openOrder.setQuoteObject(item.isSell ? assetObjects.get(0) : assetObjects.get(1));
+                }
+                item.openOrder = openOrder;
+                mOpenOrderItems.add(item);
+            }
+            hideLoadDialog();
             mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            mWebSocketService = null;
         }
     };
 
@@ -114,35 +136,17 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
             case R.id.open_orders_segment_all:
-                mAssetObjectList.clear();
-                mLimitOrderObjectList.clear();
-                mBooleanList.clear();
-                mAssetObjectList.addAll(mAssetObjectHashMap.get("All"));
-                mLimitOrderObjectList.addAll(mLimitOrderHashMap.get("All"));
-                mBooleanList.addAll(mBooleanHashMap.get("All"));
-                mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
+                mOpenOrcerRecycerViewAdapter.getFilter().filter("All");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_total_value);
                 break;
 
             case R.id.open_orders_segment_buy:
-                mAssetObjectList.clear();
-                mLimitOrderObjectList.clear();
-                mBooleanList.clear();
-                mAssetObjectList.addAll(mAssetObjectHashMap.get("Buy"));
-                mLimitOrderObjectList.addAll(mLimitOrderHashMap.get("Buy"));
-                mBooleanList.addAll(mBooleanHashMap.get("Buy"));
-                mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
+                mOpenOrcerRecycerViewAdapter.getFilter().filter("Buy");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_buy_total_value);
                 break;
 
             case R.id.open_orders_segment_sell:
-                mAssetObjectList.clear();
-                mLimitOrderObjectList.clear();
-                mBooleanList.clear();
-                mAssetObjectList.addAll(mAssetObjectHashMap.get("Sell"));
-                mLimitOrderObjectList.addAll(mLimitOrderHashMap.get("Sell"));
-                mBooleanList.addAll(mBooleanHashMap.get("Sell"));
-                mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
+                mOpenOrcerRecycerViewAdapter.getFilter().filter("Sell");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_sell_total_value);
                 break;
 
@@ -151,50 +155,40 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     @Override
     public void displayTotalValue(double total) {
-        double rmbPrice = MarketStat.getInstance().getRMBPriceFromHashMap("CYB");
+        double rmbPrice = mWebSocketService.getAssetRmbPrice("CYB").getValue();
         int precision = 2;
-        String form = "%." + precision + "f\n";
+        String form = "%." + precision + "f";
         mOpenOrderTotalValue.setText(String.format(Locale.US,"≈¥" + form, total * rmbPrice ));
     }
 
-    private List<Boolean> isSell (List<LimitOrderObject> limitOrderList, String[] compareList) {
-        List<Boolean> booleanList = new ArrayList<>();
-        for (LimitOrderObject LimitOrderObject : limitOrderList) {
-            List<AssetObject> assetObjectList = new ArrayList<>();
-
-            String baseId = LimitOrderObject.sell_price.base.asset_id.toString();
-            String quoteId = LimitOrderObject.sell_price.quote.asset_id.toString();
-
-            AssetObject base_object = mWebSocketService.getAssetObject(baseId);
-            AssetObject quote_object = mWebSocketService.getAssetObject(quoteId);
-
-            String baseSymbol = base_object.symbol;
-            String quoteSymbol = quote_object.symbol;
-            boolean isSell = checkIsSell(baseSymbol, quoteSymbol, compareList);
-            if (isSell) {
-                assetObjectList.add(base_object);
-                assetObjectList.add(quote_object);
-            } else {
-                assetObjectList.add(quote_object);
-                assetObjectList.add(base_object);
-            }
-
-            booleanList.add(isSell);
-            mAssetObjectList.add(assetObjectList);
-        }
-        return booleanList;
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadAsset(Event.LoadAsset event){
-
+    public void onLoadAssets(Event.LoadAssets event){
+        List<AssetObject> assetObjects = event.getData();
+        if(assetObjects == null && assetObjects.size() != 2){
+            return;
+        }
+        for(int i=0; i<mOpenOrderItems.size(); i++){
+            LimitOrderObject limitOrderObject = mOpenOrderItems.get(i).openOrder.getLimitOrder();
+            String baseId = limitOrderObject.sell_price.base.asset_id.toString();
+            String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
+            if(baseId.equals(assetObjects.get(0).id.toString()) && quoteId.equals(assetObjects.get(1).id.toString())){
+                String baseSymbol = assetObjects.get(0).symbol;
+                String quoteSymbol = assetObjects.get(1).symbol;
+                mOpenOrderItems.get(i).isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
+                mOpenOrderItems.get(i).openOrder.setBaseObject(mOpenOrderItems.get(i).isSell ? assetObjects.get(0) : assetObjects.get(1));
+                mOpenOrderItems.get(i).openOrder.setQuoteObject(mOpenOrderItems.get(i).isSell ? assetObjects.get(1) : assetObjects.get(0));
+                hideLoadDialog();
+                mOpenOrcerRecycerViewAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
-    private boolean checkIsSell(String baseSymbol, String quoteSymbol, String[] compareList) {
-        boolean isContainBase = Arrays.asList(compareList).contains(baseSymbol);
-        boolean isContainQuote = Arrays.asList(compareList).contains(quoteSymbol);
-        int baseIndex = Arrays.asList(compareList).indexOf(baseSymbol);
-        int quoteIndex = Arrays.asList(compareList).indexOf(quoteSymbol);
+    private boolean checkIsSell(String baseSymbol, String quoteSymbol, List<String> compareSymbol) {
+        boolean isContainBase = compareSymbol.contains(baseSymbol);
+        boolean isContainQuote = compareSymbol.contains(quoteSymbol);
+        int baseIndex = compareSymbol.indexOf(baseSymbol);
+        int quoteIndex = compareSymbol.indexOf(quoteSymbol);
         if (isContainBase) {
             if (!isContainQuote) {
                 return false;
@@ -214,40 +208,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         }
     }
 
-    private void mapBuyOrSellSegment() {
-        List<List<AssetObject>> sellAssetObjectList = new ArrayList<>();
-        List<LimitOrderObject> sellLimitOrderList = new ArrayList<>();
-        List<List<AssetObject>> buyAssetObjectList = new ArrayList<>();
-        List<LimitOrderObject> buyLimitOrderList = new ArrayList<>();
-        List<Boolean> sellList = new ArrayList<>();
-        List<Boolean> buyList = new ArrayList<>();
-        List<Boolean> allList = new ArrayList<>();
-        List<List<AssetObject>> allAssetObjectList = new ArrayList<>();
-        List<LimitOrderObject> allLimitOrderList = new ArrayList<>();
-        for (int i = 0; i < mBooleanList.size(); i++) {
-            if (mBooleanList.get(i)) {
-                sellAssetObjectList.add(mAssetObjectList.get(i));
-                sellLimitOrderList.add(mLimitOrderObjectList.get(i));
-                sellList.add(mBooleanList.get(i));
-            } else {
-                buyAssetObjectList.add(mAssetObjectList.get(i));
-                buyLimitOrderList.add(mLimitOrderObjectList.get(i));
-                buyList.add(mBooleanList.get(i));
-            }
-            allList.add(mBooleanList.get(i));
-            allAssetObjectList.add(mAssetObjectList.get(i));
-            allLimitOrderList.add(mLimitOrderObjectList.get(i));
-
-        }
-
-        mLimitOrderHashMap.put("Sell", sellLimitOrderList);
-        mLimitOrderHashMap.put("Buy", buyLimitOrderList);
-        mLimitOrderHashMap.put("All", allLimitOrderList);
-        mAssetObjectHashMap.put("Sell", sellAssetObjectList);
-        mAssetObjectHashMap.put("Buy", buyAssetObjectList);
-        mAssetObjectHashMap.put("All", allAssetObjectList);
-        mBooleanHashMap.put("Sell", sellList);
-        mBooleanHashMap.put("Buy", buyList);
-        mBooleanHashMap.put("All", allList);
+    public class OpenOrderItem {
+        public OpenOrder openOrder;
+        public boolean isSell;
     }
 }

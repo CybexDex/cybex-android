@@ -6,8 +6,43 @@ import com.cybexmobile.graphene.chain.LimitOrderObject;
 
 public class OpenOrder {
 
-    public LimitOrderObject limitOrder;
-    public AssetObject base;
-    public AssetObject quote;
-    public double price;
+    private LimitOrderObject limitOrder;
+    private AssetObject baseObject;
+    private AssetObject quoteObject;
+    private double price;
+
+    public OpenOrder() {
+    }
+
+    public LimitOrderObject getLimitOrder() {
+        return limitOrder;
+    }
+
+    public void setLimitOrder(LimitOrderObject limitOrder) {
+        this.limitOrder = limitOrder;
+    }
+
+    public AssetObject getBaseObject() {
+        return baseObject;
+    }
+
+    public void setBaseObject(AssetObject baseObject) {
+        this.baseObject = baseObject;
+    }
+
+    public AssetObject getQuoteObject() {
+        return quoteObject;
+    }
+
+    public void setQuoteObject(AssetObject quoteObject) {
+        this.quoteObject = quoteObject;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }

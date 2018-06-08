@@ -72,4 +72,7 @@
     <!-- Balance Dialog -->
     <dimen name="dialog_content_line_spacing_extra">10dp</dimen>
 
+    <!-- OrderHistoryList Fragment -->
+    <dimen name="layout_header_order_history_margin_top">6dp</dimen>
+
 </resources>

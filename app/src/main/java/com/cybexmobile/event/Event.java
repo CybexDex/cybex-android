@@ -134,7 +134,7 @@ public class Event {
         }
     }
 
-    //加载AssertAbject
+    //加载单个AssertAbject
     public static class LoadAsset{
         private AssetObject data;
 
@@ -147,6 +147,23 @@ public class Event {
         }
 
         public void setData(AssetObject data) {
+            this.data = data;
+        }
+    }
+
+    //加载多个AssertAbject
+    public static class LoadAssets{
+        private List<AssetObject> data;
+
+        public LoadAssets(List<AssetObject> data) {
+            this.data = data;
+        }
+
+        public List<AssetObject> getData() {
+            return data;
+        }
+
+        public void setData(List<AssetObject> data) {
             this.data = data;
         }
     }

@@ -153,7 +153,7 @@ public class WatchLIstFragment extends Fragment {
                 break;
             }
         }
-        if (assetRmbPrice == null) {
+        if (assetRmbPrice == null || mWatchlistData == null || mWatchlistData.size() == 0) {
             return;
         }
         if(assetRmbPrice.getValue() != mWatchlistData.get(0).getRmbPrice()){

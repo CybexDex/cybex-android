@@ -161,7 +161,7 @@ public class WebSocketService extends Service {
                     @Override
                     public void onNext(List<AssetsPair> assetsPairs) {
                         mAssetsPairHashMap.put(baseAsset, assetsPairs);
-                        loadAssetObjectData(assetsPairs);
+                        loadAssetObjectDatas(assetsPairs);
                     }
 
                     @Override
@@ -181,7 +181,7 @@ public class WebSocketService extends Service {
      * 加载币信息
      * @param assetsPairs 交易对
      */
-    private void loadAssetObjectData(List<AssetsPair> assetsPairs){
+    private void loadAssetObjectDatas(List<AssetsPair> assetsPairs){
         List<String> assetsIds = new ArrayList<>();
         for(AssetsPair assetsPair : assetsPairs){
             if(!assetsIds.contains(assetsPair.getBase())){
@@ -191,6 +191,22 @@ public class WebSocketService extends Service {
         }
         try {
             BitsharesWalletWraper.getInstance().get_objects(assetsIds, mAssetMultiCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 加载币信息
+     * @param baseAssetId
+     * @param quoteAssetId
+     */
+    private void loadAssetObjectDatas(String  baseAssetId, String quoteAssetId){
+        List<String> assetIds = new ArrayList<>();
+        assetIds.add(baseAssetId);
+        assetIds.add(quoteAssetId);
+        try {
+            BitsharesWalletWraper.getInstance().get_objects(assetIds, mAssetMultiCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -357,6 +373,7 @@ public class WebSocketService extends Service {
             if(assetObjects == null || assetObjects.size() == 0){
                 return;
             }
+            EventBus.getDefault().post(new Event.LoadAssets(assetObjects));
             mAssetObjects.addAll(assetObjects);
             if(assetObjects == null || assetObjects.size() == 0){
                 return;
@@ -537,6 +554,27 @@ public class WebSocketService extends Service {
             }
         }
         loadAssetObjectData(assetId);
+        return null;
+    }
+
+    public List<AssetObject> getAssetObjects(String baseAssetId, String quoteAssetId){
+        List<AssetObject> assetObjects = new ArrayList<>();
+        AssetObject baseAssetObject = null;
+        AssetObject quoteAssetObject = null;
+        for(AssetObject assetObject : mAssetObjects){
+            if(assetObject.id.toString().equals(baseAssetId)){
+                baseAssetObject = assetObject;
+            }
+            if(assetObject.id.toString().equals(quoteAssetId)){
+                quoteAssetObject = assetObject;
+            }
+        }
+        if(baseAssetObject != null && quoteAssetObject != null){
+            assetObjects.add(baseAssetObject);
+            assetObjects.add(quoteAssetObject);
+            return assetObjects;
+        }
+        loadAssetObjectDatas(baseAssetId, quoteAssetId);
         return null;
     }
 }
