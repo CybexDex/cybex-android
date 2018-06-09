@@ -142,4 +142,7 @@
     <string name="progress_expire_date">Progress/Expiration Time</string>
     <string name="locked_assets">Lockup Assets</string>
 
+
+    <string name="network_connection_is_not_available">network connection is not available</string>
+
 </resources>

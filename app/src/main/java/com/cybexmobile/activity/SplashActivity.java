@@ -3,6 +3,7 @@ package com.cybexmobile.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.receiver.NetWorkBroadcastReceiver;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AppVersion;
@@ -30,8 +32,11 @@ public class SplashActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        Intent intent = new Intent(SplashActivity.this, WebSocketService.class);
-        startService(intent);
+        Intent intentService = new Intent(SplashActivity.this, WebSocketService.class);
+        startService(intentService);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(new NetWorkBroadcastReceiver(), intentFilter);
     }
 
     @Override

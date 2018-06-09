@@ -13,34 +13,23 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.BucketObject;
-import com.cybexmobile.graphene.chain.ObjectId;
-import com.cybexmobile.market.MarketStat;
-import com.cybexmobile.market.MarketTicker;
-import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.utils.PriceUtil;
 
+import com.cybexmobile.service.WebSocketService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,7 +41,6 @@ import java.util.List;
 public class WatchLIstFragment extends Fragment {
 
     private static final String TAG = "WatchListFragment";
-    private MarketStat marketStat;
     private List<WatchlistData> mWatchlistData = new ArrayList<>();
     protected RecyclerView mRecyclerView;
     private TabLayout mTabLayout;
@@ -72,7 +60,6 @@ public class WatchLIstFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        marketStat = MarketStat.getInstance();
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }

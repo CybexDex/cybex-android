@@ -54,10 +54,12 @@
                 android:id="@+id/account_membership_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/membership_item_background"
                 android:layout_marginTop="@dimen/text_membership_margin_top"
                 android:padding="@dimen/text_membership_padding"
                 android:layout_marginStart="@dimen/activity_margin"
                 android:layout_marginEnd="@dimen/activity_margin"
+                android:textSize="@dimen/text_size_10sp"
                 android:textColor="@color/grey_unselected_font_color" />
 
             <LinearLayout
@@ -89,6 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_margin"
                 android:layout_marginEnd="@dimen/activity_margin"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
@@ -96,15 +99,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primary_color_white"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:text="--"/>
 
                 <TextView
                     android:id="@+id/account_balance_total_rmb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:textColor="@color/grey_unselected_font_color"
-                    />
+                    android:textColor="@color/grey_unselected_font_color" />
             </LinearLayout>
 
             <RelativeLayout

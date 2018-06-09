@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +41,7 @@ import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.data.AssetRmbPrice;
+import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
@@ -57,25 +57,31 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * 帐户界面
+ * 数据流程:FullAccountObject -> AssetObject ->MarketTicker
+ */
 public class AccountFragment extends BaseFragment {
+
+    private static final int REQUEST_CODE_LOGIN = 1;
 
     private OnAccountFragmentInteractionListener mListener;
     private RecyclerView mPortfolioRecyclerView;
     private PortfolioRecyclerViewAdapter mPortfolioRecyclerViewAdapter;
-    private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTotalAccountTextView, mAccountTotalRmbTextView;
+    private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTvTotalCybAmount, mTvTotalRmbAmount;
     private WebView mAvatarWebView;
     private ImageView mAvatarImageView, mBalanceInfoImageView;
     private LinearLayout mBeforeLoginLayout, mAfterLoginLayout;
     private RelativeLayout mPortfolioTitleLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
     private SharedPreferences mSharedPreference;
-    //所用资产
-    private volatile List<AccountBalanceObject> mAccountObjectBalance = new ArrayList<>();
-    //所有资产详情
-    private volatile List<AssetObject> mAssetObjects = new ArrayList<>();
+
+    //Recyclerview item
+    private volatile List<AccountBalanceObjectItem> mAccountBalanceObjectItems = new ArrayList<>();
     //所有委单
     private volatile List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
     private volatile double mTotalCyb;
@@ -87,10 +93,9 @@ public class AccountFragment extends BaseFragment {
 
     private WebSocketService mWebSocketService;
 
-    private static final int MESSAGE_WHAT_REFRUSH_VIEW = 1;
+    private static final int MESSAGE_WHAT_REFRUSH_MEMBERSHIP_EXPIRATION = 1;
     private static final int MESSAGE_WHAT_REFRUSH_TOTAL_CYB = 2;
-
-    private boolean mIsViewCreated;
+    private static final int MESSAGE_WHAT_REFRESH_PORTFOLIO = 3;
 
     public static AccountFragment newInstance(String param1, String param2) {
         AccountFragment fragment = new AccountFragment();
@@ -107,9 +112,6 @@ public class AccountFragment extends BaseFragment {
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mIsLoginIn = mSharedPreference.getBoolean("isLoggedIn", false);
         mName = mSharedPreference.getString("name", "");
-        Intent intent = new Intent(getContext(), WebSocketService.class);
-        getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
     }
 
     @Override
@@ -125,7 +127,11 @@ public class AccountFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mIsViewCreated = true;
+        mPortfolioRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mPortfolioRecyclerViewAdapter = new PortfolioRecyclerViewAdapter(R.layout.item_portfolio_horizontal, mAccountBalanceObjectItems);
+        mPortfolioRecyclerView.setAdapter(mPortfolioRecyclerViewAdapter);
+        Intent intent = new Intent(getContext(), WebSocketService.class);
+        getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         if(mIsLoginIn){
             if(mWebSocketService != null){
                 loadData(mWebSocketService.getFullAccount(mName));
@@ -140,8 +146,7 @@ public class AccountFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOut(Event.LoginOut event) {
-        mIsLoginIn = false;
-        mName = null;
+        resetAccountDate();
         setViews();
     }
 
@@ -153,7 +158,37 @@ public class AccountFragment extends BaseFragment {
         }
         for(AssetRmbPrice assetRmbPrice : assetRmbPrices){
             if("CYB".equals(assetRmbPrice.getName())){
-                setTotalRmbTextView(mTotalCyb * assetRmbPrice.getValue());
+                mCybRmbPrice = assetRmbPrice.getValue();
+                setTotalCybAndRmbTextView(mTotalCyb, mTotalCyb * mCybRmbPrice);
+                break;
+            }
+        }
+        if(mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0){
+            return;
+        }
+        if(mCybRmbPrice != mAccountBalanceObjectItems.get(0).cybPrice){
+            for(AccountBalanceObjectItem item : mAccountBalanceObjectItems){
+                item.cybPrice = mCybRmbPrice;
+            }
+            mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadAsset(Event.LoadAsset event){
+        AssetObject assetObject = event.getData();
+        if(assetObject == null){
+            return;
+        }
+        for(int i=0; i<mAccountBalanceObjectItems.size(); i++){
+            AccountBalanceObjectItem item = mAccountBalanceObjectItems.get(i);
+            if(assetObject.id.toString().equals(item.accountBalanceObject.asset_type.toString())){
+                item.assetObject = assetObject;
+                if(item.marketTicker != null){
+                    calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
+                            item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
+                }
+                mPortfolioRecyclerViewAdapter.notifyItemChanged(i);
                 break;
             }
         }
@@ -169,66 +204,39 @@ public class AccountFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what){
-                case MESSAGE_WHAT_REFRUSH_VIEW:
+                case MESSAGE_WHAT_REFRUSH_MEMBERSHIP_EXPIRATION:
                     updateMemberShipViewData();
-                    mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
                     break;
                 case MESSAGE_WHAT_REFRUSH_TOTAL_CYB:
-                    if (mTotalCyb == 0) {
-                        mTotalAccountTextView.setText("0.00000≈¥0.00");
-                        mAccountTotalRmbTextView.setText("");
-                    } else {
-                        mTotalAccountTextView.setText(String.format(Locale.US, "%.5f", mTotalCyb));
-                        if(mWebSocketService != null){
-                            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
-                            mCybRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-                        }
-                        setTotalRmbTextView(mTotalCyb * mCybRmbPrice);
-                    }
+                    AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
+                    mCybRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+                    setTotalCybAndRmbTextView(mTotalCyb, mTotalCyb * mCybRmbPrice);
+                    break;
+                case MESSAGE_WHAT_REFRESH_PORTFOLIO:
+                    mPortfolioTitleLayout.setVisibility(View.VISIBLE);
+                    mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
                     break;
             }
         }
     };
 
-    private WebSocketClient.MessageCallback getObjectCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>>() {
-        @Override
-        public void onMessage(WebSocketClient.Reply<List<AssetObject>> reply) {
-            mAssetObjects = reply.result;
-            for(AssetObject assetObject : mAssetObjects){
-                if (!assetObject.id.toString().equals("1.3.0")) {
-                    try {
-                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", assetObject.id.toString(), getTickerCallback);
-                    } catch (NetworkStatusException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    for(AccountBalanceObject balanceObject : mAccountObjectBalance){
-                        if(balanceObject.asset_type.toString().equals(assetObject.id.toString())){
-                            calculateTotalCyb(balanceObject.balance, assetObject.precision, 1);
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
-    private WebSocketClient.MessageCallback getTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
+    private WebSocketClient.MessageCallback onTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
         @Override
         public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
             MarketTicker ticker = reply.result;
-            for(AssetObject assetObject : mAssetObjects){
-                if(!ticker.quote.equals(assetObject.id.toString())){
-                    continue;
-                }
-                for(AccountBalanceObject balanceObject : mAccountObjectBalance){
-                    if(balanceObject.asset_type.toString().equals(assetObject.id.toString())){
-                        calculateTotalCyb(balanceObject.balance, assetObject.precision, ticker.latest);
+            if(ticker == null){
+                return;
+            }
+            for(int i=0; i<mAccountBalanceObjectItems.size(); i++){
+                AccountBalanceObjectItem item = mAccountBalanceObjectItems.get(i);
+                if(ticker.quote.toString().equals(item.accountBalanceObject.asset_type.toString())){
+                    item.marketTicker = ticker;
+                    if(item.assetObject != null){
+                        calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
+                                item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
                     }
+                    mPortfolioRecyclerViewAdapter.notifyItemChanged(i);
+                    break;
                 }
             }
 
@@ -245,9 +253,7 @@ public class AccountFragment extends BaseFragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            if(mIsViewCreated){
-                loadData(mWebSocketService.getFullAccount(mName));
-            }
+            loadData(mWebSocketService.getFullAccount(mName));
         }
 
         @Override
@@ -272,41 +278,25 @@ public class AccountFragment extends BaseFragment {
         mViewAllTextView = view.findViewById(R.id.account_view_all);
         mAvatarImageView = view.findViewById(R.id.account_avatar);
         mAvatarWebView = view.findViewById(R.id.account_avatar_webview);
-        mTotalAccountTextView = view.findViewById(R.id.account_balance);
+        mTvTotalCybAmount = view.findViewById(R.id.account_balance);
         mOpenOrderLayout = view.findViewById(R.id.account_open_order_item_background);
         mOpenLockAssetsLayout = view.findViewById(R.id.account_lockup_item_background);
         mPortfolioTitleLayout = view.findViewById(R.id.portfolio_title_layout);
         mBalanceInfoImageView = view.findViewById(R.id.balance_info_question_marker);
-        mAccountTotalRmbTextView = view.findViewById(R.id.account_balance_total_rmb);
+        mTvTotalRmbAmount = view.findViewById(R.id.account_balance_total_rmb);
     }
 
     private void setViews() {
-        if (mIsLoginIn) {
-            processLogIn();
-        } else {
-            mAvatarImageView.setVisibility(View.VISIBLE);
-            mAvatarWebView.setVisibility(View.GONE);
-            mBeforeLoginLayout.setVisibility(View.VISIBLE);
-            mAfterLoginLayout.setVisibility(View.GONE);
-        }
-    }
-
-    private void processLogIn() {
-        mAfterLoginLayout.setVisibility(View.VISIBLE);
-        mBeforeLoginLayout.setVisibility(View.GONE);
-        mAvatarWebView.setVisibility(View.VISIBLE);
-        mAvatarImageView.setVisibility(View.GONE);
+        mAvatarImageView.setVisibility(mIsLoginIn ? View.GONE : View.VISIBLE);
+        mAvatarWebView.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
+        mBeforeLoginLayout.setVisibility(mIsLoginIn ? View.GONE : View.VISIBLE);
+        mAfterLoginLayout.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
+        mPortfolioTitleLayout.setVisibility(mAccountBalanceObjectItems.size() == 0 ? View.GONE : View.VISIBLE);
+        mSayHelloTextView.setText(mName == null ? "" : mName);
+        mMembershipTextView.setText("");
+        mTvTotalCybAmount.setText("--");
+        mTvTotalRmbAmount.setText("≈--");
         loadWebView(mAvatarWebView, 56);
-        initSayHelloViewData();
-        initMemberShipViewData();
-        initRecyclerViewData();
-    }
-
-
-    private void initMemberShipViewData() {
-        Drawable drawable = getActivity().getResources().getDrawable(R.drawable.membership_item_background);
-        drawable.mutate().setAlpha(50);
-        mMembershipTextView.setBackground(drawable);
     }
 
     private void updateMemberShipViewData(){
@@ -322,19 +312,13 @@ public class AccountFragment extends BaseFragment {
         }
     }
 
-    private void initRecyclerViewData() {
-        mPortfolioRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mPortfolioTitleLayout.setVisibility(mAccountObjectBalance.size() == 0 ? View.GONE : View.VISIBLE);
-        mPortfolioRecyclerViewAdapter = new PortfolioRecyclerViewAdapter(mAccountObjectBalance);
-        mPortfolioRecyclerView.setAdapter(mPortfolioRecyclerViewAdapter);
-    }
-
-    private void initSayHelloViewData() {
-        mSayHelloTextView.setText(mName);
-    }
-
-    private void setTotalRmbTextView(double totalRmb){
-        mAccountTotalRmbTextView.setText(String.format(Locale.US, "≈¥%.2f", totalRmb));
+    private void setTotalCybAndRmbTextView(double totalCyb, double totalRmb){
+        mTvTotalCybAmount.setText(totalCyb == 0 ? "--" : String.format(Locale.US, "%.5f", mTotalCyb));
+        if (totalCyb == 0) {
+            mTvTotalRmbAmount.setText("");
+        } else {
+            mTvTotalRmbAmount.setText(totalRmb == 0 ? "≈--" : String.format(Locale.US, "≈¥%.2f", totalRmb));
+        }
     }
 
     private void setClickListener() {
@@ -342,13 +326,14 @@ public class AccountFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, REQUEST_CODE_LOGIN);
             }
         });
         mViewAllTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PortfolioActivity.class);
+                intent.putExtra(PortfolioActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
                 startActivity(intent);
             }
         });
@@ -366,7 +351,6 @@ public class AccountFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-
         mBalanceInfoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -375,25 +359,16 @@ public class AccountFragment extends BaseFragment {
         });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onAccountFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
+        if (requestCode == REQUEST_CODE_LOGIN) {
             if (resultCode == Activity.RESULT_OK) {
                 if (data.getBooleanExtra("LogIn", false)) {
                     mName = data.getStringExtra("name");
                     mIsLoginIn = true;
-                    processLogIn();
-                    if(mWebSocketService != null){
-                        loadData(mWebSocketService.getFullAccount(mName));
-                    }
+                    setViews();
+                    loadData(mWebSocketService.getFullAccount(mName));
                 }
             }
         }
@@ -404,26 +379,36 @@ public class AccountFragment extends BaseFragment {
             return;
         }
         hideLoadDialog();
-        mLimitOrderObjectList = fullAccountObject.limit_orders;
-        mAccountObjectBalance = fullAccountObject.balances;
+        mLimitOrderObjectList.addAll(fullAccountObject.limit_orders);
         mMembershipExpirationDate  = fullAccountObject.account.membership_expiration_date;
-        mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_VIEW);
-        if(mLimitOrderObjectList.size() > 0){
+        mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_MEMBERSHIP_EXPIRATION);
+        if(mLimitOrderObjectList != null && mLimitOrderObjectList.size() > 0){
             for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
                 mTotalCyb += limitOrderObject.for_sale / Math.pow(10, 5);
             }
             mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_TOTAL_CYB);
         }
-        if(mAccountObjectBalance.size() > 0){
-            List<String> objectIds = new ArrayList<>();
-            for (AccountBalanceObject balance : mAccountObjectBalance) {
-                objectIds.add(balance.asset_type.toString());
+        List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
+        if(accountBalanceObjects != null && accountBalanceObjects.size() > 0){
+            for (AccountBalanceObject balance : accountBalanceObjects) {
+                AccountBalanceObjectItem item = new AccountBalanceObjectItem();
+                item.accountBalanceObject = balance;
+                item.assetObject = mWebSocketService.getAssetObject(balance.asset_type.toString());
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
+                item.cybPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+                if(item.assetObject != null && balance.asset_type.toString().equals("1.3.0")){
+                    calculateTotalCyb(balance.balance, item.assetObject.precision, 1);
+                }
+                if (!balance.asset_type.toString().equals("1.3.0")) {
+                    try {
+                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", balance.asset_type.toString(), onTickerCallback);
+                    } catch (NetworkStatusException e) {
+                        e.printStackTrace();
+                    }
+                }
+                mAccountBalanceObjectItems.add(item);
             }
-            try {
-                BitsharesWalletWraper.getInstance().get_objects(objectIds, getObjectCallback);
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
-            }
+            mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
         }
 
     }
@@ -436,6 +421,18 @@ public class AccountFragment extends BaseFragment {
         webSettings.setJavaScriptEnabled(true);
         webView.setBackgroundColor(Color.TRANSPARENT);
         webView.loadData(htmlShareAccountName, "text/html", "UTF-8");
+    }
+
+    private void resetAccountDate(){
+        mIsLoginIn = false;
+        mName = null;
+        mTotalCyb = 0;
+        mAccountBalanceObjectItems.clear();
+        mLimitOrderObjectList.clear();
+        mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
+        if(mWebSocketService != null){
+            mWebSocketService.clearAccountCache();
+        }
     }
 
     @Override
@@ -489,4 +486,5 @@ public class AccountFragment extends BaseFragment {
         // TODO: Update argument type and name
         void onAccountFragmentInteraction(Uri uri);
     }
+
 }

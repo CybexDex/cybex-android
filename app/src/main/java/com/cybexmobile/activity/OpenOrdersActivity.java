@@ -9,20 +9,17 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
-import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.OpenOrder;
 import com.cybexmobile.service.WebSocketService;
 
@@ -45,11 +42,6 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private RecyclerView mRecyclerView;
     private OpenOrderRecyclerViewAdapter mOpenOrcerRecycerViewAdapter;
     private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.ETH", "JADE.BTC", "JADE.EOS", "CYB"});
-    private List<Boolean> mBooleanList = new ArrayList<>();
-    private List<List<AssetObject>> mAssetObjectList = new ArrayList<>();
-    private HashMap<String, List<LimitOrderObject>> mLimitOrderHashMap = new HashMap<>();
-    private HashMap<String, List<List<AssetObject>>> mAssetObjectHashMap = new HashMap<>();
-    private HashMap<String, List<Boolean>> mBooleanHashMap = new HashMap<>();
     private Toolbar mToolbar;
     private WebSocketService mWebSocketService;
 
@@ -208,8 +200,4 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         }
     }
 
-    public class OpenOrderItem {
-        public OpenOrder openOrder;
-        public boolean isSell;
-    }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.OpenOrdersActivity;
+import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.utils.MyUtils;
@@ -21,8 +22,8 @@ import java.util.List;
 
 public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrderRecyclerViewAdapter.ViewHolder> implements Filterable{
 
-    private List<OpenOrdersActivity.OpenOrderItem> mOpenOrderItems;
-    private List<OpenOrdersActivity.OpenOrderItem> mOriginalOpenOrderItems;
+    private List<OpenOrderItem> mOpenOrderItems;
+    private List<OpenOrderItem> mOriginalOpenOrderItems;
     private Context mContext;
     private double mTotal;
     private getTotalValueInterface mListener;
@@ -31,7 +32,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         void displayTotalValue(double total);
     }
 
-    public OpenOrderRecyclerViewAdapter(List<OpenOrdersActivity.OpenOrderItem> dataList, Context context, getTotalValueInterface listener) {
+    public OpenOrderRecyclerViewAdapter(List<OpenOrderItem> dataList, Context context, getTotalValueInterface listener) {
         mOpenOrderItems = dataList;
         mOriginalOpenOrderItems = dataList;
         mContext = context;
@@ -59,7 +60,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        OpenOrdersActivity.OpenOrderItem openOrderItem = mOpenOrderItems.get(position);
+        OpenOrderItem openOrderItem = mOpenOrderItems.get(position);
         AssetObject base = openOrderItem.openOrder.getBaseObject();
         AssetObject quote = openOrderItem.openOrder.getQuoteObject();
         LimitOrderObject data = openOrderItem.openOrder.getLimitOrder();
@@ -138,8 +139,8 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                 results.count = mOriginalOpenOrderItems.size();
                 return results;
             }
-            List<OpenOrdersActivity.OpenOrderItem> filterDatas = new ArrayList<>();
-            for(OpenOrdersActivity.OpenOrderItem data : mOriginalOpenOrderItems){
+            List<OpenOrderItem> filterDatas = new ArrayList<>();
+            for(OpenOrderItem data : mOriginalOpenOrderItems){
                 if("Sell".equals(filterStr) && data.isSell){
                     filterDatas.add(data);
                 }else if("Buy".equals(filterStr) && !data.isSell){
@@ -153,7 +154,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mOpenOrderItems = (List<OpenOrdersActivity.OpenOrderItem>) results.values;
+            mOpenOrderItems = (List<OpenOrderItem>) results.values;
             notifyDataSetChanged();
         }
     }

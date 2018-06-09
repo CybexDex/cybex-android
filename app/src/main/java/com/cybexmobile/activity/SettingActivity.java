@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -27,17 +26,11 @@ import com.cybexmobile.R;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 
 public class SettingActivity extends BaseActivity {
 
@@ -46,12 +39,11 @@ public class SettingActivity extends BaseActivity {
     private SharedPreferences mSharedPreference;
     private Toolbar mToolbar;
 
-    private Handler mHandler = new Handler();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        EventBus.getDefault().register(this);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
         initViews();
         onClickListener();
@@ -59,7 +51,6 @@ public class SettingActivity extends BaseActivity {
         displayTheme();
         displayVersionNumber();
         displayLogOutButton();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -160,11 +151,8 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void displayLogOutButton() {
-        if (mSharedPreference.getBoolean("isLoggedIn", false)) {
-            mLogOutButton.setVisibility(View.VISIBLE);
-        } else {
-            mLogOutButton.setVisibility(View.GONE);
-        }
+        mLogOutButton.setVisibility(mSharedPreference.getBoolean("isLoggedIn", false) ?
+                View.VISIBLE : View.GONE);
     }
 
     private void checkVersion() {

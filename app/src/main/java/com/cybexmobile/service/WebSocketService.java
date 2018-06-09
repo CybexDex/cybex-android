@@ -577,4 +577,12 @@ public class WebSocketService extends Service {
         loadAssetObjectDatas(baseAssetId, quoteAssetId);
         return null;
     }
+
+    /**
+     * 清除用户缓存数据
+     */
+    public void clearAccountCache(){
+        mFullAccount = null;
+        mNames.clear();
+    }
 }

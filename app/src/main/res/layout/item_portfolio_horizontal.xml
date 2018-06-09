@@ -12,7 +12,6 @@
     app:cardUseCompatPadding="true">
 
     <LinearLayout
-        android:id="@+id/account_portfolio_item_background"
         android:layout_width="232dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -30,7 +29,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/account_portfolio_item_asset_image"
+                    android:id="@+id/item_portfolio_asset_image"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
@@ -38,7 +37,7 @@
                     android:src="@drawable/ic_cyb_grey" />
 
                 <TextView
-                    android:id="@+id/account_portfolio_item_asset"
+                    android:id="@+id/item_portfolio_asset_symbol"
                     style="@style/font_white_dark_bold_large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -48,7 +47,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/account_portfolio_item_asset_price"
+                android:id="@+id/item_portfolio_asset_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -60,22 +59,24 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/account_portfolio_item_cyb_price"
+            android:id="@+id/item_portfolio_assets_cyb_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:textColor="@color/primary_color_white"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:text="12.537"/>
 
         <TextView
-            android:id="@+id/account_portfolio_item_cny_price"
+            android:id="@+id/item_portfolio_assets_rmb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="14dp"
             android:layout_marginStart="16dp"
             android:textColor="@color/grey_unselected_font_color"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:text="≈55.124"/>
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

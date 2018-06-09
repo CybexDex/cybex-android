@@ -146,4 +146,6 @@
     <string name="have_account_login">已注册?</string>
     <string name="action_sign_in">登录</string>
 
+    <string name="network_connection_is_not_available">无网络连接</string>
+
 </resources>

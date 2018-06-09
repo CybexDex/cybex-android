@@ -30,7 +30,6 @@ import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.market.HistoryPrice;
-import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.mychart.CoupleChartGestureListener;
 import com.cybexmobile.mychart.MyBottomMarkerView;
@@ -107,7 +106,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
 
     private DataParse mData;
     private DataParse mCacheData;
-    private MarketStat mMarketStat;
     private CandleData mCandleData;
 
     private ArrayList<KLineBean> kLineDatas;
@@ -125,26 +123,13 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mWatchListData = (WatchlistData) getIntent().getSerializableExtra("watchListData");
         initViews();
         mOrderHistoryFragmentPageAdapter = new OrderHistoryFragmentPageAdapter(getSupportFragmentManager());
-        mOrderHistoryFragmentPageAdapter.addFragment(OrderHistoryListFragment.newInstance(1, mWatchListData), getResources().getString(R.string.market_page_order_book));
-        mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(1, mWatchListData), getResources().getString(R.string.market_page_trade_history));
+        mOrderHistoryFragmentPageAdapter.addFragment(OrderHistoryListFragment.newInstance(1, mWatchListData));
+        mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(1, mWatchListData));
         mViewPager.setAdapter(mOrderHistoryFragmentPageAdapter);
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition());
-            }
+        mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-        mTabLayout.setupWithViewPager(mViewPager);
+        //mTabLayout.setupWithViewPager(mViewPager);
         addContentToView(mWatchListData);
         mDuration1dView.setSelected(true);
         mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));

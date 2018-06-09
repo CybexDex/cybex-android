@@ -52,6 +52,9 @@ public class WebSocketClient extends WebSocketListener {
 
     private static final String TAG = "WebSocketClient";
 
+    //交易对比例
+    private static final String CALL_GET_TICKER = "get_ticker";
+
     private volatile int _nDatabaseId = -1;
     private volatile int _nHistoryId = -1;
     private volatile int _nBroadcastId = -1;
@@ -665,7 +668,7 @@ public class WebSocketClient extends WebSocketListener {
         callObject.method = "call";
         callObject.params = new ArrayList<>();
         callObject.params.add(_nDatabaseId);
-        callObject.params.add("get_ticker");
+        callObject.params.add(CALL_GET_TICKER);
 
         List<Object> listParams = new ArrayList<>();
         listParams.add(base);

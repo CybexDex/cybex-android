@@ -24,12 +24,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/coin_pair_horizontal_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -184,11 +178,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/tab_order_margin_top"
                 android:background="@android:color/transparent"
+                app:tabBackground="@android:color/transparent"
                 app:tabIndicatorColor="#FF9143"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/primary_color_white"
                 app:tabTextColor="@color/grey_unselected_font_color"
-                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"/>
+                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget">
+                <android.support.design.widget.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/market_page_order_book" />
+
+                <android.support.design.widget.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/market_page_trade_history" />
+            </android.support.design.widget.TabLayout>
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/market_page_view_pager"

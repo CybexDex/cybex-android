@@ -10,23 +10,14 @@ import java.util.List;
 
 public class OrderHistoryFragmentPageAdapter extends FragmentPagerAdapter {
     private List<Fragment> mListFragment = new ArrayList<>();
-    private final List<String> mListFragmentTitle = new ArrayList<>();
-    int position;
 
     public OrderHistoryFragmentPageAdapter(FragmentManager fm) {
         super(fm);
     }
 
-    public void addFragment(Fragment fragment, String strTitle) {
+    public void addFragment(Fragment fragment) {
         mListFragment.add(fragment);
-        mListFragmentTitle.add(strTitle.toLowerCase());
-
         notifyDataSetChanged();
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return mListFragmentTitle.get(position);
     }
 
     @Override

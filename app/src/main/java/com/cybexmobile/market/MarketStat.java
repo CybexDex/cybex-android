@@ -48,14 +48,12 @@ public class MarketStat {
     private static final long BUCKETS_SECS_HOUR = 3600;
     private static final long BUCKETS_SECS_DAY = 86400;
     private static MarketStat INSTANCE = null;
-    private BitsharesWalletWraper wraper = BitsharesWalletWraper.getInstance();
 
     public static final int STAT_MARKET_HISTORY = 0x01;
     public static final int STAT_MARKET_TICKER = 0x02;
     public static final int STAT_MARKET_OPEN_ORDER = 0x08;
     public static final int STAT_MARKET_ALL = 0xffff;
 
-    private HashMap<String, Double> mRmbListHashMap = new HashMap<>();
     private static boolean isDeserializerRegistered = false;
 
     private MarketStat() {
@@ -75,20 +73,4 @@ public class MarketStat {
         return String.format("%s_%s", base.toLowerCase(), quote.toLowerCase());
     }
 
-    public static class Stat {
-        public HistoryPrice[] prices;
-        public MarketTicker ticker;
-        public Date latestTradeDate;
-        public OrderBook orderBook;
-        public List<MarketTrade> marketTradeList;
-        public List<OpenOrder> openOrders;
-    }
-
-    public double getRMBPriceFromHashMap(String symbol) {
-        if (mRmbListHashMap.get(symbol) == null) {
-            return 0;//getRmbPrice(symbol);
-        } else {
-            return mRmbListHashMap.get(symbol);
-        }
-    }
 }

@@ -13,7 +13,6 @@
     app:cardElevation="3dp">
 
     <LinearLayout
-        android:id="@+id/account_portfolio_item_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/activity_padding"
@@ -29,14 +28,14 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/account_portfolio_item_asset_image"
+                    android:id="@+id/item_portfolio_asset_image"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_cyb_grey" />
 
                 <TextView
-                    android:id="@+id/account_portfolio_item_asset"
+                    android:id="@+id/item_portfolio_asset_symbol"
                     style="@style/font_white_dark_bold_large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -46,7 +45,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/portfolio_price_cyb"
+                android:id="@+id/item_portfolio_assets_cyb_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -62,7 +61,7 @@
             android:layout_marginTop="@dimen/activity_margin">
 
             <TextView
-                android:id="@+id/account_portfolio_item_asset_price"
+                android:id="@+id/item_portfolio_asset_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="12.9833"
@@ -70,7 +69,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/portfolio_page_rmb"
+                android:id="@+id/item_portfolio_assets_rmb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

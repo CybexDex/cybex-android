@@ -149,6 +149,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+
     }
 
     @Override
