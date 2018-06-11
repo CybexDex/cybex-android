@@ -78,6 +78,11 @@ public class LockAssetsActivity extends BaseActivity {
         loadData();
     }
 
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

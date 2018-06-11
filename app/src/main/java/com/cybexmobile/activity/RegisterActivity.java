@@ -584,4 +584,9 @@ public class RegisterActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
 }

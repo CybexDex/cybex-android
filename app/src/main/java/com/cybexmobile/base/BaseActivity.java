@@ -16,13 +16,21 @@ import android.view.MenuItem;
 
 import com.cybexmobile.R;
 import com.cybexmobile.dialog.LoadDialog;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreLanguageHelper;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
     private final String TAG = BaseActivity.class.getSimpleName();
+
+    private static final String PARAM_NETWORK_AVAILABLE = "param_network_available";
+
+    public boolean mIsNetWorkAvailable = true;
 
     private LoadDialog mLoadDialog;
     private AlertDialog mHintDialog;
@@ -36,6 +44,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mIsNetWorkAvailable = savedInstanceState.getBoolean(PARAM_NETWORK_AVAILABLE);
     }
 
     @Override
@@ -72,6 +86,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(PARAM_NETWORK_AVAILABLE, mIsNetWorkAvailable);
     }
 
     @Override
@@ -164,5 +184,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         return context;
     }
 
-    public abstract void netWorkAvailable();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
+        mIsNetWorkAvailable = event.isAvailable();
+    }
+
+    public abstract void onNetWorkStateChanged();
+
 }

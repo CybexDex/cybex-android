@@ -1192,4 +1192,9 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
     }
+
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
 }

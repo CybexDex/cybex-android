@@ -38,6 +38,11 @@ public class ChooseThemeActivity extends BaseActivity {
         initData();
     }
 
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
+
     private void initView() {
         mListView = (ListView) findViewById(R.id.select_theme_list);
         mToolbar = findViewById(R.id.toolbar);

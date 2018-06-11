@@ -18,4 +18,9 @@ public class WalletIntroductionActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
     }
 
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
+
 }

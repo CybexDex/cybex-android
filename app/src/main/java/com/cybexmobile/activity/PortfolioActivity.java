@@ -46,4 +46,9 @@ public class PortfolioActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
+
 }

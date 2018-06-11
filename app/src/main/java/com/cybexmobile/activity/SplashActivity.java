@@ -62,8 +62,8 @@ public class SplashActivity extends BaseActivity{
     }
 
     @Override
-    public void netWorkAvailable() {
-        //do nothing
+    public void onNetWorkStateChanged() {
+
     }
 
     private void checkVersion() {

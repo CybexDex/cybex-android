@@ -206,4 +206,9 @@ public class SettingActivity extends BaseActivity {
                 });
     }
 
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
+
 }

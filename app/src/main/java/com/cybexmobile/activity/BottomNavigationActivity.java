@@ -143,7 +143,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     }
 
     @Override
-    public void netWorkAvailable() {
+    public void onNetWorkStateChanged() {
 
     }
 

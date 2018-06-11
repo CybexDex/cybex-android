@@ -59,6 +59,11 @@ public class ChooseLanguageActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    public void onNetWorkStateChanged() {
+
+    }
+
     private void clickChineseChange() {
         mChineseLanguageLayout.setOnClickListener(new View.OnClickListener() {
             @Override
