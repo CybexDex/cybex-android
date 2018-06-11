@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
+import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -40,7 +41,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class OrderHistoryListFragment extends Fragment {
+public class OrderHistoryListFragment extends BaseFragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -69,6 +70,11 @@ public class OrderHistoryListFragment extends Fragment {
             mWatchlistData = (WatchlistData) getArguments().getSerializable(ARG_WATCHLIST);
         }
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onNetWorkStateChanged(boolean isAvailable) {
+
     }
 
     @Override

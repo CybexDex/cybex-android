@@ -141,12 +141,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
-        if(mWatchListFragment != null){
-            mWatchListFragment.onNetWorkStateChanged(isAvailable);
-        }
-        if(mAccountFragment != null){
-            mAccountFragment.isNetWorkAvailable(isAvailable);
-        }
+
     }
 
     @Override

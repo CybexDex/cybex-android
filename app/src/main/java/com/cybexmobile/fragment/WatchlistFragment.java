@@ -21,6 +21,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
+import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -42,7 +43,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class WatchlistFragment extends Fragment {
+public class WatchlistFragment extends BaseFragment {
 
     private static final String TAG = "WatchListFragment";
     private List<WatchlistData> mWatchlistData = new ArrayList<>();
@@ -286,6 +287,7 @@ public class WatchlistFragment extends Fragment {
     }
 
 
+    @Override
     public void onNetWorkStateChanged(boolean isAvailable){
         if(isAvailable){
             loadWatchlistData();

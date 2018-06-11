@@ -22,6 +22,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cybexmobile.R;
+import com.cybexmobile.base.BaseFragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +37,7 @@ import java.util.Date;
  * Use the {@link FaqFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FaqFragment extends Fragment {
+public class FaqFragment extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -87,6 +88,11 @@ public class FaqFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    @Override
+    public void onNetWorkStateChanged(boolean isAvailable) {
+
     }
 
     @Override

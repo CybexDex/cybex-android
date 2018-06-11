@@ -54,7 +54,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
                 priceCyb = marketTicker.latest;
             }
             double price = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
-            holder.mAssetAmount.setText(String.valueOf(price));
+            holder.mAssetAmount.setText(String.format(Locale.US, "%.5f", price));
             holder.mAssetCybAmount.setText(price * priceCyb == 0 ? "-" : String.format(Locale.US, "%.5f CYB", price * priceCyb));
             holder.mAssetRmb.setText(price * priceCyb == 0 ? "-" : String.format(Locale.US, "≈¥%.2f", item.cybPrice * price *priceCyb));
         }
@@ -85,7 +85,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
-        Picasso.get().load("https://cybex.io/icons/" + quoteIdWithUnderLine +"_grey.png").into(mCoinSymbol);
+        Picasso.get().load("https://app.cybex.io/icons/" + quoteIdWithUnderLine +"_grey.png").into(mCoinSymbol);
     }
 
 }

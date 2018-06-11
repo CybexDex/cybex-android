@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,6 +71,8 @@ import java.util.Locale;
  */
 public class AccountFragment extends BaseFragment {
 
+    private static final String TAG = "AccountFragment";
+
     private static final int REQUEST_CODE_LOGIN = 1;
 
     private OnAccountFragmentInteractionListener mListener;
@@ -98,6 +101,11 @@ public class AccountFragment extends BaseFragment {
     private static final int MESSAGE_WHAT_REFRUSH_MEMBERSHIP_EXPIRATION = 1;
     private static final int MESSAGE_WHAT_REFRUSH_TOTAL_CYB = 2;
     private static final int MESSAGE_WHAT_REFRESH_PORTFOLIO = 3;
+
+    private static final String PARAM_TOTAL_CYB_VALUE = "total_cyb_value";
+    private static final String PARAM_TOTAL_RMB_VALUE = "total_rmb_value";
+    private static final String PARAM_MEMBERSHIP_DATE = "membership_date";
+    private static final String PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS = "account_balance_object_items";
 
     public static AccountFragment newInstance(String param1, String param2) {
         AccountFragment fragment = new AccountFragment();
@@ -135,21 +143,39 @@ public class AccountFragment extends BaseFragment {
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         if(mIsLoginIn){
+            if (!mIsNetWorkAvailable) {
+                mTotalCyb = savedInstanceState.getDouble(PARAM_TOTAL_CYB_VALUE);
+                mCybRmbPrice = savedInstanceState.getDouble(PARAM_TOTAL_RMB_VALUE);
+                mMembershipExpirationDate = savedInstanceState.getString(PARAM_MEMBERSHIP_DATE);
+                mAccountBalanceObjectItems.addAll((List<AccountBalanceObjectItem>) savedInstanceState.getSerializable(PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS));
+                mPortfolioTitleLayout.setVisibility(mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0 ? View.GONE : View.VISIBLE);
+                mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
+                mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
+                mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_MEMBERSHIP_EXPIRATION);
+                setTotalCybAndRmbTextView(mTotalCyb, mTotalCyb * mCybRmbPrice);
+                return;
+            }
             if(mWebSocketService != null){
                 loadData(mWebSocketService.getFullAccount(mName));
             }
         }
     }
 
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        if (!((BottomNavigationActivity)getActivity()).mIsNetWorkAvailable) {
-//            outState.putDouble(TOTAL_CYB_VALUE, mTotalCyb);
-//            outState.putDouble(TOTAL_RMB_VALUE, mCybRmbPrice);
-//            outState.putString(MEMBERSHIP_DATE, mMembershipExpirationDate);
-//        }
-//    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (!mIsNetWorkAvailable) {
+            outState.putDouble(PARAM_TOTAL_CYB_VALUE, mTotalCyb);
+            outState.putDouble(PARAM_TOTAL_RMB_VALUE, mCybRmbPrice);
+            outState.putString(PARAM_MEMBERSHIP_DATE, mMembershipExpirationDate);
+            outState.putSerializable(PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        }
+    }
+
+    @Override
+    public void onNetWorkStateChanged(boolean isAvailable) {
+
+    }
 
     @Override
     public void onResume() {
@@ -222,11 +248,18 @@ public class AccountFragment extends BaseFragment {
                 case MESSAGE_WHAT_REFRUSH_TOTAL_CYB:
                     AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
                     mCybRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+                    Log.v(TAG, "mTotalCyb=" + mTotalCyb + "  mTotalCyb * mCybRmbPrice=" + mTotalCyb * mCybRmbPrice);
                     setTotalCybAndRmbTextView(mTotalCyb, mTotalCyb * mCybRmbPrice);
                     break;
                 case MESSAGE_WHAT_REFRESH_PORTFOLIO:
                     mPortfolioTitleLayout.setVisibility(View.VISIBLE);
-                    mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
+                    Object obj = msg.obj;
+                    if(obj != null){
+                        mPortfolioRecyclerViewAdapter.notifyItemChanged((Integer) obj);
+                    }else{
+                        mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
+                    }
+
                     break;
             }
         }
@@ -247,7 +280,10 @@ public class AccountFragment extends BaseFragment {
                         calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
                                 item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
                     }
-                    mPortfolioRecyclerViewAdapter.notifyItemChanged(i);
+                    Message message = Message.obtain();
+                    message.what = MESSAGE_WHAT_REFRESH_PORTFOLIO;
+                    message.obj = i;
+                    mHandler.sendMessage(message);
                     break;
                 }
             }
@@ -303,7 +339,7 @@ public class AccountFragment extends BaseFragment {
         mAvatarWebView.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
         mBeforeLoginLayout.setVisibility(mIsLoginIn ? View.GONE : View.VISIBLE);
         mAfterLoginLayout.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
-        mPortfolioTitleLayout.setVisibility(mAccountBalanceObjectItems.size() == 0 ? View.GONE : View.VISIBLE);
+        mPortfolioTitleLayout.setVisibility(mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0 ? View.GONE : View.VISIBLE);
         mSayHelloTextView.setText(mName == null ? "" : mName);
         mMembershipTextView.setText("");
         mTvTotalCybAmount.setText("--");
@@ -390,11 +426,9 @@ public class AccountFragment extends BaseFragment {
         if(fullAccountObject == null){
             return;
         }
-
-        if (!((BottomNavigationActivity)getActivity()).mIsNetWorkAvailable) {
+        if (!mIsNetWorkAvailable) {
             return;
         }
-
         hideLoadDialog();
         mLimitOrderObjectList.addAll(fullAccountObject.limit_orders);
         mMembershipExpirationDate  = fullAccountObject.account.membership_expiration_date;
