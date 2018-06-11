@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cybexmobile.activity.BottomNavigationActivity;
 import com.cybexmobile.activity.LockAssetsActivity;
 import com.cybexmobile.activity.SettingActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
@@ -138,6 +140,16 @@ public class AccountFragment extends BaseFragment {
             }
         }
     }
+
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if (!((BottomNavigationActivity)getActivity()).mIsNetWorkAvailable) {
+//            outState.putDouble(TOTAL_CYB_VALUE, mTotalCyb);
+//            outState.putDouble(TOTAL_RMB_VALUE, mCybRmbPrice);
+//            outState.putString(MEMBERSHIP_DATE, mMembershipExpirationDate);
+//        }
+//    }
 
     @Override
     public void onResume() {
@@ -378,6 +390,11 @@ public class AccountFragment extends BaseFragment {
         if(fullAccountObject == null){
             return;
         }
+
+        if (!((BottomNavigationActivity)getActivity()).mIsNetWorkAvailable) {
+            return;
+        }
+
         hideLoadDialog();
         mLimitOrderObjectList.addAll(fullAccountObject.limit_orders);
         mMembershipExpirationDate  = fullAccountObject.account.membership_expiration_date;
@@ -486,5 +503,10 @@ public class AccountFragment extends BaseFragment {
         // TODO: Update argument type and name
         void onAccountFragmentInteraction(Uri uri);
     }
+
+    public void isNetWorkAvailable(boolean isNetWorkAvailable) {
+        loadData(mWebSocketService.getFullAccount(mName));
+    }
+
 
 }

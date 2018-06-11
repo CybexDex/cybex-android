@@ -147,7 +147,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     @Override
     public void displayTotalValue(double total) {
-        double rmbPrice = mWebSocketService.getAssetRmbPrice("CYB").getValue();
+        double rmbPrice = mWebSocketService.getAssetRmbPrice("CYB") == null ? 0 : mWebSocketService.getAssetRmbPrice("CYB").getValue();
         int precision = 2;
         String form = "%." + precision + "f";
         mOpenOrderTotalValue.setText(String.format(Locale.US,"≈¥" + form, total * rmbPrice ));
