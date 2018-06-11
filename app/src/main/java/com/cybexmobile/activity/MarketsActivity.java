@@ -1194,7 +1194,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     @Override
-    public void onNetWorkStateChanged() {
+    public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
 }

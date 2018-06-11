@@ -187,8 +187,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
         mIsNetWorkAvailable = event.isAvailable();
+        onNetWorkStateChanged(mIsNetWorkAvailable);
     }
 
-    public abstract void onNetWorkStateChanged();
+    public abstract void onNetWorkStateChanged(boolean isAvailable);
 
 }

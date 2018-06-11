@@ -198,7 +198,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     @Override
-    public void onNetWorkStateChanged() {
+    public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
 

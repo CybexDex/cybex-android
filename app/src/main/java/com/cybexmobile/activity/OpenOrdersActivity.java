@@ -201,7 +201,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     @Override
-    public void onNetWorkStateChanged() {
+    public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
 
