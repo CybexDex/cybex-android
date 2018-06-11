@@ -197,5 +197,22 @@ public class Event {
             this.data = data;
         }
     }
+
+    public static class NetWorkStateChanged{
+        private boolean isAvailable;
+
+        public boolean isAvailable() {
+            return isAvailable;
+        }
+
+        public void setAvailable(boolean available) {
+            isAvailable = available;
+        }
+
+        public NetWorkStateChanged(boolean isAvailable){
+            this.isAvailable = isAvailable;
+
+        }
+    }
 }
 

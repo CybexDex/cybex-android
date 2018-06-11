@@ -9,6 +9,9 @@ import android.net.NetworkRequest;
 import android.widget.Toast;
 
 import com.cybexmobile.R;
+import com.cybexmobile.event.Event;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class NetWorkBroadcastReceiver extends BroadcastReceiver{
 
@@ -23,12 +26,20 @@ public class NetWorkBroadcastReceiver extends BroadcastReceiver{
                 @Override
                 public void onAvailable(Network network) {
                     super.onAvailable(network);
+                    EventBus.getDefault().post(new Event.NetWorkStateChanged(true));
+                }
+
+                @Override
+                public void onLost(Network network) {
+                    super.onLost(network);
+                    //无网
+                    Toast.makeText(context, R.string.network_connection_is_not_available, Toast.LENGTH_SHORT).show();
+                    EventBus.getDefault().post(new Event.NetWorkStateChanged(false));
                 }
 
                 @Override
                 public void onUnavailable() {
                     super.onUnavailable();
-                    Toast.makeText(context, R.string.network_connection_is_not_available, Toast.LENGTH_SHORT).show();
                 }
 
             });

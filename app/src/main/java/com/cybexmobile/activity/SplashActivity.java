@@ -28,6 +28,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SplashActivity extends BaseActivity{
 
+    private NetWorkBroadcastReceiver mNetWorkBroadcastReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,8 @@ public class SplashActivity extends BaseActivity{
         startService(intentService);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        registerReceiver(new NetWorkBroadcastReceiver(), intentFilter);
+        mNetWorkBroadcastReceiver = new NetWorkBroadcastReceiver();
+        registerReceiver(mNetWorkBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -52,11 +55,15 @@ public class SplashActivity extends BaseActivity{
         }, 2000);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mNetWorkBroadcastReceiver);
+    }
+
+    @Override
+    public void netWorkAvailable() {
+        //do nothing
     }
 
     private void checkVersion() {

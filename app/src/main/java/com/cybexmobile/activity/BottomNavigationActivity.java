@@ -106,13 +106,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
         EventBus.getDefault().register(this);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(String string) {
         switch (string) {
@@ -146,6 +139,11 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+
+    }
+
+    @Override
+    public void netWorkAvailable() {
 
     }
 

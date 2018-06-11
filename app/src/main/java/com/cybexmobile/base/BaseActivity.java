@@ -20,7 +20,7 @@ import com.cybexmobile.helper.StoreLanguageHelper;
 
 import java.util.Locale;
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private final String TAG = BaseActivity.class.getSimpleName();
 
@@ -163,4 +163,6 @@ public class BaseActivity extends AppCompatActivity {
         context = context.createConfigurationContext(config);
         return context;
     }
+
+    public abstract void netWorkAvailable();
 }
