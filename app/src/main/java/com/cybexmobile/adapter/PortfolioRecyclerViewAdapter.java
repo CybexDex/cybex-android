@@ -55,7 +55,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
             }
             double price = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
             holder.mAssetAmount.setText(String.format(Locale.US, "%.5f", price));
-            holder.mAssetCybAmount.setText(price * priceCyb == 0 ? "-" : String.format(Locale.US, "%.5f CYB", price * priceCyb));
+            holder.mAssetCybAmount.setText(price * priceCyb == 0 ? "- CYB" : String.format(Locale.US, "%.5f CYB", price * priceCyb));
             holder.mAssetRmb.setText(price * priceCyb == 0 ? "-" : String.format(Locale.US, "≈¥%.2f", item.cybPrice * price *priceCyb));
         }
 
