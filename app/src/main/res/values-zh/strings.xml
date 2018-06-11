@@ -59,6 +59,12 @@
     <string name="k_boll">BOLL:</string>
     <string name="k_ema5">EMA(5):</string>
     <string name="k_ema10">EMA(10)</string>
+    <string name="index_high">高</string>
+    <string name="index_low">低</string>
+    <string name="index_open">开</string>
+    <string name="index_close">收</string>
+    <string name="index_vary">幅</string>
+    <string name="index_price">额</string>
 
     <!-- Setting page -->
     <string name="setting_language">语言</string>
@@ -116,6 +122,7 @@
     <string name="create_account_password_confirm_error">密码输入不一致</string>
     <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">帐户名仅能包含字母、数字、横杠</string>
     <string name="create_account_pin_code_not_correct">验证码不正确</string>
+    <string name="create_account_failure">注册失败</string>
 
     <string name="register_dialog_content_current_password">当前密码:</string>
     <string name="register_dialog_content_attentions">

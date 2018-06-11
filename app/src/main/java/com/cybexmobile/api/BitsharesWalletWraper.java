@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BitsharesWalletWraper {
 
@@ -481,8 +482,12 @@ public class BitsharesWalletWraper {
         mWalletApi.get_market_history(baseAssetId, quoteAssetId, nBucket, dateStart, dateEnd, callback);
     }
 
-    public void subscribe_to_market(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<Object>> callback) throws NetworkStatusException {
-        mWalletApi.subscribe_to_market(base, quote, callback);
+    public void subscribe_to_market(String id, String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+        mWalletApi.subscribe_to_market(id ,base, quote, callback);
+    }
+
+    public AtomicInteger get_call_id() {
+        return mWalletApi.getCallId();
     }
 
 //    public void set_subscribe_market(boolean filter) throws NetworkStatusException {

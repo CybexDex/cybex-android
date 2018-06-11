@@ -119,9 +119,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
             case "EVENT_REFRESH_LANGUAGE":
                 recreate();
                 break;
-            case "get_message":
-                // recreate();
-                break;
             case "THEME_CHANGED":
                 recreate();
                 break;
@@ -249,7 +246,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
 
     @Override
     public void onListFragmentInteraction(WatchlistData item, List<WatchlistData> dataList, int position) {
-        Intent intent = new Intent(BottomNavigationActivity.this, MarketsActivity.class);;
+        Intent intent = new Intent(BottomNavigationActivity.this, MarketsActivity.class);
+        ;
         intent.putExtra("watchListData", item);
         intent.putExtra("id", position);
         startActivity(intent);

@@ -53,6 +53,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 import static android.webkit.WebViewClient.ERROR_FILE_NOT_FOUND;
 import static com.cybexmobile.constant.ErrorCode.ERROR_ACCOUNT_OBJECT_EXIST;
@@ -449,6 +450,8 @@ public class RegisterActivity extends BaseActivity {
                         } else if (e instanceof ErrorCodeException) {
                             ErrorCodeException errorCodeException = (ErrorCodeException) e;
                             processErrorCode(errorCodeException.getErrorCode());
+                        } else if (e instanceof HttpException) {
+                            processExceptionMessage(e.getMessage());
                         }
                     }
 
@@ -539,7 +542,11 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void processExceptionMessage(final String strMessage) {
-        mRegisterErrorText.setText(strMessage);
+        if (strMessage.contains("403")) {
+            mRegisterErrorText.setText(getResources().getString(R.string.create_account_pin_code_not_correct));
+        } else {
+            mRegisterErrorText.setText(getResources().getString(R.string.create_account_pin_code_not_correct));
+        }
         mRegisterErrorSign.setVisibility(View.VISIBLE);
     }
 

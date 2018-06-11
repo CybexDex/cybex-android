@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WalletApi {
 
@@ -1008,8 +1009,12 @@ public class WalletApi {
 //        return strMessage;
 //    }
 
-    public void subscribe_to_market(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<Object>> callback) throws NetworkStatusException {
-        mWebSocketClient.subscribe_to_market(base, quote, callback);
+    public void subscribe_to_market(String id, String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+        mWebSocketClient.subscribe_to_market(id, base, quote, callback);
+    }
+
+    public AtomicInteger getCallId() {
+        return mWebSocketClient.getmCallId();
     }
 
 //    public void set_subscribe_market(boolean filter) throws NetworkStatusException {

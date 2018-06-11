@@ -108,6 +108,7 @@
             android:orientation="vertical">
 
             <include layout="@layout/header_kline_type" />
+            <include layout="@layout/header_kline_value" />
             <include layout="@layout/header_kline_chart_ma" />
 
             <ProgressBar

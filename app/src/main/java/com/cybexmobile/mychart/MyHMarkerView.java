@@ -1,6 +1,7 @@
 package com.cybexmobile.mychart;
 
 import android.content.Context;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,13 +21,13 @@ public class MyHMarkerView extends MarkerView {
      * @param context
      * @param layoutResource the layout resource to use for the MarkerView
      */
-    private TextView markerTv;
+    private ImageView markerTv;
     private float num;
     private DecimalFormat mFormat;
     public MyHMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
         mFormat=new DecimalFormat("#0.00");
-        markerTv = (TextView) findViewById(R.id.marker_tv);
+        markerTv = findViewById(R.id.marker_tv);
     }
 
     public void setData(float num){

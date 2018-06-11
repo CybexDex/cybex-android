@@ -55,6 +55,12 @@
     <string name="k_boll">BOLL:</string>
     <string name="k_ema5">EMA(5):</string>
     <string name="k_ema10">EMA(10)</string>
+    <string name="index_high">High</string>
+    <string name="index_low">Low</string>
+    <string name="index_open">Open</string>
+    <string name="index_close">Close</string>
+    <string name="index_vary">Change</string>
+    <string name="index_price">Price</string>
 
 
     <!-- Setting Strings -->
@@ -118,6 +124,7 @@
     <string name="create_account_account_name_should_not_contain_continuous_dashes">The account name should not contain continuous dashes</string>
     <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">The account name should only contain letter,dash and numbers</string>
     <string name="create_account_pin_code_not_correct">Incorrect verify code</string>
+    <string name="create_account_failure">create account is failed</string>
     <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>
     <string name="create_account_password_confirm_error">Two passwords do not match</string>
 

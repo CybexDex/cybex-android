@@ -91,7 +91,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected TextView mMAView, mMACDView, mBOLLView, mEMAView, mRSIView;
     protected TextView mTvKMa5, mTvKMa10, mTvKMa20;
     protected TextView mCurrentPriceView, mHighPriceView, mLowPriceView, mChangeRateView, mVolumeBaseView, mVolumeQuoteView, mDuration5mView, mDuration1hView, mDuration1dView;
-    protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart;
+    protected TextView mTvHighIndex, mTvLowIndex, mTvOpenIndex, mTvCloseIndex, mTvChangeIndex, mTvPriceIndex, mTvDateIndex;
+    protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart, mIndexHeaderLayout;
     protected ImageView mChangeSymbol;
 
     protected ProgressBar mProgressBar;
@@ -107,6 +108,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private DataParse mData;
     private DataParse mCacheData;
     private CandleData mCandleData;
+    int mBasePrecision;
 
     private ArrayList<KLineBean> kLineDatas;
 
@@ -131,6 +133,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
 
         //mTabLayout.setupWithViewPager(mViewPager);
         addContentToView(mWatchListData);
+        mBasePrecision = mWatchListData.getBasePrecision();
         mDuration1dView.setSelected(true);
         mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
         initChartKline();
@@ -148,8 +151,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         EventBus.getDefault().unregister(this);
     }
 
-    private void loadMarketHistory(){
-        if(mWatchListData == null){
+    private void loadMarketHistory() {
+        if (mWatchListData == null) {
             return;
         }
         Date startDate = new Date(System.currentTimeMillis() - mDuration * MAXBUCKETCOUNT * 1000);
@@ -165,7 +168,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         @Override
         public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
             List<BucketObject> bucketObjects = reply.result;
-            if(bucketObjects == null || bucketObjects.size() == 0){
+            if (bucketObjects == null || bucketObjects.size() == 0) {
                 return;
             }
             List<HistoryPrice> prices = new ArrayList<>();
@@ -185,7 +188,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateKLineChar(Event.UpdateKLineChar event){
+    public void onUpdateKLineChar(Event.UpdateKLineChar event) {
         setKlineByChart(mChartKline);
         setVolumeByChart(mChartVolume);
         setMACDByChart(mChartCharts);
@@ -196,7 +199,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.setVisibility(View.VISIBLE);
         mChartVolume.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
-        if(mData != null) {
+        if (mData != null) {
             setDefaultMALine();
         }
 
@@ -258,10 +261,19 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mHeaderBOLLChart = findViewById(R.id.header_kline_boll);
         mHeaderEMAChart = findViewById(R.id.k_line_header_ema_layout);
 
+        mIndexHeaderLayout = findViewById(R.id.index_header_layout);
+        mTvHighIndex = findViewById(R.id.index_high_tv);
+        mTvLowIndex = findViewById(R.id.index_low_tv);
+        mTvOpenIndex = findViewById(R.id.index_open_tv);
+        mTvCloseIndex = findViewById(R.id.index_close_tv);
+        mTvChangeIndex = findViewById(R.id.index_change_tv);
+        mTvDateIndex = findViewById(R.id.index_date_tv);
+        mTvPriceIndex = findViewById(R.id.index_price_tv);
+
     }
 
     private void addContentToView(WatchlistData watchListData) {
-        if(mWatchListData == null){
+        if (mWatchListData == null) {
             return;
         }
         String trimmedBase = watchListData.getBaseSymbol().contains("JADE") ? watchListData.getBaseSymbol().substring(5, watchListData.getBaseSymbol().length()) : watchListData.getBaseSymbol();
@@ -450,6 +462,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+                mIndexHeaderLayout.setVisibility(View.VISIBLE);
+
                 Highlight highlight = new Highlight(h.getXIndex(), h.getValue(), h.getDataIndex(), h.getDataSetIndex());
 
                 float touchY = h.getTouchY() - mChartKline.getHeight();
@@ -482,6 +496,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             public void onNothingSelected() {
                 mChartVolume.highlightValue(null);
                 mChartCharts.highlightValue(null);
+                mIndexHeaderLayout.setVisibility(View.GONE);
             }
         });
 
@@ -566,6 +581,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private void initChartData(List<HistoryPrice> historyPriceList, long duration) {
         getOffLineData(historyPriceList, duration);
         setKLineDatas();
+
+        setMarkerViewButtom(mData, mChartKline);
+        setMarkerView(mData, mChartVolume);
+        setMarkerView(mData, mChartCharts);
     }
 
     private void getOffLineData(List<HistoryPrice> historyPriceList, long duraton) {
@@ -578,7 +597,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         }
         Log.d("数据-----", object.toString());
         mData.parseKlineHistoryData(historyPriceList, duraton);
-        //mData.parseKLine(object);
 
         mCacheData = new DataParse();
         mCacheData.parseKLine(object);
@@ -591,9 +609,14 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
 
     private void setMarkerViewButtom(DataParse mData, MyCombinedChart combinedChart) {
         MyLeftMarkerView leftMarkerView = new MyLeftMarkerView(MarketsActivity.this, R.layout.my_marker_view);
-        MyHMarkerView hMarkerView = new MyHMarkerView(MarketsActivity.this, R.layout.my_marker_view);
+        MyHMarkerView hMarkerView = new MyHMarkerView(MarketsActivity.this, R.layout.mymarkerview_line);
         MyBottomMarkerView bottomMarkerView = new MyBottomMarkerView(MarketsActivity.this, R.layout.my_marker_view);
         combinedChart.setMarker(leftMarkerView, bottomMarkerView, hMarkerView, mData);
+    }
+    private void setMarkerView(DataParse mData, MyCombinedChart combinedChart) {
+        MyLeftMarkerView leftMarkerView = new MyLeftMarkerView(MarketsActivity.this, R.layout.mymarkerview);
+        MyHMarkerView hMarkerView = new MyHMarkerView(MarketsActivity.this, R.layout.mymarkerview_line);
+        combinedChart.setMarker(leftMarkerView, hMarkerView, mData);
     }
 
     private void setKlineByChart(MyCombinedChart combinedChart) {
@@ -903,36 +926,48 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void updateText(int index) {
-
+        String basePrecisionFormatter = MyUtils.getPrecisedFormatter(mBasePrecision);
+        if (index >= 0 && index < kLineDatas.size()) {
+            KLineBean klData = kLineDatas.get(index);
+            mTvOpenIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.open));
+            mTvCloseIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
+            mTvHighIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.high));
+            mTvLowIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.low));
+            mTvChangeIndex.setText(String.format(Locale.US, "%.2f%%", (klData.close -klData.open) / klData.open));
+            mTvPriceIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
+            mTvDateIndex.setText(klData.date);
+        }
         int newIndex = index;
+        String precision = MyUtils.getPrecisedFormatter(mWatchListData.getBasePrecision());
         if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa5DataL().size())
-                mTvKMa5.setText(MyUtils.getDecimalFormatVol(mData.getMa5DataL().get(newIndex).getVal()));
+                mTvKMa5.setText(String.format(Locale.US, precision, mData.getMa5DataL().get(newIndex).getVal()));
         }
         if (null != mData.getMa10DataL() && mData.getMa10DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa10DataL().size())
-                mTvKMa10.setText(MyUtils.getDecimalFormatVol(mData.getMa10DataL().get(newIndex).getVal()));
+                mTvKMa10.setText(String.format(Locale.US, precision, mData.getMa10DataL().get(newIndex).getVal()));
         }
         if (null != mData.getMa20DataL() && mData.getMa20DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa20DataL().size())
-                mTvKMa20.setText(MyUtils.getDecimalFormatVol(mData.getMa20DataL().get(newIndex).getVal()));
+                mTvKMa20.setText(String.format(Locale.US, precision, mData.getMa20DataL().get(newIndex).getVal()));
         }
     }
 
     private void updateBOLL(int index) {
         int newIndex = index;
+        String precision = MyUtils.getPrecisedFormatter(mWatchListData.getBasePrecision());
         if (null != mData.getBollDataDN() && mData.getBollDataDN().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataDN().size())
-                mBOLLTv1.setText(MyUtils.getDecimalFormatVol(mData.getBollDataDN().get(newIndex).getVal()));
+                mBOLLTv1.setText(String.format(Locale.US, precision, mData.getBollDataDN().get(newIndex).getVal()));
         }
 
         if (null != mData.getBollDataMB() && mData.getBollDataMB().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataMB().size())
-                mBOLLTv2.setText(MyUtils.getDecimalFormatVol(mData.getBollDataMB().get(newIndex).getVal()));
+                mBOLLTv2.setText(String.format(Locale.US, precision, mData.getBollDataMB().get(newIndex).getVal()));
         }
         if (null != mData.getBollDataUP() && mData.getBollDataUP().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataUP().size())
-                mBOLLTv3.setText(MyUtils.getDecimalFormatVol(mData.getBollDataUP().get(newIndex).getVal()));
+                mBOLLTv3.setText(String.format(Locale.US, precision, mData.getBollDataUP().get(newIndex).getVal()));
         }
     }
 
@@ -1071,7 +1106,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mDuration5mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mDuration5mView.isSelected()){
+                if (mDuration5mView.isSelected()) {
                     return;
                 }
                 mDuration5mView.setSelected(true);

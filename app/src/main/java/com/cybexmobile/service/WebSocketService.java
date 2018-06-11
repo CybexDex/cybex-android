@@ -39,10 +39,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
@@ -234,6 +236,13 @@ public class WebSocketService extends Service {
         }
     }
 
+    public void updateHistoryPriceAndMarketTicker(AssetObject baseAsset, AssetObject quoteAsset) {
+        loadMarketTicker(baseAsset.id.toString(), quoteAsset.id.toString());
+        Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
+        Date endDate = new Date(System.currentTimeMillis());
+        loadHistoryPrice(baseAsset, quoteAsset, startDate, endDate);
+    }
+
     private void loadHistoryPrice(AssetObject baseAsset, AssetObject quoteAsset, Date startDate, Date endDate){
         try {
             BitsharesWalletWraper.getInstance().get_market_history(baseAsset.id, quoteAsset.id, 3600, startDate, endDate, mHistoryPriceCallback);
@@ -245,6 +254,14 @@ public class WebSocketService extends Service {
     private void loadMarketTicker(String base, String quote){
         try {
             BitsharesWalletWraper.getInstance().get_ticker(base, quote, mMarketTickerCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void subscribeToMarket(String id, String base, String quote) {
+        try {
+            BitsharesWalletWraper.getInstance().subscribe_to_market(id ,base, quote, mSubscribeCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -308,6 +325,19 @@ public class WebSocketService extends Service {
         }
     };
 
+    private WebSocketClient.MessageCallback mSubscribeCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<String> reply) {
+            String id = reply.id;
+
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
     //get history price callback
     private WebSocketClient.MessageCallback mHistoryPriceCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>>() {
 
@@ -317,7 +347,7 @@ public class WebSocketService extends Service {
             if(buckets == null || buckets.size() == 0){
                 return;
             }
-            if(buckets.get(0).key.open.getTime() > (System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS - 60*60)){
+            if(buckets.get(0).key.open.getTime() > (System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS )){
                 loadPreHistoryPrice(buckets.get(0).key.base, buckets.get(0).key.quote,
                         new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS - DateUtils.DAY_IN_MILLIS),
                         new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS));
@@ -328,13 +358,6 @@ public class WebSocketService extends Service {
                 for(BucketObject bucket : buckets){
                     historyPrices.add(PriceUtil.priceFromBucket(watchlistData.getBaseAsset(), watchlistData.getQuoteAsset(), bucket));
                 }
-                //交易排序
-                Collections.sort(mWatchlistHashMap.get(watchlistData.getBaseId()), new Comparator<WatchlistData>() {
-                    @Override
-                    public int compare(WatchlistData o1, WatchlistData o2) {
-                        return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
-                    }
-                });
                 watchlistData.setHistoryPrices(historyPrices);
             }
             EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
@@ -347,20 +370,34 @@ public class WebSocketService extends Service {
     };
 
     private WatchlistData getWatchlist(Map<String, List<WatchlistData>> map, BucketObject bucket){
-        List<WatchlistData> watchlistDatas = map.get(bucket.key.base.toString());
-        if(watchlistDatas != null){
-            for(WatchlistData watchlist : watchlistDatas){
-                if(watchlist.getQuoteId().equals(bucket.key.quote.toString())){
+        List<WatchlistData> baseWatchlistDatas = map.get(bucket.key.base.toString());
+        List<WatchlistData> quoteWatchlistDatas = map.get(bucket.key.quote.toString());
+
+        if (baseWatchlistDatas != null) {
+            for (WatchlistData watchlist : baseWatchlistDatas) {
+                if (watchlist.getQuoteId().equals(bucket.key.quote.toString())) {
                     return watchlist;
                 }
             }
-        }else{
-            watchlistDatas = mWatchlistHashMap.get(bucket.key.quote.toString());
-            for(WatchlistData watchlist : watchlistDatas){
-                if(watchlist.getQuoteId().equals(bucket.key.base.toString())){
+
+            for (WatchlistData watchlist : quoteWatchlistDatas) {
+                if (watchlist.getQuoteId().equals(bucket.key.base.toString())) {
                     return watchlist;
                 }
             }
+
+        } else {
+            for (WatchlistData watchlist : quoteWatchlistDatas) {
+                if (watchlist.getQuoteId().equals(bucket.key.base.toString())) {
+                    return watchlist;
+                }
+            }
+
+            for (WatchlistData watchlist : baseWatchlistDatas) {
+                if (watchlist.getQuoteId().equals(bucket.key.quote.toString())) {
+                    return watchlist;
+                }
+             }
         }
         return null;
     }
@@ -399,6 +436,11 @@ public class WebSocketService extends Service {
             mWatchlistHashMap.put(baseAssetId, watchlistData);
             //更新行情
             EventBus.getDefault().post(new Event.UpdateWatchlists(watchlistData));
+            for (WatchlistData watchlistItem : watchlistData) {
+                AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
+                watchlistItem.setSubscribeId(String.valueOf(id.getAndIncrement()));
+                subscribeToMarket(id.toString(), watchlistItem.getBaseId(), watchlistItem.getQuoteId());
+            }
             //加载价格和交易历史
             loadHistoryPriceAndMarketTicker(assetsPairs);
 
@@ -496,7 +538,7 @@ public class WebSocketService extends Service {
                 .map(new Function<CnyResponse, List<AssetRmbPrice>>() {
                     @Override
                     public List<AssetRmbPrice> apply(CnyResponse cnyResponse) {
-                        return cnyResponse.getPrices();
+                        return cnyResponse.getPrices() != null ? cnyResponse.getPrices() : new ArrayList<>();
                     }
                 })
                 .onBackpressureDrop()

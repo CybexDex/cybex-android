@@ -276,6 +276,7 @@ public class WatchlistData implements Serializable{
         }
         this.baseVol = marketTicker.base_volume;
         this.quoteVol = marketTicker.quote_volume;
+        this.change = String.valueOf(Double.parseDouble(marketTicker.percent_change) / 100);
     }
 
     private void parseHistoryPrice(List<HistoryPrice> historyPrices){
@@ -285,7 +286,7 @@ public class WatchlistData implements Serializable{
         this.high = PriceUtil.getHighPrice(historyPrices);
         this.low = PriceUtil.getLowPrice(historyPrices);
         this.currentPrice = PriceUtil.getCurrentPrice(historyPrices);
-        this.change = PriceUtil.getChange(historyPrices);
+//        this.change = PriceUtil.getChange(historyPrices);
     }
 
 }

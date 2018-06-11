@@ -13,9 +13,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
@@ -30,6 +32,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -92,8 +96,8 @@ public class WatchLIstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mIsViewCreated = true;
         loadWatchlistData();
-    }
 
+    }
 
     @Override
     public void onDestroy() {
@@ -105,7 +109,11 @@ public class WatchLIstFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(String string) {
         if (mWebSocketService != null) {
-            mWebSocketService.loadWatchlistData(mCurrentBaseAssetId);
+            for (WatchlistData watchlistItem : mWatchlistData) {
+                if (mCurrentBaseAssetId.equals(mWatchlistData.get(0).getBaseId()) && string.equals(watchlistItem.getSubscribeId())) {
+                    mWebSocketService.updateHistoryPriceAndMarketTicker(watchlistItem.getBaseAsset(), watchlistItem.getQuoteAsset());
+                }
+            }
         }
     }
 
@@ -115,6 +123,13 @@ public class WatchLIstFragment extends Fragment {
         int index = mWatchlistData.indexOf(data);
         if (index != -1) {
             mWatchlistData.set(index, data);
+            //交易排序
+            Collections.sort(mWatchlistData, new Comparator<WatchlistData>() {
+                @Override
+                public int compare(WatchlistData o1, WatchlistData o2) {
+                    return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
+                }
+            });
             mWatchListRecyclerViewAdapter.notifyItemChanged(index);
         }
 
@@ -125,6 +140,14 @@ public class WatchLIstFragment extends Fragment {
         mProgressBar.setVisibility(View.GONE);
         mWatchlistData.clear();
         mWatchlistData.addAll(event.getData());
+        //交易排序
+        Collections.sort(mWatchlistData, new Comparator<WatchlistData>() {
+            @Override
+            public int compare(WatchlistData o1, WatchlistData o2) {
+                return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
+            }
+        });
+
         mWatchListRecyclerViewAdapter.notifyDataSetChanged();
     }
 
@@ -144,7 +167,7 @@ public class WatchLIstFragment extends Fragment {
         if (assetRmbPrice == null || mWatchlistData == null || mWatchlistData.size() == 0) {
             return;
         }
-        if(assetRmbPrice.getValue() != mWatchlistData.get(0).getRmbPrice()){
+        if (assetRmbPrice.getValue() != mWatchlistData.get(0).getRmbPrice()) {
             for (WatchlistData watchlistData : mWatchlistData) {
                 watchlistData.setRmbPrice(assetRmbPrice.getValue());
             }

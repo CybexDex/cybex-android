@@ -92,6 +92,10 @@ public class WebSocketClient extends WebSocketListener {
             "wss://bitshares.crypto.fans/ws"
     );
 
+    public AtomicInteger getmCallId() {
+        return mCallId;
+    }
+
     public WebSocketClient(){
         delayCalls = Collections.synchronizedList(new LinkedList<>());
     }
@@ -622,10 +626,10 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
     }
 
-    public void subscribe_to_market(String base, String quote, MessageCallback<Reply<Object>> callback)
+    public void subscribe_to_market(String id, String base, String quote, MessageCallback<Reply<String>> callback)
             throws NetworkStatusException {
         Call callObject = new Call();
-        callObject.id = mCallId.getAndIncrement();
+        callObject.id = Integer.parseInt(id);
         callObject.method = "call";
         callObject.params = new ArrayList<>();
         callObject.params.add(_nDatabaseId);
@@ -637,8 +641,8 @@ public class WebSocketClient extends WebSocketListener {
         listParams.add(quote);
         callObject.params.add(listParams);
 
-        ReplyProcessImpl<Reply<Object>> replyObjectProcess =
-                new ReplyProcessImpl<>(new TypeToken<Reply<Object>>() {
+        ReplyProcessImpl<Reply<String>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<String>>() {
                 }.getType(), callback);
          sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
     }
