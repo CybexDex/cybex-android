@@ -29,7 +29,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,7 +39,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private SegmentedGroup mSegmentedGroup;
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
     private RecyclerView mRecyclerView;
-    private OpenOrderRecyclerViewAdapter mOpenOrcerRecycerViewAdapter;
+    private OpenOrderRecyclerViewAdapter mOpenOrderRecycerViewAdapter;
     private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.ETH", "JADE.BTC", "JADE.EOS", "CYB"});
     private Toolbar mToolbar;
     private WebSocketService mWebSocketService;
@@ -54,10 +53,10 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         initViews();
-        mOpenOrcerRecycerViewAdapter = new OpenOrderRecyclerViewAdapter(mOpenOrderItems, this, this);
+        mOpenOrderRecycerViewAdapter = new OpenOrderRecyclerViewAdapter(mOpenOrderItems, this, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setAdapter(mOpenOrcerRecycerViewAdapter);
+        mRecyclerView.setAdapter(mOpenOrderRecycerViewAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection , BIND_AUTO_CREATE);
@@ -106,7 +105,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 mOpenOrderItems.add(item);
             }
             hideLoadDialog();
-            mOpenOrcerRecycerViewAdapter.notifyDataSetChanged();
+            mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -128,17 +127,17 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
             case R.id.open_orders_segment_all:
-                mOpenOrcerRecycerViewAdapter.getFilter().filter("All");
+                mOpenOrderRecycerViewAdapter.getFilter().filter("All");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_total_value);
                 break;
 
             case R.id.open_orders_segment_buy:
-                mOpenOrcerRecycerViewAdapter.getFilter().filter("Buy");
+                mOpenOrderRecycerViewAdapter.getFilter().filter("Buy");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_buy_total_value);
                 break;
 
             case R.id.open_orders_segment_sell:
-                mOpenOrcerRecycerViewAdapter.getFilter().filter("Sell");
+                mOpenOrderRecycerViewAdapter.getFilter().filter("Sell");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_sell_total_value);
                 break;
 
@@ -148,9 +147,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     @Override
     public void displayTotalValue(double total) {
         double rmbPrice = mWebSocketService.getAssetRmbPrice("CYB") == null ? 0 : mWebSocketService.getAssetRmbPrice("CYB").getValue();
-        int precision = 2;
-        String form = "%." + precision + "f";
-        mOpenOrderTotalValue.setText(String.format(Locale.US,"≈¥" + form, total * rmbPrice ));
+        mOpenOrderTotalValue.setText(String.format(Locale.US,"≈¥%.2f", total * rmbPrice ));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -170,7 +167,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 mOpenOrderItems.get(i).openOrder.setBaseObject(mOpenOrderItems.get(i).isSell ? assetObjects.get(0) : assetObjects.get(1));
                 mOpenOrderItems.get(i).openOrder.setQuoteObject(mOpenOrderItems.get(i).isSell ? assetObjects.get(1) : assetObjects.get(0));
                 hideLoadDialog();
-                mOpenOrcerRecycerViewAdapter.notifyItemChanged(i);
+                mOpenOrderRecycerViewAdapter.notifyItemChanged(i);
                 break;
             }
         }

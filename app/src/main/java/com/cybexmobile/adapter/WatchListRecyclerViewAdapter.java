@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybexmobile.fragment.data.WatchlistData;
-import com.cybexmobile.fragment.WatchLIstFragment.OnListFragmentInteractionListener;
+import com.cybexmobile.fragment.WatchlistFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.MyUtils;
 import com.squareup.picasso.Picasso;

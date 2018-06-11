@@ -72,7 +72,7 @@
                 android:name="com.cybexmobile.Fragments.ItemFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.cybexmobile.fragment.WatchLIstFragment"
+                tools:context="com.cybexmobile.fragment.WatchlistFragment"
                 tools:listitem="@layout/item_watch" />
 
         </LinearLayout>

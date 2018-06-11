@@ -1,10 +1,7 @@
 package com.cybexmobile.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,7 +19,7 @@ import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.FaqFragment;
-import com.cybexmobile.fragment.WatchLIstFragment;
+import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.R;
 
@@ -32,13 +29,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-public class BottomNavigationActivity extends BaseActivity implements WatchLIstFragment.OnListFragmentInteractionListener, FaqFragment.OnFragmentInteractionListener,
+public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener, FaqFragment.OnFragmentInteractionListener,
         AccountFragment.OnAccountFragmentInteractionListener {
 
     private BottomNavigationView mBottomNavigationView;
     private static final String KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID = "KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID";
 
-    private WatchLIstFragment mWatchListFragment;
+    private WatchlistFragment mWatchListFragment;
     private FaqFragment mFaqFragment;
     private AccountFragment mAccountFragment;
     private TextView mTvTitle;
@@ -125,7 +122,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
         outState.putInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, mBottomNavigationView.getSelectedItemId());
         FragmentManager fm = getSupportFragmentManager();
         if (mWatchListFragment.isAdded()) {
-            fm.putFragment(outState, WatchLIstFragment.class.getSimpleName(), mWatchListFragment);
+            fm.putFragment(outState, WatchlistFragment.class.getSimpleName(), mWatchListFragment);
         }
         if (mFaqFragment.isAdded()) {
             fm.putFragment(outState, FaqFragment.class.getSimpleName(), mFaqFragment);
@@ -144,7 +141,12 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
 
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
-        mAccountFragment.isNetWorkAvailable(isAvailable);
+        if(mWatchListFragment != null){
+            mWatchListFragment.onNetWorkStateChanged(isAvailable);
+        }
+        if(mAccountFragment != null){
+            mAccountFragment.isNetWorkAvailable(isAvailable);
+        }
     }
 
     @Override
@@ -157,18 +159,18 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
     private void initFragments(Bundle savedInstanceState) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState == null) {
-            mWatchListFragment = new WatchLIstFragment();
+            mWatchListFragment = new WatchlistFragment();
             mFaqFragment = new FaqFragment();
             mAccountFragment = new AccountFragment();
         } else {
-            mWatchListFragment = (WatchLIstFragment) fragmentManager.getFragment(savedInstanceState, WatchLIstFragment.class.getSimpleName());
+            mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState, WatchlistFragment.class.getSimpleName());
             mFaqFragment = (FaqFragment) fragmentManager.getFragment(savedInstanceState, FaqFragment.class.getSimpleName());
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
         }
 
         if (!mWatchListFragment.isAdded()) {
             fragmentManager.beginTransaction()
-                    .add(R.id.frame_container, mWatchListFragment, WatchLIstFragment.class.getSimpleName())
+                    .add(R.id.frame_container, mWatchListFragment, WatchlistFragment.class.getSimpleName())
                     .commit();
         }
         if (!mFaqFragment.isAdded()) {
@@ -186,7 +188,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchLIstF
 
     private void showFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
-        if (fragment instanceof WatchLIstFragment) {
+        if (fragment instanceof WatchlistFragment) {
             fm.beginTransaction()
                     .show(mWatchListFragment)
                     .hide(mFaqFragment)

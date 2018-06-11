@@ -42,7 +42,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class WatchLIstFragment extends Fragment {
+public class WatchlistFragment extends Fragment {
 
     private static final String TAG = "WatchListFragment";
     private List<WatchlistData> mWatchlistData = new ArrayList<>();
@@ -283,6 +283,13 @@ public class WatchLIstFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(WatchlistData item, List<WatchlistData> dataList, int position);
+    }
+
+
+    public void onNetWorkStateChanged(boolean isAvailable){
+        if(isAvailable){
+            loadWatchlistData();
+        }
     }
 
 

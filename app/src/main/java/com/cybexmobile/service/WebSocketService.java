@@ -229,10 +229,12 @@ public class WebSocketService extends Service {
     //加载价格和交易历史
     private void loadHistoryPriceAndMarketTicker(List<AssetsPair> assetsPairs){
         for(AssetsPair assetsPair : assetsPairs){
-            loadMarketTicker(assetsPair.getBase(), assetsPair.getQuote());
-            Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
-            Date endDate = new Date(System.currentTimeMillis());
-            loadHistoryPrice(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset(), startDate, endDate);
+            if(assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null){
+                loadMarketTicker(assetsPair.getBase(), assetsPair.getQuote());
+                Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
+                Date endDate = new Date(System.currentTimeMillis());
+                loadHistoryPrice(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset(), startDate, endDate);
+            }
         }
     }
 
