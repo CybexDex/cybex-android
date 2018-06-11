@@ -1012,7 +1012,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mHeaderKlineChart.setVisibility(View.VISIBLE);
                 mHeaderBOLLChart.setVisibility(View.GONE);
                 mHeaderEMAChart.setVisibility(View.GONE);
-                updateText(mData.getMa5DataL().size() - 1);
+                updateText(mData.getMa20DataL().size() - 1);
 
 
             }
@@ -1179,7 +1179,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.notifyDataSetChanged();
         mChartKline.invalidate();
         mChartCharts.setVisibility(View.GONE);
-        updateText(mData.getMa5DataL().size() - 1);
+        updateText(mData.getMa20DataL().size() - 1);
     }
 
 
