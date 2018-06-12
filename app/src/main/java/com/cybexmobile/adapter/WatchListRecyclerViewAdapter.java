@@ -43,7 +43,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         String precisinFormatter = MyUtils.getPrecisedFormatter(holder.mItem.getBasePrecision());
-        NumberFormat formatter2 = new DecimalFormat("0.00");
+        NumberFormat formatter = new DecimalFormat("0.00");
         holder.mItem = mValues.get(position);
         if (mValues.get(position).getQuoteSymbol().contains("JADE")) {
             holder.mQuoteCurrency.setText(mValues.get(position).getQuoteSymbol().substring(5, mValues.get(position).getQuoteSymbol().length()));
@@ -72,11 +72,11 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             holder.mChangeRate.setTextSize(16);
         }
         if( change > 0.f) {
-            holder.mChangeRate.setText(String.format("+%s%%",String.valueOf(formatter2.format(change * 100))));
+            holder.mChangeRate.setText(String.format("+%s%%",String.valueOf(formatter.format(change * 100))));
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.increasing_color));
 
         } else if (change < 0.f) {
-            holder.mChangeRate.setText(String.format("%s%%",String.valueOf(formatter2.format(change * 100))));
+            holder.mChangeRate.setText(String.format("%s%%",String.valueOf(formatter.format(change * 100))));
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.decreasing_color));
 
         } else {
@@ -84,7 +84,11 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.no_change_color));
         }
         loadImage(mValues.get(position).getQuoteId(), holder.mSymboleView);
-        holder.mRmbPriceTextView.setText(holder.mItem.getRmbPrice() * holder.mItem.getCurrentPrice() == 0 ? "-" : String.format("≈¥ %s", String.valueOf(DoubleRounder.round(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice(), 2))));
+        /**
+         * fix bug: CYM-250
+         * 保留两位小数点
+         */
+        holder.mRmbPriceTextView.setText(holder.mItem.getRmbPrice() * holder.mItem.getCurrentPrice() == 0 ? "-" : formatter.format(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
