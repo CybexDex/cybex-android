@@ -497,6 +497,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartVolume.highlightValue(null);
                 mChartCharts.highlightValue(null);
                 mIndexHeaderLayout.setVisibility(View.GONE);
+                mHeaderKlineChart.setVisibility(View.GONE);
+
             }
         });
 

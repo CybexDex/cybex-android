@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -301,6 +302,7 @@ public class AccountFragment extends BaseFragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            Log.v(TAG, "service connected " );
             loadData(mWebSocketService.getFullAccount(mName));
         }
 
@@ -344,7 +346,9 @@ public class AccountFragment extends BaseFragment {
         mMembershipTextView.setText("");
         mTvTotalCybAmount.setText("--");
         mTvTotalRmbAmount.setText("≈ ¥--");
-        loadWebView(mAvatarWebView, 56);
+        if (mIsLoginIn) {
+            loadWebView(mAvatarWebView, 56);
+        }
     }
 
     private void updateMemberShipViewData(){
@@ -429,6 +433,10 @@ public class AccountFragment extends BaseFragment {
         if (!mIsNetWorkAvailable) {
             return;
         }
+        mTotalCyb = 0;
+        mLimitOrderObjectList.clear();
+        mAccountBalanceObjectItems.clear();
+
         hideLoadDialog();
         mLimitOrderObjectList.addAll(fullAccountObject.limit_orders);
         mMembershipExpirationDate  = fullAccountObject.account.membership_expiration_date;

@@ -515,7 +515,7 @@ public class WebSocketService extends Service {
                     e.printStackTrace();
                 }
             }
-        }, 10*1000);
+        },  0, 3600*1000);
     }
 
     public FullAccountObject getFullAccount(boolean isLoginIn) {

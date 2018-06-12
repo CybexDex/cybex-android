@@ -215,7 +215,7 @@ public class BitsharesWalletWraper {
         mWalletApi.set_password(strPassword);
         int nRet = mWalletApi.import_account_password(accountObject, strAccountName, strPassword);
         if(nRet == 0){
-            save_wallet_file();
+//            save_wallet_file();
             for (AccountObject account : list_my_accounts()) {
                 mMapAccountId2Object.put(account.id, account);
             }
