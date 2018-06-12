@@ -291,6 +291,13 @@ public class WatchlistFragment extends BaseFragment {
     public void onNetWorkStateChanged(boolean isAvailable){
         if(isAvailable){
             loadWatchlistData();
+            List<String> baseAssetId = new ArrayList<>();
+            for (String tab : mTabs) {
+                baseAssetId.add(getAssetId(tab));
+            }
+            mWebSocketService.subscribeAfterNetworkDown(baseAssetId);
+            mWebSocketService.cancelRMBSubscription();
+            mWebSocketService.getAssetsRmbPrice();
         }
     }
 

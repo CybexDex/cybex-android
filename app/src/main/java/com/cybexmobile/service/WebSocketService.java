@@ -135,6 +135,18 @@ public class WebSocketService extends Service {
         loadAssetsPairData(baseAssetId);
     }
 
+    public void subscribeAfterNetworkDown(List<String> baseAssetIds) {
+        for (String baseAssetId : baseAssetIds) {
+            if (mWatchlistHashMap.get(baseAssetId) != null) {
+                for (WatchlistData watchlistData : mWatchlistHashMap.get(baseAssetId)) {
+                    AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
+                    watchlistData.setSubscribeId(String.valueOf(id.getAndIncrement()));
+                    subscribeToMarket(id.toString(), watchlistData.getBaseId(), watchlistData.getQuoteId());
+                }
+            }
+        }
+    }
+
     //加载交易对数据
     private void loadAssetsPairData(String baseAsset){
         RetrofitFactory.getInstance()
@@ -525,7 +537,12 @@ public class WebSocketService extends Service {
         mTimer.cancel();
     }
 
-    private void getAssetsRmbPrice(){
+    public void cancelRMBSubscription() {
+        mSubscription.cancel();
+        mSubscription = null;
+    }
+
+    public void getAssetsRmbPrice(){
         //防止多次执行
         if(mSubscription != null){
             return;

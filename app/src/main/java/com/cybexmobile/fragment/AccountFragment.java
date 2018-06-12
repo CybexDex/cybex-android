@@ -343,7 +343,7 @@ public class AccountFragment extends BaseFragment {
         mSayHelloTextView.setText(mName == null ? "" : mName);
         mMembershipTextView.setText("");
         mTvTotalCybAmount.setText("--");
-        mTvTotalRmbAmount.setText("≈--");
+        mTvTotalRmbAmount.setText("≈ ¥--");
         loadWebView(mAvatarWebView, 56);
     }
 
