@@ -200,7 +200,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartVolume.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
         if (mData != null) {
-            setDefaultMALine();
+            //setDefaultMALine();
         }
 
         mChartKline.setAutoScaleMinMaxEnabled(true);
