@@ -442,6 +442,14 @@ public class AccountFragment extends BaseFragment {
         List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
         if(accountBalanceObjects != null && accountBalanceObjects.size() > 0){
             for (AccountBalanceObject balance : accountBalanceObjects) {
+                /**
+                 * fix bug
+                 * CYM-241
+                 * 过滤为0的资产
+                 */
+                if(balance.balance == 0){
+                    continue;
+                }
                 AccountBalanceObjectItem item = new AccountBalanceObjectItem();
                 item.accountBalanceObject = balance;
                 item.assetObject = mWebSocketService.getAssetObject(balance.asset_type.toString());

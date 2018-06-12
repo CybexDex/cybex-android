@@ -77,10 +77,10 @@
         android:text="@string/open_orders_total_value"/>
     <TextView
         android:id="@+id/open_orders_total_value"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:textSize="20sp"
-        android:layout_gravity="center_horizontal"
         android:textColor="@color/primary_color_white"
         android:text="≈¥0.00"/>
     <RelativeLayout

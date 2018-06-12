@@ -9,6 +9,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +37,8 @@ import java.util.Locale;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
 public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, OpenOrderRecyclerViewAdapter.getTotalValueInterface {
+
+    private static final String TAG = "OpenOrdersActivity";
 
     private SegmentedGroup mSegmentedGroup;
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
@@ -45,6 +49,9 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private WebSocketService mWebSocketService;
 
     private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
+
+    private DecimalFormat format = new DecimalFormat("0.00");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,7 +154,10 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     @Override
     public void displayTotalValue(double total) {
         double rmbPrice = mWebSocketService.getAssetRmbPrice("CYB") == null ? 0 : mWebSocketService.getAssetRmbPrice("CYB").getValue();
-        mOpenOrderTotalValue.setText(String.format(Locale.US,"≈¥%.2f", total * rmbPrice ));
+        Log.v(TAG, "total * rmbPrice=" + total * rmbPrice);
+        Log.v(TAG, "format.format(total * rmbPrice)" + format.format(total * rmbPrice));
+        String cybrmb = format.format(total * rmbPrice);
+        mOpenOrderTotalValue.setText(String.format("≈¥%s", cybrmb));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
