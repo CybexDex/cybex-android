@@ -23,7 +23,7 @@ public class MyLeftMarkerView extends MarkerView {
     private DecimalFormat mFormat;
     public MyLeftMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
-        mFormat=new DecimalFormat("#0.00");
+        mFormat=new DecimalFormat("#0.00000000");
         markerTv = (TextView) findViewById(R.id.marker_tv);
         markerTv.setTextSize(10);
     }
