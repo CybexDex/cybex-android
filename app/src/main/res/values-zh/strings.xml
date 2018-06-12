@@ -81,6 +81,7 @@
     <string name="permission_rationale">提供电子邮件完成需要联系人权限.</string>
     <string name="setting_version_is_the_latest">当前为最新版本</string>
     <string name="setting_version_update_available">版本更新</string>
+    <string name="setting_version_update_content">新版CybexDex可用，请立即更新至最新版本.</string>
     <string name="setting_version_update_next_time">下次</string>
     <string name="setting_version_update_now">更新</string>
 

@@ -1,5 +1,6 @@
 package com.cybexmobile.data;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class AppVersion {
@@ -39,7 +40,8 @@ public class AppVersion {
     }
 
     public boolean isForceUpdate(){
-        return force.get(version).getAsBoolean();
+        JsonElement element = force.get(version);
+        return element != null && element.getAsBoolean();
     }
 
     public boolean compareVersion(String currVersion){
