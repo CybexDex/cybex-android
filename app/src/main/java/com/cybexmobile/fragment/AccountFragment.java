@@ -223,7 +223,7 @@ public class AccountFragment extends BaseFragment {
             AccountBalanceObjectItem item = mAccountBalanceObjectItems.get(i);
             if(assetObject.id.toString().equals(item.accountBalanceObject.asset_type.toString())){
                 item.assetObject = assetObject;
-                if(item.marketTicker != null){
+                if(item.marketTicker != null || item.assetObject.id.toString().equals("1.3.0")){
                     calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
                             item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
                 }
@@ -450,11 +450,11 @@ public class AccountFragment extends BaseFragment {
         List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
         if(accountBalanceObjects != null && accountBalanceObjects.size() > 0){
             for (AccountBalanceObject balance : accountBalanceObjects) {
-                /**
+                /*
                  * fix bug
                  * CYM-241
                  * 过滤为0的资产
-                 */
+                 **/
                 if(balance.balance == 0){
                     continue;
                 }
