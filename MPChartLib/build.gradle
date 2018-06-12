@@ -40,8 +40,6 @@ repositories {
 }
 
 dependencies {
-    //compile fileTree(dir: 'libs', include: ['*.jar'])
-    //compile 'com.android.support:support-v4:19.+'
     compileOnly 'io.realm:realm-android:0.87.5' // "optional" dependency to realm-database API
 }
 
@@ -50,7 +48,7 @@ android.libraryVariants.all { variant ->
     def task = project.tasks.create "jar${name.capitalize()}", Jar
     task.dependsOn variant.javaCompile
     task.from variant.javaCompile.destinationDir
-    artifacts.add('archives', task);
+    artifacts.add('archives', task)
 }
 
 task sourcesJar(type: Jar) {

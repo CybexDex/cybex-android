@@ -367,9 +367,9 @@ public class AccountFragment extends BaseFragment {
     private void setTotalCybAndRmbTextView(double totalCyb, double totalRmb){
         mTvTotalCybAmount.setText(totalCyb == 0 ? "--" : String.format(Locale.US, "%.5f", mTotalCyb));
         if (totalCyb == 0) {
-            mTvTotalRmbAmount.setText("");
+            mTvTotalRmbAmount.setText("≈¥--");
         } else {
-            mTvTotalRmbAmount.setText(totalRmb == 0 ? "≈--" : String.format(Locale.US, "≈¥%.2f", totalRmb));
+            mTvTotalRmbAmount.setText(totalRmb == 0 ? "≈¥--" : String.format(Locale.US, "≈¥%.2f", totalRmb));
         }
     }
 
