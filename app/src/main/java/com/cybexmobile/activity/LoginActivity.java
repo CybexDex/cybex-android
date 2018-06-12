@@ -44,6 +44,7 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.R;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 
@@ -207,8 +208,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        switch (string) {
+    public void onConfigChanged(Event.ConfigChanged event) {
+        switch (event.getConfigName()) {
             case "EVENT_REFRESH_LANGUAGE":
                 recreate();
                 break;

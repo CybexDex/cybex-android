@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
 
@@ -44,8 +45,8 @@ public class ChooseLanguageActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        switch (string) {
+    public void onConfigChanged(Event.ConfigChanged event) {
+        switch (event.getConfigName()) {
             case "EVENT_REFRESH_LANGUAGE":
                 recreate();
                 break;
@@ -73,7 +74,7 @@ public class ChooseLanguageActivity extends BaseActivity {
                 mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_color_white));
                 mImageViewEnglish.setVisibility(View.GONE);
                 StoreLanguageHelper.setLanguageLocal(ChooseLanguageActivity.this, "zh");
-                EventBus.getDefault().post("EVENT_REFRESH_LANGUAGE");
+                EventBus.getDefault().post(new Event.ConfigChanged("EVENT_REFRESH_LANGUAGE"));
 
             }
         });
@@ -88,7 +89,7 @@ public class ChooseLanguageActivity extends BaseActivity {
                 mTextViewChinese.setTextColor(getResources().getColor(R.color.primary_color_white));
                 mImageViewChinese.setVisibility(View.GONE);
                 StoreLanguageHelper.setLanguageLocal(ChooseLanguageActivity.this, "en");
-                EventBus.getDefault().post("EVENT_REFRESH_LANGUAGE");
+                EventBus.getDefault().post(new Event.ConfigChanged("EVENT_REFRESH_LANGUAGE"));
             }
         });
     }

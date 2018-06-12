@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreThemeHelper;
 import com.cybexmobile.R;
 
@@ -71,7 +72,7 @@ public class ChooseThemeActivity extends BaseActivity {
                     PreferenceManager.getDefaultSharedPreferences(ChooseThemeActivity.this).edit().putBoolean("night_mode", false).apply();
 
                 }
-                EventBus.getDefault().post("THEME_CHANGED");
+                EventBus.getDefault().post(new Event.ConfigChanged("THEME_CHANGED"));
                 recreate();
             }
         });

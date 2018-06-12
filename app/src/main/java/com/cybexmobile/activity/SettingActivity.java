@@ -59,8 +59,8 @@ public class SettingActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        switch (string) {
+    public void onConfigChanged(Event.ConfigChanged event) {
+        switch (event.getConfigName()) {
             case "THEME_CHANGED":
                 recreate();
                 break;

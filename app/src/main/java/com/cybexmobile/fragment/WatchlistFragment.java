@@ -9,15 +9,12 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
@@ -108,10 +105,10 @@ public class WatchlistFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
+    public void onSubscribeMarket(Event.SubscribeMarket event) {
         if (mWebSocketService != null) {
             for (WatchlistData watchlistItem : mWatchlistData) {
-                if (mCurrentBaseAssetId.equals(mWatchlistData.get(0).getBaseId()) && string.equals(watchlistItem.getSubscribeId())) {
+                if (mCurrentBaseAssetId.equals(mWatchlistData.get(0).getBaseId()) && event.getCallId() == watchlistItem.getSubscribeId()) {
                     mWebSocketService.updateHistoryPriceAndMarketTicker(watchlistItem.getBaseAsset(), watchlistItem.getQuoteAsset());
                 }
             }
@@ -139,6 +136,7 @@ public class WatchlistFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateWatchlists(Event.UpdateWatchlists event) {
         mProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
         mWatchlistData.clear();
         mWatchlistData.addAll(event.getData());
         //交易排序
@@ -214,6 +212,7 @@ public class WatchlistFragment extends BaseFragment {
                 mCurrentTab = tab.getText().toString();
                 mCurrentBaseAssetId = getAssetId(mCurrentTab);
                 mProgressBar.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
                 loadWatchlistData();
             }
 
@@ -291,11 +290,7 @@ public class WatchlistFragment extends BaseFragment {
     public void onNetWorkStateChanged(boolean isAvailable){
         if(isAvailable){
             loadWatchlistData();
-            List<String> baseAssetId = new ArrayList<>();
-            for (String tab : mTabs) {
-                baseAssetId.add(getAssetId(tab));
-            }
-            mWebSocketService.subscribeAfterNetworkDown(baseAssetId);
+            mWebSocketService.subscribeAfterNetworkAvailable();
             mWebSocketService.cancelRMBSubscription();
             mWebSocketService.getAssetsRmbPrice();
         }

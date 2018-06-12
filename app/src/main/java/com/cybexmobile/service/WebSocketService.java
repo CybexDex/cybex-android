@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -135,14 +136,20 @@ public class WebSocketService extends Service {
         loadAssetsPairData(baseAssetId);
     }
 
-    public void subscribeAfterNetworkDown(List<String> baseAssetIds) {
-        for (String baseAssetId : baseAssetIds) {
-            if (mWatchlistHashMap.get(baseAssetId) != null) {
-                for (WatchlistData watchlistData : mWatchlistHashMap.get(baseAssetId)) {
+    public void subscribeAfterNetworkAvailable() {
+        Iterator<Map.Entry<String, List<WatchlistData>>> entries = mWatchlistHashMap.entrySet().iterator();
+        while (entries.hasNext()){
+            List<WatchlistData> watchlists = entries.next().getValue();
+            for (WatchlistData watchlistData : watchlists) {
+                /**
+                 * fix bug:CYM-249
+                 * 重新订阅保持callId不变
+                 */
+                if(watchlistData.getSubscribeId() == 0){
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
-                    watchlistData.setSubscribeId(String.valueOf(id.getAndIncrement()));
-                    subscribeToMarket(id.toString(), watchlistData.getBaseId(), watchlistData.getQuoteId());
+                    watchlistData.setSubscribeId(id.getAndIncrement());
                 }
+                subscribeToMarket(String.valueOf(watchlistData.getSubscribeId()), watchlistData.getBaseId(), watchlistData.getQuoteId());
             }
         }
     }
@@ -451,9 +458,11 @@ public class WebSocketService extends Service {
             //更新行情
             EventBus.getDefault().post(new Event.UpdateWatchlists(watchlistData));
             for (WatchlistData watchlistItem : watchlistData) {
-                AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
-                watchlistItem.setSubscribeId(String.valueOf(id.getAndIncrement()));
-                subscribeToMarket(id.toString(), watchlistItem.getBaseId(), watchlistItem.getQuoteId());
+                if(watchlistItem.getSubscribeId() == 0){
+                    AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
+                    watchlistItem.setSubscribeId(id.getAndIncrement());
+                }
+                subscribeToMarket(String.valueOf(watchlistItem.getSubscribeId()), watchlistItem.getBaseId(), watchlistItem.getQuoteId());
             }
             //加载价格和交易历史
             loadHistoryPriceAndMarketTicker(assetsPairs);

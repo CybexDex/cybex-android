@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.FaqFragment;
@@ -104,8 +105,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        switch (string) {
+    public void onConfigChanged(Event.ConfigChanged event) {
+        switch (event.getConfigName()) {
             case "EVENT_REFRESH_LANGUAGE":
                 recreate();
                 break;

@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,11 +12,9 @@ import android.widget.TextView;
 import com.cybexmobile.fragment.OrderHistoryListFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
-import com.cybexmobile.utils.MyUtils;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
 
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -109,7 +107,7 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
 
     }
 
-    public void setmValues(OrderBook orderBook) {
+    public void setValues(OrderBook orderBook) {
         this.mValues = orderBook;
         notifyDataSetChanged();
     }

@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +13,6 @@ import com.cybexmobile.R;
 import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.utils.MyUtils;
 
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,7 +29,7 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
     private int mBasePrecision;
     private int mQuotePrecision;
 
-    TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, OnListFragmentInteractionListener listener, int basePrecision, int quotePrecision, Context context) {
+    public TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, OnListFragmentInteractionListener listener, int basePrecision, int quotePrecision, Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;

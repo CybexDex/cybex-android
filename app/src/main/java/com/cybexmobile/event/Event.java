@@ -214,5 +214,37 @@ public class Event {
 
         }
     }
+
+    public static class SubscribeMarket{
+        private int callId;
+
+        public SubscribeMarket(int callId) {
+            this.callId = callId;
+        }
+
+        public int getCallId() {
+            return callId;
+        }
+
+        public void setCallId(int callId) {
+            this.callId = callId;
+        }
+    }
+
+    public static class ConfigChanged{
+        private String configName;
+
+        public ConfigChanged(String configName) {
+            this.configName = configName;
+        }
+
+        public String getConfigName() {
+            return configName;
+        }
+
+        public void setConfigName(String configName) {
+            this.configName = configName;
+        }
+    }
 }
 

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.cybexmobile.crypto.Sha256Object;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -92,7 +93,7 @@ public class WebSocketClient extends WebSocketListener {
             "wss://bitshares.crypto.fans/ws"
     );
 
-    public AtomicInteger getmCallId() {
+    public AtomicInteger getCallId() {
         return mCallId;
     }
 
@@ -177,7 +178,7 @@ public class WebSocketClient extends WebSocketListener {
                     JSONObject noticeObject = new JSONObject(text);
                     JSONArray params = noticeObject.getJSONArray("params");
                     int id = params.getInt(0);
-                    EventBus.getDefault().post(String.valueOf(id));
+                    EventBus.getDefault().post(new Event.SubscribeMarket(id));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
@@ -174,8 +174,8 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        if(string.equals(mWatchlistData.getSubscribeId())) {
+    public void onSubscribeMarket(Event.SubscribeMarket event) {
+        if(mWatchlistData.getSubscribeId() == event.getCallId()) {
             loadMarketTradHistory();
         }
     }

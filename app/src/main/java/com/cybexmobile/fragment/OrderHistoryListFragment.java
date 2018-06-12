@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cybexmobile.adapter.OrderHistoryItemRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
@@ -104,12 +104,12 @@ public class OrderHistoryListFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateOrderBook(Event.UpdateOrderBook event){
         mOrderBook = event.getData();
-        mOrderHistoryItemRecycerViewAdapter.setmValues(mOrderBook);
+        mOrderHistoryItemRecycerViewAdapter.setValues(mOrderBook);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String string) {
-        if(string.equals(mWatchlistData.getSubscribeId())) {
+    public void onSubcribeMarket(Event.SubscribeMarket event) {
+        if(event.getCallId() == mWatchlistData.getSubscribeId()) {
             loadOrderBook();
         }
     }

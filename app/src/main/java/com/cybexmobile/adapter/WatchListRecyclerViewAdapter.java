@@ -19,6 +19,7 @@ import org.decimal4j.util.DoubleRounder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchListRecyclerViewAdapter.ViewHolder> {
 
@@ -88,7 +89,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
          * fix bug: CYM-250
          * 保留两位小数点
          */
-        holder.mRmbPriceTextView.setText(holder.mItem.getRmbPrice() * holder.mItem.getCurrentPrice() == 0 ? "-" : formatter.format(mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice()));
+        holder.mRmbPriceTextView.setText(holder.mItem.getRmbPrice() * holder.mItem.getCurrentPrice() == 0 ? "-" : String.format(Locale.US, "≈¥ %.2f", mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

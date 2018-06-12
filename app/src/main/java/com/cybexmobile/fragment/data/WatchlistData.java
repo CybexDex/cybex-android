@@ -40,7 +40,7 @@ public class WatchlistData implements Serializable{
     //quote编号
     private String quoteId;
     //订阅号
-    private String subscribeId;
+    private int subscribeId;
     //人名币价格
     private double rmbPrice;
     //base精度
@@ -68,7 +68,7 @@ public class WatchlistData implements Serializable{
         parseHistoryPrice(historyPrices);
     }
 
-    public WatchlistData(long time, double high, double low, double baseVol, double quoteVol, double currentPrice, String baseSymbol, String quoteSymbol, String change, String baseId, String quoteId, String subscribeId, double rmbPrice, int basePrecision, int quotePrecision) {
+    public WatchlistData(long time, double high, double low, double baseVol, double quoteVol, double currentPrice, String baseSymbol, String quoteSymbol, String change, String baseId, String quoteId, int subscribeId, double rmbPrice, int basePrecision, int quotePrecision) {
         this.high = high;
         this.low = low;
         this.baseVol = baseVol;
@@ -174,11 +174,11 @@ public class WatchlistData implements Serializable{
         this.quoteId = quoteId;
     }
 
-    public void setSubscribeId(String subscribeId) {
+    public void setSubscribeId(int subscribeId) {
         this.subscribeId = subscribeId;
     }
 
-    public String getSubscribeId() {
+    public int getSubscribeId() {
         return subscribeId;
     }
 

@@ -1014,7 +1014,7 @@ public class WalletApi {
     }
 
     public AtomicInteger getCallId() {
-        return mWebSocketClient.getmCallId();
+        return mWebSocketClient.getCallId();
     }
 
 //    public void set_subscribe_market(boolean filter) throws NetworkStatusException {
