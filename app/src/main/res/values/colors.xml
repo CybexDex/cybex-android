@@ -25,7 +25,7 @@
     <color name="kline_x_axis_text_color">#4D78819A</color>
     <color name="decreasing_color">#D04833</color>
     <color name="increasing_color">#6DBB49</color>
-    <color name="no_change_color">#B3FFFFFF</color>
+    <color name="no_change_color">#8d9097</color>
     <color name="ma_5_color">#2B756C</color>
     <color name="ma_10_color">#60408A</color>
     <color name="ma_20_color">#245C2A</color>

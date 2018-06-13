@@ -159,6 +159,7 @@ public class WebSocketClient extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
+//        Log.d("shefeng", Thread.currentThread().getName());
         Log.d(TAG, "onMessage: " + text);
         try {
             Gson gson = new Gson();
@@ -194,6 +195,7 @@ public class WebSocketClient extends WebSocketListener {
         Log.v(TAG, "onFailure: WebSocket on failure", t);
         if(t instanceof SocketTimeoutException){
             //websocket连接超时
+            EventBus.getDefault().post(new Event.WebSocketTimeOut());
         }
         mConnectStatus = WEBSOCKET_CONNECT_FAIL;
         _nDatabaseId = -1;

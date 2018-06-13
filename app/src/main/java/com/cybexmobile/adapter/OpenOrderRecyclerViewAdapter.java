@@ -20,7 +20,7 @@ import com.cybexmobile.utils.MyUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrderRecyclerViewAdapter.ViewHolder> implements Filterable{
+public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrderRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     private List<OpenOrderItem> mOpenOrderItems;
     private List<OpenOrderItem> mOriginalOpenOrderItems;
@@ -64,69 +64,40 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         AssetObject base = openOrderItem.openOrder.getBaseObject();
         AssetObject quote = openOrderItem.openOrder.getQuoteObject();
         LimitOrderObject data = openOrderItem.openOrder.getLimitOrder();
-        double amount;
-        double price;
-        if (position == 0) {
-            mTotal = 0;
-        }
-        if(base != null && quote != null){
-            /**
-             * fix bug:CYM-255
-             * 只显示前缀为CYB和JADE的资产
-             */
-            if((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE")) ||
-                    (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE"))){
-                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
-                layoutParams.height = 0;
-                layoutParams.width = 0;
-                holder.itemView.setVisibility(View.GONE);
+        if (base != null && quote != null) {
+            String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
+            String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
+            String basePrecision = MyUtils.getPrecisedFormatter(base.precision);
+            String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
+            double amount;
+            double price;
+            if (position == 0) {
+                mTotal = 0;
+            }
+            if (openOrderItem.isSell) {
+                holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
+                holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
+                amount = data.sell_price.base.amount / Math.pow(10, base.precision);
+                holder.mVolumeTextView.setText(String.format(basePrecision, amount) + " " + baseSymbol);
+                holder.mQuoteTextView.setText(baseSymbol);
+                holder.mBaseTextView.setText(String.format("/%s", quoteSymbol));
+                price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
+                holder.mPriceTextView.setText(String.format(quotePrecision, price));
+
             } else {
-                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
-                layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
-                layoutParams.width = RecyclerView.LayoutParams.WRAP_CONTENT;
-                holder.itemView.setVisibility(View.VISIBLE);
-                String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
-                String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
-                String basePrecision = MyUtils.getPrecisedFormatter(base.precision);
-                String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
-                if (openOrderItem.isSell) {
-                    holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
-                    holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
-                    if (data.sell_price.base.asset_id.equals(base.id)) {
-                        amount = data.sell_price.base.amount / Math.pow(10, base.precision);
-                        holder.mVolumeTextView.setText(String.format(basePrecision, amount) + " " + baseSymbol);
-                    } else {
-                        amount = data.sell_price.quote.amount / Math.pow(10, base.precision);
-                        holder.mVolumeTextView.setText(String.format(quotePrecision, amount) + " " + quoteSymbol);
-                    }
-                } else {
-                    holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
-                    holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
-                    if (data.sell_price.quote.asset_id.equals(quote.id)) {
-                        amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                        holder.mVolumeTextView.setText(String.format(quotePrecision, amount) + " " + quoteSymbol);
-                    } else {
-                        amount = data.sell_price.base.amount / Math.pow(10, quote.precision);
-                        holder.mVolumeTextView.setText(String.format(basePrecision, amount) + " " + baseSymbol);
-                    }
-                }
-                if (data.sell_price.base.asset_id.equals(base.id)) {
-                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
-                    holder.mPriceTextView.setText(String.format(basePrecision, price));
-                } else {
-                    price = (data.sell_price.quote.amount / Math.pow(10, base.precision)) / (data.sell_price.base.amount / Math.pow(10, quote.precision));
-                    holder.mPriceTextView.setText(String.format(quotePrecision, price));
-                }
-                mTotal += price * amount;
+                holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
+                holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
+                amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
+                holder.mVolumeTextView.setText(String.format(quotePrecision, amount) + " " + quoteSymbol);
                 holder.mQuoteTextView.setText(quoteSymbol);
                 holder.mBaseTextView.setText(String.format("/%s", baseSymbol));
+                price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
+                holder.mPriceTextView.setText(String.format(basePrecision, price));
+            }
+            mTotal += price * amount;
+            if (position == mOpenOrderItems.size() - 1) {
                 mListener.displayTotalValue(mTotal);
             }
-        }else{
-            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
-            layoutParams.height = 0;
-            layoutParams.width = 0;
-            holder.itemView.setVisibility(View.GONE);
         }
     }
 
@@ -147,22 +118,22 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
         return new OpenOrderFilter();
     }
 
-    class OpenOrderFilter extends Filter{
+    class OpenOrderFilter extends Filter {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             String filterStr = constraint.toString();
             FilterResults results = new FilterResults();
-            if(TextUtils.isEmpty(constraint) || "All".equals(filterStr)){
+            if (TextUtils.isEmpty(constraint) || "All".equals(filterStr)) {
                 results.values = mOriginalOpenOrderItems;
                 results.count = mOriginalOpenOrderItems.size();
                 return results;
             }
             List<OpenOrderItem> filterDatas = new ArrayList<>();
-            for(OpenOrderItem data : mOriginalOpenOrderItems){
-                if("Sell".equals(filterStr) && data.isSell){
+            for (OpenOrderItem data : mOriginalOpenOrderItems) {
+                if ("Sell".equals(filterStr) && data.isSell) {
                     filterDatas.add(data);
-                }else if("Buy".equals(filterStr) && !data.isSell){
+                } else if ("Buy".equals(filterStr) && !data.isSell) {
                     filterDatas.add(data);
                 }
             }

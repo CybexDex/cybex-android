@@ -18,6 +18,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+
+        debug {
+            ndk {
+                abiFilters = ["armeabi","x86"]
+            }
+        }
     }
     lintOptions {
         abortOnError false
@@ -26,14 +32,14 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
-    splits {
-        abi {
-            enable true
-            reset()
-            include 'x86', 'armeabi-v7a', 'x86_64'
-            universalApk true
-        }
-    }
+//    splits {
+//        abi {
+//            enable true
+//            reset()
+//            include 'x86', 'armeabi-v7a', 'x86_64'
+//            universalApk true
+//        }
+//    }
 }
 
 dependencies {

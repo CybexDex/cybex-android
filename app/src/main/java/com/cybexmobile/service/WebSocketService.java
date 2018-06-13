@@ -30,6 +30,9 @@ import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.PriceUtil;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusBuilder;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
@@ -89,6 +92,7 @@ public class WebSocketService extends Service {
     public void onCreate() {
         super.onCreate();
         mTimer = new Timer();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -119,6 +123,7 @@ public class WebSocketService extends Service {
         mSubscription = null;
         mTimer.cancel();
         mTimer = null;
+        EventBus.getDefault().unregister(this);
     }
 
     //加载行情数据
@@ -153,6 +158,11 @@ public class WebSocketService extends Service {
             }
         }
     }
+
+   @Subscribe(threadMode = ThreadMode.MAIN)
+   public void onWebSocketTimeOut(Event.WebSocketTimeOut webSocketTimeOut) {
+        subscribeAfterNetworkAvailable();
+   }
 
     //加载交易对数据
     private void loadAssetsPairData(String baseAsset){
@@ -336,7 +346,7 @@ public class WebSocketService extends Service {
             }
             if(watchlistData != null){
                 watchlistData.setMarketTicker(marketTicker);
-                EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
+                //EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
             }
         }
 
@@ -368,11 +378,6 @@ public class WebSocketService extends Service {
             if(buckets == null || buckets.size() == 0){
                 return;
             }
-            if(buckets.get(0).key.open.getTime() > (System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS )){
-                loadPreHistoryPrice(buckets.get(0).key.base, buckets.get(0).key.quote,
-                        new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS - DateUtils.DAY_IN_MILLIS),
-                        new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS));
-            }
             WatchlistData watchlistData = getWatchlist(mWatchlistHashMap, buckets.get(0));
             if(watchlistData != null){
                 List<HistoryPrice> historyPrices = new ArrayList<>();
@@ -381,7 +386,13 @@ public class WebSocketService extends Service {
                 }
                 watchlistData.setHistoryPrices(historyPrices);
             }
-            EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
+            if(buckets.get(0).key.open.getTime() > (System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS )){
+                loadPreHistoryPrice(buckets.get(0).key.base, buckets.get(0).key.quote,
+                        new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS - DateUtils.DAY_IN_MILLIS),
+                        new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS));
+            } else {
+                EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
+            }
         }
 
         @Override

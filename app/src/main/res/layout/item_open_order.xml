@@ -44,7 +44,7 @@
         </LinearLayout>
 
 
-        <me.grantland.widget.AutofitTextView
+        <TextView
             android:id="@+id/current_price_open_order"
             style="@style/font_white_dark_bold_large"
             android:layout_width="wrap_content"

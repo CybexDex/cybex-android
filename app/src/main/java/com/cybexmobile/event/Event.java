@@ -179,7 +179,9 @@ public class Event {
     }
 
     //websocket请求超时
-    public static class WebSocketTimeOut{}
+    public static class WebSocketTimeOut{
+
+    }
 
     //线程调度
     public static class ThreadScheduler<T>{
