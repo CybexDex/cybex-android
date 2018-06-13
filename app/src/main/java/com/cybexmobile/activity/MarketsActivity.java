@@ -1118,9 +1118,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_5_MIN;
+                mIndexHeaderLayout.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
-                mChartKline.setVisibility(View.GONE);
-                mChartVolume.setVisibility(View.GONE);
+                mChartKline.setVisibility(View.INVISIBLE);
+                mChartVolume.setVisibility(View.INVISIBLE);
                 loadMarketHistory();
             }
         });
@@ -1135,9 +1136,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_1_HOUR;
+                mIndexHeaderLayout.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
-                mChartKline.setVisibility(View.GONE);
-                mChartVolume.setVisibility(View.GONE);
+                mChartKline.setVisibility(View.INVISIBLE);
+                mChartVolume.setVisibility(View.INVISIBLE);
                 loadMarketHistory();
             }
         });
@@ -1152,9 +1154,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
+                mIndexHeaderLayout.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
-                mChartKline.setVisibility(View.GONE);
-                mChartVolume.setVisibility(View.GONE);
+                mChartKline.setVisibility(View.INVISIBLE);
+                mChartVolume.setVisibility(View.INVISIBLE);
                 loadMarketHistory();
             }
         });

@@ -117,7 +117,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
-        Picasso.get().load("https://cybex.io/icons/" + quoteIdWithUnderLine + "_grey.png").into(mCoinSymbol);
+        Picasso.get().load("https://app.cybex.io/icons/" + quoteIdWithUnderLine + "_grey.png").into(mCoinSymbol);
     }
 
     private String getDate(long timeStamp){

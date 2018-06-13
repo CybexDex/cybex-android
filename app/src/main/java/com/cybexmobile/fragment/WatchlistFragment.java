@@ -49,7 +49,7 @@ public class WatchlistFragment extends BaseFragment {
     private View view;
     private ProgressBar mProgressBar;
 
-    private String[] mTabs = new String[]{"ETH", "BTC", "USDT", "CYB"};
+    private String[] mTabs = new String[]{"ETH", "CYB", "USDT", "BTC"};
     private String mCurrentTab;
     private String mCurrentBaseAssetId;
     private WatchListRecyclerViewAdapter mWatchListRecyclerViewAdapter;

@@ -41,7 +41,20 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
         AssetObject assetObject = item.assetObject;
         MarketTicker marketTicker = item.marketTicker;
         loadImage(accountBalanceObject.asset_type.toString(), holder.mAssetImage);
-        if(assetObject != null){
+        /**
+         * fix bug:CYM-255
+         * 只显示前缀为CYB和JADE的资产
+         */
+        if (assetObject == null || (!assetObject.symbol.startsWith("CYB") && !assetObject.symbol.startsWith("JADE"))) {
+           RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+           layoutParams.height = 0;
+           layoutParams.width = 0;
+           holder.itemView.setVisibility(View.GONE);
+        }else{
+            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+            layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = RecyclerView.LayoutParams.WRAP_CONTENT;
+            holder.itemView.setVisibility(View.VISIBLE);
             if (assetObject.symbol.contains("JADE")) {
                 holder.mAssetSymbol.setText(assetObject.symbol.substring(5,assetObject.symbol.length()));
             } else {

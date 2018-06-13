@@ -7,6 +7,7 @@ public class LimitOrderObject {
     public ObjectId<LimitOrderObject> id;
     public Date expiration;
     public ObjectId<AccountObject> seller;
+    //
     public long for_sale; ///< Asset id is sell_price.base.asset_id
     public Price sell_price;
     public long deferred_fee;

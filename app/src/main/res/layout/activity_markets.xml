@@ -122,13 +122,13 @@
                 android:id="@+id/kline_chart_k"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/layout_kline_height"
-                android:visibility="gone" />
+                android:visibility="invisible" />
 
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_volume"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/layout_volume_height"
-                android:visibility="gone" />
+                android:visibility="invisible" />
 
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_chart"
