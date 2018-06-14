@@ -94,10 +94,6 @@
     <string name="prompt_password">密码</string>
     <string name="prompt_confirm_password">确认密码</string>
     <string name="prompt_pin_code">验证码</string>
-    <string name="create_account_account_name_empty">还未填写账号名</string>
-    <string name="create_account_password_empty">还未填写密码</string>
-    <string name="create_account_password_confirm_empty">请再填写一次密码</string>
-    <string name="create_account_pin_code_empty">验证码没填写</string>
 
     <string name="import_activity_unknown_error">发现错误</string>
     <string name="import_activity_private_key_invalid">私钥不正确</string>

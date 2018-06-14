@@ -6,7 +6,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="?android:actionBarSize"
         style="@style/font_grey_large"
         android:background="@color/dialog_title_background_color"
         android:gravity="center"

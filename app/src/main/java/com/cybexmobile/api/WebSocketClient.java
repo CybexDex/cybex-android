@@ -193,15 +193,18 @@ public class WebSocketClient extends WebSocketListener {
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         super.onFailure(webSocket, t, response);
         Log.v(TAG, "onFailure: WebSocket on failure", t);
-        if(t instanceof SocketTimeoutException){
-            //websocket连接超时
-            EventBus.getDefault().post(new Event.WebSocketTimeOut());
-        }
         mConnectStatus = WEBSOCKET_CONNECT_FAIL;
         _nDatabaseId = -1;
         _nBroadcastId = -1;
         _nHistoryId = -1;
         mHashMapIdToProcess.clear();
+        try {
+            Thread.sleep(3*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //websocket连接超时
+        EventBus.getDefault().post(new Event.WebSocketTimeOut());
     }
 
     @Override
