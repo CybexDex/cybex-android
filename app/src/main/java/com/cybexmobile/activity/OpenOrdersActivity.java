@@ -66,7 +66,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mRecyclerView.setAdapter(mOpenOrderRecycerViewAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         Intent intent = new Intent(this, WebSocketService.class);
-        bindService(intent, mConnection , BIND_AUTO_CREATE);
+        bindService(intent, mConnection, BIND_AUTO_CREATE);
         showLoadDialog();
     }
 
@@ -90,23 +90,23 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             //AccountFragment已经获取了FullAccount数据
             FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(true);
             List<LimitOrderObject> limitOrderObjects = fullAccountObject == null ? null : fullAccountObject.limit_orders;
-            if(limitOrderObjects == null || limitOrderObjects.size() == 0){
+            if (limitOrderObjects == null || limitOrderObjects.size() == 0) {
                 hideLoadDialog();
                 return;
             }
-            for(LimitOrderObject limitOrderObject : limitOrderObjects){
+            for (LimitOrderObject limitOrderObject : limitOrderObjects) {
                 OpenOrderItem item = new OpenOrderItem();
                 OpenOrder openOrder = new OpenOrder();
                 openOrder.setLimitOrder(limitOrderObject);
                 String baseId = limitOrderObject.sell_price.base.asset_id.toString();
                 String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
                 List<AssetObject> assetObjects = mWebSocketService.getAssetObjects(baseId, quoteId);
-                if(assetObjects != null && assetObjects.size() == 2){
+                if (assetObjects != null && assetObjects.size() == 2) {
                     String baseSymbol = assetObjects.get(0).symbol;
                     String quoteSymbol = assetObjects.get(1).symbol;
                     item.isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
-                    openOrder.setBaseObject(item.isSell ? assetObjects.get(1) : assetObjects.get(0));
-                    openOrder.setQuoteObject(item.isSell ? assetObjects.get(0) : assetObjects.get(1));
+                    openOrder.setBaseObject(assetObjects.get(0));
+                    openOrder.setQuoteObject(assetObjects.get(1));
                 }
                 item.openOrder = openOrder;
                 mOpenOrderItems.add(item);
@@ -161,16 +161,16 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadAssets(Event.LoadAssets event){
+    public void onLoadAssets(Event.LoadAssets event) {
         List<AssetObject> assetObjects = event.getData();
-        if(assetObjects == null && assetObjects.size() != 2){
+        if (assetObjects == null && assetObjects.size() != 2) {
             return;
         }
-        for(int i=0; i<mOpenOrderItems.size(); i++){
+        for (int i = 0; i < mOpenOrderItems.size(); i++) {
             LimitOrderObject limitOrderObject = mOpenOrderItems.get(i).openOrder.getLimitOrder();
             String baseId = limitOrderObject.sell_price.base.asset_id.toString();
             String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
-            if(baseId.equals(assetObjects.get(0).id.toString()) && quoteId.equals(assetObjects.get(1).id.toString())){
+            if (baseId.equals(assetObjects.get(0).id.toString()) && quoteId.equals(assetObjects.get(1).id.toString())) {
                 String baseSymbol = assetObjects.get(0).symbol;
                 String quoteSymbol = assetObjects.get(1).symbol;
                 mOpenOrderItems.get(i).isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
@@ -193,7 +193,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 return false;
             } else {
                 if (baseIndex < quoteIndex) {
-                    return  false;
+                    return false;
                 } else {
                     return true;
                 }

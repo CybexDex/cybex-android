@@ -1,5 +1,7 @@
 package com.cybexmobile.fragment.data;
 
+import android.util.Log;
+
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
@@ -10,7 +12,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class WatchlistData implements Serializable{
+public class WatchlistData implements Serializable {
 
     private AssetObject baseAsset;
     private AssetObject quoteAsset;
@@ -48,7 +50,7 @@ public class WatchlistData implements Serializable{
     //quote精度
     private int quotePrecision;
 
-    public WatchlistData(){
+    public WatchlistData() {
 
     }
 
@@ -58,12 +60,12 @@ public class WatchlistData implements Serializable{
         parseAsset(baseAsset, quoteAsset);
     }
 
-    public WatchlistData(MarketTicker marketTicker){
+    public WatchlistData(MarketTicker marketTicker) {
         this.marketTicker = marketTicker;
         parseMarketTicker(marketTicker);
     }
 
-    public WatchlistData(List<HistoryPrice> historyPrices){
+    public WatchlistData(List<HistoryPrice> historyPrices) {
         this.historyPrices = historyPrices;
         parseHistoryPrice(historyPrices);
     }
@@ -126,19 +128,19 @@ public class WatchlistData implements Serializable{
         this.time = time;
     }
 
-    public double getCurrentPrice () {
+    public double getCurrentPrice() {
         return this.currentPrice;
     }
 
-    public void setCurrentPrice (double currentPrice) {
+    public void setCurrentPrice(double currentPrice) {
         this.currentPrice = currentPrice;
     }
 
-    public String getChange () {
+    public String getChange() {
         return this.change;
     }
 
-    public void setChange (String change) {
+    public void setChange(String change) {
         this.change = change;
     }
 
@@ -233,7 +235,7 @@ public class WatchlistData implements Serializable{
         parseHistoryPrice(historyPrices);
     }
 
-    public void addHistoryPrice(int index,HistoryPrice historyPrice){
+    public void addHistoryPrice(int index, HistoryPrice historyPrice) {
         this.historyPrices.add(index, historyPrice);
         parseHistoryPrice(historyPrices);
     }
@@ -247,8 +249,8 @@ public class WatchlistData implements Serializable{
         parseMarketTicker(marketTicker);
     }
 
-    private void parseBaseAsset(AssetObject baseAsset){
-        if(baseAsset == null){
+    private void parseBaseAsset(AssetObject baseAsset) {
+        if (baseAsset == null) {
             return;
         }
         this.baseId = baseAsset.id.toString();
@@ -256,8 +258,8 @@ public class WatchlistData implements Serializable{
         this.basePrecision = baseAsset.precision;
     }
 
-    private void parseQuoteAsset(AssetObject quoteAsset){
-        if(quoteAsset == null){
+    private void parseQuoteAsset(AssetObject quoteAsset) {
+        if (quoteAsset == null) {
             return;
         }
         this.quoteId = quoteAsset.id.toString();
@@ -265,28 +267,35 @@ public class WatchlistData implements Serializable{
         this.quotePrecision = quoteAsset.precision;
     }
 
-    private void parseAsset(AssetObject baseAsset, AssetObject quoteAsset){
+    private void parseAsset(AssetObject baseAsset, AssetObject quoteAsset) {
         parseBaseAsset(baseAsset);
         parseQuoteAsset(quoteAsset);
     }
 
-    private void parseMarketTicker(MarketTicker marketTicker){
-        if(marketTicker == null){
+    private void parseMarketTicker(MarketTicker marketTicker) {
+        if (marketTicker == null) {
             return;
         }
         this.baseVol = marketTicker.base_volume;
         this.quoteVol = marketTicker.quote_volume;
-        this.change = String.valueOf(Double.parseDouble(marketTicker.percent_change) / 100);
+//        this.change = String.valueOf(Double.parseDouble(marketTicker.percent_change) / 100);
     }
 
-    private void parseHistoryPrice(List<HistoryPrice> historyPrices){
-        if(historyPrices == null || historyPrices.size() == 0){
+    private void parseHistoryPrice(List<HistoryPrice> historyPrices) {
+        if (historyPrices == null || historyPrices.size() == 0) {
             return;
         }
         this.high = PriceUtil.getHighPrice(historyPrices);
         this.low = PriceUtil.getLowPrice(historyPrices);
         this.currentPrice = PriceUtil.getCurrentPrice(historyPrices);
-//        this.change = PriceUtil.getChange(historyPrices);
+        this.change = PriceUtil.getChange(historyPrices);
+        if (quoteSymbol.equals("JADE.INK")) {
+            Log.v("Shefeng1", change);
+            Log.v("Shefeng2", String.valueOf(historyPrices.get(0).open));
+            Log.v("Shefeng2", String.valueOf(historyPrices.get(historyPrices.size() - 1).close));
+        }
+//        this.baseVol = PriceUtil.getVolFromPriceList(historyPrices);
+//        this.quoteVol = PriceUtil.getQuoteVolFromPriceList(historyPrices);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.cybexmobile.utils;
 
+import android.util.Log;
+
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.Utils;
@@ -113,7 +115,7 @@ public final class PriceUtil {
         return price;
     }
 
-    private double getVolFromPriceList(List<HistoryPrice> historyPrices) {
+    public static double getVolFromPriceList(List<HistoryPrice> historyPrices) {
         double vol = 0;
         for (HistoryPrice historyPrice : historyPrices) {
             vol += historyPrice.volume;
@@ -121,7 +123,7 @@ public final class PriceUtil {
         return vol;
     }
 
-    private double getQuoteVolFromPriceList(List<HistoryPrice> historyPrices) {
+    public static double getQuoteVolFromPriceList(List<HistoryPrice> historyPrices) {
         double vol = 0;
         for (HistoryPrice historyPrice : historyPrices) {
             vol += historyPrice.quoteVolume;

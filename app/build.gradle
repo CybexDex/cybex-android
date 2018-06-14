@@ -21,6 +21,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+
+        debug {
+            ndk {
+                abiFilters = ["armeabi","x86"]
+            }
+        }
     }
     lintOptions {
         abortOnError false
@@ -81,4 +87,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
     implementation 'org.decimal4j:decimal4j:1.0.3'
     implementation project(':MPChartLib')
+}
+
+// Run this once to be able to run the application with BUCK
+// puts all compile dependencies into folder libs for BUCK to use
+task copyDownloadableDepsToLibs(type: Copy) {
+    from configurations.compile
+    into 'libs'
 }
