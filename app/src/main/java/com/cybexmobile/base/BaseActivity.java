@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.cybexmobile.R;
 import com.cybexmobile.dialog.LoadDialog;
@@ -188,6 +189,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
         mIsNetWorkAvailable = event.isAvailable();
         onNetWorkStateChanged(mIsNetWorkAvailable);
+        Toast.makeText(this, getResources().getString(R.string.network_connection_is_not_available), Toast.LENGTH_SHORT).show();
+
     }
 
     public abstract void onNetWorkStateChanged(boolean isAvailable);

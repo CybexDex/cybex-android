@@ -100,7 +100,7 @@ public class AccountFragment extends BaseFragment {
     private boolean mIsLoginIn;
     private String mName;
     private String mMembershipExpirationDate;
-    private List<String> mCompareSymbol = Arrays.asList(new String[]{"1.3.2", "1.3.3", "1.3.4", "1.3.0"});
+    private List<String> mCompareSymbol = Arrays.asList(new String[]{"1.3.27", "1.3.2", "1.3.3", "1.3.0"});
     private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
 
     private double mCybRmbPrice;
@@ -553,12 +553,11 @@ public class AccountFragment extends BaseFragment {
                     if (limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0") && limitOrderObject.sell_price.base.asset_id.toString().equals(balance.asset_type.toString())) {
                         mTotalCyb += limitOrderObject.for_sale / Math.pow(10, 5);
                         mLimitOrderTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
-                        if (checkIsSell(limitOrderObject.sell_price.base.asset_id.toString(), limitOrderObject.sell_price.base.asset_id.toString(), mCompareSymbol)) {
+                        if (checkIsSell(limitOrderObject.sell_price.base.asset_id.toString(), limitOrderObject.sell_price.quote.asset_id.toString(), mCompareSymbol)) {
                             mLimitOrderSellTotalValue +=limitOrderObject.for_sale / Math.pow(10, 5);
                         } else {
                             mLimitOrderBuyTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
                         }
-                        break;
                     }
                 }
                 mAccountBalanceObjectItems.add(item);

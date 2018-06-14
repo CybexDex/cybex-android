@@ -33,7 +33,6 @@ public class NetWorkBroadcastReceiver extends BroadcastReceiver{
                 public void onLost(Network network) {
                     super.onLost(network);
                     //无网
-                    Toast.makeText(context, context.getResources().getString(R.string.network_connection_is_not_available), Toast.LENGTH_SHORT).show();
                     EventBus.getDefault().post(new Event.NetWorkStateChanged(false));
                 }
 

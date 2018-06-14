@@ -935,7 +935,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             mTvCloseIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
             mTvHighIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.high));
             mTvLowIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.low));
-            mTvChangeIndex.setText(String.format(Locale.US, "%.2f%%", (klData.close -klData.open) / klData.open));
+            mTvChangeIndex.setText(String.format(Locale.US, "%.2f%%", ((klData.close -klData.open) / klData.open) *100));
             mTvPriceIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
             mTvDateIndex.setText(klData.date);
         }

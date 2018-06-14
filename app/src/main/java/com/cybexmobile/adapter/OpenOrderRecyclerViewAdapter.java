@@ -105,8 +105,8 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                     price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
                     holder.mPriceTextView.setText(String.format(basePrecision, price));
                 }
-                mTotal += price * amount;
-                mListener.displayTotalValue(mTotal);
+//                mTotal += price * amount;
+//                mListener.displayTotalValue(mTotal);
             }
         }else{
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();

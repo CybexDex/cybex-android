@@ -105,6 +105,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/kline_header_color"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical">
 
             <include layout="@layout/header_kline_type" />

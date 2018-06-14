@@ -44,7 +44,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
     private RecyclerView mRecyclerView;
     private OpenOrderRecyclerViewAdapter mOpenOrderRecycerViewAdapter;
-    private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.ETH", "JADE.BTC", "JADE.EOS", "CYB"});
+    private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB"});
     private Toolbar mToolbar;
     private WebSocketService mWebSocketService;
 
@@ -113,7 +113,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             }
             hideLoadDialog();
             mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
-            //displayTotalValue(getIntent().getDoubleExtra("TotalValue", 0));
+            displayTotalValue(getIntent().getDoubleExtra("TotalValue", 0));
         }
 
         @Override
@@ -137,18 +137,20 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             case R.id.open_orders_segment_all:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("All");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_total_value);
+                displayTotalValue(getIntent().getDoubleExtra("TotalValue", 0));
+
                 break;
 
             case R.id.open_orders_segment_buy:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("Buy");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_buy_total_value);
-                //displayTotalValue(getIntent().getDoubleExtra("TotalBuyValue", 0));
+                displayTotalValue(getIntent().getDoubleExtra("TotalBuyValue", 0));
                 break;
 
             case R.id.open_orders_segment_sell:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("Sell");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_sell_total_value);
-                //displayTotalValue((getIntent().getDoubleExtra("TotalSellValue", 0)));
+                displayTotalValue((getIntent().getDoubleExtra("TotalSellValue", 0)));
                 break;
 
         }

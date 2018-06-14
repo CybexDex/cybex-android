@@ -289,11 +289,6 @@ public class WatchlistData implements Serializable {
         this.low = PriceUtil.getLowPrice(historyPrices);
         this.currentPrice = PriceUtil.getCurrentPrice(historyPrices);
         this.change = PriceUtil.getChange(historyPrices);
-        if (quoteSymbol.equals("JADE.INK")) {
-            Log.v("Shefeng1", change);
-            Log.v("Shefeng2", String.valueOf(historyPrices.get(0).open));
-            Log.v("Shefeng2", String.valueOf(historyPrices.get(historyPrices.size() - 1).close));
-        }
 //        this.baseVol = PriceUtil.getVolFromPriceList(historyPrices);
 //        this.quoteVol = PriceUtil.getQuoteVolFromPriceList(historyPrices);
     }
