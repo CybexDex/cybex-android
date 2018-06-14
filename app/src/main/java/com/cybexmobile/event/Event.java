@@ -48,9 +48,12 @@ public class Event {
 
     //更新所有行情数据
     public static class UpdateWatchlists {
+        private String baseAssetId;
+
         private List<WatchlistData> data;
 
-        public UpdateWatchlists(List<WatchlistData> data) {
+        public UpdateWatchlists(String baseAssetId, List<WatchlistData> data) {
+            this.baseAssetId = baseAssetId;
             this.data = data;
         }
 
@@ -60,6 +63,14 @@ public class Event {
 
         public void setData(List<WatchlistData> data) {
             this.data = data;
+        }
+
+        public String getBaseAssetId() {
+            return baseAssetId;
+        }
+
+        public void setBaseAssetId(String baseAssetId) {
+            this.baseAssetId = baseAssetId;
         }
     }
 

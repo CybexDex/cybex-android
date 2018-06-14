@@ -296,7 +296,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                                             startActivity(browseIntent);
                                         }
                                     });
-                            if(!appVersion.isForceUpdate()){
+                            if(!appVersion.isForceUpdate(BuildConfig.VERSION_NAME)){
                                 builder.setNegativeButton(R.string.setting_version_update_next_time, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {

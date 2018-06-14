@@ -39,8 +39,8 @@ public class AppVersion {
         this.force = force;
     }
 
-    public boolean isForceUpdate(){
-        JsonElement element = force.get(version);
+    public boolean isForceUpdate(String currVersion){
+        JsonElement element = force.get(currVersion);
         return element != null && element.getAsBoolean();
     }
 

@@ -125,7 +125,7 @@ public class WebSocketService extends Service {
     public void loadWatchlistData(String baseAssetId){
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
         if(watchlistDatas != null){
-            EventBus.getDefault().post(new Event.UpdateWatchlists(watchlistDatas));
+            EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistDatas));
             return;
         }
         List<AssetsPair> assetsPairs = mAssetsPairHashMap.get(baseAssetId);
@@ -456,7 +456,7 @@ public class WebSocketService extends Service {
             }
             mWatchlistHashMap.put(baseAssetId, watchlistData);
             //更新行情
-            EventBus.getDefault().post(new Event.UpdateWatchlists(watchlistData));
+            EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistData));
             for (WatchlistData watchlistItem : watchlistData) {
                 if(watchlistItem.getSubscribeId() == 0){
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();

@@ -135,6 +135,13 @@ public class WatchlistFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateWatchlists(Event.UpdateWatchlists event) {
+        /**
+         * fix bug
+         * 解决切换tab数据错误
+         */
+        if(!event.getBaseAssetId().equals(mCurrentBaseAssetId)){
+            return;
+        }
         mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mWatchlistData.clear();
@@ -146,7 +153,6 @@ public class WatchlistFragment extends BaseFragment {
                 return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
             }
         });
-
         mWatchListRecyclerViewAdapter.notifyDataSetChanged();
     }
 
