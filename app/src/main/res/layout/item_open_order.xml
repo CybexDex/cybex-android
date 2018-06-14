@@ -19,8 +19,8 @@
                 android:id="@+id/sell_or_buy_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
+                android:paddingStart="@dimen/text_sell_or_buy_padding"
+                android:paddingEnd="@dimen/text_sell_or_buy_padding"
                 android:text="BUY"
                 android:textSize="9sp"
                 android:gravity="center"
@@ -32,7 +32,7 @@
                 style="@style/font_white_dark_bold_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/text_quote_margin_start"
                 android:text="XRP" />
 
             <TextView
@@ -52,8 +52,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignBottom="@id/coinpair_linear_layout"
             android:maxLines="1"
-            android:layout_marginTop="14dp"
-            autofit:autoSizeMinTextSize="12sp"
+            android:layout_marginTop="@dimen/activity_margin"
             android:text="$11,309.109" />
 
         <TextView
@@ -63,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@id/coinpair_linear_layout"
             android:layout_below="@id/coinpair_linear_layout"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/text_volume_margin_top"
             android:text="Volume:288,980,254" />
 
     </RelativeLayout>

@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             style="@style/font_grey_medium"
             android:text="@string/account_balance_dialog_content"
-            android:lineSpacingExtra="10dp" />
+            android:lineSpacingExtra="@dimen/dialog_content_line_spacing_extra" />
 
         <Button
             android:id="@+id/account_balance_dialog_button"

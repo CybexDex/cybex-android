@@ -28,16 +28,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_hint_text_size"
             android:layout_centerVertical="true"
-            android:textColor="@color/grey_unselected_font_color"
+            style="@style/font_gray_small"
             android:text="@string/watch_list_name_vol"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_hint_text_size"
             android:text="@string/watch_list_new_price_title"
-            android:textColor="@color/grey_unselected_font_color"
+            style="@style/font_gray_small"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/text_hint_margin_end"
             android:layout_alignParentEnd="true"/>
@@ -46,7 +44,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_hint_text_size"
             android:layout_centerVertical="true"
-            android:textColor="@color/grey_unselected_font_color"
+            style="@style/font_gray_small"
             android:layout_alignParentEnd="true"
             android:text="@string/watch_list_vibration_range_title"/>
     </RelativeLayout>

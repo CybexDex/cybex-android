@@ -5,7 +5,7 @@
     android:weightSum="4"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/market_page_trade_history_price_value"
         style="@style/font_gray_bold_small"
         android:layout_width="0dp"
@@ -15,7 +15,7 @@
         android:singleLine="true"
         android:text="@string/market_page_trade_history_price" />
 
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/market_page_trade_history_quote_volume"
         style="@style/font_gray_bold_small"
         android:layout_width="0dp"
@@ -23,18 +23,19 @@
         android:gravity="center"
         android:layout_weight="1"
         android:singleLine="true"
-        android:text="dfd"/>
+        android:text="CYB"/>
 
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/market_page_trade_history_base_volume"
         style="@style/font_gray_bold_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:gravity="center"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:text="ETH"/>
 
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/market_page_trade_history_date_value"
         style="@style/font_gray_bold_small"
         android:layout_width="0dp"
@@ -42,7 +43,6 @@
         android:gravity="center"
         android:singleLine="true"
         android:layout_weight="1"
-        android:textSize="10sp"
         android:text="@string/market_page_trade_history_date" />
 
 </LinearLayout>

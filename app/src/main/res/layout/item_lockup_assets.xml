@@ -44,8 +44,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="9dp"
-            android:paddingBottom="5dp">
+            android:paddingTop="@dimen/text_asset_price_padding_top"
+            android:paddingBottom="@dimen/text_asset_price_padding_bottom">
 
             <TextView
                 style="@style/font_white_dark_bold_large"
@@ -68,14 +68,13 @@
                     style="@style/font_gray_bold_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:text="50%" />
 
                 <ProgressBar
                     android:id="@+id/lock_up_asset_progress_bar"
                     style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="60dp"
-                    android:layout_height="5dp"
+                    android:layout_width="@dimen/progress_asset_width"
+                    android:layout_height="@dimen/progress_asset_height"
                     android:max="100"
                     android:progress="50"
                     android:progressDrawable="@drawable/bg_progress_bar" />

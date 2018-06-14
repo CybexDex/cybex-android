@@ -26,25 +26,24 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="11dp"
-        android:paddingEnd="21dp"
-        android:paddingStart="21dp"
-        android:paddingTop="11dp">
+        android:padding="@dimen/activity_padding"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/assets_amount"
-            android:textColor="@color/text_hint_color"
-            android:textSize="12dp" />
+            style="@style/font_gray_small"
+            android:textColor="@color/text_hint_color" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="@string/portfolio_price"
-            android:textColor="@color/text_hint_color"
-            android:textSize="12dp" />
+            style="@style/font_gray_small"
+            android:textColor="@color/text_hint_color" />
 
     </RelativeLayout>
 

@@ -26,8 +26,8 @@
         android:id="@+id/open_orders_segmented_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="14dp"
-        android:layout_marginStart="14dp"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginStart="@dimen/activity_margin"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:sc_border_width="1dp"
@@ -61,56 +61,49 @@
             android:text="@string/open_orders_sell" />
     </info.hoang8f.android.segmented.SegmentedGroup>
 
-    <!--<FrameLayout-->
-        <!--android:id="@+id/open_orders_segment_frame"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
     <TextView
         android:id="@+id/open_orders_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@color/grey_unselected_font_color"
+        style="@style/font_gray_large"
         android:alpha="0.5"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="@dimen/activity_margin_double"
         android:text="@string/open_orders_total_value"/>
     <TextView
         android:id="@+id/open_orders_total_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="20sp"
-        android:textColor="@color/primary_color_white"
+        style="@style/font_white_dark_xxlarge"
         android:text="≈¥0.00"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginEnd="13dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/activity_margin"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0.5"
             android:text="@string/open_order_asset_amount"
-            android:textColor="@color/grey_unselected_font_color"
-            android:textSize="12sp"
-            />
+            style="@style/font_gray_small"
+            android:textColor="@color/text_hint_color" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0.5"
             android:text="@string/open_order_order_value"
             android:layout_alignParentEnd="true"
-            android:textSize="12sp"
-            android:textColor="@color/grey_unselected_font_color"/>
+            style="@style/font_gray_small"
+            android:textColor="@color/text_hint_color"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/open_orders_recycler_view"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/recycler_view_margin_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

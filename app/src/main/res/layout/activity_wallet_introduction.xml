@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="@dimen/activity_margin"
                 android:text="Cybex移动端仅支持注册云钱包模式账户。云钱包模式使用密码和账户名衍生出私钥，这使您可以从不同的电脑、移动终端或浏览器登录。但此模式存在面对黑客暴力破解攻击的风险。因此，我们强烈推荐您使用长密码!"
                 style="@style/font_white_dark_large"
                 android:lineSpacingMultiplier="1.5" />
@@ -47,12 +47,12 @@
                 android:layout_height="wrap_content"
                 android:text="Cloud Wallet"
                 style="@style/font_white_dark_bold_large"
-                android:layout_marginTop="25dp" />
+                android:layout_marginTop="@dimen/activity_margin_double" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="@dimen/activity_margin"
                 android:text="You can register using a cloud wallet. It uses a password in combination with your account name to generate your private keys on the fly. It restricts you to only logging in with one account at a time, in return for ease of use and convenience. But your password is vulnerable to brute-force attacks which means it is important to use a very long password, ideally 20+ characters!"
                 style="@style/font_white_dark_large"
                 android:lineSpacingMultiplier="1.5" />

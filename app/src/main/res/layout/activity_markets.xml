@@ -31,11 +31,10 @@
 
         <TextView
             android:id="@+id/market_page_current_money"
-            style="@style/font_white_dark_bold_large"
+            style="@style/font_white_dark_bold_xxlarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$11,309.109"
-            android:textSize="20sp" />
+            android:text="$11,309.109" />
         <LinearLayout
             android:id="@+id/market_page_change_layout"
             android:layout_width="wrap_content"
@@ -50,11 +49,10 @@
                 android:layout_gravity="center_vertical"/>
             <TextView
                 android:id="@+id/market_page_exchange_variation"
-                style="@style/font_green_bold_small"
+                style="@style/font_green_bold_xxlarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="25.25%"
-                android:textSize="20sp" />
+                android:text="25.25%" />
         </LinearLayout>
 
         <TextView
@@ -151,8 +149,8 @@
                     android:layout_weight="1"
                     android:text="5m"
                     android:gravity="center"
-                    android:textColor="@color/kline_header_selector"
-                    android:textSize="14sp" />
+                    style="@style/font_gray_medium"
+                    android:textColor="@color/kline_header_selector" />
 
                 <TextView
                     android:id="@+id/market_page_1_hour"
@@ -161,8 +159,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="1h"
-                    android:textColor="@color/kline_header_selector"
-                    android:textSize="14sp" />
+                    style="@style/font_gray_medium"
+                    android:textColor="@color/kline_header_selector" />
 
                 <TextView
                     android:id="@+id/market_page_1_day"
@@ -171,8 +169,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="1d"
-                    android:textColor="@color/kline_header_selector"
-                    android:textSize="14sp" />
+                    style="@style/font_gray_medium"
+                    android:textColor="@color/kline_header_selector" />
             </LinearLayout>
 
             <android.support.design.widget.TabLayout
@@ -182,7 +180,7 @@
                 android:layout_marginTop="@dimen/tab_order_margin_top"
                 android:background="@android:color/transparent"
                 app:tabBackground="@android:color/transparent"
-                app:tabIndicatorColor="#FF9143"
+                app:tabIndicatorColor="@color/primary_orange"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/primary_color_white"
                 app:tabTextColor="@color/grey_unselected_font_color"

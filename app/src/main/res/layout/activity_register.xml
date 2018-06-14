@@ -50,8 +50,7 @@
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.04"
                     android:text="@string/register_create_cloud_wallet"
-                    android:textColor="@color/grey_unselected_font_color"
-                    android:textSize="14sp" />
+                    style="@style/font_gray_medium" />
 
                 <ImageView
                     android:id="@+id/register_cloud_wallet_question_marker"
@@ -310,8 +309,7 @@
                     android:id="@+id/register_error_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_color_white"
-                    android:textSize="12sp" />
+                    style="@style/font_white_dark_small" />
             </LinearLayout>
 
             <Button
@@ -322,7 +320,7 @@
                 android:background="@drawable/bg_btn_orange_gradient_enabled"
                 android:enabled="false"
                 android:text="@string/create_account_register"
-                android:textColor="@color/login_text_color"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -348,9 +346,6 @@
 
         </LinearLayout>
 
-
-
     </RelativeLayout>
-
 
 </LinearLayout>

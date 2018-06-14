@@ -59,27 +59,41 @@
     </style>
 
     <!-- font white dark -->
+    <style name="font_white_dark_bold_xxlarge" parent="font_white_dark_xxlarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_white_dark_xxlarge" parent="font_white_dark">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="font_white_dark_xlarge" parent="font_white_dark">
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <style name="font_white_dark_bold_large" parent="font_white_dark_large">
         <item name="android:textStyle">bold</item>
     </style>
 
-
-    <style name="font_white_dark_large">
-        <item name="android:fontFamily">Roboto Condensed</item>
-        <item name="android:textColor">@color/primary_color_white</item>
+    <style name="font_white_dark_large" parent="font_white_dark">
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="font_white_dark_medium">
-        <item name="android:fontFamily">Roboto Condensed</item>
-        <item name="android:textColor">@color/primary_color_white</item>
+    <style name="font_white_dark_medium" parent="font_white_dark">
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="font_white_dark_small">
+    <style name="font_white_dark_small" parent="font_white_dark">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="font_white_dark_xsmall" parent="font_white_dark">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="font_white_dark">
         <item name="android:fontFamily">Roboto Condensed</item>
         <item name="android:textColor">@color/primary_color_white</item>
-        <item name="android:textSize">12sp</item>
     </style>
 
     <!-- font gray -->
@@ -87,21 +101,48 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="font_gray_small">
-        <item name="android:fontFamily">Roboto Condensed</item>
-        <item name="android:textColor">#78819A</item>
+    <style name="font_gray_large" parent="font_gray">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="font_gray_medium" parent="font_gray">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="font_gray_small" parent="font_gray">
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="font_gray_xsmall" parent="font_gray">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="font_gray">
+        <item name="android:fontFamily">Roboto Condensed</item>
+        <item name="android:textColor">#78819A</item>
+    </style>
+
     <!-- font green -->
+
+    <style name="font_green_bold_xxlarge" parent="font_green_xxlarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_green_xxlarge" parent="font_green">
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <style name="font_green_bold_small" parent="font_green_small">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="font_green_small">
+    <style name="font_green_small" parent="font_green">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="font_green">
         <item name="android:fontFamily">Roboto Condensed</item>
         <item name="android:textColor">#6DBB49</item>
-        <item name="android:textSize">12sp</item>
     </style>
 
     <!-- font white -->
