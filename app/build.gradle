@@ -22,11 +22,11 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
 
-        debug {
-            ndk {
-                abiFilters = ["armeabi","x86"]
-            }
-        }
+//        debug {
+//            ndk {
+//                abiFilters = ["armeabi","x86"]
+//            }
+//        }
     }
     lintOptions {
         abortOnError false

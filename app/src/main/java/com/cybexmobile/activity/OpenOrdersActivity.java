@@ -113,6 +113,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             }
             hideLoadDialog();
             mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
+            //displayTotalValue(getIntent().getDoubleExtra("TotalValue", 0));
         }
 
         @Override
@@ -141,11 +142,13 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             case R.id.open_orders_segment_buy:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("Buy");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_buy_total_value);
+                //displayTotalValue(getIntent().getDoubleExtra("TotalBuyValue", 0));
                 break;
 
             case R.id.open_orders_segment_sell:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("Sell");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_sell_total_value);
+                //displayTotalValue((getIntent().getDoubleExtra("TotalSellValue", 0)));
                 break;
 
         }
@@ -174,8 +177,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 String baseSymbol = assetObjects.get(0).symbol;
                 String quoteSymbol = assetObjects.get(1).symbol;
                 mOpenOrderItems.get(i).isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
-                mOpenOrderItems.get(i).openOrder.setBaseObject(mOpenOrderItems.get(i).isSell ? assetObjects.get(0) : assetObjects.get(1));
-                mOpenOrderItems.get(i).openOrder.setQuoteObject(mOpenOrderItems.get(i).isSell ? assetObjects.get(1) : assetObjects.get(0));
+                mOpenOrderItems.get(i).openOrder.setBaseObject(assetObjects.get(0));
+                mOpenOrderItems.get(i).openOrder.setQuoteObject(assetObjects.get(1));
                 hideLoadDialog();
                 mOpenOrderRecycerViewAdapter.notifyItemChanged(i);
                 break;

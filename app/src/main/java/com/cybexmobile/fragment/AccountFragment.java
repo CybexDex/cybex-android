@@ -46,6 +46,7 @@ import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
+import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
@@ -55,6 +56,7 @@ import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.market.MarketTicker;
+import com.cybexmobile.market.OpenOrder;
 import com.cybexmobile.service.WebSocketService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -63,6 +65,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -91,9 +94,14 @@ public class AccountFragment extends BaseFragment {
     //所有委单
     private volatile List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
     private volatile double mTotalCyb;
+    private volatile double mLimitOrderTotalValue;
+    private volatile double mLimitOrderBuyTotalValue;
+    private volatile double mLimitOrderSellTotalValue;
     private boolean mIsLoginIn;
     private String mName;
     private String mMembershipExpirationDate;
+    private List<String> mCompareSymbol = Arrays.asList(new String[]{"1.3.2", "1.3.3", "1.3.4", "1.3.0"});
+    private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
 
     private double mCybRmbPrice;
 
@@ -281,12 +289,56 @@ public class AccountFragment extends BaseFragment {
                         calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
                                 item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
                     }
+                    for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
+                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString())) {
+                            mTotalCyb += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
+                            mLimitOrderTotalValue += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
+                            if (checkIsSell(limitOrderObject.sell_price.base.asset_id.toString(), limitOrderObject.sell_price.quote.asset_id.toString(),mCompareSymbol)) {
+                                mLimitOrderSellTotalValue += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
+                            } else {
+                                mLimitOrderBuyTotalValue += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
+                            }
+                            break;
+                        }
+                    }
                     Message message = Message.obtain();
                     message.what = MESSAGE_WHAT_REFRESH_PORTFOLIO;
                     message.obj = i;
                     mHandler.sendMessage(message);
                     break;
                 }
+            }
+
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
+    private WebSocketClient.MessageCallback mCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
+            MarketTicker ticker = reply.result;
+            if (ticker == null) {
+                return;
+            }
+            for (OpenOrderItem openOrderItem : mOpenOrderItems) {
+                if (openOrderItem.isSell) {
+                    double price = (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, openOrderItem.openOrder.getQuoteObject().precision)) / (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision));
+
+                    if (ticker.quote.equals(openOrderItem.openOrder.getQuoteObject().id.toString())) {
+                        mTotalCyb += price * (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount /Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) * ticker.latest;
+                    }
+                } else {
+                    double price = (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) / (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, openOrderItem.openOrder.getQuoteObject().precision));
+
+                    if (ticker.quote.equals(openOrderItem.openOrder.getQuoteObject().id.toString())) {
+                        mTotalCyb += price * (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10,openOrderItem.openOrder.getQuoteObject().precision)) * ticker.latest;
+                    }
+                }
+                break;
             }
 
         }
@@ -393,6 +445,9 @@ public class AccountFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), OpenOrdersActivity.class);
+                intent.putExtra("TotalValue", mLimitOrderTotalValue);
+                intent.putExtra("TotalSellValue", mLimitOrderSellTotalValue);
+                intent.putExtra("TotalBuyValue", mLimitOrderBuyTotalValue);
                 startActivity(intent);
             }
         });
@@ -434,6 +489,9 @@ public class AccountFragment extends BaseFragment {
             return;
         }
         mTotalCyb = 0;
+        mLimitOrderTotalValue = 0;
+        mLimitOrderBuyTotalValue = 0;
+        mLimitOrderSellTotalValue = 0;
         mLimitOrderObjectList.clear();
         mAccountBalanceObjectItems.clear();
 
@@ -441,12 +499,30 @@ public class AccountFragment extends BaseFragment {
         mLimitOrderObjectList.addAll(fullAccountObject.limit_orders);
         mMembershipExpirationDate  = fullAccountObject.account.membership_expiration_date;
         mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_MEMBERSHIP_EXPIRATION);
-        if(mLimitOrderObjectList != null && mLimitOrderObjectList.size() > 0){
-            for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
-                mTotalCyb += limitOrderObject.for_sale / Math.pow(10, 5);
-            }
-            mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_TOTAL_CYB);
-        }
+//        if(mLimitOrderObjectList != null && mLimitOrderObjectList.size() > 0){
+//            for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
+//
+////                OpenOrderItem item = new OpenOrderItem();
+////                OpenOrder openOrder = new OpenOrder();
+////                openOrder.setLimitOrder(limitOrderObject);
+////                String baseId = limitOrderObject.sell_price.base.asset_id.toString();
+////                String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
+////                List<AssetObject> assetObjects = mWebSocketService.getAssetObjects(baseId, quoteId);
+////                if (assetObjects != null && assetObjects.size() == 2) {
+////                    String baseSymbol = assetObjects.get(0).symbol;
+////                    String quoteSymbol = assetObjects.get(1).symbol;
+////                    item.isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
+////                    openOrder.setBaseObject(assetObjects.get(0));
+////                    openOrder.setQuoteObject(assetObjects.get(1));
+////                }
+////                item.openOrder = openOrder;
+////                calculateLimitOrderTotalValue(item);
+////                mOpenOrderItems.add(item);
+//
+////                mTotalCyb += limitOrderObject.for_sale / Math.pow(10, 5);
+//            }
+//            mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_TOTAL_CYB);
+//        }
         List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
         if(accountBalanceObjects != null && accountBalanceObjects.size() > 0){
             for (AccountBalanceObject balance : accountBalanceObjects) {
@@ -473,6 +549,18 @@ public class AccountFragment extends BaseFragment {
                         e.printStackTrace();
                     }
                 }
+                for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
+                    if (limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0") && limitOrderObject.sell_price.base.asset_id.toString().equals(balance.asset_type.toString())) {
+                        mTotalCyb += limitOrderObject.for_sale / Math.pow(10, 5);
+                        mLimitOrderTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
+                        if (checkIsSell(limitOrderObject.sell_price.base.asset_id.toString(), limitOrderObject.sell_price.base.asset_id.toString(), mCompareSymbol)) {
+                            mLimitOrderSellTotalValue +=limitOrderObject.for_sale / Math.pow(10, 5);
+                        } else {
+                            mLimitOrderBuyTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
+                        }
+                        break;
+                    }
+                }
                 mAccountBalanceObjectItems.add(item);
             }
             mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
@@ -494,6 +582,7 @@ public class AccountFragment extends BaseFragment {
         mIsLoginIn = false;
         mName = null;
         mTotalCyb = 0;
+        mLimitOrderTotalValue = 0;
         mAccountBalanceObjectItems.clear();
         mLimitOrderObjectList.clear();
         mPortfolioRecyclerViewAdapter.notifyDataSetChanged();
@@ -501,6 +590,62 @@ public class AccountFragment extends BaseFragment {
             mWebSocketService.clearAccountCache();
         }
     }
+
+    private boolean checkIsSell(String baseSymbol, String quoteSymbol, List<String> compareSymbol) {
+        boolean isContainBase = compareSymbol.contains(baseSymbol);
+        boolean isContainQuote = compareSymbol.contains(quoteSymbol);
+        int baseIndex = compareSymbol.indexOf(baseSymbol);
+        int quoteIndex = compareSymbol.indexOf(quoteSymbol);
+        if (isContainBase) {
+            if (!isContainQuote) {
+                return false;
+            } else {
+                if (baseIndex < quoteIndex) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } else {
+            if (isContainQuote) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+//    private void calculateLimitOrderTotalValue(OpenOrderItem openOrderItem) {
+//        AssetObject base = openOrderItem.openOrder.getBaseObject();
+//        AssetObject quote = openOrderItem.openOrder.getQuoteObject();
+//        double price;
+//        if (base != null && quote != null) {
+//            if (openOrderItem.isSell) {
+//                price = (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, quote.precision)) / (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, base.precision));
+//                if (openOrderItem.openOrder.getQuoteObject().symbol.equals("CYB")) {
+//                    mTotalCyb += price * (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision));
+//                } else {
+//                    try {
+//                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", openOrderItem.openOrder.getQuoteObject().id.toString(), mCallback);
+//                    } catch (NetworkStatusException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//            } else {
+//                price = (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, base.precision)) / (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, quote.precision));
+//                if (openOrderItem.openOrder.getBaseObject().symbol.equals("CYB")) {
+//                    mTotalCyb += price * (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, openOrderItem.openOrder.getQuoteObject().precision));
+//                } else {
+//                    try {
+//                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", openOrderItem.openOrder.getBaseObject().id.toString(), mCallback);
+//                    } catch (NetworkStatusException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public void onAttach(Context context) {
