@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatDelegate;
 import android.util.DisplayMetrics;
 
 import com.cybexmobile.helper.StoreLanguageHelper;
+import com.cybexmobile.utils.SSLSocketFactoryUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
@@ -22,6 +24,8 @@ public class MainApplication extends Application {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
+        Picasso picasso = SSLSocketFactoryUtils.getPicassoInstance(this);
+        Picasso.setSingletonInstance(picasso);
     }
 
     @Override

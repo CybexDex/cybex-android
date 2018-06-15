@@ -1,5 +1,7 @@
 package com.cybexmobile.api;
 
+import com.cybexmobile.utils.SSLSocketFactoryUtils;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -26,6 +28,9 @@ public class RetrofitFactory {
                 .retryOnConnectionFailure(true)
                 //.cache(new Cache(10*1024*1024))
                 .addInterceptor(interceptor)
+                .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
+                .hostnameVerifier(new SSLSocketFactoryUtils.TrustAllHostnameVerifier())
+
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -47,5 +52,7 @@ public class RetrofitFactory {
     public CybexHttpApi api(){
         return cybexHttpApi;
     }
+
+
 
 }

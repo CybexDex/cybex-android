@@ -12,6 +12,9 @@ import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.MyUtils;
+import com.cybexmobile.utils.SSLSocketFactoryUtils;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import org.decimal4j.util.DoubleRounder;
@@ -36,7 +39,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                 .inflate(R.layout.item_watch, parent, false);
+                .inflate(R.layout.item_watch, parent, false);
         return new ViewHolder(view);
     }
 
@@ -60,7 +63,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         holder.mCurrentPrice.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.format(precisinFormatter, holder.mItem.getCurrentPrice()));
 
         double change = 0.f;
-        if(mValues.get(position).getChange()!= null) {
+        if (mValues.get(position).getChange() != null) {
             try {
                 change = Double.parseDouble(mValues.get(position).getChange());
             } catch (Exception e) {
@@ -72,12 +75,12 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         } else {
             holder.mChangeRate.setTextSize(16);
         }
-        if( change > 0.f) {
-            holder.mChangeRate.setText(String.format("+%s%%",String.valueOf(formatter.format(change * 100))));
+        if (change > 0.f) {
+            holder.mChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.increasing_color));
 
         } else if (change < 0.f) {
-            holder.mChangeRate.setText(String.format("%s%%",String.valueOf(formatter.format(change * 100))));
+            holder.mChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change * 100))));
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.decreasing_color));
 
         } else {
@@ -139,7 +142,9 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
-        Picasso.get().load("https://app.cybex.io/icons/" + quoteIdWithUnderLine +"_grey.png").into(mCoinSymbol);
+        Picasso.get()
+                .load("https://app.cybex.io/icons/" + quoteIdWithUnderLine + "_grey.png")
+                .into(mCoinSymbol);
     }
 
     public void setItemToPosition(WatchlistData watchListData, int position) {
