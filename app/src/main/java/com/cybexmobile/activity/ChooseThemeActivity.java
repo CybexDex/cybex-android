@@ -122,10 +122,10 @@ public class ChooseThemeActivity extends BaseActivity {
             viewHolder.name.setText(mList.get(position));
             if(selectedPosition == position) {
                 viewHolder.select.setBackgroundResource(R.drawable.ic_check);
-                viewHolder.name.setTextColor(getResources().getColor(R.color.primary_orange));
+                viewHolder.name.setTextColor(getResources().getColor(R.color.primary_color_orange));
             } else {
                 viewHolder.select.setBackgroundResource(0);
-                viewHolder.name.setTextColor(getResources().getColor(R.color.primary_color_white));
+                viewHolder.name.setTextColor(getResources().getColor(R.color.font_color_white_dark));
             }
 
             return convertView;

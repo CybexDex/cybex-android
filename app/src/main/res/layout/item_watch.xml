@@ -64,7 +64,7 @@
             style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
+            android:layout_marginLeft="@dimen/text_volume_margin_start"
             android:text="288,980,254" />
 
     </LinearLayout>

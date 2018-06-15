@@ -13,8 +13,8 @@
         android:background="@android:color/transparent"
         app:tabIndicatorColor="@color/tab_indicator_color"
         app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/primary_color_white"
-        app:tabTextColor="@color/grey_unselected_font_color" />
+        app:tabSelectedTextColor="@color/font_color_white_dark"
+        app:tabTextColor="@color/primary_color_grey" />
 
     <View
         android:layout_width="match_parent"
@@ -42,7 +42,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_hint_text_size"
             android:layout_centerVertical="true"
             style="@style/font_gray_small"
             android:layout_alignParentEnd="true"

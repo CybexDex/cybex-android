@@ -12,8 +12,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        app:subtitleTextColor="@color/grey_unselected_font_color"
-        app:titleTextColor="@color/grey_unselected_font_color">
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey">
 
         <TextView
             android:id="@+id/tv_title"

@@ -63,8 +63,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -637,7 +635,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         set.setHighlightLineWidth(.5f);
         set.setHighLightColor(getResources().getColor(R.color.no_change_color));
         set.setDrawValues(true);
-        set.setValueTextColor(getResources().getColor(R.color.primary_color_white));
+        set.setValueTextColor(getResources().getColor(R.color.font_color_white_dark));
         CandleData candleData = new CandleData(mData.getXVals(), set);
         mCandleData = candleData;
         combinedChart.getAxisLeft().setAxisMinValue((float) getLowFromPriceList(mHistoryPriceList));
@@ -715,7 +713,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         set.setBarSpacePercent(20); //bar空隙
         set.setHighlightEnabled(true);
         set.setHighLightAlpha(255);
-        set.setHighLightColor(getResources().getColor(R.color.primary_color_white));
+        set.setHighLightColor(getResources().getColor(R.color.font_color_white_dark));
         set.setDrawValues(false);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         List<Integer> list = new ArrayList<>();
@@ -773,7 +771,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         set.setBarSpacePercent(20); //bar空隙
         set.setHighlightEnabled(true);
         set.setHighLightAlpha(255);
-        set.setHighLightColor(getResources().getColor(R.color.primary_color_white));
+        set.setHighLightColor(getResources().getColor(R.color.font_color_white_dark));
         set.setDrawValues(false);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(Color.TRANSPARENT);
@@ -822,7 +820,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         set.setNeutralColor(getResources().getColor(R.color.decreasing_color));
         set.setShadowColorSameAsCandle(true);
         set.setHighlightLineWidth(1f);
-        set.setHighLightColor(getResources().getColor(R.color.primary_color_white));
+        set.setHighLightColor(getResources().getColor(R.color.font_color_white_dark));
         set.setDrawValues(true);
         set.setValueTextColor(getResources().getColor(R.color.kline_x_axis_text_color));
         set.setShowCandleBar(false);

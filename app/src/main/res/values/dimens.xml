@@ -5,19 +5,24 @@
     <dimen name="activity_margin_double">26dp</dimen>
     <dimen name="activity_padding_double">26dp</dimen>
 
+    <!-- font size -->
+    <dimen name="font_xxlarge">20sp</dimen>
+    <dimen name="font_xlarge">18sp</dimen>
+    <dimen name="font_large">16sp</dimen>
+    <dimen name="font_medium">14sp</dimen>
+    <dimen name="font_small">12sp</dimen>
+    <dimen name="font_xsmall">10sp</dimen>
+    <dimen name="font_xxsmall">8sp</dimen>
+
     <!-- dialog -->
     <dimen name="dialog_padding">18dp</dimen>
     <dimen name="dialog_margin">18dp</dimen>
 
-    <dimen name="text_size_10sp">10sp</dimen>
-
     <!-- Splash Activity -->
     <dimen name="text_splash_margin_bottom">10dp</dimen>
-    <dimen name="text_splash_text_size">12sp</dimen>
 
     <!-- Watch List Fragment -->
     <dimen name="text_hint_margin_end">111dp</dimen>
-    <dimen name="text_hint_text_size">12sp</dimen>
 
     <!-- Watch List Item -->
     <dimen name="item_elevation">3dp</dimen>
@@ -26,7 +31,6 @@
     <dimen name="text_price_margin_end">111dp</dimen>
     <dimen name="text_quote_margin_start">8dp</dimen>
     <dimen name="text_volume_margin_top">5dp</dimen>
-    <dimen name="text_price_min_text_size">8sp</dimen>
 
     <!-- Lockup Assets Item -->
     <dimen name="text_asset_price_padding_top">9dp</dimen>
@@ -73,6 +77,10 @@
     <!-- Markets Activity -->
     <dimen name="text_kline_header_margin_start">10dp</dimen>
     <dimen name="text_kline_header_price_margin_top">6dp</dimen>
+    <dimen name="layout_kline_header_type_padding">6dp</dimen>
+    <dimen name="text_kline_header_value_margin_start">3dp</dimen>
+    <dimen name="text_volume_margin_start">3dp</dimen>
+    <dimen name="text_marker_padding">3dp</dimen>
     <dimen name="layout_kline_height">180dp</dimen>
     <dimen name="layout_volume_height">40dp</dimen>
     <dimen name="tab_order_margin_top">26dp</dimen>
@@ -90,5 +98,8 @@
 
     <!-- Open Order Activity -->
     <dimen name="recycler_view_margin_top">10dp</dimen>
+
+    <!-- order history fragment and trade history fragment -->
+    <dimen name="recycler_view_margin_start_end">5dp</dimen>
 
 </resources>

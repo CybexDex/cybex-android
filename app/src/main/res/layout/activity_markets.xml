@@ -11,8 +11,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        app:subtitleTextColor="@color/grey_unselected_font_color"
-        app:titleTextColor="@color/grey_unselected_font_color"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey"
         app:navigationIcon="@drawable/ic_arrow_forward_16px">
 
         <TextView
@@ -180,10 +180,10 @@
                 android:layout_marginTop="@dimen/tab_order_margin_top"
                 android:background="@android:color/transparent"
                 app:tabBackground="@android:color/transparent"
-                app:tabIndicatorColor="@color/primary_orange"
+                app:tabIndicatorColor="@color/primary_color_orange"
                 app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/primary_color_white"
-                app:tabTextColor="@color/grey_unselected_font_color"
+                app:tabSelectedTextColor="@color/font_color_white_dark"
+                app:tabTextColor="@color/primary_color_grey"
                 app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget">
                 <android.support.design.widget.TabItem
                     android:layout_width="wrap_content"

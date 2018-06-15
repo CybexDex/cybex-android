@@ -139,7 +139,7 @@ public class WebSocketClient extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
-        Log.v(TAG, "onOpen: WebSocket is connected");
+        Log.v(TAG, "onOpen: WebSocket is connected" );
         mWebSocket = webSocket;
         mConnectStatus = WEBSOCKET_CONNECT_SUCCESS;
         try {
@@ -153,14 +153,13 @@ public class WebSocketClient extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
         super.onMessage(webSocket, bytes);
-        Log.v(TAG, "onMessage: " + bytes.toString());
+        Log.v(TAG, String.format("onMessage: %s", bytes.toString()));
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-//        Log.d("shefeng", Thread.currentThread().getName());
-        Log.d(TAG, "onMessage: " + text);
+        Log.v(TAG, String.format("onMessage: %s", text));
         try {
             Gson gson = new Gson();
             ReplyBase replyObjectBase = gson.fromJson(text, ReplyBase.class);
@@ -771,7 +770,7 @@ public class WebSocketClient extends WebSocketListener {
     private <T> void sendForReplyImpl(Call call, ReplyProcessImpl<Reply<T>> replyObjectProcess) throws NetworkStatusException {
         Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
         String strMessage = gson.toJson(call);
-        Log.v(TAG, strMessage);
+        Log.v(TAG, String.format("call: %s", strMessage));
         boolean result = mWebSocket.send(strMessage);
         if(result){
             mHashMapIdToProcess.put(call.id, replyObjectProcess);

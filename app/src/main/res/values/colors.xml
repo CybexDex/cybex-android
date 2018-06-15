@@ -10,15 +10,20 @@
     <!--   a secondary color for controls like checkboxes and text fields -->
     <color name="colorAccent">#FF4081</color>
 
+    <!-- primary color -->
+    <color name="primary_color_orange">#FF9143</color>
+    <color name="primary_color_grey">#78819A</color>
+
+    <!-- Item background color -->
     <color name="itemBackground">#1B2230</color>
     <color name="horizontalItemBackground">#1B2230</color>
-    <color name="dialogBackground">#FFFFFF</color>
-    <color name="dialog_font_color">#1B2230</color>
 
     <!-- Font color -->
-    <color name="primary_orange">#FFFF9143</color>
-    <color name="grey_unselected_font_color">#78819A</color>
-    <color name="primary_color_white">#FFFFFF</color>
+    <color name="font_color_white_dark">#FFFFFF</color>
+    <color name="font_color_dark_white">#1B2230</color>
+
+    <!-- divider color -->
+    <color name="divider_color">#0affffff</color>
 
     <!-- Market Page -->
     <color name="kline_header_color">#111621</color>
@@ -41,16 +46,11 @@
     <color name="dialog_title_background_color">#f7f8fa</color>
     <color name="register_pin_code_color">#fec985</color>
 
-    <!-- action bar cloud wallet introduction -->
-    <color name="faded_orange">#e7ac5f</color>
-    <color name="dusty_orange">#e76536</color>
-
     <!-- Splash Activity -->
     <color name="splash_text_color">#454545</color>
 
     <!-- Watch List Fragment -->
     <color name="tab_indicator_color">#FF9143</color>
-    <color name="divider_color">#0affffff</color>
 
     <color name="btn_orange_start">#ffc478</color>
     <color name="btn_orange_end">#ff9143</color>

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_markerview"
-        android:padding="3dp"
+        android:padding="@dimen/text_marker_padding"
         android:text=""
         android:textColor="@color/marker_line_bg" />
 

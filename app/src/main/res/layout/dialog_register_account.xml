@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             style="@style/font_grey_medium"
             android:paddingBottom="@dimen/dialog_content_line_spacing_extra"
-            android:textColor="@color/primary_orange"
+            android:textColor="@color/primary_color_orange"
             android:text="123456"/>
 
         <TextView

@@ -10,15 +10,16 @@
     <!--   a secondary color for controls like checkboxes and text fields -->
     <color name="colorAccent">#FF4081</color>
 
+    <!-- Item background color -->
     <color name="itemBackground">#FFFFFF</color>
     <color name="horizontalItemBackground">#CCFFFFFF</color>
-    <color name="dialogBackground">#1B2230</color>
-    <color name="dialog_font_color">#FFFFFF</color>
-
-    <!-- Watch List Fragment -->
-    <color name="divider_color">#1c78819a</color>
 
     <!-- font color -->
-    <color name="primary_color_white">#1B2230</color>
+    <color name="font_color_white_dark">#1B2230</color>
+    <color name="font_color_dark_white">#FFFFFF</color>
+
+    <!-- divider color -->
+    <color name="divider_color">#1c78819a</color>
+
     <color name="kline_header_color">#EFF1F4</color>
 </resources>

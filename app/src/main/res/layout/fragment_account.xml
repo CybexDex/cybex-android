@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:letterSpacing="0.01"
                 android:text="@string/log_in_cybex"
-                android:textColor="@color/primary_color_white"
+                android:textColor="@color/font_color_white_dark"
                 android:layout_marginStart="@dimen/activity_margin"
                 android:layout_marginEnd="@dimen/activity_margin"
                 android:textSize="34sp" />
@@ -58,8 +58,8 @@
                 android:padding="@dimen/text_membership_padding"
                 android:layout_marginStart="@dimen/activity_margin"
                 android:layout_marginEnd="@dimen/activity_margin"
-                android:textSize="@dimen/text_size_10sp"
-                android:textColor="@color/grey_unselected_font_color" />
+                android:textSize="@dimen/font_xsmall"
+                android:textColor="@color/primary_color_grey" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -252,13 +252,13 @@
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.01"
                     android:text="@string/log_in_cybex"
-                    android:textColor="@color/primary_color_white"
+                    android:textColor="@color/font_color_white_dark"
                     android:textSize="34sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="@dimen/text_quote_margin_start"
                     android:src="@drawable/ic_arrow_forward_right_16_px"/>
             </LinearLayout>
 

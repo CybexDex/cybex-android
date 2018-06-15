@@ -3,7 +3,7 @@
     android:id="@+id/index_header_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
+    android:visibility="gone"
     android:orientation="vertical">
 
     <LinearLayout
@@ -28,7 +28,7 @@
                 android:id="@+id/index_high_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="@dimen/text_kline_header_value_margin_start"
                 android:text="1111"
                 style="@style/font_gray_xsmall"
                 android:textColor="@color/increasing_color" />
@@ -52,7 +52,7 @@
                 android:id="@+id/index_open_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="@dimen/text_kline_header_value_margin_start"
                 android:text="1111"
                 style="@style/font_white_dark_xsmall" />
         </LinearLayout>
@@ -74,7 +74,7 @@
                 android:id="@+id/index_low_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="@dimen/text_kline_header_value_margin_start"
                 android:text="1111"
                 style="@style/font_gray_xsmall"
                 android:textColor="@color/decreasing_color" />
@@ -97,7 +97,7 @@
                 android:id="@+id/index_close_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="@dimen/text_kline_header_value_margin_start"
                 android:text="1111"
                 style="@style/font_gray_xsmall"
                 android:textColor="@color/increasing_color" />
@@ -127,7 +127,7 @@
                 android:id="@+id/index_change_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="@dimen/text_kline_header_value_margin_start"
                 android:text="1111"
                 style="@style/font_gray_xsmall"
                 android:textColor="@color/increasing_color" />
@@ -150,10 +150,10 @@
                 android:id="@+id/index_price_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="@dimen/text_kline_header_value_margin_start"
                 android:text="1111"
                 style="@style/font_gray_xsmall"
-                android:textColor="@color/primary_color_white" />
+                android:textColor="@color/font_color_white_dark" />
         </LinearLayout>
 
         <LinearLayout
@@ -167,7 +167,7 @@
                 android:id="@+id/index_date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="@dimen/text_kline_header_value_margin_start"
                 android:text="1111"
                 style="@style/font_white_dark_xsmall" />
         </LinearLayout>

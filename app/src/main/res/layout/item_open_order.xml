@@ -22,7 +22,7 @@
                 android:paddingStart="@dimen/text_sell_or_buy_padding"
                 android:paddingEnd="@dimen/text_sell_or_buy_padding"
                 android:text="BUY"
-                android:textSize="9sp"
+                android:textSize="@dimen/font_xxsmall"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bg_btn_buy"/>

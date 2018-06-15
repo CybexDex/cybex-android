@@ -69,9 +69,9 @@ public class ChooseLanguageActivity extends BaseActivity {
         mChineseLanguageLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTextViewChinese.setTextColor(getResources().getColor(R.color.primary_orange));
+                mTextViewChinese.setTextColor(getResources().getColor(R.color.primary_color_orange));
                 mImageViewChinese.setVisibility(View.VISIBLE);
-                mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_color_white));
+                mTextViewEnglish.setTextColor(getResources().getColor(R.color.font_color_white_dark));
                 mImageViewEnglish.setVisibility(View.GONE);
                 StoreLanguageHelper.setLanguageLocal(ChooseLanguageActivity.this, "zh");
                 EventBus.getDefault().post(new Event.ConfigChanged("EVENT_REFRESH_LANGUAGE"));
@@ -84,9 +84,9 @@ public class ChooseLanguageActivity extends BaseActivity {
         mEnglishLanguageLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_orange));
+                mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_color_orange));
                 mImageViewEnglish.setVisibility(View.VISIBLE);
-                mTextViewChinese.setTextColor(getResources().getColor(R.color.primary_color_white));
+                mTextViewChinese.setTextColor(getResources().getColor(R.color.font_color_white_dark));
                 mImageViewChinese.setVisibility(View.GONE);
                 StoreLanguageHelper.setLanguageLocal(ChooseLanguageActivity.this, "en");
                 EventBus.getDefault().post(new Event.ConfigChanged("EVENT_REFRESH_LANGUAGE"));
@@ -98,14 +98,14 @@ public class ChooseLanguageActivity extends BaseActivity {
         String defaultLanguage = StoreLanguageHelper.getLanguageLocal(this);
         if (!defaultLanguage.equals("")) {
             if (defaultLanguage.equals("en")) {
-                mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_orange));
+                mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_color_orange));
                 mImageViewEnglish.setVisibility(View.VISIBLE);
             } else if (defaultLanguage.equals("zh")) {
-                mTextViewChinese.setTextColor(getResources().getColor(R.color.primary_orange));
+                mTextViewChinese.setTextColor(getResources().getColor(R.color.primary_color_orange));
                 mImageViewChinese.setVisibility(View.VISIBLE);
             }
         } else {
-            mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_orange));
+            mTextViewEnglish.setTextColor(getResources().getColor(R.color.primary_color_orange));
             mImageViewEnglish.setVisibility(View.VISIBLE);
         }
     }

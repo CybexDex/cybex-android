@@ -51,8 +51,8 @@
         android:name="com.cybexmobile.Fragments.orderHistoryListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="@dimen/recycler_view_margin_start_end"
+        android:layout_marginRight="@dimen/recycler_view_margin_start_end"
         tools:context="com.cybexmobile.fragment.OrderHistoryListFragment"
         tools:listitem="@layout/item_order_history" />
 

@@ -12,8 +12,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        app:subtitleTextColor="@color/grey_unselected_font_color"
-        app:titleTextColor="@color/grey_unselected_font_color"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey"
         app:navigationIcon="@drawable/ic_close_24_px"/>
 
     <RelativeLayout
@@ -99,7 +99,7 @@
                                 android:maxLines="1"
                                 android:maxLength="63"
                                 android:singleLine="true"
-                                android:textColor="@color/primary_color_white"
+                                android:textColor="@color/font_color_white_dark"
                                 android:textColorHint="@color/text_hint_color"
                                 android:textCursorDrawable="@null" />
 
@@ -156,7 +156,7 @@
                                 android:inputType="textPassword"
                                 android:maxLines="1"
                                 android:singleLine="true"
-                                android:textColor="@color/primary_color_white"
+                                android:textColor="@color/font_color_white_dark"
                                 android:textColorHint="@color/text_hint_color"
                                 android:textCursorDrawable="@null" />
 
@@ -215,7 +215,7 @@
                                 android:inputType="textPassword"
                                 android:maxLines="1"
                                 android:singleLine="true"
-                                android:textColor="@color/primary_color_white"
+                                android:textColor="@color/font_color_white_dark"
                                 android:textColorHint="@color/text_hint_color"
                                 android:textCursorDrawable="@null" />
 
@@ -272,7 +272,7 @@
                                 android:imeOptions="actionUnspecified"
                                 android:maxLines="1"
                                 android:singleLine="true"
-                                android:textColor="@color/primary_color_white"
+                                android:textColor="@color/font_color_white_dark"
                                 android:textColorHint="@color/text_hint_color"
                                 android:textCursorDrawable="@null" />
 
@@ -342,7 +342,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_sign_in"
-                android:textColor="@color/primary_orange"/>
+                android:textColor="@color/primary_color_orange"/>
 
         </LinearLayout>
 
