@@ -7,6 +7,9 @@
     <string name="title_setting">Settings</string>
     <string name="title_account">Account</string>
     <string name="title_faq">Application</string>
+    <string name="title_exchange">Exchange</string>
+    
+    <string name="menu_order_history">Order History</string>
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>

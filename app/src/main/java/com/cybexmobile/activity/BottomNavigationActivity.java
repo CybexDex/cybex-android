@@ -10,12 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.api.RetrofitFactory;
@@ -23,8 +18,8 @@ import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AppVersion;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.AccountFragment;
+import com.cybexmobile.fragment.ExchangeFragment;
 import com.cybexmobile.fragment.data.WatchlistData;
-import com.cybexmobile.fragment.FaqFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.R;
@@ -40,17 +35,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener, FaqFragment.OnFragmentInteractionListener,
+public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener,
         AccountFragment.OnAccountFragmentInteractionListener {
 
     private BottomNavigationView mBottomNavigationView;
     private static final String KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID = "KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID";
 
     private WatchlistFragment mWatchListFragment;
-    private FaqFragment mFaqFragment;
     private AccountFragment mAccountFragment;
-    private TextView mTvTitle;
-    private Toolbar mToolbar;
+    private ExchangeFragment mExchangeFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -59,15 +52,12 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_watchlist:
-                    mTvTitle.setText(R.string.title_watchlist);
                     showFragment(mWatchListFragment);
                     return true;
-                case R.id.navigation_faq:
-                    mTvTitle.setText(R.string.title_faq);
-                    showFragment(mFaqFragment);
+                case R.id.navigation_exchange:
+                    showFragment(mExchangeFragment);
                     return true;
                 case R.id.navigation_account:
-                    mTvTitle.setText(R.string.title_account);
                     showFragment(mAccountFragment);
                     return true;
             }
@@ -81,11 +71,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_nav_button);
         initFragments(savedInstanceState);
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        mTvTitle = findViewById(R.id.tv_title);
         mBottomNavigationView = findViewById(R.id.navigation);
-
         BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
         mBottomNavigationView.setItemIconTintList(null);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -93,19 +79,13 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             int id = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
             switch (id) {
                 case R.id.navigation_watchlist:
-                    mTvTitle.setText(R.string.title_watchlist);
                     showFragment(mWatchListFragment);
-                    mBottomNavigationView.setVisibility(View.VISIBLE);
                     break;
-                case R.id.navigation_faq:
-                    mTvTitle.setText(R.string.title_faq);
-                    showFragment(mFaqFragment);
-                    mBottomNavigationView.setVisibility(View.VISIBLE);
+                case R.id.navigation_exchange:
+                    showFragment(mExchangeFragment);
                     break;
                 case R.id.navigation_account:
-                    mTvTitle.setText(R.string.title_account);
                     showFragment(mAccountFragment);
-                    mBottomNavigationView.setVisibility(View.VISIBLE);
                     break;
             }
         } else {
@@ -136,8 +116,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (mWatchListFragment.isAdded()) {
             fm.putFragment(outState, WatchlistFragment.class.getSimpleName(), mWatchListFragment);
         }
-        if (mFaqFragment.isAdded()) {
-            fm.putFragment(outState, FaqFragment.class.getSimpleName(), mFaqFragment);
+        if (mExchangeFragment.isAdded()) {
+            fm.putFragment(outState, ExchangeFragment.class.getSimpleName(), mExchangeFragment);
         }
         if (mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
@@ -167,11 +147,11 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState == null) {
             mWatchListFragment = new WatchlistFragment();
-            mFaqFragment = new FaqFragment();
+            mExchangeFragment = new ExchangeFragment();
             mAccountFragment = new AccountFragment();
         } else {
             mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState, WatchlistFragment.class.getSimpleName());
-            mFaqFragment = (FaqFragment) fragmentManager.getFragment(savedInstanceState, FaqFragment.class.getSimpleName());
+            mExchangeFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
         }
 
@@ -180,9 +160,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                     .add(R.id.frame_container, mWatchListFragment, WatchlistFragment.class.getSimpleName())
                     .commit();
         }
-        if (!mFaqFragment.isAdded()) {
+        if (!mExchangeFragment.isAdded()) {
             fragmentManager.beginTransaction()
-                    .add(R.id.frame_container, mFaqFragment, FaqFragment.class.getSimpleName())
+                    .add(R.id.frame_container, mExchangeFragment, ExchangeFragment.class.getSimpleName())
                     .commit();
         }
         if (!mAccountFragment.isAdded()) {
@@ -198,20 +178,20 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (fragment instanceof WatchlistFragment) {
             fm.beginTransaction()
                     .show(mWatchListFragment)
-                    .hide(mFaqFragment)
+                    .hide(mExchangeFragment)
                     .hide(mAccountFragment)
                     .commit();
 
-        } else if (fragment instanceof FaqFragment) {
+        } else if (fragment instanceof ExchangeFragment) {
             fm.beginTransaction()
-                    .show(mFaqFragment)
+                    .show(mExchangeFragment)
                     .hide(mAccountFragment)
                     .hide(mWatchListFragment)
                     .commit();
         } else if (fragment instanceof AccountFragment) {
             fm.beginTransaction()
                     .show(mAccountFragment)
-                    .hide(mFaqFragment)
+                    .hide(mExchangeFragment)
                     .hide(mWatchListFragment)
                     .commit();
         }
@@ -254,7 +234,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     @Override
     public void onListFragmentInteraction(WatchlistData item, List<WatchlistData> dataList, int position) {
         Intent intent = new Intent(BottomNavigationActivity.this, MarketsActivity.class);
-        ;
         intent.putExtra("watchListData", item);
         intent.putExtra("id", position);
         startActivity(intent);
@@ -262,11 +241,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     @Override
     public void onAccountFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
     }
 

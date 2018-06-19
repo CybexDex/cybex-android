@@ -8,23 +8,6 @@
     android:orientation="vertical"
     tools:context="com.cybexmobile.activity.BottomNavigationActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
-        app:subtitleTextColor="@color/primary_color_grey"
-        app:titleTextColor="@color/primary_color_grey">
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title_watchlist"
-            android:layout_gravity="center"
-            style="@style/font_white_dark_bold_large" />
-
-    </android.support.v7.widget.Toolbar>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

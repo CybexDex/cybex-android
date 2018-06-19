@@ -6,15 +6,10 @@
         android:icon="@drawable/ic_watch_list_selector"
         android:title="@string/title_watchlist" />
 
-    <!--<item-->
-        <!--android:id="@+id/navigation_explorer"-->
-        <!--android:icon="@drawable/ic_exlorer_24px"-->
-        <!--android:title="@string/title_explorer" />-->
-
     <item
-        android:id="@+id/navigation_faq"
+        android:id="@+id/navigation_exchange"
         android:icon="@drawable/ic_application_selector"
-        android:title="@string/title_faq" />
+        android:title="@string/title_exchange" />
     <item
         android:id="@+id/navigation_account"
         android:icon="@drawable/ic_account_selector"

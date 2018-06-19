@@ -17,8 +17,10 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -87,6 +89,7 @@ public class AccountFragment extends BaseFragment {
     private ImageView mAvatarImageView, mBalanceInfoImageView;
     private LinearLayout mBeforeLoginLayout, mAfterLoginLayout;
     private RelativeLayout mPortfolioTitleLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
+    private Toolbar mToolbar;
     private SharedPreferences mSharedPreference;
 
     //Recyclerview item
@@ -386,6 +389,8 @@ public class AccountFragment extends BaseFragment {
         mPortfolioTitleLayout = view.findViewById(R.id.portfolio_title_layout);
         mBalanceInfoImageView = view.findViewById(R.id.balance_info_question_marker);
         mTvTotalRmbAmount = view.findViewById(R.id.account_balance_total_rmb);
+        mToolbar = view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
     }
 
     private void setViews() {

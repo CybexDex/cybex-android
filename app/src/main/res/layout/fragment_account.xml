@@ -1,275 +1,299 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbars="none"
+    android:orientation="vertical"
     tools:context=".fragment.AccountFragment">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/title_account"
+            style="@style/font_white_dark_bold_large" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_padding">
+        android:scrollbars="none">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:padding="@dimen/activity_padding">
 
-            <ImageView
-                android:id="@+id/account_avatar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/account_avatar" />
-
-            <WebView
-                android:id="@+id/account_avatar_webview"
-                android:layout_width="@dimen/webview_width_height"
-                android:layout_height="@dimen/webview_width_height" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/account_logged_in"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_padding"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/account_say_hello_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.01"
-                android:text="@string/log_in_cybex"
-                android:textColor="@color/font_color_white_dark"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_marginEnd="@dimen/activity_margin"
-                android:textSize="34sp" />
-
-            <TextView
-                android:id="@+id/account_membership_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/membership_item_background"
-                android:layout_marginTop="@dimen/text_membership_margin_top"
-                android:padding="@dimen/text_membership_padding"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_marginEnd="@dimen/activity_margin"
-                android:textSize="@dimen/font_xsmall"
-                android:textColor="@color/primary_color_grey" />
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_balance_margin_top"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_marginEnd="@dimen/activity_margin"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:alpha="0.5"
-                    android:text="@string/account_balance"
-                    style="@style/font_gray_small" />
+                android:layout_height="match_parent"
+                android:padding="@dimen/activity_padding">
 
                 <ImageView
-                    android:id="@+id/balance_info_question_marker"
+                    android:id="@+id/account_avatar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/cloud_wallet" />
+                    android:src="@drawable/account_avatar" />
 
-            </LinearLayout>
+                <WebView
+                    android:id="@+id/account_avatar_webview"
+                    android:layout_width="@dimen/webview_width_height"
+                    android:layout_height="@dimen/webview_width_height" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_marginEnd="@dimen/activity_margin"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/account_balance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/font_white_dark_xxlarge"
-                    android:text="--"/>
-
-                <TextView
-                    android:id="@+id/account_balance_total_rmb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/font_gray_medium"
-                    android:text="≈¥--"/>
-            </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/portfolio_title_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_margin"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_marginEnd="@dimen/activity_margin"
-                android:paddingBottom="@dimen/layout_portfolio_header_padding_bottom"
-                android:paddingTop="@dimen/activity_padding">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/font_grey_medium"
-                    android:alpha="0.5"
-                    android:text="@string/account_available_asset" />
-
-                <TextView
-                    android:id="@+id/account_view_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/font_grey_medium"
-                    android:layout_alignParentEnd="true"
-                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                    android:text="@string/account_view_all" />
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/account_my_asset_recycler_view"
+            <LinearLayout
+                android:id="@+id/account_logged_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/font_grey_medium"
-                android:layout_marginTop="@dimen/activity_margin"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_marginEnd="@dimen/activity_padding"
-                android:alpha="0.5"
-                android:paddingBottom="@dimen/layout_portfolio_header_padding_bottom"
                 android:paddingTop="@dimen/activity_padding"
-                android:text="@string/account_other_asset" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:cardCornerRadius="4dp"
-                    app:cardBackgroundColor="@color/itemBackground"
-                    app:cardUseCompatPadding="true">
-
-                    <RelativeLayout
-                        android:id="@+id/account_open_order_item_background"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/layout_asset_operations_height"
-                        android:paddingStart="@dimen/activity_padding"
-                        android:paddingEnd="@dimen/layout_asset_operations_padding_end"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            style="@style/font_white_dark_bold_large"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="@string/text_opened_orders" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/ic_arrow_forward_right_16_px" />
-
-
-                    </RelativeLayout>
-
-                </android.support.v7.widget.CardView>
-
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:cardCornerRadius="4dp"
-                    app:cardElevation="3dp"
-                    app:cardBackgroundColor="@color/itemBackground"
-                    app:cardUseCompatPadding="true">
-
-                    <RelativeLayout
-                        android:id="@+id/account_lockup_item_background"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/layout_asset_operations_height"
-                        android:paddingStart="@dimen/activity_padding"
-                        android:paddingEnd="@dimen/layout_asset_operations_padding_end"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            style="@style/font_white_dark_bold_large"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="@string/text_lockup_assets" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/ic_arrow_forward_right_16_px" />
-
-                    </RelativeLayout>
-
-                </android.support.v7.widget.CardView>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/account_no_log_in"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/activity_padding"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/account_log_in_text"
+                    android:id="@+id/account_say_hello_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.01"
                     android:text="@string/log_in_cybex"
                     android:textColor="@color/font_color_white_dark"
+                    android:layout_marginStart="@dimen/activity_margin"
+                    android:layout_marginEnd="@dimen/activity_margin"
                     android:textSize="34sp" />
 
-                <ImageView
+                <TextView
+                    android:id="@+id/account_membership_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_quote_margin_start"
-                    android:src="@drawable/ic_arrow_forward_right_16_px"/>
+                    android:background="@drawable/membership_item_background"
+                    android:layout_marginTop="@dimen/text_membership_margin_top"
+                    android:padding="@dimen/text_membership_padding"
+                    android:layout_marginStart="@dimen/activity_margin"
+                    android:layout_marginEnd="@dimen/activity_margin"
+                    android:textSize="@dimen/font_xsmall"
+                    android:textColor="@color/primary_color_grey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/text_balance_margin_top"
+                    android:layout_marginStart="@dimen/activity_margin"
+                    android:layout_marginEnd="@dimen/activity_margin"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.5"
+                        android:text="@string/account_balance"
+                        style="@style/font_gray_small" />
+
+                    <ImageView
+                        android:id="@+id/balance_info_question_marker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cloud_wallet" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_margin"
+                    android:layout_marginEnd="@dimen/activity_margin"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/account_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_xxlarge"
+                        android:text="--"/>
+
+                    <TextView
+                        android:id="@+id/account_balance_total_rmb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_gray_medium"
+                        android:text="≈¥--"/>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/portfolio_title_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin"
+                    android:layout_marginStart="@dimen/activity_margin"
+                    android:layout_marginEnd="@dimen/activity_margin"
+                    android:paddingBottom="@dimen/layout_portfolio_header_padding_bottom"
+                    android:paddingTop="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_grey_medium"
+                        android:alpha="0.5"
+                        android:text="@string/account_available_asset" />
+
+                    <TextView
+                        android:id="@+id/account_view_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_grey_medium"
+                        android:layout_alignParentEnd="true"
+                        android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
+                        android:text="@string/account_view_all" />
+                </RelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/account_my_asset_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_grey_medium"
+                    android:layout_marginTop="@dimen/activity_margin"
+                    android:layout_marginStart="@dimen/activity_margin"
+                    android:layout_marginEnd="@dimen/activity_padding"
+                    android:alpha="0.5"
+                    android:paddingBottom="@dimen/layout_portfolio_header_padding_bottom"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:text="@string/account_other_asset" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="4dp"
+                        app:cardBackgroundColor="@color/itemBackground"
+                        app:cardUseCompatPadding="true">
+
+                        <RelativeLayout
+                            android:id="@+id/account_open_order_item_background"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/layout_asset_operations_height"
+                            android:paddingStart="@dimen/activity_padding"
+                            android:paddingEnd="@dimen/layout_asset_operations_padding_end"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/font_white_dark_bold_large"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/text_opened_orders" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/ic_arrow_forward_right_16_px" />
+
+
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:cardBackgroundColor="@color/itemBackground"
+                        app:cardUseCompatPadding="true">
+
+                        <RelativeLayout
+                            android:id="@+id/account_lockup_item_background"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/layout_asset_operations_height"
+                            android:paddingStart="@dimen/activity_padding"
+                            android:paddingEnd="@dimen/layout_asset_operations_padding_end"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/font_white_dark_bold_large"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/text_lockup_assets" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/ic_arrow_forward_right_16_px" />
+
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/account_introduction_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/account_no_log_in"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/font_grey_medium"
-                android:layout_marginTop="@dimen/text_introduction_margin_top"
-                android:lineSpacingExtra="@dimen/text_line_spacing_extra"
-                android:text="@string/account_introduction_text" />
+                android:padding="@dimen/activity_padding"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/account_log_in_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.01"
+                        android:text="@string/log_in_cybex"
+                        android:textColor="@color/font_color_white_dark"
+                        android:textSize="34sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/text_quote_margin_start"
+                        android:src="@drawable/ic_arrow_forward_right_16_px"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/account_introduction_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_grey_medium"
+                    android:layout_marginTop="@dimen/text_introduction_margin_top"
+                    android:lineSpacingExtra="@dimen/text_line_spacing_extra"
+                    android:text="@string/account_introduction_text" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+
+</LinearLayout>
