@@ -71,6 +71,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 /**
  * 帐户界面
  * 数据流程:FullAccountObject -> AssetObject ->MarketTicker
@@ -82,14 +88,33 @@ public class AccountFragment extends BaseFragment {
     private static final int REQUEST_CODE_LOGIN = 1;
 
     private OnAccountFragmentInteractionListener mListener;
-    private RecyclerView mPortfolioRecyclerView;
     private PortfolioRecyclerViewAdapter mPortfolioRecyclerViewAdapter;
-    private TextView mLoginTextView, mMembershipTextView, mViewAllTextView, mSayHelloTextView, mTvTotalCybAmount, mTvTotalRmbAmount;
-    private WebView mAvatarWebView;
-    private ImageView mAvatarImageView, mBalanceInfoImageView;
-    private LinearLayout mBeforeLoginLayout, mAfterLoginLayout;
-    private RelativeLayout mPortfolioTitleLayout, mOpenOrderLayout, mOpenLockAssetsLayout;
-    private Toolbar mToolbar;
+
+    @BindView(R.id.account_my_asset_recycler_view)
+    RecyclerView mPortfolioRecyclerView;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.account_membership_text)
+    TextView mMembershipTextView;
+    @BindView(R.id.account_say_hello_text_view)
+    TextView mSayHelloTextView;
+    @BindView(R.id.account_balance)
+    TextView mTvTotalCybAmount;
+    @BindView(R.id.account_balance_total_rmb)
+    TextView mTvTotalRmbAmount;
+    @BindView(R.id.account_avatar_webview)
+    WebView mAvatarWebView;
+    @BindView(R.id.account_avatar)
+    ImageView mAvatarImageView;
+    @BindView(R.id.account_no_log_in)
+    LinearLayout mBeforeLoginLayout;
+    @BindView(R.id.account_logged_in)
+    LinearLayout mAfterLoginLayout;
+    @BindView(R.id.portfolio_title_layout)
+    RelativeLayout mPortfolioTitleLayout;
+
+    private Unbinder mUnbinder;
+
     private SharedPreferences mSharedPreference;
 
     //Recyclerview item
@@ -140,8 +165,8 @@ public class AccountFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
-        initViews(view);
-        setClickListener();
+        mUnbinder = ButterKnife.bind(this, view);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
         setViews();
         return view;
     }
@@ -192,6 +217,50 @@ public class AccountFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @OnClick(R.id.account_log_in_text)
+    public void onLoginClick(View view){
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_LOGIN);
+    }
+
+    @OnClick(R.id.account_view_all)
+    public void onAllPortfolioClick(View view){
+        Intent intent = new Intent(getActivity(), PortfolioActivity.class);
+        intent.putExtra(PortfolioActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.account_open_order_item_background)
+    public void onOpenOrderClick(View view){
+        Intent intent = new Intent(getActivity(), OpenOrdersActivity.class);
+        intent.putExtra("TotalValue", mLimitOrderTotalValue);
+        intent.putExtra("TotalSellValue", mLimitOrderSellTotalValue);
+        intent.putExtra("TotalBuyValue", mLimitOrderBuyTotalValue);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.account_lockup_item_background)
+    public void onLockAssetsClick(View view){
+        Intent intent = new Intent(getContext(), LockAssetsActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.balance_info_question_marker)
+    public void onBalanceInfoClick(View view){
+        CybexDialog.showBalanceDialog(getActivity());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -373,26 +442,6 @@ public class AccountFragment extends BaseFragment {
         mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_TOTAL_CYB);
     }
 
-    private void initViews(View view) {
-        mBeforeLoginLayout = view.findViewById(R.id.account_no_log_in);
-        mAfterLoginLayout = view.findViewById(R.id.account_logged_in);
-        mLoginTextView = view.findViewById(R.id.account_log_in_text);
-        mSayHelloTextView = view.findViewById(R.id.account_say_hello_text_view);
-        mMembershipTextView = view.findViewById(R.id.account_membership_text);
-        mPortfolioRecyclerView = view.findViewById(R.id.account_my_asset_recycler_view);
-        mViewAllTextView = view.findViewById(R.id.account_view_all);
-        mAvatarImageView = view.findViewById(R.id.account_avatar);
-        mAvatarWebView = view.findViewById(R.id.account_avatar_webview);
-        mTvTotalCybAmount = view.findViewById(R.id.account_balance);
-        mOpenOrderLayout = view.findViewById(R.id.account_open_order_item_background);
-        mOpenLockAssetsLayout = view.findViewById(R.id.account_lockup_item_background);
-        mPortfolioTitleLayout = view.findViewById(R.id.portfolio_title_layout);
-        mBalanceInfoImageView = view.findViewById(R.id.balance_info_question_marker);
-        mTvTotalRmbAmount = view.findViewById(R.id.account_balance_total_rmb);
-        mToolbar = view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
-    }
-
     private void setViews() {
         mAvatarImageView.setVisibility(mIsLoginIn ? View.GONE : View.VISIBLE);
         mAvatarWebView.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
@@ -428,47 +477,6 @@ public class AccountFragment extends BaseFragment {
         } else {
             mTvTotalRmbAmount.setText(totalRmb == 0 ? "≈¥--" : String.format(Locale.US, "≈¥%.2f", totalRmb));
         }
-    }
-
-    private void setClickListener() {
-        mLoginTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_LOGIN);
-            }
-        });
-        mViewAllTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), PortfolioActivity.class);
-                intent.putExtra(PortfolioActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
-                startActivity(intent);
-            }
-        });
-        mOpenOrderLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), OpenOrdersActivity.class);
-                intent.putExtra("TotalValue", mLimitOrderTotalValue);
-                intent.putExtra("TotalSellValue", mLimitOrderSellTotalValue);
-                intent.putExtra("TotalBuyValue", mLimitOrderBuyTotalValue);
-                startActivity(intent);
-            }
-        });
-        mOpenLockAssetsLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), LockAssetsActivity.class);
-                startActivity(intent);
-            }
-        });
-        mBalanceInfoImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CybexDialog.showBalanceDialog(getActivity());
-            }
-        });
     }
 
     @Override

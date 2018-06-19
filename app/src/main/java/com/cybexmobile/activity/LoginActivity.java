@@ -240,7 +240,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
             return;
         }
-        showLoadDialog();
+        showLoadDialog(true);
         try {
             BitsharesWalletWraper.getInstance().get_account_object(email, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
                 @Override
