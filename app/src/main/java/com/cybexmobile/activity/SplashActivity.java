@@ -1,64 +1,132 @@
 package com.cybexmobile.activity;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
-import android.widget.Toast;
+import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 
-import com.cybexmobile.BuildConfig;
 import com.cybexmobile.receiver.NetWorkBroadcastReceiver;
-import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.data.AppVersion;
 import com.cybexmobile.R;
 import com.cybexmobile.service.WebSocketService;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class SplashActivity extends BaseActivity{
+
+    private static final int REQUEST_CODE_WRITE_SETTING = 1;
 
     private NetWorkBroadcastReceiver mNetWorkBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
         Intent intentService = new Intent(SplashActivity.this, WebSocketService.class);
         startService(intentService);
+        setContentView(R.layout.activity_splash);
+        /**
+         * fix bug
+         * Android6.0 注册广播无法动态申请CHANGE_NETWORK_STATE权限，跳转至系统界面手动开启WRITE_SETTINGS权限
+         */
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            requestPermissions();
+        } else {
+            registerBroadcast();
+        }
+    }
+
+    private void registerBroadcast(){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         mNetWorkBroadcastReceiver = new NetWorkBroadcastReceiver();
         registerReceiver(mNetWorkBroadcastReceiver, intentFilter);
+        gotoMain();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        new Handler().postDelayed(new Runnable() {
+    private void gotoMain(){
+            new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(SplashActivity.this, BottomNavigationActivity.class);
                 startActivity(i);
                 finish();
             }
-        }, 2000);
+        }, 1500);
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean canWriteSetting(){
+        return Settings.System.canWrite(this);
+    }
+
+    private void requestPermissions(){
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.requestEach(Manifest.permission.CHANGE_NETWORK_STATE)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Permission>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Permission permission) {
+                        if(permission.granted || canWriteSetting()){
+                            registerBroadcast();
+                        } else {
+                            Intent intentSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                            intentSetting.setData(Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intentSetting, REQUEST_CODE_WRITE_SETTING);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        finish();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mNetWorkBroadcastReceiver);
+        if(mNetWorkBroadcastReceiver != null){
+            unregisterReceiver(mNetWorkBroadcastReceiver);
+            mNetWorkBroadcastReceiver = null;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_WRITE_SETTING){
+            if(canWriteSetting()){
+                registerBroadcast();
+            } else {
+              finish();
+            }
+        }
     }
 
     @Override
