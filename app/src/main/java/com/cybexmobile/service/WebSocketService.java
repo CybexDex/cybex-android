@@ -450,13 +450,15 @@ public class WebSocketService extends Service {
             String baseAssetId = assetObjects.get(0).id.toString();
             List<AssetsPair> assetsPairs = mAssetsPairHashMap.get(baseAssetId);
             //币信息对应交易对
-            for(AssetObject assetObject : assetObjects){
-                for(AssetsPair assetsPair : assetsPairs){
-                    if(assetsPair.getBase().equals(assetObject.id.toString())){
-                        assetsPair.setBaseAsset(assetObject);
-                    }
-                    if(assetsPair.getQuote().equals(assetObject.id.toString())){
-                        assetsPair.setQuoteAsset(assetObject);
+            if (assetsPairs != null) {
+                for (AssetObject assetObject : assetObjects) {
+                    for (AssetsPair assetsPair : assetsPairs) {
+                        if (assetsPair.getBase().equals(assetObject.id.toString())) {
+                            assetsPair.setBaseAsset(assetObject);
+                        }
+                        if (assetsPair.getQuote().equals(assetObject.id.toString())) {
+                            assetsPair.setQuoteAsset(assetObject);
+                        }
                     }
                 }
             }
@@ -546,7 +548,7 @@ public class WebSocketService extends Service {
         if(mFullAccount != null){
             return mFullAccount;
         }
-        if(!TextUtils.isEmpty(name)){
+        if(!TextUtils.isEmpty(name) && mAssetsPairHashMap != null){
             callFullAccount(name);
         }
         return null;

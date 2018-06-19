@@ -14,21 +14,15 @@ import okhttp3.WebSocketListener;
 public class FullNodeServerSelect {
 
     private List<String> mListNode = Arrays.asList(
-            "wss://bitshares.openledger.info/ws",
-            "wss://eu.openledger.info/ws",
-            "wss://bit.btsabc.org/ws",
-            "wss://bts.transwiser.com/ws",
-            "wss://bitshares.dacplay.org/ws",
-            "wss://bitshares-api.wancloud.io/ws",
-            "wss://openledger.hk/ws",
-            "wss://secure.freedomledger.com/ws",
-            "wss://dexnode.net/ws",
-            "wss://altcap.io/ws",
+            "wss://shanghai.51nebula.com/",
+            "wss://singapore-01.cybex.io/",
+            "wss://tokyo-01.cybex.io/",
+            "wss://korea-01.cybex.io/",
             "wss://hongkong.cybex.io/"
     );
 
     public String getServer() {
-        return "wss://hongkong.cybex.io/";
+        return getAutoSelectServer();
     }
 
     private String getAutoSelectServer() {
