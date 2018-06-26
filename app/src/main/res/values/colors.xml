@@ -8,7 +8,7 @@
     <color name="colorPrimaryDark">#171D2A</color>
 
     <!--   a secondary color for controls like checkboxes and text fields -->
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#78819A</color>
 
     <!-- primary color -->
     <color name="primary_color_orange">#FF9143</color>
@@ -49,13 +49,15 @@
     <!-- Splash Activity -->
     <color name="splash_text_color">#454545</color>
 
-    <!-- Watch List Fragment -->
-    <color name="tab_indicator_color">#FF9143</color>
-
     <color name="btn_orange_start">#ffc478</color>
     <color name="btn_orange_end">#ff9143</color>
     <color name="btn_grey_start">#A9A9A9</color>
     <color name="btn_grey_end">#78819a</color>
+
+    <color name="btn_green_start">#a9e06e</color>
+    <color name="btn_green_end">#8dc84f</color>
+    <color name="btn_red_start">#d96250</color>
+    <color name="btn_red_end">#be4634</color>
 
 
 </resources>

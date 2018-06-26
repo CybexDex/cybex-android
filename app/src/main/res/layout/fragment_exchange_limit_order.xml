@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_input_header_height"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/buysell_tv_order_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            style="@style/font_gray_small"
+            android:text="@string/text_asset_price" />
+
+        <TextView
+            android:id="@+id/buysell_tv_order_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            style="@style/font_gray_small"
+            android:layout_alignParentEnd="true"
+            android:text="@string/text_asset_amount" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/buysell_rv_sell"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        tools:listitem="@layout/item_buy_sell_order"
+        tools:itemCount="5">
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/font_gray_large"
+        android:text="@string/text_empty"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/font_gray_small"
+        android:text="≈--"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/buysell_rv_buy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        tools:listitem="@layout/item_buy_sell_order"
+        tools:itemCount="5">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

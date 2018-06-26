@@ -668,4 +668,15 @@ public class WebSocketService extends Service {
         mFullAccount = null;
         mNames.clear();
     }
+
+    public WatchlistData getFirstWatchlist(){
+        if(mWatchlistHashMap == null || mWatchlistHashMap.isEmpty()){
+            return null;
+        }
+        List<WatchlistData> watchlistData = mWatchlistHashMap.get("1.3.2");
+        if(watchlistData == null || watchlistData.size() == 0){
+            return null;
+        }
+        return watchlistData.get(0);
+    }
 }

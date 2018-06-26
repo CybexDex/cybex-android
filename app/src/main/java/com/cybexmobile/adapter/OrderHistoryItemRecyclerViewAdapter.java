@@ -47,22 +47,22 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if (position < mValues.bids.size()) {
-            holder.mBuyPrice.setText(String.format(Locale.US,"%.6f", mValues.bids.get(position).price));
-            holder.mVolume.setText(String.format(Locale.US, "%.4f", mValues.bids.get(position).quote));
+        if (position < mValues.buyOrders.size()) {
+            holder.mBuyPrice.setText(String.format(Locale.US,"%.6f", mValues.buyOrders.get(position).price));
+            holder.mVolume.setText(String.format(Locale.US, "%.4f", mValues.buyOrders.get(position).quoteAmount));
         }
-        if (position < mValues.asks.size()) {
-            holder.mSellPrice.setText(String.format(Locale.US, "%.6f", mValues.asks.get(position).price));
-            holder.mSellVolume.setText(String.format(Locale.US, "%.4f", mValues.asks.get(position).quote));
+        if (position < mValues.sellOrders.size()) {
+            holder.mSellPrice.setText(String.format(Locale.US, "%.6f", mValues.sellOrders.get(position).price));
+            holder.mSellVolume.setText(String.format(Locale.US, "%.4f", mValues.sellOrders.get(position).quoteAmount));
         }
 
         float percentageBids = 0f;
-        if (position < mValues.bids.size()) {
-            percentageBids = (float) getPercentage(mValues.bids, position);
+        if (position < mValues.buyOrders.size()) {
+            percentageBids = (float) getPercentage(mValues.buyOrders, position);
         }
         float percentageAsks = 0f;
-        if (position < mValues.asks.size()) {
-            percentageAsks = (float) getPercentage(mValues.asks, position);
+        if (position < mValues.sellOrders.size()) {
+            percentageAsks = (float) getPercentage(mValues.sellOrders, position);
         }
         LinearLayout.LayoutParams barpar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, percentageBids);
         LinearLayout.LayoutParams barpar2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1 - percentageBids);
@@ -91,20 +91,10 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
 
     @Override
     public int getItemCount() {
-        if (mValues != null) {
-            if (mValues.asks.size() > 20 || mValues.bids.size() > 20) {
-                return 20;
-            } else {
-                if (mValues.asks.size() >= mValues.bids.size()) {
-                    return mValues.asks.size();
-                } else {
-                    return mValues.bids.size();
-                }
-            }
-        } else {
+        if (mValues == null) {
             return 0;
         }
-
+        return mValues.sellOrders.size() >= mValues.buyOrders.size() ? mValues.sellOrders.size() : mValues.buyOrders.size();
     }
 
     public void setValues(OrderBook orderBook) {
@@ -115,7 +105,7 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
     private double getPercentage(List<Order> orderList, int position) {
         double divider = 0;
         for (int i = 0; i <= position; i++) {
-            divider += orderList.get(i).base;
+            divider += orderList.get(i).baseAmount;
         }
         return divider / getSum(orderList);
     }
@@ -130,7 +120,7 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
                 length = orderList.size();
             }
             for (int i = 0; i < length; i++) {
-                sum += orderList.get(i).base;
+                sum += orderList.get(i).baseAmount;
             }
         }
         return sum;

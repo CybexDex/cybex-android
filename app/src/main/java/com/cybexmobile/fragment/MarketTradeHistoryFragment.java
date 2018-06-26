@@ -21,6 +21,7 @@ import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.market.MarketTrade;
+import com.cybexmobile.utils.AssetUtil;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,27 +40,20 @@ import java.util.Locale;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
  */
 public class MarketTradeHistoryFragment extends BaseFragment {
 
     // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_WATCHLIST = "watchlist";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
-    private TextView mQuoteTextView, mBaseTextView;
+    private TextView mQuoteTextView, mBaseTextView, mTvBasePrice;
     private List<MarketTrade> mMarketTradeList = new ArrayList<>();
     private WatchlistData mWatchlistData;
     private RecyclerView mRecyclerView;
     private TradeHistoryRecyclerViewAdapter mTradeHistoryRecyclerViewAdapter;
 
-    public static MarketTradeHistoryFragment newInstance(int columnCount, WatchlistData watchListData) {
+    public static MarketTradeHistoryFragment newInstance(WatchlistData watchListData) {
         MarketTradeHistoryFragment fragment = new MarketTradeHistoryFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putSerializable(ARG_WATCHLIST, watchListData);
         fragment.setArguments(args);
         return fragment;
@@ -69,7 +63,6 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mWatchlistData = (WatchlistData) getArguments().getSerializable(ARG_WATCHLIST);
         }
         EventBus.getDefault().register(this);
@@ -85,28 +78,30 @@ public class MarketTradeHistoryFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trade_history, container, false);
         mRecyclerView = view.findViewById(R.id.trade_history_list);
+        mTvBasePrice = view.findViewById(R.id.market_page_base_asset_price);
         mQuoteTextView = view.findViewById(R.id.market_page_trade_history_quote);
         mBaseTextView = view.findViewById(R.id.market_page_trade_history_base);
-        if (mColumnCount <= 1) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mColumnCount));
-        }
-        String trimmedBase = mWatchlistData.getBaseSymbol().contains("JADE") ? mWatchlistData.getBaseSymbol().substring(5, mWatchlistData.getBaseSymbol().length()) : mWatchlistData.getBaseSymbol();
-        String trimmedQuote = mWatchlistData.getQuoteSymbol().contains("JADE") ? mWatchlistData.getQuoteSymbol().substring(5, mWatchlistData.getQuoteSymbol().length()) : mWatchlistData.getQuoteSymbol();
-
-        if(mWatchlistData != null){
-            mBaseTextView.setText(trimmedBase);
-            mQuoteTextView.setText(trimmedQuote);
-            mTradeHistoryRecyclerViewAdapter = new TradeHistoryRecyclerViewAdapter(mMarketTradeList, mListener, mWatchlistData.getBasePrecision(), mWatchlistData.getQuotePrecision(), getContext());
-            mRecyclerView.setAdapter(mTradeHistoryRecyclerViewAdapter);
-        }
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initViewData();
+    }
+
+    private void initViewData(){
+        if(mWatchlistData == null){
+            return;
+        }
+        String trimmedBase = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());
+        String trimmedQuote = AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol());
+        mTvBasePrice.setText(getResources().getString(R.string.market_page_trade_history_price).replace("--", trimmedBase));
+        mBaseTextView.setText(getResources().getString(R.string.market_page_trade_history_base).replace("--", trimmedBase));
+        mQuoteTextView.setText(getResources().getString(R.string.market_page_trade_history_quote).replace("--", trimmedQuote));
+        mTradeHistoryRecyclerViewAdapter = new TradeHistoryRecyclerViewAdapter(mMarketTradeList, mWatchlistData.getBasePrecision(), mWatchlistData.getQuotePrecision(), getContext());
+        mRecyclerView.setAdapter(mTradeHistoryRecyclerViewAdapter);
         loadMarketTradHistory();
     }
 
@@ -190,33 +185,17 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         EventBus.getDefault().unregister(this);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(MarketTrade item);
+    public void changeWatchlist(WatchlistData watchlist){
+        this.mWatchlistData = watchlist;
+        initViewData();
     }
+
 }

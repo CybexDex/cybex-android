@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.cybexmobile.fragment.MarketTradeHistoryFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
 import com.cybexmobile.market.MarketTrade;
@@ -18,20 +17,17 @@ import java.util.Locale;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeHistoryRecyclerViewAdapter.ViewHolder> {
 
     private final List<MarketTrade> mValues;
-    private final OnListFragmentInteractionListener mListener;
     private final Context mContext;
     private int mBasePrecision;
     private int mQuotePrecision;
 
-    public TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, OnListFragmentInteractionListener listener, int basePrecision, int quotePrecision, Context context) {
+    public TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, int basePrecision, int quotePrecision, Context context) {
         mValues = items;
-        mListener = listener;
         mContext = context;
         mBasePrecision = basePrecision;
         mQuotePrecision = quotePrecision;

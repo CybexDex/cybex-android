@@ -7,6 +7,7 @@ import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTrade;
+import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
 
 import java.util.List;
@@ -257,6 +258,42 @@ public class Event {
 
         public void setConfigName(String configName) {
             this.configName = configName;
+        }
+    }
+
+    public static class UpdateBuySellOrders{
+        private List<Order> buyOrders;
+        private List<Order> sellOrders;
+
+        public UpdateBuySellOrders(List<Order> buyOrders, List<Order> sellOrders) {
+            this.buyOrders = buyOrders;
+            this.sellOrders = sellOrders;
+        }
+
+        public List<Order> getBuyOrders() {
+            return buyOrders;
+        }
+
+        public List<Order> getSellOrders() {
+            return sellOrders;
+        }
+    }
+
+    public static class MarketIntentToExchange{
+        private String action;
+        private WatchlistData watchlist;
+
+        public MarketIntentToExchange(String action, WatchlistData watchlist) {
+            this.action = action;
+            this.watchlist = watchlist;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public WatchlistData getWatchlist() {
+            return watchlist;
         }
     }
 }

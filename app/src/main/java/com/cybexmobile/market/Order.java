@@ -4,8 +4,10 @@ package com.cybexmobile.market;
 import java.io.Serializable;
 
 public class Order implements Serializable {
+    //quote相对base价格
     public double price;
-    public double quote;
-    public double base;
-
+    //quote数量
+    public double quoteAmount;
+    //asset数量
+    public double baseAmount;
 }

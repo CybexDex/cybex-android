@@ -8,8 +8,6 @@
     <string name="title_account">Account</string>
     <string name="title_faq">Application</string>
     <string name="title_exchange">Exchange</string>
-    
-    <string name="menu_order_history">Order History</string>
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>
@@ -45,10 +43,10 @@
     <string name="market_page_volume">Volume</string>
     <string name="market_page_volume_short">Vol</string>
     <string name="market_page_sell_price">Sell Price</string>
-    <string name="market_page_trade_history_price">Price</string>
-    <string name="market_page_trade_history_date">Date</string>
-    <string name="market_page_trade_history_base">Base</string>
-    <string name="market_page_trade_history_quote">Quote</string>
+    <string name="market_page_trade_history_price">Price(--)</string>
+    <string name="market_page_trade_history_date">Time</string>
+    <string name="market_page_trade_history_base">Total(--)</string>
+    <string name="market_page_trade_history_quote">Amount(--)</string>
     <string name="market_page_order_book">Order Book</string>
     <string name="market_page_trade_history">Trade History</string>
     <string name="k_ma">MA(5):</string>
@@ -65,9 +63,7 @@
     <string name="index_vary">Change</string>
     <string name="index_price">Price</string>
 
-
     <!-- Setting Strings -->
-
     <string name="setting_language">Language</string>
     <string name="setting_language_english">English</string>
     <string name="setting_language_chinese">简体中文</string>
@@ -154,5 +150,27 @@
 
 
     <string name="network_connection_is_not_available">network connection is not available</string>
+
+    <!-- Exchange Fragment -->
+    <string name="tab_buy">BUY</string>
+    <string name="tab_sell">SELL</string>
+    <string name="tab_open_orders">Open Orders</string>
+    <string name="menu_order_history">Order History</string>
+    <string name="text_limit">Limit</string>
+    <string name="text_empty">--</string>
+    <string name="text_asset_price">Price(--)</string>
+    <string name="text_asset_amount">Amount(--)</string>
+    <string name="text_percentage_25">25%</string>
+    <string name="text_percentage_50">50%</string>
+    <string name="text_percentage_75">75%</string>
+    <string name="text_percentage_100">100%</string>
+    <string name="text_available">Available</string>
+    <string name="text_free">Free</string>
+    <string name="text_total">Total</string>
+    <string name="text_buy">Buy</string>
+    <string name="text_sell">Sell</string>
+    <string name="text_not_enough">Not enough</string>
+
+
 
 </resources>

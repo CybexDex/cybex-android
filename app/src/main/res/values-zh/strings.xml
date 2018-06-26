@@ -47,10 +47,10 @@
     <string name="market_page_sell_price">卖价</string>
     <string name="market_page_volume">成交量</string>
     <string name="market_page_volume_short">成交量</string>
-    <string name="market_page_trade_history_price">价格</string>
+    <string name="market_page_trade_history_price">价格(--)</string>
     <string name="market_page_trade_history_date">时间</string>
-    <string name="market_page_trade_history_base">Base</string>
-    <string name="market_page_trade_history_quote">Quote</string>
+    <string name="market_page_trade_history_base">成交额(--)</string>
+    <string name="market_page_trade_history_quote">数量(--)</string>
     <string name="market_page_order_book">买卖单</string>
     <string name="market_page_trade_history">交易历史</string>
     <string name="k_ma">MA(5):</string>
@@ -152,5 +152,25 @@
     <string name="action_sign_in">登录</string>
 
     <string name="network_connection_is_not_available">无网络连接</string>
+
+    <!-- Exchange Fragment -->
+    <string name="tab_buy">买入</string>
+    <string name="tab_sell">卖出</string>
+    <string name="tab_open_orders">我的委单</string>
+    <string name="menu_order_history">我的记录</string>
+    <string name="text_limit">限价单</string>
+    <string name="text_empty">--</string>
+    <string name="text_asset_price">价格(--)</string>
+    <string name="text_asset_amount">数量(--)</string>
+    <string name="text_percentage_25">25%</string>
+    <string name="text_percentage_50">50%</string>
+    <string name="text_percentage_75">75%</string>
+    <string name="text_percentage_100">100%</string>
+    <string name="text_available">余额</string>
+    <string name="text_free">手续费</string>
+    <string name="text_total">成交额</string>
+    <string name="text_buy">买入</string>
+    <string name="text_sell">卖出</string>
+    <string name="text_not_enough">余额不足</string>
 
 </resources>

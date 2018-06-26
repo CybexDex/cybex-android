@@ -1,5 +1,6 @@
 package com.cybexmobile.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -30,7 +32,6 @@ import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.market.HistoryPrice;
-import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.mychart.CoupleChartGestureListener;
 import com.cybexmobile.mychart.MyBottomMarkerView;
 import com.cybexmobile.mychart.MyCombinedChart;
@@ -69,12 +70,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class MarketsActivity extends BaseActivity implements OrderHistoryListFragment.OnListFragmentInteractionListener,
-        MarketTradeHistoryFragment.OnListFragmentInteractionListener {
+import static com.cybexmobile.utils.Constant.ACTION_BUY;
+import static com.cybexmobile.utils.Constant.ACTION_SELL;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_FROM;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+
+public class MarketsActivity extends BaseActivity implements OrderHistoryListFragment.OnListFragmentInteractionListener{
 
     private static final long MARKET_STAT_INTERVAL_MILLIS_5_MIN = TimeUnit.MINUTES.toSeconds(5);
     private static final long MARKET_STAT_INTERVAL_MILLIS_1_HOUR = TimeUnit.HOURS.toSeconds(1);
     private static final long MARKET_STAT_INTERVAL_MILLIS_1_DAY = TimeUnit.DAYS.toSeconds(1);
+
+    public static final int RESULT_CODE_BACK = 1;
 
     protected MyCombinedChart mChartKline;
     protected MyCombinedChart mChartVolume;
@@ -92,6 +100,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected TextView mTvHighIndex, mTvLowIndex, mTvOpenIndex, mTvCloseIndex, mTvChangeIndex, mTvPriceIndex, mTvDateIndex;
     protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart, mIndexHeaderLayout;
     protected ImageView mChangeSymbol;
+    private Button mBtnBuy, mBtnSell;
+    private LinearLayout mLayoutFooter;
 
     protected ProgressBar mProgressBar;
     private ViewPager mViewPager;
@@ -113,6 +123,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     //
     private static final int MAXBUCKETCOUNT = 200;
 
+    private String mFromWhere;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,11 +132,12 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mToolbar = findViewById(R.id.toolbar);
         mTvTitle = findViewById(R.id.tv_title);
         setSupportActionBar(mToolbar);
-        mWatchListData = (WatchlistData) getIntent().getSerializableExtra("watchListData");
+        mWatchListData = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
+        mFromWhere = getIntent().getStringExtra(INTENT_PARAM_FROM);
         initViews();
         mOrderHistoryFragmentPageAdapter = new OrderHistoryFragmentPageAdapter(getSupportFragmentManager());
-        mOrderHistoryFragmentPageAdapter.addFragment(OrderHistoryListFragment.newInstance(1, mWatchListData));
-        mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(1, mWatchListData));
+        mOrderHistoryFragmentPageAdapter.addFragment(OrderHistoryListFragment.newInstance(mWatchListData));
+        mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(mWatchListData));
         mViewPager.setAdapter(mOrderHistoryFragmentPageAdapter);
         mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
@@ -133,7 +146,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         addContentToView(mWatchListData);
         mBasePrecision = mWatchListData.getBasePrecision();
         mDuration1dView.setSelected(true);
-        mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
+        mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
         initChartKline();
         initChartVolume();
         initChartChart();
@@ -249,7 +262,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mTvKMa10 = (TextView) findViewById(R.id.view_kline_tv_ma10);
         mTvKMa20 = (TextView) findViewById(R.id.view_kline_tv_ma20);
 
-
         mBOLLTv1 = findViewById(R.id.view_boll_tv_1);
         mBOLLTv2 = findViewById(R.id.view_boll_tv_2);
         mBOLLTv3 = findViewById(R.id.view_boll_tv_3);
@@ -267,7 +279,36 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mTvChangeIndex = findViewById(R.id.index_change_tv);
         mTvDateIndex = findViewById(R.id.index_date_tv);
         mTvPriceIndex = findViewById(R.id.index_price_tv);
+        mBtnBuy = findViewById(R.id.market_page_btn_buy);
+        mBtnSell = findViewById(R.id.market_page_btn_sell);
+        mLayoutFooter = findViewById(R.id.market_page_layout_footer);
+        mLayoutFooter.setVisibility(mFromWhere == null ? View.VISIBLE : View.GONE);
+        setViewListener();
+    }
 
+    private void setViewListener(){
+        mBtnBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra(INTENT_PARAM_ACTION, ACTION_BUY);
+                intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchListData);
+                setResult(RESULT_CODE_BACK, intent);
+                EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_BUY, mWatchListData));
+                finish();
+            }
+        });
+        mBtnSell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra(INTENT_PARAM_ACTION, ACTION_SELL);
+                intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchListData);
+                EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_SELL, mWatchListData));
+                setResult(RESULT_CODE_BACK, intent);
+                finish();
+            }
+        });
     }
 
     private void addContentToView(WatchlistData watchListData) {
@@ -1112,7 +1153,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration5mView.setSelected(true);
                 mDuration1hView.setSelected(false);
                 mDuration1dView.setSelected(false);
-                mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
+                mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_5_MIN;
@@ -1132,7 +1173,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration1dView.setSelected(false);
                 mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
+                mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_1_HOUR;
                 mIndexHeaderLayout.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
@@ -1149,7 +1190,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration1hView.setSelected(false);
                 mDuration1dView.setSelected(true);
                 mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.market_page_highlight_line));
+                mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
                 mIndexHeaderLayout.setVisibility(View.GONE);
@@ -1183,12 +1224,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.invalidate();
         mChartCharts.setVisibility(View.GONE);
         updateText(mData.getMa20DataL().size() - 1);
-    }
-
-
-    @Override
-    public void onListFragmentInteraction(MarketTrade item) {
-
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,19 +43,15 @@ import java.util.List;
 public class OrderHistoryListFragment extends BaseFragment {
 
     // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_WATCHLIST = "watchlist";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private WatchlistData mWatchlistData;
     private OnListFragmentInteractionListener mListener;
     private OrderHistoryItemRecyclerViewAdapter mOrderHistoryItemRecycerViewAdapter;
     private OrderBook mOrderBook;
 
-    public static OrderHistoryListFragment newInstance(int columnCount, WatchlistData watchListData) {
+    public static OrderHistoryListFragment newInstance(WatchlistData watchListData) {
         OrderHistoryListFragment fragment = new OrderHistoryListFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putSerializable(ARG_WATCHLIST, watchListData);
         fragment.setArguments(args);
         return fragment;
@@ -66,7 +61,6 @@ public class OrderHistoryListFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             mWatchlistData = (WatchlistData) getArguments().getSerializable(ARG_WATCHLIST);
         }
         EventBus.getDefault().register(this);
@@ -83,11 +77,7 @@ public class OrderHistoryListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_order_history, container, false);
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.list);
-        if (mColumnCount <= 1) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        } else {
-            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         if(mWatchlistData != null){
             mOrderHistoryItemRecycerViewAdapter = new OrderHistoryItemRecyclerViewAdapter(mWatchlistData.getQuoteSymbol(), mOrderBook, mListener, getContext());
             recyclerView.setAdapter(mOrderHistoryItemRecycerViewAdapter);
@@ -134,35 +124,41 @@ public class OrderHistoryListFragment extends BaseFragment {
             OrderBook orderBook = new OrderBook();
             orderBook.base = mWatchlistData.getBaseSymbol();
             orderBook.quote = mWatchlistData.getQuoteSymbol();
-            orderBook.bids = new ArrayList<>();
-            orderBook.asks = new ArrayList<>();
+            orderBook.buyOrders = new ArrayList<>();
+            orderBook.sellOrders = new ArrayList<>();
+            Order order = null;
             for(LimitOrderObject limitOrder : limitOrders){
-                Order order = null;
                 if (limitOrder.sell_price.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
+                    if(orderBook.buyOrders.size() == 20){
+                        continue;
+                    }
                     order = new Order();
                     order.price = priceToReal(limitOrder.sell_price);
-                    order.quote = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
+                    order.quoteAmount = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
                             / (double) limitOrder.sell_price.base.amount
                             / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    order.base = limitOrder.for_sale / Math.pow(10, mWatchlistData.getBasePrecision());
-                    orderBook.bids.add(order);
+                    order.baseAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getBasePrecision());
+                    orderBook.buyOrders.add(order);
                 } else {
+                    if(orderBook.sellOrders.size() == 20){
+                        continue;
+                    }
                     order = new Order();
                     order.price = priceToReal(limitOrder.sell_price);
-                    order.quote = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    order.base = (double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount
+                    order.quoteAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
+                    order.baseAmount = (double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount
                             / limitOrder.sell_price.base.amount
                             / Math.pow(10, mWatchlistData.getBasePrecision());
-                    orderBook.asks.add(order);
+                    orderBook.sellOrders.add(order);
                 }
             }
-            Collections.sort(orderBook.bids, new Comparator<Order>() {
+            Collections.sort(orderBook.buyOrders, new Comparator<Order>() {
                 @Override
                 public int compare(Order o1, Order o2) {
                     return (o1.price - o2.price) < 0 ? 1 : -1;
                 }
             });
-            Collections.sort(orderBook.asks, new Comparator<Order>() {
+            Collections.sort(orderBook.sellOrders, new Comparator<Order>() {
                 @Override
                 public int compare(Order o1, Order o2) {
                     return (o1.price - o2.price) < 0 ? -1 : 1;

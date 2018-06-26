@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/layout_header_order_history_margin_top"
+        android:paddingTop="@dimen/layout_header_order_history_padding"
+        android:paddingBottom="@dimen/layout_header_order_history_padding"
         android:weightSum="4">
 
         <TextView

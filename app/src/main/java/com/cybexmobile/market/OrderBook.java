@@ -8,6 +8,8 @@ public class OrderBook implements Serializable {
 
     public String base;
     public String quote;
-    public List<Order> bids;
-    public List<Order> asks;
+    //买单
+    public List<Order> buyOrders;
+    //卖单
+    public List<Order> sellOrders;
 }

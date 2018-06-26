@@ -20,71 +20,60 @@
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- DayNight主题下使用WebView activity重绘 uiMode禁止重绘 -->
         <activity
             android:name=".activity.BottomNavigationActivity"
             android:label=""
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:configChanges="uiMode"
+            android:launchMode="singleTask" />
         <activity
             android:name=".activity.MarketsActivity"
             android:label=""
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ChooseLanguageActivity"
             android:label=""
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ChooseThemeActivity"
             android:label=""
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
             android:label=""/>
         <activity
             android:name=".activity.RegisterActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
             android:label=""/>
         <activity
             android:name=".activity.SettingActivity"
             android:screenOrientation="portrait"
-            android:label=""
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="" />
         <activity
             android:name=".activity.WalletIntroductionActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
         <activity android:name=".activity.OpenOrdersActivity"
             android:screenOrientation="portrait"
-            android:label=""
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="" />
         <activity android:name=".activity.PortfolioActivity"
             android:screenOrientation="portrait"
-            android:label=""
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:label="" />
         <activity
             android:name=".activity.LockAssetsActivity"
             android:screenOrientation="portrait"
-            android:label=""
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="" />
 
         <service android:name=".service.WebSocketService"/>
     </application>

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:singleLine="true"
-        android:text="@string/market_page_trade_history_price" />
+        android:text="@string/text_empty" />
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_quote_volume"
@@ -23,7 +23,7 @@
         android:gravity="center"
         android:layout_weight="1"
         android:singleLine="true"
-        android:text="CYB"/>
+        android:text="@string/text_empty"/>
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_base_volume"
@@ -33,7 +33,7 @@
         android:singleLine="true"
         android:gravity="center"
         android:layout_weight="1"
-        android:text="ETH"/>
+        android:text="@string/text_empty"/>
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_date_value"
@@ -43,6 +43,6 @@
         android:gravity="center"
         android:singleLine="true"
         android:layout_weight="1"
-        android:text="@string/market_page_trade_history_date" />
+        android:text="@string/text_empty" />
 
 </LinearLayout>

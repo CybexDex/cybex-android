@@ -119,8 +119,8 @@ public class RegisterActivity extends BaseActivity {
         mPasswordIcon = findViewById(R.id.register_password_icon);
         mPasswordConfirmIcon = findViewById(R.id.register_password_confirmation_icon);
         mPinCodeIcon = findViewById(R.id.register_pin_code_icon);
-        mLayoutContainer = findViewById(R.id.register_ll_container);
         mLayoutError = findViewById(R.id.register_ll_error);
+        mLayoutContainer = findViewById(R.id.register_ll_container);
         setSupportActionBar(mToolbar);
     }
 

@@ -84,7 +84,8 @@
     <dimen name="layout_kline_height">180dp</dimen>
     <dimen name="layout_volume_height">40dp</dimen>
     <dimen name="tab_order_margin_top">26dp</dimen>
-    <dimen name="viewpager_order_height">343dp</dimen>
+    <dimen name="layout_footer_padding">6.5dp</dimen>
+    <dimen name="btn_buy_sell_margin">6.5dp</dimen>
 
     <!-- Load Dialog -->
     <dimen name="dialog_width_height">80dp</dimen>
@@ -94,12 +95,19 @@
     <dimen name="dialog_content_line_spacing_extra">10dp</dimen>
 
     <!-- OrderHistoryList Fragment -->
-    <dimen name="layout_header_order_history_margin_top">6dp</dimen>
+    <dimen name="layout_header_order_history_padding">6dp</dimen>
 
     <!-- Open Order Activity -->
     <dimen name="recycler_view_margin_top">10dp</dimen>
 
     <!-- order history fragment and trade history fragment -->
     <dimen name="recycler_view_margin_start_end">5dp</dimen>
+
+    <dimen name="layout_item_buy_sell_height">26dp</dimen>
+    <dimen name="layout_input_header_height">24dp</dimen>
+    <dimen name="layout_input_height">48dp</dimen>
+    <dimen name="text_add_sub_width">40dp</dimen>
+    <dimen name="text_asset_symbol">65dp</dimen>
+    <dimen name="layout_trade_history_height">34dp</dimen>
 
 </resources>
