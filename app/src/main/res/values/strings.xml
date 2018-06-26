@@ -36,6 +36,9 @@
     <string name="open_order_order_value">Price</string>
     <string name="open_order_buy">Buy</string>
     <string name="open_order_sell">Sell</string>
+    <string name="open_orders_title">Opened Orders</string>
+    <string name="open_order_price_amount">Price/Amount</string>
+    <string name="open_order_filled_cancel">Filled/Cancel</string>
 
     <!-- Markets Page -->
     <string name="markets_title">Market</string>
@@ -129,11 +132,8 @@
 
     <!-- Open Orders Page Related -->
     <string name="open_orders_all">All</string>
-
-
     <string name="open_orders_buy">Buy</string>
     <string name="open_orders_sell">Sell</string>
-    <string name="open_orders_title">Opened Orders</string>
     <string name="open_orders_total_value">Total Value:</string>
     <string name="open_orders_sell_total_value">Sell Total Value:</string>
     <string name="open_orders_buy_total_value">Buy Total Value:</string>
@@ -171,6 +171,8 @@
     <string name="text_sell">Sell</string>
     <string name="text_not_enough">Not enough</string>
 
-
+    <string name="item_text_open_order_price">Price:</string>
+    <string name="item_text_open_order_amount">Amount:</string>
+    <string name="item_text_open_order_cancel">Cancel</string>
 
 </resources>

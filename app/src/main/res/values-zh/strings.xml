@@ -40,6 +40,8 @@
     <string name="open_order_buy">买入</string>
     <string name="open_order_sell">卖出</string>
     <string name="open_orders_title">委单</string>
+    <string name="open_order_price_amount">价格/数量</string>
+    <string name="open_order_filled_cancel">成交量/撤单</string>
 
     <!-- Markets Page -->
     <string name="markets_title">交易中心</string>
@@ -172,5 +174,9 @@
     <string name="text_buy">买入</string>
     <string name="text_sell">卖出</string>
     <string name="text_not_enough">余额不足</string>
+
+    <string name="item_text_open_order_price">价格:</string>
+    <string name="item_text_open_order_amount">数量:</string>
+    <string name="item_text_open_order_cancel">撤单</string>
 
 </resources>

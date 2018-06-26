@@ -138,9 +138,20 @@ public class ExchangeFragment extends BaseFragment {
         mWatchlistData = event.getWatchlist();
         mAction = event.getAction();
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
-        mBuyFragment.changeWatchlist(event.getWatchlist());
-        mSellFragment.changeWatchlist(event.getWatchlist());
+        notifyFragmentWatchlistDataChange(event.getWatchlist());
         setTitleData();
+    }
+
+    private void notifyFragmentWatchlistDataChange(WatchlistData watchlistData){
+        if(mBuyFragment != null){
+            mBuyFragment.changeWatchlist(watchlistData);
+        }
+        if(mSellFragment != null){
+            mSellFragment.changeWatchlist(watchlistData);
+        }
+        if(mOpenOrdersFragment != null){
+            mOpenOrdersFragment.changeWatchlist(watchlistData);
+        }
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -151,9 +162,7 @@ public class ExchangeFragment extends BaseFragment {
             if(mWatchlistData == null){
                 mWebSocketService = binder.getService();
                 mWatchlistData = mWebSocketService.getFirstWatchlist();
-                if(mBuyFragment != null){
-                    mBuyFragment.changeWatchlist(mWatchlistData);
-                }
+                notifyFragmentWatchlistDataChange(mWatchlistData);
                 setTitleData();
             }
         }
@@ -216,7 +225,7 @@ public class ExchangeFragment extends BaseFragment {
                 break;
             case 2:
                 if(mOpenOrdersFragment == null){
-                    mOpenOrdersFragment = OpenOrdersFragment.getInstance();
+                    mOpenOrdersFragment = OpenOrdersFragment.getInstance(mWatchlistData);
                 }
                 if(mOpenOrdersFragment.isAdded()){
                     transaction.show(mOpenOrdersFragment);
