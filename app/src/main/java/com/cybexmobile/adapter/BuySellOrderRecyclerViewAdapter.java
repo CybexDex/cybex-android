@@ -14,6 +14,7 @@ import com.cybexmobile.fragment.OrderHistoryListFragment.OnListFragmentInteracti
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
+import com.cybexmobile.utils.AssetUtil;
 
 import java.util.List;
 import java.util.Locale;
@@ -54,20 +55,22 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    if(mListener != null){
+                        mListener.onItemClick(mOrders.get(position));
+                    }
                 }
             });
-            holder.mOrderPrice.setText(String.format(Locale.US,"%.6f", mOrders.get(position).price));
-            holder.mOrderVolume.setText(String.format(Locale.US, "%.4f", mOrders.get(position).quoteAmount));
+            holder.mOrderPrice.setText(String.format(Locale.US, AssetUtil.formatPrice(mOrders.get(position).price), mOrders.get(position).price));
+            holder.mOrderVolume.setText(String.format(Locale.US, AssetUtil.formatAmount(mOrders.get(position).price), mOrders.get(position).quoteAmount));
             float percentage = (float) getPercentage(mOrders, position);
             LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
             LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
             holder.mColorBar.setLayoutParams(layoutParams_colorBar);
             holder.mColorBarNon.setLayoutParams(layoutParams_colorBarNon);
             holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
-            holder.mOrderPrice.setTextColor(mContext.getResources().getColor(mType == TYPE_BUY ? R.color.increasing_color : R.color.decreasing_color));
             holder.mColorBar.setBackgroundColor(mContext.getResources().getColor(mType == TYPE_BUY ? R.color.fade_background_green : R.color.fade_background_red));
         }
+        holder.mOrderPrice.setTextColor(mContext.getResources().getColor(mType == TYPE_BUY ? R.color.increasing_color : R.color.decreasing_color));
     }
 
     @Override
@@ -117,7 +120,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
         }
     }
 
-    interface OnItemClickListener{
+    public interface OnItemClickListener{
         void onItemClick(Order order);
     }
 }

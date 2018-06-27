@@ -12,6 +12,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 
 import java.util.List;
@@ -62,28 +63,26 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<E
                 holder.itemView.setVisibility(View.VISIBLE);
                 String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
                 String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
-                String basePrecision = MyUtils.getPrecisedFormatter(base.precision);
-                String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
                 if (openOrderItem.isSell) {
                     holder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
                     holder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
+                    price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
+                    holder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, quoteSymbol));
                     amount = data.sell_price.base.amount / Math.pow(10, base.precision);
-                    holder.mTvAssetAmount.setText(String.format(basePrecision + " %s", amount, baseSymbol));
+                    holder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, baseSymbol));
                     holder.mTvQuoteSymbol.setText(baseSymbol);
                     holder.mTvBaseSymbol.setText(quoteSymbol);
-                    price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
-                    holder.mTvAssetPrice.setText(String.format(quotePrecision + " %s", price, quoteSymbol));
-                    holder.mTvFilled.setText(String.format(quotePrecision + " %s", price * amount, quoteSymbol));
+                    holder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, quoteSymbol));
                 } else {
                     holder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
                     holder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
+                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
+                    holder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, baseSymbol));
                     amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                    holder.mTvAssetAmount.setText(String.format(quotePrecision + " %s", amount, quoteSymbol));
+                    holder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, quoteSymbol));
                     holder.mTvQuoteSymbol.setText(quoteSymbol);
                     holder.mTvBaseSymbol.setText(baseSymbol);
-                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
-                    holder.mTvAssetPrice.setText(String.format(basePrecision + " %s", price, baseSymbol));
-                    holder.mTvFilled.setText(String.format(basePrecision + " %s", price * amount, baseSymbol));
+                    holder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, baseSymbol));
                 }
             }
         }else{

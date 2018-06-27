@@ -279,6 +279,9 @@ public class Event {
         }
     }
 
+    /**
+     * 通过K线图界面快捷买入卖出
+     */
     public static class MarketIntentToExchange{
         private String action;
         private WatchlistData watchlist;
@@ -294,6 +297,21 @@ public class Event {
 
         public WatchlistData getWatchlist() {
             return watchlist;
+        }
+    }
+
+    /**
+     * 交易界面委单被点击 委单价格设置到EditText
+     */
+    public static class LimitOrderClick{
+        private double price;
+
+        public LimitOrderClick(double price) {
+            this.price = price;
+        }
+
+        public double getPrice() {
+            return price;
         }
     }
 }

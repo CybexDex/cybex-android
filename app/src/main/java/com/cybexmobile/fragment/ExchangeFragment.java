@@ -80,8 +80,8 @@ public class ExchangeFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         setHasOptionsMenu(true);
+        EventBus.getDefault().register(this);
         Bundle bundle = getArguments();
         if(bundle != null){
             mAction = bundle.getString(INTENT_PARAM_ACTION, ACTION_BUY);
@@ -140,6 +140,16 @@ public class ExchangeFragment extends BaseFragment {
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
         notifyFragmentWatchlistDataChange(event.getWatchlist());
         setTitleData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLimitOrderClick(Event.LimitOrderClick event){
+        if(mBuyFragment != null && mBuyFragment.isVisible()){
+            mBuyFragment.changeBuyOrSellPrice(event.getPrice());
+        }
+        if(mSellFragment != null && mSellFragment.isVisible()){
+            mSellFragment.changeBuyOrSellPrice(event.getPrice());
+        }
     }
 
     private void notifyFragmentWatchlistDataChange(WatchlistData watchlistData){
@@ -278,7 +288,7 @@ public class ExchangeFragment extends BaseFragment {
 
                 break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

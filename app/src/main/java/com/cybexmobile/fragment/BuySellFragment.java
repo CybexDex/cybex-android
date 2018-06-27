@@ -193,6 +193,8 @@ public class BuySellFragment extends BaseFragment {
         String baseSymbol = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());
         String quoteSymbol = AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol());
         mTvAssetSymbol.setText(quoteSymbol);
+        mEtAssetPrice.setText("");
+        mEtAssetAmount.setText("");
         initOrResetButtonData();
     }
 
@@ -219,5 +221,13 @@ public class BuySellFragment extends BaseFragment {
             mExchangeLimitOrderFragment.changeWatchlist(mWatchlistData);
         }
         initOrResetViewData();
+    }
+
+    /**
+     * 改变买入卖出价
+     * @param quotePrice
+     */
+    public void changeBuyOrSellPrice(double quotePrice) {
+        mEtAssetPrice.setText(String.format(AssetUtil.formatPrice(quotePrice), quotePrice));
     }
 }

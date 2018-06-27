@@ -43,6 +43,9 @@ import butterknife.Unbinder;
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 
+/**
+ * 交易界面当前用户当前交易对委单
+ */
 public class OpenOrdersFragment extends BaseFragment {
 
     @BindView(R.id.open_orders_recycler_view)
