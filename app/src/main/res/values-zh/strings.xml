@@ -9,6 +9,7 @@
     <string name="title_faq">申请</string>
     <string name="title_account">账户</string>
     <string name="title_exchange">交易</string>
+    <string name="title_order_history">我的记录</string>
 
     <!-- Watch List Page -->
     <string name="popular_title">最热</string>
@@ -41,7 +42,7 @@
     <string name="open_order_sell">卖出</string>
     <string name="open_orders_title">委单</string>
     <string name="open_order_price_amount">价格/数量</string>
-    <string name="open_order_filled_cancel">成交量/撤单</string>
+    <string name="open_order_filled_cancel">成交额/撤单</string>
 
     <!-- Markets Page -->
     <string name="markets_title">交易中心</string>
@@ -178,5 +179,13 @@
     <string name="item_text_open_order_price">价格:</string>
     <string name="item_text_open_order_amount">数量:</string>
     <string name="item_text_open_order_cancel">撤单</string>
+
+    <!-- Order History Activity -->
+    <string name="text_asset_and_amount">资产/数量</string>
+    <string name="text_filled_and_price">成交额/单价</string>
+
+    <!-- Order History Item -->
+    <string name="item_own_order_history_time">时间:</string>
+    <string name="item_own_order_history_done">已成交</string>
 
 </resources>

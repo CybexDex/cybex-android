@@ -7,6 +7,7 @@ import android.util.Log;
 import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
+import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
@@ -28,7 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -382,27 +382,25 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, callObject, replyObject);
     }
 
-//    public List<OperationHistoryObject> get_account_history(ObjectId<AccountObject> accountId, int nLimit) throws NetworkStatusException {
-//        Call callObject = new Call();
-//        callObject.id = mCallId.getAndIncrement();
-//        callObject.method = "call";
-//        callObject.params = new ArrayList<>();
-//        callObject.params.add(_nHistoryId);
-//        callObject.params.add("get_account_history");
-//
-//        List<Object> listAccountHistoryParam = new ArrayList<>();
-//        listAccountHistoryParam.add(accountId);
-//        listAccountHistoryParam.add("1.11.0");
-//        listAccountHistoryParam.add(nLimit);
-//        listAccountHistoryParam.add("1.11.0");
-//        callObject.params.add(listAccountHistoryParam);
-//
-//        ReplyProcessImpl<Reply<List<OperationHistoryObject>>> replyObject =
-//                new ReplyProcessImpl<>(new TypeToken<Reply<List<OperationHistoryObject>>>(){}.getType());
-//        Reply<List<OperationHistoryObject>> replyAccountHistory = sendForReply(callObject, replyObject);
-//
-//        return replyAccountHistory.result;
-//    }
+    public void get_account_history(ObjectId<AccountObject> accountId, int nLimit, MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nHistoryId);
+        callObject.params.add("get_account_history");
+
+        List<Object> listAccountHistoryParam = new ArrayList<>();
+        listAccountHistoryParam.add(accountId);
+        listAccountHistoryParam.add("1.11.0");
+        listAccountHistoryParam.add(nLimit);
+        listAccountHistoryParam.add("1.11.0");
+        callObject.params.add(listAccountHistoryParam);
+
+        ReplyProcessImpl<Reply<List<AccountHistoryObject>>> replyObject =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<AccountHistoryObject>>>(){}.getType(), callback);
+        sendForReply(FLAG_HISTORY, callObject, replyObject);
+    }
 
 //    public global_property_object get_global_properties() throws NetworkStatusException {
 //        Call callObject = new Call();

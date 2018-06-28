@@ -2,10 +2,11 @@ package com.cybexmobile.event;
 
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.market.HistoryPrice;
-import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTrade;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
@@ -312,6 +313,18 @@ public class Event {
 
         public double getPrice() {
             return price;
+        }
+    }
+
+    public static class LoadAccountHistory{
+        private List<AccountHistoryObject> accountHistoryObjects;
+
+        public LoadAccountHistory(List<AccountHistoryObject> accountHistoryObjects) {
+            this.accountHistoryObjects = accountHistoryObjects;
+        }
+
+        public List<AccountHistoryObject> getAccountHistoryObjects() {
+            return accountHistoryObjects;
         }
     }
 }

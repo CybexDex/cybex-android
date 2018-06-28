@@ -74,6 +74,10 @@
             android:name=".activity.LockAssetsActivity"
             android:screenOrientation="portrait"
             android:label="" />
+        <activity
+            android:name=".activity.OwnOrderHistoryActivity"
+            android:screenOrientation="portrait"
+            android:label="" />
 
         <service android:name=".service.WebSocketService"/>
     </application>

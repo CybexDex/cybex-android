@@ -1,0 +1,190 @@
+package com.cybexmobile.activity;
+
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+
+import com.cybexmobile.R;
+import com.cybexmobile.adapter.OwnOrderHistoryRecyclerViewAdapter;
+import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.event.Event;
+import com.cybexmobile.faucet.AssetsPair;
+import com.cybexmobile.graphene.chain.AccountHistoryObject;
+import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.OrderHistory;
+import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybexmobile.service.WebSocketService;
+import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+public class OwnOrderHistoryActivity extends BaseActivity {
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolBar;
+    @BindView(R.id.order_history_rv)
+    RecyclerView mRvOrderHistory;
+
+    private Unbinder mUnbinder;
+
+    private WebSocketService mWebSocketService;
+
+    private OwnOrderHistoryRecyclerViewAdapter mOwnOrderHistoryRecyclerViewAdapter;
+
+    private List<OrderHistoryItem> mOrderHistoryItems = new ArrayList<>();
+
+    private boolean mIsLoginIn;
+    private String mName;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_own_order_history);
+        EventBus.getDefault().register(this);
+        mUnbinder = ButterKnife.bind(this);
+        setSupportActionBar(mToolBar);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mIsLoginIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        mName = sharedPreferences.getString("name", null);
+        Intent intent = new Intent(this, WebSocketService.class);
+        bindService(intent, mConnection, BIND_AUTO_CREATE);
+        mRvOrderHistory.setLayoutManager(new LinearLayoutManager(this));
+        mRvOrderHistory.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        mOwnOrderHistoryRecyclerViewAdapter = new OwnOrderHistoryRecyclerViewAdapter(this, mOrderHistoryItems);
+        mRvOrderHistory.setAdapter(mOwnOrderHistoryRecyclerViewAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUnbinder.unbind();
+        EventBus.getDefault().unregister(this);
+        unbindService(mConnection);
+    }
+
+    @Override
+    public void onNetWorkStateChanged(boolean isAvailable) {
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateFullAccount(Event.UpdateFullAccount event){
+       FullAccountObject fullAccountObject = event.getData();
+       mWebSocketService.loadAccountHistory(fullAccountObject.account.id, 100);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadAccountHistory(Event.LoadAccountHistory event){
+        List<AccountHistoryObject> accountHistoryObjects = event.getAccountHistoryObjects();
+        if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
+            return;
+        }
+        mOrderHistoryItems.clear();
+        OrderHistoryItem item = null;
+        Iterator<AccountHistoryObject> it = accountHistoryObjects.iterator();
+        //过滤非交易记录 op4为交易记录
+        Gson gson = new Gson();
+        Map<String, List<AssetsPair>> assetPairs = mWebSocketService.getAssetPairHashMap();
+        while (it.hasNext()){
+            AccountHistoryObject accountHistoryObject = it.next();
+            if(accountHistoryObject.op.get(0).getAsInt() == 4){
+                item = new OrderHistoryItem();
+                item.accountHistoryObject = accountHistoryObject;
+                item.orderHistory = gson.fromJson(accountHistoryObject.op.get(1), OrderHistory.class);
+                parseBuyOrSell(item, assetPairs);
+                //加载区块信息
+                mOrderHistoryItems.add(item);
+            } else {
+                it.remove();
+            }
+        }
+        mOwnOrderHistoryRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    private void parseBuyOrSell(OrderHistoryItem item, Map<String, List<AssetsPair>> assetPairs){
+        String payAssetId = item.orderHistory.pays.asset_id;
+        String receiveAssetId = item.orderHistory.receives.asset_id;
+        here:
+        for(Map.Entry<String, List<AssetsPair>> entry : assetPairs.entrySet()){
+            //支付baseAssetId 接收quoteAssetId 为买单
+            if(entry.getKey().equals(payAssetId)){
+                for(AssetsPair assetsPair : entry.getValue()){
+                    if(assetsPair.getQuote().equals(receiveAssetId)){
+                        item.isSell = false;
+                        item.baseAsset = assetsPair.getBaseAsset();
+                        item.quoteAsset = assetsPair.getQuoteAsset();
+                        break here;
+                    }
+                }
+            }
+            //支付quoteAssetId 接收baseAssetId 为卖单
+            if(entry.getKey().equals(receiveAssetId)){
+                for(AssetsPair assetsPair : entry.getValue()){
+                    if(assetsPair.getQuote().equals(payAssetId)){
+                        item.isSell = true;
+                        item.baseAsset = assetsPair.getBaseAsset();
+                        item.quoteAsset = assetsPair.getQuoteAsset();
+                        break here;
+                    }
+                }
+            }
+        }
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
+            if(mIsLoginIn){
+                FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
+                if(fullAccountObject != null){
+                    mWebSocketService.loadAccountHistory(fullAccountObject.account.id, 100);
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
+
+   public class OrderHistoryItem {
+        public boolean isSell;
+        public AccountHistoryObject accountHistoryObject;
+        public OrderHistory orderHistory;
+        public AssetObject baseAsset;
+        public AssetObject quoteAsset;
+   }
+}

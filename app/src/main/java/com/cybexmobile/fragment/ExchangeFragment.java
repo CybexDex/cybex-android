@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,10 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.MarketsActivity;
+import com.cybexmobile.activity.OwnOrderHistoryActivity;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -285,7 +284,8 @@ public class ExchangeFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_order_history:
-
+                Intent intent = new Intent(getContext(), OwnOrderHistoryActivity.class);
+                getContext().startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);

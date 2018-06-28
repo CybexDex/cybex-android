@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,27 +13,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.adapter.BuySellOrderRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
-import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
-import com.cybexmobile.graphene.chain.Asset;
-import com.cybexmobile.graphene.chain.LimitOrderObject;
-import com.cybexmobile.graphene.chain.Price;
-import com.cybexmobile.market.Order;
 import com.cybexmobile.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

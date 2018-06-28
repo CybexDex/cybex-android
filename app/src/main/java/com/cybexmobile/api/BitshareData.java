@@ -2,11 +2,11 @@ package com.cybexmobile.api;
 
 import android.util.Pair;
 
+import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.ObjectId;
-import com.cybexmobile.graphene.chain.OperationHistoryObject;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class BitshareData {
 
     public List<Asset> listBalances;
-    public List<Pair<OperationHistoryObject, Date>> listHistoryObject;
+    public List<Pair<AccountHistoryObject, Date>> listHistoryObject;
     //public Map<ObjectId<AccountObject>, AccountObject> mapId2AccountObject;
     public Map<ObjectId<AssetObject>, AssetObject> mapId2AssetObject;
     public AssetObject assetObjectCurrency; // 当前做汇率标志的货币

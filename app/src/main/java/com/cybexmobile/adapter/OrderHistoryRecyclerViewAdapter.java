@@ -23,7 +23,7 @@ import java.util.Locale;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<OrderHistoryItemRecyclerViewAdapter.ViewHolder> {
+public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderHistoryRecyclerViewAdapter.ViewHolder> {
 
     private OrderBook mValues;
     private String mQuoteName;
@@ -31,7 +31,7 @@ public class OrderHistoryItemRecyclerViewAdapter extends RecyclerView.Adapter<Or
     private Context mContext;
 
 
-    public OrderHistoryItemRecyclerViewAdapter(String quoteName, OrderBook orderBook, OnListFragmentInteractionListener listener, Context context) {
+    public OrderHistoryRecyclerViewAdapter(String quoteName, OrderBook orderBook, OnListFragmentInteractionListener listener, Context context) {
         mValues = orderBook;
         mQuoteName = quoteName;
         mListener = listener;

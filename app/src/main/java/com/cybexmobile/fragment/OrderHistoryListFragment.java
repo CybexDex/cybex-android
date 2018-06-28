@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cybexmobile.adapter.OrderHistoryItemRecyclerViewAdapter;
+import com.cybexmobile.adapter.OrderHistoryRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
@@ -46,7 +46,7 @@ public class OrderHistoryListFragment extends BaseFragment {
     private static final String ARG_WATCHLIST = "watchlist";
     private WatchlistData mWatchlistData;
     private OnListFragmentInteractionListener mListener;
-    private OrderHistoryItemRecyclerViewAdapter mOrderHistoryItemRecycerViewAdapter;
+    private OrderHistoryRecyclerViewAdapter mOrderHistoryItemRecycerViewAdapter;
     private OrderBook mOrderBook;
 
     public static OrderHistoryListFragment newInstance(WatchlistData watchListData) {
@@ -79,7 +79,7 @@ public class OrderHistoryListFragment extends BaseFragment {
         RecyclerView recyclerView = view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         if(mWatchlistData != null){
-            mOrderHistoryItemRecycerViewAdapter = new OrderHistoryItemRecyclerViewAdapter(mWatchlistData.getQuoteSymbol(), mOrderBook, mListener, getContext());
+            mOrderHistoryItemRecycerViewAdapter = new OrderHistoryRecyclerViewAdapter(mWatchlistData.getQuoteSymbol(), mOrderBook, mListener, getContext());
             recyclerView.setAdapter(mOrderHistoryItemRecycerViewAdapter);
         }
         return view;

@@ -108,7 +108,7 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     private void loadMarketTradHistory(){
         if(mWatchlistData != null){
             try {
-                BitsharesWalletWraper.getInstance().get_fill_order_history(mWatchlistData.getBaseAsset().id, mWatchlistData.getQuoteAsset().id, 40, mMarketTradeHistoryCallback);
+                BitsharesWalletWraper.getInstance().get_fill_order_history(mWatchlistData.getBaseAsset().id, mWatchlistData.getQuoteAsset().id, 50, mMarketTradeHistoryCallback);
             } catch (NetworkStatusException e) {
                 e.printStackTrace();
             }

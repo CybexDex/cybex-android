@@ -59,6 +59,9 @@ public class OpenOrdersFragment extends BaseFragment {
     private WebSocketService mWebSocketService;
     private ExchangeOpenOrderRecyclerViewAdapter mOpenOrderRecyclerViewAdapter;
 
+    private boolean mIsLoginIn;
+    private String mName;
+
     private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB"});
 
     public static OpenOrdersFragment getInstance(WatchlistData watchlistData){
@@ -73,6 +76,9 @@ public class OpenOrdersFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mIsLoginIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        mName = sharedPreferences.getString("name", null);
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, BIND_AUTO_CREATE);
         Bundle bundle = getArguments();
@@ -144,10 +150,8 @@ public class OpenOrdersFragment extends BaseFragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            boolean isLoginIn = sharedPreferences.getBoolean("isLoggedIn", false);
-            if(isLoginIn){
-                FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(sharedPreferences.getString("name", null));
+            if(mIsLoginIn){
+                FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
                 List<LimitOrderObject> limitOrderObjects = fullAccountObject == null ? null : fullAccountObject.limit_orders;
                 parseOpenOrderItems(limitOrderObjects);
                 notifyRecyclerView();

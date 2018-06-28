@@ -12,7 +12,7 @@ import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
-import com.cybexmobile.graphene.chain.OperationHistoryObject;
+import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
@@ -32,7 +32,6 @@ public class BitsharesWalletWraper {
     private WalletApi mWalletApi = new WalletApi();
     private Map<ObjectId<AccountObject>, AccountObject> mMapAccountId2Object = new ConcurrentHashMap<>();
     private Map<ObjectId<AccountObject>, List<Asset>> mMapAccountId2Asset = new ConcurrentHashMap<>();
-    private Map<ObjectId<AccountObject>, List<OperationHistoryObject>> mMapAccountId2History = new ConcurrentHashMap<>();
     private Map<ObjectId<AssetObject>, AssetObject> mMapAssetId2Object = new ConcurrentHashMap<>();
     private String mstrWalletFilePath;
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
@@ -54,7 +53,6 @@ public class BitsharesWalletWraper {
         mWalletApi = new WalletApi();
         mMapAccountId2Object.clear();
         mMapAccountId2Asset.clear();
-        mMapAccountId2History.clear();
         mMapAssetId2Object.clear();
 
         File file = new File(mstrWalletFilePath);
@@ -254,10 +252,10 @@ public class BitsharesWalletWraper {
 //        return listAsset;
 //    }
 
-//    public List<OperationHistoryObject> get_history(boolean bRefresh) throws NetworkStatusException {
-//        List<OperationHistoryObject> listAllHistoryObject = new ArrayList<>();
+//    public List<AccountHistoryObject> get_history(boolean bRefresh) throws NetworkStatusException {
+//        List<AccountHistoryObject> listAllHistoryObject = new ArrayList<>();
 //        for (AccountObject accountObject : list_my_accounts()) {
-//            List<OperationHistoryObject> listHistoryObject = get_account_history(
+//            List<AccountHistoryObject> listHistoryObject = get_account_history(
 //                    accountObject.id,
 //                    100,
 //                    bRefresh
@@ -269,16 +267,11 @@ public class BitsharesWalletWraper {
 //        return listAllHistoryObject;
 //    }
 
-//    public List<OperationHistoryObject> get_account_history(ObjectId<AccountObject> accountObjectId,
-//                                                              int nLimit,
-//                                                              boolean bRefresh) throws NetworkStatusException {
-//        List<OperationHistoryObject> listHistoryObject = mMapAccountId2History.get(accountObjectId);
-//        if (listHistoryObject == null || bRefresh) {
-//            listHistoryObject = mWalletApi.get_account_history(accountObjectId, nLimit);
-//            mMapAccountId2History.put(accountObjectId, listHistoryObject);
-//        }
-//        return listHistoryObject;
-//    }
+    public void get_account_history(ObjectId<AccountObject> accountObjectId,
+                                                              int nLimit,
+                                                          WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_account_history(accountObjectId, nLimit, callback);
+    }
 
 //    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
 //        return mWalletApi.list_assets(strLowerBound, nLimit);
@@ -368,12 +361,12 @@ public class BitsharesWalletWraper {
 //        try {
 //            List<Asset> listBalances = BitsharesWalletWraper.getInstance().list_balances(bRefresh);
 //
-//            List<OperationHistoryObject> operationHistoryObjectList = BitsharesWalletWraper.getInstance().get_history(bRefresh);
+//            List<AccountHistoryObject> operationHistoryObjectList = BitsharesWalletWraper.getInstance().get_history(bRefresh);
 //            HashSet<ObjectId<AccountObject>> hashSetObjectId = new HashSet<ObjectId<AccountObject>>();
 //            HashSet<ObjectId<AssetObject>> hashSetAssetObject = new HashSet<ObjectId<AssetObject>>();
 //
-//            List<Pair<OperationHistoryObject, Date>> listHistoryObjectTime = new ArrayList<Pair<OperationHistoryObject, Date>>();
-//            for (OperationHistoryObject historyObject : operationHistoryObjectList) {
+//            List<Pair<AccountHistoryObject, Date>> listHistoryObjectTime = new ArrayList<Pair<AccountHistoryObject, Date>>();
+//            for (AccountHistoryObject historyObject : operationHistoryObjectList) {
 //                block_header blockHeader = BitsharesWalletWraper.getInstance().get_block_header(historyObject.block_num);
 //                listHistoryObjectTime.add(new Pair<>(historyObject, blockHeader.timestamp));
 //                if (historyObject.op.nOperationType <= operations.ID_CREATE_ACCOUNT_OPERATION) {

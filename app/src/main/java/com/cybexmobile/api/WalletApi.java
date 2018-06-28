@@ -13,6 +13,7 @@ import com.cybexmobile.fc.io.BaseEncoder;
 import com.cybexmobile.fc.io.DataStreamEncoder;
 import com.cybexmobile.fc.io.DataStreamSizeEncoder;
 import com.cybexmobile.fc.io.RawType;
+import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
@@ -364,9 +365,9 @@ public class WalletApi {
 //        return mWebSocketClient.list_account_balances(accountId);
 //    }
 
-//    public List<OperationHistoryObject> get_account_history(ObjectId<AccountObject> accountId, int nLimit) throws NetworkStatusException {
-//        return mWebSocketClient.get_account_history(accountId, nLimit);
-//    }
+    public void get_account_history(ObjectId<AccountObject> accountId, int nLimit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_account_history(accountId, nLimit, callback);
+    }
 
 //    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
 //        return mWebSocketClient.list_assets(strLowerBound, nLimit);

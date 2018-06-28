@@ -19,31 +19,31 @@ import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.faucet.AssetsPair;
 import com.cybexmobile.faucet.CnyResponse;
 import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybexmobile.graphene.chain.AccountHistoryObject;
+import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.market.HistoryPrice;
-import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.PriceUtil;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.EventBusBuilder;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,8 +52,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -305,6 +303,31 @@ public class WebSocketService extends Service {
             e.printStackTrace();
         }
     }
+
+    public void loadAccountHistory(ObjectId<AccountObject> accountObjectId, int nLimit){
+        try {
+            BitsharesWalletWraper.getInstance().get_account_history(accountObjectId, nLimit, mAccountHistoryCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private WebSocketClient.MessageCallback mAccountHistoryCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>>() {
+
+        @Override
+        public void onMessage(WebSocketClient.Reply<List<AccountHistoryObject>> reply) {
+            List<AccountHistoryObject> accountHistoryObjects = reply.result;
+            if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
+                return;
+            }
+            EventBus.getDefault().post(new Event.LoadAccountHistory(accountHistoryObjects));
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
 
     private WebSocketClient.MessageCallback mPreHistoryPriceCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>>() {
 
@@ -678,5 +701,12 @@ public class WebSocketService extends Service {
             return null;
         }
         return watchlistData.get(0);
+    }
+
+    /**
+     * 获取所有交易对信息
+     */
+    public Map<String, List<AssetsPair>> getAssetPairHashMap(){
+        return mAssetsPairHashMap;
     }
 }
