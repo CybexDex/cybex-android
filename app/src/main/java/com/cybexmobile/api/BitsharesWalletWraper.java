@@ -7,6 +7,7 @@ import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
@@ -338,9 +339,9 @@ public class BitsharesWalletWraper {
 //        return mapId2Object;
 //    }
 
-//    public block_header get_block_header(int nBlockNumber) throws NetworkStatusException {
-//        return mWalletApi.get_block_header(nBlockNumber);
-//    }
+    public void get_block(int callId, int blockNumber, WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>> callback) throws NetworkStatusException {
+        mWalletApi.get_block(callId, blockNumber, callback);
+    }
 
 //    public signed_transaction transfer(String strFrom,
 //                                       String strTo,

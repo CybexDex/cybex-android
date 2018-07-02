@@ -10,11 +10,9 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.LockAssetsActivity;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
-import com.cybexmobile.market.MarketStat;
+import com.cybexmobile.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -68,13 +66,13 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         LockUpAssetObject lockUpAssetObject = item.lockUpAssetobject;
         if(lockUpAssetObject != null){
             loadImage(lockUpAssetObject.balance.asset_id.toString(), holder.mAssetSymbol);
-            long timeStamp = getTimeStamp(lockUpAssetObject.vesting_policy.begin_timestamp);
+            long timeStamp = DateUtils.formatToMillis(lockUpAssetObject.vesting_policy.begin_timestamp);
             long currentTimeStamp = System.currentTimeMillis();
             long duration = lockUpAssetObject.vesting_policy.vesting_duration_seconds;
             long time = (currentTimeStamp - timeStamp) / 1000;
             holder.mProgressbar.setProgress((int) (100 * time / duration));
             holder.mProgressText.setText(String.format("%s%%", String.valueOf((100 * time / duration))));
-            holder.mExpirationDate.setText(getDate(timeStamp + duration * 1000));
+            holder.mExpirationDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_yyyy_MM_dd, timeStamp + duration * 1000));
         }
         AssetObject assetObject = item.assetObject;
         if(assetObject != null){
@@ -101,35 +99,11 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         return super.getItemViewType(position);
     }
 
-    private long getTimeStamp(String timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        Calendar calendar = new GregorianCalendar();
-        TimeZone mTimeZone = calendar.getTimeZone();
-        int mOffset = mTimeZone.getRawOffset();
-        try {
-            Date parsedDate = dateFormat.parse(timestamp);
-            return parsedDate.getTime() + mOffset;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
+
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
         Picasso.get().load("https://app.cybex.io/icons/" + quoteIdWithUnderLine + "_grey.png").into(mCoinSymbol);
-    }
-
-    private String getDate(long timeStamp){
-
-        try{
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-            Date netDate = (new Date(timeStamp));
-            return sdf.format(netDate);
-        }
-        catch(Exception ex){
-            return "xx";
-        }
     }
 
 }

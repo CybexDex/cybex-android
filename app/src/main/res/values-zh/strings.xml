@@ -188,4 +188,9 @@
     <string name="item_own_order_history_time">时间:</string>
     <string name="item_own_order_history_done">已成交</string>
 
+    <!-- Watchlist Select Activity -->
+    <string name="text_markets">计价币种</string>
+    <string name="text_paris">交易对</string>
+    <string name="text_24_hour_volume">24h成交量</string>
+
 </resources>

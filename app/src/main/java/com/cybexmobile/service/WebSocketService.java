@@ -22,6 +22,7 @@ import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
@@ -312,6 +313,27 @@ public class WebSocketService extends Service {
         }
     }
 
+    public void loadBlock(int callId, int blockNumber){
+        try {
+            BitsharesWalletWraper.getInstance().get_block(callId, blockNumber, mBlockCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private WebSocketClient.MessageCallback mBlockCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<BlockHeader> reply) {
+            BlockHeader block = reply.result;
+            EventBus.getDefault().post(new Event.LoadBlock(Integer.parseInt(reply.id), block));
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
     private WebSocketClient.MessageCallback mAccountHistoryCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>>() {
 
         @Override
@@ -320,6 +342,7 @@ public class WebSocketService extends Service {
             if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
                 return;
             }
+            //if(accountHistoryObject.op.get(0).getAsInt() == 4){
             EventBus.getDefault().post(new Event.LoadAccountHistory(accountHistoryObjects));
         }
 

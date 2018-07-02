@@ -170,6 +170,9 @@ public class MarketTradeHistoryFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSubscribeMarket(Event.SubscribeMarket event) {
+        if(mWatchlistData == null){
+            return;
+        }
         if(mWatchlistData.getSubscribeId() == event.getCallId()) {
             loadMarketTradHistory();
         }

@@ -16,6 +16,7 @@ import com.cybexmobile.fc.io.RawType;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
@@ -369,15 +370,15 @@ public class WalletApi {
         mWebSocketClient.get_account_history(accountId, nLimit, callback);
     }
 
+    public void get_block(int callId, int blockNumber, WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_block(callId, blockNumber, callback);
+    }
+
 //    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
 //        return mWebSocketClient.list_assets(strLowerBound, nLimit);
 //    }
 //    public List<AssetObject> get_assets(List<ObjectId<AssetObject>> listAssetObjectId) throws NetworkStatusException {
 //        return mWebSocketClient.get_assets(listAssetObjectId);
-//    }
-
-//    public block_header get_block_header(int nBlockNumber) throws NetworkStatusException {
-//        return mWebSocketClient.get_block_header(nBlockNumber);
 //    }
 
     public void lookup_asset_symbols(String strAssetSymbol, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {

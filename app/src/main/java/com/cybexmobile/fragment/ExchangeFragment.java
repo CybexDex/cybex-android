@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.MarketsActivity;
 import com.cybexmobile.activity.OwnOrderHistoryActivity;
+import com.cybexmobile.activity.WatchlistSelectActivity;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -36,6 +37,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static com.cybexmobile.utils.Constant.ACTION_BUY;
@@ -48,6 +50,9 @@ public class ExchangeFragment extends BaseFragment {
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
+
+    private static final int REQUEST_CODE_SELECT_WATCHLIST = 1;
+    private static final int RESULT_CODE_SELECTED_WATCHLIST = 1;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -132,6 +137,20 @@ public class ExchangeFragment extends BaseFragment {
         initFragment(savedInstanceState);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_SELECT_WATCHLIST && requestCode == RESULT_CODE_SELECTED_WATCHLIST){
+            //change watchlistdata
+            setTitleData();
+//            mBuyFragment.changeWatchlist(null);
+//            mSellFragment.changeWatchlist(null);
+//            mOpenOrdersFragment.changeWatchlist(null);
+        }
+
+
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMarketIntentToExchange(Event.MarketIntentToExchange event){
         mWatchlistData = event.getWatchlist();
@@ -149,6 +168,13 @@ public class ExchangeFragment extends BaseFragment {
         if(mSellFragment != null && mSellFragment.isVisible()){
             mSellFragment.changeBuyOrSellPrice(event.getPrice());
         }
+    }
+
+    @OnClick(R.id.tv_title)
+    public void onTitleClick(View view){
+        Intent intent = new Intent(getContext(), WatchlistSelectActivity.class);
+        intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
+        startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
     }
 
     private void notifyFragmentWatchlistDataChange(WatchlistData watchlistData){

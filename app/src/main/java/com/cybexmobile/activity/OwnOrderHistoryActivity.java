@@ -15,11 +15,13 @@ import android.support.v7.widget.Toolbar;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.OwnOrderHistoryRecyclerViewAdapter;
+import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.faucet.AssetsPair;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.service.WebSocketService;
@@ -69,6 +71,7 @@ public class OwnOrderHistoryActivity extends BaseActivity {
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
         mRvOrderHistory.setLayoutManager(new LinearLayoutManager(this));
+        mRvOrderHistory.setItemAnimator(null);
         mRvOrderHistory.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mOwnOrderHistoryRecyclerViewAdapter = new OwnOrderHistoryRecyclerViewAdapter(this, mOrderHistoryItems);
         mRvOrderHistory.setAdapter(mOwnOrderHistoryRecyclerViewAdapter);
@@ -123,12 +126,29 @@ public class OwnOrderHistoryActivity extends BaseActivity {
                 item.orderHistory = gson.fromJson(accountHistoryObject.op.get(1), OrderHistory.class);
                 parseBuyOrSell(item, assetPairs);
                 //加载区块信息
+                item.callId = BitsharesWalletWraper.getInstance().get_call_id().getAndIncrement();
+                mWebSocketService.loadBlock(item.callId, item.accountHistoryObject.block_num);
                 mOrderHistoryItems.add(item);
             } else {
                 it.remove();
             }
         }
         mOwnOrderHistoryRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadBlock(Event.LoadBlock event){
+        if(mOrderHistoryItems == null || mOrderHistoryItems.size() == 0){
+            return;
+        }
+        event.getCallId();
+        for(int i = 0; i < mOrderHistoryItems.size(); i++){
+            if(mOrderHistoryItems.get(i).callId == event.getCallId()){
+                mOrderHistoryItems.get(i).block = event.getBlockHeader();
+                mOwnOrderHistoryRecyclerViewAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     private void parseBuyOrSell(OrderHistoryItem item, Map<String, List<AssetsPair>> assetPairs){
@@ -181,10 +201,12 @@ public class OwnOrderHistoryActivity extends BaseActivity {
     };
 
    public class OrderHistoryItem {
+        public int callId;//通过callid对应请求结果
         public boolean isSell;
         public AccountHistoryObject accountHistoryObject;
         public OrderHistory orderHistory;
         public AssetObject baseAsset;
         public AssetObject quoteAsset;
+        public BlockHeader block;
    }
 }

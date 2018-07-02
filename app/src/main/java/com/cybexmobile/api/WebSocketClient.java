@@ -10,6 +10,7 @@ import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FullNodeServerSelect;
 import com.cybexmobile.graphene.chain.Asset;
@@ -521,25 +522,20 @@ public class WebSocketClient extends WebSocketListener {
         //return replyObject.result.get(0);
     }
 
-//    public block_header get_block_header(int nBlockNumber) throws NetworkStatusException {
-//        Call callObject = new Call();
-//        callObject.id = mCallId.getAndIncrement();
-//        callObject.method = "call";
-//        callObject.params = new ArrayList<>();
-//        callObject.params.add(_nDatabaseId);
-//        callObject.params.add("get_block_header");
-//        List<Object> listBlockNumber = new ArrayList<>();
-//        listBlockNumber.add(nBlockNumber);
-//        callObject.params.add(listBlockNumber);
-//
-//        ReplyProcessImpl<Reply<block_header>> replyObjectProcess =
-//                new ReplyProcessImpl<>(new TypeToken<Reply<block_header>>(){}.getType());
-//        Reply<block_header> replyObject = sendForReply(callObject, replyObjectProcess);
-//
-//        return replyObject.result;
-//
-//    }
-
+    public void get_block(int callId, int blockNumber, MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
+        Call call = new Call();
+        call.id = callId;
+        call.method = "call";
+        call.params = new ArrayList<>();
+        call.params.add(_nDatabaseId);
+        call.params.add("get_block");
+        List<Object> blockData = new ArrayList<>();
+        blockData.add(blockNumber);
+        call.params.add(blockData);
+        ReplyProcessImpl<Reply<BlockHeader>> replyReplyProcess =
+            new ReplyProcessImpl<>(new TypeToken<Reply<BlockHeader>>(){}.getType(), callback);
+        sendForReply(FLAG_DATABASE, call, replyReplyProcess);
+    }
 
 //    public int broadcast_transaction(signed_transaction tx) throws NetworkStatusException {
 //        Call callObject = new Call();

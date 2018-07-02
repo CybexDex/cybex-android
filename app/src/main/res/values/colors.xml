@@ -59,5 +59,6 @@
     <color name="btn_red_start">#d96250</color>
     <color name="btn_red_end">#be4634</color>
 
+    <color name="bg_watchlist_item_focus_color">#212939</color>f
 
 </resources>

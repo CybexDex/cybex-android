@@ -78,6 +78,10 @@
             android:name=".activity.OwnOrderHistoryActivity"
             android:screenOrientation="portrait"
             android:label="" />
+        <activity android:name=".activity.WatchlistSelectActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dialog"
+            android:label="" />
 
         <service android:name=".service.WebSocketService"/>
     </application>

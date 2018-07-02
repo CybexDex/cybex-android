@@ -4,6 +4,7 @@ import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.market.HistoryPrice;
@@ -325,6 +326,24 @@ public class Event {
 
         public List<AccountHistoryObject> getAccountHistoryObjects() {
             return accountHistoryObjects;
+        }
+    }
+
+    public static class LoadBlock{
+        private int callId;
+        private BlockHeader blockHeader;
+
+        public LoadBlock(int callId, BlockHeader blockHeader) {
+            this.callId = callId;
+            this.blockHeader = blockHeader;
+        }
+
+        public int getCallId() {
+            return callId;
+        }
+
+        public BlockHeader getBlockHeader() {
+            return blockHeader;
         }
     }
 }

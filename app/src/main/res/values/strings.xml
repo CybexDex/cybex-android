@@ -183,5 +183,11 @@
     <!-- Own Order History Item -->
     <string name="item_own_order_history_time">Time:</string>
     <string name="item_own_order_history_done">Done</string>
+    
+    <!-- Watchlist Select Activity -->
+    <string name="text_markets">Markets</string>
+    <string name="text_paris">Pairs</string>
+    <string name="text_24_hour_volume">24h Volume</string>
+    
 
 </resources>

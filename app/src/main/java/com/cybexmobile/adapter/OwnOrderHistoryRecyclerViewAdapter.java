@@ -12,9 +12,11 @@ import com.cybexmobile.activity.OwnOrderHistoryActivity;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.utils.AssetUtil;
+import com.cybexmobile.utils.DateUtils;
 
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Own
         OwnOrderHistoryActivity.OrderHistoryItem orderHistoryItem = mOrderHistoryItems.get(position);
         AssetObject base = orderHistoryItem.baseAsset;
         AssetObject quote = orderHistoryItem.quoteAsset;
-        OrderHistory orderHistory = orderHistoryItem.orderHistory;
+        BlockHeader block = orderHistoryItem.block;
         if (base != null && quote != null) {
             if ((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE")) ||
                     (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE"))) {
@@ -78,6 +80,9 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Own
                 holder.mTvBasePrice.setText(String.format("%." + base.precision + "f %s", baseAmount/quoteAmount, baseSymbol));
                 holder.mTvBaseAmount.setText(String.format("%." + base.precision + "f %s", baseAmount, baseSymbol));
                 holder.mTvQuoteAmount.setText(String.format("%." + quote.precision +"f %s", quoteAmount, quoteSymbol));
+                if(block != null){
+                    holder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillis(block.timestamp)));
+                }
             }
         }else{
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
