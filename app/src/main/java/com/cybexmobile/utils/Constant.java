@@ -33,4 +33,10 @@ public class Constant {
     public static final String ASSET_SYMBOL_CYB = "CYB";
     public static final String ASSET_SYMBOL_USDT = "USDT";
     public static final String ASSET_SYMBOL_BTC = "BTC";
+
+    /**
+     * intent request and result code
+     */
+    public static final int REQUEST_CODE_SELECT_WATCHLIST = 1;
+    public static final int RESULT_CODE_SELECTED_WATCHLIST = 1;
 }

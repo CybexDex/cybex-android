@@ -23,6 +23,7 @@ import com.cybexmobile.adapter.WatchlistSelectRecyclerViewAdapter;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.utils.Constant;
 
@@ -40,6 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
 public class WatchlistSelectActivity extends BaseActivity implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener{
 
@@ -65,20 +67,16 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watchlist_select);
-        EventBus.getDefault().register(this);
-        WindowManager windowManager = getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = (int)(display.getHeight() * 0.7);
-        params.gravity = Gravity.TOP;
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
+        mCurrWatchlist = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
+        initWindow();
+        initRadioButton();
         mRvWatchlist.setLayoutManager(new LinearLayoutManager(this));
         mRvWatchlist.setItemAnimator(null);
-        mWatchlistSelectRecyclerViewAdapter = new WatchlistSelectRecyclerViewAdapter(this, mWatchlists);
+        mWatchlistSelectRecyclerViewAdapter = new WatchlistSelectRecyclerViewAdapter(this, mCurrWatchlist, mWatchlists);
         mWatchlistSelectRecyclerViewAdapter.setOnItemClickListener(this);
         mRvWatchlist.setAdapter(mWatchlistSelectRecyclerViewAdapter);
-        mCurrWatchlist = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
     }
@@ -109,7 +107,7 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
     public void onItemClick(WatchlistData watchlist) {
         Intent intent = new Intent();
         intent.putExtra(INTENT_PARAM_WATCHLIST, watchlist);
-        setResult(1, intent);
+        setResult(RESULT_CODE_SELECTED_WATCHLIST, intent);
         finish();
     }
 
@@ -184,4 +182,41 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
             mWebSocketService = null;
         }
     };
+
+    private void initWindow(){
+        WindowManager windowManager = getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = (int)(display.getHeight() * 0.7);
+        params.gravity = Gravity.TOP;
+    }
+
+    private void initRadioButton(){
+        if(mCurrWatchlist == null){
+            return;
+        }
+        AssetObject baseAsset = mCurrWatchlist.getBaseAsset();
+        if(baseAsset == null){
+            return;
+        }
+        switch (baseAsset.id.toString()){
+            case Constant.ASSET_ID_ETH:
+                mRbEth.setChecked(true);
+                mCurrentBaseAssetId = Constant.ASSET_ID_ETH;
+                break;
+            case Constant.ASSET_ID_CYB:
+                mRbCyb.setChecked(true);
+                mCurrentBaseAssetId = Constant.ASSET_ID_CYB;
+                break;
+            case Constant.ASSET_ID_USDT:
+                mRbUsdt.setChecked(true);
+                mCurrentBaseAssetId = Constant.ASSET_ID_USDT;
+                break;
+            case Constant.ASSET_ID_BTC:
+                mRbBtc.setChecked(true);
+                mCurrentBaseAssetId = Constant.ASSET_ID_BTC;
+                break;
+        }
+    }
 }

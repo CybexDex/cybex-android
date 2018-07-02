@@ -10,13 +10,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="@dimen/layout_header_order_history_padding"
-        android:paddingBottom="@dimen/layout_header_order_history_padding"
-        android:weightSum="4">
+        android:paddingBottom="@dimen/layout_header_order_history_padding">
 
         <TextView
             android:id="@+id/market_page_base_asset_price"
             style="@style/font_gray_bold_small"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -25,7 +24,7 @@
         <TextView
             android:id="@+id/market_page_trade_history_quote"
             style="@style/font_gray_bold_small"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:layout_height="wrap_content"
@@ -34,7 +33,7 @@
         <TextView
             android:id="@+id/market_page_trade_history_base"
             style="@style/font_gray_bold_small"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
@@ -43,7 +42,7 @@
 
         <TextView
             style="@style/font_gray_bold_small"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_weight="1"

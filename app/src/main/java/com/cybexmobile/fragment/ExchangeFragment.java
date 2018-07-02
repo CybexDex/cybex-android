@@ -30,6 +30,7 @@ import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.utils.AssetUtil;
+import com.cybexmobile.utils.Constant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,14 +46,13 @@ import static com.cybexmobile.utils.Constant.ACTION_SELL;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_FROM;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
+import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
 public class ExchangeFragment extends BaseFragment {
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
-
-    private static final int REQUEST_CODE_SELECT_WATCHLIST = 1;
-    private static final int RESULT_CODE_SELECTED_WATCHLIST = 1;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -140,15 +140,12 @@ public class ExchangeFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_SELECT_WATCHLIST && requestCode == RESULT_CODE_SELECTED_WATCHLIST){
+        if(requestCode == REQUEST_CODE_SELECT_WATCHLIST && resultCode == RESULT_CODE_SELECTED_WATCHLIST){
             //change watchlistdata
+            mWatchlistData = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
             setTitleData();
-//            mBuyFragment.changeWatchlist(null);
-//            mSellFragment.changeWatchlist(null);
-//            mOpenOrdersFragment.changeWatchlist(null);
+            notifyFragmentWatchlistDataChange(mWatchlistData);
         }
-
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -193,10 +190,10 @@ public class ExchangeFragment extends BaseFragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
-            //当WatchlistData为空时 默认取行情页第一个tab的第一个交易对
+            //当WatchlistData为空时，默认取CYB/ETH交易对数据
             if(mWatchlistData == null){
                 mWebSocketService = binder.getService();
-                mWatchlistData = mWebSocketService.getFirstWatchlist();
+                mWatchlistData = mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB);
                 notifyFragmentWatchlistDataChange(mWatchlistData);
                 setTitleData();
             }

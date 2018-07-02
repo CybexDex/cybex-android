@@ -3,6 +3,7 @@ package com.cybexmobile.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,11 +22,13 @@ import butterknife.ButterKnife;
 public class WatchlistSelectRecyclerViewAdapter extends RecyclerView.Adapter<WatchlistSelectRecyclerViewAdapter.ViewHolder> {
 
     private List<WatchlistData> mWatchlists;
+    private WatchlistData mCurrentWatchlist;
     private Context mContext;
     private OnItemClickListener mOnItemClickListener;
 
-    public WatchlistSelectRecyclerViewAdapter(Context context, List<WatchlistData> watchlists) {
+    public WatchlistSelectRecyclerViewAdapter(Context context, WatchlistData watchlistData, List<WatchlistData> watchlists) {
         mWatchlists = watchlists;
+        mCurrentWatchlist = watchlistData;
         mContext = context;
     }
 
@@ -47,16 +50,23 @@ public class WatchlistSelectRecyclerViewAdapter extends RecyclerView.Adapter<Wat
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         WatchlistData watchlist = mWatchlists.get(position);
-        holder.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(mOnItemClickListener != null && hasFocus){
+            public void onClick(View v) {
+                if(mOnItemClickListener != null){
                     mOnItemClickListener.onItemClick(watchlist);
                 }
             }
         });
-        holder.mTvQuoteSymbol.setText(AssetUtil.parseSymbol(watchlist.getQuoteSymbol()));
-        holder.mTvBaseSymbol.setText(AssetUtil.parseSymbol(watchlist.getBaseSymbol()));
+        if(mCurrentWatchlist != null && mCurrentWatchlist.getBaseSymbol().equals(watchlist.getBaseSymbol()) &&
+                mCurrentWatchlist.getQuoteSymbol().equals(watchlist.getQuoteSymbol())){
+            holder.itemView.setSelected(true);
+            holder.mTvSymbol.setSelected(true);
+        } else {
+            holder.itemView.setSelected(false);
+            holder.mTvSymbol.setSelected(false);
+        }
+        holder.mTvSymbol.setText(String.format("%s/%s", AssetUtil.parseSymbol(watchlist.getQuoteSymbol()), AssetUtil.parseSymbol(watchlist.getBaseSymbol())));
         double change = watchlist.getChange() == null ? 0.0 : Double.parseDouble(watchlist.getChange());
         if(change > 0.f){
             holder.mTvChange.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
@@ -77,10 +87,8 @@ public class WatchlistSelectRecyclerViewAdapter extends RecyclerView.Adapter<Wat
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.item_watchlist_select_tv_quote_symbol)
-        TextView mTvQuoteSymbol;
-        @BindView(R.id.item_watchlist_select_tv_base_symbol)
-        TextView mTvBaseSymbol;
+        @BindView(R.id.item_watchlist_select_tv_symbol)
+        TextView mTvSymbol;
         @BindView(R.id.item_watchlist_select_tv_24_change)
         TextView mTvChange;
         @BindView(R.id.item_watchlist_select_tv_24_volume)

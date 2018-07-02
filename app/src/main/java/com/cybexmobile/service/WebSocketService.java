@@ -715,15 +715,27 @@ public class WebSocketService extends Service {
         mNames.clear();
     }
 
-    public WatchlistData getFirstWatchlist(){
+    /**
+     * 获取交易对WatchlistData
+     * @param baseId
+     * @param quoteId
+     * @return
+     */
+    public WatchlistData getWatchlist(String baseId, String quoteId){
         if(mWatchlistHashMap == null || mWatchlistHashMap.isEmpty()){
             return null;
         }
-        List<WatchlistData> watchlistData = mWatchlistHashMap.get("1.3.2");
-        if(watchlistData == null || watchlistData.size() == 0){
+        List<WatchlistData> watchlists = mWatchlistHashMap.get(baseId);
+        if(watchlists == null || watchlists.size() == 0){
             return null;
         }
-        return watchlistData.get(0);
+        for(WatchlistData watchlist : watchlists){
+            AssetObject quoteAsset = watchlist.getQuoteAsset();
+            if(quoteAsset != null && quoteAsset.id.toString().equals(quoteId)){
+                return watchlist;
+            }
+        }
+        return null;
     }
 
     /**

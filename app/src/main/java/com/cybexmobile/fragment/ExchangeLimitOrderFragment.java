@@ -290,9 +290,14 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     }
 
     private void initQuotePriceText(){
-        mTvQuotePrice.setText(String.format(AssetUtil.formatPrice(mWatchlistData.getCurrentPrice()), mWatchlistData.getCurrentPrice()));
-        mTvQuotePrice.setTextColor(getResources().getColor(Double.parseDouble(mWatchlistData.getChange()) > 0 ? R.color.decreasing_color : R.color.increasing_color));
-        mTvQuoteRmbPrice.setText(String.format(Locale.US, "≈¥ %.2f", mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice()));
+        mTvQuotePrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) : String.format(AssetUtil.formatPrice(mWatchlistData.getCurrentPrice()), mWatchlistData.getCurrentPrice()));
+        String change = mWatchlistData.getChange();
+        if(change == null){
+            mTvQuotePrice.setTextColor(getResources().getColor(R.color.no_change_color));
+        } else {
+            mTvQuotePrice.setTextColor(getResources().getColor(Double.parseDouble(change) > 0 ? R.color.decreasing_color : R.color.increasing_color));
+        }
+        mTvQuoteRmbPrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) : String.format(Locale.US, "≈¥ %.2f", mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice()));
     }
 
     public void changeWatchlist(WatchlistData watchlist){
