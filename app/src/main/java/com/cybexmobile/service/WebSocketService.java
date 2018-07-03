@@ -81,8 +81,8 @@ public class WebSocketService extends Service {
 
     private boolean mIsWebSocketAvailable;
 
-    public class WebSocketBinder extends Binder{
-        public WebSocketService getService(){
+    public class WebSocketBinder extends Binder {
+        public WebSocketService getService() {
             return WebSocketService.this;
         }
     }
@@ -130,30 +130,35 @@ public class WebSocketService extends Service {
     }
 
     //加载行情数据
-    public void loadWatchlistData(String baseAssetId){
+    public void loadWatchlistData(String baseAssetId) {
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
-        if(watchlistDatas != null){
+        if (watchlistDatas != null) {
             EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistDatas));
             return;
         }
         List<AssetsPair> assetsPairs = mAssetsPairHashMap.get(baseAssetId);
-        if(assetsPairs != null && assetsPairs.size() > 0){
+        if (assetsPairs != null && assetsPairs.size() > 0) {
             loadHistoryPriceAndMarketTicker(assetsPairs);
             return;
         }
         loadAssetsPairData(baseAssetId);
+        loadAssetsPairData("1.3.0");
+        loadAssetsPairData("1.3.27");
+        loadAssetsPairData("1.3.3");
+
+
     }
 
     public void subscribeAfterNetworkAvailable() {
         Iterator<Map.Entry<String, List<WatchlistData>>> entries = mWatchlistHashMap.entrySet().iterator();
-        while (entries.hasNext()){
+        while (entries.hasNext()) {
             List<WatchlistData> watchlists = entries.next().getValue();
             for (WatchlistData watchlistData : watchlists) {
                 /**
                  * fix bug:CYM-249
                  * 重新订阅保持callId不变
                  */
-                if(watchlistData.getSubscribeId() == 0){
+                if (watchlistData.getSubscribeId() == 0) {
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
                     watchlistData.setSubscribeId(id.getAndIncrement());
                 }
@@ -162,13 +167,13 @@ public class WebSocketService extends Service {
         }
     }
 
-   @Subscribe(threadMode = ThreadMode.MAIN)
-   public void onWebSocketTimeOut(Event.WebSocketTimeOut webSocketTimeOut) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onWebSocketTimeOut(Event.WebSocketTimeOut webSocketTimeOut) {
         subscribeAfterNetworkAvailable();
-   }
+    }
 
     //加载交易对数据
-    private void loadAssetsPairData(String baseAsset){
+    private void loadAssetsPairData(String baseAsset) {
         RetrofitFactory.getInstance()
                 .api()
                 .getAssetsPair(baseAsset)
@@ -176,8 +181,8 @@ public class WebSocketService extends Service {
                     @Override
                     public List<AssetsPair> apply(AssetsPairResponse assetsPairResponse) {
                         List<AssetsPair> assetsPairs = new ArrayList<>();
-                        if(assetsPairResponse.getData() != null && assetsPairResponse.getData().size() > 0){
-                            for(String quote : assetsPairResponse.getData()){
+                        if (assetsPairResponse.getData() != null && assetsPairResponse.getData().size() > 0) {
+                            for (String quote : assetsPairResponse.getData()) {
                                 assetsPairs.add(new AssetsPair(baseAsset, quote));
                             }
                         }
@@ -213,6 +218,7 @@ public class WebSocketService extends Service {
 
     /**
      * 加载币信息
+     *
      * @param assetsPairs 交易对
      */
     private void loadAssetObjectDatas(List<AssetsPair> assetsPairs){
@@ -232,10 +238,11 @@ public class WebSocketService extends Service {
 
     /**
      * 加载币信息
+     *
      * @param baseAssetId
      * @param quoteAssetId
      */
-    private void loadAssetObjectDatas(String  baseAssetId, String quoteAssetId){
+    private void loadAssetObjectDatas(String baseAssetId, String quoteAssetId) {
         List<String> assetIds = new ArrayList<>();
         assetIds.add(baseAssetId);
         assetIds.add(quoteAssetId);
@@ -248,9 +255,10 @@ public class WebSocketService extends Service {
 
     /**
      * 加载币信息
+     *
      * @param assetId 币id
      */
-    private void loadAssetObjectData(String assetId){
+    private void loadAssetObjectData(String assetId) {
         try {
             BitsharesWalletWraper.getInstance().get_objects(assetId, mAssetOneCallback);
         } catch (NetworkStatusException e) {
@@ -259,9 +267,9 @@ public class WebSocketService extends Service {
     }
 
     //加载价格和交易历史
-    private void loadHistoryPriceAndMarketTicker(List<AssetsPair> assetsPairs){
-        for(AssetsPair assetsPair : assetsPairs){
-            if(assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null){
+    private void loadHistoryPriceAndMarketTicker(List<AssetsPair> assetsPairs) {
+        for (AssetsPair assetsPair : assetsPairs) {
+            if (assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null) {
                 loadMarketTicker(assetsPair.getBase(), assetsPair.getQuote());
                 Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
                 Date endDate = new Date(System.currentTimeMillis());
@@ -277,7 +285,7 @@ public class WebSocketService extends Service {
         loadHistoryPrice(baseAsset, quoteAsset, startDate, endDate);
     }
 
-    private void loadHistoryPrice(AssetObject baseAsset, AssetObject quoteAsset, Date startDate, Date endDate){
+    private void loadHistoryPrice(AssetObject baseAsset, AssetObject quoteAsset, Date startDate, Date endDate) {
         try {
             BitsharesWalletWraper.getInstance().get_market_history(baseAsset.id, quoteAsset.id, 3600, startDate, endDate, mHistoryPriceCallback);
         } catch (NetworkStatusException e) {
@@ -285,7 +293,7 @@ public class WebSocketService extends Service {
         }
     }
 
-    private void loadMarketTicker(String base, String quote){
+    private void loadMarketTicker(String base, String quote) {
         try {
             BitsharesWalletWraper.getInstance().get_ticker(base, quote, mMarketTickerCallback);
         } catch (NetworkStatusException e) {
@@ -295,13 +303,13 @@ public class WebSocketService extends Service {
 
     private void subscribeToMarket(String id, String base, String quote) {
         try {
-            BitsharesWalletWraper.getInstance().subscribe_to_market(id ,base, quote, mSubscribeCallback);
+            BitsharesWalletWraper.getInstance().subscribe_to_market(id, base, quote, mSubscribeCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
     }
 
-    private void loadPreHistoryPrice(ObjectId<AssetObject> baseAssetId, ObjectId<AssetObject> quoteAssetId, Date startDate, Date endDate){
+    private void loadPreHistoryPrice(ObjectId<AssetObject> baseAssetId, ObjectId<AssetObject> quoteAssetId, Date startDate, Date endDate) {
         try {
             BitsharesWalletWraper.getInstance().get_market_history(baseAssetId, quoteAssetId, 3600, startDate, endDate, mPreHistoryPriceCallback);
         } catch (NetworkStatusException e) {
@@ -361,12 +369,12 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
             List<BucketObject> buckets = reply.result;
-            if(buckets == null || buckets.size() == 0){
+            if (buckets == null || buckets.size() == 0) {
                 return;
             }
-            BucketObject bucket = buckets.get(buckets.size() -1);
+            BucketObject bucket = buckets.get(buckets.size() - 1);
             WatchlistData watchlistData = getWatchlist(mWatchlistHashMap, buckets.get(0));
-            if(watchlistData != null){
+            if (watchlistData != null) {
                 watchlistData.addHistoryPrice(0, PriceUtil.priceFromBucket(watchlistData.getBaseAsset(), watchlistData.getQuoteAsset(), bucket));
             }
             EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
@@ -384,17 +392,17 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
             MarketTicker marketTicker = reply.result;
-            if(marketTicker == null){
+            if (marketTicker == null) {
                 return;
             }
             WatchlistData watchlistData = null;
-            for(WatchlistData watchlist : mWatchlistHashMap.get(marketTicker.base)){
-                if(watchlist.getQuoteId().equals(marketTicker.quote)){
+            for (WatchlistData watchlist : mWatchlistHashMap.get(marketTicker.base)) {
+                if (watchlist.getQuoteId().equals(marketTicker.quote)) {
                     watchlistData = watchlist;
                     break;
                 }
             }
-            if(watchlistData != null){
+            if (watchlistData != null) {
                 watchlistData.setMarketTicker(marketTicker);
                 //EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
             }
@@ -425,18 +433,18 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
             List<BucketObject> buckets = reply.result;
-            if(buckets == null || buckets.size() == 0){
+            if (buckets == null || buckets.size() == 0) {
                 return;
             }
             WatchlistData watchlistData = getWatchlist(mWatchlistHashMap, buckets.get(0));
-            if(watchlistData != null){
+            if (watchlistData != null) {
                 List<HistoryPrice> historyPrices = new ArrayList<>();
-                for(BucketObject bucket : buckets){
+                for (BucketObject bucket : buckets) {
                     historyPrices.add(PriceUtil.priceFromBucket(watchlistData.getBaseAsset(), watchlistData.getQuoteAsset(), bucket));
                 }
                 watchlistData.setHistoryPrices(historyPrices);
             }
-            if(buckets.get(0).key.open.getTime() > (System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS )){
+            if (buckets.get(0).key.open.getTime() > (System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS)) {
                 loadPreHistoryPrice(buckets.get(0).key.base, buckets.get(0).key.quote,
                         new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS - DateUtils.DAY_IN_MILLIS),
                         new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS));
@@ -451,7 +459,7 @@ public class WebSocketService extends Service {
         }
     };
 
-    private WatchlistData getWatchlist(Map<String, List<WatchlistData>> map, BucketObject bucket){
+    private WatchlistData getWatchlist(Map<String, List<WatchlistData>> map, BucketObject bucket) {
         List<WatchlistData> baseWatchlistDatas = map.get(bucket.key.base.toString());
         List<WatchlistData> quoteWatchlistDatas = map.get(bucket.key.quote.toString());
 
@@ -479,7 +487,7 @@ public class WebSocketService extends Service {
                 if (watchlist.getQuoteId().equals(bucket.key.quote.toString())) {
                     return watchlist;
                 }
-             }
+            }
         }
         return null;
     }
@@ -489,12 +497,12 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(WebSocketClient.Reply<List<AssetObject>> reply) {
             List<AssetObject> assetObjects = reply.result;
-            if(assetObjects == null || assetObjects.size() == 0){
+            if (assetObjects == null || assetObjects.size() == 0) {
                 return;
             }
             EventBus.getDefault().post(new Event.LoadAssets(assetObjects));
             mAssetObjects.addAll(assetObjects);
-            if(assetObjects == null || assetObjects.size() == 0){
+            if (assetObjects == null || assetObjects.size() == 0) {
                 return;
             }
             String baseAssetId = assetObjects.get(0).id.toString();
@@ -514,14 +522,17 @@ public class WebSocketService extends Service {
             }
             //创建交易对数据
             List<WatchlistData> watchlistData = new ArrayList<>();
-            for(AssetsPair assetsPair : assetsPairs){
+            for (AssetsPair assetsPair : assetsPairs) {
                 watchlistData.add(new WatchlistData(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset()));
             }
             mWatchlistHashMap.put(baseAssetId, watchlistData);
             //更新行情
             EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistData));
+            if (mWatchlistHashMap.get("1.3.2") != null && mWatchlistHashMap.get("1.3.27") != null && mWatchlistHashMap.get("1.3.3") != null && mWatchlistHashMap.get("1.3.0") != null) {
+                EventBus.getDefault().post(new Event.UpdateAccountPage());
+            }
             for (WatchlistData watchlistItem : watchlistData) {
-                if(watchlistItem.getSubscribeId() == 0){
+                if (watchlistItem.getSubscribeId() == 0) {
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
                     watchlistItem.setSubscribeId(id.getAndIncrement());
                 }
@@ -559,7 +570,7 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(WebSocketClient.Reply<List<FullAccountObjectReply>> reply) {
             List<FullAccountObjectReply> fullAccountObjectReplies = reply.result;
-            if(fullAccountObjectReplies == null || fullAccountObjectReplies.size() == 0){
+            if (fullAccountObjectReplies == null || fullAccountObjectReplies.size() == 0) {
                 return;
             }
             mFullAccount = fullAccountObjectReplies.get(0).fullAccountObject;
@@ -572,9 +583,9 @@ public class WebSocketService extends Service {
         }
     };
 
-    public void callFullAccount(String name){
+    public void callFullAccount(String name) {
         //防止多次执行TimeTask
-        if(mNames.size() != 0){
+        if (mNames.size() != 0) {
             return;
         }
         mNames.add(name);
@@ -587,24 +598,24 @@ public class WebSocketService extends Service {
                     e.printStackTrace();
                 }
             }
-        },  0, 3600*1000);
+        }, 0, 3600 * 1000);
     }
 
     public FullAccountObject getFullAccount(boolean isLoginIn) {
         return isLoginIn ? mFullAccount : null;
     }
 
-    public FullAccountObject getFullAccount(String name){
-        if(mFullAccount != null){
+    public FullAccountObject getFullAccount(String name) {
+        if (mFullAccount != null) {
             return mFullAccount;
         }
-        if(!TextUtils.isEmpty(name) && mAssetsPairHashMap != null){
+        if (!TextUtils.isEmpty(name) && mAssetsPairHashMap != null) {
             callFullAccount(name);
         }
         return null;
     }
 
-    public void cancelCallFullAccount(){
+    public void cancelCallFullAccount() {
         mNames.clear();
         mTimer.cancel();
     }
@@ -614,9 +625,9 @@ public class WebSocketService extends Service {
         mSubscription = null;
     }
 
-    public void getAssetsRmbPrice(){
+    public void getAssetsRmbPrice() {
         //防止多次执行
-        if(mSubscription != null){
+        if (mSubscription != null) {
             return;
         }
         Flowable.interval(0, 5, TimeUnit.SECONDS)
@@ -664,25 +675,25 @@ public class WebSocketService extends Service {
 
     }
 
-    public List<AssetRmbPrice> getAssetRmbPrices(){
+    public List<AssetRmbPrice> getAssetRmbPrices() {
         return mAssetRmbPrices;
     }
 
-    public AssetRmbPrice getAssetRmbPrice(String assetName){
-        if(mAssetRmbPrices == null || mAssetRmbPrices.size() == 0){
+    public AssetRmbPrice getAssetRmbPrice(String assetName) {
+        if (mAssetRmbPrices == null || mAssetRmbPrices.size() == 0) {
             return null;
         }
-        for(AssetRmbPrice assetRmbPrice : mAssetRmbPrices){
-            if(assetName.equals(assetRmbPrice.getName())){
+        for (AssetRmbPrice assetRmbPrice : mAssetRmbPrices) {
+            if (assetName.equals(assetRmbPrice.getName())) {
                 return assetRmbPrice;
             }
         }
         return null;
     }
 
-    public AssetObject getAssetObject(String assetId){
-        for(AssetObject assetObject : mAssetObjects){
-            if(assetObject.id.toString().equals(assetId)){
+    public AssetObject getAssetObject(String assetId) {
+        for (AssetObject assetObject : mAssetObjects) {
+            if (assetObject.id.toString().equals(assetId)) {
                 return assetObject;
             }
         }
@@ -690,19 +701,19 @@ public class WebSocketService extends Service {
         return null;
     }
 
-    public List<AssetObject> getAssetObjects(String baseAssetId, String quoteAssetId){
+    public List<AssetObject> getAssetObjects(String baseAssetId, String quoteAssetId) {
         List<AssetObject> assetObjects = new ArrayList<>();
         AssetObject baseAssetObject = null;
         AssetObject quoteAssetObject = null;
-        for(AssetObject assetObject : mAssetObjects){
-            if(assetObject.id.toString().equals(baseAssetId)){
+        for (AssetObject assetObject : mAssetObjects) {
+            if (assetObject.id.toString().equals(baseAssetId)) {
                 baseAssetObject = assetObject;
             }
-            if(assetObject.id.toString().equals(quoteAssetId)){
+            if (assetObject.id.toString().equals(quoteAssetId)) {
                 quoteAssetObject = assetObject;
             }
         }
-        if(baseAssetObject != null && quoteAssetObject != null){
+        if (baseAssetObject != null && quoteAssetObject != null) {
             assetObjects.add(baseAssetObject);
             assetObjects.add(quoteAssetObject);
             return assetObjects;
@@ -714,7 +725,7 @@ public class WebSocketService extends Service {
     /**
      * 清除用户缓存数据
      */
-    public void clearAccountCache(){
+    public void clearAccountCache() {
         mFullAccount = null;
         mNames.clear();
     }

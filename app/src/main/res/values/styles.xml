@@ -176,6 +176,13 @@
         <item name="android:textSize">@dimen/font_large</item>
     </style>
 
+    <!-- font red -->
+    <style name="font_red_small">
+        <item name="android:fontFamily">PingFangSC-Regular</item>
+        <item name="android:textColor">#be4634</item>
+        <item name="android:textSize">@dimen/font_small</item>
+    </style>
+
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabTextAppearance">@style/MyCustomTextAppearance</item>
     </style>

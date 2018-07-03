@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_padding"
+    android:paddingRight="@dimen/activity_padding">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_forward_16px"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:title=""
+        app:titleTextColor="@color/primary_color_grey">
+
+        <TextView
+            android:id="@+id/withdraw_toolbar_text_view"
+            style="@style/font_white_dark_bold_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="ETH" />
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_item"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_padding">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/withdraw_available_amount" />
+
+                <TextView
+                    android:id="@+id/withdraw_available_amount"
+                    style="@style/font_white_large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:background="@drawable/bg_item"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_padding">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/withdraw_withdrawal_address" />
+
+                <EditText
+                    android:id="@+id/withdraw_withdrawal_address"
+                    style="@style/font_white_dark_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:hint="@string/withdraw_enter_or_paste_address_hint"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColorHint="@color/text_hint_color"
+                    android:textCursorDrawable="@null" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="9dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp"
+                    android:text="@string/withdraw_amount" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/withdraw_amount"
+                        style="@style/font_white_dark_large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:hint="@string/withdraw_amount_hint"
+                        android:textColorHint="@color/text_hint_color"
+                        android:inputType="numberDecimal"
+                        android:textCursorDrawable="@null" />
+
+                    <TextView
+                        android:id="@+id/withdraw_all_button"
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/withdraw_all" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/withdraw_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/btn_register_margin_top"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/withdraw_error_sign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_error_16px" />
+
+                <TextView
+                    android:id="@+id/withdraw_error_text"
+                    style="@style/font_red_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_padding">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/withdraw_gateway_fee" />
+
+                    <TextView
+                        android:id="@+id/withdraw_gateway_fee"
+                        style="@style/font_white_dark_large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/withdraw_transfer_fee" />
+
+                    <TextView
+                        android:id="@+id/withdraw_transfer_fee"
+                        style="@style/font_white_dark_large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="162dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_item"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:id="@+id/withdraw_message"
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_padding">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/withdraw_receive_amount" />
+
+                <TextView
+                    android:id="@+id/withdraw_receive_amount"
+                    style="@style/font_white_dark_large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="--" />
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/withdraw_button"
+                style="@style/font_white_dark_large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="27dp"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
+                android:enabled="false"
+                android:text="@string/withdraw_withdraw_button" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

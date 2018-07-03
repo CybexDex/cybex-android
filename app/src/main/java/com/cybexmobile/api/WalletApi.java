@@ -2,6 +2,8 @@ package com.cybexmobile.api;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.cybexmobile.constant.ErrorCode;
@@ -551,18 +553,18 @@ public class WalletApi {
         String ownerAddress = publicOwnerKeyType.getAddress();
         String memoAddress = publicMemoKeyType.getAddress();
         String PTSAddress = publicActiveKeyType.getPTSAddress(publicActiveKeyType.key_data);
-        String owerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
+        String ownerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
         String memoPtsAddress = publicMemoKeyType.getPTSAddress(publicMemoKeyType.key_data);
-        String uncompresedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
+        String uncompressedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
         unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
         String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
         Log.v("Address", address);
         Log.v("OwnerAddress", ownerAddress);
         Log.v("ActivePTSAddress", PTSAddress);
-        Log.v("OwnerPtsAddress", owerPtsAddress);
+        Log.v("OwnerPtsAddress", ownerPtsAddress);
         Log.v("MemoAddress", memoAddress);
         Log.v("MemoPTSAddress", memoPtsAddress);
-        Log.v("uncompressedActive", uncompresedPts);
+        Log.v("uncompressedActive", uncompressedPts);
         Log.v("uncompressedOwner", unCompressedOwnerKey);
         Log.v("uncompressedMemo", unCompressedMemo);
 
@@ -580,6 +582,7 @@ public class WalletApi {
         mWalletObject.extra_keys.put(accountObject.id, listPublicKeyType);
         mHashMapPub2Priv.put(publicActiveKeyType, new Types.private_key_type(privateActiveKey));
         mHashMapPub2Priv.put(publicOwnerKeyType, new Types.private_key_type(privateOwnerKey));
+        mHashMapPub2Priv.put(publicMemoKeyType, new Types.private_key_type(privateMemoKey));
 
         encrypt_keys();
 

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/font_grey_large"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:background="@color/dialog_header_background_color"
+        android:gravity="center"
+        android:text="@string/withdraw_confirmation" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/itemBackground"
+        android:orientation="vertical"
+        android:padding="@dimen/dialog_padding">
+
+        <TextView
+            style="@style/font_gray_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/withdraw_withdrawal_address" />
+
+        <TextView
+            android:id="@+id/confirm_dialog_withdraw_address"
+            style="@style/font_white_dark_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:text="0x2ced84f6bccdc06e36c2975af6a80b" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/withdraw_amount" />
+
+            <TextView
+                android:id="@+id/confirm_dialog_withdraw_amount"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   6.000000 ETH" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/withdraw_transfer_fee" />
+
+            <TextView
+                android:id="@+id/confirm_dialog_withdraw_withdraw_fee"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   0.1 ETH" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/withdraw_gateway_fee" />
+
+            <TextView
+                android:id="@+id/confirm_dialog_gateway_fee"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 0.0055 CYB" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/withdraw_receive_amount" />
+
+            <TextView
+                android:id="@+id/confirm_dialog_receive_amount"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 5.023412 ETH" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/confirm_dialog_cancel_button"
+                style="@style/font_white_large"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dialog_margin"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
+                android:enabled="false"
+                android:text="@string/unlock_wallet_dialog_cancel" />
+
+
+            <Button
+                android:id="@+id/confirm_dialog_confirm_button"
+                style="@style/font_white_large"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="@dimen/dialog_margin"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
+                android:text="@string/unlock_wallet_dialog_confirm" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

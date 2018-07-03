@@ -30,12 +30,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.activity.BottomNavigationActivity;
+import com.cybexmobile.activity.GatewayActivity;
 import com.cybexmobile.activity.LockAssetsActivity;
 import com.cybexmobile.activity.SettingActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
@@ -117,6 +119,8 @@ public class AccountFragment extends BaseFragment {
     LinearLayout mAfterLoginLayout;
     @BindView(R.id.portfolio_title_layout)
     RelativeLayout mPortfolioTitleLayout;
+    @BindView(R.id.account_gateway_button)
+    Button mGatewayButton;
 
     private Unbinder mUnbinder;
 
@@ -197,9 +201,6 @@ public class AccountFragment extends BaseFragment {
                 setTotalCybAndRmbTextView(mTotalCyb, mTotalCyb * mCybRmbPrice);
                 return;
             }
-            if(mWebSocketService != null){
-                loadData(mWebSocketService.getFullAccount(mName));
-            }
         }
     }
 
@@ -260,12 +261,27 @@ public class AccountFragment extends BaseFragment {
     @OnClick(R.id.account_lockup_item_background)
     public void onLockAssetsClick(View view){
         Intent intent = new Intent(getContext(), LockAssetsActivity.class);
+        intent.putExtra("userName", mName);
         startActivity(intent);
     }
 
     @OnClick(R.id.balance_info_question_marker)
     public void onBalanceInfoClick(View view){
         CybexDialog.showBalanceDialog(getActivity());
+    }
+
+    @OnClick(R.id.account_gateway_button)
+    public void onGatewayButtonClick(View view) {
+        Intent intent = new Intent(getContext(), GatewayActivity.class);
+        intent.putExtra(GatewayActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAccountPageUpdate(Event.UpdateAccountPage event) {
+        if(mWebSocketService != null){
+            loadData(mWebSocketService.getFullAccount(mName));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -637,38 +653,6 @@ public class AccountFragment extends BaseFragment {
             }
         }
     }
-
-//    private void calculateLimitOrderTotalValue(OpenOrderItem openOrderItem) {
-//        AssetObject base = openOrderItem.openOrder.getBaseObject();
-//        AssetObject quote = openOrderItem.openOrder.getQuoteObject();
-//        double price;
-//        if (base != null && quote != null) {
-//            if (openOrderItem.isSell) {
-//                price = (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, quote.precision)) / (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, base.precision));
-//                if (openOrderItem.openOrder.getQuoteObject().symbol.equals("CYB")) {
-//                    mTotalCyb += price * (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision));
-//                } else {
-//                    try {
-//                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", openOrderItem.openOrder.getQuoteObject().id.toString(), mCallback);
-//                    } catch (NetworkStatusException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//
-//            } else {
-//                price = (openOrderItem.openOrder.getLimitOrder().sell_price.base.amount / Math.pow(10, base.precision)) / (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, quote.precision));
-//                if (openOrderItem.openOrder.getBaseObject().symbol.equals("CYB")) {
-//                    mTotalCyb += price * (openOrderItem.openOrder.getLimitOrder().sell_price.quote.amount / Math.pow(10, openOrderItem.openOrder.getQuoteObject().precision));
-//                } else {
-//                    try {
-//                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", openOrderItem.openOrder.getBaseObject().id.toString(), mCallback);
-//                    } catch (NetworkStatusException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     @Override
     public void onAttach(Context context) {

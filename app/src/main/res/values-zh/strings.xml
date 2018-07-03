@@ -34,6 +34,7 @@
     <string name="account_balance_dialog_button">我知道了</string>
     <string name="text_opened_orders">委单</string>
     <string name="text_lockup_assets">锁定期资产</string>
+    <string name="account_text_gateway">充值提现</string>
 
     <!-- Open Orders Page -->
     <string name="open_order_asset_amount">资产/委托数量</string>
@@ -196,4 +197,46 @@
 
     <string name="text_press_again_to_exit">再按一次退出</string>
 
+    <!-- Gateway Page Related -->
+    <string name="gate_way_title">充值提现</string>
+    <string name="gate_way_deposit">充值</string>
+    <string name="gate_way_withdraw">提现</string>
+    <string name="gate_way_select_coin">选择币种</string>
+
+    <!-- Deposit Page Related -->
+    <string name="deposit_save_qr_code">保存二维码</string>
+    <string name="deposit_copy_address">复制地址</string>
+    <string name="deposit_get_new_address">生成新地址</string>
+
+    <!-- Withdraw Page Related -->
+    <string name="withdraw_available_amount">可用余额</string>
+    <string name="withdraw_withdrawal_address">提现地址</string>
+    <string name="withdraw_amount">数量</string>
+    <string name="withdraw_all">全部</string>
+    <string name="withdraw_transfer_fee">提现手续费</string>
+    <string name="withdraw_gateway_fee">转账手续费</string>
+    <string name="withdraw_receive_amount">到账数量</string>
+    <string name="withdraw_withdraw_button">提现</string>
+    <string name="withdraw_enter_or_paste_address_hint">输入或长按粘贴地址</string>
+    <string name="withdraw_amount_hint">最小提现数量 1</string>
+    <string name="withdraw_confirmation">确认提现</string>
+    <string name="withdraw_error_not_enough">余额不足</string>
+    <string name="withdraw_error_less_than_minimum">小于最小提现额度</string>
+    <string name="withdraw_error_invalid_address">地址不合法</string>
+
+
+    <!-- Snack Bar Text -->
+    <string name="snack_bar_saved">已保存二维码</string>
+    <string name="snack_bar_copied">已复制地址</string>
+    <string name="snack_bar_please_retry">请在5分钟后重新生成</string>
+
+    <!-- Toast Message -->
+    <string name="toast_message_can_not_deposit">暂不支持充值</string>
+    <string name="toast_message_can_not_withdraw">您没有权限提现</string>
+
+    <!-- unlock wallet -->
+    <string name="unlock_wallet_dialog_title">解锁钱包</string>
+    <string name="unlock_wallet_dialog_cancel">取消</string>
+    <string name="unlock_wallet_dialog_confirm">确认</string>
+    <string name="unlock_wallet_dialog_error_invalid_password">解锁失败，请重新输入密码</string>
 </resources>

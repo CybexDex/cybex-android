@@ -102,6 +102,7 @@
 
     <!-- order history fragment and trade history fragment -->
     <dimen name="recycler_view_margin_start_end">5dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
     <dimen name="layout_item_buy_sell_height">26dp</dimen>
     <dimen name="layout_input_header_height">24dp</dimen>

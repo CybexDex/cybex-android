@@ -3,7 +3,7 @@ package com.cybexmobile.graphene.chain;
 import java.io.Serializable;
 import java.util.List;
 
-public class AccountObject implements Serializable{
+public class AccountObject implements Serializable {
     public ObjectId<AccountObject> id;
     public String membership_expiration_date;
     public String registrar;

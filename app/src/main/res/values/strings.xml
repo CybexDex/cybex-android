@@ -31,6 +31,7 @@
     <string name="account_balance_dialog_button">OK</string>
     <string name="text_opened_orders">Opened\nOrders</string>
     <string name="text_lockup_assets">Lockup\nAssets</string>
+    <string name="account_text_gateway">Gateway</string>
 
     <!-- Open Orders Page -->
     <string name="open_order_asset_amount">Asset/Amount</string>
@@ -176,7 +177,7 @@
     <string name="item_text_open_order_price">Price:</string>
     <string name="item_text_open_order_amount">Amount:</string>
     <string name="item_text_open_order_cancel">Cancel</string>
-    
+
     <!-- Own Order History Activity -->
     <string name="text_asset_and_amount">Asset/Amount</string>
     <string name="text_filled_and_price">Filled/Price</string>
@@ -184,13 +185,54 @@
     <!-- Own Order History Item -->
     <string name="item_own_order_history_time">Time:</string>
     <string name="item_own_order_history_done">Done</string>
-    
+
     <!-- Watchlist Select Activity -->
     <string name="text_markets">Markets</string>
     <string name="text_paris">Pairs</string>
     <string name="text_24_hour_volume">24h Volume</string>
-    
-    <string name="text_press_again_to_exit">Press again to exit</string>
-    
 
+    <string name="text_press_again_to_exit">Press again to exit</string>
+
+
+    <!-- Gateway Page Related -->
+    <string name="gate_way_title">Gateway</string>
+    <string name="gate_way_deposit">Deposit</string>
+    <string name="gate_way_withdraw">Withdraw</string>
+    <string name="gate_way_select_coin">Select Coin</string>
+
+    <!-- Deposit Page Related -->
+    <string name="deposit_save_qr_code">Save QR Code</string>
+    <string name="deposit_copy_address">Copy Address</string>
+    <string name="deposit_get_new_address">Get New Address</string>
+
+    <!-- Withdraw Page Related -->
+    <string name="withdraw_available_amount">Available</string>
+    <string name="withdraw_withdrawal_address">Withdrawal Address</string>
+    <string name="withdraw_amount">Amount</string>
+    <string name="withdraw_all">All</string>
+    <string name="withdraw_transfer_fee">Transfer Fee</string>
+    <string name="withdraw_gateway_fee">Gateway Fee</string>
+    <string name="withdraw_receive_amount">Receive Amount</string>
+    <string name="withdraw_withdraw_button">WITHDRAW</string>
+    <string name="withdraw_enter_or_paste_address_hint">Enter or paste address</string>
+    <string name="withdraw_amount_hint">Min 1</string>
+    <string name="withdraw_confirmation">CONFIRMATION</string>
+    <string name="withdraw_error_not_enough">Not enough</string>
+    <string name="withdraw_error_less_than_minimum">Less than the minimum withdrawal</string>
+    <string name="withdraw_error_invalid_address">Invalid Address</string>
+
+    <!-- Snack Bar Text -->
+    <string name="snack_bar_saved">Saved</string>
+    <string name="snack_bar_copied">Copied</string>
+    <string name="snack_bar_please_retry">Please retry 5 minutes later</string>
+
+    <!-- Toast Message -->
+    <string name="toast_message_can_not_deposit">Missing authority for deposit</string>
+    <string name="toast_message_can_not_withdraw">Missing authority for withdrawal</string>
+
+    <!-- unlock wallet -->
+    <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
+    <string name="unlock_wallet_dialog_cancel">CANCEL</string>
+    <string name="unlock_wallet_dialog_confirm">CONFIRM</string>
+    <string name="unlock_wallet_dialog_error_invalid_password">Invalid password</string>
 </resources>

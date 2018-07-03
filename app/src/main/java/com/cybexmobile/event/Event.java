@@ -45,6 +45,11 @@ public class Event {
         }
     }
 
+    //开始加载account页面
+    public static class UpdateAccountPage {
+        public UpdateAccountPage() {}
+    }
+
     //更新所有行情数据
     public static class UpdateWatchlists {
         private String baseAssetId;

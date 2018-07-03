@@ -87,4 +87,12 @@ public class MyUtils {
         return result;
 
     }
+
+    public static String removeJadePrefix(String symbol) {
+        if (symbol.contains("JADE")) {
+            return symbol.substring(5, symbol.length());
+        } else {
+            return symbol;
+        }
+    }
 }

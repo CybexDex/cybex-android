@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey"
+        app:title=""
+        app:navigationIcon="@drawable/ic_arrow_forward_16px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gate_way_title"
+            style="@style/font_white_dark_bold_large"
+            android:layout_gravity="center"/>
+    </android.support.v7.widget.Toolbar>
+
+    <info.hoang8f.android.segmented.SegmentedGroup
+        android:id="@+id/gate_way_segmented_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:sc_border_width="1dp"
+        app:sc_checked_text_color="@color/font_color_white_dark"
+        app:sc_corner_radius="4dp"
+        app:sc_tint_color="@color/primary_color_grey">
+
+        <RadioButton
+            android:id="@+id/gate_way_segment_deposit"
+            style="@style/RadioButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/gate_way_deposit" />
+
+        <RadioButton
+            android:id="@+id/gate_way_segment_withdraw"
+            style="@style/RadioButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/gate_way_withdraw" />
+
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/activity_margin"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:text="@string/gate_way_select_coin"
+            style="@style/font_gray_small"
+            android:textColor="@color/text_hint_color" />
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/gate_way_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/gate_way_recycler_view"-->
+        <!--android:layout_marginTop="@dimen/recycler_view_margin_top"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+</LinearLayout>

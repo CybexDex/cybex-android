@@ -83,7 +83,21 @@
             android:theme="@style/AppTheme.Dialog"
             android:label="" />
 
-        <service android:name=".service.WebSocketService"/>
+        <activity
+            android:name=".activity.DepositActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".activity.GatewayActivity"
+            android:label=""
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.WithdrawActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <service android:name=".service.WebSocketService" />
     </application>
 
 </manifest>

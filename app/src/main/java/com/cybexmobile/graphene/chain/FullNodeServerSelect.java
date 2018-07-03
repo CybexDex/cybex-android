@@ -42,7 +42,7 @@ public class FullNodeServerSelect {
                         listSelectedServer.add(""); // 失败，则填空
 
                         if (listSelectedServer.size() == nTotalCount) {
-                            objectSync.notify();;
+                            objectSync.notify();
                         }
                     }
                 }

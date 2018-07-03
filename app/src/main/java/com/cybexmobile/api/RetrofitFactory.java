@@ -1,5 +1,6 @@
 package com.cybexmobile.api;
 
+import com.apollographql.apollo.ApolloClient;
 import com.cybexmobile.utils.SSLSocketFactoryUtils;
 
 import java.util.concurrent.TimeUnit;

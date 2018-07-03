@@ -25,4 +25,10 @@
 
     <color name="bg_watchlist_item_focus_color">#F7F8FA</color>
 
+
+    <!-- toast message background color -->
+    <color name="toast_message_background_color">#cd78819a</color>
+
+    <!-- dialog related color -->
+    <color name="dialog_header_background_color">#f7f8fa</color>
 </resources>

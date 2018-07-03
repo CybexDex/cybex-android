@@ -1,5 +1,6 @@
 package com.cybexmobile.activity;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -15,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
@@ -22,8 +25,10 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AssetRmbPrice;
+import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
+import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.service.WebSocketService;
@@ -75,10 +80,13 @@ public class LockAssetsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_assets);
         EventBus.getDefault().register(this);
-        Intent intent = new Intent(this, WebSocketService.class);
-        bindService(intent, mConnection, BIND_AUTO_CREATE);
+        Intent intent = getIntent();
+        String userName = intent.getStringExtra("userName");
+        Intent serviceIntent = new Intent(this, WebSocketService.class);
+        bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
+
         initViews();
-        loadData();
+        checkIfLocked(userName);
     }
 
     @Override
@@ -106,11 +114,50 @@ public class LockAssetsActivity extends BaseActivity {
         }
     };
 
-    private void loadData(){
+    private void checkIfLocked(String userName) {
+        if (BitsharesWalletWraper.getInstance().is_locked()) {
+            CybexDialog.showUnlockWalletDialog(this, new CybexDialog.UnLockDialogClickListener() {
+                @Override
+                public void onClick(String password, Dialog dialog) {
+                    try {
+                        BitsharesWalletWraper.getInstance().get_account_object(userName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+                            @Override
+                            public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                                AccountObject accountObject = reply.result;
+                                int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, userName, password);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (result == 0) {
+                                            dialog.dismiss();
+                                            loadData(userName, password);
+                                        } else {
+                                            hideLoadDialog();
+                                            LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
+                                            errorLayout.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                hideLoadDialog();
+                            }
+                        });
+                    } catch (NetworkStatusException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        } else {
+            loadData(userName, BitsharesWalletWraper.getInstance().getPassword());
+        }
+    }
+
+    private void loadData(String name, String password){
         showLoadDialog(true);
-        SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
-        String name = sharedPreference.getString(PREF_NAME, "");
-        String password = sharedPreference.getString(PREF_PASSWORD,"");
         Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(ObservableEmitter<List<String>> e) {

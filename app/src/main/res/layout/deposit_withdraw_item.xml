@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/activity_padding"
+    android:paddingEnd="@dimen/activity_padding"
+    android:paddingTop="25dp"
+    android:paddingBottom="25dp"
+    android:background="@color/itemBackground">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+
+        <ImageView
+            android:id="@+id/gate_way_asset_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_btc_grey" />
+
+        <TextView
+            android:id="@+id/gate_way_asset_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BTC"
+            style="@style/font_white_dark_bold_large"
+            android:layout_marginLeft="@dimen/text_quote_margin_start"/>
+
+        <TextView
+            android:id="@+id/gate_way_asset_full_name"
+            style="@style/font_gray_bold_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/gate_way_asset_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_gray_large" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_light_24px"/>
+    </LinearLayout>
+
+</RelativeLayout>

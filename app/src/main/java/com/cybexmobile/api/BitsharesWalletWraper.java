@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,8 +37,11 @@ public class BitsharesWalletWraper {
     private Map<ObjectId<AccountObject>, List<Asset>> mMapAccountId2Asset = new ConcurrentHashMap<>();
     private Map<ObjectId<AssetObject>, AssetObject> mMapAssetId2Object = new ConcurrentHashMap<>();
     private String mstrWalletFilePath;
+    private  Timer mTimer = new Timer();
+    private Task mTask = new Task();
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
+    private String password;
 
     private BitshareData mBitshareData;
 
@@ -73,8 +78,9 @@ public class BitsharesWalletWraper {
         return mWalletApi.is_new();
     }
 
-    public  boolean is_locked() {
-        return mWalletApi.is_locked();
+    public boolean is_locked() {
+//        return mWalletApi.is_locked();
+        return password == null;
     }
 
     public int load_wallet_file() {
@@ -218,18 +224,31 @@ public class BitsharesWalletWraper {
             for (AccountObject account : list_my_accounts()) {
                 mMapAccountId2Object.put(account.id, account);
             }
+            password = strPassword;
+            lockWallet();
         }
         return nRet;
 
     }
 
-//    public int unlock(String strPassword) {
-//        return mWalletApi.unlock(strPassword);
-//    }
+    public int unlock(String strPassword) {
+        return mWalletApi.unlock(strPassword);
+    }
 
-//    public int lock() {
-//        return mWalletApi.lock();
-//    }
+    public int lock() {
+        return mWalletApi.lock();
+    }
+
+    public void lockWallet() {
+        mTimer.schedule(mTask, 120*1000, 120 * 1000);
+    }
+
+    public class Task extends TimerTask {
+        @Override
+        public void run() {
+            password = null;
+        }
+    }
 
 //    public List<Asset> list_balances(boolean bRefresh) throws NetworkStatusException {
 //        List<Asset> listAllAsset = new ArrayList<>();
@@ -645,5 +664,9 @@ public class BitsharesWalletWraper {
         } else {
             return getAddressesForLockAsset(userName, passWord);
         }
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

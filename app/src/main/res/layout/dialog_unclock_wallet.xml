@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/font_grey_large"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:background="@color/dialog_header_background_color"
+        android:gravity="center"
+        android:text="@string/unlock_wallet_dialog_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/itemBackground"
+        android:orientation="vertical"
+        android:padding="@dimen/dialog_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dialog_header_background_color">
+
+            <EditText
+                android:id="@+id/unlock_wallet_dialog_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="@string/prompt_password"
+                android:imeActionId="6"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/font_color_white_dark"
+                android:textColorHint="@color/text_hint_color"
+                android:textCursorDrawable="@null" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/unlock_wallet_dialog_error_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/unlock_wallet_dialog_error_sign"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_error_16px" />
+
+            <TextView
+                android:id="@+id/withdraw_error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_red_small"
+                android:text="@string/import_activity_password_invalid"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/unlock_wallet_dialog_cancel"
+                style="@style/font_white_large"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dialog_margin"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_grey"
+                android:text="@string/unlock_wallet_dialog_cancel" />
+
+
+            <Button
+                android:id="@+id/unlock_wallet_dialog_confirm"
+                style="@style/font_white_large"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="@dimen/dialog_margin"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
+                android:text="@string/unlock_wallet_dialog_confirm" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

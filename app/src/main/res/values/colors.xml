@@ -24,6 +24,7 @@
 
     <!-- divider color -->
     <color name="divider_color">#0affffff</color>
+    <color name="deposit_divider_color">#1b2230</color>
 
     <!-- Market Page -->
     <color name="kline_header_color">#111621</color>
@@ -60,5 +61,14 @@
     <color name="btn_red_end">#be4634</color>
 
     <color name="bg_watchlist_item_focus_color">#212939</color>f
+    <!-- snack bar color -->
+    <color name="snack_bar_background_color">#cd78819a</color>
+
+    <!-- toast message background color -->
+    <color name="toast_message_background_color">#212939</color>
+
+    <!-- dialog related color -->
+    <color name="dialog_header_background_color">#212939</color>
+
 
 </resources>
