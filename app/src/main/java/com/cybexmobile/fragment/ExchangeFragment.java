@@ -230,9 +230,9 @@ public class ExchangeFragment extends BaseFragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
             //当WatchlistData为空时，默认取CYB/ETH交易对数据
             if(mWatchlistData == null){
-                mWebSocketService = binder.getService();
                 mWatchlistData = mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB);
                 notifyWatchlistDataChange(mWatchlistData);
                 if(mIsLoginIn){
@@ -371,6 +371,7 @@ public class ExchangeFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        //outState.putBoolean();
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mBuyFragment != null && mBuyFragment.isAdded()){
             fragmentManager.putFragment(outState, BuySellFragment.class.getSimpleName() + TAG_BUY, mBuyFragment);
