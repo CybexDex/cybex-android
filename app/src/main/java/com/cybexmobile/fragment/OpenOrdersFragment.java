@@ -41,6 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
@@ -81,12 +82,15 @@ public class OpenOrdersFragment extends BaseFragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mIsLoginIn = sharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
         mName = sharedPreferences.getString(PREF_NAME, null);
-        Intent intent = new Intent(getContext(), WebSocketService.class);
-        getContext().bindService(intent, mConnection, BIND_AUTO_CREATE);
         Bundle bundle = getArguments();
         if(bundle != null){
             mWatchlistData = (WatchlistData) bundle.getSerializable(INTENT_PARAM_WATCHLIST);
         }
+        if(savedInstanceState != null){
+            mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
+        }
+        Intent intent = new Intent(getContext(), WebSocketService.class);
+        getContext().bindService(intent, mConnection, BIND_AUTO_CREATE);
     }
 
     @Nullable
@@ -109,6 +113,7 @@ public class OpenOrdersFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
     }
 
     @Override

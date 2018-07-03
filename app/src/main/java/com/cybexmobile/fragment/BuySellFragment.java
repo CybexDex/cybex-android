@@ -35,6 +35,10 @@ import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
 import static com.cybexmobile.utils.Constant.ACTION_BUY;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACCOUNT_BALANCE;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACTION;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
@@ -105,10 +109,17 @@ public class BuySellFragment extends BaseFragment {
         EventBus.getDefault().register(this);
         Bundle bundle = getArguments();
         if(bundle != null){
-            mWatchlistData = (WatchlistData)bundle.getSerializable(INTENT_PARAM_WATCHLIST);
             mCurrentAction = bundle.getString(INTENT_PARAM_ACTION, ACTION_BUY);
-            mAccountBalance = (AccountBalanceObject) bundle.getSerializable(INTENT_PARAM_ACCOUNT_BALANCE);
             mIsLoginIn = bundle.getBoolean(INTENT_PARAM_LOGIN_IN);
+            mWatchlistData = (WatchlistData)bundle.getSerializable(INTENT_PARAM_WATCHLIST);
+            mAccountBalance = (AccountBalanceObject) bundle.getSerializable(INTENT_PARAM_ACCOUNT_BALANCE);
+
+        }
+        if(savedInstanceState != null){
+            mCurrentAction = savedInstanceState.getString(BUNDLE_SAVE_ACTION);
+            mIsLoginIn = savedInstanceState.getBoolean(BUNDLE_SAVE_IS_LOGIN_IN);
+            mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
+            mAccountBalance = (AccountBalanceObject) savedInstanceState.getSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE);
         }
 
     }
@@ -133,6 +144,10 @@ public class BuySellFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString(BUNDLE_SAVE_ACTION, mCurrentAction);
+        outState.putBoolean(BUNDLE_SAVE_IS_LOGIN_IN, mIsLoginIn);
+        outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
+        outState.putSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE, mAccountBalance);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mMarketTradeHistoryFragment != null && mMarketTradeHistoryFragment.isAdded()){
             fragmentManager.putFragment(outState, MarketTradeHistoryFragment.class.getSimpleName(), mMarketTradeHistoryFragment);

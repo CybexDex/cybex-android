@@ -50,6 +50,9 @@ import butterknife.Unbinder;
 
 import static com.cybexmobile.utils.Constant.ACTION_BUY;
 import static com.cybexmobile.utils.Constant.ACTION_SELL;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACCOUNT_BALANCE;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACTION;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_FROM;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
@@ -104,6 +107,11 @@ public class ExchangeFragment extends BaseFragment {
             mAction = bundle.getString(INTENT_PARAM_ACTION, ACTION_BUY);
             mWatchlistData = (WatchlistData) bundle.getSerializable(INTENT_PARAM_WATCHLIST);
         }
+        if (savedInstanceState != null) {
+            mAction = savedInstanceState.getString(BUNDLE_SAVE_ACTION);
+            mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
+            mAccountBalance = (AccountBalanceObject) savedInstanceState.getSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE);
+        }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mName = sharedPreferences.getString(PREF_NAME, "");
         mIsLoginIn = sharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
@@ -130,6 +138,11 @@ public class ExchangeFragment extends BaseFragment {
         mTlExchange.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                if(tab.getPosition() == 0){
+                    mAction = ACTION_BUY;
+                } else if(tab.getPosition() == 1){
+                    mAction = ACTION_SELL;
+                }
                 showFragment(tab.getPosition());
             }
 
@@ -371,7 +384,9 @@ public class ExchangeFragment extends BaseFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putBoolean();
+        outState.putString(BUNDLE_SAVE_ACTION, mAction);
+        outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
+        outState.putSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE, mAccountBalance);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mBuyFragment != null && mBuyFragment.isAdded()){
             fragmentManager.putFragment(outState, BuySellFragment.class.getSimpleName() + TAG_BUY, mBuyFragment);

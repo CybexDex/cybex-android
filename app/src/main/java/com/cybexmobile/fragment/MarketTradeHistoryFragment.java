@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -62,10 +64,13 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         if (getArguments() != null) {
             mWatchlistData = (WatchlistData) getArguments().getSerializable(ARG_WATCHLIST);
         }
-        EventBus.getDefault().register(this);
+        if(savedInstanceState != null){
+            mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
+        }
     }
 
     @Override
@@ -89,6 +94,12 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViewData();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
     }
 
     private void initViewData(){

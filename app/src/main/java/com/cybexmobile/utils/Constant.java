@@ -50,4 +50,12 @@ public class Constant {
      */
     public static final int REQUEST_CODE_SELECT_WATCHLIST = 1;
     public static final int RESULT_CODE_SELECTED_WATCHLIST = 1;
+
+    /**
+     * bundle save state参数
+     */
+    public static final String BUNDLE_SAVE_ACTION = "bundle_save_action";
+    public static final String BUNDLE_SAVE_WATCHLIST = "bundle_save_watchlist";
+    public static final String BUNDLE_SAVE_ACCOUNT_BALANCE = "bundle_save_account_balance";
+    public static final String BUNDLE_SAVE_IS_LOGIN_IN = "bundle_save_is_login_in";
 }

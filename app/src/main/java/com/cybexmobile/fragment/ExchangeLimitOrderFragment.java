@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 
 /**
@@ -94,6 +95,9 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(bundle != null){
             mWatchlistData = (WatchlistData) bundle.getSerializable(INTENT_PARAM_WATCHLIST);
         }
+        if(savedInstanceState != null){
+            mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
+        }
     }
 
     @Nullable
@@ -117,6 +121,12 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         super.onViewCreated(view, savedInstanceState);
         initViewData();
         loadBuySellOrder();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
     }
 
     @Override
