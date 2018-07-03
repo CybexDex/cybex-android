@@ -32,15 +32,7 @@ public class AssetUtil {
      * @return
      */
     public static String formatPrice(double price){
-        String format;
-        if(price >= 1){
-            format = "%.4f";
-        }else if(price >= 0.0001){
-            format = "%.6f";
-        }else {
-            format = "%.8f";
-        }
-        return format;
+        return String.format(Locale.US, "%%.%df", pricePrecision(price));
     }
 
     /**
@@ -52,15 +44,37 @@ public class AssetUtil {
      * @return
      */
     public static String formatAmount(double price){
-        String format;
+        return String.format(Locale.US, "%%.%df", amountPrecision(price));
+    }
+
+    /**
+     * 价格精度
+     * @param price
+     * @return
+     */
+    public static int pricePrecision(double price){
         if(price >= 1){
-            format = "%.6f";
+            return 4;
         }else if(price >= 0.0001){
-            format = "%.4f";
+            return 6;
         }else {
-            format = "%.2f";
+            return 8;
         }
-        return format;
+    }
+
+    /**
+     * 数量精度
+     * @param price
+     * @return
+     */
+    public static int amountPrecision(double price){
+        if(price >= 1){
+            return 6;
+        }else if(price >= 0.0001){
+            return 4;
+        }else {
+            return 2;
+        }
     }
 
 }

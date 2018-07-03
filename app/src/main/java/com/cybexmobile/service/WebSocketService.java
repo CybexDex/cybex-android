@@ -118,10 +118,14 @@ public class WebSocketService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mSubscription.cancel();
-        mSubscription = null;
-        mTimer.cancel();
-        mTimer = null;
+        if(mSubscription != null){
+            mSubscription.cancel();
+            mSubscription = null;
+        }
+        if(mTimer != null){
+            mTimer.cancel();
+            mTimer = null;
+        }
         EventBus.getDefault().unregister(this);
     }
 

@@ -50,6 +50,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
+
 public class LockAssetsActivity extends BaseActivity {
 
     private static final String TAG = "LockAssetsActivity";
@@ -106,8 +109,8 @@ public class LockAssetsActivity extends BaseActivity {
     private void loadData(){
         showLoadDialog(true);
         SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
-        String name = sharedPreference.getString("name", "");
-        String password = sharedPreference.getString("password","");
+        String name = sharedPreference.getString(PREF_NAME, "");
+        String password = sharedPreference.getString(PREF_PASSWORD,"");
         Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(ObservableEmitter<List<String>> e) {

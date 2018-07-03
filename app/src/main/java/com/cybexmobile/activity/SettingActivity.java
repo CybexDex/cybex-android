@@ -32,6 +32,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
+
 public class SettingActivity extends BaseActivity {
 
     private CardView mLanguageSettingView, mThemeSettingView, mSettingVersionView;
@@ -112,9 +116,9 @@ public class SettingActivity extends BaseActivity {
         });
 
         mLogOutButton.setOnClickListener(v -> {
-            mSharedPreference.edit().putBoolean("isLoggedIn", false).apply();
-            mSharedPreference.edit().putString("name", null).apply();
-            mSharedPreference.edit().putString("password", null).apply();
+            mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
+            mSharedPreference.edit().putString(PREF_NAME, null).apply();
+            mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
             EventBus.getDefault().post(new Event.LoginOut());
             finish();
         });
@@ -151,7 +155,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void displayLogOutButton() {
-        mLogOutButton.setVisibility(mSharedPreference.getBoolean("isLoggedIn", false) ?
+        mLogOutButton.setVisibility(mSharedPreference.getBoolean(PREF_IS_LOGIN_IN, false) ?
                 View.VISIBLE : View.GONE);
     }
 

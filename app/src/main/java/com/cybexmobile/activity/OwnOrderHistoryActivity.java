@@ -40,6 +40,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+
 public class OwnOrderHistoryActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
@@ -66,8 +69,8 @@ public class OwnOrderHistoryActivity extends BaseActivity {
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolBar);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mIsLoginIn = sharedPreferences.getBoolean("isLoggedIn", false);
-        mName = sharedPreferences.getString("name", null);
+        mIsLoginIn = sharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
+        mName = sharedPreferences.getString(PREF_NAME, null);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
         mRvOrderHistory.setLayoutManager(new LinearLayoutManager(this));
@@ -102,7 +105,7 @@ public class OwnOrderHistoryActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
-       FullAccountObject fullAccountObject = event.getData();
+       FullAccountObject fullAccountObject = event.getFullAccount();
        mWebSocketService.loadAccountHistory(fullAccountObject.account.id, 100);
     }
 

@@ -17,6 +17,17 @@ public class Constant {
     public static final String INTENT_PARAM_ACTION = "intent_param_action";
     public static final String INTENT_PARAM_WATCHLIST = "intent_param_watchlist";
     public static final String INTENT_PARAM_FROM = "intent_param_from";
+    public static final String INTENT_PARAM_ACCOUNT_BALANCE = "intent_param_account_balance";
+
+    public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
+    public static final String INTENT_PARAM_NAME = "name";
+
+    /**
+     * SharePreference参数
+     */
+    public static final String PREF_IS_LOGIN_IN = "isLoginIn";
+    public static final String PREF_NAME = "name";
+    public static final String PREF_PASSWORD = "password";
 
     /**
      *  币ID

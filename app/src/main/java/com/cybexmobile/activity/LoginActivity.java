@@ -53,6 +53,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
 
 /**
  * A login screen that offers login via email/password.
@@ -253,13 +258,14 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                             hideLoadDialog();
                             if (result == 0) {
                                 Intent returnIntent = new Intent();
-                                returnIntent.putExtra("LogIn", true);
-                                returnIntent.putExtra("name", email);
+                                returnIntent.putExtra(INTENT_PARAM_LOGIN_IN, true);
+                                returnIntent.putExtra(INTENT_PARAM_NAME, email);
                                 setResult(Activity.RESULT_OK, returnIntent);
+                                EventBus.getDefault().post(new Event.LoginIn(email));
                                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                                sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
-                                sharedPreferences.edit().putString("name", email).apply();
-                                sharedPreferences.edit().putString("password", password).apply();
+                                sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                                sharedPreferences.edit().putString(PREF_NAME, email).apply();
+                                sharedPreferences.edit().putString(PREF_PASSWORD, password).apply();
                                 finish();
                             } else {
                                 Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_incorrect_password), Toast.LENGTH_SHORT);

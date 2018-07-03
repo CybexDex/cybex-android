@@ -45,7 +45,7 @@
                         android:paddingEnd="@dimen/activity_padding"
                         android:background="@null"
                         android:inputType="numberDecimal"
-                        style="@style/font_white_dark_large"
+                        style="@style/font_white_dark_medium"
                         android:layout_toStartOf="@+id/view_divider" />
 
                     <View
@@ -61,7 +61,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:layout_toStartOf="@+id/buysell_tv_add"
-                        style="@style/font_gray_medium"
+                        style="@style/font_gray_large"
                         android:text="-"/>
 
                     <TextView
@@ -69,7 +69,7 @@
                         android:layout_width="@dimen/text_add_sub_width"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        style="@style/font_gray_medium"
+                        style="@style/font_gray_large"
                         android:layout_alignParentEnd="true"
                         android:text="+"/>
 
@@ -98,7 +98,7 @@
                         android:background="@null"
                         android:layout_toStartOf="@+id/view_divider2"
                         android:inputType="numberDecimal"
-                        style="@style/font_white_dark_large" />
+                        style="@style/font_white_dark_medium" />
 
                     <View
                         android:id="@+id/view_divider2"
@@ -253,6 +253,7 @@
                     android:id="@+id/buysell_btn_buy_sell"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/layout_input_height"
+                    android:textAllCaps="false"
                     style="@style/font_white_large"
                     android:text="@string/text_buy"
                     android:background="@drawable/bg_btn_green_gradient_enabled"/>

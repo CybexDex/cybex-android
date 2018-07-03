@@ -202,9 +202,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
             long currentTime = System.currentTimeMillis();
-            if(currentTime - mLastExitTime > 1000){
+            if(currentTime - mLastExitTime > 2 * 1000){
                 mLastExitTime = currentTime;
-                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.text_press_again_to_exit), Toast.LENGTH_SHORT).show();
             } else {
                 finish();
             }

@@ -34,18 +34,14 @@ public class Event {
     }
 
     public static class UpdateFullAccount{
-        private FullAccountObject data;
+        private FullAccountObject fullAccount;
 
-        public UpdateFullAccount(FullAccountObject data) {
-            this.data = data;
+        public UpdateFullAccount(FullAccountObject fullAccount) {
+            this.fullAccount = fullAccount;
         }
 
-        public FullAccountObject getData() {
-            return data;
-        }
-
-        public void setData(FullAccountObject data) {
-            this.data = data;
+        public FullAccountObject getFullAccount() {
+            return fullAccount;
         }
     }
 
@@ -187,6 +183,19 @@ public class Event {
 
     }
 
+    //登录
+    public static class LoginIn{
+        private String name;
+
+        public LoginIn(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
     //http请求超时
     public static class HttpTimeOut{
 
@@ -307,13 +316,23 @@ public class Event {
      */
     public static class LimitOrderClick{
         private double price;
+        private double quoteAmount;
 
-        public LimitOrderClick(double price) {
+        public LimitOrderClick(double price){
             this.price = price;
+        }
+
+        public LimitOrderClick(double price, double quoteAmount) {
+            this.price = price;
+            this.quoteAmount = quoteAmount;
         }
 
         public double getPrice() {
             return price;
+        }
+
+        public double getQuoteAmount() {
+            return quoteAmount;
         }
     }
 

@@ -77,6 +77,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+
 /**
  * 帐户界面
  * 数据流程:FullAccountObject -> AssetObject ->MarketTicker
@@ -157,8 +162,8 @@ public class AccountFragment extends BaseFragment {
         setHasOptionsMenu(true);
         EventBus.getDefault().register(this);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mIsLoginIn = mSharedPreference.getBoolean("isLoggedIn", false);
-        mName = mSharedPreference.getString("name", "");
+        mIsLoginIn = mSharedPreference.getBoolean(PREF_IS_LOGIN_IN, false);
+        mName = mSharedPreference.getString(PREF_NAME, "");
     }
 
     @Override
@@ -270,6 +275,14 @@ public class AccountFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginIn(Event.LoginIn event){
+        mName = event.getName();
+        mIsLoginIn = true;
+        setViews();
+        loadData(mWebSocketService.getFullAccount(mName));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateRmbPrice(Event.UpdateRmbPrice event){
         List<AssetRmbPrice> assetRmbPrices = event.getData();
         if(assetRmbPrices == null || assetRmbPrices.size() == 0){
@@ -315,7 +328,7 @@ public class AccountFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
-        loadData(event.getData());
+        loadData(event.getFullAccount());
     }
 
     private Handler mHandler = new Handler(Looper.getMainLooper()){
@@ -482,14 +495,12 @@ public class AccountFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_LOGIN) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data.getBooleanExtra("LogIn", false)) {
-                    mName = data.getStringExtra("name");
-                    mIsLoginIn = true;
-                    setViews();
-                    loadData(mWebSocketService.getFullAccount(mName));
-                }
+        if (requestCode == REQUEST_CODE_LOGIN && resultCode == Activity.RESULT_OK) {
+            if (data.getBooleanExtra(INTENT_PARAM_LOGIN_IN, false)) {
+                mName = data.getStringExtra(INTENT_PARAM_NAME);
+                mIsLoginIn = true;
+                setViews();
+                loadData(mWebSocketService.getFullAccount(mName));
             }
         }
     }

@@ -4,8 +4,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -26,8 +28,11 @@ import com.cybexmobile.activity.MarketsActivity;
 import com.cybexmobile.activity.OwnOrderHistoryActivity;
 import com.cybexmobile.activity.WatchlistSelectActivity;
 import com.cybexmobile.base.BaseFragment;
+import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybexmobile.graphene.chain.AccountBalanceObject;
+import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.Constant;
@@ -35,6 +40,8 @@ import com.cybexmobile.utils.Constant;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,6 +53,8 @@ import static com.cybexmobile.utils.Constant.ACTION_SELL;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_FROM;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
@@ -69,8 +78,12 @@ public class ExchangeFragment extends BaseFragment {
 
     private String mAction;
     private WatchlistData mWatchlistData;
+    private AccountBalanceObject mAccountBalance;
 
     private WebSocketService mWebSocketService;
+
+    private String mName;
+    private boolean mIsLoginIn;
 
     public static ExchangeFragment getInstance(String action, WatchlistData watchlist){
         ExchangeFragment fragment = new ExchangeFragment();
@@ -91,6 +104,9 @@ public class ExchangeFragment extends BaseFragment {
             mAction = bundle.getString(INTENT_PARAM_ACTION, ACTION_BUY);
             mWatchlistData = (WatchlistData) bundle.getSerializable(INTENT_PARAM_WATCHLIST);
         }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mName = sharedPreferences.getString(PREF_NAME, "");
+        mIsLoginIn = sharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -144,7 +160,8 @@ public class ExchangeFragment extends BaseFragment {
             //change watchlistdata
             mWatchlistData = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
             setTitleData();
-            notifyFragmentWatchlistDataChange(mWatchlistData);
+            notifyWatchlistDataChange(mWatchlistData);
+            notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
         }
     }
 
@@ -153,18 +170,53 @@ public class ExchangeFragment extends BaseFragment {
         mWatchlistData = event.getWatchlist();
         mAction = event.getAction();
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
-        notifyFragmentWatchlistDataChange(event.getWatchlist());
+        notifyWatchlistDataChange(event.getWatchlist());
         setTitleData();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLimitOrderClick(Event.LimitOrderClick event){
         if(mBuyFragment != null && mBuyFragment.isVisible()){
-            mBuyFragment.changeBuyOrSellPrice(event.getPrice());
+            mBuyFragment.changeBuyOrSellPrice(event.getPrice(), event.getQuoteAmount());
         }
         if(mSellFragment != null && mSellFragment.isVisible()){
-            mSellFragment.changeBuyOrSellPrice(event.getPrice());
+            mSellFragment.changeBuyOrSellPrice(event.getPrice(), event.getQuoteAmount());
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateRmbPrice(Event.UpdateRmbPrice event) {
+        List<AssetRmbPrice> assetRmbPrices = event.getData();
+        if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
+            return;
+        }
+        for (AssetRmbPrice rmbPrice : assetRmbPrices) {
+            if (mWatchlistData.getBaseSymbol().contains(rmbPrice.getName())) {
+                notifyRmbPriceDataChange(rmbPrice.getValue());
+                break;
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateFullAccount(Event.UpdateFullAccount event){
+        notifyAccountBalanceDataChange(event.getFullAccount());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginIn(Event.LoginIn event){
+        mIsLoginIn = true;
+        mName = event.getName();
+        notifyLoginStateDataChange(true);
+        notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginOut(Event.LoginOut event){
+        mName = null;
+        mIsLoginIn = false;
+        notifyLoginStateDataChange(false);
+        notifyAccountBalanceDataChange(null);
     }
 
     @OnClick(R.id.tv_title)
@@ -174,7 +226,38 @@ public class ExchangeFragment extends BaseFragment {
         startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
     }
 
-    private void notifyFragmentWatchlistDataChange(WatchlistData watchlistData){
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            //当WatchlistData为空时，默认取CYB/ETH交易对数据
+            if(mWatchlistData == null){
+                mWebSocketService = binder.getService();
+                mWatchlistData = mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB);
+                notifyWatchlistDataChange(mWatchlistData);
+                if(mIsLoginIn){
+                    notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
+                }
+                setTitleData();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
+
+    private void notifyRmbPriceDataChange(double rmbPrice){
+        if(mBuyFragment != null){
+            mBuyFragment.changeRmbPrice(rmbPrice);
+        }
+        if(mSellFragment != null){
+            mSellFragment.changeRmbPrice(rmbPrice);
+        }
+    }
+
+    private void notifyWatchlistDataChange(WatchlistData watchlistData){
         if(mBuyFragment != null){
             mBuyFragment.changeWatchlist(watchlistData);
         }
@@ -186,24 +269,40 @@ public class ExchangeFragment extends BaseFragment {
         }
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
-            //当WatchlistData为空时，默认取CYB/ETH交易对数据
-            if(mWatchlistData == null){
-                mWebSocketService = binder.getService();
-                mWatchlistData = mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB);
-                notifyFragmentWatchlistDataChange(mWatchlistData);
-                setTitleData();
+    private void notifyAccountBalanceDataChange(FullAccountObject fullAccount){
+        AccountBalanceObject accountBalanceObject = null;
+        if(mWatchlistData != null && fullAccount != null){
+            List<AccountBalanceObject> accountBalances = fullAccount.balances;
+            if(accountBalances == null || accountBalances.size() == 0){
+                return;
+            }
+            for(AccountBalanceObject accountBalance : accountBalances){
+                if(accountBalance.asset_type.toString().equals(mWatchlistData.getBaseId())){
+                    accountBalanceObject = accountBalance;
+                    break;
+                }
             }
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mWebSocketService = null;
+        if(mAccountBalance == accountBalanceObject){
+            return;
         }
-    };
+        mAccountBalance = accountBalanceObject;
+        if(mBuyFragment != null){
+            mBuyFragment.changeAccountBalance(mAccountBalance);
+        }
+        if(mSellFragment != null){
+            mSellFragment.changeAccountBalance(mAccountBalance);
+        }
+    }
+
+    private void notifyLoginStateDataChange(boolean loginState){
+        if(mBuyFragment != null){
+            mBuyFragment.changeLoginState(loginState);
+        }
+        if(mSellFragment != null){
+            mSellFragment.changeLoginState(loginState);
+        }
+    }
 
     private void setTitleData(){
         if(mWatchlistData == null){
@@ -237,7 +336,7 @@ public class ExchangeFragment extends BaseFragment {
         switch (position){
             case 0:
                 if(mBuyFragment == null){
-                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData);
+                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mAccountBalance, mIsLoginIn);
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
@@ -247,7 +346,7 @@ public class ExchangeFragment extends BaseFragment {
                 break;
             case 1:
                 if(mSellFragment == null){
-                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData);
+                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mAccountBalance, mIsLoginIn);
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);

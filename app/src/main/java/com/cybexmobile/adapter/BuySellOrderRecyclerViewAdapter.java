@@ -70,6 +70,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
             holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
             holder.mColorBar.setBackgroundColor(mContext.getResources().getColor(mType == TYPE_BUY ? R.color.fade_background_green : R.color.fade_background_red));
         } else {
+            holder.itemView.setOnClickListener(null);
             holder.mOrderPrice.setText(mContext.getResources().getString(R.string.text_empty));
             holder.mOrderVolume.setText(mContext.getResources().getString(R.string.text_empty));
             holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);

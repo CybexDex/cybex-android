@@ -66,6 +66,9 @@ import static com.cybexmobile.constant.ErrorCode.ERROR_PASSWORD_INVALID;
 import static com.cybexmobile.constant.ErrorCode.ERROR_SERVER_CREATE_ACCOUNT_FAIL;
 import static com.cybexmobile.constant.ErrorCode.ERROR_SERVER_RESPONSE_FAIL;
 import static com.cybexmobile.constant.ErrorCode.ERROR_UNKNOWN;
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
 
 public class RegisterActivity extends BaseActivity {
     private static final String TAG = "RegisterActivity";
@@ -481,9 +484,9 @@ public class RegisterActivity extends BaseActivity {
                                     public void onClick(View view) {
                                         Intent intent = new Intent(RegisterActivity.this, BottomNavigationActivity.class);
                                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RegisterActivity.this);
-                                        sharedPreferences.edit().putBoolean("isLoggedIn", true).apply();
-                                        sharedPreferences.edit().putString("name", account).apply();
-                                        sharedPreferences.edit().putString("password", password).apply();
+                                        sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                                        sharedPreferences.edit().putString(PREF_NAME, account).apply();
+                                        sharedPreferences.edit().putString(PREF_PASSWORD, password).apply();
                                         startActivity(intent);
                                     }
                                 });

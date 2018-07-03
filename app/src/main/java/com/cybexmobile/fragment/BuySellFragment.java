@@ -1,10 +1,15 @@
 package com.cybexmobile.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +18,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
+import com.cybexmobile.activity.LoginActivity;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
 import static com.cybexmobile.utils.Constant.ACTION_BUY;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 
 public class BuySellFragment extends BaseFragment {
@@ -65,16 +77,24 @@ public class BuySellFragment extends BaseFragment {
     private ExchangeLimitOrderFragment mExchangeLimitOrderFragment;
 
     private String mCurrentAction = ACTION_BUY;
+    private WatchlistData mWatchlistData;
+    private AccountBalanceObject mAccountBalance;
+    private boolean mIsLoginIn;
 
     private Unbinder mUnbinder;
 
-    private WatchlistData mWatchlistData;
+    private int mPricePrecision;//价格精度
+    private int mAmountPrecision;//数量精度
+    private double mAssetRmbPrice;
 
-    public static BuySellFragment getInstance(String action, WatchlistData watchlistData){
+    public static BuySellFragment getInstance(String action, WatchlistData watchlistData,
+                                              AccountBalanceObject accountBalance, boolean isLoginIn){
         BuySellFragment fragment = new BuySellFragment();
         Bundle bundle = new Bundle();
         bundle.putString(INTENT_PARAM_ACTION, action);
         bundle.putSerializable(INTENT_PARAM_WATCHLIST, watchlistData);
+        bundle.putSerializable(INTENT_PARAM_ACCOUNT_BALANCE, accountBalance);
+        bundle.putBoolean(INTENT_PARAM_LOGIN_IN, isLoginIn);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -87,6 +107,8 @@ public class BuySellFragment extends BaseFragment {
         if(bundle != null){
             mWatchlistData = (WatchlistData)bundle.getSerializable(INTENT_PARAM_WATCHLIST);
             mCurrentAction = bundle.getString(INTENT_PARAM_ACTION, ACTION_BUY);
+            mAccountBalance = (AccountBalanceObject) bundle.getSerializable(INTENT_PARAM_ACCOUNT_BALANCE);
+            mIsLoginIn = bundle.getBoolean(INTENT_PARAM_LOGIN_IN);
         }
 
     }
@@ -96,6 +118,8 @@ public class BuySellFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_buysell, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+        mEtAssetPrice.setFilters(new InputFilter[]{mPriceFilter});
+        mEtAssetAmount.setFilters(new InputFilter[]{mAmountFilter});
         return view;
     }
 
@@ -112,6 +136,9 @@ public class BuySellFragment extends BaseFragment {
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mMarketTradeHistoryFragment != null && mMarketTradeHistoryFragment.isAdded()){
             fragmentManager.putFragment(outState, MarketTradeHistoryFragment.class.getSimpleName(), mMarketTradeHistoryFragment);
+        }
+        if(mExchangeLimitOrderFragment != null && mExchangeLimitOrderFragment.isAdded()){
+            fragmentManager.putFragment(outState, ExchangeLimitOrderFragment.class.getSimpleName(), mExchangeLimitOrderFragment);
         }
     }
 
@@ -134,12 +161,51 @@ public class BuySellFragment extends BaseFragment {
 
     @OnClick({R.id.buysell_tv_add, R.id.buysell_tv_sub})
     public void onAssetPriceClick(View view){
-
+        String assetPriceStr = mEtAssetPrice.getText().toString();
+        if(TextUtils.isEmpty(assetPriceStr)){
+            return;
+        }
+        double assetPrice = Double.parseDouble(assetPriceStr);
+        switch (view.getId()){
+            case R.id.buysell_tv_add:
+                assetPrice += (1/Math.pow(10, mPricePrecision));
+                break;
+            case R.id.buysell_tv_sub:
+                assetPrice -= (1/Math.pow(10, mPricePrecision));
+                break;
+        }
+        mEtAssetPrice.setText(String.format(String.format("%%.%sf", mPricePrecision), assetPrice));
     }
 
     @OnClick({R.id.buysell_tv_percentage_25, R.id.buysell_tv_percentage_50, R.id.buysell_tv_percentage_75, R.id.buysell_tv_percentage_100})
     public void onAssetAmountClick(View view){
+        //判断TextView的值 防止余额小于有效精度
+        String assetAvailableStr = mTvAssetAvailable.getText().toString();
+        switch (view.getId()){
+            case R.id.buysell_tv_percentage_25:
+                break;
+            case R.id.buysell_tv_percentage_50:
+                break;
+            case R.id.buysell_tv_percentage_75:
+                break;
+            case R.id.buysell_tv_percentage_100:
+                break;
+        }
+    }
 
+    @OnClick(R.id.buysell_btn_buy_sell)
+    public void onBtnBuySellClick(View view){
+        if(!mIsLoginIn){
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            startActivity(intent);
+        } else {
+
+        }
+    }
+
+    @OnTextChanged(value = R.id.buysell_et_asset_price, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onPriceTextChanged(Editable editable){
+        initOrResetRmbTextData();
     }
 
     private void initFragment(Bundle savedInstanceState){
@@ -178,13 +244,29 @@ public class BuySellFragment extends BaseFragment {
         mEtAssetPrice.setText("");
         mEtAssetAmount.setText("");
         initOrResetButtonData();
+        initOrResetAvailableData();
+    }
+
+    private void initOrResetAvailableData(){
+        mTvAssetAvailable.setText(mAccountBalance == null ? getResources().getString(R.string.text_empty) :
+                String.format("%s%s", mAccountBalance.balance/Math.pow(10, mWatchlistData.getBasePrecision()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
     }
 
     private void initOrResetButtonData(){
-        mBtnBuySell.setText(String.format("%s %s", getResources().getString(mCurrentAction.equals(ACTION_BUY) ?
-                R.string.text_buy : R.string.text_sell), mWatchlistData == null ? "" : AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
+        if(mIsLoginIn){
+            mBtnBuySell.setText(String.format("%s %s", getResources().getString(mCurrentAction.equals(ACTION_BUY) ?
+                    R.string.text_buy : R.string.text_sell), mWatchlistData == null ? "" : AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
+        } else {
+            mBtnBuySell.setText(getResources().getString(R.string.text_login_in_to_exchange));
+        }
         mBtnBuySell.setBackgroundResource(mCurrentAction.equals(ACTION_BUY) ?
                 R.drawable.bg_btn_green_gradient_enabled : R.drawable.bg_btn_red_gradient_enabled);
+    }
+
+    private void initOrResetRmbTextData(){
+        String assetPrice = mEtAssetPrice.getText().toString();
+        mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈--" :
+                String.format(Locale.US, "≈%.2f", Double.parseDouble(assetPrice) * mAssetRmbPrice));
     }
 
     /**
@@ -202,14 +284,70 @@ public class BuySellFragment extends BaseFragment {
         if(mExchangeLimitOrderFragment != null){
             mExchangeLimitOrderFragment.changeWatchlist(mWatchlistData);
         }
+        mPricePrecision = AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice());
+        mAmountPrecision = AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice());
         initOrResetViewData();
+    }
+
+    public void changeLoginState(boolean loginState){
+        mIsLoginIn = loginState;
+        initOrResetButtonData();
+    }
+
+    public void changeAccountBalance(AccountBalanceObject accountBalance){
+        mAccountBalance = accountBalance;
+        initOrResetAvailableData();
     }
 
     /**
      * 改变买入卖出价
-     * @param quotePrice
+     * @param basePrice
      */
-    public void changeBuyOrSellPrice(double quotePrice) {
-        mEtAssetPrice.setText(String.format(AssetUtil.formatPrice(quotePrice), quotePrice));
+    public void changeBuyOrSellPrice(double basePrice, double quoteAmount) {
+        mEtAssetPrice.setText(String.format(AssetUtil.formatPrice(basePrice), basePrice));
+        if(quoteAmount != 0){
+            mEtAssetAmount.setText(String.format(AssetUtil.formatAmount(basePrice), quoteAmount));
+        }
     }
+
+    public void changeRmbPrice(double rmbPrice){
+        mAssetRmbPrice = rmbPrice;
+        initOrResetRmbTextData();
+    }
+
+    private InputFilter mPriceFilter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if(dest.length() == 0 && source.equals(".")){
+                return "0.";
+            }
+            String destStr = dest.toString();
+            String[] destArr = destStr.split("\\.");
+            if (destArr.length > 1) {
+                String dotValue = destArr[1];
+                if (dotValue.length() == mPricePrecision) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
+
+    private InputFilter mAmountFilter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if(dest.length() == 0 && source.equals(".")){
+                return "0.";
+            }
+            String destStr = dest.toString();
+            String[] destArr = destStr.split("\\.");
+            if (destArr.length > 1) {
+                String dotValue = destArr[1];
+                if (dotValue.length() == mAmountPrecision) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
 }

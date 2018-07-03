@@ -42,6 +42,8 @@ import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
 
 /**
  * 交易界面当前用户当前交易对委单
@@ -77,8 +79,8 @@ public class OpenOrdersFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mIsLoginIn = sharedPreferences.getBoolean("isLoggedIn", false);
-        mName = sharedPreferences.getString("name", null);
+        mIsLoginIn = sharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
+        mName = sharedPreferences.getString(PREF_NAME, null);
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, BIND_AUTO_CREATE);
         Bundle bundle = getArguments();
@@ -119,6 +121,7 @@ public class OpenOrdersFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        getContext().unbindService(mConnection);
     }
 
     @Override
@@ -140,9 +143,23 @@ public class OpenOrdersFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
-        List<LimitOrderObject> limitOrderObjects = event.getData() == null ? null : event.getData().limit_orders;
+        List<LimitOrderObject> limitOrderObjects = event.getFullAccount() == null ? null : event.getFullAccount().limit_orders;
         parseOpenOrderItems(limitOrderObjects);
         notifyRecyclerView();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginIn(Event.LoginIn event){
+        mName = event.getName();
+        mIsLoginIn = true;
+        loadLimitOrderData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginOut(Event.LoginOut event){
+        mName = null;
+        mIsLoginIn = false;
+        clearLimitOrderData();
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -151,10 +168,7 @@ public class OpenOrdersFragment extends BaseFragment {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             if(mIsLoginIn){
-                FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
-                List<LimitOrderObject> limitOrderObjects = fullAccountObject == null ? null : fullAccountObject.limit_orders;
-                parseOpenOrderItems(limitOrderObjects);
-                notifyRecyclerView();
+                loadLimitOrderData();
             }
         }
 
@@ -163,6 +177,18 @@ public class OpenOrdersFragment extends BaseFragment {
             mWebSocketService = null;
         }
     };
+
+    private void loadLimitOrderData(){
+        FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
+        List<LimitOrderObject> limitOrderObjects = fullAccountObject == null ? null : fullAccountObject.limit_orders;
+        parseOpenOrderItems(limitOrderObjects);
+        notifyRecyclerView();
+    }
+
+    private void clearLimitOrderData(){
+        mOpenOrderItems.clear();
+        notifyRecyclerView();
+    }
 
     private boolean checkIsSell(String baseSymbol, String quoteSymbol, List<String> compareSymbol) {
         boolean isContainBase = compareSymbol.contains(baseSymbol);

@@ -134,15 +134,22 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateBuySellOrders(Event.UpdateBuySellOrders event){
         mBuyOrders.clear();
-        mBuyOrders.addAll(event.getBuyOrders());
         mSellOrders.clear();
-        mSellOrders.addAll(event.getSellOrders());
+        if(event.getBuyOrders() != null){
+            mBuyOrders.addAll(event.getBuyOrders());
+        }
+        if(event.getSellOrders() != null){
+            mSellOrders.addAll(event.getSellOrders());
+        }
         mBuyOrderAdapter.notifyDataSetChanged();
         mSellOrderAdapter.notifyDataSetChanged();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSubcribeMarket(Event.SubscribeMarket event) {
+        if(mWatchlistData == null){
+            return;
+        }
         if(event.getCallId() == mWatchlistData.getSubscribeId()) {
             loadBuySellOrder();
         }
@@ -187,11 +194,14 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
 
     @Override
     public void onItemClick(Order order) {
-        EventBus.getDefault().post(new Event.LimitOrderClick(order.price));
+        EventBus.getDefault().post(new Event.LimitOrderClick(order.price, order.quoteAmount));
     }
 
     @OnClick({R.id.buysell_tv_quote_price, R.id.buysell_tv_quote_rmb_price})
     public void onQuotePriceClick(View view){
+        if(mWatchlistData.getCurrentPrice() == 0){
+            return;
+        }
         EventBus.getDefault().post(new Event.LimitOrderClick(mWatchlistData.getCurrentPrice()));
     }
 
@@ -210,6 +220,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         public void onMessage(WebSocketClient.Reply<List<LimitOrderObject>> reply) {
             List<LimitOrderObject> limitOrders = reply.result;
             if(limitOrders == null || limitOrders.size() == 0){
+                //没有委单时，发送空数据，清空买卖单列表数据
+                EventBus.getDefault().post(new Event.UpdateBuySellOrders(null, null));
                 return;
             }
             List<Order> buyOrders = new ArrayList<>();
