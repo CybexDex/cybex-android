@@ -226,8 +226,10 @@ public class DepositActivity extends BaseActivity {
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mQRAddressView.setText(address);
-                                        generateBarCode(address);
+                                        if(mQRAddressView != null){
+                                            mQRAddressView.setText(address);
+                                            generateBarCode(address);
+                                        }
                                     }
                                 });
                             }
