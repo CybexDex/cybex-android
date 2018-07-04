@@ -53,10 +53,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Function4;
 import io.reactivex.schedulers.Schedulers;
 
 public class WebSocketService extends Service {
@@ -76,6 +78,8 @@ public class WebSocketService extends Service {
     private ConcurrentHashMap<String, List<AssetsPair>> mAssetsPairHashMap = new ConcurrentHashMap<>();
 
     private ConcurrentHashMap<String, List<WatchlistData>> mWatchlistHashMap = new ConcurrentHashMap<>();
+    //当前行情tab页
+    private volatile String mCurrentBaseAssetId;
 
     private Timer mTimer;
 
@@ -131,22 +135,16 @@ public class WebSocketService extends Service {
 
     //加载行情数据
     public void loadWatchlistData(String baseAssetId) {
+        mCurrentBaseAssetId = baseAssetId;
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
         if (watchlistDatas != null) {
             EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistDatas));
+            if(watchlistDatas.get(0).getHistoryPrices() == null){
+                loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(baseAssetId));
+            }
             return;
         }
-        List<AssetsPair> assetsPairs = mAssetsPairHashMap.get(baseAssetId);
-        if (assetsPairs != null && assetsPairs.size() > 0) {
-            loadHistoryPriceAndMarketTicker(assetsPairs);
-            return;
-        }
-        loadAssetsPairData(baseAssetId);
-        loadAssetsPairData("1.3.0");
-        loadAssetsPairData("1.3.27");
-        loadAssetsPairData("1.3.3");
-
-
+        loadAllAssetsPairData();
     }
 
     public void subscribeAfterNetworkAvailable() {
@@ -172,62 +170,80 @@ public class WebSocketService extends Service {
         subscribeAfterNetworkAvailable();
     }
 
+    private void loadAllAssetsPairData(){
+        Observable.zip(loadAssetsPairData("1.3.2"), loadAssetsPairData("1.3.0"),
+                loadAssetsPairData("1.3.27"), loadAssetsPairData("1.3.3"),
+                new Function4<Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>>() {
+                    @Override
+                    public Map<String,List<AssetsPair>> apply(Map<String, List<AssetsPair>> stringListMap, Map<String, List<AssetsPair>> stringListMap2, Map<String, List<AssetsPair>> stringListMap3, Map<String, List<AssetsPair>> stringListMap4) {
+                        stringListMap.putAll(stringListMap2);
+                        stringListMap.putAll(stringListMap3);
+                        stringListMap.putAll(stringListMap4);
+                        return stringListMap;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map<String,List<AssetsPair>>>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onNext(Map<String,List<AssetsPair>> assetsPairMap) {
+                    mAssetsPairHashMap.putAll(assetsPairMap);
+                    loadAllAssetObjectData(mAssetsPairHashMap);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+        });
+    }
+
     //加载交易对数据
-    private void loadAssetsPairData(String baseAsset) {
-        RetrofitFactory.getInstance()
+    private Observable<Map<String, List<AssetsPair>>> loadAssetsPairData(String baseAsset) {
+        return RetrofitFactory.getInstance()
                 .api()
                 .getAssetsPair(baseAsset)
-                .map(new Function<AssetsPairResponse, List<AssetsPair>>() {
+                .map(new Function<AssetsPairResponse, Map<String, List<AssetsPair>>>() {
                     @Override
-                    public List<AssetsPair> apply(AssetsPairResponse assetsPairResponse) {
+                    public Map<String, List<AssetsPair>> apply(AssetsPairResponse assetsPairResponse) {
+                        Map<String, List<AssetsPair>> assetsPairMap = new HashMap<>();
                         List<AssetsPair> assetsPairs = new ArrayList<>();
                         if (assetsPairResponse.getData() != null && assetsPairResponse.getData().size() > 0) {
                             for (String quote : assetsPairResponse.getData()) {
                                 assetsPairs.add(new AssetsPair(baseAsset, quote));
                             }
                         }
-                        return assetsPairs;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<AssetsPair>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<AssetsPair> assetsPairs) {
-                        mAssetsPairHashMap.put(baseAsset, assetsPairs);
-                        loadAssetObjectDatas(assetsPairs);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
+                        assetsPairMap.put(baseAsset, assetsPairs);
+                        return assetsPairMap;
                     }
                 });
-
     }
 
     /**
      * 加载币信息
      *
-     * @param assetsPairs 交易对
+     * @param assetsPairMap 交易对
      */
-    private void loadAssetObjectDatas(List<AssetsPair> assetsPairs){
+    private void loadAllAssetObjectData(Map<String, List<AssetsPair>> assetsPairMap){
         List<String> assetsIds = new ArrayList<>();
-        for(AssetsPair assetsPair : assetsPairs){
-            if(!assetsIds.contains(assetsPair.getBase())){
-                assetsIds.add(assetsPair.getBase());
+        for (Map.Entry<String, List<AssetsPair>> entry : assetsPairMap.entrySet()){
+            List<AssetsPair> assetsPairs = entry.getValue();
+            for(AssetsPair assetsPair : assetsPairs){
+                if(!assetsIds.contains(assetsPair.getBase())){
+                    assetsIds.add(assetsPair.getBase());
+                }
+                assetsIds.add(assetsPair.getQuote());
             }
-            assetsIds.add(assetsPair.getQuote());
         }
         try {
             BitsharesWalletWraper.getInstance().get_objects(assetsIds, mAssetMultiCallback);
@@ -236,22 +252,7 @@ public class WebSocketService extends Service {
         }
     }
 
-    /**
-     * 加载币信息
-     *
-     * @param baseAssetId
-     * @param quoteAssetId
-     */
-    private void loadAssetObjectDatas(String baseAssetId, String quoteAssetId) {
-        List<String> assetIds = new ArrayList<>();
-        assetIds.add(baseAssetId);
-        assetIds.add(quoteAssetId);
-        try {
-            BitsharesWalletWraper.getInstance().get_objects(assetIds, mAssetMultiCallback);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     /**
      * 加载币信息
@@ -354,7 +355,6 @@ public class WebSocketService extends Service {
             if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
                 return;
             }
-            //if(accountHistoryObject.op.get(0).getAsInt() == 4){
             EventBus.getDefault().post(new Event.LoadAccountHistory(accountHistoryObjects));
         }
 
@@ -502,13 +502,12 @@ public class WebSocketService extends Service {
             }
             EventBus.getDefault().post(new Event.LoadAssets(assetObjects));
             mAssetObjects.addAll(assetObjects);
-            if (assetObjects == null || assetObjects.size() == 0) {
-                return;
-            }
-            String baseAssetId = assetObjects.get(0).id.toString();
-            List<AssetsPair> assetsPairs = mAssetsPairHashMap.get(baseAssetId);
             //币信息对应交易对
-            if (assetsPairs != null) {
+            for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+                List<AssetsPair> assetsPairs = entry.getValue();
+                if(assetsPairs == null || assetsPairs.size() == 0){
+                    continue;
+                }
                 for (AssetObject assetObject : assetObjects) {
                     for (AssetsPair assetsPair : assetsPairs) {
                         if (assetsPair.getBase().equals(assetObject.id.toString())) {
@@ -521,27 +520,30 @@ public class WebSocketService extends Service {
                 }
             }
             //创建交易对数据
-            List<WatchlistData> watchlistData = new ArrayList<>();
-            for (AssetsPair assetsPair : assetsPairs) {
-                watchlistData.add(new WatchlistData(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset()));
+            for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+                List<AssetsPair> assetsPairs = entry.getValue();
+                if(assetsPairs == null || assetsPairs.size() == 0){
+                    continue;
+                }
+                List<WatchlistData> watchlistData = new ArrayList<>();
+                for (AssetsPair assetsPair : assetsPairs) {
+                    WatchlistData watchlist = new WatchlistData(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset());
+                    AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
+                    watchlist.setSubscribeId(id.getAndIncrement());
+                    watchlistData.add(watchlist);
+                    //订阅
+                    subscribeToMarket(String.valueOf(id), watchlist.getBaseId(), watchlist.getQuoteId());
+                }
+                mWatchlistHashMap.put(entry.getKey(), watchlistData);
             }
-            mWatchlistHashMap.put(baseAssetId, watchlistData);
+            List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
             //更新行情
-            EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistData));
+            EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
             if (mWatchlistHashMap.get("1.3.2") != null && mWatchlistHashMap.get("1.3.27") != null && mWatchlistHashMap.get("1.3.3") != null && mWatchlistHashMap.get("1.3.0") != null) {
                 EventBus.getDefault().post(new Event.UpdateAccountPage());
             }
-            for (WatchlistData watchlistItem : watchlistData) {
-                if (watchlistItem.getSubscribeId() == 0) {
-                    AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
-                    watchlistItem.setSubscribeId(id.getAndIncrement());
-                }
-                subscribeToMarket(String.valueOf(watchlistItem.getSubscribeId()), watchlistItem.getBaseId(), watchlistItem.getQuoteId());
-            }
             //加载价格和交易历史
-            loadHistoryPriceAndMarketTicker(assetsPairs);
-
-
+            loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(mCurrentBaseAssetId));
         }
 
         @Override
@@ -718,7 +720,6 @@ public class WebSocketService extends Service {
             assetObjects.add(quoteAssetObject);
             return assetObjects;
         }
-        loadAssetObjectDatas(baseAssetId, quoteAssetId);
         return null;
     }
 
