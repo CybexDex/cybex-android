@@ -95,7 +95,7 @@
     </RelativeLayout>
 
 
-    <ScrollView
+    <com.cybexmobile.widget.OverScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/market_page_layout_header"
@@ -206,7 +206,7 @@
                 android:background="@android:color/transparent" />
 
         </LinearLayout>
-    </ScrollView>
+    </com.cybexmobile.widget.OverScrollView>
 
     <LinearLayout
         android:id="@+id/market_page_layout_footer"
