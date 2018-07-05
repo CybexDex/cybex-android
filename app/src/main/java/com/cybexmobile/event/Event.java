@@ -5,6 +5,7 @@ import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.market.HistoryPrice;
@@ -368,6 +369,21 @@ public class Event {
 
         public BlockHeader getBlockHeader() {
             return blockHeader;
+        }
+    }
+
+    /**
+     *  加载交易手续费
+     */
+    public static class LoadRequiredFee{
+        private FeeAmountObject fee;
+
+        public LoadRequiredFee(FeeAmountObject fee) {
+            this.fee = fee;
+        }
+
+        public FeeAmountObject getFee() {
+            return fee;
         }
     }
 }

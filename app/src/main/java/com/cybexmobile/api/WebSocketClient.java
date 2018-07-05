@@ -729,7 +729,7 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, callObject, replyObject);
     }
 
-    public void get_required_fees(String assetid, String operationId, Operations.transfer_operation transferOperation,
+    public void get_required_fees(String assetId, int operationId, Operations.base_operation operation,
                                   MessageCallback<Reply<List<FeeAmountObject>>> callback) throws NetworkStatusException {
         Call callObject = new Call();
         callObject.id = mCallId.getAndIncrement();
@@ -738,17 +738,17 @@ public class WebSocketClient extends WebSocketListener {
         callObject.params.add(_nDatabaseId);
         callObject.params.add("get_required_fees");
 
-        List<Object> listParams = new ArrayList<>();
-        List<Object> operationList = new ArrayList<>();
-        List<Object> operation = new ArrayList<>();
+        List<Object> operationParams1 = new ArrayList<>();
+        List<Object> operationParams2 = new ArrayList<>();
+        List<Object> operationParams3 = new ArrayList<>();
 
-        operation.add(operationId);
-        operation.add(transferOperation);
+        operationParams3.add(operationId);
+        operationParams3.add(operation);
 
-        operationList.add(operation);
-        listParams.add(operationList);
-        listParams.add(assetid);
-        callObject.params.add(listParams);
+        operationParams2.add(operationParams3);
+        operationParams1.add(operationParams2);
+        operationParams1.add(assetId);
+        callObject.params.add(operationParams1);
 
         ReplyProcessImpl<Reply<List<FeeAmountObject>>> replyObject =
                 new ReplyProcessImpl<>(new TypeToken<Reply<List<FeeAmountObject>>>() {

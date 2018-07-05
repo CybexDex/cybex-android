@@ -24,6 +24,8 @@ import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
+import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
@@ -40,6 +42,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,6 +81,7 @@ public class WebSocketService extends Service {
     private ConcurrentHashMap<String, List<AssetsPair>> mAssetsPairHashMap = new ConcurrentHashMap<>();
 
     private ConcurrentHashMap<String, List<WatchlistData>> mWatchlistHashMap = new ConcurrentHashMap<>();
+    private List<FeeAmountObject> mExchangeFees = null;
     //当前行情tab页
     private volatile String mCurrentBaseAssetId;
 
@@ -162,6 +166,26 @@ public class WebSocketService extends Service {
                 }
                 subscribeToMarket(String.valueOf(watchlistData.getSubscribeId()), watchlistData.getBaseId(), watchlistData.getQuoteId());
             }
+        }
+    }
+
+    public void loadBuySellFee(String assetId, int operationId, Operations.base_operation operation){
+        if(mExchangeFees == null){
+            mExchangeFees = Collections.synchronizedList(new ArrayList<>());
+        }
+        if(mExchangeFees.size() > 0){
+            for(FeeAmountObject fee : mExchangeFees){
+                if(!assetId.equals(fee.asset_id)){
+                   continue;
+                }
+                EventBus.getDefault().post(new Event.LoadRequiredFee(fee));
+                return;
+            }
+        }
+        try {
+            BitsharesWalletWraper.getInstance().get_requried_fees(assetId, operationId, operation, mExchangeFeeCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
         }
     }
 
@@ -333,6 +357,23 @@ public class WebSocketService extends Service {
             e.printStackTrace();
         }
     }
+
+    private WebSocketClient.MessageCallback mExchangeFeeCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+            List<FeeAmountObject> feeAmountObjects = reply.result;
+            if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
+                return;
+            }
+            mExchangeFees.add(feeAmountObjects.get(0));
+            EventBus.getDefault().post(new Event.LoadRequiredFee(feeAmountObjects.get(0)));
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
 
     private WebSocketClient.MessageCallback mBlockCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>>() {
         @Override

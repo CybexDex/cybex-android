@@ -1,6 +1,8 @@
 package com.cybexmobile.graphene.chain;
 
-public class FeeAmountObject {
+import java.io.Serializable;
+
+public class FeeAmountObject implements Serializable{
 
     public double amount;
     public String asset_id;

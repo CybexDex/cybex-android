@@ -47,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -640,7 +641,7 @@ public class WalletApi {
         Operations.transfer_operation transferOperation = new Operations.transfer_operation();
         transferOperation.from = from;
         transferOperation.to = to;
-        transferOperation.fee = new Asset(0, ObjectId.create_from_string("1.3.0"));
+        transferOperation.fee = new Asset(0, assetObject.id);
         transferOperation.amount = assetObject.amount_from_string(amount);
         transferOperation.extensions = new HashSet<>();
         transferOperation.memo = new MemoData();
@@ -656,6 +657,26 @@ public class WalletApi {
                 privateKeyType.getPrivateKey(),
                 toMemoKey.getPublicKey());
         return transferOperation;
+    }
+
+    public Operations.limit_order_create_operation getLimitOrderCreateOperation(ObjectId<AccountObject> accountId,
+                                                                                ObjectId<AssetObject> assetFeeId,
+                                                                                ObjectId<AssetObject> assetSellId,
+                                                                                ObjectId<AssetObject> assetReceiveId,
+                                                                                long amountSell,
+                                                                                long amountReceive){
+        Operations.limit_order_create_operation operation = new Operations.limit_order_create_operation();
+        operation.fee = new Asset(0, assetFeeId);
+        operation.seller = accountId;
+        operation.amount_to_sell = new Asset(amountSell, assetSellId);
+        operation.min_to_receive = new Asset(amountReceive, assetReceiveId);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.YEAR, 5);
+        operation.expiration = calendar.getTime();
+        operation.fill_or_kill = false;
+        operation.extensions = new HashSet<>();
+        return operation;
     }
 
 //    public signed_transaction transfer(String strFrom,
@@ -1091,10 +1112,10 @@ public class WalletApi {
         mWebSocketClient.get_full_accounts(names, subscribe, callback);
     }
 
-    public void get_requried_fees(String assetId, String operationId, Operations.transfer_operation transferOperation,
+    public void get_requried_fees(String assetId, int operationId, Operations.base_operation operation,
                                   WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
             throws NetworkStatusException {
-        mWebSocketClient.get_required_fees(assetId, operationId, transferOperation, callback);
+        mWebSocketClient.get_required_fees(assetId, operationId, operation, callback);
     }
 
 //    public String getUnCompressedOwnerKey() {

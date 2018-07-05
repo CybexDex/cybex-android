@@ -26,6 +26,8 @@ import com.cybexmobile.activity.LoginActivity;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
+import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.widget.OverScrollView;
 
@@ -42,10 +44,14 @@ import butterknife.Unbinder;
 import static com.cybexmobile.utils.Constant.ACTION_BUY;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACCOUNT_BALANCE;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACTION;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_CYB_ASSET_OBJECT;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FEE;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CYB_ASSET_OBJECT;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_FEE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 
@@ -91,6 +97,8 @@ public class BuySellFragment extends BaseFragment {
     private WatchlistData mWatchlistData;
     private AccountBalanceObject mAccountBalance;
     private boolean mIsLoginIn;
+    private FeeAmountObject mExchangeFee;
+    private AssetObject mCybAssetObject;
 
     private Unbinder mUnbinder;
 
@@ -99,13 +107,16 @@ public class BuySellFragment extends BaseFragment {
     private double mAssetRmbPrice;
 
     public static BuySellFragment getInstance(String action, WatchlistData watchlistData,
-                                              AccountBalanceObject accountBalance, boolean isLoginIn){
+                                              AccountBalanceObject accountBalance, boolean isLoginIn,
+                                              FeeAmountObject fee, AssetObject cybAssetObject){
         BuySellFragment fragment = new BuySellFragment();
         Bundle bundle = new Bundle();
         bundle.putString(INTENT_PARAM_ACTION, action);
         bundle.putSerializable(INTENT_PARAM_WATCHLIST, watchlistData);
         bundle.putSerializable(INTENT_PARAM_ACCOUNT_BALANCE, accountBalance);
         bundle.putBoolean(INTENT_PARAM_LOGIN_IN, isLoginIn);
+        bundle.putSerializable(INTENT_PARAM_FEE, fee);
+        bundle.putSerializable(INTENT_PARAM_CYB_ASSET_OBJECT, cybAssetObject);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -120,13 +131,16 @@ public class BuySellFragment extends BaseFragment {
             mIsLoginIn = bundle.getBoolean(INTENT_PARAM_LOGIN_IN);
             mWatchlistData = (WatchlistData)bundle.getSerializable(INTENT_PARAM_WATCHLIST);
             mAccountBalance = (AccountBalanceObject) bundle.getSerializable(INTENT_PARAM_ACCOUNT_BALANCE);
-
+            mExchangeFee = (FeeAmountObject) bundle.getSerializable(INTENT_PARAM_FEE);
+            mCybAssetObject = (AssetObject) bundle.getSerializable(INTENT_PARAM_CYB_ASSET_OBJECT);
         }
         if(savedInstanceState != null){
             mCurrentAction = savedInstanceState.getString(BUNDLE_SAVE_ACTION);
             mIsLoginIn = savedInstanceState.getBoolean(BUNDLE_SAVE_IS_LOGIN_IN);
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
             mAccountBalance = (AccountBalanceObject) savedInstanceState.getSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE);
+            mExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FEE);
+            mCybAssetObject = (AssetObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT);
         }
 
     }
@@ -146,6 +160,8 @@ public class BuySellFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         initFragment(savedInstanceState);
         initOrResetViewData();
+        initOrResetButtonData();
+        initOrResetFeeData();
     }
 
     @Override
@@ -155,6 +171,7 @@ public class BuySellFragment extends BaseFragment {
         outState.putBoolean(BUNDLE_SAVE_IS_LOGIN_IN, mIsLoginIn);
         outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
         outState.putSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE, mAccountBalance);
+        outState.putSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT, mCybAssetObject);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mMarketTradeHistoryFragment != null && mMarketTradeHistoryFragment.isAdded()){
             fragmentManager.putFragment(outState, MarketTradeHistoryFragment.class.getSimpleName(), mMarketTradeHistoryFragment);
@@ -271,7 +288,28 @@ public class BuySellFragment extends BaseFragment {
 
     private void initOrResetAvailableData(){
         mTvAssetAvailable.setText(mAccountBalance == null ? getResources().getString(R.string.text_empty) :
-                String.format("%s%s", mAccountBalance.balance/Math.pow(10, mWatchlistData.getBasePrecision()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
+                String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mWatchlistData.getBasePrecision()),
+                        mAccountBalance.balance/Math.pow(10, mWatchlistData.getBasePrecision()),
+                        AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
+    }
+
+    private void initOrResetFeeData(){
+        if(mExchangeFee == null){
+            mTvExchangeFree.setText(getResources().getString(R.string.text_empty));
+            return;
+        }
+        ExchangeFragment fragment = (ExchangeFragment) getParentFragment();
+        if(mIsLoginIn){
+
+
+
+        } else {
+            mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
+                    String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mCybAssetObject.precision),
+                            mExchangeFee.amount/Math.pow(10, mCybAssetObject.precision),
+                            AssetUtil.parseSymbol(mCybAssetObject.symbol)));
+        }
+
     }
 
     private void initOrResetButtonData(){
@@ -309,6 +347,14 @@ public class BuySellFragment extends BaseFragment {
         mPricePrecision = AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice());
         mAmountPrecision = AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice());
         initOrResetViewData();
+    }
+
+    public void changeFee(FeeAmountObject fee, AssetObject cybAsset){
+        if(mCybAssetObject == null){
+            mCybAssetObject = cybAsset;
+        }
+        mExchangeFee = fee;
+        initOrResetFeeData();
     }
 
     public void changeLoginState(boolean loginState){
@@ -372,4 +418,9 @@ public class BuySellFragment extends BaseFragment {
             return null;
         }
     };
+
+    //余额不足回调
+    public interface OnAssetAvailable{
+        void availableNotEnough();
+    }
 }

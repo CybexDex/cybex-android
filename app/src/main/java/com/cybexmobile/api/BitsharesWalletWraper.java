@@ -374,6 +374,15 @@ public class BitsharesWalletWraper {
         return mWalletApi.getTransferOperation(from, to, assetObject, amount, memo, fromMemoKey, toMemokey);
     }
 
+    public Operations.limit_order_create_operation getLimitOrderCreateOperation(ObjectId<AccountObject> accountId,
+                                                                                ObjectId<AssetObject> assetFeeId,
+                                                                                ObjectId<AssetObject> assetSellId,
+                                                                                ObjectId<AssetObject> assetReceiveId,
+                                                                               long amountSell,
+                                                                               long amountReceive){
+        return mWalletApi.getLimitOrderCreateOperation(accountId, assetFeeId, assetSellId, assetReceiveId, amountSell, amountReceive);
+    }
+
 //    public signed_transaction transfer(String strFrom,
 //                                       String strTo,
 //                                       String strAmount,
@@ -610,10 +619,10 @@ public class BitsharesWalletWraper {
         mWalletApi.get_full_accounts(names, subscribe, callback);
     }
 
-    public void get_requried_fees(String assetId, String operationId, Operations.transfer_operation transferOperation,
+    public void get_requried_fees(String assetId, int operationId, Operations.base_operation operation,
                                   WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
             throws NetworkStatusException {
-        mWalletApi.get_requried_fees(assetId, operationId, transferOperation, callback);
+        mWalletApi.get_requried_fees(assetId, operationId, operation, callback);
     }
 
 

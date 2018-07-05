@@ -69,6 +69,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
+import static com.cybexmobile.graphene.chain.Operations.ID_TRANSER_OPERATION;
+
 public class WithdrawActivity extends BaseActivity {
 
     public Unbinder mUnbinder;
@@ -224,7 +226,7 @@ public class WithdrawActivity extends BaseActivity {
                         String memo = getMemo(mAddress, mAssetName);
                         mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount);
                         try {
-                            BitsharesWalletWraper.getInstance().get_requried_fees("1.3.0", "0", mTransferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+                            BitsharesWalletWraper.getInstance().get_requried_fees("1.3.0", ID_TRANSER_OPERATION, mTransferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
                                 @Override
                                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
                                     FeeAmountObject feeAmountObject = reply.result.get(0);

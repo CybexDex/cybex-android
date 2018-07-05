@@ -27,12 +27,16 @@ import com.cybexmobile.R;
 import com.cybexmobile.activity.MarketsActivity;
 import com.cybexmobile.activity.OwnOrderHistoryActivity;
 import com.cybexmobile.activity.WatchlistSelectActivity;
+import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
+import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.Constant;
@@ -48,10 +52,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybexmobile.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 import static com.cybexmobile.utils.Constant.ACTION_BUY;
 import static com.cybexmobile.utils.Constant.ACTION_SELL;
+import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACCOUNT_BALANCE;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACTION;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_CYB_ASSET_OBJECT;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FEE;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_FROM;
@@ -61,7 +69,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class ExchangeFragment extends BaseFragment {
+public class ExchangeFragment extends BaseFragment implements BuySellFragment.OnAssetAvailable {
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
@@ -82,6 +90,8 @@ public class ExchangeFragment extends BaseFragment {
     private String mAction;
     private WatchlistData mWatchlistData;
     private AccountBalanceObject mAccountBalance;
+    private FeeAmountObject mExchangeFee;
+    private AssetObject mCybAssetObject;
 
     private WebSocketService mWebSocketService;
 
@@ -111,6 +121,8 @@ public class ExchangeFragment extends BaseFragment {
             mAction = savedInstanceState.getString(BUNDLE_SAVE_ACTION);
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
             mAccountBalance = (AccountBalanceObject) savedInstanceState.getSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE);
+            mExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FEE);
+            mCybAssetObject = (AssetObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mName = sharedPreferences.getString(PREF_NAME, "");
@@ -170,12 +182,25 @@ public class ExchangeFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE_SELECT_WATCHLIST && resultCode == RESULT_CODE_SELECTED_WATCHLIST){
-            //change watchlistdata
-            mWatchlistData = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
+            WatchlistData watchlist = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
+            //change watchlistdata 同一个交易对数据不刷新
+            if(mWatchlistData != null && watchlist.getBaseId().equals(mWatchlistData.getBaseId()) && watchlist.getQuoteId().equals(mWatchlistData.getQuoteId())){
+                return;
+            }
+            mWatchlistData = watchlist;
             setTitleData();
             notifyWatchlistDataChange(mWatchlistData);
             notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
+            //切换交易对 重新加载交易手续费
+            loadBuySellFee();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadRequiredFee(Event.LoadRequiredFee event){
+        mExchangeFee = event.getFee();
+
+        notifyExchangeFee(event.getFee(), mWebSocketService.getAssetObject(ASSET_ID_CYB));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -239,6 +264,14 @@ public class ExchangeFragment extends BaseFragment {
         startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
     }
 
+    private void loadBuySellFee(){
+        mWebSocketService.loadBuySellFee(ASSET_ID_CYB, ID_CREATE_LIMIT_ORDER_OPERATION,
+                BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
+                        ObjectId.create_from_string(ASSET_ID_CYB),
+                        mWatchlistData.getBaseAsset().id,
+                        mWatchlistData.getQuoteAsset().id,  0, 0));
+    }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -248,11 +281,12 @@ public class ExchangeFragment extends BaseFragment {
             if(mWatchlistData == null){
                 mWatchlistData = mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB);
                 notifyWatchlistDataChange(mWatchlistData);
-                if(mIsLoginIn){
-                    notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
-                }
                 setTitleData();
             }
+            if(mIsLoginIn){
+                notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
+            }
+            loadBuySellFee();
         }
 
         @Override
@@ -279,6 +313,15 @@ public class ExchangeFragment extends BaseFragment {
         }
         if(mOpenOrdersFragment != null){
             mOpenOrdersFragment.changeWatchlist(watchlistData);
+        }
+    }
+
+    private void notifyExchangeFee(FeeAmountObject fee, AssetObject cybAsset){
+        if(mBuyFragment != null){
+            mBuyFragment.changeFee(fee, cybAsset);
+        }
+        if(mSellFragment != null){
+            mBuyFragment.changeFee(fee, cybAsset);
         }
     }
 
@@ -349,7 +392,7 @@ public class ExchangeFragment extends BaseFragment {
         switch (position){
             case 0:
                 if(mBuyFragment == null){
-                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mAccountBalance, mIsLoginIn);
+                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mAccountBalance, mIsLoginIn, mExchangeFee, mCybAssetObject);
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
@@ -359,7 +402,7 @@ public class ExchangeFragment extends BaseFragment {
                 break;
             case 1:
                 if(mSellFragment == null){
-                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mAccountBalance, mIsLoginIn);
+                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mAccountBalance, mIsLoginIn, mExchangeFee, mCybAssetObject);
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);
@@ -387,6 +430,8 @@ public class ExchangeFragment extends BaseFragment {
         outState.putString(BUNDLE_SAVE_ACTION, mAction);
         outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
         outState.putSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE, mAccountBalance);
+        outState.putSerializable(BUNDLE_SAVE_FEE, mExchangeFee);
+        outState.putSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT, mCybAssetObject);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mBuyFragment != null && mBuyFragment.isAdded()){
             fragmentManager.putFragment(outState, BuySellFragment.class.getSimpleName() + TAG_BUY, mBuyFragment);
@@ -435,4 +480,8 @@ public class ExchangeFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void availableNotEnough() {
+
+    }
 }
