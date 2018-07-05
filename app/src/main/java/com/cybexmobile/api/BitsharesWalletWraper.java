@@ -9,11 +9,13 @@ import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
+import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
@@ -37,7 +39,7 @@ public class BitsharesWalletWraper {
     private Map<ObjectId<AccountObject>, List<Asset>> mMapAccountId2Asset = new ConcurrentHashMap<>();
     private Map<ObjectId<AssetObject>, AssetObject> mMapAssetId2Object = new ConcurrentHashMap<>();
     private String mstrWalletFilePath;
-    private  Timer mTimer = new Timer();
+    private Timer mTimer = new Timer();
     private Task mTask = new Task();
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
@@ -219,7 +221,7 @@ public class BitsharesWalletWraper {
     public int import_account_password(AccountObject accountObject, String strAccountName, String strPassword) {
         mWalletApi.set_password(strPassword);
         int nRet = mWalletApi.import_account_password(accountObject, strAccountName, strPassword);
-        if(nRet == 0){
+        if (nRet == 0) {
 //            save_wallet_file();
             for (AccountObject account : list_my_accounts()) {
                 mMapAccountId2Object.put(account.id, account);
@@ -240,7 +242,7 @@ public class BitsharesWalletWraper {
     }
 
     public void lockWallet() {
-        mTimer.schedule(mTask, 120*1000, 120 * 1000);
+        mTimer.schedule(mTask, 120 * 1000, 120 * 1000);
     }
 
     public class Task extends TimerTask {
@@ -288,8 +290,8 @@ public class BitsharesWalletWraper {
 //    }
 
     public void get_account_history(ObjectId<AccountObject> accountObjectId,
-                                                              int nLimit,
-                                                          WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+                                    int nLimit,
+                                    WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_account_history(accountObjectId, nLimit, callback);
     }
 
@@ -362,6 +364,16 @@ public class BitsharesWalletWraper {
         mWalletApi.get_block(callId, blockNumber, callback);
     }
 
+    public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
+                                                              ObjectId<AccountObject> to,
+                                                              AssetObject assetObject,
+                                                              String amount,
+                                                              String memo,
+                                                              Types.public_key_type fromMemoKey,
+                                                              Types.public_key_type toMemokey) {
+        return mWalletApi.getTransferOperation(from, to, assetObject, amount, memo, fromMemoKey, toMemokey);
+    }
+
 //    public signed_transaction transfer(String strFrom,
 //                                       String strTo,
 //                                       String strAmount,
@@ -389,8 +401,8 @@ public class BitsharesWalletWraper {
 //            for (AccountHistoryObject historyObject : operationHistoryObjectList) {
 //                block_header blockHeader = BitsharesWalletWraper.getInstance().get_block_header(historyObject.block_num);
 //                listHistoryObjectTime.add(new Pair<>(historyObject, blockHeader.timestamp));
-//                if (historyObject.op.nOperationType <= operations.ID_CREATE_ACCOUNT_OPERATION) {
-//                    operations.base_operation operation = (operations.base_operation)historyObject.op.operationContent;
+//                if (historyObject.op.nOperationType <= Operations.ID_CREATE_ACCOUNT_OPERATION) {
+//                    Operations.base_operation operation = (Operations.base_operation)historyObject.op.operationContent;
 //                    hashSetObjectId.addAll(operation.get_account_id_list());
 //                    hashSetAssetObject.addAll(operation.get_asset_id_list());
 //                }
@@ -496,7 +508,7 @@ public class BitsharesWalletWraper {
     }
 
     public void subscribe_to_market(String id, String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
-        mWalletApi.subscribe_to_market(id ,base, quote, callback);
+        mWalletApi.subscribe_to_market(id, base, quote, callback);
     }
 
     public AtomicInteger get_call_id() {
@@ -594,9 +606,16 @@ public class BitsharesWalletWraper {
 //    }
 
     public void get_full_accounts(List<String> names, boolean subscribe,
-                                                     WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>> callback) throws NetworkStatusException {
+                                  WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>> callback) throws NetworkStatusException {
         mWalletApi.get_full_accounts(names, subscribe, callback);
     }
+
+    public void get_requried_fees(String assetId, String operationId, Operations.transfer_operation transferOperation,
+                                  WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
+            throws NetworkStatusException {
+        mWalletApi.get_requried_fees(assetId, operationId, transferOperation, callback);
+    }
+
 
     //Todo: add asset_object_to_id_map
 //    public List<ObjectId<AssetObject>> getObjectList() {

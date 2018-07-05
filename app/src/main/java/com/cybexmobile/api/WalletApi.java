@@ -17,14 +17,18 @@ import com.cybexmobile.fc.io.DataStreamSizeEncoder;
 import com.cybexmobile.fc.io.RawType;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
+import com.cybexmobile.graphene.chain.MemoData;
 import com.cybexmobile.graphene.chain.ObjectId;
+import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
@@ -45,6 +49,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -602,7 +607,7 @@ public class WalletApi {
 //            assetObject = get_assets(listAssetObjectId).get(0);
 //        }
 //
-//        operations.transfer_operation transferOperation = new operations.transfer_operation();
+//        Operations.transfer_operation transferOperation = new Operations.transfer_operation();
 //        transferOperation.from = new ObjectId<AccountObject>(0, AccountObject.class);//accountObjectFrom.id;
 //        transferOperation.to = new ObjectId<AccountObject>(0, AccountObject.class);
 //        transferOperation.amount = assetObject.amount_from_string(strAmount);
@@ -611,18 +616,47 @@ public class WalletApi {
 //
 //        }*/
 //
-//        operations.operation_type operationType = new operations.operation_type();
+//        Operations.operation_type operationType = new Operations.operation_type();
 //        operationType.nOperationType = 0;
 //        operationType.operationContent = transferOperation;
 //
 //        signed_transaction tx = new signed_transaction();
-//        tx.operations = new ArrayList<>();
-//        tx.operations.add(operationType);
+//        tx.Operations = new ArrayList<>();
+//        tx.Operations.add(operationType);
 //        tx.extensions = new HashSet<>();
 //        set_operation_fees(tx, get_global_properties().parameters.current_fees);
 //
 //        return transferOperation.fee;
 //    }
+
+    public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
+                                                              ObjectId<AccountObject> to,
+                                                              AssetObject assetObject,
+                                                              String amount,
+                                                              String memo,
+                                                              Types.public_key_type fromMemoKey,
+                                                              Types.public_key_type toMemoKey) {
+
+        Operations.transfer_operation transferOperation = new Operations.transfer_operation();
+        transferOperation.from = from;
+        transferOperation.to = to;
+        transferOperation.fee = new Asset(0, ObjectId.create_from_string("1.3.0"));
+        transferOperation.amount = assetObject.amount_from_string(amount);
+        transferOperation.extensions = new HashSet<>();
+        transferOperation.memo = new MemoData();
+        transferOperation.memo.from = fromMemoKey;
+        transferOperation.memo.to = toMemoKey;
+        Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+        transferOperation.memo.set_message(
+                privateKeyType.getPrivateKey(),
+                toMemoKey.getPublicKey(),
+                memo,
+                0);
+        transferOperation.memo.get_message(
+                privateKeyType.getPrivateKey(),
+                toMemoKey.getPublicKey());
+        return transferOperation;
+    }
 
 //    public signed_transaction transfer(String strFrom,
 //                                       String strTo,
@@ -646,7 +680,7 @@ public class WalletApi {
 //            return null;
 //        }
 //
-//        operations.transfer_operation transferOperation = new operations.transfer_operation();
+//        Operations.transfer_operation transferOperation = new Operations.transfer_operation();
 //        transferOperation.from = accountObjectFrom.id;
 //        transferOperation.to = accountObjectTo.id;
 //        transferOperation.amount = assetObject.amount_from_string(strAmount);
@@ -672,13 +706,13 @@ public class WalletApi {
 //            );
 //        }
 //
-//        operations.operation_type operationType = new operations.operation_type();
-//        operationType.nOperationType = operations.ID_TRANSER_OPERATION;
+//        Operations.operation_type operationType = new Operations.operation_type();
+//        operationType.nOperationType = Operations.ID_TRANSER_OPERATION;
 //        operationType.operationContent = transferOperation;
 //
 //        signed_transaction tx = new signed_transaction();
-//        tx.operations = new ArrayList<>();
-//        tx.operations.add(operationType);
+//        tx.Operations = new ArrayList<>();
+//        tx.Operations.add(operationType);
 //        tx.extensions = new HashSet<>();
 //        set_operation_fees(tx, get_global_properties().parameters.current_fees);
 //
@@ -690,17 +724,17 @@ public class WalletApi {
 //    public Asset calculate_sell_asset_fee(String amountToSell, AssetObject assetToSell,
 //                                          String minToReceive, AssetObject assetToReceive,
 //                                          global_property_object globalPropertyObject) {
-//        operations.limit_order_create_operation op = new operations.limit_order_create_operation();
+//        Operations.limit_order_create_operation op = new Operations.limit_order_create_operation();
 //        op.amount_to_sell = assetToSell.amount_from_string(amountToSell);
 //        op.min_to_receive = assetToReceive.amount_from_string(minToReceive);
 //
-//        operations.operation_type operationType = new operations.operation_type();
-//        operationType.nOperationType = operations.ID_CREATE_LIMIT_ORDER_OPERATION;
+//        Operations.operation_type operationType = new Operations.operation_type();
+//        operationType.nOperationType = Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 //        operationType.operationContent = op;
 //
 //        signed_transaction tx = new signed_transaction();
-//        tx.operations = new ArrayList<>();
-//        tx.operations.add(operationType);
+//        tx.Operations = new ArrayList<>();
+//        tx.Operations.add(operationType);
 //
 //        tx.extensions = new HashSet<>();
 //        set_operation_fees(tx, globalPropertyObject.parameters.current_fees);
@@ -728,7 +762,7 @@ public class WalletApi {
 //            throws NetworkStatusException {
 //        // 这是用于出售的帐号
 //        AccountObject accountObject = list_my_accounts().get(0);
-//        operations.limit_order_create_operation op = new operations.limit_order_create_operation();
+//        Operations.limit_order_create_operation op = new Operations.limit_order_create_operation();
 //        op.seller = accountObject.id;
 //
 //        // 填充数据
@@ -743,13 +777,13 @@ public class WalletApi {
 //        op.fill_or_kill = fillOrKill;
 //        op.extensions = new HashSet<>();
 //
-//        operations.operation_type operationType = new operations.operation_type();
-//        operationType.nOperationType = operations.ID_CREATE_LIMIT_ORDER_OPERATION;
+//        Operations.operation_type operationType = new Operations.operation_type();
+//        operationType.nOperationType = Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 //        operationType.operationContent = op;
 //
 //        signed_transaction tx = new signed_transaction();
-//        tx.operations = new ArrayList<>();
-//        tx.operations.add(operationType);
+//        tx.Operations = new ArrayList<>();
+//        tx.Operations.add(operationType);
 //
 //        tx.extensions = new HashSet<>();
 //        set_operation_fees(tx, get_global_properties().parameters.current_fees);
@@ -797,18 +831,18 @@ public class WalletApi {
 
 //    public signed_transaction cancel_order(ObjectId<LimitOrderObject> id)
 //            throws NetworkStatusException {
-//        operations.limit_order_cancel_operation op = new operations.limit_order_cancel_operation();
+//        Operations.limit_order_cancel_operation op = new Operations.limit_order_cancel_operation();
 //        op.fee_paying_account = mWebSocketClient.get_limit_order(id).seller;
 //        op.order = id;
 //        op.extensions = new HashSet<>();
 //
-//        operations.operation_type operationType = new operations.operation_type();
-//        operationType.nOperationType = operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
+//        Operations.operation_type operationType = new Operations.operation_type();
+//        operationType.nOperationType = Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
 //        operationType.operationContent = op;
 //
 //        signed_transaction tx = new signed_transaction();
-//        tx.operations = new ArrayList<>();
-//        tx.operations.add(operationType);
+//        tx.Operations = new ArrayList<>();
+//        tx.Operations.add(operationType);
 //
 //        tx.extensions = new HashSet<>();
 //        set_operation_fees(tx, get_global_properties().parameters.current_fees);
@@ -842,7 +876,7 @@ public class WalletApi {
 //        Types.public_key_type publicActiveKey = new Types.public_key_type(privateActiveKey.get_public_key());
 //        Types.public_key_type publicMemoKey = new Types.public_key_type(privateMemoKey.get_public_key());
 //
-//        operations.account_create_operation operation = new operations.account_create_operation();
+//        Operations.account_create_operation operation = new Operations.account_create_operation();
 //        operation.name = strAccountName;
 //        operation.options.memo_key = publicMemoKey;
 //        operation.active = new Authority(1, publicActiveKey, 1);
@@ -946,7 +980,7 @@ public class WalletApi {
     }
 
 //    private void set_operation_fees(signed_transaction tx, fee_schedule feeSchedule) {
-//        for (operations.operation_type operationType : tx.operations) {
+//        for (Operations.operation_type operationType : tx.Operations) {
 //            feeSchedule.set_fee(operationType, Price.unit_price(new ObjectId<AssetObject>(0, AssetObject.class)));
 //        }
 //    }
@@ -1055,6 +1089,12 @@ public class WalletApi {
                                                      WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>> callback)
             throws NetworkStatusException {
         mWebSocketClient.get_full_accounts(names, subscribe, callback);
+    }
+
+    public void get_requried_fees(String assetId, String operationId, Operations.transfer_operation transferOperation,
+                                  WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
+            throws NetworkStatusException {
+        mWebSocketClient.get_required_fees(assetId, operationId, transferOperation, callback);
     }
 
 //    public String getUnCompressedOwnerKey() {

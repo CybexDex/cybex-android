@@ -12,6 +12,7 @@ import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullNodeServerSelect;
 import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
@@ -19,6 +20,7 @@ import com.cybexmobile.graphene.chain.GlobalConfigObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
+import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.market.MarketTrade;
 import com.google.gson.Gson;
@@ -499,8 +501,6 @@ public class WebSocketClient extends WebSocketListener {
                 new ReplyProcessImpl<>(new TypeToken<Reply<List<AssetObject>>>() {
                 }.getType(), callback);
         sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
-
-        //return replyObject.result.get(0);
     }
 
     public void get_objects(List<String> objectIds, MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
@@ -518,8 +518,6 @@ public class WebSocketClient extends WebSocketListener {
                 new ReplyProcessImpl<>(new TypeToken<Reply<List<AssetObject>>>() {
                 }.getType(), callback);
         sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
-
-        //return replyObject.result.get(0);
     }
 
     public void get_block(int callId, int blockNumber, MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
@@ -646,25 +644,6 @@ public class WebSocketClient extends WebSocketListener {
          sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
     }
 
-//    public void set_subscribe_callback(boolean filter) throws NetworkStatusException {
-//        Call callObject = new Call();
-//        callObject.id = mCallId.getAndIncrement();
-//        callObject.method = "call";
-//        callObject.params = new ArrayList<>();
-//        callObject.params.add(_nDatabaseId);
-//        callObject.params.add("set_subscribe_callback");
-//
-//        List<Object> listParams = new ArrayList<>();
-//        listParams.add(callObject.id);
-//        listParams.add(filter);
-//        callObject.params.add(listParams);
-//
-//        ReplyProcessImpl<Reply<String>> replyObject =
-//                new ReplyProcessImpl<>(new TypeToken<Reply<String>>() {
-//                }.getType(), null);
-//        sendForReplyImpl(FLAG_DATABASE, callObject, replyObject);
-//    }
-
     public void get_ticker(String base, String quote, MessageCallback<Reply<MarketTicker>> callback) throws NetworkStatusException {
         Call callObject = new Call();
         callObject.id = mCallId.getAndIncrement();
@@ -748,6 +727,34 @@ public class WebSocketClient extends WebSocketListener {
                 new ReplyProcessImpl<>(new TypeToken<Reply<List<FullAccountObjectReply>>>() {
                 }.getType(), callback);
         sendForReply(FLAG_DATABASE, callObject, replyObject);
+    }
+
+    public void get_required_fees(String assetid, String operationId, Operations.transfer_operation transferOperation,
+                                  MessageCallback<Reply<List<FeeAmountObject>>> callback) throws NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nDatabaseId);
+        callObject.params.add("get_required_fees");
+
+        List<Object> listParams = new ArrayList<>();
+        List<Object> operationList = new ArrayList<>();
+        List<Object> operation = new ArrayList<>();
+
+        operation.add(operationId);
+        operation.add(transferOperation);
+
+        operationList.add(operation);
+        listParams.add(operationList);
+        listParams.add(assetid);
+        callObject.params.add(listParams);
+
+        ReplyProcessImpl<Reply<List<FeeAmountObject>>> replyObject =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<FeeAmountObject>>>() {
+                }.getType(), callback);
+        sendForReply(FLAG_DATABASE, callObject, replyObject);
+
     }
 
 

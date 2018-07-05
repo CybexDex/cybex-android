@@ -87,6 +87,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
                         intent.putExtra("isEnabled", mDataList.get(position).isEnable());
                         intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
                         intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
+                        intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
                         if(accountBalanceObject != null) {
                             intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, assetObject.precision));
                         }
