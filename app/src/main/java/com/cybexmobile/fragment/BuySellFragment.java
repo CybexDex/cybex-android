@@ -6,15 +6,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.NestedScrollView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
@@ -23,6 +27,7 @@ import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.utils.AssetUtil;
+import com.cybexmobile.widget.OverScrollView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -76,6 +81,8 @@ public class BuySellFragment extends BaseFragment {
     TextView mTvExchangeFree;
     @BindView(R.id.buysell_tv_asset_total)
     TextView mTvAssetTotal;
+    @BindView(R.id.buysell_scroll_view)
+    OverScrollView mScrollView;
 
     private MarketTradeHistoryFragment mMarketTradeHistoryFragment;
     private ExchangeLimitOrderFragment mExchangeLimitOrderFragment;
