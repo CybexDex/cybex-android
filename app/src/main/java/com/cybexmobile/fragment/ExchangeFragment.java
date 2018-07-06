@@ -32,7 +32,6 @@ import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
-import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
@@ -56,10 +55,11 @@ import static com.cybexmobile.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OP
 import static com.cybexmobile.utils.Constant.ACTION_BUY;
 import static com.cybexmobile.utils.Constant.ACTION_SELL;
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACCOUNT_BALANCE;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACTION;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_CYB_ASSET_OBJECT;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_CYB_FEE;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FEE;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_FROM;
@@ -69,7 +69,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class ExchangeFragment extends BaseFragment implements BuySellFragment.OnAssetAvailable {
+public class ExchangeFragment extends BaseFragment {
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
@@ -89,8 +89,9 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
 
     private String mAction;
     private WatchlistData mWatchlistData;
-    private AccountBalanceObject mAccountBalance;
+    private FullAccountObject mFullAccountObject;
     private FeeAmountObject mExchangeFee;
+    private FeeAmountObject mCybExchangeFee;
     private AssetObject mCybAssetObject;
 
     private WebSocketService mWebSocketService;
@@ -120,8 +121,9 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
         if (savedInstanceState != null) {
             mAction = savedInstanceState.getString(BUNDLE_SAVE_ACTION);
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
-            mAccountBalance = (AccountBalanceObject) savedInstanceState.getSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE);
+            mFullAccountObject = (FullAccountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FULL_ACCOUNT_OBJECT);
             mExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FEE);
+            mCybExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_FEE);
             mCybAssetObject = (AssetObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -192,15 +194,18 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
             notifyWatchlistDataChange(mWatchlistData);
             notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
             //切换交易对 重新加载交易手续费
-            loadBuySellFee();
+            loadBuySellFee(ASSET_ID_CYB);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadRequiredFee(Event.LoadRequiredFee event){
         mExchangeFee = event.getFee();
-
-        notifyExchangeFee(event.getFee(), mWebSocketService.getAssetObject(ASSET_ID_CYB));
+        if(mExchangeFee.asset_id.equals(ASSET_ID_CYB) && mCybExchangeFee == null){
+            mCybExchangeFee = mExchangeFee;
+        }
+        mCybAssetObject = mWebSocketService.getAssetObject(ASSET_ID_CYB);
+        notifyExchangeFee(mExchangeFee, mCybAssetObject);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -264,8 +269,8 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
         startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
     }
 
-    private void loadBuySellFee(){
-        mWebSocketService.loadBuySellFee(ASSET_ID_CYB, ID_CREATE_LIMIT_ORDER_OPERATION,
+    public void loadBuySellFee(String assetId){
+        mWebSocketService.loadBuySellFee(assetId, ID_CREATE_LIMIT_ORDER_OPERATION,
                 BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
                         ObjectId.create_from_string(ASSET_ID_CYB),
                         mWatchlistData.getBaseAsset().id,
@@ -286,7 +291,7 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
             if(mIsLoginIn){
                 notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
             }
-            loadBuySellFee();
+            loadBuySellFee(ASSET_ID_CYB);
         }
 
         @Override
@@ -326,28 +331,12 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
     }
 
     private void notifyAccountBalanceDataChange(FullAccountObject fullAccount){
-        AccountBalanceObject accountBalanceObject = null;
-        if(mWatchlistData != null && fullAccount != null){
-            List<AccountBalanceObject> accountBalances = fullAccount.balances;
-            if(accountBalances == null || accountBalances.size() == 0){
-                return;
-            }
-            for(AccountBalanceObject accountBalance : accountBalances){
-                if(accountBalance.asset_type.toString().equals(mWatchlistData.getBaseId())){
-                    accountBalanceObject = accountBalance;
-                    break;
-                }
-            }
-        }
-        if(mAccountBalance == accountBalanceObject){
-            return;
-        }
-        mAccountBalance = accountBalanceObject;
+        mFullAccountObject = fullAccount;
         if(mBuyFragment != null){
-            mBuyFragment.changeAccountBalance(mAccountBalance);
+            mBuyFragment.changeFullAccount(fullAccount);
         }
         if(mSellFragment != null){
-            mSellFragment.changeAccountBalance(mAccountBalance);
+            mSellFragment.changeFullAccount(fullAccount);
         }
     }
 
@@ -392,7 +381,7 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
         switch (position){
             case 0:
                 if(mBuyFragment == null){
-                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mAccountBalance, mIsLoginIn, mExchangeFee, mCybAssetObject);
+                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mFullAccountObject, mIsLoginIn, mCybExchangeFee, mCybAssetObject);
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
@@ -402,7 +391,7 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
                 break;
             case 1:
                 if(mSellFragment == null){
-                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mAccountBalance, mIsLoginIn, mExchangeFee, mCybAssetObject);
+                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mFullAccountObject, mIsLoginIn, mCybExchangeFee, mCybAssetObject);
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);
@@ -429,8 +418,9 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
         super.onSaveInstanceState(outState);
         outState.putString(BUNDLE_SAVE_ACTION, mAction);
         outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
-        outState.putSerializable(BUNDLE_SAVE_ACCOUNT_BALANCE, mAccountBalance);
+        outState.putSerializable(BUNDLE_SAVE_FULL_ACCOUNT_OBJECT, mFullAccountObject);
         outState.putSerializable(BUNDLE_SAVE_FEE, mExchangeFee);
+        outState.putSerializable(BUNDLE_SAVE_CYB_FEE, mCybExchangeFee);
         outState.putSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT, mCybAssetObject);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mBuyFragment != null && mBuyFragment.isAdded()){
@@ -479,9 +469,4 @@ public class ExchangeFragment extends BaseFragment implements BuySellFragment.On
 
     }
 
-
-    @Override
-    public void availableNotEnough() {
-
-    }
 }

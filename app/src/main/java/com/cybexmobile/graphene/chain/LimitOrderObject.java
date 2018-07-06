@@ -1,8 +1,9 @@
 package com.cybexmobile.graphene.chain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class LimitOrderObject {
+public class LimitOrderObject implements Serializable {
 
     public ObjectId<LimitOrderObject> id;
     public Date expiration;

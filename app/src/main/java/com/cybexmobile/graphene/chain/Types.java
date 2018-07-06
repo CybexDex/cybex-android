@@ -12,6 +12,7 @@ import org.spongycastle.crypto.digests.RIPEMD160Digest;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.digests.SHA512Digest;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +23,7 @@ import mrd.bitlib.bitcoinj.Base58;
 
 import static com.cybexmobile.graphene.chain.Config.GRAPHENE_ADDRESS_PREFIX;
 
-public class Types {
+public class Types{
 
     enum reserved_spaces
     {
@@ -126,7 +127,7 @@ public class Types {
         }
     }
 
-    public static class public_key_type {
+    public static class public_key_type implements Serializable{
         public byte[] key_data = new byte[33];
         public byte[] key_data_uncompressed = new byte[65];
 
@@ -327,7 +328,7 @@ public class Types {
         }
     }
 
-    public static class vote_id_type {
+    public static class vote_id_type implements Serializable {
         int content;
 
         public vote_id_type(String strSerial) {
@@ -354,7 +355,7 @@ public class Types {
         }
     }
 
-    public static class account_options {
+    public static class account_options implements Serializable {
         public public_key_type memo_key;
         public String voting_account;
         public Integer num_witness;

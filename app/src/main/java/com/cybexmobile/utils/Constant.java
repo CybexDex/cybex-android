@@ -17,9 +17,9 @@ public class Constant {
     public static final String INTENT_PARAM_ACTION = "intent_param_action";
     public static final String INTENT_PARAM_WATCHLIST = "intent_param_watchlist";
     public static final String INTENT_PARAM_FROM = "intent_param_from";
-    public static final String INTENT_PARAM_ACCOUNT_BALANCE = "intent_param_account_balance";
     public static final String INTENT_PARAM_FEE = "intent_param_fee";
     public static final String INTENT_PARAM_CYB_ASSET_OBJECT = "intent_param_cyb_asset_object";
+    public static final String INTENT_PARAM_FULL_ACCOUNT_OBJECT = "intent_param_full_account_object";
 
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";
@@ -60,6 +60,8 @@ public class Constant {
     public static final String BUNDLE_SAVE_WATCHLIST = "bundle_save_watchlist";
     public static final String BUNDLE_SAVE_ACCOUNT_BALANCE = "bundle_save_account_balance";
     public static final String BUNDLE_SAVE_IS_LOGIN_IN = "bundle_save_is_login_in";
-    public static final String BUNDLE_SAVE_FEE = "fee";
+    public static final String BUNDLE_SAVE_FEE = "bundle_save_fee";
+    public static final String BUNDLE_SAVE_CYB_FEE = "bundle_save_cyb_fee";
     public static final String BUNDLE_SAVE_CYB_ASSET_OBJECT = "bundle_save_cyb_asset_object";
+    public static final String BUNDLE_SAVE_FULL_ACCOUNT_OBJECT = "bundle_save_full_account_object";
 }

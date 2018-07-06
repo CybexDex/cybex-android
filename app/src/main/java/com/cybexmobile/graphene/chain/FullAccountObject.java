@@ -1,8 +1,9 @@
 package com.cybexmobile.graphene.chain;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class FullAccountObject {
+public class FullAccountObject implements Serializable {
 
     public AccountObject account;
     public List<LimitOrderObject> limit_orders;

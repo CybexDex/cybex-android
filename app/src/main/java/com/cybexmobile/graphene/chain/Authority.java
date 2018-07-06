@@ -1,10 +1,11 @@
 package com.cybexmobile.graphene.chain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Authority {
+public class Authority implements Serializable {
 
     private Integer weight_threshold;
     public HashMap<ObjectId<AccountObject>, Integer> account_auths = new HashMap<>();
