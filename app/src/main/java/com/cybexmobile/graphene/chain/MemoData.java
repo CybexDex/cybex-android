@@ -7,6 +7,9 @@ import com.cybexmobile.crypto.Sha224Object;
 import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.crypto.Sha512Object;
 import com.cybexmobile.fc.io.RawType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.primitives.UnsignedLong;
 
 import java.nio.ByteBuffer;
@@ -61,13 +64,15 @@ public class MemoData {
      * be unique with high probability as long as the generating host has a high-resolution clock OR a strong source
      * of entropy for generating private keys.
      */
-    UnsignedLong unsignedNonce = UnsignedLong.ZERO;
+    transient UnsignedLong unsignedNonce = UnsignedLong.ZERO;
+
     long nonce = 0;
     /**
      * This field contains the AES encrypted packed @ref memo_message
      */
     //vector<char> messageBuffer;
-    ByteBuffer messageBuffer;
+    transient ByteBuffer messageBuffer;
+
     String message;
 
     /// @note custom_nonce is for debugging only; do not set to a nonzero value in production
@@ -117,8 +122,6 @@ public class MemoData {
         System.arraycopy(sha512Object.hash, 32, ivBytes, 0, ivBytes.length);
 
         messageBuffer = Aes.encrypt(byteKey, ivBytes, byteBufferText.array());
-
-        Log.e("messageBuffer", bytesToHex(messageBuffer.array()));
         message = bytesToHex(messageBuffer.array());
     }
 

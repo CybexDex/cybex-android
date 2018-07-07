@@ -12,6 +12,7 @@ import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullNodeServerSelect;
 import com.cybexmobile.graphene.chain.Asset;
@@ -21,6 +22,7 @@ import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.Operations;
+import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.market.MarketTrade;
 import com.google.gson.Gson;
@@ -422,23 +424,21 @@ public class WebSocketClient extends WebSocketListener {
 //        return replyObject.result;
 //    }
 
-//    public dynamic_global_property_object get_dynamic_global_properties() throws NetworkStatusException {
-//        Call callObject = new Call();
-//        callObject.id = mCallId.getAndIncrement();
-//        callObject.method = "call";
-//        callObject.params = new ArrayList<>();
-//        callObject.params.add(_nDatabaseId);
-//        callObject.params.add("get_dynamic_global_properties");
-//
-//        callObject.params.add(new ArrayList<Object>());
-//
-//        ReplyProcessImpl<Reply<dynamic_global_property_object>> replyObjectProcess =
-//                new ReplyProcessImpl<>(new TypeToken<Reply<dynamic_global_property_object>>(){}.getType());
-//        Reply<dynamic_global_property_object> replyObject = sendForReply(callObject, replyObjectProcess);
-//
-//        return replyObject.result;
-//
-//    }
+    public void get_dynamic_global_properties(MessageCallback<Reply<DynamicGlobalPropertyObject>> callback) throws NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nDatabaseId);
+        callObject.params.add("get_dynamic_global_properties");
+
+        callObject.params.add(new ArrayList<Object>());
+
+        ReplyProcessImpl<Reply<DynamicGlobalPropertyObject>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<DynamicGlobalPropertyObject>>(){}.getType(), callback);
+        sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
+
+    }
 
     public void list_assets(String strLowerBound, int nLimit, MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         Call callObject = new Call();
@@ -535,26 +535,22 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, call, replyReplyProcess);
     }
 
-//    public int broadcast_transaction(signed_transaction tx) throws NetworkStatusException {
-//        Call callObject = new Call();
-//        callObject.id = mCallId.getAndIncrement();
-//        callObject.method = "call";
-//        callObject.params = new ArrayList<>();
-//        callObject.params.add(_nBroadcastId);
-//        callObject.params.add("broadcast_transaction");
-//        List<Object> listTransaction = new ArrayList<>();
-//        listTransaction.add(tx);
-//        callObject.params.add(listTransaction);
-//
-//        ReplyProcessImpl<Reply<Object>> replyObjectProcess =
-//                new ReplyProcessImpl<>(new TypeToken<Reply<Integer>>(){}.getType());
-//        Reply<Object> replyObject = sendForReply(callObject, replyObjectProcess);
-//        if (replyObject.error != null) {
-//            return -1;
-//        } else {
-//            return 0;
-//        }
-//    }
+    public void broadcast_transaction_with_callback(SignedTransaction tx, MessageCallback<Reply<String>> callback) throws NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nBroadcastId);
+        callObject.params.add("broadcast_transaction_with_callback");
+        List<Object> listTransaction = new ArrayList<>();
+        listTransaction.add(callObject.id);
+        listTransaction.add(tx);
+        callObject.params.add(listTransaction);
+
+        ReplyProcessImpl<Reply<String>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<String>>(){}.getType(), callback);
+        sendForReply(FLAG_BROADCAST, callObject, replyObjectProcess);
+    }
 
     public void get_market_history(ObjectId<AssetObject> baseAssetId,
                                                  ObjectId<AssetObject> quoteAssetId,

@@ -84,14 +84,20 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showConfirmationDialog(Context context, View.OnClickListener listener) {
+    public static void showConfirmationDialog(Context context, View.OnClickListener listener, String withdrawAddress, String withdrawAmount,
+                                              String transferFee, String gatewayFee, String receiveAmount ) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_withdraw_confirmation);
-        TextView withdrawAddress = dialog.findViewById(R.id.confirm_dialog_withdraw_address);
-        TextView withdrawAmount = dialog.findViewById(R.id.confirm_dialog_withdraw_amount);
-        TextView withdrawFee = dialog.findViewById(R.id.confirm_dialog_withdraw_withdraw_fee);
-        TextView gatewayFee = dialog.findViewById(R.id.confirm_dialog_gateway_fee);
-        TextView receiveAmount = dialog.findViewById(R.id.confirm_dialog_receive_amount);
+        TextView withdrawAddressView = dialog.findViewById(R.id.confirm_dialog_withdraw_address);
+        TextView withdrawAmountView = dialog.findViewById(R.id.confirm_dialog_withdraw_amount);
+        TextView withdrawFeeView = dialog.findViewById(R.id.confirm_dialog_withdraw_withdraw_fee);
+        TextView gatewayFeeView = dialog.findViewById(R.id.confirm_dialog_gateway_fee);
+        TextView receiveAmountView = dialog.findViewById(R.id.confirm_dialog_receive_amount);
+        withdrawAddressView.setText(withdrawAddress);
+        withdrawAmountView.setText(withdrawAmount);
+        withdrawFeeView.setText(transferFee);
+        gatewayFeeView.setText(gatewayFee);
+        receiveAmountView.setText(receiveAmount);
         Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
         Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
         confirmButton.setOnClickListener(new View.OnClickListener() {

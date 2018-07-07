@@ -26,14 +26,12 @@ import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.Operations;
-import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.PriceUtil;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,7 +74,7 @@ public class WebSocketService extends Service {
 
     private List<String> mNames = new ArrayList<>();
 
-    private List<AssetObject> mAssetObjects = new ArrayList<>();
+    private volatile List<AssetObject> mAssetObjects = new ArrayList<>();
 
     private ConcurrentHashMap<String, List<AssetsPair>> mAssetsPairHashMap = new ConcurrentHashMap<>();
 
@@ -183,7 +181,7 @@ public class WebSocketService extends Service {
             }
         }
         try {
-            BitsharesWalletWraper.getInstance().get_requried_fees(assetId, operationId, operation, mExchangeFeeCallback);
+            BitsharesWalletWraper.getInstance().get_required_fees(assetId, operationId, operation, mExchangeFeeCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -641,7 +639,7 @@ public class WebSocketService extends Service {
                     e.printStackTrace();
                 }
             }
-        }, 0, 3600 * 1000);
+        }, 0, 10 * 1000);
     }
 
     public FullAccountObject getFullAccount(boolean isLoginIn) {

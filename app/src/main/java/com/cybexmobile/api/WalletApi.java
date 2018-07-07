@@ -2,8 +2,6 @@ package com.cybexmobile.api;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.cybexmobile.constant.ErrorCode;
@@ -21,6 +19,7 @@ import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
@@ -30,6 +29,7 @@ import com.cybexmobile.graphene.chain.MemoData;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.graphene.chain.PrivateKey;
+import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
 import com.google.common.primitives.UnsignedInteger;
@@ -84,6 +84,7 @@ public class WalletApi {
         }
     }
 
+    DynamicGlobalPropertyObject mDynamicGlobalPropertyObject;
     private WebSocketClient mWebSocketClient = new WebSocketClient();
     private wallet_object mWalletObject;
     private boolean mbLogin = false;
@@ -159,6 +160,22 @@ public class WalletApi {
                     if (mWalletObject == null) {
                         mWalletObject = new wallet_object();
                         mWalletObject.chain_id = sha256Object;
+                    }
+                }
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+
+            mWebSocketClient.get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+                @Override
+                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                    DynamicGlobalPropertyObject dynamicGlobalPropertyObject = reply.result;
+                    if (mDynamicGlobalPropertyObject == null) {
+                        mDynamicGlobalPropertyObject = new DynamicGlobalPropertyObject();
+                        mDynamicGlobalPropertyObject = dynamicGlobalPropertyObject;
                     }
                 }
 
@@ -584,13 +601,15 @@ public class WalletApi {
         List<Types.public_key_type> listPublicKeyType = new ArrayList<>();
         listPublicKeyType.add(publicActiveKeyType);
         listPublicKeyType.add(publicOwnerKeyType);
-        mWalletObject.update_account(accountObject);
-        mWalletObject.extra_keys.put(accountObject.id, listPublicKeyType);
+        listPublicKeyType.add(publicMemoKeyType);
+        if (mWalletObject != null) {
+            mWalletObject.update_account(accountObject);
+            mWalletObject.extra_keys.put(accountObject.id, listPublicKeyType);
+            encrypt_keys();
+        }
         mHashMapPub2Priv.put(publicActiveKeyType, new Types.private_key_type(privateActiveKey));
         mHashMapPub2Priv.put(publicOwnerKeyType, new Types.private_key_type(privateOwnerKey));
         mHashMapPub2Priv.put(publicMemoKeyType, new Types.private_key_type(privateMemoKey));
-
-        encrypt_keys();
 
         return 0;
     }
@@ -633,6 +652,8 @@ public class WalletApi {
     public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
                                                               ObjectId<AccountObject> to,
                                                               AssetObject assetObject,
+                                                              long feeAmount,
+                                                              String feeAssetId,
                                                               String amount,
                                                               String memo,
                                                               Types.public_key_type fromMemoKey,
@@ -641,7 +662,7 @@ public class WalletApi {
         Operations.transfer_operation transferOperation = new Operations.transfer_operation();
         transferOperation.from = from;
         transferOperation.to = to;
-        transferOperation.fee = new Asset(0, assetObject.id);
+        transferOperation.fee = new Asset(feeAmount, ObjectId.create_from_string(feeAssetId));
         transferOperation.amount = assetObject.amount_from_string(amount);
         transferOperation.extensions = new HashSet<>();
         transferOperation.memo = new MemoData();
@@ -678,6 +699,38 @@ public class WalletApi {
         operation.extensions = new HashSet<>();
         return operation;
     }
+
+    public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Operations.operation_type operationType = new Operations.operation_type();
+        operationType.nOperationType = operationId;
+        operationType.operationContent = operation;
+        signedTransaction.operationTypes = new ArrayList<>();
+        signedTransaction.operationTypes.add(operationType);
+        signedTransaction.operations = new ArrayList<>();
+        List<Object> listInOperations = new ArrayList<>();
+        listInOperations.add(operationId);
+        listInOperations.add(operation);
+        signedTransaction.operations.add(listInOperations);
+        signedTransaction.extensions = new HashSet<>();
+
+        signedTransaction.set_reference_block(dynamicGlobalPropertyObject.head_block_id);
+
+        Date dateObject = dynamicGlobalPropertyObject.time;
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(dateObject);
+        calender.add(Calendar.SECOND, 30);
+        dateObject = calender.getTime();
+
+        signedTransaction.set_expiration(dateObject);
+
+        Types.private_key_type privateKey = mHashMapPub2Priv.get(accountObject.active.get_keys().get(0));
+        signedTransaction.sign(privateKey, mWalletObject.chain_id);
+
+        return signedTransaction;
+    }
+
+
 
 //    public signed_transaction transfer(String strFrom,
 //                                       String strTo,
@@ -875,10 +928,6 @@ public class WalletApi {
 //        return mWebSocketClient.get_global_properties();
 //    }
 
-//    public dynamic_global_property_object get_dynamic_global_properties() throws NetworkStatusException {
-//        return mWebSocketClient.get_dynamic_global_properties();
-//    }
-
 //    public void create_account_with_private_key(PrivateKey privateOwnerKey,
 //                                                String strAccountName,
 //                                                String strPassword,
@@ -915,9 +964,9 @@ public class WalletApi {
 //
 //    }
 
-//    private signed_transaction sign_transaction(signed_transaction tx) throws NetworkStatusException {
+//    private SignedTransaction sign_transaction(SignedTransaction tx) throws NetworkStatusException {
 //        // // TODO: 07/09/2017 这里的set应出问题
-//        signed_transaction.required_authorities requiresAuthorities = tx.get_required_authorities();
+//        SignedTransaction.required_authorities requiresAuthorities = tx.get_required_authorities();
 //
 //        Set<ObjectId<AccountObject>> req_active_approvals = new HashSet<>();
 //        req_active_approvals.addAll(requiresAuthorities.active);
@@ -940,31 +989,31 @@ public class WalletApi {
 //        List<ObjectId<AccountObject>> listAccountObjectId = new ArrayList<>();
 //        listAccountObjectId.addAll(accountObjectAll);
 //
-//        List<AccountObject> listAccountObject = get_accounts(listAccountObjectId);
-//        HashMap<ObjectId<AccountObject>, AccountObject> hashMapIdToObject = new HashMap<>();
-//        for (AccountObject accountObject : listAccountObject) {
+//        List<account_object> listAccountObject = get_accounts(listAccountObjectId);
+//        HashMap<object_id<account_object>, account_object> hashMapIdToObject = new HashMap<>();
+//        for (account_object accountObject : listAccountObject) {
 //            hashMapIdToObject.put(accountObject.id, accountObject);
 //        }
 //
-//        HashSet<Types.public_key_type> approving_key_set = new HashSet<>();
-//        for (ObjectId<AccountObject> accountObjectId : req_active_approvals) {
-//            AccountObject accountObject = hashMapIdToObject.get(accountObjectId);
+//        HashSet<types.public_key_type> approving_key_set = new HashSet<>();
+//        for (object_id<account_object> accountObjectId : req_active_approvals) {
+//            account_object accountObject = hashMapIdToObject.get(accountObjectId);
 //            approving_key_set.addAll(accountObject.active.get_keys());
 //        }
 //
-//        for (ObjectId<AccountObject> accountObjectId : req_owner_approvals) {
-//            AccountObject accountObject = hashMapIdToObject.get(accountObjectId);
+//        for (object_id<account_object> accountObjectId : req_owner_approvals) {
+//            account_object accountObject = hashMapIdToObject.get(accountObjectId);
 //            approving_key_set.addAll(accountObject.owner.get_keys());
 //        }
 //
-//        for (Authority authorityObject : requiresAuthorities.other) {
-//            for (Types.public_key_type publicKeyType : authorityObject.get_keys()) {
+//        for (authority authorityObject : requiresAuthorities.other) {
+//            for (types.public_key_type publicKeyType : authorityObject.get_keys()) {
 //                approving_key_set.add(publicKeyType);
 //            }
 //        }
 //
 //        // // TODO: 07/09/2017 被简化了
-//        dynamic_global_property_object dynamicGlobalPropertyObject = get_dynamic_global_properties();
+//        DynamicGlobalPropertyObject dynamicGlobalPropertyObject = get_dynamic_global_properties();
 //        tx.set_reference_block(dynamicGlobalPropertyObject.head_block_id);
 //
 //        Date dateObject = dynamicGlobalPropertyObject.time;
@@ -976,20 +1025,16 @@ public class WalletApi {
 //
 //        tx.set_expiration(dateObject);
 //
-//        for (Types.public_key_type pulicKeyType : approving_key_set) {
-//            Types.private_key_type privateKey = mHashMapPub2Priv.get(pulicKeyType);
+//        for (types.public_key_type pulicKeyType : approving_key_set) {
+//            types.private_key_type privateKey = mHashMapPub2Priv.get(pulicKeyType);
 //            if (privateKey != null) {
 //                tx.sign(privateKey, mWalletObject.chain_id);
 //            }
 //        }
 //
 //        // 发出tx，进行广播，这里也涉及到序列化
-//        int nRet = mWebSocketClient.broadcast_transaction(tx);
-//        if (nRet == 0) {
-//            return tx;
-//        } else {
-//            return null;
-//        }
+//        mWebSocketClient.broadcast_transaction(tx);
+//
 //    }
 
     public void get_market_history(ObjectId<AssetObject> baseAssetId,
@@ -998,6 +1043,10 @@ public class WalletApi {
                                                  Date dateStart, Date dateEnd,
                                                  WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_market_history(baseAssetId, quoteAssetId, nBucket, dateStart, dateEnd, callback);
+    }
+
+    public void get_dynamic_global_properties(WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_dynamic_global_properties(callback);
     }
 
 //    private void set_operation_fees(signed_transaction tx, fee_schedule feeSchedule) {
@@ -1112,13 +1161,14 @@ public class WalletApi {
         mWebSocketClient.get_full_accounts(names, subscribe, callback);
     }
 
-    public void get_requried_fees(String assetId, int operationId, Operations.base_operation operation,
+    public void get_required_fees(String assetId, int operationId, Operations.base_operation operation,
                                   WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
             throws NetworkStatusException {
         mWebSocketClient.get_required_fees(assetId, operationId, operation, callback);
     }
 
-//    public String getUnCompressedOwnerKey() {
-//        return unCompressedOwnerKey;
-//    }
+    public void broadcast_transaction_with_callback(SignedTransaction signedTransaction, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+        mWebSocketClient.broadcast_transaction_with_callback(signedTransaction, callback);
+    }
+
 }

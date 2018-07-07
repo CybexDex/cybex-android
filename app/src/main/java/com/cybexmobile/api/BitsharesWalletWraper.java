@@ -9,6 +9,7 @@ import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.BucketObject;
+import com.cybexmobile.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
@@ -17,11 +18,13 @@ import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.graphene.chain.PrivateKey;
+import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.market.MarketTicker;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +42,6 @@ public class BitsharesWalletWraper {
     private Map<ObjectId<AccountObject>, List<Asset>> mMapAccountId2Asset = new ConcurrentHashMap<>();
     private Map<ObjectId<AssetObject>, AssetObject> mMapAssetId2Object = new ConcurrentHashMap<>();
     private String mstrWalletFilePath;
-    private Timer mTimer = new Timer();
-    private Task mTask = new Task();
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
     private String password;
@@ -242,14 +243,12 @@ public class BitsharesWalletWraper {
     }
 
     public void lockWallet() {
-        mTimer.schedule(mTask, 120 * 1000, 120 * 1000);
-    }
-
-    public class Task extends TimerTask {
-        @Override
-        public void run() {
-            password = null;
-        }
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                password = null;
+            }
+        }, 120 * 1000, 120 * 1000);
     }
 
 //    public List<Asset> list_balances(boolean bRefresh) throws NetworkStatusException {
@@ -367,11 +366,13 @@ public class BitsharesWalletWraper {
     public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
                                                               ObjectId<AccountObject> to,
                                                               AssetObject assetObject,
+                                                              long feeAmount,
+                                                              String feeAssetId,
                                                               String amount,
                                                               String memo,
                                                               Types.public_key_type fromMemoKey,
                                                               Types.public_key_type toMemokey) {
-        return mWalletApi.getTransferOperation(from, to, assetObject, amount, memo, fromMemoKey, toMemokey);
+        return mWalletApi.getTransferOperation(from, to, assetObject, feeAmount, feeAssetId, amount, memo, fromMemoKey, toMemokey);
     }
 
     public Operations.limit_order_create_operation getLimitOrderCreateOperation(ObjectId<AccountObject> accountId,
@@ -381,6 +382,11 @@ public class BitsharesWalletWraper {
                                                                                long amountSell,
                                                                                long amountReceive){
         return mWalletApi.getLimitOrderCreateOperation(accountId, assetFeeId, assetSellId, assetReceiveId, amountSell, amountReceive);
+    }
+
+    public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
+
+        return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
     }
 
 //    public signed_transaction transfer(String strFrom,
@@ -619,10 +625,14 @@ public class BitsharesWalletWraper {
         mWalletApi.get_full_accounts(names, subscribe, callback);
     }
 
-    public void get_requried_fees(String assetId, int operationId, Operations.base_operation operation,
+    public void get_required_fees(String assetId, int operationId, Operations.base_operation operation,
                                   WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
             throws NetworkStatusException {
-        mWalletApi.get_requried_fees(assetId, operationId, operation, callback);
+        mWalletApi.get_required_fees(assetId, operationId, operation, callback);
+    }
+
+    public void broadcast_transaction_with_callback(SignedTransaction signedTransaction, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+        mWalletApi.broadcast_transaction_with_callback(signedTransaction, callback);
     }
 
 
@@ -639,9 +649,10 @@ public class BitsharesWalletWraper {
 //        return mWalletApi.cancel_order(id);
 //    }
 //
-//    public global_property_object get_global_properties() throws NetworkStatusException {
-//        return mWalletApi.get_global_properties();
-//    }
+
+    public void get_dynamic_global_properties(WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>> callback) throws NetworkStatusException {
+        mWalletApi.get_dynamic_global_properties(callback);
+    }
 
     private List<String> getAddressesForLockAsset(String strAccountName, String strPassword) {
         PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
