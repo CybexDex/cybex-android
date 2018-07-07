@@ -66,8 +66,7 @@
             android:layout_height="wrap_content"
             android:alpha="0.5"
             android:text="@string/gate_way_select_coin"
-            style="@style/font_gray_small"
-            android:textColor="@color/text_hint_color" />
+            style="@style/font_gray_small" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager

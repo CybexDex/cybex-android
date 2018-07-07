@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:text="@string/assets_amount"
             style="@style/font_gray_small"
-            android:textColor="@color/text_hint_color" />
+            android:alpha="0.5" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             android:layout_alignParentEnd="true"
             android:text="@string/portfolio_price"
             style="@style/font_gray_small"
-            android:textColor="@color/text_hint_color" />
+            android:alpha="0.5" />
 
     </RelativeLayout>
 

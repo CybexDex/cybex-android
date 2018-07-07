@@ -272,27 +272,16 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/account_log_in_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/account_log_in_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:letterSpacing="0.01"
-                        android:text="@string/log_in_cybex"
-                        android:textColor="@color/font_color_white_dark"
-                        android:textSize="34sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/text_quote_margin_start"
-                        android:src="@drawable/ic_arrow_forward_right_16_px"/>
-                </LinearLayout>
+                    android:letterSpacing="0.01"
+                    android:text="@string/log_in_cybex"
+                    android:textColor="@color/font_color_white_dark"
+                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
+                    android:drawablePadding="@dimen/text_quote_margin_start"
+                    android:textSize="34sp" />
 
                 <TextView
                     android:id="@+id/account_introduction_text"

@@ -49,6 +49,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemClick;
 import butterknife.Unbinder;
 
 import static com.cybexmobile.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
@@ -69,7 +70,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class ExchangeFragment extends BaseFragment {
+public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener, View.OnClickListener, TabLayout.OnTabSelectedListener{
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
@@ -138,38 +139,11 @@ public class ExchangeFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_exchange, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), MarketsActivity.class);
-                intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
-                intent.putExtra(INTENT_PARAM_FROM, ExchangeLimitOrderFragment.class.getSimpleName());
-                getContext().startActivity(intent);
-            }
-        });
+        mToolbar.inflateMenu(R.menu.menu_exchange);
+        mToolbar.setOnMenuItemClickListener(this);
+        mToolbar.setNavigationOnClickListener(this);
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
-        mTlExchange.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if(tab.getPosition() == 0){
-                    mAction = ACTION_BUY;
-                } else if(tab.getPosition() == 1){
-                    mAction = ACTION_SELL;
-                }
-                showFragment(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+        mTlExchange.addOnTabSelectedListener(this);
         return view;
     }
 
@@ -270,6 +244,9 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     public void loadBuySellFee(String assetId){
+        if(mWatchlistData == null){
+            return;
+        }
         mWebSocketService.loadBuySellFee(assetId, ID_CREATE_LIMIT_ORDER_OPERATION,
                 BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
                         ObjectId.create_from_string(ASSET_ID_CYB),
@@ -326,7 +303,7 @@ public class ExchangeFragment extends BaseFragment {
             mBuyFragment.changeFee(fee, cybAsset);
         }
         if(mSellFragment != null){
-            mBuyFragment.changeFee(fee, cybAsset);
+            mSellFragment.changeFee(fee, cybAsset);
         }
     }
 
@@ -448,25 +425,46 @@ public class ExchangeFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_exchange, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    public void onNetWorkStateChanged(boolean isAvailable) {
+
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_order_history:
                 Intent intent = new Intent(getContext(), OwnOrderHistoryActivity.class);
                 getContext().startActivity(intent);
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override
-    public void onNetWorkStateChanged(boolean isAvailable) {
+    public void onClick(View v) {
+        Intent intent = new Intent(getContext(), MarketsActivity.class);
+        intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
+        intent.putExtra(INTENT_PARAM_FROM, ExchangeLimitOrderFragment.class.getSimpleName());
+        getContext().startActivity(intent);
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        if(tab.getPosition() == 0){
+            mAction = ACTION_BUY;
+        } else if(tab.getPosition() == 1){
+            mAction = ACTION_SELL;
+        }
+        showFragment(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
 
     }
 
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
 }

@@ -34,6 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -234,8 +235,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                 EventBus.getDefault().post(new Event.UpdateBuySellOrders(null, null));
                 return;
             }
-            List<Order> buyOrders = new ArrayList<>();
-            List<Order> sellOrders = new ArrayList<>();
+            LinkedList<Order> buyOrders = new LinkedList<>();
+            LinkedList<Order> sellOrders = new LinkedList<>();
             Order order = null;
             for(LimitOrderObject limitOrder : limitOrders){
                 if(buyOrders.size() == 5 && sellOrders.size() == 5){
@@ -245,24 +246,42 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                     if(buyOrders.size() == 5){
                         continue;
                     }
-                    order = new Order();
-                    order.price = priceToReal(limitOrder.sell_price);
-                    order.quoteAmount = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
+                    /**
+                     * 合并深度
+                     */
+                    double price = priceToReal(limitOrder.sell_price);
+                    double amount = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
                             / (double) limitOrder.sell_price.base.amount
                             / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    order.baseAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getBasePrecision());
-                    buyOrders.add(order);
+                    if(buyOrders.size() > 0 && String.format(Locale.US, AssetUtil.formatPrice(price), price).equals(String.format(Locale.US, AssetUtil.formatPrice(price), buyOrders.getLast().price))){
+                        buyOrders.getLast().quoteAmount += amount;
+                    } else {
+                        order = new Order();
+                        order.price = price;
+                        order.quoteAmount = amount;
+                        order.baseAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getBasePrecision());
+                        buyOrders.add(order);
+                    }
                 } else {
                     if(sellOrders.size() == 5){
                         continue;
                     }
-                    order = new Order();
-                    order.price = priceToReal(limitOrder.sell_price);
-                    order.quoteAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    order.baseAmount = (double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount
-                            / limitOrder.sell_price.base.amount
-                            / Math.pow(10, mWatchlistData.getBasePrecision());
-                    sellOrders.add(order);
+                    /**
+                     * 合并深度
+                     */
+                    double price = priceToReal(limitOrder.sell_price);
+                    double amount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
+                    if(sellOrders.size() > 0 && String.format(Locale.US, AssetUtil.formatPrice(price), price).equals(String.format(Locale.US, AssetUtil.formatPrice(price), sellOrders.getLast().price))) {
+                        sellOrders.getLast().quoteAmount += amount;
+                    } else {
+                        order = new Order();
+                        order.price = price;
+                        order.quoteAmount = amount;
+                        order.baseAmount = (double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount
+                                / limitOrder.sell_price.base.amount
+                                / Math.pow(10, mWatchlistData.getBasePrecision());
+                        sellOrders.add(order);
+                    }
                 }
             }
             Collections.sort(buyOrders, new Comparator<Order>() {
@@ -317,7 +336,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(change == null){
             mTvQuotePrice.setTextColor(getResources().getColor(R.color.no_change_color));
         } else {
-            mTvQuotePrice.setTextColor(getResources().getColor(Double.parseDouble(change) > 0 ? R.color.decreasing_color : R.color.increasing_color));
+            mTvQuotePrice.setTextColor(getResources().getColor(Double.parseDouble(change) > 0 ? R.color.increasing_color : R.color.decreasing_color));
         }
         mTvQuoteRmbPrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) : String.format(Locale.US, "≈¥ %.2f", mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice()));
     }

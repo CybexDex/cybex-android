@@ -15,6 +15,7 @@ import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
 import com.cybexmobile.utils.AssetUtil;
+import com.cybexmobile.utils.MyUtils;
 
 import java.util.List;
 import java.util.Locale;
@@ -61,7 +62,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                 }
             });
             holder.mOrderPrice.setText(String.format(Locale.US, AssetUtil.formatPrice(mOrders.get(position).price), mOrders.get(position).price));
-            holder.mOrderVolume.setText(String.format(Locale.US, AssetUtil.formatAmount(mOrders.get(position).price), mOrders.get(position).quoteAmount));
+            holder.mOrderVolume.setText(MyUtils.getNumberKMGExpressionFormat(AssetUtil.formatAmount(mOrders.get(position).price), mOrders.get(position).quoteAmount));
             float percentage = (float) getPercentage(mOrders, position);
             LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
             LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);

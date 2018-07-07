@@ -34,6 +34,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/layout_input_height"
                     android:background="@drawable/bg_item"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:orientation="horizontal">
 
                     <EditText
@@ -86,6 +88,8 @@
                     android:layout_height="@dimen/layout_input_height"
                     android:layout_marginTop="@dimen/activity_margin"
                     android:background="@drawable/bg_item"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:orientation="horizontal">
 
                     <EditText

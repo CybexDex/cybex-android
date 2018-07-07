@@ -36,6 +36,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
@@ -207,6 +208,15 @@ public class BuySellFragment extends BaseFragment {
 
     }
 
+    @OnFocusChange({R.id.buysell_et_asset_price, R.id.buysell_et_asset_amount})
+    public void onFocusChanged(View view, boolean isFocused){
+        //未登录时 获取焦点自动跳转到登录界面
+        if(isFocused && !mIsLoginIn){
+            view.clearFocus();
+            toLogin();
+        }
+    }
+
     @OnClick({R.id.buysell_tv_add, R.id.buysell_tv_sub})
     public void onAssetPriceClick(View view){
         String assetPriceStr = mEtAssetPrice.getText().toString();
@@ -219,7 +229,9 @@ public class BuySellFragment extends BaseFragment {
                 assetPrice += (1/Math.pow(10, mPricePrecision));
                 break;
             case R.id.buysell_tv_sub:
-                assetPrice -= (1/Math.pow(10, mPricePrecision));
+                if(assetPrice > 0){
+                    assetPrice -= (1/Math.pow(10, mPricePrecision));
+                }
                 break;
         }
         mEtAssetPrice.setText(String.format(String.format("%%.%sf", mPricePrecision), assetPrice));
@@ -229,6 +241,7 @@ public class BuySellFragment extends BaseFragment {
     public void onAssetAmountClick(View view){
         //判断TextView的值 防止余额小于有效精度
         String assetAvailableStr = mTvAssetAvailable.getText().toString();
+
         switch (view.getId()){
             case R.id.buysell_tv_percentage_25:
                 break;
@@ -244,16 +257,31 @@ public class BuySellFragment extends BaseFragment {
     @OnClick(R.id.buysell_btn_buy_sell)
     public void onBtnBuySellClick(View view){
         if(!mIsLoginIn){
-            Intent intent = new Intent(getContext(), LoginActivity.class);
-            startActivity(intent);
+            toLogin();
         } else {
 
         }
     }
 
+    @OnTextChanged(value = R.id.buysell_et_asset_amount, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onAmountTextChanged(Editable editable){
+        calculateTotal();
+    }
+
     @OnTextChanged(value = R.id.buysell_et_asset_price, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onPriceTextChanged(Editable editable){
+        calculateTotal();
         initOrResetRmbTextData();
+    }
+
+    private void calculateTotal(){
+        String assetPrice = mEtAssetPrice.getText().toString();
+        String assetAmount = mEtAssetAmount.getText().toString();
+        double price = TextUtils.isEmpty(assetPrice) ? 0 : Double.parseDouble(assetPrice);
+        double amount = TextUtils.isEmpty(assetAmount) ? 0 : Double.parseDouble(assetAmount);
+        mTvAssetTotal.setText(price == 0 || amount == 0 ? "--" :
+                String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mWatchlistData.getBasePrecision()),
+                        price * amount, AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
     }
 
     private void initFragment(Bundle savedInstanceState){
@@ -458,6 +486,11 @@ public class BuySellFragment extends BaseFragment {
             }
         }
         return accountBalanceObject;
+    }
+
+    private void toLogin(){
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        startActivity(intent);
     }
 
     private InputFilter mPriceFilter = new InputFilter() {

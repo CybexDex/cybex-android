@@ -32,18 +32,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:alpha="0.5"
             android:text="@string/text_asset_and_amount"
             style="@style/font_gray_small"
-            android:textColor="@color/text_hint_color" />
+            android:alpha="0.5" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:alpha="0.5"
             android:text="@string/text_filled_and_price"
             android:layout_alignParentEnd="true"
             style="@style/font_gray_small"
-            android:textColor="@color/text_hint_color"/>
+            android:alpha="0.5"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

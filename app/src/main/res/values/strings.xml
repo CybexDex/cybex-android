@@ -177,10 +177,12 @@
     <string name="item_text_open_order_price">Price:</string>
     <string name="item_text_open_order_amount">Amount:</string>
     <string name="item_text_open_order_cancel">Cancel</string>
+    <string name="text_no_open_order">No open orders</string>
 
     <!-- Own Order History Activity -->
     <string name="text_asset_and_amount">Asset/Amount</string>
     <string name="text_filled_and_price">Filled/Price</string>
+    <string name="text_no_exchange_history">No exchange history</string>
 
     <!-- Own Order History Item -->
     <string name="item_own_order_history_time">Time:</string>

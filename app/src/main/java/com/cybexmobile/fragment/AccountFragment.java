@@ -88,7 +88,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
  * 帐户界面
  * 数据流程:FullAccountObject -> AssetObject ->MarketTicker
  */
-public class AccountFragment extends BaseFragment {
+public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener{
 
     private static final String TAG = "AccountFragment";
 
@@ -175,7 +175,8 @@ public class AccountFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        mToolbar.inflateMenu(R.menu.menu_setting);
+        mToolbar.setOnMenuItemClickListener(this);
         setViews();
         return view;
     }
@@ -675,20 +676,14 @@ public class AccountFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_setting, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_setting:
                 Intent intent = new Intent(getContext(), SettingActivity.class);
                 startActivity(intent);
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     /**

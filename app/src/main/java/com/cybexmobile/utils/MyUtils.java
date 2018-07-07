@@ -88,6 +88,20 @@ public class MyUtils {
 
     }
 
+    public static String getNumberKMGExpressionFormat(String format, double number) {
+        int e = (int) Math.floor(Math.log10(number));
+        if(e < 3){
+            return String.format(Locale.US, format, number);
+        }
+        if (e < 6) {
+            return String.format(Locale.US, "%.2fK", number / Math.pow(10, 3));
+        }
+        if(e < 9){
+            return String.format(Locale.US, "%.2fM", number / Math.pow(10, 6));
+        }
+        return String.format(Locale.US, "%.2fB", number / Math.pow(10, 9));
+    }
+
     public static String removeJadePrefix(String symbol) {
         if (symbol.contains("JADE")) {
             return symbol.substring(5, symbol.length());

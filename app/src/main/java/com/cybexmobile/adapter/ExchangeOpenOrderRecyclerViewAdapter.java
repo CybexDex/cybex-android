@@ -1,26 +1,29 @@
 package com.cybexmobile.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
+import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.utils.AssetUtil;
-import com.cybexmobile.utils.MyUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<ExchangeOpenOrderRecyclerViewAdapter.ViewHolder> {
+public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private final static int TYPE_EMPTY = 0;
+    private final static int TYPE_CONTENT = 1;
 
     private List<OpenOrderItem> mOpenOrderItems;
     private Context mContext;
@@ -36,13 +39,24 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<E
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_exchange_open_order, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = null;
+        if(viewType == TYPE_EMPTY){
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
+            return new EmptyViewHolder(view);
+        }
+        view = LayoutInflater.from(mContext).inflate(R.layout.item_exchange_open_order, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(holder instanceof EmptyViewHolder){
+            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_open_order));
+            return;
+        }
+        ViewHolder viewHolder = (ViewHolder) holder;
         OpenOrderItem openOrderItem = mOpenOrderItems.get(position);
         AssetObject base = openOrderItem.openOrder.getBaseObject();
         AssetObject quote = openOrderItem.openOrder.getQuoteObject();
@@ -64,25 +78,25 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<E
                 String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
                 String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
                 if (openOrderItem.isSell) {
-                    holder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
-                    holder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
+                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
+                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
                     price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
-                    holder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, quoteSymbol));
+                    viewHolder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, quoteSymbol));
                     amount = data.sell_price.base.amount / Math.pow(10, base.precision);
-                    holder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, baseSymbol));
-                    holder.mTvQuoteSymbol.setText(baseSymbol);
-                    holder.mTvBaseSymbol.setText(quoteSymbol);
-                    holder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, quoteSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, baseSymbol));
+                    viewHolder.mTvQuoteSymbol.setText(baseSymbol);
+                    viewHolder.mTvBaseSymbol.setText(quoteSymbol);
+                    viewHolder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, quoteSymbol));
                 } else {
-                    holder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
-                    holder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
+                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
+                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
                     price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
-                    holder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, baseSymbol));
+                    viewHolder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, baseSymbol));
                     amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                    holder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, quoteSymbol));
-                    holder.mTvQuoteSymbol.setText(quoteSymbol);
-                    holder.mTvBaseSymbol.setText(baseSymbol);
-                    holder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, baseSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, quoteSymbol));
+                    viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
+                    viewHolder.mTvBaseSymbol.setText(baseSymbol);
+                    viewHolder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, baseSymbol));
                 }
             }
         }else{
@@ -95,7 +109,12 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<E
 
     @Override
     public int getItemCount() {
-        return mOpenOrderItems.size();
+        return mOpenOrderItems == null || mOpenOrderItems.size() == 0 ? 1 : mOpenOrderItems.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mOpenOrderItems == null || mOpenOrderItems.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

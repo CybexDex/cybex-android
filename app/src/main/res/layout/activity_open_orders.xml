@@ -89,16 +89,14 @@
             android:layout_height="wrap_content"
             android:alpha="0.5"
             android:text="@string/open_order_asset_amount"
-            style="@style/font_gray_small"
-            android:textColor="@color/text_hint_color" />
+            style="@style/font_gray_small" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:alpha="0.5"
             android:text="@string/open_order_order_value"
+            android:alpha="0.5"
             android:layout_alignParentEnd="true"
-            style="@style/font_gray_small"
-            android:textColor="@color/text_hint_color"/>
+            style="@style/font_gray_small" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

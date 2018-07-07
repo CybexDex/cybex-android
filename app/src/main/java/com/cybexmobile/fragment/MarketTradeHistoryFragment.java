@@ -135,7 +135,11 @@ public class MarketTradeHistoryFragment extends BaseFragment {
             }
             List<MarketTrade> marketTrades = new ArrayList<>();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("MM/dd HH:mm:ss", Locale.US);
+            /**
+             * fix
+             * 日期不显示月日
+             */
+            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.US);
             MarketTrade marketTrade = null;
             for (int i = 0; i < hashMaplist.size(); i += 2) {
                 marketTrade = new MarketTrade();

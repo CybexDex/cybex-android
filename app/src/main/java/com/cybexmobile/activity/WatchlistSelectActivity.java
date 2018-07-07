@@ -111,6 +111,11 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
         finish();
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+    }
+
     @OnCheckedChanged({R.id.activity_watchlist_select_rb_eth, R.id.activity_watchlist_select_rb_cyb,
             R.id.activity_watchlist_select_rb_usdt, R.id.activity_watchlist_select_rb_btc})
     public void onCheckedChanged(CompoundButton button, boolean checked){

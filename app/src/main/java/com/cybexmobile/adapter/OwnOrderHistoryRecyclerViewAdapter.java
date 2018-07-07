@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.OwnOrderHistoryActivity;
+import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -23,7 +24,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OwnOrderHistoryRecyclerViewAdapter.ViewHolder> {
+public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private final static int TYPE_EMPTY = 0;
+    private final static int TYPE_CONTENT = 1;
 
     private List<OwnOrderHistoryActivity.OrderHistoryItem> mOrderHistoryItems;
     private Context mContext;
@@ -39,13 +43,24 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Own
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_own_order_history, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = null;
+        if(viewType == TYPE_EMPTY){
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
+            return new EmptyViewHolder(view);
+        }
+        view = LayoutInflater.from(mContext).inflate(R.layout.item_own_order_history, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if(holder instanceof EmptyViewHolder){
+            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_exchange_history));
+            return;
+        }
+        ViewHolder viewHolder = (ViewHolder) holder;
         OwnOrderHistoryActivity.OrderHistoryItem orderHistoryItem = mOrderHistoryItems.get(position);
         AssetObject base = orderHistoryItem.baseAsset;
         AssetObject quote = orderHistoryItem.quoteAsset;
@@ -64,10 +79,10 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Own
                 holder.itemView.setVisibility(View.VISIBLE);
                 String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
                 String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
-                holder.mTvBuySell.setText(mContext.getResources().getString(orderHistoryItem.isSell ? R.string.open_order_sell : R.string.open_order_buy));
-                holder.mTvBuySell.setBackground(mContext.getResources().getDrawable(orderHistoryItem.isSell ?R.drawable.bg_btn_sell : R.drawable.bg_btn_buy));
-                holder.mTvBaseSymbol.setText(baseSymbol);
-                holder.mTvQuoteSymbol.setText(quoteSymbol);
+                viewHolder.mTvBuySell.setText(mContext.getResources().getString(orderHistoryItem.isSell ? R.string.open_order_sell : R.string.open_order_buy));
+                viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(orderHistoryItem.isSell ?R.drawable.bg_btn_sell : R.drawable.bg_btn_buy));
+                viewHolder.mTvBaseSymbol.setText(baseSymbol);
+                viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
                 double baseAmount;
                 double quoteAmount;
                 if(orderHistoryItem.isSell){
@@ -77,11 +92,11 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Own
                     baseAmount = orderHistoryItem.orderHistory.pays.amount / Math.pow(10, base.precision);
                     quoteAmount = orderHistoryItem.orderHistory.receives.amount / Math.pow(10, quote.precision);
                 }
-                holder.mTvBasePrice.setText(String.format("%." + base.precision + "f %s", baseAmount/quoteAmount, baseSymbol));
-                holder.mTvBaseAmount.setText(String.format("%." + base.precision + "f %s", baseAmount, baseSymbol));
-                holder.mTvQuoteAmount.setText(String.format("%." + quote.precision +"f %s", quoteAmount, quoteSymbol));
+                viewHolder.mTvBasePrice.setText(String.format("%." + base.precision + "f %s", baseAmount/quoteAmount, baseSymbol));
+                viewHolder.mTvBaseAmount.setText(String.format("%." + base.precision + "f %s", baseAmount, baseSymbol));
+                viewHolder.mTvQuoteAmount.setText(String.format("%." + quote.precision +"f %s", quoteAmount, quoteSymbol));
                 if(block != null){
-                    holder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillis(block.timestamp)));
+                    viewHolder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillis(block.timestamp)));
                 }
             }
         }else{
@@ -94,7 +109,12 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Own
 
     @Override
     public int getItemCount() {
-        return mOrderHistoryItems.size();
+        return mOrderHistoryItems == null || mOrderHistoryItems.size() == 0 ? 1 : mOrderHistoryItems.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mOrderHistoryItems == null || mOrderHistoryItems.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
