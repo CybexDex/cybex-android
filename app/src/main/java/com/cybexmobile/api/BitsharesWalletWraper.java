@@ -248,7 +248,7 @@ public class BitsharesWalletWraper {
             public void run() {
                 password = null;
             }
-        }, 120 * 1000, 120 * 1000);
+        }, 360 * 1000, 360 * 1000);
     }
 
 //    public List<Asset> list_balances(boolean bRefresh) throws NetworkStatusException {

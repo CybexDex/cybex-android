@@ -33,12 +33,6 @@ public interface CybexHttpApi {
     @GET("/json/deposit.json")
     Observable<ResponseBody> getDepositList();
 
-    @GET("/json/deposit_msg.json")
-    Observable<ResponseBody> getDepositMsg();
-
-    @GET("/json/withdraw_msg.json")
-    Observable<ResponseBody> getWithdrawMsg();
-
     @GET
     Observable<ResponseBody> getPinCode(@Url String url);
 

@@ -9,14 +9,14 @@
     android:padding="@dimen/activity_padding">
 
     <ImageView
-        android:src="@drawable/ic_error_16px"
+        android:id="@+id/toast_center_message_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
     <TextView
         style="@style/font_white_dark_large"
-        android:id="@+id/toast_deposit_text_view"
+        android:id="@+id/toast_center_message_text_view"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

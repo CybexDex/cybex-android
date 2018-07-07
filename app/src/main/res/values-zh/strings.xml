@@ -235,6 +235,7 @@
     <!-- Toast Message -->
     <string name="toast_message_can_not_deposit">暂不支持充值</string>
     <string name="toast_message_can_not_withdraw">您没有权限提现</string>
+    <string name="toast_message_withdraw_sent">提现申请成功</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">解锁钱包</string>

@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -19,12 +18,10 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -40,17 +37,11 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.cybexmobile.R;
 import com.cybexmobile.api.ApolloClientApi;
-import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.toast.message.ToastMessage;
+import com.cybexmobile.utils.QRCode;
 import com.cybexmobile.utils.SnackBarUtils;
-import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -59,11 +50,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 
 
 public class DepositActivity extends BaseActivity {
@@ -76,6 +62,8 @@ public class DepositActivity extends BaseActivity {
     private String mAssetName;
     private String mEnMsg;
     private String mCnMsg;
+    private String mEnInfo;
+    private String mCnInfo;
     private boolean mIsEnabled;
 
     @BindView(R.id.deposit_qr_code)
@@ -114,6 +102,8 @@ public class DepositActivity extends BaseActivity {
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
         mEnMsg = intent.getStringExtra("enMsg");
         mCnMsg = intent.getStringExtra("cnMsg");
+        mEnInfo = intent.getStringExtra("enInfo");
+        mCnInfo = intent.getStringExtra("cnInfo");
         mToolbarTextView.setText(String.format("%s" + getResources().getString(R.string.gate_way_deposit), mAssetName));
         if (mIsEnabled) {
             getAddress(mUserName, mAssetName);
@@ -121,9 +111,9 @@ public class DepositActivity extends BaseActivity {
         } else {
             Log.v("language", Locale.getDefault().getLanguage());
             if (Locale.getDefault().getLanguage().equals("zh")) {
-                ToastMessage.showNotEnableDepositToastMessage(this, mCnMsg);
+                ToastMessage.showNotEnableDepositToastMessage(this, mCnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
             } else {
-                ToastMessage.showNotEnableDepositToastMessage(this, mEnMsg);
+                ToastMessage.showNotEnableDepositToastMessage(this, mEnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
             }
         }
     }
@@ -169,45 +159,11 @@ public class DepositActivity extends BaseActivity {
     }
 
     private void requestDetailMessage() {
-        RetrofitFactory.getInstance()
-                .api()
-                .getDepositMsg()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(responseBody.string());
-                            String enMsg = jsonObject.getString("enMsg");
-                            String cnMsg = jsonObject.getString("cnMsg");
-                            if (Locale.getDefault().getLanguage().equals("zh")) {
-                                mTextMessage.setText(cnMsg.replace("$asset", mAssetName));
-                            } else {
-                                mTextMessage.setText(enMsg.replace("$asset", mAssetName));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        if (Locale.getDefault().getLanguage().equals("zh")) {
+            mTextMessage.setText(mCnInfo);
+        } else {
+            mTextMessage.setText(mEnInfo);
+        }
     }
 
     private void getAddress(String userName, String assetName) {
@@ -226,7 +182,7 @@ public class DepositActivity extends BaseActivity {
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if(mQRAddressView != null){
+                                        if (mQRAddressView != null) {
                                             mQRAddressView.setText(address);
                                             generateBarCode(address);
                                         }
@@ -234,7 +190,7 @@ public class DepositActivity extends BaseActivity {
                                 });
                             }
                         } else {
-                            SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout,  getApplicationContext(), R.drawable.ic_error_16px);
+                            SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
                             mGetNewAddressIcon.clearAnimation();
 
                         }
@@ -272,7 +228,7 @@ public class DepositActivity extends BaseActivity {
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout,  getApplicationContext(), R.drawable.ic_error_16px);
+                                    SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
                                     mGetNewAddressIcon.clearAnimation();
                                 }
                             });
@@ -288,9 +244,8 @@ public class DepositActivity extends BaseActivity {
     }
 
     private void generateBarCode(String barcode) {
-        Bitmap bitmapLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.icon);
-        Bitmap qrCode = AwesomeQRCode.create(barcode, 150, 5, 0.3f, Color.BLACK, Color.WHITE, bitmapLogo, true, false);
-        mQRCodeView.setImageBitmap(qrCode);
+        Bitmap bitmap = QRCode.createQRCodeWithLogo(barcode, BitmapFactory.decodeResource(getResources(), R.drawable.icon));
+        mQRCodeView.setImageBitmap(bitmap);
     }
 
     private Animation getAnimation() {

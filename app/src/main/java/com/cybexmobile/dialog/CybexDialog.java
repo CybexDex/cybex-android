@@ -16,6 +16,10 @@ public class CybexDialog {
         void onClick(String password, Dialog dialog);
     }
 
+    public interface ConfirmationDialogClickListener {
+        void onClick(Dialog dialog);
+    }
+
     public static void showRegisterDialog(Context context, String message, View.OnClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -84,7 +88,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showConfirmationDialog(Context context, View.OnClickListener listener, String withdrawAddress, String withdrawAmount,
+    public static void showConfirmationDialog(Context context, ConfirmationDialogClickListener listener, String withdrawAddress, String withdrawAmount,
                                               String transferFee, String gatewayFee, String receiveAmount ) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_withdraw_confirmation);
@@ -103,10 +107,10 @@ public class CybexDialog {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
                 if (listener != null) {
-                    listener.onClick(v);
+                    listener.onClick(dialog);
                 }
+                dialog.dismiss();
             }
         });
 

@@ -80,6 +80,8 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
                         intent.putExtra("isEnabled", mDataList.get(position).isEnable());
                         intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
                         intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
+                        intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
+                        intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
                         mContext.startActivity(intent);
                     } else {
                         Intent intent = new Intent(mContext, WithdrawActivity.class);
@@ -87,6 +89,8 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
                         intent.putExtra("isEnabled", mDataList.get(position).isEnable());
                         intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
                         intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
+                        intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
+                        intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
                         intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
                         if(accountBalanceObject != null) {
                             intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, assetObject.precision));

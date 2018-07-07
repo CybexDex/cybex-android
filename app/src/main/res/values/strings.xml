@@ -231,6 +231,7 @@
     <!-- Toast Message -->
     <string name="toast_message_can_not_deposit">Missing authority for deposit</string>
     <string name="toast_message_can_not_withdraw">Missing authority for withdrawal</string>
+    <string name="toast_message_withdraw_sent">Withdrawal request has been sent</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>

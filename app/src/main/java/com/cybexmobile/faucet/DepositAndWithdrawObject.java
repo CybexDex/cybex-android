@@ -8,6 +8,8 @@ public class DepositAndWithdrawObject {
     public boolean enable;
     public String enMsg;
     public String cnMsg;
+    String enInfo;
+    String cnInfo;
     public AssetObject assetObject;
     private AccountBalanceObject accountBalanceObject;
 
@@ -33,6 +35,22 @@ public class DepositAndWithdrawObject {
 
     public void setEnMsg(String enMsg) {
         this.enMsg = enMsg;
+    }
+
+    public void setEnInfo(String enInfo) {
+        this.enInfo = enInfo;
+    }
+
+    public String getEnInfo() {
+        return enInfo;
+    }
+
+    public void setCnInfo(String cnInfo) {
+        this.cnInfo = cnInfo;
+    }
+
+    public String getCnInfo() {
+        return cnInfo;
     }
 
     public void setEnable(boolean enable) {

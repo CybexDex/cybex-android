@@ -82,6 +82,8 @@ public class WithdrawActivity extends BaseActivity {
     private boolean mIsEnabled;
     private String mEnMsg;
     private String mCnMsg;
+    private String mEnInfo;
+    private String mCnInfo;
     private String mUserName;
     private String mAddress;
     private String mAmount;
@@ -143,6 +145,8 @@ public class WithdrawActivity extends BaseActivity {
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
         mEnMsg = intent.getStringExtra("enMsg");
         mCnMsg = intent.getStringExtra("cnMsg");
+        mEnInfo = intent.getStringExtra("enInfo");
+        mCnInfo = intent.getStringExtra("cnInfo");
         mAvailableAmount = intent.getDoubleExtra("availableAmount", 0);
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_withdraw), mAssetName));
@@ -186,9 +190,9 @@ public class WithdrawActivity extends BaseActivity {
                 checkIfLocked();
             } else {
                 if (Locale.getDefault().getLanguage().equals("zh")) {
-                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mCnMsg);
+                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mCnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
                 } else {
-                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mEnMsg);
+                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mEnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
                 }
             }
         }
@@ -231,7 +235,7 @@ public class WithdrawActivity extends BaseActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    if (mAddress != null && mAmount != null && mAccountObject != null && mToAccountObject != null) {
+                    if (mAddress != null && mAmount != null && mAccountObject != null && mToAccountObject != null && !BitsharesWalletWraper.getInstance().is_locked()) {
                         String memo = getMemo(mAddress, mAssetName);
                         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount, "1.3.0", 0);
                         double cybBalance = getBalance(mFullAccountObject, "1.3.0");
@@ -242,11 +246,14 @@ public class WithdrawActivity extends BaseActivity {
                                     FeeAmountObject feeAmountObject = reply.result.get(0);
                                     if (feeAmountObject.amount <= cybBalance) {
                                         mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount, feeAmountObject.asset_id, feeAmountObject.amount);
-                                        calculateReceiveAmount(feeAmountObject);
                                         mHandler.post(new Runnable() {
                                             @Override
                                             public void run() {
                                                 mTransferFeeTextView.setText(String.format("%sCYB", String.valueOf(feeAmountObject.amount / Math.pow(10, 5))));
+                                                calculateReceiveAmount(feeAmountObject);
+                                                if (!BitsharesWalletWraper.getInstance().is_locked()) {
+                                                    mWithdrawButton.setEnabled(true);
+                                                }
                                             }
                                         });
                                     } else {
@@ -264,23 +271,6 @@ public class WithdrawActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                     }
-                    try {
-                        BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
-                            @Override
-                            public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
-                                mDynamicGlobalPropertyObject = reply.result;
-
-                            }
-
-                            @Override
-                            public void onFailure() {
-
-                            }
-                        });
-                    } catch (NetworkStatusException e) {
-                        e.printStackTrace();
-                    }
-                    mWithdrawButton.setEnabled(true);
                 }
             }
         });
@@ -304,12 +294,45 @@ public class WithdrawActivity extends BaseActivity {
 
     @OnClick(value = R.id.withdraw_button)
     public void onWithdrawButtonClicked(View view) {
-        mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
+        CybexDialog.showConfirmationDialog(this, new CybexDialog.ConfirmationDialogClickListener() {
+            @Override
+            public void onClick(Dialog dialog) {
+                try {
+                    BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+                        @Override
+                        public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                            mDynamicGlobalPropertyObject = reply.result;
+                            mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
+                            broadCastTransaction(mSignedTransaction);
+
+                        }
+
+                        @Override
+                        public void onFailure() {
+
+                        }
+                    });
+                } catch (NetworkStatusException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, mAddress, mAmount, mTransferFeeTextView.getText().toString(), mGateWayFeeTextView.getText().toString(), mReceiveAmountTextView.getText().toString());
+    }
+
+    private void broadCastTransaction(SignedTransaction signedTransaction) {
         try {
-            BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(mSignedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+            BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<String> reply) {
-
+                    if (reply.result.equals("null")) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), getResources().getString(R.string.toast_message_withdraw_sent), getResources().getDrawable(R.drawable.ic_check_circle_green));
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -323,7 +346,14 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void calculateReceiveAmount(FeeAmountObject feeAmountObject) {
-        
+        double amount = Double.parseDouble(mAmount);
+        double receiveAmount = 0;
+        if (feeAmountObject.asset_id.equals("1.3.0")) {
+            receiveAmount = amount - mGatewayFee;
+        } else {
+            receiveAmount = amount - mGatewayFee - (feeAmountObject.amount / Math.pow(10, mAssetObject.precision));
+        }
+        mReceiveAmountTextView.setText(String.format("%s%s", String.valueOf(receiveAmount), mAssetName));
     }
 
     private long getBalance(FullAccountObject fullAccountObject, String assetId) {
@@ -350,7 +380,11 @@ public class WithdrawActivity extends BaseActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            mTransferFeeTextView.setText(String.format("%s " + mAssetName , String.valueOf(feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
+                            mTransferFeeTextView.setText(String.format("%s " + mAssetName, String.valueOf(feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
+                            calculateReceiveAmount(feeAmountObject);
+                            if(!BitsharesWalletWraper.getInstance().is_locked()) {
+                                mWithdrawButton.setEnabled(true);
+                            }
                         }
                     });
 
@@ -411,45 +445,11 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void requestDetailMessage() {
-        RetrofitFactory.getInstance()
-                .api()
-                .getWithdrawMsg()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(responseBody.string());
-                            String enMsg = jsonObject.getString("enMsg");
-                            String cnMsg = jsonObject.getString("cnMsg");
-                            if (Locale.getDefault().getLanguage().equals("zh")) {
-                                mWithdrawMessage.setText(cnMsg.replace("$asset", mAssetName));
-                            } else {
-                                mWithdrawMessage.setText(enMsg.replace("$asset", mAssetName));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        if (Locale.getDefault().getLanguage().equals("zh")) {
+            mWithdrawMessage.setText(mCnInfo);
+        } else {
+            mWithdrawMessage.setText(mEnInfo);
+        }
     }
 
     private void setMinWithdrawAmountAndGateWayFee() {
@@ -557,7 +557,7 @@ public class WithdrawActivity extends BaseActivity {
         Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
         if (!memoKey.toString().equals(publicMemoKeyType.toString()) && !accountObject.active.is_public_key_type_exist(publicActiveKeyType) &&
                 !accountObject.active.is_public_key_type_exist(publicOwnerKeyType)) {
-            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw));
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), getResources().getDrawable(R.drawable.ic_error_16px));
         }
 
 
