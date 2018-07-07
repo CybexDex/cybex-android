@@ -680,14 +680,27 @@ public class WalletApi {
         return transferOperation;
     }
 
+    public Operations.limit_order_cancel_operation getLimitOrderCancelOperation(ObjectId<AccountObject> accountId,
+                                                                                ObjectId<AssetObject> assetFeeId,
+                                                                                ObjectId<LimitOrderObject> limitOrderId,
+                                                                                long amountFee){
+        Operations.limit_order_cancel_operation operation = new Operations.limit_order_cancel_operation();
+        operation.fee = new Asset(amountFee, assetFeeId);
+        operation.fee_paying_account = accountId;
+        operation.order = limitOrderId;
+        operation.extensions = new HashSet<>();
+        return operation;
+    }
+
     public Operations.limit_order_create_operation getLimitOrderCreateOperation(ObjectId<AccountObject> accountId,
                                                                                 ObjectId<AssetObject> assetFeeId,
                                                                                 ObjectId<AssetObject> assetSellId,
                                                                                 ObjectId<AssetObject> assetReceiveId,
+                                                                                long amountFee,
                                                                                 long amountSell,
                                                                                 long amountReceive){
         Operations.limit_order_create_operation operation = new Operations.limit_order_create_operation();
-        operation.fee = new Asset(0, assetFeeId);
+        operation.fee = new Asset(amountFee, assetFeeId);
         operation.seller = accountId;
         operation.amount_to_sell = new Asset(amountSell, assetSellId);
         operation.min_to_receive = new Asset(amountReceive, assetReceiveId);

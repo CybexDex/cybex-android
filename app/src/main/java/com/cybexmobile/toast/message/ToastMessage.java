@@ -14,13 +14,13 @@ import com.cybexmobile.R;
 
 public class ToastMessage {
 
-    public static void showNotEnableDepositToastMessage(Activity context, String message, Drawable drawable) {
+    public static void showNotEnableDepositToastMessage(Activity context, String message, int resId) {
         LayoutInflater inflater = context.getLayoutInflater();
         View layout = inflater.inflate(R.layout.toast_unenable_deposit, (ViewGroup) context.findViewById(R.id.toast_layout_deposit_root));
         TextView text = layout.findViewById(R.id.toast_center_message_text_view);
         ImageView imageView = layout.findViewById(R.id.toast_center_message_icon);
         text.setText(message);
-        imageView.setBackground(drawable);
+        imageView.setImageResource(resId);
         Toast toast = new Toast(context.getApplicationContext());
         toast.setGravity(Gravity.CENTER_VERTICAL, 0 ,0);
         toast.setDuration(Toast.LENGTH_LONG);

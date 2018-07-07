@@ -190,9 +190,9 @@ public class WithdrawActivity extends BaseActivity {
                 checkIfLocked();
             } else {
                 if (Locale.getDefault().getLanguage().equals("zh")) {
-                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mCnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
+                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mCnMsg, R.drawable.ic_error_16px);
                 } else {
-                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mEnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
+                    ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mEnMsg, R.drawable.ic_error_16px);
                 }
             }
         }
@@ -329,7 +329,7 @@ public class WithdrawActivity extends BaseActivity {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), getResources().getString(R.string.toast_message_withdraw_sent), getResources().getDrawable(R.drawable.ic_check_circle_green));
+                                ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
                             }
                         });
                     }
@@ -557,7 +557,7 @@ public class WithdrawActivity extends BaseActivity {
         Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
         if (!memoKey.toString().equals(publicMemoKeyType.toString()) && !accountObject.active.is_public_key_type_exist(publicActiveKeyType) &&
                 !accountObject.active.is_public_key_type_exist(publicOwnerKeyType)) {
-            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), getResources().getDrawable(R.drawable.ic_error_16px));
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
         }
 
 

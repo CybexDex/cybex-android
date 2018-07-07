@@ -60,6 +60,7 @@ public class Constant {
     public static final String BUNDLE_SAVE_WATCHLIST = "bundle_save_watchlist";
     public static final String BUNDLE_SAVE_ACCOUNT_BALANCE = "bundle_save_account_balance";
     public static final String BUNDLE_SAVE_IS_LOGIN_IN = "bundle_save_is_login_in";
+    public static final String BUNDLE_SAVE_NAME = "bundle_save_name";
     public static final String BUNDLE_SAVE_FEE = "bundle_save_fee";
     public static final String BUNDLE_SAVE_CYB_FEE = "bundle_save_cyb_fee";
     public static final String BUNDLE_SAVE_CYB_ASSET_OBJECT = "bundle_save_cyb_asset_object";

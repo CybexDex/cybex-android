@@ -1,5 +1,6 @@
 package com.cybexmobile.fragment;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -15,18 +16,31 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.ExchangeOpenOrderRecyclerViewAdapter;
+import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.item.OpenOrderItem;
+import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
+import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.DynamicGlobalPropertyObject;
+import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.graphene.chain.ObjectId;
+import com.cybexmobile.graphene.chain.Operations;
+import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.market.OpenOrder;
 import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.toast.message.ToastMessage;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,7 +55,11 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
+import static com.cybexmobile.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
+import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
+import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
@@ -49,13 +67,15 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 /**
  * 交易界面当前用户当前交易对委单
  */
-public class OpenOrdersFragment extends BaseFragment {
+public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrderRecyclerViewAdapter.OnItemClickListener {
 
     @BindView(R.id.open_orders_recycler_view)
     RecyclerView mRvOpenOrders;
 
     private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
     private WatchlistData mWatchlistData;
+    private FullAccountObject mFullAccount;
+    private OpenOrderItem mCurrOpenOrderItem;
 
     private Unbinder mUnbinder;
 
@@ -85,9 +105,11 @@ public class OpenOrdersFragment extends BaseFragment {
         Bundle bundle = getArguments();
         if(bundle != null){
             mWatchlistData = (WatchlistData) bundle.getSerializable(INTENT_PARAM_WATCHLIST);
+            mFullAccount = (FullAccountObject) bundle.getSerializable(INTENT_PARAM_FULL_ACCOUNT_OBJECT);
         }
         if(savedInstanceState != null){
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
+            mFullAccount = (FullAccountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FULL_ACCOUNT_OBJECT);
         }
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, BIND_AUTO_CREATE);
@@ -107,6 +129,7 @@ public class OpenOrdersFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mOpenOrderRecyclerViewAdapter = new ExchangeOpenOrderRecyclerViewAdapter(getContext(), mOpenOrderItems);
+        mOpenOrderRecyclerViewAdapter.setOnItemClickListener(this);
         mRvOpenOrders.setAdapter(mOpenOrderRecyclerViewAdapter);
     }
 
@@ -146,9 +169,102 @@ public class OpenOrdersFragment extends BaseFragment {
         notifyRecyclerView();
     }
 
+    public void loadLimitOrderCancelFee(String assetId){
+        if(mWatchlistData == null){
+            return;
+        }
+        mWebSocketService.loadLimitOrderCancelFee(assetId, ID_CANCEL_LMMIT_ORDER_OPERATION,
+                BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
+                        ObjectId.create_from_string(ASSET_ID_CYB),
+                        mWatchlistData.getBaseAsset().id,
+                        mWatchlistData.getQuoteAsset().id,  0, 0, 0));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadRequiredCancelFee(Event.LoadRequiredCancelFee event){
+        FeeAmountObject feeAmount = event.getFee();
+        AccountBalanceObject accountBalance = getBalance(feeAmount.asset_id, mFullAccount);
+        if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
+            if(accountBalance.balance > feeAmount.amount){//cyb足够扣手续费
+                checkIfLocked(mName, feeAmount);
+            } else { //cyb不够扣手续费 扣取委单的base或者quote
+                if(ASSET_ID_CYB.equals(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString())){
+                    Toast.makeText(getContext(), "buzu", Toast.LENGTH_SHORT).show();
+                } else {
+                    loadLimitOrderCancelFee(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString());
+                }
+            }
+        } else {
+            if(accountBalance.balance > feeAmount.amount){
+                checkIfLocked(mName, feeAmount);
+            } else {
+                Toast.makeText(getContext(), "buzu", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLimitOrderCancel(Event.LimitOrderCancel event){
+        if(event.isSuccess()){
+            ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
+                    R.string.toast_message_cancel_order_successfully), R.drawable.ic_check_circle_green);
+        } else {
+            ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
+                    R.string.toast_message_cancel_order_failed), R.drawable.ic_error_16px);
+        }
+    }
+
+    private void checkIfLocked(String userName, FeeAmountObject feeAmount) {
+        if(!BitsharesWalletWraper.getInstance().is_locked()){
+            toCancelLimitOrder(feeAmount);
+            return;
+        }
+        CybexDialog.showUnlockWalletDialog(getContext(), new CybexDialog.UnLockDialogClickListener() {
+            @Override
+            public void onClick(String password, Dialog dialog) {
+                int result = BitsharesWalletWraper.getInstance().import_account_password(mFullAccount.account, userName, password);
+                if (result == 0) {
+                    dialog.dismiss();
+                    toCancelLimitOrder(feeAmount);
+                } else {
+                    LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
+                    errorLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void toCancelLimitOrder(FeeAmountObject feeAmount){
+        try {
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+                @Override
+                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                    Operations.limit_order_cancel_operation operation = BitsharesWalletWraper.getInstance().
+                            getLimitOrderCancelOperation(mFullAccount.account.id, ObjectId.create_from_string(feeAmount.asset_id),
+                                    mCurrOpenOrderItem.openOrder.getLimitOrder().id, feeAmount.amount);
+                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                            mFullAccount.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
+                    try {
+                        BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mLimitOrderCancelCallback);
+                    } catch (NetworkStatusException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
-        List<LimitOrderObject> limitOrderObjects = event.getFullAccount() == null ? null : event.getFullAccount().limit_orders;
+        mFullAccount = event.getFullAccount();
+        List<LimitOrderObject> limitOrderObjects = mFullAccount == null ? null : mFullAccount.limit_orders;
         parseOpenOrderItems(limitOrderObjects);
         notifyRecyclerView();
     }
@@ -183,9 +299,22 @@ public class OpenOrdersFragment extends BaseFragment {
         }
     };
 
+    private WebSocketClient.MessageCallback mLimitOrderCancelCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>(){
+
+        @Override
+        public void onMessage(WebSocketClient.Reply<String> reply) {
+            EventBus.getDefault().post(new Event.LimitOrderCancel(reply.result == null && reply.error == null));
+        }
+
+        @Override
+        public void onFailure() {
+            EventBus.getDefault().post(new Event.LimitOrderCancel(false));
+        }
+    };
+
     private void loadLimitOrderData(){
-        FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
-        List<LimitOrderObject> limitOrderObjects = fullAccountObject == null ? null : fullAccountObject.limit_orders;
+        mFullAccount = mWebSocketService.getFullAccount(mName);
+        List<LimitOrderObject> limitOrderObjects = mFullAccount == null ? null : mFullAccount.limit_orders;
         parseOpenOrderItems(limitOrderObjects);
         notifyRecyclerView();
     }
@@ -262,5 +391,29 @@ public class OpenOrdersFragment extends BaseFragment {
             item.openOrder = openOrder;
             mOpenOrderItems.add(item);
         }
+    }
+
+    @Override
+    public void onItemClick(OpenOrderItem itemValue) {
+        mCurrOpenOrderItem = itemValue;
+         loadLimitOrderCancelFee(ASSET_ID_CYB);
+    }
+
+    private AccountBalanceObject getBalance(String assetId, FullAccountObject fullAccount){
+        if(assetId == null || fullAccount == null){
+            return null;
+        }
+        List<AccountBalanceObject> accountBalances = fullAccount.balances;
+        if(accountBalances == null || accountBalances.size() == 0){
+            return null;
+        }
+        AccountBalanceObject accountBalanceObject = null;
+        for(AccountBalanceObject accountBalance : accountBalances){
+            if(accountBalance.asset_type.toString().equals(assetId)){
+                accountBalanceObject = accountBalance;
+                break;
+            }
+        }
+        return accountBalanceObject;
     }
 }

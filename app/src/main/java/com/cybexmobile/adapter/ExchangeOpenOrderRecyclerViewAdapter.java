@@ -19,6 +19,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -27,6 +28,7 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<R
 
     private List<OpenOrderItem> mOpenOrderItems;
     private Context mContext;
+    private OnItemClickListener mOnItemClickListener;
 
     public ExchangeOpenOrderRecyclerViewAdapter(Context context, List<OpenOrderItem> dataList) {
         mOpenOrderItems = dataList;
@@ -36,6 +38,10 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<R
     public void setOpenOrderItems(List<OpenOrderItem> openOrderItems){
         mOpenOrderItems = openOrderItems;
         notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mOnItemClickListener = listener;
     }
 
     @Override
@@ -137,5 +143,16 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<R
             super(view);
             ButterKnife.bind(this, view);
         }
+
+        @OnClick(R.id.item_exchange_open_order_btn_cancel)
+        public void onCancelClick(View view){
+            if(mOnItemClickListener != null){
+                mOnItemClickListener.onItemClick(mOpenOrderItems.get(getAdapterPosition()));
+            }
+        }
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(OpenOrderItem itemValue);
     }
 }

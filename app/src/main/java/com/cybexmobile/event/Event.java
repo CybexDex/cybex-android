@@ -386,5 +386,53 @@ public class Event {
             return fee;
         }
     }
+
+    /**
+     *  加载交易撤单手续费
+     */
+    public static class LoadRequiredCancelFee{
+        private FeeAmountObject fee;
+
+        public LoadRequiredCancelFee(FeeAmountObject fee) {
+            this.fee = fee;
+        }
+
+        public FeeAmountObject getFee() {
+            return fee;
+        }
+    }
+
+    /**
+     * 创建委单
+     */
+    public static class LimitOrderCreate{
+        private boolean isSuccess;
+
+        public LimitOrderCreate(boolean isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        public boolean isSuccess() {
+            return isSuccess;
+        }
+
+    }
+
+    /**
+     * 撤销委单
+     */
+    public static class LimitOrderCancel{
+        private boolean isSuccess;
+
+        public LimitOrderCancel(boolean isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        public boolean isSuccess() {
+            return isSuccess;
+        }
+
+    }
+
 }
 

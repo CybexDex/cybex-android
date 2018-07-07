@@ -379,9 +379,17 @@ public class BitsharesWalletWraper {
                                                                                 ObjectId<AssetObject> assetFeeId,
                                                                                 ObjectId<AssetObject> assetSellId,
                                                                                 ObjectId<AssetObject> assetReceiveId,
-                                                                               long amountSell,
-                                                                               long amountReceive){
-        return mWalletApi.getLimitOrderCreateOperation(accountId, assetFeeId, assetSellId, assetReceiveId, amountSell, amountReceive);
+                                                                                long amountFee,
+                                                                                long amountSell,
+                                                                                long amountReceive){
+        return mWalletApi.getLimitOrderCreateOperation(accountId, assetFeeId, assetSellId, assetReceiveId, amountFee, amountSell, amountReceive);
+    }
+
+    public Operations.limit_order_cancel_operation getLimitOrderCancelOperation(ObjectId<AccountObject> accountId,
+                                                                                ObjectId<AssetObject> assetFeeId,
+                                                                                ObjectId<LimitOrderObject> limitOrderId,
+                                                                                long amountFee){
+        return mWalletApi.getLimitOrderCancelOperation(accountId, assetFeeId, limitOrderId, amountFee);
     }
 
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {

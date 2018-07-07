@@ -81,7 +81,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/font_gray_small"
-                    android:text="≈--"/>
+                    android:text="≈¥ --"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

@@ -13,11 +13,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +34,7 @@ import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.toast.message.ToastMessage;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.Constant;
 
@@ -49,7 +47,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 import butterknife.Unbinder;
 
 import static com.cybexmobile.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
@@ -166,19 +163,21 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
             mWatchlistData = watchlist;
             setTitleData();
             notifyWatchlistDataChange(mWatchlistData);
-            notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
+            notifyFullAccountDataChange(mWebSocketService.getFullAccount(mName));
             //切换交易对 重新加载交易手续费
-            loadBuySellFee(ASSET_ID_CYB);
+            loadLimitOrderCreateFee(ASSET_ID_CYB);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadRequiredFee(Event.LoadRequiredFee event){
+    public void onLoadLimitOrderCreateFee(Event.LoadRequiredFee event){
         mExchangeFee = event.getFee();
         if(mExchangeFee.asset_id.equals(ASSET_ID_CYB) && mCybExchangeFee == null){
             mCybExchangeFee = mExchangeFee;
         }
-        mCybAssetObject = mWebSocketService.getAssetObject(ASSET_ID_CYB);
+        if(mCybAssetObject == null){
+            mCybAssetObject = mWebSocketService.getAssetObject(ASSET_ID_CYB);
+        }
         notifyExchangeFee(mExchangeFee, mCybAssetObject);
     }
 
@@ -217,23 +216,34 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
-        notifyAccountBalanceDataChange(event.getFullAccount());
+        notifyFullAccountDataChange(event.getFullAccount());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginIn(Event.LoginIn event){
         mIsLoginIn = true;
         mName = event.getName();
-        notifyLoginStateDataChange(true);
-        notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
+        notifyLoginStateDataChange(true, mName);
+        notifyFullAccountDataChange(mWebSocketService.getFullAccount(mName));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOut(Event.LoginOut event){
         mName = null;
         mIsLoginIn = false;
-        notifyLoginStateDataChange(false);
-        notifyAccountBalanceDataChange(null);
+        notifyLoginStateDataChange(false, null);
+        notifyFullAccountDataChange(null);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLimitOrderCreate(Event.LimitOrderCreate event){
+        if(event.isSuccess()){
+            ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
+                    R.string.toast_message_place_order_successfully), R.drawable.ic_check_circle_green);
+        } else {
+            ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
+                    R.string.toast_message_place_order_failed), R.drawable.ic_error_16px);
+        }
     }
 
     @OnClick(R.id.tv_title)
@@ -243,15 +253,15 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
         startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
     }
 
-    public void loadBuySellFee(String assetId){
+    public void loadLimitOrderCreateFee(String assetId){
         if(mWatchlistData == null){
             return;
         }
-        mWebSocketService.loadBuySellFee(assetId, ID_CREATE_LIMIT_ORDER_OPERATION,
+        mWebSocketService.loadLimitOrderCreateFee(assetId, ID_CREATE_LIMIT_ORDER_OPERATION,
                 BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
                         ObjectId.create_from_string(ASSET_ID_CYB),
                         mWatchlistData.getBaseAsset().id,
-                        mWatchlistData.getQuoteAsset().id,  0, 0));
+                        mWatchlistData.getQuoteAsset().id,  0, 0, 0));
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -266,9 +276,9 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
                 setTitleData();
             }
             if(mIsLoginIn){
-                notifyAccountBalanceDataChange(mWebSocketService.getFullAccount(mName));
+                notifyFullAccountDataChange(mWebSocketService.getFullAccount(mName));
             }
-            loadBuySellFee(ASSET_ID_CYB);
+            loadLimitOrderCreateFee(ASSET_ID_CYB);
         }
 
         @Override
@@ -307,7 +317,7 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
         }
     }
 
-    private void notifyAccountBalanceDataChange(FullAccountObject fullAccount){
+    private void notifyFullAccountDataChange(FullAccountObject fullAccount){
         mFullAccountObject = fullAccount;
         if(mBuyFragment != null){
             mBuyFragment.changeFullAccount(fullAccount);
@@ -317,12 +327,12 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
         }
     }
 
-    private void notifyLoginStateDataChange(boolean loginState){
+    private void notifyLoginStateDataChange(boolean loginState, String name){
         if(mBuyFragment != null){
-            mBuyFragment.changeLoginState(loginState);
+            mBuyFragment.changeLoginState(loginState, name);
         }
         if(mSellFragment != null){
-            mSellFragment.changeLoginState(loginState);
+            mSellFragment.changeLoginState(loginState, name);
         }
     }
 
@@ -358,7 +368,7 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
         switch (position){
             case 0:
                 if(mBuyFragment == null){
-                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mFullAccountObject, mIsLoginIn, mCybExchangeFee, mCybAssetObject);
+                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject);
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
@@ -368,7 +378,7 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
                 break;
             case 1:
                 if(mSellFragment == null){
-                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mFullAccountObject, mIsLoginIn, mCybExchangeFee, mCybAssetObject);
+                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject);
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);

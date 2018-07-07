@@ -111,9 +111,9 @@ public class DepositActivity extends BaseActivity {
         } else {
             Log.v("language", Locale.getDefault().getLanguage());
             if (Locale.getDefault().getLanguage().equals("zh")) {
-                ToastMessage.showNotEnableDepositToastMessage(this, mCnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
+                ToastMessage.showNotEnableDepositToastMessage(this, mCnMsg, R.drawable.ic_error_16px);
             } else {
-                ToastMessage.showNotEnableDepositToastMessage(this, mEnMsg, getResources().getDrawable(R.drawable.ic_error_16px));
+                ToastMessage.showNotEnableDepositToastMessage(this, mEnMsg, R.drawable.ic_error_16px);
             }
         }
     }

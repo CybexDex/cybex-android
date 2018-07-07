@@ -79,7 +79,8 @@ public class WebSocketService extends Service {
     private ConcurrentHashMap<String, List<AssetsPair>> mAssetsPairHashMap = new ConcurrentHashMap<>();
 
     private ConcurrentHashMap<String, List<WatchlistData>> mWatchlistHashMap = new ConcurrentHashMap<>();
-    private List<FeeAmountObject> mExchangeFees = null;
+    private List<FeeAmountObject> mLimitOrderCreateFees = null;
+    private List<FeeAmountObject> mLimitOrderCancelFees = null;
     //当前行情tab页
     private volatile String mCurrentBaseAssetId;
 
@@ -167,12 +168,12 @@ public class WebSocketService extends Service {
         }
     }
 
-    public void loadBuySellFee(String assetId, int operationId, Operations.base_operation operation){
-        if(mExchangeFees == null){
-            mExchangeFees = Collections.synchronizedList(new ArrayList<>());
+    public void loadLimitOrderCreateFee(String assetId, int operationId, Operations.base_operation operation){
+        if(mLimitOrderCreateFees == null){
+            mLimitOrderCreateFees = Collections.synchronizedList(new ArrayList<>());
         }
-        if(mExchangeFees.size() > 0){
-            for(FeeAmountObject fee : mExchangeFees){
+        if(mLimitOrderCreateFees.size() > 0){
+            for(FeeAmountObject fee : mLimitOrderCreateFees){
                 if(!assetId.equals(fee.asset_id)){
                    continue;
                 }
@@ -181,7 +182,27 @@ public class WebSocketService extends Service {
             }
         }
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(assetId, operationId, operation, mExchangeFeeCallback);
+            BitsharesWalletWraper.getInstance().get_required_fees(assetId, operationId, operation, mLimitOrderCreateFeeCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadLimitOrderCancelFee(String assetId, int operationId, Operations.base_operation operation){
+        if(mLimitOrderCancelFees == null){
+            mLimitOrderCancelFees = Collections.synchronizedList(new ArrayList<>());
+        }
+        if(mLimitOrderCancelFees.size() > 0){
+            for(FeeAmountObject fee : mLimitOrderCancelFees){
+                if(!assetId.equals(fee.asset_id)){
+                    continue;
+                }
+                EventBus.getDefault().post(new Event.LoadRequiredCancelFee(fee));
+                return;
+            }
+        }
+        try {
+            BitsharesWalletWraper.getInstance().get_required_fees(assetId, operationId, operation, mLimitOrderCancelFeesCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -356,15 +377,32 @@ public class WebSocketService extends Service {
         }
     }
 
-    private WebSocketClient.MessageCallback mExchangeFeeCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+    private WebSocketClient.MessageCallback mLimitOrderCreateFeeCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
         @Override
         public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
             if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
                 return;
             }
-            mExchangeFees.add(feeAmountObjects.get(0));
+            mLimitOrderCreateFees.add(feeAmountObjects.get(0));
             EventBus.getDefault().post(new Event.LoadRequiredFee(feeAmountObjects.get(0)));
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
+    private WebSocketClient.MessageCallback mLimitOrderCancelFeesCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+            List<FeeAmountObject> feeAmountObjects = reply.result;
+            if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
+                return;
+            }
+            mLimitOrderCancelFees.add(feeAmountObjects.get(0));
+            EventBus.getDefault().post(new Event.LoadRequiredCancelFee(feeAmountObjects.get(0)));
         }
 
         @Override

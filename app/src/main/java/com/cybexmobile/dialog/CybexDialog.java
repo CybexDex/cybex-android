@@ -2,6 +2,7 @@ package com.cybexmobile.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -74,8 +75,9 @@ public class CybexDialog {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    listener.onClick(passwordEditText.getText().toString(), dialog);
+                String password = passwordEditText.getText().toString();
+                if (listener != null && !TextUtils.isEmpty(password)) {
+                    listener.onClick(password, dialog);
                 }
             }
         });
