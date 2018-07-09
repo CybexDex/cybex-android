@@ -45,6 +45,8 @@
                         android:paddingStart="@dimen/activity_padding"
                         android:paddingEnd="@dimen/activity_padding"
                         android:background="@null"
+                        android:hint="@string/text_hint_price"
+                        android:textColorHint="@color/text_hint_color"
                         android:inputType="numberDecimal"
                         style="@style/font_white_dark_medium"
                         android:layout_toStartOf="@+id/view_divider" />
@@ -98,6 +100,8 @@
                         android:layout_height="match_parent"
                         android:paddingStart="@dimen/activity_padding"
                         android:paddingEnd="@dimen/activity_padding"
+                        android:hint="@string/text_hint_amount"
+                        android:textColorHint="@color/text_hint_color"
                         android:background="@null"
                         android:layout_toStartOf="@+id/view_divider2"
                         android:inputType="numberDecimal"
@@ -274,6 +278,7 @@
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/layout_trade_history"
             android:layout_width="match_parent"
             android:layout_height="@dimen/layout_trade_history_height"
             android:layout_marginTop="@dimen/activity_margin">
@@ -285,11 +290,12 @@
                 style="@style/font_gray_large"
                 android:text="@string/market_page_trade_history"/>
 
-            <ImageView
+            <CheckBox
+                android:id="@+id/buysell_checkbox_market_trades"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
-                android:src="@drawable/ic_arrow_drop_down_grey"/>
+                android:button="@drawable/ic_arrow_grey_selector" />
 
         </FrameLayout>
 

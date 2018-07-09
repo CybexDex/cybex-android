@@ -20,6 +20,7 @@ import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.DateUtils;
 
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -92,11 +93,15 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                     baseAmount = orderHistoryItem.orderHistory.pays.amount / Math.pow(10, base.precision);
                     quoteAmount = orderHistoryItem.orderHistory.receives.amount / Math.pow(10, quote.precision);
                 }
-                viewHolder.mTvBasePrice.setText(String.format("%." + base.precision + "f %s", baseAmount/quoteAmount, baseSymbol));
+                /**
+                 * fix bug:CYM-371
+                 * 价格保留8位小数
+                 */
+                viewHolder.mTvBasePrice.setText(String.format(Locale.US, "%.8f %s", baseAmount/quoteAmount, baseSymbol));
                 viewHolder.mTvBaseAmount.setText(String.format("%." + base.precision + "f %s", baseAmount, baseSymbol));
                 viewHolder.mTvQuoteAmount.setText(String.format("%." + quote.precision +"f %s", quoteAmount, quoteSymbol));
                 if(block != null){
-                    viewHolder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillis(block.timestamp)));
+                    viewHolder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(block.timestamp)));
                 }
             }
         }else{

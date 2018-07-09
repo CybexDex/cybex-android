@@ -36,8 +36,8 @@
     <!-- Open Orders Page -->
     <string name="open_order_asset_amount">Asset/Amount</string>
     <string name="open_order_order_value">Price</string>
-    <string name="open_order_buy">Buy</string>
-    <string name="open_order_sell">Sell</string>
+    <string name="open_order_buy">BUY</string>
+    <string name="open_order_sell">SELL</string>
     <string name="open_orders_title">Opened Orders</string>
     <string name="open_order_price_amount">Price/Amount</string>
     <string name="open_order_filled_cancel">Filled/Cancel</string>
@@ -53,7 +53,7 @@
     <string name="market_page_trade_history_base">Total(--)</string>
     <string name="market_page_trade_history_quote">Amount(--)</string>
     <string name="market_page_order_book">Order Book</string>
-    <string name="market_page_trade_history">Trade History</string>
+    <string name="market_page_trade_history">Market Trades</string>
     <string name="k_ma">MA(5):</string>
     <string name="k_ma5">MA(5):</string>
     <string name="k_ma10">MA(10):</string>
@@ -173,6 +173,8 @@
     <string name="text_sell">Sell</string>
     <string name="text_not_enough">Not enough</string>
     <string name="text_login_in_to_exchange">Login in to exchange</string>
+    <string name="text_hint_price">Price</string>
+    <string name="text_hint_amount">Amount</string>
 
     <string name="item_text_open_order_price">Price:</string>
     <string name="item_text_open_order_amount">Amount:</string>

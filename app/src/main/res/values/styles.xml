@@ -162,9 +162,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="font_white_medium">
-        <item name="android:fontFamily">Roboto Condensed</item>
-        <item name="android:textColor">#FFFFFF</item>
+    <style name="font_white_medium" parent="font_white">
         <item name="android:textSize">@dimen/font_medium</item>
     </style>
 
@@ -172,8 +170,17 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="font_white_large" parent="font_white_medium">
+    <style name="font_white_large" parent="font_white">
         <item name="android:textSize">@dimen/font_large</item>
+    </style>
+
+    <style name="font_white_xxsmall" parent="font_white">
+        <item name="android:textSize">@dimen/font_xxsmall</item>
+    </style>
+
+    <style name="font_white">
+        <item name="android:fontFamily">Roboto Condensed</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
     <!-- font red -->

@@ -16,7 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -48,6 +51,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
@@ -107,6 +111,10 @@ public class BuySellFragment extends BaseFragment {
     TextView mTvAssetTotal;
     @BindView(R.id.buysell_scroll_view)
     NestedScrollView mScrollView;
+    @BindView(R.id.buysell_checkbox_market_trades)
+    CheckBox mCbMarketTrades;
+    @BindView(R.id.layout_trade_history)
+    FrameLayout mLayoutTradeHistory;
 
     private MarketTradeHistoryFragment mMarketTradeHistoryFragment;
     private ExchangeLimitOrderFragment mExchangeLimitOrderFragment;
@@ -242,6 +250,11 @@ public class BuySellFragment extends BaseFragment {
         }
     }
 
+    @OnCheckedChanged(R.id.buysell_checkbox_market_trades)
+    public void onMarketTradeCheckChanged(CompoundButton button, boolean isChecked){
+        mScrollView.scrollTo(0, isChecked ? mLayoutTradeHistory.getTop() : 0);
+    }
+
     @OnClick({R.id.buysell_tv_add, R.id.buysell_tv_sub})
     public void onAssetPriceClick(View view){
         String assetPriceStr = mEtAssetPrice.getText().toString();
@@ -310,8 +323,8 @@ public class BuySellFragment extends BaseFragment {
         }
         if(mIsExchangeBalanceEnough){
             CybexDialog.showLimitOrderCreateConfirmationDialog(getContext(), mCurrentAction.equals(ACTION_BUY),
-                    String.format("%s%s", mEtAssetPrice.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
-                    String.format("%s%s", mEtAssetAmount.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
+                    String.format("%s %s", mEtAssetPrice.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
+                    String.format("%s %s", mEtAssetAmount.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
                     mTvAssetTotal.getText().toString(),
                     new CybexDialog.ConfirmationDialogClickListener() {
                 @Override

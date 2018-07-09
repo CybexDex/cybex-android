@@ -18,7 +18,7 @@
             android:paddingStart="@dimen/text_sell_or_buy_padding"
             android:paddingEnd="@dimen/text_sell_or_buy_padding"
             android:text="@string/text_empty"
-            android:textSize="@dimen/font_xxsmall"
+            style="@style/font_white_xxsmall"
             android:gravity="center"
             android:layout_gravity="center_vertical"
             android:background="@drawable/bg_btn_buy"/>

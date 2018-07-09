@@ -18,7 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.CheckBox;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.MarketsActivity;
@@ -46,6 +46,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
@@ -74,8 +75,8 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
+    @BindView(R.id.cb_title)
+    CheckBox mCbTitle;
     @BindView(R.id.tl_exchange)
     TabLayout mTlExchange;
 
@@ -154,6 +155,7 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        mCbTitle.setChecked(false);
         if(requestCode == REQUEST_CODE_SELECT_WATCHLIST && resultCode == RESULT_CODE_SELECTED_WATCHLIST){
             WatchlistData watchlist = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
             //change watchlistdata 同一个交易对数据不刷新
@@ -246,7 +248,7 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
         }
     }
 
-    @OnClick(R.id.tv_title)
+    @OnClick(R.id.cb_title)
     public void onTitleClick(View view){
         Intent intent = new Intent(getContext(), WatchlistSelectActivity.class);
         intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
@@ -340,7 +342,7 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
         if(mWatchlistData == null){
             return;
         }
-        mTvTitle.setText(String.format("%s/%s", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
+        mCbTitle.setText(String.format("%s/%s", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
     }
 
     private void initFragment(Bundle savedInstanceState){

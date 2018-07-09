@@ -254,7 +254,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             feeStr = String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", cybAsset.precision),
                     feeAmount.amount/Math.pow(10, cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
         } else {
-            feeStr = String.format("%s%s", feeAmount.amount / Math.pow(10, mCurrOpenOrderItem.isSell ? quote.precision : base.precision),
+            feeStr = String.format("%s %s", feeAmount.amount / Math.pow(10, mCurrOpenOrderItem.isSell ? quote.precision : base.precision),
                     mCurrOpenOrderItem.isSell ? AssetUtil.parseSymbol(quote.symbol) : AssetUtil.parseSymbol(base.symbol));
         }
         CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(), !mCurrOpenOrderItem.isSell,

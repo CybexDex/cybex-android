@@ -177,6 +177,8 @@
     <string name="text_sell">卖出</string>
     <string name="text_not_enough">余额不足</string>
     <string name="text_login_in_to_exchange">请登录</string>
+    <string name="text_hint_price">价格</string>
+    <string name="text_hint_amount">数量</string>
 
     <string name="item_text_open_order_price">价格:</string>
     <string name="item_text_open_order_amount">数量:</string>

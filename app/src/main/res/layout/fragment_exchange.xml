@@ -13,12 +13,13 @@
         app:navigationIcon="@drawable/ic_candle"
         app:titleTextColor="@color/primary_color_grey">
 
-        <TextView
-            android:id="@+id/tv_title"
+        <CheckBox
+            android:id="@+id/cb_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawableRight="@drawable/ic_arrow_drop_down_orange"
+            android:button="@null"
+            android:drawableEnd="@drawable/ic_arrow_orange_selector"
             android:text="--/--"
             style="@style/font_white_dark_bold_large" />
 
@@ -31,7 +32,6 @@
         android:background="@android:color/transparent"
         app:tabIndicatorColor="@color/primary_color_orange"
         app:tabGravity="center"
-
         app:tabSelectedTextColor="@color/primary_color_orange"
         app:tabTextColor="@color/primary_color_grey"
         app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget">
