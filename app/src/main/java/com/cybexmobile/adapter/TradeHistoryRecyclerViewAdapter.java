@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
 import com.cybexmobile.market.MarketTrade;
+import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 
 import java.util.List;
@@ -45,9 +46,13 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
         holder.mItem = mValues.get(position);
         String basePrecisionFormatter = MyUtils.getPrecisedFormatter(mBasePrecision);
         String quotePrecisionFormatter = MyUtils.getPrecisedFormatter(mQuotePrecision);
-        holder.mPriceView.setText(String.format(Locale.US, basePrecisionFormatter, mValues.get(position).price));
+        /**
+         * fix bug:CYM-379
+         * 精度不对
+         */
+        holder.mPriceView.setText(String.format(Locale.US, AssetUtil.formatPrice(mValues.get(position).price), mValues.get(position).price));
         holder.mBaseView.setText(String.format(Locale.US, basePrecisionFormatter, mValues.get(position).baseAmount));
-        holder.mQuoteView.setText(String.format(Locale.US, quotePrecisionFormatter, mValues.get(position).quoteAmount));
+        holder.mQuoteView.setText(String.format(Locale.US, AssetUtil.formatAmount(mValues.get(position).price), mValues.get(position).quoteAmount));
         holder.mDateView.setText(mValues.get(position).date);
         if(mValues.get(position).showRed.equals("showRed")) {
             holder.mPriceView.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
