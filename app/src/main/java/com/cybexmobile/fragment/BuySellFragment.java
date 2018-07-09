@@ -272,7 +272,17 @@ public class BuySellFragment extends BaseFragment {
         double amount = 0;
         double fee = mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
                 mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision());
-        double balanceAvailable = mIsCybBalanceEnough ? mBalanceAvailable : mBalanceAvailable - fee;
+        /**
+         * fix bug:CYM-365
+         * 当cyb余额足够扣手续费，交易为花费cyb时 点击100%仓位 计算数量没有减去手续费
+         */
+        double balanceAvailable;
+        if((mCurrentAction.equals(ACTION_SELL) && mWatchlistData.getQuoteId().equals(ASSET_ID_CYB)) ||
+                (mCurrentAction.equals(ACTION_BUY) && mWatchlistData.getBaseId().equals(ASSET_ID_CYB))){
+            balanceAvailable = mBalanceAvailable - fee;
+        } else {
+            balanceAvailable = mIsCybBalanceEnough ? mBalanceAvailable : mBalanceAvailable - fee;
+        }
         switch (view.getId()){
             case R.id.buysell_tv_percentage_25:
                 amount = mCurrentAction.equals(ACTION_BUY) ? balanceAvailable * 0.25 / price : balanceAvailable * 0.25;
