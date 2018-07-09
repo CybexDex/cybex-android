@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/font_grey_large"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:background="@color/dialog_header_background_color"
+        android:gravity="center"
+        android:text="@string/dialog_text_title_limit_order_cancel_confirmation" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/itemBackground"
+        android:orientation="vertical"
+        android:padding="@dimen/dialog_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_line_height"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/dialog_text_price" />
+
+            <TextView
+                android:id="@+id/dialog_limit_order_create_tv_price"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:text="@string/text_empty" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_line_height"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/dialog_text_amount" />
+
+            <TextView
+                android:id="@+id/dialog_limit_order_create_tv_amount"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:text="@string/text_empty" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_line_height"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/dialog_text_total" />
+
+            <TextView
+                android:id="@+id/dialog_limit_order_create_tv_total"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:text="@string/text_empty" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_line_height"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/dialog_text_cancellation_fee" />
+
+            <TextView
+                android:id="@+id/dialog_limit_order_create_tv_cancellation_fee"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:text="@string/text_empty" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/dialog_margin"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/confirm_dialog_cancel_button"
+                style="@style/font_white_large"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_grey"
+                android:text="@string/dialog_text_cancel" />
+
+
+            <Button
+                android:id="@+id/confirm_dialog_confirm_button"
+                style="@style/font_white_large"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
+                android:text="@string/dialog_text_confirm" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -299,7 +299,16 @@ public class BuySellFragment extends BaseFragment {
             return;
         }
         if(mIsExchangeBalanceEnough){
-            checkIfLocked(mName);
+            CybexDialog.showLimitOrderCreateConfirmationDialog(getContext(), mCurrentAction.equals(ACTION_BUY),
+                    String.format("%s%s", mEtAssetPrice.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
+                    String.format("%s%s", mEtAssetAmount.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
+                    mTvAssetTotal.getText().toString(),
+                    new CybexDialog.ConfirmationDialogClickListener() {
+                @Override
+                public void onClick(Dialog dialog) {
+                    checkIfLocked(mName);
+                }
+            });
         }
     }
 
@@ -325,7 +334,7 @@ public class BuySellFragment extends BaseFragment {
             return;
         }
         mAssetTotal = price * amount;
-        mTvAssetTotal.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mWatchlistData.getBasePrecision()),
+        mTvAssetTotal.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mWatchlistData.getBasePrecision()),
                         mAssetTotal, AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
         //cyb余额不足扣手续费时 需要扣除手续费
 
@@ -400,7 +409,7 @@ public class BuySellFragment extends BaseFragment {
         }
         mBalanceAvailable  = accountBalanceObject.balance/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
                 mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision());
-        mTvAssetAvailable.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df%%s",
+        mTvAssetAvailable.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s",
                 mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()), mBalanceAvailable,
                 mCurrentAction.equals(ACTION_BUY) ? AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol()) : AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
     }
@@ -415,7 +424,7 @@ public class BuySellFragment extends BaseFragment {
         }
         if(!mIsLoginIn){
             mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                    String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mCybAssetObject.precision),
+                    String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
                             mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision),
                             AssetUtil.parseSymbol(mCybAssetObject.symbol)));
             return;
@@ -428,7 +437,7 @@ public class BuySellFragment extends BaseFragment {
             if(accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//cyb足够
                 mIsCybBalanceEnough = true;
                 mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                        String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mCybAssetObject.precision),
+                        String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
                                 mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision),
                                 AssetUtil.parseSymbol(mCybAssetObject.symbol)));
             } else {//cyb不足
@@ -436,7 +445,7 @@ public class BuySellFragment extends BaseFragment {
                 if((mCurrentAction.equals(ACTION_BUY) && mWatchlistData.getBaseId().equals(ASSET_ID_CYB)) ||
                         (mCurrentAction.equals(ACTION_SELL) && mWatchlistData.getQuoteId().equals(ASSET_ID_CYB))){
                     mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                            String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mCybAssetObject.precision),
+                            String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
                                     mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision),
                                     AssetUtil.parseSymbol(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseSymbol() : mWatchlistData.getQuoteSymbol())));
                 } else {
@@ -445,13 +454,13 @@ public class BuySellFragment extends BaseFragment {
             }
         } else {
             if(accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//交易对余额足够
-                mTvExchangeFree.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df%%s",
+                mTvExchangeFree.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s",
                         mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
                         mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
                                 mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()), AssetUtil.parseSymbol(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseSymbol() : mWatchlistData.getQuoteSymbol())));
             } else {//交易对余额不足 显示cyb手续费
                 mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                        String.format(Locale.US, String.format(Locale.US, "%%.%df%%s", mCybAssetObject.precision),
+                        String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
                                 mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), AssetUtil.parseSymbol(mCybAssetObject.symbol)));
             }
         }
@@ -546,11 +555,18 @@ public class BuySellFragment extends BaseFragment {
         return accountBalanceObject;
     }
 
+    /**
+     * 登录
+     */
     private void toLogin(){
         Intent intent = new Intent(getContext(), LoginActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * 检查用户钱包状态
+     * @param userName
+     */
     private void checkIfLocked(String userName) {
         if(!BitsharesWalletWraper.getInstance().is_locked()){
             toExchange();
@@ -571,6 +587,9 @@ public class BuySellFragment extends BaseFragment {
         });
     }
 
+    /**
+     * 挂单
+     */
     private void toExchange(){
         try {
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {

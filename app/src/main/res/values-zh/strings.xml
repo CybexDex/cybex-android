@@ -246,4 +246,14 @@
     <string name="unlock_wallet_dialog_cancel">取消</string>
     <string name="unlock_wallet_dialog_confirm">确认</string>
     <string name="unlock_wallet_dialog_error_invalid_password">解锁失败，请重新输入密码</string>
+
+    <!-- Dialog limit order create and cancel -->
+    <string name="dialog_text_title_limit_order_create_confirmation">买卖确认</string>
+    <string name="dialog_text_title_limit_order_cancel_confirmation">确认取消该订单</string>
+    <string name="dialog_text_price">价格:</string>
+    <string name="dialog_text_amount">数量:</string>
+    <string name="dialog_text_total">成交额:</string>
+    <string name="dialog_text_cancellation_fee">取消手续费:</string>
+    <string name="dialog_text_cancel">取消</string>
+    <string name="dialog_text_confirm">确认</string>
 </resources>

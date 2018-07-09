@@ -111,4 +111,7 @@
     <dimen name="text_asset_symbol">65dp</dimen>
     <dimen name="layout_trade_history_height">34dp</dimen>
 
+    <dimen name="dialog_content_margin_start">8dp</dimen>
+    <dimen name="dialog_line_height">24dp</dimen>
+
 </resources>

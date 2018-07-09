@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.ExchangeOpenOrderRecyclerViewAdapter;
@@ -41,6 +40,7 @@ import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.market.OpenOrder;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
+import com.cybexmobile.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,6 +49,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,6 +57,7 @@ import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybexmobile.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
+import static com.cybexmobile.utils.Constant.ACTION_BUY;
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
 import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
@@ -157,6 +159,12 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
 
     }
 
+    @Override
+    public void onItemClick(OpenOrderItem itemValue) {
+        mCurrOpenOrderItem = itemValue;
+        loadLimitOrderCancelFee(ASSET_ID_CYB);
+    }
+
     /**
      * 交易对改变
      * @param watchlist
@@ -186,19 +194,23 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
         AccountBalanceObject accountBalance = getBalance(feeAmount.asset_id, mFullAccount);
         if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
             if(accountBalance.balance > feeAmount.amount){//cyb足够扣手续费
-                checkIfLocked(mName, feeAmount);
+                limitOrderCancelConfirm(mName, feeAmount);
             } else { //cyb不够扣手续费 扣取委单的base或者quote
                 if(ASSET_ID_CYB.equals(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString())){
-                    Toast.makeText(getContext(), "buzu", Toast.LENGTH_SHORT).show();
+                    ToastMessage.showNotEnableDepositToastMessage(getActivity(),
+                            getContext().getResources().getString(R.string.text_not_enough),
+                            R.drawable.ic_error_16px);
                 } else {
                     loadLimitOrderCancelFee(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString());
                 }
             }
         } else {
             if(accountBalance.balance > feeAmount.amount){
-                checkIfLocked(mName, feeAmount);
+                limitOrderCancelConfirm(mName, feeAmount);
             } else {
-                Toast.makeText(getContext(), "buzu", Toast.LENGTH_SHORT).show();
+                ToastMessage.showNotEnableDepositToastMessage(getActivity(),
+                        getContext().getResources().getString(R.string.text_not_enough),
+                        R.drawable.ic_error_16px);
             }
         }
     }
@@ -212,6 +224,47 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
                     R.string.toast_message_cancel_order_failed), R.drawable.ic_error_16px);
         }
+    }
+
+    private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
+        String priceStr;
+        String amountStr;
+        String totalStr;
+        String feeStr;
+        LimitOrderObject limitOrderObject = mCurrOpenOrderItem.openOrder.getLimitOrder();
+        AssetObject base = mCurrOpenOrderItem.openOrder.getBaseObject();
+        AssetObject quote = mCurrOpenOrderItem.openOrder.getQuoteObject();
+        if(mCurrOpenOrderItem.isSell){
+            double total = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision);
+            double amount = limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision);
+            double price = total / amount;
+            priceStr = String.format(AssetUtil.formatPrice(price) + " %s", price, AssetUtil.parseSymbol(quote.symbol));
+            amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(base.symbol));
+            totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(quote.symbol));
+        } else {
+            double total = limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision);
+            double amount = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision);
+            double price = total / amount;
+            priceStr = String.format(AssetUtil.formatPrice(price) + " %s", price, AssetUtil.parseSymbol(base.symbol));
+            amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(quote.symbol));
+            totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(base.symbol));
+        }
+        if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
+            AssetObject cybAsset = mWebSocketService.getAssetObject(ASSET_ID_CYB);
+            feeStr = String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", cybAsset.precision),
+                    feeAmount.amount/Math.pow(10, cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
+        } else {
+            feeStr = String.format("%s%s", feeAmount.amount / Math.pow(10, mCurrOpenOrderItem.isSell ? quote.precision : base.precision),
+                    mCurrOpenOrderItem.isSell ? AssetUtil.parseSymbol(quote.symbol) : AssetUtil.parseSymbol(base.symbol));
+        }
+        CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(), !mCurrOpenOrderItem.isSell,
+                priceStr, amountStr, totalStr, feeStr,
+                new CybexDialog.ConfirmationDialogClickListener() {
+                    @Override
+                    public void onClick(Dialog dialog) {
+                        checkIfLocked(userName, feeAmount);
+                    }
+                });
     }
 
     private void checkIfLocked(String userName, FeeAmountObject feeAmount) {
@@ -391,12 +444,6 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             item.openOrder = openOrder;
             mOpenOrderItems.add(item);
         }
-    }
-
-    @Override
-    public void onItemClick(OpenOrderItem itemValue) {
-        mCurrOpenOrderItem = itemValue;
-         loadLimitOrderCancelFee(ASSET_ID_CYB);
     }
 
     private AccountBalanceObject getBalance(String assetId, FullAccountObject fullAccount){

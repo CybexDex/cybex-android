@@ -242,4 +242,14 @@
     <string name="unlock_wallet_dialog_cancel">CANCEL</string>
     <string name="unlock_wallet_dialog_confirm">CONFIRM</string>
     <string name="unlock_wallet_dialog_error_invalid_password">Invalid password</string>
+
+    <!-- Dialog limit order create and cancel -->
+    <string name="dialog_text_title_limit_order_create_confirmation">CONFIRMATION</string>
+    <string name="dialog_text_title_limit_order_cancel_confirmation">CONFIRMATION</string>
+    <string name="dialog_text_price">Price:</string>
+    <string name="dialog_text_amount">Amount:</string>
+    <string name="dialog_text_total">Total:</string>
+    <string name="dialog_text_cancellation_fee">Cancellation Fee:</string>
+    <string name="dialog_text_cancel">CANCEL</string>
+    <string name="dialog_text_confirm">CONFIRM</string>
 </resources>

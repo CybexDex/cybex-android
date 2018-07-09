@@ -125,4 +125,68 @@ public class CybexDialog {
         dialog.show();
     }
 
+    public static void showLimitOrderCreateConfirmationDialog(Context context, boolean isBuy, String price, String amount,
+                                                              String total, ConfirmationDialogClickListener listener){
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_limit_order_create_confirmation);
+        TextView tvPrice = dialog.findViewById(R.id.dialog_limit_order_create_tv_price);
+        TextView tvAmount = dialog.findViewById(R.id.dialog_limit_order_create_tv_amount);
+        TextView tvTotal = dialog.findViewById(R.id.dialog_limit_order_create_tv_total);
+        tvPrice.setText(price);
+        tvAmount.setText(amount);
+        tvTotal.setText(total);
+        tvPrice.setTextColor(context.getResources().getColor(isBuy ? R.color.increasing_color : R.color.decreasing_color));
+        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
+        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public static void showLimitOrderCancelConfirmationDialog(Context context, boolean isBuy, String price, String amount,
+                                                              String total, String fee, ConfirmationDialogClickListener listener){
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_limit_order_cancel_confirmation);
+        TextView tvPrice = dialog.findViewById(R.id.dialog_limit_order_create_tv_price);
+        TextView tvAmount = dialog.findViewById(R.id.dialog_limit_order_create_tv_amount);
+        TextView tvTotal = dialog.findViewById(R.id.dialog_limit_order_create_tv_total);
+        TextView tvFee = dialog.findViewById(R.id.dialog_limit_order_create_tv_cancellation_fee);
+        tvPrice.setText(price);
+        tvAmount.setText(amount);
+        tvTotal.setText(total);
+        tvFee.setText(fee);
+        tvPrice.setTextColor(context.getResources().getColor(isBuy ? R.color.increasing_color : R.color.decreasing_color));
+        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
+        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 }
