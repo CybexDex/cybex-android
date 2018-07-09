@@ -89,7 +89,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                     holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
                     holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
                     amount = data.sell_price.base.amount / Math.pow(10, base.precision);
-                    holder.mVolumeTextView.setText(String.format(basePrecision, amount) + " " + baseSymbol);
+                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), String.format(basePrecision, amount), baseSymbol));
                     holder.mQuoteTextView.setText(baseSymbol);
                     holder.mBaseTextView.setText(String.format("/%s", quoteSymbol));
                     price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
@@ -99,7 +99,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                     holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
                     holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
                     amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                    holder.mVolumeTextView.setText(String.format(quotePrecision, amount) + " " + quoteSymbol);
+                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), String.format(quotePrecision, amount), quoteSymbol));
                     holder.mQuoteTextView.setText(quoteSymbol);
                     holder.mBaseTextView.setText(String.format("/%s", baseSymbol));
                     price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));

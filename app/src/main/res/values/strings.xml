@@ -139,6 +139,7 @@
     <string name="open_orders_total_value">Total Value:</string>
     <string name="open_orders_sell_total_value">Sell Total Value:</string>
     <string name="open_orders_buy_total_value">Buy Total Value:</string>
+    <string name="open_orders_volume">Amount:</string>
 
     <!-- Portfolio Page Related -->
     <string name="portfolio_price">Price(CYB)</string>
@@ -208,11 +209,18 @@
     <string name="deposit_save_qr_code">Save QR Code</string>
     <string name="deposit_copy_address">Copy Address</string>
     <string name="deposit_get_new_address">Get New Address</string>
+    <string name="deposit_eos_copy_account_name">Copy Account Name</string>
+    <string name="deposit_eos_copy_code">Copy Code</string>
+    <string name="deposit_eos_get_new_code">Get New Code</string>
+    <string name="deposit_eos_deposit_account">EOS Deposit Account</string>
+    <string name="deposit_eos_verification_code">Verification code</string>
+    <string name="deposit_eos_alert_message">(Must transfer your EOS to deposit account with this verification code in memo)</string>
 
     <!-- Withdraw Page Related -->
     <string name="withdraw_available_amount">Available</string>
     <string name="withdraw_withdrawal_address">Withdrawal Address</string>
     <string name="withdraw_amount">Amount</string>
+    <string name="withdraw_minimum_hint">Minimum </string>
     <string name="withdraw_all">All</string>
     <string name="withdraw_transfer_fee">Transfer Fee</string>
     <string name="withdraw_gateway_fee">Gateway Fee</string>

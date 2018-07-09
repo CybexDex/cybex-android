@@ -50,7 +50,7 @@
 
                 <TextView
                     android:id="@+id/withdraw_available_amount"
-                    style="@style/font_white_large"
+                    style="@style/font_white_dark_large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1" />
@@ -108,6 +108,7 @@
                         android:backgroundTint="@android:color/transparent"
                         android:hint="@string/withdraw_amount_hint"
                         android:textColorHint="@color/text_hint_color"
+                        android:imeOptions="actionDone"
                         android:inputType="numberDecimal"
                         android:textCursorDrawable="@null" />
 
@@ -204,7 +205,8 @@
 
                     <TextView
                         android:id="@+id/withdraw_message"
-                        style="@style/font_gray_medium"
+                        style="@style/font_gray_small"
+                        android:lineSpacingExtra="@dimen/withdraw_deposit_line_spacing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>

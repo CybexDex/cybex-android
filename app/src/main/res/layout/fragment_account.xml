@@ -81,6 +81,7 @@
                     android:layout_marginStart="@dimen/activity_margin"
                     android:layout_marginEnd="@dimen/activity_margin"
                     android:textSize="@dimen/font_xsmall"
+                    android:visibility="gone"
                     android:textColor="@color/primary_color_grey" />
 
                 <LinearLayout
@@ -128,6 +129,7 @@
                     android:layout_alignParentEnd="true"
                     android:background="@color/itemBackground"
                     style="@style/font_gray_medium"
+                    android:textAllCaps="false"
                     android:text="@string/account_text_gateway"/>
             </RelativeLayout>
 

@@ -495,7 +495,6 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(WebSocketClient.Reply<String> reply) {
             String id = reply.id;
-
         }
 
         @Override

@@ -54,6 +54,7 @@ import butterknife.Unbinder;
 
 public class DepositActivity extends BaseActivity {
     private static int REQUEST_PERMISSION = 1;
+    private static String EOS_NAME = "EOS";
 
     private Unbinder mUnbinder;
     private ApolloClient mApolloClient;
@@ -66,6 +67,15 @@ public class DepositActivity extends BaseActivity {
     private String mCnInfo;
     private boolean mIsEnabled;
 
+
+    @BindView(R.id.deposit_linear_layout)
+    LinearLayout mNormalLinearLayout;
+    @BindView(R.id.deposit_eos_linear_layout)
+    LinearLayout mEosLinearLayout;
+    @BindView(R.id.deposit_eos_account)
+    TextView mEosAccountNameTv;
+    @BindView(R.id.deposit_eos_copy_account_name)
+    LinearLayout mEosCopyAccountLinearLayout;
     @BindView(R.id.deposit_qr_code)
     ImageView mQRCodeView;
     @BindView(R.id.deposit_save_qr_address)
@@ -76,8 +86,12 @@ public class DepositActivity extends BaseActivity {
     TextView mQRAddressView;
     @BindView(R.id.deposit_copy_address)
     LinearLayout mCopyAddressLayout;
+    @BindView(R.id.deposit_copy_address_tv)
+    TextView mCopyAddressTv;
     @BindView(R.id.deposit_get_new_address)
     LinearLayout mGetNewAddress;
+    @BindView(R.id.deposit_get_new_address_tv)
+    TextView mGetNewAddressTv;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.deposit_toolbar_text_view)
@@ -106,6 +120,12 @@ public class DepositActivity extends BaseActivity {
         mCnInfo = intent.getStringExtra("cnInfo");
         mToolbarTextView.setText(String.format("%s" + getResources().getString(R.string.gate_way_deposit), mAssetName));
         if (mIsEnabled) {
+            if (mAssetName.equals(EOS_NAME)) {
+                mEosLinearLayout.setVisibility(View.VISIBLE);
+                mNormalLinearLayout.setVisibility(View.GONE);
+                mCopyAddressTv.setText(getResources().getString(R.string.deposit_eos_copy_code));
+                mGetNewAddressTv.setText(getResources().getString(R.string.deposit_eos_get_new_code));
+            }
             getAddress(mUserName, mAssetName);
             requestDetailMessage();
         } else {
@@ -146,6 +166,15 @@ public class DepositActivity extends BaseActivity {
 
     }
 
+    @OnClick(R.id.deposit_eos_copy_account_name)
+    public void onClickCopyEosAccountName(View view) {
+        if (mEosAccountNameTv.getText() != null) {
+            copyAddress(mEosAccountNameTv.getText().toString());
+        }
+        SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_copied), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
+
+    }
+
     @OnClick(R.id.deposit_save_qr_address)
     public void onClickSaveAddress(View view) {
         checkImageGalleryPermission();
@@ -178,16 +207,27 @@ public class DepositActivity extends BaseActivity {
                         if (response.data() != null) {
                             if (response.data().getDepositAddress() != null) {
                                 String address = response.data().getDepositAddress().fragments().accountAddressRecord().address();
-                                Log.e("DepositAddress", address);
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (mQRAddressView != null) {
-                                            mQRAddressView.setText(address);
-                                            generateBarCode(address);
+                                if (assetName.equals(EOS_NAME)) {
+                                    String eosAccountName = address.substring(0, address.indexOf("["));
+                                    String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mEosAccountNameTv.setText(eosAccountName);
+                                            mQRAddressView.setText(verificationCode);
                                         }
-                                    }
-                                });
+                                    });
+                                } else {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (mQRAddressView != null) {
+                                                mQRAddressView.setText(address);
+                                                generateBarCode(address);
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         } else {
                             SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
@@ -215,14 +255,27 @@ public class DepositActivity extends BaseActivity {
                         if (response.data() != null) {
                             Log.v("mutateAddress", response.data().newDepositAddress().fragments().accountAddressRecord().address());
                             String address = response.data().newDepositAddress().fragments().accountAddressRecord().address();
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mQRAddressView.setText(address);
-                                    generateBarCode(address);
-                                    mGetNewAddressIcon.clearAnimation();
-                                }
-                            });
+                            if (mAssetName.equals(EOS_NAME)) {
+                                String eosAccountName = address.substring(0, address.indexOf("["));
+                                String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mEosAccountNameTv.setText(eosAccountName);
+                                        mQRAddressView.setText(verificationCode);
+                                        mGetNewAddressIcon.clearAnimation();
+                                    }
+                                });
+                            } else {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mQRAddressView.setText(address);
+                                        generateBarCode(address);
+                                        mGetNewAddressIcon.clearAnimation();
+                                    }
+                                });
+                            }
                         } else {
                             Log.v("mutateAddress", "error");
                             mHandler.post(new Runnable() {

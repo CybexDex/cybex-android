@@ -114,4 +114,7 @@
     <dimen name="dialog_content_margin_start">8dp</dimen>
     <dimen name="dialog_line_height">24dp</dimen>
 
+    <!-- withdraw/deposit line spacing -->
+    <dimen name="withdraw_deposit_line_spacing">4dp</dimen>
+
 </resources>

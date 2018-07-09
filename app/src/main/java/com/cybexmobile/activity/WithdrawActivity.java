@@ -15,9 +15,10 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,7 +34,6 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.cybexmobile.R;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.CybexDialog;
@@ -52,10 +52,6 @@ import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -65,13 +61,10 @@ import javax.annotation.Nonnull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
+import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 
 import static com.cybexmobile.graphene.chain.Operations.ID_TRANSER_OPERATION;
 
@@ -101,6 +94,7 @@ public class WithdrawActivity extends BaseActivity {
     private Operations.transfer_operation mTransferOperation;
     private SignedTransaction mSignedTransaction;
     private DynamicGlobalPropertyObject mDynamicGlobalPropertyObject;
+    private Context mContext;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -150,16 +144,10 @@ public class WithdrawActivity extends BaseActivity {
         mAvailableAmount = intent.getDoubleExtra("availableAmount", 0);
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_withdraw), mAssetName));
+        mContext = this;
         setAvailableAmount(mAvailableAmount, mAssetName);
         requestDetailMessage();
         setMinWithdrawAmountAndGateWayFee();
-        setEditTextOnClickListener();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
     }
 
     @Override
@@ -178,6 +166,43 @@ public class WithdrawActivity extends BaseActivity {
         }
         return super.dispatchTouchEvent(event);
     }
+
+    private CybexDialog.UnLockDialogClickListener mUnLockDialogListener = new CybexDialog.UnLockDialogClickListener() {
+        @Override
+        public void onClick(String password, Dialog dialog) {
+            showLoadDialog(true);
+            try {
+                BitsharesWalletWraper.getInstance().get_account_object(mUserName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+                    @Override
+                    public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                        mAccountObject = reply.result;
+                        int result = BitsharesWalletWraper.getInstance().import_account_password(mAccountObject, mUserName, password);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (result == 0) {
+                                    hideLoadDialog();
+                                    dialog.dismiss();
+                                    checkWithdrawAuthority(mAccountObject, password);
+                                } else {
+                                    hideLoadDialog();
+                                    LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
+                                    errorLayout.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        hideLoadDialog();
+                    }
+                });
+            } catch (NetworkStatusException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -203,78 +228,38 @@ public class WithdrawActivity extends BaseActivity {
         }
     };
 
-    private void setEditTextOnClickListener() {
-        mWithdrawAddress.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    @OnClick(value = R.id.withdraw_all_button)
+    public void onAllButtonClicked(View view) {
+        mWithdrawAmountEditText.setText(String.valueOf(mAvailableAmount));
+        if (mAvailableAmount < mMinValue) {
+            mErrorLinearLayout.setVisibility(View.VISIBLE);
+            mErrorTextView.setText(getResources().getString(R.string.withdraw_error_less_than_minimum));
+        }
+    }
 
-            }
+    @OnFocusChange(value = {R.id.withdraw_amount, R.id.withdraw_withdrawal_address})
+    public void onFocusChange(View view, boolean isFocused) {
+        if (!isFocused) {
+            displayFee();
+        }
+    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-            }
+    @OnEditorAction(value = R.id.withdraw_amount)
+    public boolean OnEditorAction(TextView v, int actionId, KeyEvent event) {
+        switch (actionId) {
+            case EditorInfo.IME_ACTION_DONE:
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                displayFee();
+                break;
+        }
+        return true;
+    }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                verifyAddress(s.toString());
-            }
-        });
-
-        mWithdrawAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mWithdrawAmountEditText.setText(String.valueOf(mAvailableAmount));
-                if (mAvailableAmount < mMinValue) {
-                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                    mErrorTextView.setText(getResources().getString(R.string.withdraw_error_less_than_minimum));
-                }
-            }
-        });
-        mWithdrawAmountEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if (mAddress != null && mAmount != null && mAccountObject != null && mToAccountObject != null && !BitsharesWalletWraper.getInstance().is_locked()) {
-                        String memo = getMemo(mAddress, mAssetName);
-                        Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount, "1.3.0", 0);
-                        double cybBalance = getBalance(mFullAccountObject, "1.3.0");
-                        try {
-                            BitsharesWalletWraper.getInstance().get_required_fees("1.3.0", ID_TRANSER_OPERATION, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
-                                @Override
-                                public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
-                                    FeeAmountObject feeAmountObject = reply.result.get(0);
-                                    if (feeAmountObject.amount <= cybBalance) {
-                                        mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount, feeAmountObject.asset_id, feeAmountObject.amount);
-                                        mHandler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mTransferFeeTextView.setText(String.format("%sCYB", String.valueOf(feeAmountObject.amount / Math.pow(10, 5))));
-                                                calculateReceiveAmount(feeAmountObject);
-                                                if (!BitsharesWalletWraper.getInstance().is_locked()) {
-                                                    mWithdrawButton.setEnabled(true);
-                                                }
-                                            }
-                                        });
-                                    } else {
-                                        getNoneCybFee(memo);
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailure() {
-
-                                }
-                            });
-                        } catch (NetworkStatusException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-
+    @OnTextChanged(value = R.id.withdraw_withdrawal_address, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onWithdrawAddressEditTextChanged(Editable editable) {
+        verifyAddress(editable.toString());
     }
 
     @OnTextChanged(value = R.id.withdraw_amount, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -289,6 +274,9 @@ public class WithdrawActivity extends BaseActivity {
         } else {
             mAmount = editable.toString();
             mErrorLinearLayout.setVisibility(View.GONE);
+            if (BitsharesWalletWraper.getInstance().is_locked()) {
+                CybexDialog.showUnlockWalletDialog(mContext, mUnLockDialogListener);
+            }
         }
     }
 
@@ -304,7 +292,6 @@ public class WithdrawActivity extends BaseActivity {
                             mDynamicGlobalPropertyObject = reply.result;
                             mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
                             broadCastTransaction(mSignedTransaction);
-
                         }
 
                         @Override
@@ -320,16 +307,55 @@ public class WithdrawActivity extends BaseActivity {
         }, mAddress, mAmount, mTransferFeeTextView.getText().toString(), mGateWayFeeTextView.getText().toString(), mReceiveAmountTextView.getText().toString());
     }
 
+    private void displayFee() {
+        if (mAddress != null && mAmount != null && mAccountObject != null && mToAccountObject != null && !BitsharesWalletWraper.getInstance().is_locked()) {
+            String memo = getMemo(mAddress, mAssetName);
+            Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount, "1.3.0", 0);
+            double cybBalance = getBalance(mFullAccountObject, "1.3.0");
+            try {
+                BitsharesWalletWraper.getInstance().get_required_fees("1.3.0", ID_TRANSER_OPERATION, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+                    @Override
+                    public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+                        FeeAmountObject feeAmountObject = reply.result.get(0);
+                        if (feeAmountObject.amount <= cybBalance) {
+                            mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount, feeAmountObject.asset_id, feeAmountObject.amount);
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mTransferFeeTextView.setText(String.format("%s CYB", String.valueOf(feeAmountObject.amount / Math.pow(10, 5))));
+                                    calculateReceiveAmount(feeAmountObject);
+                                    if (!BitsharesWalletWraper.getInstance().is_locked()) {
+                                        mWithdrawButton.setEnabled(true);
+                                    }
+                                }
+                            });
+                        } else {
+                            getNoneCybFee(memo);
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+            } catch (NetworkStatusException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void broadCastTransaction(SignedTransaction signedTransaction) {
         try {
             BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<String> reply) {
-                    if (reply.result.equals("null")) {
+                    if (reply.result == null) {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
+                                ToastMessage.showNotEnableDepositToastMessage( (Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
                             }
                         });
                     }
@@ -382,7 +408,7 @@ public class WithdrawActivity extends BaseActivity {
                         public void run() {
                             mTransferFeeTextView.setText(String.format("%s " + mAssetName, String.valueOf(feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
                             calculateReceiveAmount(feeAmountObject);
-                            if(!BitsharesWalletWraper.getInstance().is_locked()) {
+                            if (!BitsharesWalletWraper.getInstance().is_locked()) {
                                 mWithdrawButton.setEnabled(true);
                             }
                         }
@@ -425,7 +451,9 @@ public class WithdrawActivity extends BaseActivity {
                                     @Override
                                     public void run() {
                                         mErrorLinearLayout.setVisibility(View.GONE);
-
+                                        if (BitsharesWalletWraper.getInstance().is_locked()) {
+                                            CybexDialog.showUnlockWalletDialog(mContext, mUnLockDialogListener);
+                                        }
                                     }
                                 });
                             }
@@ -469,7 +497,7 @@ public class WithdrawActivity extends BaseActivity {
                                         mGatewayFee = response.data().withdrawInfo().fragments().withdrawinfoObject().fee();
                                         mToAccountId = response.data().withdrawInfo().fragments().withdrawinfoObject().gatewayAccount();
                                         getToAccountMemoKey(mToAccountId);
-                                        mWithdrawAmountEditText.setHint(String.valueOf(mMinValue) + "Min");
+                                        mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
                                         mGateWayFeeTextView.setText(String.format("%s %s", String.valueOf(mGatewayFee), mAssetName));
                                     }
                                 });
@@ -506,42 +534,7 @@ public class WithdrawActivity extends BaseActivity {
 
     private void checkIfLocked() {
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, new CybexDialog.UnLockDialogClickListener() {
-                @Override
-                public void onClick(String password, Dialog dialog) {
-                    showLoadDialog(true);
-                    try {
-                        BitsharesWalletWraper.getInstance().get_account_object(mUserName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
-                            @Override
-                            public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
-                                mAccountObject = reply.result;
-                                int result = BitsharesWalletWraper.getInstance().import_account_password(mAccountObject, mUserName, password);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (result == 0) {
-                                            hideLoadDialog();
-                                            dialog.dismiss();
-                                            checkWithdrawAuthority(mAccountObject, password);
-                                        } else {
-                                            hideLoadDialog();
-                                            LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                                            errorLayout.setVisibility(View.VISIBLE);
-                                        }
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure() {
-                                hideLoadDialog();
-                            }
-                        });
-                    } catch (NetworkStatusException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+            CybexDialog.showUnlockWalletDialog(this, mUnLockDialogListener);
         } else {
             checkWithdrawAuthority(mAccountObject, BitsharesWalletWraper.getInstance().getPassword());
         }

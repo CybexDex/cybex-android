@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/deposit_coordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/deposit_coordinatorLayout">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,20 +27,103 @@
                 android:layout_gravity="center" />
         </android.support.v7.widget.Toolbar>
 
-        <ImageView
-            android:id="@+id/deposit_qr_code"
-            android:layout_width="155dp"
-            android:layout_height="155dp"
-            android:layout_gravity="center_horizontal" />
-
-        <TextView
-            android:id="@+id/deposit_save_qr_address"
-            style="@style/font_orange_large"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/deposit_linear_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:text="@string/deposit_save_qr_code" />
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/deposit_qr_code"
+                android:layout_width="155dp"
+                android:layout_height="155dp"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/deposit_save_qr_address"
+                style="@style/font_orange_large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:text="@string/deposit_save_qr_code" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/deposit_eos_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_double"
+                android:text="@string/deposit_eos_deposit_account"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin"
+                android:layout_marginRight="@dimen/activity_margin"
+                android:layout_marginTop="@dimen/image_asset_width_height"
+                android:background="@drawable/bg_item"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_padding">
+
+                <TextView
+                    android:id="@+id/deposit_eos_account"
+                    style="@style/font_white_dark_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/activity_padding"
+                    android:background="@color/deposit_divider_color" />
+
+
+                <LinearLayout
+                    android:id="@+id/deposit_eos_copy_account_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin">
+
+                    <TextView
+                        style="@style/font_orange_large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/deposit_eos_copy_account_name" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="@dimen/activity_margin_double"
+                android:layout_marginTop="@dimen/activity_margin_double">
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deposit_eos_verification_code"/>
+
+            <TextView
+                style="@style/font_red_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deposit_eos_alert_message"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -82,6 +165,7 @@
                         android:src="@drawable/content_copy" />
 
                     <TextView
+                        android:id="@+id/deposit_copy_address_tv"
                         style="@style/font_orange_large"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -102,6 +186,7 @@
                         android:src="@drawable/ic_refresh" />
 
                     <TextView
+                        android:id="@+id/deposit_get_new_address_tv"
                         style="@style/font_orange_large"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -116,13 +201,14 @@
         </LinearLayout>
 
         <TextView
-            style="@style/font_gray_small"
             android:id="@+id/deposit_detail_message"
+            style="@style/font_gray_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            android:layout_marginTop="36dp" />
+            android:layout_marginTop="36dp"
+            android:lineSpacingExtra="@dimen/withdraw_deposit_line_spacing" />
 
 
     </LinearLayout>
