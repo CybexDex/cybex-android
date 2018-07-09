@@ -350,7 +350,11 @@ public class BuySellFragment extends BaseFragment {
                         mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()) >= total;
             }
         } else {
-            mIsExchangeBalanceEnough = mIsCybBalanceEnough && mBalanceAvailable > amount;
+            /**
+             * fix bug:CYM-367
+             * 点击100%仓位 显示余额不足
+             */
+            mIsExchangeBalanceEnough = mIsCybBalanceEnough && mBalanceAvailable >= amount;
         }
         mTvNotEnough.setVisibility(mIsExchangeBalanceEnough ? View.INVISIBLE : View.VISIBLE);
     }
