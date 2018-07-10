@@ -183,7 +183,6 @@ public class DepositActivity extends BaseActivity {
     @OnClick(R.id.deposit_get_new_address)
     public void onClickGetNewAddress(View view) {
         Animation animation = getAnimation();
-        mGetNewAddressIcon.startAnimation(animation);
         mutateNewAddress(mUserName, mAssetName);
     }
 
@@ -233,6 +232,7 @@ public class DepositActivity extends BaseActivity {
                                 }
                             } else {
                                 SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
+                                hideHintDialog();
                             }
                         }
                     }
@@ -264,7 +264,6 @@ public class DepositActivity extends BaseActivity {
                                     public void run() {
                                         mEosAccountNameTv.setText(eosAccountName);
                                         mQRAddressView.setText(verificationCode);
-                                        mGetNewAddressIcon.clearAnimation();
                                     }
                                 });
                             } else {
@@ -273,7 +272,6 @@ public class DepositActivity extends BaseActivity {
                                     public void run() {
                                         mQRAddressView.setText(address);
                                         generateBarCode(address);
-                                        mGetNewAddressIcon.clearAnimation();
                                     }
                                 });
                             }
@@ -283,7 +281,6 @@ public class DepositActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
-                                    mGetNewAddressIcon.clearAnimation();
                                 }
                             });
 

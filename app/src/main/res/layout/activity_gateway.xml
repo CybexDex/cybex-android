@@ -72,7 +72,8 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/gate_way_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin"/>
 
     <!--<android.support.v7.widget.RecyclerView-->
         <!--android:id="@+id/gate_way_recycler_view"-->

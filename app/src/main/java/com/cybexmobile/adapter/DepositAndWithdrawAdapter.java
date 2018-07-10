@@ -2,7 +2,9 @@ package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +45,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
         TextView mAssetFullName;
         TextView mAssetPrice;
         ImageView mAssetIcon;
+        ImageView mAssetArrow;
         View mView;
 
         ViewHolder(View view) {
@@ -52,6 +55,12 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
             mAssetFullName = view.findViewById(R.id.gate_way_asset_full_name);
             mAssetPrice = view.findViewById(R.id.gate_way_asset_price);
             mAssetIcon = view.findViewById(R.id.gate_way_asset_icon);
+            mAssetArrow = view.findViewById(R.id.gate_way_asset_arrow);
+            if (PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("night_mode", false)) {
+                mAssetArrow.setImageResource(R.drawable.ic_arrow_dark_24_px);
+            } else {
+                mAssetArrow.setImageResource(R.drawable.ic_arrow_light_24px);
+            }
         }
     }
 

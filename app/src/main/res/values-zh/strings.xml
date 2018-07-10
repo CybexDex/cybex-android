@@ -223,7 +223,7 @@
     <string name="withdraw_available_amount">可用余额</string>
     <string name="withdraw_withdrawal_address">提现地址</string>
     <string name="withdraw_amount">数量</string>
-    <string name="withdraw_minimum_hint">最小提现额 </string>
+    <string name="withdraw_minimum_hint">最小提数量 </string>
     <string name="withdraw_all">全部</string>
     <string name="withdraw_transfer_fee">转账手续费</string>
     <string name="withdraw_gateway_fee">提现手续费</string>
