@@ -234,17 +234,21 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
         LimitOrderObject limitOrderObject = mCurrOpenOrderItem.openOrder.getLimitOrder();
         AssetObject base = mCurrOpenOrderItem.openOrder.getBaseObject();
         AssetObject quote = mCurrOpenOrderItem.openOrder.getQuoteObject();
+        /**
+         * fix bug:CYM-349
+         * 订单部分撮合
+         */
         if(mCurrOpenOrderItem.isSell){
-            double total = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision);
-            double amount = limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision);
-            double price = total / amount;
+            double amount = limitOrderObject.for_sale / Math.pow(10, base.precision);
+            double price = (limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision)) / (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision));
+            double total = amount * price;
             priceStr = String.format(AssetUtil.formatPrice(price) + " %s", price, AssetUtil.parseSymbol(quote.symbol));
             amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(base.symbol));
             totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(quote.symbol));
         } else {
-            double total = limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision);
-            double amount = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision);
-            double price = total / amount;
+            double amount = limitOrderObject.for_sale / Math.pow(10, quote.precision);
+            double price = (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision)) / (limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision));
+            double total = amount * price;
             priceStr = String.format(AssetUtil.formatPrice(price) + " %s", price, AssetUtil.parseSymbol(base.symbol));
             amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(quote.symbol));
             totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(base.symbol));

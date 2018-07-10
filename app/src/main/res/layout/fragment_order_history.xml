@@ -14,6 +14,7 @@
         android:weightSum="4">
 
         <TextView
+            android:id="@+id/order_history_tv_buy_price"
             style="@style/font_gray_bold_small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -22,14 +23,16 @@
             android:text="@string/market_page_buy_price" />
 
         <TextView
+            android:id="@+id/order_history_tv_buy_amount"
             style="@style/font_gray_bold_small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/market_page_volume" />
+            android:text="@string/market_page_trade_history_quote" />
 
         <TextView
+            android:id="@+id/order_history_tv_sell_price"
             style="@style/font_gray_bold_small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -38,12 +41,13 @@
             android:text="@string/market_page_sell_price" />
 
         <TextView
+            android:id="@+id/order_history_tv_sell_amount"
             style="@style/font_gray_bold_small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/market_page_volume" />
+            android:text="@string/market_page_trade_history_quote" />
 
     </LinearLayout>
 

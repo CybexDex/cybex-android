@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.cybexmobile.adapter.OrderHistoryRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
@@ -24,6 +25,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
+import com.cybexmobile.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,6 +35,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A fragment representing a list of Items.
@@ -44,10 +50,24 @@ public class OrderHistoryListFragment extends BaseFragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_WATCHLIST = "watchlist";
+
+    @BindView(R.id.list)
+    RecyclerView recyclerView;
+    @BindView(R.id.order_history_tv_buy_price)
+    TextView mTvBuyPrice;
+    @BindView(R.id.order_history_tv_buy_amount)
+    TextView mTvBuyAmount;
+    @BindView(R.id.order_history_tv_sell_price)
+    TextView mTvSellPrice;
+    @BindView(R.id.order_history_tv_sell_amount)
+    TextView mTvSellAmount;
+
     private WatchlistData mWatchlistData;
     private OnListFragmentInteractionListener mListener;
     private OrderHistoryRecyclerViewAdapter mOrderHistoryItemRecycerViewAdapter;
     private OrderBook mOrderBook;
+
+    private Unbinder mUnbunder;
 
     public static OrderHistoryListFragment newInstance(WatchlistData watchListData) {
         OrderHistoryListFragment fragment = new OrderHistoryListFragment();
@@ -75,20 +95,34 @@ public class OrderHistoryListFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order_history, container, false);
-        Context context = view.getContext();
-        RecyclerView recyclerView = view.findViewById(R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        if(mWatchlistData != null){
-            mOrderHistoryItemRecycerViewAdapter = new OrderHistoryRecyclerViewAdapter(mWatchlistData.getQuoteSymbol(), mOrderBook, mListener, getContext());
-            recyclerView.setAdapter(mOrderHistoryItemRecycerViewAdapter);
-        }
+        mUnbunder = ButterKnife.bind(this, view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if(mWatchlistData != null){
+            mTvBuyPrice.setText(getResources().getString(R.string.market_page_buy_price).replace("--", AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
+            mTvBuyAmount.setText(getResources().getString(R.string.market_page_trade_history_quote).replace("--", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
+            mTvSellPrice.setText(getResources().getString(R.string.market_page_sell_price).replace("--", AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
+            mTvSellAmount.setText(getResources().getString(R.string.market_page_trade_history_quote).replace("--", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
+            mOrderHistoryItemRecycerViewAdapter = new OrderHistoryRecyclerViewAdapter(mWatchlistData.getQuoteSymbol(), mOrderBook, mListener, getContext());
+            recyclerView.setAdapter(mOrderHistoryItemRecycerViewAdapter);
+        }
         loadOrderBook();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbunder.unbind();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -44,10 +44,9 @@
 
     <!-- Markets Page -->
     <string name="markets_title">Market</string>
-    <string name="market_page_buy_price">Buy Price</string>
-    <string name="market_page_volume">Volume</string>
+    <string name="market_page_buy_price">Buy Price(--)</string>
     <string name="market_page_volume_short">Vol</string>
-    <string name="market_page_sell_price">Sell Price</string>
+    <string name="market_page_sell_price">Sell Price(--)</string>
     <string name="market_page_trade_history_price">Price(--)</string>
     <string name="market_page_trade_history_date">Time</string>
     <string name="market_page_trade_history_base">Total(--)</string>

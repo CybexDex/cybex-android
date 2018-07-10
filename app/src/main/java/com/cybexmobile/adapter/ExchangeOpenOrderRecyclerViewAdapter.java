@@ -88,7 +88,11 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<R
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
                     price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
                     viewHolder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, quoteSymbol));
-                    amount = data.sell_price.base.amount / Math.pow(10, base.precision);
+                    /**
+                     * fix bug:CYM-349
+                     * 订单部分撮合
+                     */
+                    amount = data.for_sale / Math.pow(10, base.precision);
                     viewHolder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, baseSymbol));
                     viewHolder.mTvQuoteSymbol.setText(baseSymbol);
                     viewHolder.mTvBaseSymbol.setText(quoteSymbol);
@@ -98,7 +102,7 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<R
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
                     price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
                     viewHolder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, baseSymbol));
-                    amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
+                    amount = data.for_sale / Math.pow(10, quote.precision);
                     viewHolder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, quoteSymbol));
                     viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
                     viewHolder.mTvBaseSymbol.setText(baseSymbol);

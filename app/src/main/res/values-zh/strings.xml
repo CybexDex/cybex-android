@@ -42,14 +42,13 @@
     <string name="open_order_buy">买入</string>
     <string name="open_order_sell">卖出</string>
     <string name="open_orders_title">委单</string>
-    <string name="open_order_price_amount">价格/数量</string>
+    <string name="open_order_price_amount">委托单价/委托数量</string>
     <string name="open_order_filled_cancel">成交额/撤单</string>
 
     <!-- Markets Page -->
     <string name="markets_title">交易中心</string>
-    <string name="market_page_buy_price">买价</string>
-    <string name="market_page_sell_price">卖价</string>
-    <string name="market_page_volume">成交量</string>
+    <string name="market_page_buy_price">买价(--)</string>
+    <string name="market_page_sell_price">卖价(--)</string>
     <string name="market_page_volume_short">成交量</string>
     <string name="market_page_trade_history_price">价格(--)</string>
     <string name="market_page_trade_history_date">时间</string>
