@@ -51,6 +51,7 @@ import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
+import com.cybexmobile.utils.SoftKeyBoardListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +149,7 @@ public class WithdrawActivity extends BaseActivity {
         setAvailableAmount(mAvailableAmount, mAssetName);
         requestDetailMessage();
         setMinWithdrawAmountAndGateWayFee();
+        setKeyboardListener();
     }
 
     @Override
@@ -234,27 +236,9 @@ public class WithdrawActivity extends BaseActivity {
         if (mAvailableAmount < mMinValue) {
             mErrorLinearLayout.setVisibility(View.VISIBLE);
             mErrorTextView.setText(getResources().getString(R.string.withdraw_error_less_than_minimum));
-        }
-    }
-
-    @OnFocusChange(value = {R.id.withdraw_amount, R.id.withdraw_withdrawal_address})
-    public void onFocusChange(View view, boolean isFocused) {
-        if (!isFocused) {
+        } else {
             displayFee();
         }
-    }
-
-
-    @OnEditorAction(value = R.id.withdraw_amount)
-    public boolean OnEditorAction(TextView v, int actionId, KeyEvent event) {
-        switch (actionId) {
-            case EditorInfo.IME_ACTION_DONE:
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                displayFee();
-                break;
-        }
-        return true;
     }
 
     @OnTextChanged(value = R.id.withdraw_withdrawal_address, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -306,6 +290,21 @@ public class WithdrawActivity extends BaseActivity {
             }
         }, mAddress, mAmount, mTransferFeeTextView.getText().toString(), mGateWayFeeTextView.getText().toString(), mReceiveAmountTextView.getText().toString());
     }
+
+    private void setKeyboardListener() {
+        SoftKeyBoardListener.setListener(this, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
+            @Override
+            public void keyBoardShow(int height) {
+
+            }
+
+            @Override
+            public void keyBoardHide(int height) {
+                displayFee();
+            }
+        });
+    }
+
 
     private void displayFee() {
         if (mAddress != null && mAmount != null && mAccountObject != null && mToAccountObject != null && !BitsharesWalletWraper.getInstance().is_locked()) {
@@ -373,13 +372,18 @@ public class WithdrawActivity extends BaseActivity {
 
     private void calculateReceiveAmount(FeeAmountObject feeAmountObject) {
         double amount = Double.parseDouble(mAmount);
+        double fee = (feeAmountObject.amount / Math.pow(10, mAssetObject.precision));
         double receiveAmount = 0;
         if (feeAmountObject.asset_id.equals("1.3.0")) {
             receiveAmount = amount - mGatewayFee;
         } else {
-            receiveAmount = amount - mGatewayFee - (feeAmountObject.amount / Math.pow(10, mAssetObject.precision));
+            if (amount + fee > mAvailableAmount) {
+                receiveAmount = amount - mGatewayFee - fee;
+            } else {
+                receiveAmount = amount - mGatewayFee;
+            }
         }
-        mReceiveAmountTextView.setText(String.format("%s%s", String.valueOf(receiveAmount), mAssetName));
+        mReceiveAmountTextView.setText(String.format("%." + mAssetObject.precision + "f %s", receiveAmount, mAssetName));
     }
 
     private long getBalance(FullAccountObject fullAccountObject, String assetId) {
@@ -406,7 +410,7 @@ public class WithdrawActivity extends BaseActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            mTransferFeeTextView.setText(String.format("%s " + mAssetName, String.valueOf(feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
+                            mTransferFeeTextView.setText(String.format("%." + mAssetObject.precision + "f " + mAssetName, (feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
                             calculateReceiveAmount(feeAmountObject);
                             if (!BitsharesWalletWraper.getInstance().is_locked()) {
                                 mWithdrawButton.setEnabled(true);
