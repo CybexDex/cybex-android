@@ -31,4 +31,7 @@
 
     <!-- dialog related color -->
     <color name="dialog_header_background_color">#f7f8fa</color>
+
+    <!-- deposit item divider -->
+    <color name="deposit_item_divider">#f7f8fa</color>
 </resources>

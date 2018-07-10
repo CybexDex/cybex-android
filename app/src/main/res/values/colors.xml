@@ -24,7 +24,6 @@
 
     <!-- divider color -->
     <color name="divider_color">#0affffff</color>
-    <color name="deposit_divider_color">#1b2230</color>
 
     <!-- Market Page -->
     <color name="kline_header_color">#111621</color>
@@ -69,6 +68,9 @@
 
     <!-- dialog related color -->
     <color name="dialog_header_background_color">#212939</color>
+
+    <!-- deposit item divider -->
+    <color name="deposit_item_divider">#171d2a</color>
 
 
 </resources>

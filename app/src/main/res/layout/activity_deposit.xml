@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/activity_padding"
-                    android:background="@color/deposit_divider_color" />
+                    android:background="@color/deposit_item_divider" />
 
 
                 <LinearLayout
@@ -138,7 +138,7 @@
 
             <TextView
                 android:id="@+id/deposit_qr_address"
-                style="@style/font_white_dark_medium"
+                style="@style/font_white_dark_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -146,7 +146,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/activity_padding"
-                android:background="@color/deposit_divider_color" />
+                android:background="@color/deposit_item_divider" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

@@ -118,7 +118,7 @@ public class DepositActivity extends BaseActivity {
         mCnMsg = intent.getStringExtra("cnMsg");
         mEnInfo = intent.getStringExtra("enInfo");
         mCnInfo = intent.getStringExtra("cnInfo");
-        mToolbarTextView.setText(String.format("%s" + getResources().getString(R.string.gate_way_deposit), mAssetName));
+        mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_deposit), mAssetName));
         if (mIsEnabled) {
             if (mAssetName.equals(EOS_NAME)) {
                 mEosLinearLayout.setVisibility(View.VISIBLE);
@@ -228,11 +228,9 @@ public class DepositActivity extends BaseActivity {
                                         }
                                     });
                                 }
+                            } else {
+                                SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
                             }
-                        } else {
-                            SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
-                            mGetNewAddressIcon.clearAnimation();
-
                         }
                     }
 

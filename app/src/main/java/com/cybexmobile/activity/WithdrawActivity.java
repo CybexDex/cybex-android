@@ -498,7 +498,7 @@ public class WithdrawActivity extends BaseActivity {
                                         mToAccountId = response.data().withdrawInfo().fragments().withdrawinfoObject().gatewayAccount();
                                         getToAccountMemoKey(mToAccountId);
                                         mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
-                                        mGateWayFeeTextView.setText(String.format("%s %s", String.valueOf(mGatewayFee), mAssetName));
+                                        mGateWayFeeTextView.setText(String.format(Locale.US,"%."+ mAssetObject.precision + "f %s", mGatewayFee, mAssetName));
                                     }
                                 });
                             }
