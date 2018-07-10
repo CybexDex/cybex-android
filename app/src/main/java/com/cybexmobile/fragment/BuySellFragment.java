@@ -126,6 +126,7 @@ public class BuySellFragment extends BaseFragment {
     private String mName;
     //交易对的手续费 买单为base 卖单为quote
     private FeeAmountObject mBaseOrQuoteExchangeFee;
+    private FeeAmountObject mCybExchangeFee;
     private AssetObject mCybAssetObject;
 
     private Unbinder mUnbinder;
@@ -135,8 +136,6 @@ public class BuySellFragment extends BaseFragment {
     private double mAssetTotal;
     //已经精确的余额
     private double mBalanceAvailable;
-    //cyb手续费
-    private long mCybExchangeFee;
     //cyb资产是否足够扣手续费
     private boolean mIsCybBalanceEnough;
     //交易资产是否足够
@@ -179,7 +178,7 @@ public class BuySellFragment extends BaseFragment {
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
             mFullAccountObject = (FullAccountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FULL_ACCOUNT_OBJECT);
             mBaseOrQuoteExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FEE);
-            mCybExchangeFee = savedInstanceState.getLong(BUNDLE_SAVE_CYB_FEE);
+            mCybExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_FEE);
             mCybAssetObject = (AssetObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT);
         }
 
@@ -214,7 +213,7 @@ public class BuySellFragment extends BaseFragment {
         outState.putSerializable(BUNDLE_SAVE_FULL_ACCOUNT_OBJECT, mFullAccountObject);
         outState.putSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT, mCybAssetObject);
         outState.putSerializable(BUNDLE_SAVE_FEE, mBaseOrQuoteExchangeFee);
-        outState.putLong(BUNDLE_SAVE_CYB_FEE, mCybExchangeFee);
+        outState.putSerializable(BUNDLE_SAVE_CYB_FEE, mCybExchangeFee);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mMarketTradeHistoryFragment != null && mMarketTradeHistoryFragment.isAdded()){
             fragmentManager.putFragment(outState, MarketTradeHistoryFragment.class.getSimpleName(), mMarketTradeHistoryFragment);
@@ -458,10 +457,14 @@ public class BuySellFragment extends BaseFragment {
         }
         AccountBalanceObject accountBalanceObject = getBalance(mBaseOrQuoteExchangeFee.asset_id, mFullAccountObject);
         //先判断cyb是否足够
-        if(accountBalanceObject.asset_type.toString().equals(ASSET_ID_CYB)){
+        if(mBaseOrQuoteExchangeFee.asset_id.equals(ASSET_ID_CYB)){
             //记录cyb手续费
-            mCybExchangeFee = mBaseOrQuoteExchangeFee.amount;
-            if(accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//cyb足够
+            mCybExchangeFee = mBaseOrQuoteExchangeFee;
+            /**
+             * fix bug:CYM-380
+             * 手续费显示错乱
+             */
+            if(accountBalanceObject != null && accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//cyb足够
                 mIsCybBalanceEnough = true;
                 mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
                         String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
@@ -480,15 +483,18 @@ public class BuySellFragment extends BaseFragment {
                 }
             }
         } else {
-            if(accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//交易对余额足够
-                mTvExchangeFree.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s",
-                        mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
-                        mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
-                                mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()), AssetUtil.parseSymbol(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseSymbol() : mWatchlistData.getQuoteSymbol())));
-            } else {//交易对余额不足 显示cyb手续费
-                mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                        String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
-                                mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), AssetUtil.parseSymbol(mCybAssetObject.symbol)));
+            if((mCurrentAction.equals(ACTION_BUY) && mWatchlistData.getBaseId().equals(mBaseOrQuoteExchangeFee.asset_id)) ||
+                    (mCurrentAction.equals(ACTION_SELL) && mWatchlistData.getQuoteId().equals(mBaseOrQuoteExchangeFee.asset_id))){
+                if(accountBalanceObject != null && accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//交易对余额足够
+                    mTvExchangeFree.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s",
+                            mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
+                            mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
+                                    mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()), AssetUtil.parseSymbol(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseSymbol() : mWatchlistData.getQuoteSymbol())));
+                } else {//交易对余额不足 显示cyb手续费
+                    mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
+                            String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
+                                    mCybExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), AssetUtil.parseSymbol(mCybAssetObject.symbol)));
+                }
             }
         }
 
@@ -635,7 +641,7 @@ public class BuySellFragment extends BaseFragment {
                             mIsCybBalanceEnough ? mCybAssetObject.id : mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseAsset().id : mWatchlistData.getQuoteAsset().id,
                             mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseAsset().id : mWatchlistData.getQuoteAsset().id,
                             mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getQuoteAsset().id : mWatchlistData.getBaseAsset().id,
-                            mIsCybBalanceEnough ? mCybExchangeFee : mBaseOrQuoteExchangeFee.amount,
+                            mIsCybBalanceEnough ? mCybExchangeFee.amount : mBaseOrQuoteExchangeFee.amount,
                             amountSell, amountReceive);
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                             mFullAccountObject.account, operation, ID_CREATE_LIMIT_ORDER_OPERATION, reply.result);
