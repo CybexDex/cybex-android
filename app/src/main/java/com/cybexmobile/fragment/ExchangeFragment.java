@@ -68,7 +68,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener, View.OnClickListener, TabLayout.OnTabSelectedListener{
+public class ExchangeFragment extends BaseFragment implements View.OnClickListener, TabLayout.OnTabSelectedListener{
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
@@ -137,8 +137,6 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_exchange, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        mToolbar.inflateMenu(R.menu.menu_exchange);
-        mToolbar.setOnMenuItemClickListener(this);
         mToolbar.setNavigationOnClickListener(this);
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
         mTlExchange.addOnTabSelectedListener(this);
@@ -257,11 +255,25 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getContext(), MarketsActivity.class);
+        intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
+        intent.putExtra(INTENT_PARAM_FROM, ExchangeLimitOrderFragment.class.getSimpleName());
+        getContext().startActivity(intent);
+    }
+
     @OnClick(R.id.cb_title)
     public void onTitleClick(View view){
         Intent intent = new Intent(getContext(), WatchlistSelectActivity.class);
         intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
         startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
+    }
+
+    @OnClick(R.id.exchange_tv_order_history)
+    public void onOrderHistoryClick(View view){
+        Intent intent = new Intent(getContext(), OwnOrderHistoryActivity.class);
+        getContext().startActivity(intent);
     }
 
     public void loadLimitOrderCreateFee(String assetId){
@@ -448,25 +460,6 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_order_history:
-                Intent intent = new Intent(getContext(), OwnOrderHistoryActivity.class);
-                getContext().startActivity(intent);
-                break;
-        }
-        return false;
-    }
-
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(getContext(), MarketsActivity.class);
-        intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
-        intent.putExtra(INTENT_PARAM_FROM, ExchangeLimitOrderFragment.class.getSimpleName());
-        getContext().startActivity(intent);
     }
 
     @Override

@@ -295,6 +295,14 @@ public class BuySellFragment extends BaseFragment {
         } else {
             balanceAvailable = mIsCybBalanceEnough ? mBalanceAvailable : mBalanceAvailable - fee;
         }
+        /**
+         * fix bug:CYM-397
+         * 余额不足以扣手续费时 点击仓位数量输入框设置为0
+         */
+        if(balanceAvailable <= 0){
+            mEtAssetAmount.setText("");
+            return;
+        }
         switch (view.getId()){
             case R.id.buysell_tv_percentage_25:
                 amount = mCurrentAction.equals(ACTION_BUY) ? balanceAvailable * 0.25 / price : balanceAvailable * 0.25;
