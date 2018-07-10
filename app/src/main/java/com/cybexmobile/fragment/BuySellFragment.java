@@ -386,15 +386,18 @@ public class BuySellFragment extends BaseFragment {
             if(mIsCybBalanceEnough){
                 mIsExchangeBalanceEnough = mBalanceAvailable >= total;
             } else {
-                mIsExchangeBalanceEnough = mBalanceAvailable - mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
-                        mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()) >= total;
+                mIsExchangeBalanceEnough = mBalanceAvailable - mBaseOrQuoteExchangeFee.amount/Math.pow(10, mWatchlistData.getBasePrecision()) >= total;
             }
         } else {
             /**
              * fix bug:CYM-367
              * 点击100%仓位 显示余额不足
              */
-            mIsExchangeBalanceEnough = mIsCybBalanceEnough && mBalanceAvailable >= amount;
+            if(mIsCybBalanceEnough){
+                mIsExchangeBalanceEnough = mBalanceAvailable >= amount;
+            } else {
+                mIsExchangeBalanceEnough = mBalanceAvailable - mBaseOrQuoteExchangeFee.amount/Math.pow(10, mWatchlistData.getQuotePrecision()) >= amount;
+            }
         }
         mTvNotEnough.setVisibility(mIsExchangeBalanceEnough ? View.INVISIBLE : View.VISIBLE);
     }
@@ -531,7 +534,7 @@ public class BuySellFragment extends BaseFragment {
 
     private void initOrResetRmbTextData(){
         String assetPrice = mEtAssetPrice.getText().toString();
-        mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ --" :
+        mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ 0.00" :
                 String.format(Locale.US, "≈¥ %.2f", Double.parseDouble(assetPrice) * mAssetRmbPrice));
     }
 
@@ -557,8 +560,16 @@ public class BuySellFragment extends BaseFragment {
         if(mCybAssetObject == null){
             mCybAssetObject = cybAsset;
         }
-        mBaseOrQuoteExchangeFee = fee;
-        initOrResetFeeData();
+        /**
+         * fix bug:CYM-413
+         * 手续费赋值错误
+         */
+        if(fee.asset_id.equals(ASSET_ID_CYB) ||
+                (mCurrentAction.equals(ACTION_BUY) && mWatchlistData.getBaseId().equals(fee.asset_id)) ||
+                (mCurrentAction.equals(ACTION_SELL) && mWatchlistData.getQuoteId().equals(fee.asset_id))){
+            mBaseOrQuoteExchangeFee = fee;
+            initOrResetFeeData();
+        }
     }
 
     public void changeLoginState(boolean loginState, String name){
