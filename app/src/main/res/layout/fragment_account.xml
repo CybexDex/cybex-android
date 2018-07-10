@@ -46,8 +46,8 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/account_avatar" />
 
-                <WebView
-                    android:id="@+id/account_avatar_webview"
+                <ImageView
+                    android:id="@+id/account_avatar_jadenticon"
                     android:layout_width="@dimen/webview_width_height"
                     android:layout_height="@dimen/webview_width_height" />
 

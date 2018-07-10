@@ -261,4 +261,11 @@
     <string name="dialog_text_cancellation_fee">Cancellation Fee:</string>
     <string name="dialog_text_cancel">CANCEL</string>
     <string name="dialog_text_confirm">CONFIRM</string>
+
+    <!-- Dialog withdraw confirmation -->
+    <string name="dialog_withdraw_confirmation_address">Withdrawal Address:</string>
+    <string name="dialog_withdraw_confirmation_amount">Amount:</string>
+    <string name="dialog_withdraw_confirmation_gateway_fee">Gateway Fee:</string>
+    <string name="dialog_withdraw_confirmation_transfer_fee">Transfer Fee:</string>
+    <string name="dialog_withdraw_confirmation_receive_amount">Receive Amount:</string>
 </resources>

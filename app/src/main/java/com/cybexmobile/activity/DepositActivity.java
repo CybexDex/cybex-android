@@ -195,7 +195,7 @@ public class DepositActivity extends BaseActivity {
     }
 
     private void getAddress(String userName, String assetName) {
-        showLoadDialog();
+        showLoadDialog(true);
         mApolloClient.query(GetDepositAddress
                 .builder()
                 .accountName(userName)
@@ -232,7 +232,7 @@ public class DepositActivity extends BaseActivity {
                                 }
                             } else {
                                 SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
-                                hideHintDialog();
+                                hideLoadDialog();
                             }
                         }
                     }

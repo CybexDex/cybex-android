@@ -265,4 +265,11 @@
     <string name="dialog_text_cancellation_fee">取消手续费:</string>
     <string name="dialog_text_cancel">取消</string>
     <string name="dialog_text_confirm">确认</string>
+
+    <!-- Dialog withdraw confirmation -->
+    <string name="dialog_withdraw_confirmation_address">提现地址:</string>
+    <string name="dialog_withdraw_confirmation_amount">提现数量:</string>
+    <string name="dialog_withdraw_confirmation_gateway_fee">提现手续费:</string>
+    <string name="dialog_withdraw_confirmation_transfer_fee">转账手续费:</string>
+    <string name="dialog_withdraw_confirmation_receive_amount">到账数量:</string>
 </resources>

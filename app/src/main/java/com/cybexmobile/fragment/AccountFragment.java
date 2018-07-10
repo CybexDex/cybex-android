@@ -56,6 +56,8 @@ import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.utils.KotlinAvatarJavaBridge;
+import com.pixplicity.sharp.Sharp;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -102,8 +104,8 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     TextView mTvTotalCybAmount;
     @BindView(R.id.account_balance_total_rmb)
     TextView mTvTotalRmbAmount;
-    @BindView(R.id.account_avatar_webview)
-    WebView mAvatarWebView;
+    @BindView(R.id.account_avatar_jadenticon)
+    ImageView mAvatarJadenticonView;
     @BindView(R.id.account_avatar)
     ImageView mAvatarImageView;
     @BindView(R.id.account_no_log_in)
@@ -467,7 +469,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     private void setViews() {
         mAvatarImageView.setVisibility(mIsLoginIn ? View.GONE : View.VISIBLE);
-        mAvatarWebView.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
+        mAvatarJadenticonView.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
         mBeforeLoginLayout.setVisibility(mIsLoginIn ? View.GONE : View.VISIBLE);
         mAfterLoginLayout.setVisibility(mIsLoginIn ? View.VISIBLE : View.GONE);
         mPortfolioTitleLayout.setVisibility(mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0 ? View.GONE : View.VISIBLE);
@@ -476,9 +478,17 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
         mTvTotalCybAmount.setText("--");
         mTvTotalRmbAmount.setText("≈ ¥--");
         if (mIsLoginIn) {
-            loadWebView(mAvatarWebView, 56);
+            loadAvatar(mAvatarJadenticonView, 56);
         }
     }
+
+    private void loadAvatar(ImageView avatarJadenticonView, int size) {
+        Sha256Object.encoder encoder = new Sha256Object.encoder();
+        encoder.write(mName.getBytes());
+        String encoderString = encoder.result().toString();
+        String svgString = KotlinAvatarJavaBridge.getAvatarSvg(encoderString, size, 0);
+        Sharp.loadString(svgString).into(avatarJadenticonView);
+        }
 
     private void updateMemberShipViewData(){
         try {

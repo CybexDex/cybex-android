@@ -23,7 +23,7 @@
             style="@style/font_gray_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/withdraw_withdrawal_address" />
+            android:text="@string/dialog_withdraw_confirmation_address" />
 
         <TextView
             android:id="@+id/confirm_dialog_withdraw_address"
@@ -42,7 +42,7 @@
                 style="@style/font_gray_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/withdraw_amount" />
+                android:text="@string/dialog_withdraw_confirmation_amount" />
 
             <TextView
                 android:id="@+id/confirm_dialog_withdraw_amount"
@@ -62,7 +62,7 @@
                 style="@style/font_gray_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/withdraw_transfer_fee" />
+                android:text="@string/dialog_withdraw_confirmation_gateway_fee" />
 
             <TextView
                 android:id="@+id/confirm_dialog_withdraw_withdraw_fee"
@@ -83,7 +83,7 @@
                 style="@style/font_gray_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/withdraw_gateway_fee" />
+                android:text="@string/dialog_withdraw_confirmation_transfer_fee" />
 
             <TextView
                 android:id="@+id/confirm_dialog_gateway_fee"
@@ -103,7 +103,7 @@
                 style="@style/font_gray_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/withdraw_receive_amount" />
+                android:text="@string/dialog_withdraw_confirmation_receive_amount" />
 
             <TextView
                 android:id="@+id/confirm_dialog_receive_amount"

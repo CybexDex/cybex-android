@@ -288,7 +288,7 @@ public class WithdrawActivity extends BaseActivity {
                 }
 
             }
-        }, mAddress, mAmount, mTransferFeeTextView.getText().toString(), mGateWayFeeTextView.getText().toString(), mReceiveAmountTextView.getText().toString());
+        }, mAddress, mAmount + " " + mAssetName, mTransferFeeTextView.getText().toString(), mGateWayFeeTextView.getText().toString(), mReceiveAmountTextView.getText().toString());
     }
 
     private void setKeyboardListener() {

@@ -1,5 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "com.apollographql.android"
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
@@ -54,6 +56,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.android.support:design:27.1.1'
@@ -107,5 +111,7 @@ dependencies {
     implementation "com.apollographql.apollo:apollo-android-support:0.3.2"
     //top snack bar
     implementation 'com.androidadvance:topsnackbar:1.1.1'
+    //Jadeticon
+    implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
     implementation project(':MPChartLib')
 }
