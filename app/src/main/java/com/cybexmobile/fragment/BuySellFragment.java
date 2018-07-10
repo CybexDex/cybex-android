@@ -656,6 +656,11 @@ public class BuySellFragment extends BaseFragment {
         }
     }
 
+    public void clearEditTextData(){
+        mEtAssetAmount.setText("");
+        mEtAssetPrice.setText("");
+    }
+
     private WebSocketClient.MessageCallback mLimitOrderCreateCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>(){
 
         @Override

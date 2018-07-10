@@ -240,6 +240,15 @@ public class ExchangeFragment extends BaseFragment implements Toolbar.OnMenuItem
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLimitOrderCreate(Event.LimitOrderCreate event){
         if(event.isSuccess()){
+            /**
+             * fix bug:CYM-381
+             * 挂单成功清空输入框数据
+             */
+            if(mAction.equals(ACTION_BUY)){
+                mBuyFragment.clearEditTextData();
+            } else {
+              mSellFragment.clearEditTextData();
+            }
             ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
                     R.string.toast_message_place_order_successfully), R.drawable.ic_check_circle_green);
         } else {
