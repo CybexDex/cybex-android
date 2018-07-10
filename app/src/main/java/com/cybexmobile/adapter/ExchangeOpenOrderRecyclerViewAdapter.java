@@ -98,15 +98,19 @@ public class ExchangeOpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<R
                     viewHolder.mTvBaseSymbol.setText(quoteSymbol);
                     viewHolder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, quoteSymbol));
                 } else {
+                    /**
+                     * fix bug:CYM-412
+                     * 买单数据显示错误
+                     */
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
-                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
+                    amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
+                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / amount;
                     viewHolder.mTvAssetPrice.setText(String.format(AssetUtil.formatPrice(price) + " %s", price, baseSymbol));
-                    amount = data.for_sale / Math.pow(10, quote.precision);
                     viewHolder.mTvAssetAmount.setText(String.format(AssetUtil.formatAmount(price) + " %s", amount, quoteSymbol));
                     viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
                     viewHolder.mTvBaseSymbol.setText(baseSymbol);
-                    viewHolder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", price * amount, baseSymbol));
+                    viewHolder.mTvFilled.setText(String.format(AssetUtil.formatPrice(price) + " %s", data.for_sale / Math.pow(10, base.precision), baseSymbol));
                 }
             }
         }else{
