@@ -320,10 +320,20 @@ public class BuySellFragment extends BaseFragment {
             toLogin();
             return;
         }
+        /**
+         * fix bug:CYM-401
+         * 价格和数量输入框为0或空 不交易
+         */
+        String price = mEtAssetPrice.getText().toString();
+        String amount = mEtAssetAmount.getText().toString();
+        if(TextUtils.isEmpty(price) || Double.parseDouble(price) == 0 ||
+                TextUtils.isEmpty(amount) || Double.parseDouble(amount) == 0){
+            return;
+        }
         if(mIsExchangeBalanceEnough){
             CybexDialog.showLimitOrderCreateConfirmationDialog(getContext(), mCurrentAction.equals(ACTION_BUY),
-                    String.format("%s %s", mEtAssetPrice.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
-                    String.format("%s %s", mEtAssetAmount.getText().toString(), AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
+                    String.format("%s %s", price, AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
+                    String.format("%s %s", amount, AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
                     mTvAssetTotal.getText().toString(),
                     new CybexDialog.ConfirmationDialogClickListener() {
                 @Override
