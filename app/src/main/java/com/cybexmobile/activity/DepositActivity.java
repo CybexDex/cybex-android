@@ -196,6 +196,7 @@ public class DepositActivity extends BaseActivity {
     }
 
     private void getAddress(String userName, String assetName) {
+        showLoadDialog();
         mApolloClient.query(GetDepositAddress
                 .builder()
                 .accountName(userName)
@@ -215,6 +216,7 @@ public class DepositActivity extends BaseActivity {
                                         public void run() {
                                             mEosAccountNameTv.setText(eosAccountName);
                                             mQRAddressView.setText(verificationCode);
+                                            hideLoadDialog();
                                         }
                                     });
                                 } else {
@@ -224,6 +226,7 @@ public class DepositActivity extends BaseActivity {
                                             if (mQRAddressView != null) {
                                                 mQRAddressView.setText(address);
                                                 generateBarCode(address);
+                                                hideLoadDialog();
                                             }
                                         }
                                     });
