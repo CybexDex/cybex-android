@@ -354,7 +354,7 @@ public class WithdrawActivity extends BaseActivity {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                ToastMessage.showNotEnableDepositToastMessage( (Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
+                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
                             }
                         });
                     }
@@ -406,7 +406,7 @@ public class WithdrawActivity extends BaseActivity {
                 @Override
                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
                     FeeAmountObject feeAmountObject = reply.result.get(0);
-                    mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, mAmount, feeAmountObject.asset_id, feeAmountObject.amount);
+                    mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, getSubmitAmount(feeAmountObject), feeAmountObject.asset_id, feeAmountObject.amount);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -428,6 +428,18 @@ public class WithdrawActivity extends BaseActivity {
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getSubmitAmount(FeeAmountObject feeAmountObject) {
+        double amount = Double.parseDouble(mAmount);
+        double fee = (feeAmountObject.amount / Math.pow(10, mAssetObject.precision));
+        double submitAmount = 0;
+        if (amount + fee > mAvailableAmount) {
+            submitAmount = amount - fee;
+        } else {
+            submitAmount = amount;
+        }
+        return String.valueOf(submitAmount);
     }
 
     private void verifyAddress(String s) {
@@ -502,7 +514,7 @@ public class WithdrawActivity extends BaseActivity {
                                         mToAccountId = response.data().withdrawInfo().fragments().withdrawinfoObject().gatewayAccount();
                                         getToAccountMemoKey(mToAccountId);
                                         mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
-                                        mGateWayFeeTextView.setText(String.format(Locale.US,"%."+ mAssetObject.precision + "f %s", mGatewayFee, mAssetName));
+                                        mGateWayFeeTextView.setText(String.format(Locale.US, "%." + mAssetObject.precision + "f %s", mGatewayFee, mAssetName));
                                     }
                                 });
                             }
