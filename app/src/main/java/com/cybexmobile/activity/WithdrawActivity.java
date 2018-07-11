@@ -350,11 +350,20 @@ public class WithdrawActivity extends BaseActivity {
             BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<String> reply) {
-                    if (reply.result == null) {
+                    if (reply.result == null && reply.error == null) {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
                                 ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
+                                finish();
+                            }
+                        });
+                    }
+                    if (reply.error != null) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_failed), R.drawable.ic_error_16px);
                             }
                         });
                     }

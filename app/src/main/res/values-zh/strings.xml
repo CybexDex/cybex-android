@@ -245,6 +245,7 @@
     <string name="toast_message_can_not_deposit">暂不支持充值</string>
     <string name="toast_message_can_not_withdraw">您没有权限提现</string>
     <string name="toast_message_withdraw_sent">提现申请成功</string>
+    <string name="toast_message_withdraw_failed">提现申请失败</string>
     <string name="toast_message_place_order_successfully">挂单成功</string>
     <string name="toast_message_place_order_failed">挂单失败</string>
     <string name="toast_message_cancel_order_successfully">委单撤销成功</string>

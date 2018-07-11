@@ -241,6 +241,7 @@
     <string name="toast_message_can_not_deposit">Missing authority for deposit</string>
     <string name="toast_message_can_not_withdraw">Missing authority for withdrawal</string>
     <string name="toast_message_withdraw_sent">Withdrawal request has been sent</string>
+    <string name="toast_message_withdraw_failed">Withdrawal request failed</string>
     <string name="toast_message_place_order_successfully">Place order successfully</string>
     <string name="toast_message_place_order_failed">Place order failed</string>
     <string name="toast_message_cancel_order_successfully">Cancel order successfully</string>
