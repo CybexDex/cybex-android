@@ -202,6 +202,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateRmbPrice(Event.UpdateRmbPrice event) {
+        if(mWatchlistData == null){
+            return;
+        }
         List<AssetRmbPrice> assetRmbPrices = event.getData();
         if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
             return;
@@ -253,6 +256,21 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
                     R.string.toast_message_place_order_failed), R.drawable.ic_error_16px);
         }
+    }
+
+    /**
+     * fix bug:CYM-348
+     * 行情界面数据没加载出来进入交易界面，交易界面数据为空
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onInitExchangeWatchlist(Event.InitExchangeWatchlist event){
+        if(mWatchlistData != null){
+            return;
+        }
+        mWatchlistData = event.getWatchlist();
+        notifyWatchlistDataChange(mWatchlistData);
+        loadLimitOrderCreateFee(ASSET_ID_CYB);
+        setTitleData();
     }
 
     @Override

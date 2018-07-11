@@ -442,7 +442,7 @@ public class BuySellFragment extends BaseFragment {
     }
 
     private void initOrResetAvailableData(){
-        if(mFullAccountObject == null){
+        if(mFullAccountObject == null || mWatchlistData == null){
             mTvAssetAvailable.setText(getResources().getString(R.string.text_empty));
             return;
         }

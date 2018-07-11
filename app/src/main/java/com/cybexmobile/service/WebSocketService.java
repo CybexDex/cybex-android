@@ -31,6 +31,7 @@ import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketTicker;
+import com.cybexmobile.utils.Constant;
 import com.cybexmobile.utils.PriceUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -613,6 +614,8 @@ public class WebSocketService extends Service {
                 mWatchlistHashMap.put(entry.getKey(), watchlistData);
             }
             List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
+            //初始化交易界面 默认交易对CYB/ETH
+            EventBus.getDefault().post(new Event.InitExchangeWatchlist(getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB)));
             //更新行情
             EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
             if (mWatchlistHashMap.get("1.3.2") != null && mWatchlistHashMap.get("1.3.27") != null && mWatchlistHashMap.get("1.3.3") != null && mWatchlistHashMap.get("1.3.0") != null) {

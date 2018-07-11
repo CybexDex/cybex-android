@@ -180,6 +180,9 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateRmbPrice(Event.UpdateRmbPrice event) {
+        if(mWatchlistData == null){
+            return;
+        }
         List<AssetRmbPrice> assetRmbPrices = event.getData();
         if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
             return;

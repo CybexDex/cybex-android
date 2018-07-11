@@ -434,5 +434,20 @@ public class Event {
 
     }
 
+    /**
+     * 行情数据加载完通知交易界面刷新 防止行情界面数据没加载出来进入交易界面交易界面数据为空
+     */
+    public static class InitExchangeWatchlist{
+        private WatchlistData watchlist;
+
+        public InitExchangeWatchlist(WatchlistData watchlist) {
+            this.watchlist = watchlist;
+        }
+
+        public WatchlistData getWatchlist() {
+            return watchlist;
+        }
+    }
+
 }
 
