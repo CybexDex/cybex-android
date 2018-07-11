@@ -213,14 +213,15 @@
     <string name="deposit_get_new_address">生成新地址</string>
     <string name="deposit_eos_copy_account_name">复制账户</string>
     <string name="deposit_eos_copy_code">复制验证码</string>
-    <string name="deposit_eos_get_new_code">复制验证码</string>
+    <string name="deposit_eos_get_new_code">重新生成</string>
     <string name="deposit_eos_deposit_account">EOS充值账户</string>
-    <string name="deposit_eos_verification_code">EOS充值账户</string>
+    <string name="deposit_eos_verification_code">备注验证码</string>
     <string name="deposit_eos_alert_message">(请务必在转账备注中填写并核对正确)</string>
 
     <!-- Withdraw Page Related -->
     <string name="withdraw_available_amount">可用余额</string>
     <string name="withdraw_withdrawal_address">提现地址</string>
+    <string name="withdraw_account_eos">提现账户</string>
     <string name="withdraw_amount">数量</string>
     <string name="withdraw_minimum_hint">最小提数量 </string>
     <string name="withdraw_all">全部</string>
@@ -229,6 +230,7 @@
     <string name="withdraw_receive_amount">到账数量</string>
     <string name="withdraw_withdraw_button">提现</string>
     <string name="withdraw_enter_or_paste_address_hint">输入或长按粘贴地址</string>
+    <string name="withdraw_enter_or_paste_account_hint_eos">输入或长按粘贴账户</string>
     <string name="withdraw_amount_hint">最小提现数量 1</string>
     <string name="withdraw_confirmation">确认提现</string>
     <string name="withdraw_error_not_enough">余额不足</string>

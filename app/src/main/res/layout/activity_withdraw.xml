@@ -66,6 +66,7 @@
                 android:padding="@dimen/activity_padding">
 
                 <TextView
+                    android:id="@+id/withdraw_address_tv"
                     style="@style/font_gray_medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

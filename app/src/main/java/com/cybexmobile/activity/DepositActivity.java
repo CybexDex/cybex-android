@@ -1,8 +1,10 @@
 package com.cybexmobile.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -39,6 +41,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.toast.message.ToastMessage;
+import com.cybexmobile.utils.AntiMultiClick;
 import com.cybexmobile.utils.QRCode;
 import com.cybexmobile.utils.SnackBarUtils;
 
@@ -59,6 +62,7 @@ public class DepositActivity extends BaseActivity {
     private Unbinder mUnbinder;
     private ApolloClient mApolloClient;
     private Handler mHandler = new Handler();
+    private Context mContext;
     private String mUserName;
     private String mAssetName;
     private String mEnMsg;
@@ -109,6 +113,7 @@ public class DepositActivity extends BaseActivity {
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mApolloClient = ApolloClientApi.getApolloClient();
+        mContext = this;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mUserName = sharedPreferences.getString("name", "");
         Intent intent = getIntent();
@@ -144,7 +149,6 @@ public class DepositActivity extends BaseActivity {
         if (requestCode == REQUEST_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 saveImageView(mQRCodeView);
-                SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_saved), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
             }
         } else {
 
@@ -159,20 +163,23 @@ public class DepositActivity extends BaseActivity {
 
     @OnClick(R.id.deposit_copy_address)
     public void onClickCopyAddress(View view) {
-        if (mQRAddressView.getText() != null) {
-            copyAddress(mQRAddressView.getText().toString());
+        if (AntiMultiClick.isFastClick()) {
+            if (mQRAddressView.getText() != null) {
+                copyAddress(mQRAddressView.getText().toString());
+            }
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_copied), R.drawable.ic_check_circle_green);
         }
-        SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_copied), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
-
     }
+
 
     @OnClick(R.id.deposit_eos_copy_account_name)
     public void onClickCopyEosAccountName(View view) {
-        if (mEosAccountNameTv.getText() != null) {
-            copyAddress(mEosAccountNameTv.getText().toString());
+        if (AntiMultiClick.isFastClick()) {
+            if (mEosAccountNameTv.getText() != null) {
+                copyAddress(mEosAccountNameTv.getText().toString());
+            }
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_copied), R.drawable.ic_check_circle_green);
         }
-        SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_copied), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
-
     }
 
     @OnClick(R.id.deposit_save_qr_address)
@@ -182,8 +189,10 @@ public class DepositActivity extends BaseActivity {
 
     @OnClick(R.id.deposit_get_new_address)
     public void onClickGetNewAddress(View view) {
-        Animation animation = getAnimation();
-        mutateNewAddress(mUserName, mAssetName);
+        if (AntiMultiClick.isFastClick()) {
+            Animation animation = getAnimation();
+            mutateNewAddress(mUserName, mAssetName);
+        }
     }
 
     private void requestDetailMessage() {
@@ -231,7 +240,13 @@ public class DepositActivity extends BaseActivity {
                                     });
                                 }
                             } else {
-                                SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
+
+                                    }
+                                });
                                 hideLoadDialog();
                             }
                         }
@@ -276,11 +291,10 @@ public class DepositActivity extends BaseActivity {
                                 });
                             }
                         } else {
-                            Log.v("mutateAddress", "error");
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
+                                    ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
                                 }
                             });
 
@@ -320,16 +334,17 @@ public class DepositActivity extends BaseActivity {
                     REQUEST_PERMISSION);
         } else {
             saveImageView(mQRCodeView);
-            SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_saved), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
-
         }
     }
 
     private void saveImageView(ImageView imageView) {
-        Drawable drawable = imageView.getDrawable();
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        String savedImageURL = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "QRCode", "");
-        Log.e("imageUrl", savedImageURL);
+        if (imageView.getDrawable() != null) {
+            Drawable drawable = imageView.getDrawable();
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            String savedImageURL = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "QRCode", "");
+            Log.e("imageUrl", savedImageURL);
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_saved), R.drawable.ic_check_circle_green);
+        }
     }
 
     @Override

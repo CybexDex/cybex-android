@@ -218,6 +218,7 @@
     <!-- Withdraw Page Related -->
     <string name="withdraw_available_amount">Available</string>
     <string name="withdraw_withdrawal_address">Withdrawal Address</string>
+    <string name="withdraw_account_eos">Withdrawal Account</string>
     <string name="withdraw_amount">Amount</string>
     <string name="withdraw_minimum_hint">Minimum </string>
     <string name="withdraw_all">All</string>
@@ -226,6 +227,7 @@
     <string name="withdraw_receive_amount">Receive Amount</string>
     <string name="withdraw_withdraw_button">WITHDRAW</string>
     <string name="withdraw_enter_or_paste_address_hint">Enter or paste address</string>
+    <string name="withdraw_enter_or_paste_account_hint_eos">Enter or paste account</string>
     <string name="withdraw_amount_hint">Min 1</string>
     <string name="withdraw_confirmation">CONFIRMATION</string>
     <string name="withdraw_error_not_enough">Not enough</string>

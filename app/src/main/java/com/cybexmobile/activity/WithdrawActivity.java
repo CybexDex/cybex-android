@@ -70,6 +70,7 @@ import butterknife.Unbinder;
 import static com.cybexmobile.graphene.chain.Operations.ID_TRANSER_OPERATION;
 
 public class WithdrawActivity extends BaseActivity {
+    private static String EOS = "EOS";
 
     public Unbinder mUnbinder;
     private String mAssetName;
@@ -103,6 +104,8 @@ public class WithdrawActivity extends BaseActivity {
     TextView mToolbarTextView;
     @BindView(R.id.withdraw_available_amount)
     TextView mAvailableAmountTextView;
+    @BindView(R.id.withdraw_address_tv)
+    TextView mWithdrawAddressTv;
     @BindView(R.id.withdraw_withdrawal_address)
     EditText mWithdrawAddress;
     @BindView(R.id.withdraw_amount)
@@ -146,6 +149,10 @@ public class WithdrawActivity extends BaseActivity {
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_withdraw), mAssetName));
         mContext = this;
+        if (mAssetName.equals(EOS)) {
+            mWithdrawAddressTv.setText(getResources().getString(R.string.withdraw_account_eos));
+            mWithdrawAddress.setHint(getResources().getString(R.string.withdraw_enter_or_paste_account_hint_eos));
+        }
         setAvailableAmount(mAvailableAmount, mAssetName);
         requestDetailMessage();
         setMinWithdrawAmountAndGateWayFee();
@@ -355,9 +362,14 @@ public class WithdrawActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
-                                finish();
                             }
                         });
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 3500);
                     }
                     if (reply.error != null) {
                         mHandler.post(new Runnable() {

@@ -27,7 +27,7 @@
 
 
     <!-- toast message background color -->
-    <color name="toast_message_background_color">#cd78819a</color>
+    <color name="toast_message_background_color">#78819a</color>
 
     <!-- dialog related color -->
     <color name="dialog_header_background_color">#f7f8fa</color>
