@@ -134,7 +134,6 @@ public class DepositActivity extends BaseActivity {
             getAddress(mUserName, mAssetName);
             requestDetailMessage();
         } else {
-            Log.v("language", Locale.getDefault().getLanguage());
             if (Locale.getDefault().getLanguage().equals("zh")) {
                 ToastMessage.showNotEnableDepositToastMessage(this, mCnMsg, R.drawable.ic_error_16px);
             } else {
