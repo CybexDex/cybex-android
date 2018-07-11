@@ -193,7 +193,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
         FeeAmountObject feeAmount = event.getFee();
         AccountBalanceObject accountBalance = getBalance(feeAmount.asset_id, mFullAccount);
         if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
-            if(accountBalance.balance > feeAmount.amount){//cyb足够扣手续费
+            if(accountBalance.balance >= feeAmount.amount){//cyb足够扣手续费
                 limitOrderCancelConfirm(mName, feeAmount);
             } else { //cyb不够扣手续费 扣取委单的base或者quote
                 if(ASSET_ID_CYB.equals(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString())){
@@ -246,9 +246,9 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(base.symbol));
             totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(quote.symbol));
         } else {
-            double amount = limitOrderObject.for_sale / Math.pow(10, quote.precision);
-            double price = (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision)) / (limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision));
-            double total = amount * price;
+            double amount = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision);
+            double price = (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision)) / amount;
+            double total = limitOrderObject.for_sale / Math.pow(10, base.precision);
             priceStr = String.format(AssetUtil.formatPrice(price) + " %s", price, AssetUtil.parseSymbol(base.symbol));
             amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(quote.symbol));
             totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(base.symbol));
@@ -258,8 +258,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             feeStr = String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", cybAsset.precision),
                     feeAmount.amount/Math.pow(10, cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
         } else {
-            feeStr = String.format("%s %s", feeAmount.amount / Math.pow(10, mCurrOpenOrderItem.isSell ? quote.precision : base.precision),
-                    mCurrOpenOrderItem.isSell ? AssetUtil.parseSymbol(quote.symbol) : AssetUtil.parseSymbol(base.symbol));
+            feeStr = String.format("%s %s", feeAmount.amount / Math.pow(10, base.precision), AssetUtil.parseSymbol(base.symbol));
         }
         CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(), !mCurrOpenOrderItem.isSell,
                 priceStr, amountStr, totalStr, feeStr,

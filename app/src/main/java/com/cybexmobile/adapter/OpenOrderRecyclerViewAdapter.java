@@ -86,15 +86,18 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                 String basePrecision = MyUtils.getPrecisedFormatter(base.precision);
                 String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
                 if (openOrderItem.isSell) {
+                    /**
+                     * fix bug:CYM-426
+                     * 订单部分撮合
+                     */
                     holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
                     holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
-                    amount = data.sell_price.base.amount / Math.pow(10, base.precision);
+                    amount = data.for_sale / Math.pow(10, base.precision);
                     holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), String.format(basePrecision, amount), baseSymbol));
                     holder.mQuoteTextView.setText(baseSymbol);
                     holder.mBaseTextView.setText(String.format("/%s", quoteSymbol));
                     price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
-                    holder.mPriceTextView.setText(String.format(quotePrecision, price));
-
+                    holder.mPriceTextView.setText(String.format("%s %s", String.format(quotePrecision, price), quoteSymbol));
                 } else {
                     holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
                     holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
@@ -103,10 +106,8 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                     holder.mQuoteTextView.setText(quoteSymbol);
                     holder.mBaseTextView.setText(String.format("/%s", baseSymbol));
                     price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
-                    holder.mPriceTextView.setText(String.format(basePrecision, price));
+                    holder.mPriceTextView.setText(String.format("%s %s", String.format(basePrecision, price), baseSymbol));
                 }
-//                mTotal += price * amount;
-//                mListener.displayTotalValue(mTotal);
             }
         }else{
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();

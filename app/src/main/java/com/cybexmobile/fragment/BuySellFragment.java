@@ -581,6 +581,11 @@ public class BuySellFragment extends BaseFragment {
     public void changeFullAccount(FullAccountObject fullAccountObject){
         mFullAccountObject = fullAccountObject;
         initOrResetAvailableData();
+        /**
+         * fix bug:CYM-422
+         * 每次刷新FullAccount数据时重新计算手续费，防止费用减少到手续费临界值时手续费未刷新
+         */
+        ((ExchangeFragment)getParentFragment()).loadLimitOrderCreateFee(ASSET_ID_CYB);
     }
 
     /**

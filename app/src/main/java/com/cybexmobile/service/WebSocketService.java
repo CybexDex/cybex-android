@@ -679,7 +679,7 @@ public class WebSocketService extends Service {
                     e.printStackTrace();
                 }
             }
-        }, 0, 10 * 1000);
+        }, 0, 5 * 1000);
     }
 
     public FullAccountObject getFullAccount(boolean isLoginIn) {
