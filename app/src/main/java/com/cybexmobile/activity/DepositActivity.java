@@ -144,7 +144,7 @@ public class DepositActivity extends BaseActivity {
         if (requestCode == REQUEST_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 saveImageView(mQRCodeView);
-                SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_saved), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
+                SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_saved), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
             }
         } else {
 
@@ -162,7 +162,7 @@ public class DepositActivity extends BaseActivity {
         if (mQRAddressView.getText() != null) {
             copyAddress(mQRAddressView.getText().toString());
         }
-        SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_copied), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
+        SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_copied), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
 
     }
 
@@ -171,7 +171,7 @@ public class DepositActivity extends BaseActivity {
         if (mEosAccountNameTv.getText() != null) {
             copyAddress(mEosAccountNameTv.getText().toString());
         }
-        SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_copied), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
+        SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_copied), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
 
     }
 
@@ -231,7 +231,7 @@ public class DepositActivity extends BaseActivity {
                                     });
                                 }
                             } else {
-                                SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
+                                SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
                                 hideLoadDialog();
                             }
                         }
@@ -280,7 +280,7 @@ public class DepositActivity extends BaseActivity {
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
+                                    SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_please_retry), mCoordinatorLayout, getApplicationContext(), R.drawable.ic_error_16px);
                                 }
                             });
 
@@ -320,7 +320,7 @@ public class DepositActivity extends BaseActivity {
                     REQUEST_PERMISSION);
         } else {
             saveImageView(mQRCodeView);
-            SnackBarUtils.getInstance().showSnackbar(getResources().getString(R.string.snack_bar_saved), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
+            SnackBarUtils.getInstance().showTopSnackBar(getResources().getString(R.string.snack_bar_saved), mCoordinatorLayout, this, R.drawable.ic_check_circle_green);
 
         }
     }

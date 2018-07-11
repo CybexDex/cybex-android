@@ -59,9 +59,9 @@
     <color name="btn_red_start">#d96250</color>
     <color name="btn_red_end">#be4634</color>
 
-    <color name="bg_watchlist_item_focus_color">#212939</color>f
+    <color name="bg_watchlist_item_focus_color">#212939</color>
     <!-- snack bar color -->
-    <color name="snack_bar_background_color">#cd78819a</color>
+    <color name="snack_bar_background_color">#9198ad</color>
 
     <!-- toast message background color -->
     <color name="toast_message_background_color">#212939</color>
