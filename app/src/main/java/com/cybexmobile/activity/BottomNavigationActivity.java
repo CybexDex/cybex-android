@@ -260,7 +260,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
                     @Override
                     public void onNext(AppVersion appVersion) {
-                        if (appVersion.compareVersion("1.0.1")) {
+                        if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
                             if (appVersion.isForceUpdate(BuildConfig.VERSION_NAME)) {
                                 if (Locale.getDefault().getLanguage().equals("zh")) {
                                     CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
