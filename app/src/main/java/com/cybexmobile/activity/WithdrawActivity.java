@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.apollographql.apollo.GetWithdrawInfo;
 import com.apollographql.apollo.VerifyAddress;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.fragment.WithdrawinfoObject;
 import com.cybexmobile.R;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.api.BitsharesWalletWraper;
@@ -51,6 +53,7 @@ import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
+import com.cybexmobile.utils.DecimalDigitsInputFilter;
 import com.cybexmobile.utils.SoftKeyBoardListener;
 
 import java.util.ArrayList;
@@ -85,6 +88,7 @@ public class WithdrawActivity extends BaseActivity {
     private double mAvailableAmount;
     private double mMinValue;
     private double mGatewayFee;
+    private Integer mAssetPrecision;
     private String mToAccountId;
     private FullAccountObject mToAccountObject;
     private AccountObject mAccountObject;
@@ -404,7 +408,7 @@ public class WithdrawActivity extends BaseActivity {
                 receiveAmount = amount - mGatewayFee;
             }
         }
-        mReceiveAmountTextView.setText(String.format("%." + mAssetObject.precision + "f %s", receiveAmount, mAssetName));
+        mReceiveAmountTextView.setText(String.format("%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", receiveAmount, mAssetName));
     }
 
     private long getBalance(FullAccountObject fullAccountObject, String assetId) {
@@ -431,7 +435,7 @@ public class WithdrawActivity extends BaseActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            mTransferFeeTextView.setText(String.format("%." + mAssetObject.precision + "f " + mAssetName, (feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
+                            mTransferFeeTextView.setText(String.format("%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f " + mAssetName, (feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
                             calculateReceiveAmount(feeAmountObject);
                             if (!BitsharesWalletWraper.getInstance().is_locked()) {
                                 mWithdrawButton.setEnabled(true);
@@ -527,15 +531,19 @@ public class WithdrawActivity extends BaseActivity {
                     public void onResponse(@Nonnull Response<GetWithdrawInfo.Data> response) {
                         if (response.data() != null) {
                             if (response.data().withdrawInfo().fragments().withdrawinfoObject() != null) {
+                                WithdrawinfoObject withdrawinfoObject = response.data().withdrawInfo().fragments().withdrawinfoObject();
+                                mMinValue = withdrawinfoObject.minValue();
+                                mGatewayFee = withdrawinfoObject.fee();
+                                mToAccountId = withdrawinfoObject.gatewayAccount();
+                                mAssetPrecision = withdrawinfoObject.precision();
+
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mMinValue = response.data().withdrawInfo().fragments().withdrawinfoObject().minValue();
-                                        mGatewayFee = response.data().withdrawInfo().fragments().withdrawinfoObject().fee();
-                                        mToAccountId = response.data().withdrawInfo().fragments().withdrawinfoObject().gatewayAccount();
                                         getToAccountMemoKey(mToAccountId);
                                         mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
-                                        mGateWayFeeTextView.setText(String.format(Locale.US, "%." + mAssetObject.precision + "f %s", mGatewayFee, mAssetName));
+                                        mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
+                                        mWithdrawAmountEditText.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
                                     }
                                 });
                             }
