@@ -122,13 +122,14 @@
                     style="@style/font_white_dark_xxlarge"
                     android:text="--"/>
                 <Button
+                    style="@style/font_gray_medium"
                     android:id="@+id/account_gateway_button"
                     android:layout_width="82dp"
                     android:layout_height="32dp"
+                    android:background="@color/itemBackground"
+                    android:stateListAnimator="@null"
                     android:shadowRadius="4"
                     android:layout_alignParentEnd="true"
-                    android:background="@color/itemBackground"
-                    style="@style/font_gray_medium"
                     android:textAllCaps="false"
                     android:text="@string/account_text_gateway"/>
             </RelativeLayout>

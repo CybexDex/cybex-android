@@ -39,15 +39,18 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.fragment.AccountAddressRecord;
 import com.apollographql.apollo.internal.cache.http.HttpCacheFetchStrategy;
 import com.cybexmobile.R;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.toast.message.ToastMessage;
 import com.cybexmobile.utils.AntiMultiClick;
+import com.cybexmobile.utils.DateUtils;
 import com.cybexmobile.utils.QRCode;
 import com.cybexmobile.utils.SnackBarUtils;
 
+import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -214,9 +217,8 @@ public class DepositActivity extends BaseActivity {
                 .accountName(userName)
                 .asset(assetName)
                 .build())
-                .cacheControl(CacheControl.NETWORK_ONLY)
-                .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
-                .enqueue(new ApolloCall.Callback<GetDepositAddress.Data>() {
+                .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST)
+                .enqueueAndWatch(new ApolloCall.Callback<GetDepositAddress.Data>() {
                     @Override
                     public void onResponse(@Nonnull Response<GetDepositAddress.Data> response) {
                         if (response.data() != null) {
@@ -275,35 +277,36 @@ public class DepositActivity extends BaseActivity {
                     @Override
                     public void onResponse(@Nonnull Response<NewDepositAddress.Data> response) {
                         if (response.data() != null) {
-                            Log.v("mutateAddress", response.data().newDepositAddress().fragments().accountAddressRecord().address());
-                            String address = response.data().newDepositAddress().fragments().accountAddressRecord().address();
-                            if (mAssetName.equals(EOS_NAME)) {
-                                String eosAccountName = address.substring(0, address.indexOf("["));
-                                String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mEosAccountNameTv.setText(eosAccountName);
-                                        mQRAddressView.setText(verificationCode);
-                                    }
-                                });
+                            AccountAddressRecord accountAddressRecord = response.data().newDepositAddress().fragments().accountAddressRecord();
+                            String address = accountAddressRecord.address();
+                            if (DateUtils.formatToMillis(accountAddressRecord.createAt().toString()) != 0) {
+                                if (mAssetName.equals(EOS_NAME)) {
+                                    String eosAccountName = address.substring(0, address.indexOf("["));
+                                    String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mEosAccountNameTv.setText(eosAccountName);
+                                            mQRAddressView.setText(verificationCode);
+                                        }
+                                    });
+                                } else {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mQRAddressView.setText(address);
+                                            generateBarCode(address);
+                                        }
+                                    });
+                                }
                             } else {
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mQRAddressView.setText(address);
-                                        generateBarCode(address);
+                                        ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
                                     }
                                 });
                             }
-                        } else {
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
-                                }
-                            });
-
                         }
                     }
 
