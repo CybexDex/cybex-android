@@ -7,7 +7,7 @@
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_price_value"
-        style="@style/font_gray_bold_small"
+        style="@style/font_gray_small"
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_quote_volume"
-        style="@style/font_gray_bold_small"
+        style="@style/font_gray_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -27,7 +27,7 @@
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_base_volume"
-        style="@style/font_gray_bold_small"
+        style="@style/font_gray_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
@@ -37,7 +37,7 @@
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_date_value"
-        style="@style/font_gray_bold_small"
+        style="@style/font_gray_small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

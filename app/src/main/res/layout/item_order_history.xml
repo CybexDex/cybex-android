@@ -40,7 +40,7 @@
 
             <TextView
                 android:id="@+id/buy_price"
-                style="@style/font_gray_bold_small"
+                style="@style/font_gray_small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -49,7 +49,7 @@
 
             <TextView
                 android:id="@+id/order_volume"
-                style="@style/font_gray_bold_small"
+                style="@style/font_gray_small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -95,7 +95,7 @@
 
             <TextView
                 android:id="@+id/sell_price"
-                style="@style/font_gray_bold_small"
+                style="@style/font_gray_small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -104,7 +104,7 @@
 
             <TextView
                 android:id="@+id/sell_order_volume"
-                style="@style/font_gray_bold_small"
+                style="@style/font_gray_small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
