@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/toast_layout_deposit_root"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="220dp"
-        android:layout_height="110dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/toast_width"
+        android:minHeight="@dimen/toast_height"
         android:background="@color/toast_message_background_color"
+        android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/activity_padding">
 
         <ImageView
             android:id="@+id/toast_center_message_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/toast_image_width_height"
+            android:layout_height="@dimen/toast_image_width_height"
             android:layout_gravity="center" />
 
         <TextView
@@ -23,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="9dp" />
+            android:layout_marginTop="@dimen/toast_message_margin_top" />
 
     </LinearLayout>
 </RelativeLayout>

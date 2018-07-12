@@ -34,6 +34,7 @@ import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.Types;
+import com.cybexmobile.utils.VirtualBarUtil;
 import com.google.gson.Gson;
 import com.pixplicity.sharp.Sharp;
 
@@ -82,9 +83,8 @@ public class RegisterActivity extends BaseActivity {
     String mCapId;
     Timer mTimer = new Timer();
     Task mTask = new Task();
-    private boolean mIsKeyShowing;
-    private int mLastInvisibleHeight;
     private int mLastScrollHeight;
+    private int mVirtualBarHeight = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -357,23 +357,25 @@ public class RegisterActivity extends BaseActivity {
         mLayoutContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                if(mVirtualBarHeight == -1){
+                    mVirtualBarHeight = VirtualBarUtil.getHeight(RegisterActivity.this);
+                }
+                /**
+                 * fix bug
+                 * 计算虚拟导航栏的高度
+                 */
                 Rect rect = new Rect();
                 mLayoutContainer.getWindowVisibleDisplayFrame(rect);
-                int invisibleHeight = mLayoutContainer.getRootView().getHeight() - rect.bottom;
+                int invisibleHeight = mLayoutContainer.getRootView().getHeight() - (rect.bottom + mVirtualBarHeight);
                 if(invisibleHeight > 100){
-                    if(mIsKeyShowing && mLastInvisibleHeight == invisibleHeight){return;}
-                    mLastInvisibleHeight = invisibleHeight;
                     int[] location = new int[2];
                     mLayoutError.getLocationInWindow(location);
                     int scrollHeight = location[1] + mLayoutError.getHeight() - rect.bottom;
                     mLastScrollHeight += scrollHeight;
                     mLayoutContainer.scrollTo(0, mLastScrollHeight);
-                    mIsKeyShowing = true;
                 }else{
                     mLayoutContainer.scrollTo(0, 0);
                     mLastScrollHeight = 0;
-                    mLastInvisibleHeight = 0;
-                    mIsKeyShowing = false;
                 }
             }
         });

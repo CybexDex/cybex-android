@@ -117,4 +117,9 @@
     <!-- withdraw/deposit line spacing -->
     <dimen name="withdraw_deposit_line_spacing">4dp</dimen>
 
+    <dimen name="toast_width">220dp</dimen>
+    <dimen name="toast_height">110dp</dimen>
+    <dimen name="toast_image_width_height">24dp</dimen>
+    <dimen name="toast_message_margin_top">6dp</dimen>
+
 </resources>

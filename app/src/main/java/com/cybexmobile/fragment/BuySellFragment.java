@@ -1,6 +1,7 @@
 package com.cybexmobile.fragment;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,9 +13,12 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -22,6 +26,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.LoginActivity;
@@ -41,6 +46,7 @@ import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.utils.AssetUtil;
+import com.cybexmobile.utils.SoftKeyBoardListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -55,6 +61,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
+import butterknife.OnTouch;
 import butterknife.Unbinder;
 
 import static com.cybexmobile.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
@@ -77,7 +84,9 @@ import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 
-public class BuySellFragment extends BaseFragment {
+public class BuySellFragment extends BaseFragment implements SoftKeyBoardListener.OnSoftKeyBoardChangeListener{
+
+    private static final String TAG = BuySellFragment.class.getSimpleName();
 
     @BindView(R.id.buysell_btn_buy_sell)
     Button mBtnBuySell;
@@ -191,6 +200,7 @@ public class BuySellFragment extends BaseFragment {
         mUnbinder = ButterKnife.bind(this, view);
         mEtAssetPrice.setFilters(new InputFilter[]{mPriceFilter});
         mEtAssetAmount.setFilters(new InputFilter[]{mAmountFilter});
+        SoftKeyBoardListener.setListener(getActivity(), this);
         return view;
     }
 
@@ -240,10 +250,44 @@ public class BuySellFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void keyBoardShow(int height) {
+        Log.v(TAG, String.format("%s: %s", "keyBoardShow", height));
+    }
+
+    @Override
+    public void keyBoardHide(int height) {
+        Log.v(TAG, String.format("%s: %s", "keyBoardHide", height));
+        if(mEtAssetPrice.isFocused()){
+            mEtAssetPrice.clearFocus();
+        }
+        if(mEtAssetAmount.isFocused()){
+            mEtAssetAmount.clearFocus();
+        }
+    }
+
     @OnFocusChange({R.id.buysell_et_asset_price, R.id.buysell_et_asset_amount})
     public void onFocusChanged(View view, boolean isFocused){
+        /**
+         * fix bug:CYM-400
+         * 软盘消失 输入框失去焦点 自动不全精度
+         */
+        if(!isFocused){
+            if(view.getId() == R.id.buysell_et_asset_price){
+                String priceStr = mEtAssetPrice.getText().toString();
+                if(!TextUtils.isEmpty(priceStr)){
+                    mEtAssetPrice.setText(String.format(String.format(Locale.US, "%%.%df", AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(priceStr)));
+                }
+            } else if (view.getId() == R.id.buysell_et_asset_amount){
+                String amountStr = mEtAssetAmount.getText().toString();
+                if(!TextUtils.isEmpty(amountStr)){
+                    mEtAssetAmount.setText(String.format(String.format(Locale.US, "%%.%df", AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(amountStr)));
+                }
+            }
+            return;
+        }
         //未登录时 获取焦点自动跳转到登录界面
-        if(isFocused && !mIsLoginIn){
+        if(!mIsLoginIn){
             view.clearFocus();
             toLogin();
         }
@@ -252,6 +296,25 @@ public class BuySellFragment extends BaseFragment {
     @OnCheckedChanged(R.id.buysell_checkbox_market_trades)
     public void onMarketTradeCheckChanged(CompoundButton button, boolean isChecked){
         mScrollView.scrollTo(0, isChecked ? mLayoutTradeHistory.getTop() : 0);
+    }
+
+    @OnTouch(R.id.buysell_scroll_view)
+    public boolean onTouchEvent(View view, MotionEvent event){
+        /**
+         * fix bug:点击空白处隐藏软键盘
+         */
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            InputMethodManager manager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if(mEtAssetPrice.isFocused()){
+                manager.hideSoftInputFromWindow(mEtAssetPrice.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                mEtAssetPrice.clearFocus();
+            }
+            if(mEtAssetAmount.isFocused()){
+                manager.hideSoftInputFromWindow(mEtAssetAmount.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                mEtAssetPrice.clearFocus();
+            }
+        }
+        return false;
     }
 
     @OnClick({R.id.buysell_tv_add, R.id.buysell_tv_sub})

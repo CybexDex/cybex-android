@@ -137,7 +137,7 @@
                 android:background="@drawable/bg_btn_orange_gradient_enabled"
                 android:enabled="false"
                 android:text="@string/action_sign_in"
-                android:textColor="@color/login_text_color"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>

@@ -161,6 +161,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
 
     @Override
     public void onItemClick(OpenOrderItem itemValue) {
+        showLoadDialog();
         mCurrOpenOrderItem = itemValue;
         loadLimitOrderCancelFee(ASSET_ID_CYB);
     }
@@ -197,6 +198,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
                 limitOrderCancelConfirm(mName, feeAmount);
             } else { //cyb不够扣手续费 扣取委单的base或者quote
                 if(ASSET_ID_CYB.equals(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString())){
+                    hideLoadDialog();
                     ToastMessage.showNotEnableDepositToastMessage(getActivity(),
                             getContext().getResources().getString(R.string.text_not_enough),
                             R.drawable.ic_error_16px);
@@ -208,6 +210,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             if(accountBalance.balance > feeAmount.amount){
                 limitOrderCancelConfirm(mName, feeAmount);
             } else {
+                hideLoadDialog();
                 ToastMessage.showNotEnableDepositToastMessage(getActivity(),
                         getContext().getResources().getString(R.string.text_not_enough),
                         R.drawable.ic_error_16px);
@@ -217,6 +220,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLimitOrderCancel(Event.LimitOrderCancel event){
+        hideLoadDialog();
         if(event.isSuccess()){
             ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
                     R.string.toast_message_cancel_order_successfully), R.drawable.ic_check_circle_green);
@@ -227,6 +231,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
     }
 
     private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
+        hideLoadDialog();
         String priceStr;
         String amountStr;
         String totalStr;
@@ -286,6 +291,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
                 int result = BitsharesWalletWraper.getInstance().import_account_password(mFullAccount.account, userName, password);
                 if (result == 0) {
                     dialog.dismiss();
+                    showLoadDialog();
                     toCancelLimitOrder(feeAmount);
                 } else {
                     LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
