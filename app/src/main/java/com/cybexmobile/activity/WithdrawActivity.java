@@ -299,7 +299,7 @@ public class WithdrawActivity extends BaseActivity {
                 }
 
             }
-        }, mAddress, mAmount + " " + mAssetName, mTransferFeeTextView.getText().toString(), mGateWayFeeTextView.getText().toString(), mReceiveAmountTextView.getText().toString());
+        }, mAddress, mAmount + " " + mAssetName, mGateWayFeeTextView.getText().toString(), mTransferFeeTextView.getText().toString(), mReceiveAmountTextView.getText().toString());
     }
 
     private void setKeyboardListener() {
