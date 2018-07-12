@@ -21,7 +21,6 @@ import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.constant.ConstantTest;
 import com.cybexmobile.data.DataParse;
 import com.cybexmobile.data.KLineBean;
 import com.cybexmobile.event.Event;
@@ -61,8 +60,6 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -351,11 +348,11 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initChartKline() {
-        mChartKline.setScaleEnabled(true);//启用图表缩放事件
+        mChartKline.setScaleXEnabled(true);//启用图表缩放事件
         mChartKline.setDrawBorders(true);//是否绘制边线
         mChartKline.setBorderWidth(1);//边线宽度，单位dp
         mChartKline.setDragEnabled(true);//启用图表拖拽事件
-        mChartKline.setScaleYEnabled(true);//启用Y轴上的缩放
+        mChartKline.setScaleYEnabled(false);//启用Y轴上的缩放
         mChartKline.setBorderColor(Color.TRANSPARENT);//边线颜色
         mChartKline.setDescription("");//右下角对图表的描述信息
         mChartKline.setMinOffset(0f);
@@ -620,7 +617,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initChartData(List<HistoryPrice> historyPriceList, long duration) {
-        getOffLineData(historyPriceList, duration);
+        getKLineData(historyPriceList, duration);
         setKLineDatas();
 
         setMarkerViewButtom(mData, mChartKline);
@@ -628,19 +625,9 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         setMarkerView(mData, mChartCharts);
     }
 
-    private void getOffLineData(List<HistoryPrice> historyPriceList, long duraton) {
+    private void getKLineData(List<HistoryPrice> historyPriceList, long duraton) {
         mData = new DataParse();
-        JSONObject object = null;
-        try {
-            object = new JSONObject(ConstantTest.KLINEURL);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.d("数据-----", object.toString());
         mData.parseKlineHistoryData(historyPriceList, duraton);
-
-        mCacheData = new DataParse();
-        mCacheData.parseKLine(object);
     }
 
     private void setKLineDatas() {

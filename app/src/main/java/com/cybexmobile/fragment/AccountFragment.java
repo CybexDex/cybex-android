@@ -180,6 +180,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPortfolioRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mPortfolioRecyclerView.getItemAnimator().setChangeDuration(0);
         mPortfolioRecyclerViewAdapter = new PortfolioRecyclerViewAdapter(R.layout.item_portfolio_horizontal, mAccountBalanceObjectItems);
         mPortfolioRecyclerView.setAdapter(mPortfolioRecyclerViewAdapter);
         Intent intent = new Intent(getContext(), WebSocketService.class);

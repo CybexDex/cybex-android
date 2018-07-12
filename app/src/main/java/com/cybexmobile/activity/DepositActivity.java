@@ -36,7 +36,10 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.GetDepositAddress;
 import com.apollographql.apollo.NewDepositAddress;
 import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.internal.cache.http.HttpCacheFetchStrategy;
 import com.cybexmobile.R;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.base.BaseActivity;
@@ -183,7 +186,9 @@ public class DepositActivity extends BaseActivity {
 
     @OnClick(R.id.deposit_save_qr_address)
     public void onClickSaveAddress(View view) {
-        checkImageGalleryPermission();
+        if (AntiMultiClick.isFastClick()) {
+            checkImageGalleryPermission();
+        }
     }
 
     @OnClick(R.id.deposit_get_new_address)
@@ -209,6 +214,8 @@ public class DepositActivity extends BaseActivity {
                 .accountName(userName)
                 .asset(assetName)
                 .build())
+                .cacheControl(CacheControl.NETWORK_ONLY)
+                .httpCachePolicy(HttpCachePolicy.NETWORK_ONLY)
                 .enqueue(new ApolloCall.Callback<GetDepositAddress.Data>() {
                     @Override
                     public void onResponse(@Nonnull Response<GetDepositAddress.Data> response) {
