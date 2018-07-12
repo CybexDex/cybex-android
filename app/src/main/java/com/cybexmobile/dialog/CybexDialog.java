@@ -189,4 +189,49 @@ public class CybexDialog {
         dialog.show();
     }
 
+    public static void showVersionUpdateDialog(Context context, String updateMessage, ConfirmationDialogClickListener listener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_update_version_dialog);
+        TextView message  = dialog.findViewById(R.id.dialog_version_update_text_view);
+        message.setText(updateMessage);
+        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
+        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public static void showVersionUpdateDialogForced(Context context, String updateMessage, ConfirmationDialogClickListener listener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_update_version_dialog);
+        TextView message  = dialog.findViewById(R.id.dialog_version_update_text_view);
+        message.setText(updateMessage);
+        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 }

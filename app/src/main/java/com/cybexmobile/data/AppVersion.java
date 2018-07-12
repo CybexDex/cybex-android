@@ -7,12 +7,16 @@ public class AppVersion {
 
     private String version;
     private String url;
+    private String cnUpdateInfo;
+    private String enUpdateInfo;
     private JsonObject force;
 
-    public AppVersion(String version, String url, JsonObject force) {
+    public AppVersion(String version, String url, JsonObject force, String cnUpdateInfo, String enUpdateInfo) {
         this.version = version;
         this.url = url;
         this.force = force;
+        this.cnUpdateInfo = cnUpdateInfo;
+        this.enUpdateInfo = enUpdateInfo;
     }
 
     public String getVersion() {
@@ -37,6 +41,22 @@ public class AppVersion {
 
     public void setForce(JsonObject force) {
         this.force = force;
+    }
+
+    public String getCnUpdateInfo() {
+        return cnUpdateInfo;
+    }
+
+    public void setCnUpdateInfo(String cnUpdateInfo) {
+        this.cnUpdateInfo = cnUpdateInfo;
+    }
+
+    public String getEnUpdateInfo() {
+        return enUpdateInfo;
+    }
+
+    public void setEnUpdateInfo(String enUpdateInfo) {
+        this.enUpdateInfo = enUpdateInfo;
     }
 
     public boolean isForceUpdate(String currVersion){

@@ -251,7 +251,7 @@
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
-    <string name="unlock_wallet_dialog_cancel">CANCEL</string>
+    <string name="unlock_wallet_dialog_cancel">CANCEL</string>cy
     <string name="unlock_wallet_dialog_confirm">CONFIRM</string>
     <string name="unlock_wallet_dialog_error_invalid_password">Invalid password</string>
 
@@ -271,4 +271,7 @@
     <string name="dialog_withdraw_confirmation_gateway_fee">Gateway Fee:</string>
     <string name="dialog_withdraw_confirmation_transfer_fee">Transfer Fee:</string>
     <string name="dialog_withdraw_confirmation_receive_amount">Receive Amount:</string>
+
+    <!--Dialog Version Update -->
+    <string name="dialog_version_update">Version Update</string>
 </resources>

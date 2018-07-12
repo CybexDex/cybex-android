@@ -275,4 +275,7 @@
     <string name="dialog_withdraw_confirmation_gateway_fee">提现手续费:</string>
     <string name="dialog_withdraw_confirmation_transfer_fee">转账手续费:</string>
     <string name="dialog_withdraw_confirmation_receive_amount">到账数量:</string>
+
+    <!--Dialog Version Update -->
+    <string name="dialog_version_update">版本更新</string>
 </resources>

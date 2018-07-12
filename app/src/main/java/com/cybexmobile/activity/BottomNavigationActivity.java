@@ -1,9 +1,12 @@
 package com.cybexmobile.activity;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -19,6 +22,7 @@ import com.cybexmobile.BuildConfig;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AppVersion;
+import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.ExchangeFragment;
@@ -32,6 +36,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -52,6 +57,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private WatchlistFragment mWatchListFragment;
     private AccountFragment mAccountFragment;
     private ExchangeFragment mExchangeFragment;
+    private Context mContext;
 
     private String mAction;
     private WatchlistData mWatchlistData;
@@ -71,6 +77,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         EventBus.getDefault().register(this);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_nav_button);
@@ -144,49 +151,50 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     /**
      * 延迟加载fragment
+     *
      * @param resId
      */
     private void showFragment(int resId) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if(mWatchListFragment != null && mWatchListFragment.isAdded()){
+        if (mWatchListFragment != null && mWatchListFragment.isAdded()) {
             transaction.hide(mWatchListFragment);
         }
-        if(mExchangeFragment != null && mExchangeFragment.isAdded()){
+        if (mExchangeFragment != null && mExchangeFragment.isAdded()) {
             transaction.hide(mExchangeFragment);
         }
-        if(mAccountFragment != null && mAccountFragment.isAdded()){
+        if (mAccountFragment != null && mAccountFragment.isAdded()) {
             transaction.hide(mAccountFragment);
         }
         switch (resId) {
             case R.id.navigation_watchlist:
-                if(mWatchListFragment == null){
+                if (mWatchListFragment == null) {
                     mWatchListFragment = new WatchlistFragment();
                 }
-                if(mWatchListFragment.isAdded()){
+                if (mWatchListFragment.isAdded()) {
                     transaction.show(mWatchListFragment);
                 } else {
                     transaction.add(R.id.frame_container, mWatchListFragment, WatchlistFragment.class.getSimpleName());
                 }
                 break;
             case R.id.navigation_exchange:
-                if(mExchangeFragment == null){
+                if (mExchangeFragment == null) {
                     mExchangeFragment = ExchangeFragment.getInstance(mAction, mWatchlistData);
                 }
-                if(mExchangeFragment.isAdded()){
+                if (mExchangeFragment.isAdded()) {
                     transaction.show(mExchangeFragment);
                 } else {
-                  transaction.add(R.id.frame_container, mExchangeFragment, ExchangeFragment.class.getSimpleName());
+                    transaction.add(R.id.frame_container, mExchangeFragment, ExchangeFragment.class.getSimpleName());
                 }
                 break;
             case R.id.navigation_account:
-                if(mAccountFragment == null){
+                if (mAccountFragment == null) {
                     mAccountFragment = new AccountFragment();
                 }
-                if(mAccountFragment.isAdded()){
+                if (mAccountFragment.isAdded()) {
                     transaction.show(mAccountFragment);
                 } else {
-                     transaction.add(R.id.frame_container, mAccountFragment, AccountFragment.class.getSimpleName());
+                    transaction.add(R.id.frame_container, mAccountFragment, AccountFragment.class.getSimpleName());
                 }
                 break;
         }
@@ -200,9 +208,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             long currentTime = System.currentTimeMillis();
-            if(currentTime - mLastExitTime > 2 * 1000){
+            if (currentTime - mLastExitTime > 2 * 1000) {
                 mLastExitTime = currentTime;
                 Toast.makeText(this, getResources().getString(R.string.text_press_again_to_exit), Toast.LENGTH_SHORT).show();
             } else {
@@ -216,8 +224,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_BACK && resultCode == RESULT_CODE_BACK){
-            if(data != null){
+        if (requestCode == REQUEST_CODE_BACK && resultCode == RESULT_CODE_BACK) {
+            if (data != null) {
                 mAction = data.getStringExtra(INTENT_PARAM_ACTION);
                 mWatchlistData = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
             }
@@ -252,27 +260,40 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
                     @Override
                     public void onNext(AppVersion appVersion) {
-                        if(appVersion.compareVersion(BuildConfig.VERSION_NAME)){
-                            AlertDialog.Builder builder = new AlertDialog.Builder(BottomNavigationActivity.this)
-                                    .setCancelable(false)
-                                    .setTitle(R.string.setting_version_update_available)
-                                    .setMessage(R.string.setting_version_update_content)
-                                    .setPositiveButton(R.string.setting_version_update_now, new DialogInterface.OnClickListener() {
+                        if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
+                            if (appVersion.isForceUpdate(BuildConfig.VERSION_NAME)) {
+                                if (Locale.getDefault().getLanguage().equals("zh")) {
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
                                         @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(appVersion.getUrl()));
-                                            startActivity(browseIntent);
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
                                         }
                                     });
-                            if(!appVersion.isForceUpdate(BuildConfig.VERSION_NAME)){
-                                builder.setNegativeButton(R.string.setting_version_update_next_time, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
+                                } else {
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
+                                        }
+                                    });
+                                }
+                            } else {
+                                if (Locale.getDefault().getLanguage().equals("zh")) {
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
+                                        }
+                                    });
+                                } else {
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
+                                        }
+                                    });
+                                }
                             }
-                            builder.show();
                         }
                     }
 
@@ -286,6 +307,11 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
                     }
                 });
+    }
+
+    private void goToUpdate(String url) {
+        Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browseIntent);
     }
 
 }
