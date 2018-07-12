@@ -724,7 +724,7 @@ public class WebSocketService extends Service {
                         return cnyResponse.getPrices() != null ? cnyResponse.getPrices() : new ArrayList<>();
                     }
                 })
-                .retry(3)
+                .retry()
                 .onBackpressureDrop()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
