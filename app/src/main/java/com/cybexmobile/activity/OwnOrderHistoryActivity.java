@@ -115,7 +115,6 @@ public class OwnOrderHistoryActivity extends BaseActivity {
         if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
             return;
         }
-        mOrderHistoryItems.clear();
         OrderHistoryItem item = null;
         Iterator<AccountHistoryObject> it = accountHistoryObjects.iterator();
         //过滤非交易记录 op4为交易记录
@@ -127,6 +126,15 @@ public class OwnOrderHistoryActivity extends BaseActivity {
                 item = new OrderHistoryItem();
                 item.accountHistoryObject = accountHistoryObject;
                 item.orderHistory = gson.fromJson(accountHistoryObject.op.get(1), OrderHistory.class);
+                /**
+                 * fix bug:CYM-443
+                 * 交易历史时间字段值不停在闪动
+                 */
+                if(hasExist(item.orderHistory.order_id, mOrderHistoryItems)){
+                    item = null;
+                    it.remove();
+                    continue;
+                }
                 parseBuyOrSell(item, assetPairs);
                 //加载区块信息
                 item.callId = BitsharesWalletWraper.getInstance().get_call_id().getAndIncrement();
@@ -152,6 +160,15 @@ public class OwnOrderHistoryActivity extends BaseActivity {
                 break;
             }
         }
+    }
+
+    private boolean hasExist(String orderId, List<OrderHistoryItem> orderHistories){
+        for(OrderHistoryItem item : orderHistories){
+            if(item.orderHistory.order_id.equals(orderId)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void parseBuyOrSell(OrderHistoryItem item, Map<String, List<AssetsPair>> assetPairs){
