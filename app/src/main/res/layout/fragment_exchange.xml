@@ -23,15 +23,6 @@
             android:text="--/--"
             style="@style/font_white_dark_bold_large" />
 
-        <TextView
-            android:id="@+id/exchange_tv_order_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/activity_margin"
-            style="@style/font_gray_medium"
-            android:layout_gravity="end"
-            android:text="@string/menu_order_history"/>
-
     </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout

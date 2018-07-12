@@ -68,7 +68,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class ExchangeFragment extends BaseFragment implements View.OnClickListener, TabLayout.OnTabSelectedListener{
+public class ExchangeFragment extends BaseFragment implements View.OnClickListener, Toolbar.OnMenuItemClickListener, TabLayout.OnTabSelectedListener{
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
@@ -138,6 +138,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         View view = inflater.inflate(R.layout.fragment_exchange, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mToolbar.setNavigationOnClickListener(this);
+        mToolbar.setOnMenuItemClickListener(this);
+        mToolbar.inflateMenu(R.menu.menu_exchange);
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
         mTlExchange.addOnTabSelectedListener(this);
         return view;
@@ -288,10 +290,11 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
     }
 
-    @OnClick(R.id.exchange_tv_order_history)
-    public void onOrderHistoryClick(View view){
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
         Intent intent = new Intent(getContext(), OwnOrderHistoryActivity.class);
         getContext().startActivity(intent);
+        return false;
     }
 
     public void loadLimitOrderCreateFee(String assetId){
@@ -499,4 +502,5 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     public void onTabReselected(TabLayout.Tab tab) {
 
     }
+
 }

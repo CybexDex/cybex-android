@@ -8,6 +8,7 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="android:windowAnimationStyle">@style/Animation.Activity</item>
         <item name="actionMenuTextColor">@color/primary_color_grey</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.DayNight.Dialog">

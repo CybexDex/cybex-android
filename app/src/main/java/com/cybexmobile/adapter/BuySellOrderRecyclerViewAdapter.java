@@ -28,6 +28,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
     public static final int TYPE_BUY = 1;
     public static final int TYPE_SELL = 2;
 
+    public static final int MAX_ITEM = 5;
+
     private Context mContext;
     private List<Order> mOrders;
     private int mType;
@@ -52,37 +54,75 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if(mOrders.size() > position){
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(mListener != null){
-                        mListener.onItemClick(mOrders.get(position));
-                    }
+        /**
+         * fix bug:CYM-439
+         * 委单倒叙排序，从底部开始排
+         */
+        switch (mType){
+            case TYPE_BUY:
+                if(mOrders.size() > position){
+                    final Order order = mOrders.get(position);
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(mListener != null){
+                                mListener.onItemClick(order);
+                            }
+                        }
+                    });
+                    holder.mOrderPrice.setText(String.format(Locale.US, AssetUtil.formatPrice(order.price), order.price));
+                    holder.mOrderVolume.setText(MyUtils.getNumberKMGExpressionFormat(AssetUtil.formatAmount(order.price), order.quoteAmount));
+                    float percentage = (float) getPercentage(mOrders, position);
+                    LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
+                    LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
+                    holder.mColorBar.setLayoutParams(layoutParams_colorBar);
+                    holder.mColorBarNon.setLayoutParams(layoutParams_colorBarNon);
+                    holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
+                    holder.mColorBar.setBackgroundColor(mContext.getResources().getColor(R.color.fade_background_green));
+                } else {
+                    holder.itemView.setOnClickListener(null);
+                    holder.mOrderPrice.setText(mContext.getResources().getString(R.string.text_empty));
+                    holder.mOrderVolume.setText(mContext.getResources().getString(R.string.text_empty));
+                    holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
+                    holder.mColorBar.setBackgroundColor(Color.TRANSPARENT);
                 }
-            });
-            holder.mOrderPrice.setText(String.format(Locale.US, AssetUtil.formatPrice(mOrders.get(position).price), mOrders.get(position).price));
-            holder.mOrderVolume.setText(MyUtils.getNumberKMGExpressionFormat(AssetUtil.formatAmount(mOrders.get(position).price), mOrders.get(position).quoteAmount));
-            float percentage = (float) getPercentage(mOrders, position);
-            LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
-            LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
-            holder.mColorBar.setLayoutParams(layoutParams_colorBar);
-            holder.mColorBarNon.setLayoutParams(layoutParams_colorBarNon);
-            holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
-            holder.mColorBar.setBackgroundColor(mContext.getResources().getColor(mType == TYPE_BUY ? R.color.fade_background_green : R.color.fade_background_red));
-        } else {
-            holder.itemView.setOnClickListener(null);
-            holder.mOrderPrice.setText(mContext.getResources().getString(R.string.text_empty));
-            holder.mOrderVolume.setText(mContext.getResources().getString(R.string.text_empty));
-            holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
-            holder.mColorBar.setBackgroundColor(Color.TRANSPARENT);
+                break;
+            case TYPE_SELL:
+                if(mOrders.size() < MAX_ITEM - position){
+                    holder.itemView.setOnClickListener(null);
+                    holder.mOrderPrice.setText(mContext.getResources().getString(R.string.text_empty));
+                    holder.mOrderVolume.setText(mContext.getResources().getString(R.string.text_empty));
+                    holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
+                    holder.mColorBar.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    final Order order = mOrders.get(mOrders.size() - MAX_ITEM + position);
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(mListener != null){
+                                mListener.onItemClick(order);
+                            }
+                        }
+                    });
+                    holder.mOrderPrice.setText(String.format(Locale.US, AssetUtil.formatPrice(order.price), order.price));
+                    holder.mOrderVolume.setText(MyUtils.getNumberKMGExpressionFormat(AssetUtil.formatAmount(order.price), order.quoteAmount));
+                    float percentage = (float) getPercentage(mOrders, mOrders.size() - MAX_ITEM + position);
+                    LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
+                    LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
+                    holder.mColorBar.setLayoutParams(layoutParams_colorBar);
+                    holder.mColorBarNon.setLayoutParams(layoutParams_colorBarNon);
+                    holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
+                    holder.mColorBar.setBackgroundColor(mContext.getResources().getColor(R.color.fade_background_red));
+                }
+                break;
         }
+
         holder.mOrderPrice.setTextColor(mContext.getResources().getColor(mType == TYPE_BUY ? R.color.increasing_color : R.color.decreasing_color));
     }
 
     @Override
     public int getItemCount() {
-        return 5;
+        return MAX_ITEM;
     }
 
     @Override
