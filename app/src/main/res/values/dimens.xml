@@ -53,6 +53,8 @@
     <dimen name="layout_asset_operations_height">76dp</dimen>
     <dimen name="layout_portfolio_header_padding_bottom">8dp</dimen>
     <dimen name="text_line_spacing_extra">10dp</dimen>
+    <dimen name="gate_way_button_vertical_margin">6dp</dimen>
+    <dimen name="gate_way_button_horizontal_margin">12dp</dimen>
 
     <!-- Login Activity -->
     <dimen name="image_logo_margin_top_bottom">15dp</dimen>
