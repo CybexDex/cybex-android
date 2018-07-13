@@ -2,6 +2,7 @@ package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
+import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 import com.cybexmobile.utils.SSLSocketFactoryUtils;
 import com.squareup.picasso.NetworkPolicy;
@@ -26,14 +28,18 @@ import java.util.Locale;
 
 public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchListRecyclerViewAdapter.ViewHolder> {
 
-    private final List<WatchlistData> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private List<WatchlistData> mValues;
+    private OnListFragmentInteractionListener mListener;
     private Context mContext;
 
     public WatchListRecyclerViewAdapter(List<WatchlistData> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
         mContext = context;
+    }
+
+    public void setWatchlistData(List<WatchlistData> watchlistData){
+        mValues = watchlistData;
     }
 
     @Override
@@ -45,27 +51,18 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.mItem = mValues.get(position);
-        String precisinFormatter = MyUtils.getPrecisedFormatter(holder.mItem.getBasePrecision());
+        WatchlistData watchlistData = mValues.get(position);
+        String precisinFormatter = MyUtils.getPrecisedFormatter(watchlistData.getBasePrecision());
         NumberFormat formatter = new DecimalFormat("0.00");
-        holder.mItem = mValues.get(position);
-        if (mValues.get(position).getQuoteSymbol().contains("JADE")) {
-            holder.mQuoteCurrency.setText(mValues.get(position).getQuoteSymbol().substring(5, mValues.get(position).getQuoteSymbol().length()));
-        } else {
-            holder.mQuoteCurrency.setText(mValues.get(position).getQuoteSymbol());
-        }
-        if (mValues.get(position).getBaseSymbol().contains("JADE")) {
-            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBaseSymbol().substring(5, mValues.get(position).getBaseSymbol().length())));
-        } else {
-            holder.mBaseCurrency.setText(String.format("/%s", mValues.get(position).getBaseSymbol()));
-        }
-        holder.mVolume.setText(holder.mItem.getQuoteVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(mValues.get(position).getQuoteVol()));
-        holder.mCurrentPrice.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : String.format(precisinFormatter, holder.mItem.getCurrentPrice()));
+        holder.mQuoteCurrency.setText(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()));
+        holder.mBaseCurrency.setText(String.format("/%s", AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
+        holder.mVolume.setText(watchlistData.getQuoteVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(watchlistData.getQuoteVol()));
+        holder.mCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : String.format(precisinFormatter, watchlistData.getCurrentPrice()));
 
         double change = 0.f;
-        if (mValues.get(position).getChange() != null) {
+        if (watchlistData.getChange() != null) {
             try {
-                change = Double.parseDouble(mValues.get(position).getChange());
+                change = Double.parseDouble(watchlistData.getChange());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -78,29 +75,28 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         if (change > 0.f) {
             holder.mChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.increasing_color));
-
         } else if (change < 0.f) {
             holder.mChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change * 100))));
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.decreasing_color));
-
         } else {
-            holder.mChangeRate.setText(holder.mItem.getCurrentPrice() == 0.f ? "-" : "0.00%");
+            holder.mChangeRate.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : "0.00%");
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.no_change_color));
         }
-        loadImage(mValues.get(position).getQuoteId(), holder.mSymboleView);
+        loadImage(watchlistData.getQuoteId(), holder.mSymboleView);
         /**
          * fix bug: CYM-250
          * 保留两位小数点
          */
-        holder.mRmbPriceTextView.setText(holder.mItem.getRmbPrice() * holder.mItem.getCurrentPrice() == 0 ? "-" : String.format(Locale.US, "≈¥ %.2f", mValues.get(position).getRmbPrice() * mValues.get(position).getCurrentPrice()));
+        holder.mRmbPriceTextView.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
+                String.format(Locale.US, "≈¥ %.2f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem, mValues, position);
+                    mListener.onListFragmentInteraction(watchlistData, mValues, position);
                 }
             }
         });
@@ -112,8 +108,6 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        final View mView;
-        public WatchlistData mItem;
         TextView mBaseCurrency;
         TextView mQuoteCurrency;
         TextView mCurrentPrice;
@@ -124,7 +118,6 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
             mBaseCurrency = (TextView) view.findViewById(R.id.base_currency_watchlist);
             mQuoteCurrency = (TextView) view.findViewById(R.id.quote_currency_watchlist);
             mCurrentPrice = (TextView) view.findViewById(R.id.current_price_watchlist);

@@ -711,7 +711,7 @@ public class WebSocketService extends Service {
         if (mSubscription != null) {
             return;
         }
-        Flowable.interval(0, 5, TimeUnit.SECONDS)
+        Flowable.interval(0, 3, TimeUnit.SECONDS)
                 .flatMap(new Function<Long, Publisher<CnyResponse>>() {
                     @Override
                     public Publisher<CnyResponse> apply(Long aLong) {

@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.WatchlistSelectRecyclerViewAdapter;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -146,13 +147,12 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
         if (index != -1) {
             mWatchlists.set(index, data);
             //交易排序
-            Collections.sort(mWatchlists, new Comparator<WatchlistData>() {
-                @Override
-                public int compare(WatchlistData o1, WatchlistData o2) {
-                    return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
-                }
-            });
-            mWatchlistSelectRecyclerViewAdapter.notifyItemChanged(index);
+            Collections.sort(mWatchlists);
+            /**
+             * fix bug:CYM-444
+             * 交易对排序后不刷新单条Item，防止数据错乱
+             */
+            //mWatchlistSelectRecyclerViewAdapter.notifyItemChanged(index);
         }
 
     }
@@ -164,13 +164,17 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
         }
         mWatchlists.clear();
         mWatchlists.addAll(event.getData());
+        Collections.sort(mWatchlists);
         //交易排序
-        Collections.sort(mWatchlists, new Comparator<WatchlistData>() {
-            @Override
-            public int compare(WatchlistData o1, WatchlistData o2) {
-                return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
-            }
-        });
+        mWatchlistSelectRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateRmbPrice(Event.UpdateRmbPrice event) {
+        List<AssetRmbPrice> assetRmbPrices = event.getData();
+        if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
+            return;
+        }
         mWatchlistSelectRecyclerViewAdapter.notifyDataSetChanged();
     }
 

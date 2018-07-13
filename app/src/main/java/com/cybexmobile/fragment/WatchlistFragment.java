@@ -26,6 +26,8 @@ import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
 
 import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.utils.AssetUtil;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -123,13 +125,12 @@ public class WatchlistFragment extends BaseFragment {
         if (index != -1) {
             mWatchlistData.set(index, data);
             //交易排序
-            Collections.sort(mWatchlistData, new Comparator<WatchlistData>() {
-                @Override
-                public int compare(WatchlistData o1, WatchlistData o2) {
-                    return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
-                }
-            });
-            mWatchListRecyclerViewAdapter.notifyItemChanged(index);
+            Collections.sort(mWatchlistData);
+            /**
+             * fix bug:CYM-444
+             * 交易对排序后不刷新单条Item，防止数据错乱
+             */
+            //mWatchListRecyclerViewAdapter.notifyItemChanged(index);
         }
 
     }
@@ -148,12 +149,7 @@ public class WatchlistFragment extends BaseFragment {
         mWatchlistData.clear();
         mWatchlistData.addAll(event.getData());
         //交易排序
-        Collections.sort(mWatchlistData, new Comparator<WatchlistData>() {
-            @Override
-            public int compare(WatchlistData o1, WatchlistData o2) {
-                return o1.getBaseVol() > o2.getBaseVol() ? -1 : 1;
-            }
-        });
+        Collections.sort(mWatchlistData);
         mWatchListRecyclerViewAdapter.notifyDataSetChanged();
     }
 
@@ -177,11 +173,9 @@ public class WatchlistFragment extends BaseFragment {
             for (WatchlistData watchlistData : mWatchlistData) {
                 watchlistData.setRmbPrice(assetRmbPrice.getValue());
             }
-            mWatchListRecyclerViewAdapter.notifyDataSetChanged();
         }
-
+        mWatchListRecyclerViewAdapter.notifyDataSetChanged();
     }
-
 
     private void loadWatchlistData() {
         if (mWebSocketService != null && mIsViewCreated) {

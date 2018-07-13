@@ -1,5 +1,6 @@
 package com.cybexmobile.fragment.data;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -12,7 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class WatchlistData implements Serializable {
+public class WatchlistData implements Serializable, Comparable<WatchlistData> {
 
     private AssetObject baseAsset;
     private AssetObject quoteAsset;
@@ -293,4 +294,9 @@ public class WatchlistData implements Serializable {
 //        this.quoteVol = PriceUtil.getQuoteVolFromPriceList(historyPrices);
     }
 
+
+    @Override
+    public int compareTo(@NonNull WatchlistData o) {
+        return this.getBaseVol() > o.getBaseVol() ? -1 : 1;
+    }
 }
