@@ -70,8 +70,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                             }
                         }
                     });
-                    holder.mOrderPrice.setText(String.format(Locale.US, AssetUtil.formatPrice(order.price), order.price));
-                    holder.mOrderVolume.setText(MyUtils.getNumberKMGExpressionFormat(AssetUtil.formatAmount(order.price), order.quoteAmount));
+                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)));
+                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, AssetUtil.amountPrecision(order.price)));
                     float percentage = (float) getPercentage(mOrders, position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
                     LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
@@ -104,8 +104,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                             }
                         }
                     });
-                    holder.mOrderPrice.setText(String.format(Locale.US, AssetUtil.formatPrice(order.price), order.price));
-                    holder.mOrderVolume.setText(MyUtils.getNumberKMGExpressionFormat(AssetUtil.formatAmount(order.price), order.quoteAmount));
+                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)));
+                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, AssetUtil.amountPrecision(order.price)));
                     float percentage = (float) getPercentage(mOrders, mOrders.size() - MAX_ITEM + position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
                     LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);

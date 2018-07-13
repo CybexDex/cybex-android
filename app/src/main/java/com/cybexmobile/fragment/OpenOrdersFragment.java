@@ -247,16 +247,16 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             double amount = limitOrderObject.for_sale / Math.pow(10, base.precision);
             double price = (limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision)) / (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision));
             double total = amount * price;
-            priceStr = String.format(AssetUtil.formatPrice(price) + " %s", price, AssetUtil.parseSymbol(quote.symbol));
-            amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(base.symbol));
-            totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(quote.symbol));
+            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(quote.symbol));
+            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), AssetUtil.parseSymbol(base.symbol));
+            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(quote.symbol));
         } else {
             double amount = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision);
             double price = (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision)) / amount;
             double total = limitOrderObject.for_sale / Math.pow(10, base.precision);
-            priceStr = String.format(AssetUtil.formatPrice(price) + " %s", price, AssetUtil.parseSymbol(base.symbol));
-            amountStr = String.format(AssetUtil.formatAmount(price) + " %s", amount, AssetUtil.parseSymbol(quote.symbol));
-            totalStr = String.format(AssetUtil.formatPrice(price) + " %s", total, AssetUtil.parseSymbol(base.symbol));
+            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(base.symbol));
+            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), AssetUtil.parseSymbol(quote.symbol));
+            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(base.symbol));
         }
         if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
             AssetObject cybAsset = mWebSocketService.getAssetObject(ASSET_ID_CYB);

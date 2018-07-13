@@ -44,15 +44,13 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        String basePrecisionFormatter = MyUtils.getPrecisedFormatter(mBasePrecision);
-        String quotePrecisionFormatter = MyUtils.getPrecisedFormatter(mQuotePrecision);
         /**
          * fix bug:CYM-379
          * 精度不对
          */
-        holder.mPriceView.setText(String.format(Locale.US, AssetUtil.formatPrice(mValues.get(position).price), mValues.get(position).price));
-        holder.mBaseView.setText(String.format(Locale.US, basePrecisionFormatter, mValues.get(position).baseAmount));
-        holder.mQuoteView.setText(String.format(Locale.US, AssetUtil.formatAmount(mValues.get(position).price), mValues.get(position).quoteAmount));
+        holder.mPriceView.setText(AssetUtil.formatNumberRounding(mValues.get(position).price, AssetUtil.pricePrecision(mValues.get(position).price)));
+        holder.mBaseView.setText(AssetUtil.formatNumberRounding(mValues.get(position).baseAmount, mBasePrecision));
+        holder.mQuoteView.setText(AssetUtil.formatNumberRounding(mValues.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.get(position).price)));
         holder.mDateView.setText(mValues.get(position).date);
         if(mValues.get(position).showRed.equals("showRed")) {
             holder.mPriceView.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));

@@ -20,6 +20,7 @@ import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.market.MarketTicker;
+import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 import com.squareup.picasso.Picasso;
 
@@ -74,8 +75,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
 
             if (accountBalanceObject != null) {
                 double balanceAmount = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
-                String objectFormatter = MyUtils.getPrecisedFormatter(assetObject.precision);
-                holder.mAssetPrice.setText(String.format(Locale.US, objectFormatter, balanceAmount));
+                holder.mAssetPrice.setText(AssetUtil.formatNumberRounding(balanceAmount, assetObject.precision));
             } else {
                 holder.mAssetPrice.setText("");
             }

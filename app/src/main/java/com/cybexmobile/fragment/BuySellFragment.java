@@ -381,8 +381,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                 break;
         }
         //amount 不四舍五入
-        BigDecimal bigDecimal = new BigDecimal(amount).setScale(AssetUtil.amountPrecision(price), RoundingMode.DOWN);
-        mEtAssetAmount.setText(String.valueOf(bigDecimal.toString()));
+        mEtAssetAmount.setText(AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price), RoundingMode.DOWN));
     }
 
     @OnClick(R.id.buysell_btn_buy_sell)
@@ -437,8 +436,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             return;
         }
         mAssetTotal = price * amount;
-        mTvAssetTotal.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mWatchlistData.getBasePrecision()),
-                        mAssetTotal, AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
+        mTvAssetTotal.setText(String.format("%s %s", AssetUtil.formatNumberRounding(mAssetTotal, mWatchlistData.getBasePrecision()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
         //cyb余额不足扣手续费时 需要扣除手续费
 
         if(mCurrentAction.equals(ACTION_BUY)){
@@ -656,9 +654,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
      * @param basePrice
      */
     public void changeBuyOrSellPrice(double basePrice, double quoteAmount) {
-        mEtAssetPrice.setText(String.format(AssetUtil.formatPrice(basePrice), basePrice));
+        mEtAssetPrice.setText(AssetUtil.formatNumberRounding(basePrice, AssetUtil.pricePrecision(basePrice)));
         if(quoteAmount != 0){
-            mEtAssetAmount.setText(String.format(AssetUtil.formatAmount(basePrice), quoteAmount));
+            //mEtAssetAmount.setText(String.format(AssetUtil.formatAmount(basePrice), quoteAmount));
         }
     }
 

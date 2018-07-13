@@ -37,6 +37,7 @@ import com.cybexmobile.mychart.MyCombinedChart;
 import com.cybexmobile.mychart.MyHMarkerView;
 import com.cybexmobile.mychart.MyLeftMarkerView;
 import com.cybexmobile.R;
+import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 import com.cybexmobile.utils.PriceUtil;
 import com.cybexmobile.utils.VolFormatter;
@@ -315,16 +316,20 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         String trimmedBase = watchListData.getBaseSymbol().contains("JADE") ? watchListData.getBaseSymbol().substring(5, watchListData.getBaseSymbol().length()) : watchListData.getBaseSymbol();
         String trimmedQuote = watchListData.getQuoteSymbol().contains("JADE") ? watchListData.getQuoteSymbol().substring(5, watchListData.getQuoteSymbol().length()) : watchListData.getQuoteSymbol();
         mTvTitle.setText(String.format("%s/%s", trimmedQuote, trimmedBase));
-        String precisionFormatter = MyUtils.getPrecisedFormatter(watchListData.getBasePrecision());
-        mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" : String.format(precisionFormatter, watchListData.getCurrentPrice()));
-        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" : String.format("High :" + precisionFormatter, watchListData.getHigh()));
-        mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" : String.format("Low :" + precisionFormatter, watchListData.getLow()));
-        mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase, MyUtils.getNumberKMGExpressionFormat(watchListData.getBaseVol())));
+        watchListData.getBasePrecision();
+        mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" :
+                AssetUtil.formatNumberRounding(watchListData.getCurrentPrice(), watchListData.getBasePrecision()));
+        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" :
+                String.format("High :%s", AssetUtil.formatNumberRounding(watchListData.getHigh(), watchListData.getBasePrecision())));
+        mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" :
+                String.format("Low :%s", AssetUtil.formatNumberRounding(watchListData.getLow(), watchListData.getBasePrecision())));
+        mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase, AssetUtil.formatAmountToKMB(watchListData.getBaseVol(), 2)));
         double volQuote = 0.f;
         if (watchListData.getCurrentPrice() != 0.f) {
             volQuote = watchListData.getBaseVol() / watchListData.getCurrentPrice();
         }
-        mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s: %2$s", trimmedQuote, MyUtils.getNumberKMGExpressionFormat(watchListData.getQuoteVol())));
+        mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s: %2$s", trimmedQuote,
+                AssetUtil.formatAmountToKMB(watchListData.getQuoteVol(), 2)));
         double change = 0.f;
         if (watchListData.getChange() != null) {
             try {
@@ -954,54 +959,51 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void updateText(int index) {
-        String basePrecisionFormatter = MyUtils.getPrecisedFormatter(mBasePrecision);
         if (index >= 0 && index < kLineDatas.size()) {
             KLineBean klData = kLineDatas.get(index);
             double change = ((klData.close -klData.open) / klData.open) *100;
-            mTvOpenIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.open));
-            mTvCloseIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
-            mTvHighIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.high));
-            mTvLowIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.low));
+            mTvOpenIndex.setText(AssetUtil.formatNumberRounding(klData.open, mBasePrecision));
+            mTvCloseIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
+            mTvHighIndex.setText(AssetUtil.formatNumberRounding(klData.high, mBasePrecision));
+            mTvLowIndex.setText(AssetUtil.formatNumberRounding(klData.low, mBasePrecision));
             mTvChangeIndex.setText(String.format(Locale.US, "%.2f%%", change));
             if (change > 0) {
                 mTvChangeIndex.setTextColor(getResources().getColor(R.color.increasing_color));
             } else {
                 mTvChangeIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
             }
-            mTvPriceIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
+            mTvPriceIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
             mTvDateIndex.setText(klData.date);
         }
         int newIndex = index;
-        String precision = MyUtils.getPrecisedFormatter(mWatchListData.getBasePrecision());
         if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa5DataL().size())
-                mTvKMa5.setText(String.format(Locale.US, precision, mData.getMa5DataL().get(newIndex).getVal()));
+                mTvKMa5.setText(AssetUtil.formatNumberRounding(mData.getMa5DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
         if (null != mData.getMa10DataL() && mData.getMa10DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa10DataL().size())
-                mTvKMa10.setText(String.format(Locale.US, precision, mData.getMa10DataL().get(newIndex).getVal()));
+                mTvKMa10.setText(AssetUtil.formatNumberRounding(mData.getMa10DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
         if (null != mData.getMa20DataL() && mData.getMa20DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa20DataL().size())
-                mTvKMa20.setText(String.format(Locale.US, precision, mData.getMa20DataL().get(newIndex).getVal()));
+                mTvKMa20.setText(AssetUtil.formatNumberRounding(mData.getMa20DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
     }
 
     private void updateBOLL(int index) {
         int newIndex = index;
-        String precision = MyUtils.getPrecisedFormatter(mWatchListData.getBasePrecision());
         if (null != mData.getBollDataDN() && mData.getBollDataDN().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataDN().size())
-                mBOLLTv1.setText(String.format(Locale.US, precision, mData.getBollDataDN().get(newIndex).getVal()));
+                mBOLLTv1.setText(AssetUtil.formatNumberRounding(mData.getBollDataDN().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
 
         if (null != mData.getBollDataMB() && mData.getBollDataMB().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataMB().size())
-                mBOLLTv2.setText(String.format(Locale.US, precision, mData.getBollDataMB().get(newIndex).getVal()));
+                mBOLLTv2.setText(AssetUtil.formatNumberRounding(mData.getBollDataMB().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
         if (null != mData.getBollDataUP() && mData.getBollDataUP().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataUP().size())
-                mBOLLTv3.setText(String.format(Locale.US, precision, mData.getBollDataUP().get(newIndex).getVal()));
+                mBOLLTv3.setText(AssetUtil.formatNumberRounding(mData.getBollDataUP().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
     }
 

@@ -78,7 +78,7 @@ public class WatchlistSelectRecyclerViewAdapter extends RecyclerView.Adapter<Wat
             holder.mTvChange.setText(watchlist.getCurrentPrice() == 0.f ? "-" : "0.00%");
             holder.mTvChange.setTextColor(mContext.getResources().getColor(R.color.no_change_color));
         }
-        holder.mTvVolume.setText(watchlist.getQuoteVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(watchlist.getQuoteVol()));
+        holder.mTvVolume.setText(watchlist.getQuoteVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlist.getQuoteVol(), 2));
     }
 
     @Override

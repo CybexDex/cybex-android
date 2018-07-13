@@ -52,12 +52,11 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         WatchlistData watchlistData = mValues.get(position);
-        String precisinFormatter = MyUtils.getPrecisedFormatter(watchlistData.getBasePrecision());
         NumberFormat formatter = new DecimalFormat("0.00");
         holder.mQuoteCurrency.setText(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()));
         holder.mBaseCurrency.setText(String.format("/%s", AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
-        holder.mVolume.setText(watchlistData.getQuoteVol() == 0.f ? "-" : MyUtils.getNumberKMGExpressionFormat(watchlistData.getQuoteVol()));
-        holder.mCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : String.format(precisinFormatter, watchlistData.getCurrentPrice()));
+        holder.mVolume.setText(watchlistData.getQuoteVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getQuoteVol(), 2));
+        holder.mCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
 
         double change = 0.f;
         if (watchlistData.getChange() != null) {

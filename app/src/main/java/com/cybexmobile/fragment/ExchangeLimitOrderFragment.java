@@ -25,7 +25,6 @@ import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.Price;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.utils.AssetUtil;
-import com.cybexmobile.utils.MyUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,7 +35,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -256,7 +254,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                     double amount = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
                             / (double) limitOrder.sell_price.base.amount
                             / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    if(buyOrders.size() > 0 && String.format(Locale.US, AssetUtil.formatPrice(price), price).equals(String.format(Locale.US, AssetUtil.formatPrice(price), buyOrders.getLast().price))){
+                    if(buyOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)).equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
                         buyOrders.getLast().quoteAmount += amount;
                     } else {
                         order = new Order();
@@ -274,7 +272,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                      */
                     double price = priceToReal(limitOrder.sell_price);
                     double amount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    if(sellOrders.size() > 0 && String.format(Locale.US, AssetUtil.formatPrice(price), price).equals(String.format(Locale.US, AssetUtil.formatPrice(price), sellOrders.getLast().price))) {
+
+                    if(sellOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)).equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price)))) {
                         sellOrders.getLast().quoteAmount += amount;
                     } else {
                         order = new Order();
@@ -334,14 +333,16 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     }
 
     private void initQuotePriceText(){
-        mTvQuotePrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) : String.format(AssetUtil.formatPrice(mWatchlistData.getCurrentPrice()), mWatchlistData.getCurrentPrice()));
+        mTvQuotePrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) :
+                AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice(), AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())));
         String change = mWatchlistData.getChange();
         if(change == null){
             mTvQuotePrice.setTextColor(getResources().getColor(R.color.no_change_color));
         } else {
             mTvQuotePrice.setTextColor(getResources().getColor(Double.parseDouble(change) > 0 ? R.color.increasing_color : R.color.decreasing_color));
         }
-        mTvQuoteRmbPrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) : String.format(Locale.US, "≈¥ %.2f", mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice()));
+        mTvQuoteRmbPrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) :
+                "≈¥ " + AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice(), 2));
     }
 
     public void changeWatchlist(WatchlistData watchlist){

@@ -15,6 +15,7 @@ import com.cybexmobile.activity.OpenOrdersActivity;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 
 import java.util.ArrayList;
@@ -83,8 +84,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                 holder.itemView.setVisibility(View.VISIBLE);
                 String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
                 String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
-                String basePrecision = MyUtils.getPrecisedFormatter(base.precision);
-                String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
+                //String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
                 if (openOrderItem.isSell) {
                     /**
                      * fix bug:CYM-426
@@ -93,20 +93,20 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                     holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
                     holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
                     amount = data.for_sale / Math.pow(10, base.precision);
-                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), String.format(basePrecision, amount), baseSymbol));
+                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), AssetUtil.formatNumberRounding(amount, base.precision), baseSymbol));
                     holder.mQuoteTextView.setText(baseSymbol);
                     holder.mBaseTextView.setText(String.format("/%s", quoteSymbol));
                     price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
-                    holder.mPriceTextView.setText(String.format("%s %s", String.format(quotePrecision, price), quoteSymbol));
+                    holder.mPriceTextView.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, quote.precision), quoteSymbol));
                 } else {
                     holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
                     holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
                     amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), String.format(quotePrecision, amount), quoteSymbol));
+                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), AssetUtil.formatNumberRounding(amount, quote.precision), quoteSymbol));
                     holder.mQuoteTextView.setText(quoteSymbol);
                     holder.mBaseTextView.setText(String.format("/%s", baseSymbol));
                     price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
-                    holder.mPriceTextView.setText(String.format("%s %s", String.format(basePrecision, price), baseSymbol));
+                    holder.mPriceTextView.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, base.precision), baseSymbol));
                 }
             }
         }else{
