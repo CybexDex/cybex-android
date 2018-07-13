@@ -38,7 +38,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,11 +53,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Flowable;
-import io.reactivex.FlowableSubscriber;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Function4;
 import io.reactivex.schedulers.Schedulers;
@@ -71,7 +70,7 @@ public class WebSocketService extends Service {
 
     private volatile FullAccountObject mFullAccount;
 
-    private Subscription mSubscription;
+    private Disposable mDisposable;
 
     private List<String> mNames = new ArrayList<>();
 
@@ -108,7 +107,7 @@ public class WebSocketService extends Service {
         //连接websocket
         BitsharesWalletWraper.getInstance().build_connect();
         //每10秒获取一次币Rmb价格
-        getAssetsRmbPrice();
+        loadAssetsRmbPrice();
         return START_NOT_STICKY;
     }
 
@@ -126,14 +125,8 @@ public class WebSocketService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mSubscription != null){
-            mSubscription.cancel();
-            mSubscription = null;
-        }
-        if(mTimer != null){
-            mTimer.cancel();
-            mTimer = null;
-        }
+        cancelRMBSubscription();
+        cancelCallFullAccount();
         EventBus.getDefault().unregister(this);
     }
 
@@ -698,20 +691,29 @@ public class WebSocketService extends Service {
 
     public void cancelCallFullAccount() {
         mNames.clear();
-        mTimer.cancel();
+        if(mTimer != null){
+            mTimer.cancel();
+            mTimer = null;
+        }
     }
 
     public void cancelRMBSubscription() {
-        mSubscription.cancel();
-        mSubscription = null;
+        if(mDisposable != null && mDisposable.isDisposed()){
+            mDisposable.dispose();
+            mDisposable = null;
+        }
     }
 
-    public void getAssetsRmbPrice() {
+    public void loadAssetsRmbPrice() {
         //防止多次执行
-        if (mSubscription != null) {
+        if (mDisposable != null) {
             return;
         }
-        Flowable.interval(0, 3, TimeUnit.SECONDS)
+        /**
+         * fix bug:CYM-446
+         * 人民币价格请求失败立马重新请求
+         */
+        mDisposable = Flowable.interval(0, 3, TimeUnit.SECONDS)
                 .flatMap(new Function<Long, Publisher<CnyResponse>>() {
                     @Override
                     public Publisher<CnyResponse> apply(Long aLong) {
@@ -728,35 +730,22 @@ public class WebSocketService extends Service {
                 .onBackpressureDrop()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FlowableSubscriber<List<AssetRmbPrice>>() {
-
+                .subscribe(new Consumer<List<AssetRmbPrice>>() {
                     @Override
-                    public void onSubscribe(Subscription s) {
-                        Log.v(TAG, "getAssetsRmbPrice: onSubscribe");
-                        mSubscription = s;
-                        s.request(Long.MAX_VALUE);
+                    public void accept(List<AssetRmbPrice> assetRmbPrices) throws Exception {
+                        Log.v(TAG, "getAssetsRmbPrice: success");
+                        mAssetRmbPrices = assetRmbPrices;
+                        EventBus.getDefault().post(new Event.UpdateRmbPrice(assetRmbPrices));
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onNext(List<AssetRmbPrice> o) {
-                        Log.v(TAG, "getAssetsRmbPrice: onNext");
-                        mAssetRmbPrices = o;
-                        EventBus.getDefault().post(new Event.UpdateRmbPrice(o));
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.v(TAG, "getAssetsRmbPrice:" + t.getMessage());
-                        getAssetsRmbPrice();
-                        mSubscription = null;
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.v(TAG, "getAssetsRmbPrice: onComplete");
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.v(TAG, "getAssetsRmbPrice:" + throwable.getMessage());
+                        mDisposable.dispose();
+                        mDisposable = null;
+                        loadAssetsRmbPrice();
                     }
                 });
-
     }
 
     public List<AssetRmbPrice> getAssetRmbPrices() {

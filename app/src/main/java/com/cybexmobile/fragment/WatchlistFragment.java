@@ -292,8 +292,7 @@ public class WatchlistFragment extends BaseFragment {
         if(isAvailable){
             loadWatchlistData();
             mWebSocketService.subscribeAfterNetworkAvailable();
-            mWebSocketService.cancelRMBSubscription();
-            mWebSocketService.getAssetsRmbPrice();
+            mWebSocketService.loadAssetsRmbPrice();
         }
     }
 
