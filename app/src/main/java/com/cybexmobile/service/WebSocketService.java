@@ -747,6 +747,8 @@ public class WebSocketService extends Service {
                     @Override
                     public void onError(Throwable t) {
                         Log.v(TAG, "getAssetsRmbPrice:" + t.getMessage());
+                        getAssetsRmbPrice();
+                        mSubscription = null;
                     }
 
                     @Override
