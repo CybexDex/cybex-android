@@ -105,7 +105,7 @@ public class MyCombinedChart extends CombinedChart {
                     myBottomMarkerView.layout(0, 0, myBottomMarkerView.getMeasuredWidth(),
                             myBottomMarkerView.getMeasuredHeight());
 
-                    myBottomMarkerView.draw(canvas, pos[0] - myBottomMarkerView.getWidth() / 2, mViewPortHandler.contentBottom());
+                    myBottomMarkerView.draw(canvas, pos[0] - myBottomMarkerView.getWidth() / 2, mViewPortHandler.contentTop());
                 }
 
 

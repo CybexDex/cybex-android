@@ -16,6 +16,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -115,7 +116,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     @BindView(R.id.portfolio_title_layout)
     RelativeLayout mPortfolioTitleLayout;
     @BindView(R.id.account_gateway_button)
-    Button mGatewayButton;
+    CardView mGatewayButton;
 
     private Unbinder mUnbinder;
 

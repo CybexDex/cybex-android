@@ -724,6 +724,7 @@ public class WebSocketService extends Service {
                         return cnyResponse.getPrices() != null ? cnyResponse.getPrices() : new ArrayList<>();
                     }
                 })
+                .retry()
                 .onBackpressureDrop()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -746,6 +747,8 @@ public class WebSocketService extends Service {
                     @Override
                     public void onError(Throwable t) {
                         Log.v(TAG, "getAssetsRmbPrice:" + t.getMessage());
+                        getAssetsRmbPrice();
+                        mSubscription = null;
                     }
 
                     @Override

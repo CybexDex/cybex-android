@@ -957,11 +957,17 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         String basePrecisionFormatter = MyUtils.getPrecisedFormatter(mBasePrecision);
         if (index >= 0 && index < kLineDatas.size()) {
             KLineBean klData = kLineDatas.get(index);
+            double change = ((klData.close -klData.open) / klData.open) *100;
             mTvOpenIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.open));
             mTvCloseIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
             mTvHighIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.high));
             mTvLowIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.low));
-            mTvChangeIndex.setText(String.format(Locale.US, "%.2f%%", ((klData.close -klData.open) / klData.open) *100));
+            mTvChangeIndex.setText(String.format(Locale.US, "%.2f%%", change));
+            if (change > 0) {
+                mTvChangeIndex.setTextColor(getResources().getColor(R.color.increasing_color));
+            } else {
+                mTvChangeIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
+            }
             mTvPriceIndex.setText(String.format(Locale.US, basePrecisionFormatter, klData.close));
             mTvDateIndex.setText(klData.date);
         }
