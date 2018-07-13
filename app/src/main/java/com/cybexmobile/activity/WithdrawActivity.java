@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,6 +54,7 @@ import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
+import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.DecimalDigitsInputFilter;
 import com.cybexmobile.utils.SoftKeyBoardListener;
 
@@ -259,6 +261,11 @@ public class WithdrawActivity extends BaseActivity {
 
     @OnTextChanged(value = R.id.withdraw_amount, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onWithdrawAmountEditTextChanged(Editable editable) {
+        if (!editable.toString().isEmpty() && editable.toString().startsWith(".")) {
+            mWithdrawAmountEditText.setText("0" + editable.toString());
+            mWithdrawAmountEditText.setSelection(editable.length() + 1);
+            return;
+        }
         double amount = editable.toString().length() > 0 ? Double.valueOf(editable.toString()) : 0;
         if (amount > mAvailableAmount) {
             mErrorLinearLayout.setVisibility(View.VISIBLE);
