@@ -276,12 +276,23 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             if(view.getId() == R.id.buysell_et_asset_price){
                 String priceStr = mEtAssetPrice.getText().toString();
                 if(!TextUtils.isEmpty(priceStr)){
-                    mEtAssetPrice.setText(String.format(String.format(Locale.US, "%%.%df", AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(priceStr)));
+                    if(priceStr.equals(".")){
+                        mEtAssetPrice.setText("");
+                    } else {
+                        mEtAssetPrice.setText(String.format(String.format(Locale.US, "%%.%df",
+                                AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(priceStr)));
+                    }
                 }
             } else if (view.getId() == R.id.buysell_et_asset_amount){
                 String amountStr = mEtAssetAmount.getText().toString();
                 if(!TextUtils.isEmpty(amountStr)){
-                    mEtAssetAmount.setText(String.format(String.format(Locale.US, "%%.%df", AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(amountStr)));
+                    if(amountStr.equals(".")){
+                        mEtAssetAmount.setText("");
+                    } else {
+                        mEtAssetAmount.setText(String.format(String.format(Locale.US, "%%.%df",
+                                AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(amountStr)));
+                    }
+
                 }
             }
             return;
@@ -428,8 +439,20 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private void calculateTotal(){
         String assetPrice = mEtAssetPrice.getText().toString();
         String assetAmount = mEtAssetAmount.getText().toString();
-        double price = TextUtils.isEmpty(assetPrice) ? 0 : Double.parseDouble(assetPrice);
-        double amount = TextUtils.isEmpty(assetAmount) ? 0 : Double.parseDouble(assetAmount);
+        /**
+         * fix bug
+         * parseDouble错误
+         */
+        double price;
+        double amount;
+        try{
+            price = TextUtils.isEmpty(assetPrice) ? 0 : Double.parseDouble(assetPrice);
+            amount = TextUtils.isEmpty(assetAmount) ? 0 : Double.parseDouble(assetAmount);
+        } catch (Exception e){
+            e.printStackTrace();
+            price = 0;
+            amount = 0;
+        }
         if(price == 0 || amount == 0){
             mTvAssetTotal.setText("--");
             mTvNotEnough.setVisibility(View.INVISIBLE);
@@ -438,7 +461,6 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         mAssetTotal = price * amount;
         mTvAssetTotal.setText(String.format("%s %s", AssetUtil.formatNumberRounding(mAssetTotal, mWatchlistData.getBasePrecision()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
         //cyb余额不足扣手续费时 需要扣除手续费
-
         if(mCurrentAction.equals(ACTION_BUY)){
             /**
              * BigDecimal解决double * double精度问题
@@ -595,8 +617,14 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
     private void initOrResetRmbTextData(){
         String assetPrice = mEtAssetPrice.getText().toString();
-        mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ 0.00" :
-                String.format(Locale.US, "≈¥ %.2f", Double.parseDouble(assetPrice) * mAssetRmbPrice));
+        try {
+            mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ 0.00" :
+                    String.format(Locale.US, "≈¥ %.2f", Double.parseDouble(assetPrice) * mAssetRmbPrice));
+        } catch (Exception e){
+            e.printStackTrace();
+            mTvAssetRmbPrice.setText("≈¥ 0.00");
+        }
+
     }
 
     /**
