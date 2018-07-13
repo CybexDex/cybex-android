@@ -130,7 +130,11 @@ public class OwnOrderHistoryActivity extends BaseActivity {
                  * fix bug:CYM-443
                  * 交易历史时间字段值不停在闪动
                  */
-                if(hasExist(item.orderHistory.order_id, mOrderHistoryItems)){
+                /**
+                 * fix bug:CYM-447
+                 * 丢失成交历史记录
+                 */
+                if(hasExist(item.accountHistoryObject.id, mOrderHistoryItems)){
                     item = null;
                     it.remove();
                     continue;
@@ -162,9 +166,9 @@ public class OwnOrderHistoryActivity extends BaseActivity {
         }
     }
 
-    private boolean hasExist(String orderId, List<OrderHistoryItem> orderHistories){
+    private boolean hasExist(String id, List<OrderHistoryItem> orderHistories){
         for(OrderHistoryItem item : orderHistories){
-            if(item.orderHistory.order_id.equals(orderId)){
+            if(item.accountHistoryObject.id.equals(id)){
                 return true;
             }
         }
