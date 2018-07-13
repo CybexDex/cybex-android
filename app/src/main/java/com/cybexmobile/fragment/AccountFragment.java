@@ -127,9 +127,9 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     //所有委单
     private volatile List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
     private volatile double mTotalCyb;
-    private volatile double mLimitOrderTotalValue;
-    private volatile double mLimitOrderBuyTotalValue;
-    private volatile double mLimitOrderSellTotalValue;
+    private double mLimitOrderTotalValue;
+    private double mLimitOrderBuyTotalValue;
+    private double mLimitOrderSellTotalValue;
     private boolean mIsLoginIn;
     private String mName;
     private String mMembershipExpirationDate;
@@ -389,16 +389,19 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
                                 item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
                     }
                     for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
-                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString())) {
+                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString()) && !limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0")) {
                             mTotalCyb += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
                             mLimitOrderTotalValue += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
+                            Log.e("shefengTotalLimitTicker", String.valueOf((limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest));
                             if (checkIsSell(limitOrderObject.sell_price.base.asset_id.toString(), limitOrderObject.sell_price.quote.asset_id.toString(),mCompareSymbol)) {
                                 mLimitOrderSellTotalValue += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
                             } else {
                                 mLimitOrderBuyTotalValue += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
                             }
-                            break;
                         }
+                    }
+                    if (item.accountBalanceObject.balance == 0) {
+                        mAccountBalanceObjectItems.remove(item);
                     }
                     Message message = Message.obtain();
                     message.what = MESSAGE_WHAT_REFRESH_PORTFOLIO;
@@ -577,8 +580,18 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
                  * CYM-241
                  * 过滤为0的资产
                  */
-                if(balance.balance == 0){
-                    continue;
+                if(balance.balance == 0 ){
+                    boolean shouldHide = true;
+                    for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
+                        if (limitOrderObject.sell_price.base.asset_id.equals(balance.asset_type)) {
+                           shouldHide = false;
+                           break;
+                        }
+                    }
+                    if (shouldHide) {
+                        continue;
+                    }
+
                 }
                 AccountBalanceObjectItem item = new AccountBalanceObjectItem();
                 item.accountBalanceObject = balance;
@@ -588,25 +601,27 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
                 if(item.assetObject != null && balance.asset_type.toString().equals("1.3.0")){
                     calculateTotalCyb(balance.balance, item.assetObject.precision, 1);
                 }
+                mAccountBalanceObjectItems.add(item);
                 if (!balance.asset_type.toString().equals("1.3.0")) {
                     try {
                         BitsharesWalletWraper.getInstance().get_ticker("1.3.0", balance.asset_type.toString(), onTickerCallback);
                     } catch (NetworkStatusException e) {
                         e.printStackTrace();
                     }
-                }
-                for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
-                    if (limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0") && limitOrderObject.sell_price.base.asset_id.toString().equals(balance.asset_type.toString())) {
-                        mTotalCyb += limitOrderObject.for_sale / Math.pow(10, 5);
-                        mLimitOrderTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
-                        if (checkIsSell(limitOrderObject.sell_price.base.asset_id.toString(), limitOrderObject.sell_price.quote.asset_id.toString(), mCompareSymbol)) {
-                            mLimitOrderSellTotalValue +=limitOrderObject.for_sale / Math.pow(10, 5);
-                        } else {
-                            mLimitOrderBuyTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
+                } else {
+                    for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
+                        if (limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0")) {
+                            mTotalCyb += limitOrderObject.for_sale / Math.pow(10, 5);
+                            mLimitOrderTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
+                            Log.e("shefengLimitValue", String.valueOf(limitOrderObject.for_sale / Math.pow(10, 5)));
+                            if (checkIsSell(limitOrderObject.sell_price.base.asset_id.toString(), limitOrderObject.sell_price.quote.asset_id.toString(), mCompareSymbol)) {
+                                mLimitOrderSellTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
+                            } else {
+                                mLimitOrderBuyTotalValue += limitOrderObject.for_sale / Math.pow(10, 5);
+                            }
                         }
                     }
                 }
-                mAccountBalanceObjectItems.add(item);
             }
             mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
         }
