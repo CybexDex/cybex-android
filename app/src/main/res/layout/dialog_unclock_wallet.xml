@@ -35,6 +35,7 @@
                 android:imeOptions="actionUnspecified"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:inputType="textPassword"
                 android:textColor="@color/font_color_white_dark"
                 android:textColorHint="@color/text_hint_color"
                 android:textCursorDrawable="@null" />
