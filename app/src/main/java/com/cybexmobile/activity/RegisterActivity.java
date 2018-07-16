@@ -91,7 +91,7 @@ public class RegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         initViews();
-        mTimer.schedule(mTask, 0, 120 * 1000);
+        mTimer.schedule(mTask, 0, 90 * 1000);
         setViews();
         setOnClickListener();
     }
