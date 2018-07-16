@@ -1,8 +1,7 @@
 package com.cybexmobile.utils;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Locale;
+import java.text.NumberFormat;
 
 public class AssetUtil {
 
@@ -32,8 +31,11 @@ public class AssetUtil {
      * @return
      */
     public static String formatNumberRounding(double number, int scale, RoundingMode mode){
-        BigDecimal bigDecimal = new BigDecimal(number).setScale(scale, mode);
-        return bigDecimal.toString();
+        NumberFormat format = NumberFormat.getInstance();
+        format.setMinimumFractionDigits(scale);
+        format.setMaximumFractionDigits(scale);
+        format.setRoundingMode(mode);
+        return format.format(number);
     }
 
     /**
@@ -89,17 +91,27 @@ public class AssetUtil {
      * @return
      */
     public static String formatAmountToKMB(double number, int scale) {
+        NumberFormat format = NumberFormat.getInstance();
+        format.setRoundingMode(RoundingMode.DOWN);
         int e = (int) Math.floor(Math.log10(number));
         if(e < 3){
-            return new BigDecimal(number).setScale(scale, RoundingMode.DOWN).toString();
+            format.setMaximumFractionDigits(scale);
+            format.setMinimumFractionDigits(scale);
+            return format.format(number);
         }
         if (e < 6) {
-            return new BigDecimal(number / Math.pow(10, 3)).setScale(2, RoundingMode.DOWN).toString() + "K";
+            format.setMaximumFractionDigits(2);
+            format.setMinimumFractionDigits(2);
+            return format.format(number / Math.pow(10, 3)) + "K";
         }
         if(e < 9){
-            return new BigDecimal(number / Math.pow(10, 6)).setScale(2, RoundingMode.DOWN).toString() + "M";
+            format.setMaximumFractionDigits(2);
+            format.setMinimumFractionDigits(2);
+            return format.format(number / Math.pow(10, 6)) + "M";
         }
-        return new BigDecimal(number / Math.pow(10, 9)).setScale(2, RoundingMode.DOWN).toString() + "K";
+        format.setMaximumFractionDigits(2);
+        format.setMinimumFractionDigits(2);
+        return format.format(number / Math.pow(10, 9)) + "B";
     }
 
 }

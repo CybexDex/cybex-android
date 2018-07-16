@@ -260,15 +260,13 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
         }
         if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
             AssetObject cybAsset = mWebSocketService.getAssetObject(ASSET_ID_CYB);
-            feeStr = String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", cybAsset.precision),
-                    feeAmount.amount/Math.pow(10, cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
+            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount/Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
         } else {
             /**
              * fix bug:CYM-419
              * 未保留有效精度
              */
-            feeStr = String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", base.precision),
-                    feeAmount.amount / Math.pow(10, base.precision), AssetUtil.parseSymbol(base.symbol));
+            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, base.precision), base.precision), AssetUtil.parseSymbol(base.symbol));
         }
         CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(), !mCurrOpenOrderItem.isSell,
                 priceStr, amountStr, totalStr, feeStr,

@@ -270,7 +270,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     public void onFocusChanged(View view, boolean isFocused){
         /**
          * fix bug:CYM-400
-         * 软盘消失 输入框失去焦点 自动不全精度
+         * 软盘消失 输入框失去焦点 自动补全精度
          */
         if(!isFocused){
             if(view.getId() == R.id.buysell_et_asset_price){
@@ -539,8 +539,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         }
         mBalanceAvailable  = accountBalanceObject.balance/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
                 mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision());
-        mTvAssetAvailable.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s",
-                mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()), mBalanceAvailable,
+        mTvAssetAvailable.setText(String.format("%s %s",
+                AssetUtil.formatNumberRounding(mBalanceAvailable, mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
                 mCurrentAction.equals(ACTION_BUY) ? AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol()) : AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
     }
 
@@ -553,9 +553,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             return;
         }
         if(!mIsLoginIn){
-            mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                    String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
-                            mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision),
+            mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) : String.format("%s %s",
+                            AssetUtil.formatNumberRounding(mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), mCybAssetObject.precision),
                             AssetUtil.parseSymbol(mCybAssetObject.symbol)));
             return;
         }
@@ -570,17 +569,15 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
              */
             if(accountBalanceObject != null && accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//cyb足够
                 mIsCybBalanceEnough = true;
-                mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                        String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
-                                mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision),
-                                AssetUtil.parseSymbol(mCybAssetObject.symbol)));
+                mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) : String.format("%s %s",
+                        AssetUtil.formatNumberRounding(mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), mCybAssetObject.precision),
+                        AssetUtil.parseSymbol(mCybAssetObject.symbol)));
             } else {//cyb不足
                 mIsCybBalanceEnough = false;
                 if((mCurrentAction.equals(ACTION_BUY) && mWatchlistData.getBaseId().equals(ASSET_ID_CYB)) ||
                         (mCurrentAction.equals(ACTION_SELL) && mWatchlistData.getQuoteId().equals(ASSET_ID_CYB))){
-                    mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                            String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
-                                    mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision),
+                    mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) : String.format("%s %s",
+                                    AssetUtil.formatNumberRounding(mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), mCybAssetObject.precision),
                                     AssetUtil.parseSymbol(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseSymbol() : mWatchlistData.getQuoteSymbol())));
                 } else {
                     ((ExchangeFragment)getParentFragment()).loadLimitOrderCreateFee(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseId() : mWatchlistData.getQuoteId());
@@ -590,14 +587,15 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             if((mCurrentAction.equals(ACTION_BUY) && mWatchlistData.getBaseId().equals(mBaseOrQuoteExchangeFee.asset_id)) ||
                     (mCurrentAction.equals(ACTION_SELL) && mWatchlistData.getQuoteId().equals(mBaseOrQuoteExchangeFee.asset_id))){
                 if(accountBalanceObject != null && accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//交易对余额足够
-                    mTvExchangeFree.setText(String.format(Locale.US, String.format(Locale.US, "%%.%df %%s",
-                            mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
-                            mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
-                                    mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()), AssetUtil.parseSymbol(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseSymbol() : mWatchlistData.getQuoteSymbol())));
+                    mTvExchangeFree.setText(String.format("%s %s",
+                            AssetUtil.formatNumberRounding(mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
+                                    mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
+                                    mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
+                            AssetUtil.parseSymbol(mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getBaseSymbol() : mWatchlistData.getQuoteSymbol())));
                 } else {//交易对余额不足 显示cyb手续费
-                    mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) :
-                            String.format(Locale.US, String.format(Locale.US, "%%.%df %%s", mCybAssetObject.precision),
-                                    mCybExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), AssetUtil.parseSymbol(mCybAssetObject.symbol)));
+                    mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) : String.format("%s %s",
+                                    AssetUtil.formatNumberRounding(mCybExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), mCybAssetObject.precision),
+                                    AssetUtil.parseSymbol(mCybAssetObject.symbol)));
                 }
             }
         }

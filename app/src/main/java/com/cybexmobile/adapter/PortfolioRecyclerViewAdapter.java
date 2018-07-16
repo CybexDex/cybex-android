@@ -13,6 +13,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.market.MarketTicker;
+import com.cybexmobile.utils.AssetUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -67,9 +68,9 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<Portfolio
                 priceCyb = marketTicker.latest;
             }
             double price = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
-            holder.mAssetAmount.setText(String.format(Locale.US, "%.5f", price));
-            holder.mAssetCybAmount.setText(price * priceCyb == 0 ? "- CYB" : String.format(Locale.US, "%.5f CYB", price * priceCyb));
-            holder.mAssetRmb.setText(price * priceCyb == 0 ? "-" : String.format(Locale.US, "≈¥%.2f", item.cybPrice * price *priceCyb));
+            holder.mAssetAmount.setText(AssetUtil.formatNumberRounding(price, 5));
+            holder.mAssetCybAmount.setText(price * priceCyb == 0 ? "- CYB" : String.format("%s CYB", AssetUtil.formatNumberRounding(price * priceCyb, 5)));
+            holder.mAssetRmb.setText(price * priceCyb == 0 ? "-" : "≈¥" + AssetUtil.formatNumberRounding(item.cybPrice * price *priceCyb, 2));
         }
 
     }
