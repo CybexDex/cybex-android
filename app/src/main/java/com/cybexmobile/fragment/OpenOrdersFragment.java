@@ -414,7 +414,12 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
     }
 
     private void notifyRecyclerView(){
+        /**
+         * fix bug
+         * 最后一笔挂单撤销之后 列表没有刷新
+         */
         if(mOpenOrderItems == null || mOpenOrderItems.size() == 0){
+            mOpenOrderRecyclerViewAdapter.setOpenOrderItems(new ArrayList<>());
             return;
         }
         if(mWatchlistData == null){
@@ -435,10 +440,10 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
     }
 
     private void parseOpenOrderItems(List<LimitOrderObject> limitOrderObjects){
+        mOpenOrderItems.clear();
         if(limitOrderObjects == null || limitOrderObjects.size() == 0){
             return;
         }
-        mOpenOrderItems.clear();
         for (LimitOrderObject limitOrderObject : limitOrderObjects) {
             String baseId = limitOrderObject.sell_price.base.asset_id.toString();
             String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
