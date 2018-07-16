@@ -57,11 +57,6 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
             mAssetPrice = view.findViewById(R.id.gate_way_asset_price);
             mAssetIcon = view.findViewById(R.id.gate_way_asset_icon);
             mAssetArrow = view.findViewById(R.id.gate_way_asset_arrow);
-            if (PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("night_mode", false)) {
-                mAssetArrow.setImageResource(R.drawable.ic_arrow_dark_24_px);
-            } else {
-                mAssetArrow.setImageResource(R.drawable.ic_arrow_light_24px);
-            }
         }
     }
 
