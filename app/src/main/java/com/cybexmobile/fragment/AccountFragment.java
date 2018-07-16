@@ -149,6 +149,8 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     private static final String PARAM_MEMBERSHIP_DATE = "membership_date";
     private static final String PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS = "account_balance_object_items";
 
+    private int mRefreshCount;//50秒刷新一次界面
+
     public static AccountFragment newInstance(String param1, String param2) {
         AccountFragment fragment = new AccountFragment();
         Bundle args = new Bundle();
@@ -342,7 +344,10 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
-        loadData(event.getFullAccount());
+        mRefreshCount++;
+        if(mRefreshCount == 1 || mRefreshCount % 10 == 0){
+            loadData(event.getFullAccount());
+        }
     }
 
     private Handler mHandler = new Handler(Looper.getMainLooper()){
