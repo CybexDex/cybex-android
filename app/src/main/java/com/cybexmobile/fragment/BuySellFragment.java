@@ -567,7 +567,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
              * fix bug:CYM-380
              * 手续费显示错乱
              */
-            if(accountBalanceObject != null && accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//cyb足够
+            if(accountBalanceObject != null && accountBalanceObject.balance >= mBaseOrQuoteExchangeFee.amount){//cyb足够
                 mIsCybBalanceEnough = true;
                 mTvExchangeFree.setText(mCybAssetObject == null ? getResources().getString(R.string.text_empty) : String.format("%s %s",
                         AssetUtil.formatNumberRounding(mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCybAssetObject.precision), mCybAssetObject.precision),
@@ -586,7 +586,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         } else {
             if((mCurrentAction.equals(ACTION_BUY) && mWatchlistData.getBaseId().equals(mBaseOrQuoteExchangeFee.asset_id)) ||
                     (mCurrentAction.equals(ACTION_SELL) && mWatchlistData.getQuoteId().equals(mBaseOrQuoteExchangeFee.asset_id))){
-                if(accountBalanceObject != null && accountBalanceObject.balance > mBaseOrQuoteExchangeFee.amount){//交易对余额足够
+                if(accountBalanceObject != null && accountBalanceObject.balance >= mBaseOrQuoteExchangeFee.amount){//交易对余额足够
                     mTvExchangeFree.setText(String.format("%s %s",
                             AssetUtil.formatNumberRounding(mBaseOrQuoteExchangeFee.amount/Math.pow(10, mCurrentAction.equals(ACTION_BUY) ?
                                     mWatchlistData.getBasePrecision() : mWatchlistData.getQuotePrecision()),
