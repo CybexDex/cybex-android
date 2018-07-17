@@ -277,6 +277,13 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+        /**
+         * fix bug:CYM-454
+         * WatchlistData为空不能跳转，防止MarketsActivity crash
+         */
+        if(mWatchlistData == null){
+            return;
+        }
         Intent intent = new Intent(getContext(), MarketsActivity.class);
         intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
         intent.putExtra(INTENT_PARAM_FROM, ExchangeLimitOrderFragment.class.getSimpleName());
