@@ -136,6 +136,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public Resources getResources() {
+        /**
+         * fix bug:CYM-455
+         * app字体大小不跟随系统改变
+         */
+        Resources resources = super.getResources();
+        if(resources.getConfiguration().fontScale != 1){
+            Configuration newConf = new Configuration();
+            newConf.setToDefaults();
+            resources.updateConfiguration(newConf, resources.getDisplayMetrics());
+        }
+        return resources;
+    }
+
     protected final void showHintDialog(@StringRes int messageId){
         if(mHintDialog == null){
             mHintDialog = new AlertDialog.Builder(this, R.style.LoadDialog)
