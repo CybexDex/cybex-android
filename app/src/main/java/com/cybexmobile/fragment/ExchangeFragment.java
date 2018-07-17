@@ -23,7 +23,6 @@ import android.widget.CheckBox;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.MarketsActivity;
 import com.cybexmobile.activity.OwnOrderHistoryActivity;
-import com.cybexmobile.activity.WatchlistSelectActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.AssetRmbPrice;
@@ -46,7 +45,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
@@ -68,7 +66,8 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class ExchangeFragment extends BaseFragment implements View.OnClickListener, Toolbar.OnMenuItemClickListener, TabLayout.OnTabSelectedListener{
+public class ExchangeFragment extends BaseFragment implements View.OnClickListener,
+        Toolbar.OnMenuItemClickListener, TabLayout.OnTabSelectedListener, WatchlistSelectFragment.OnWatchlistSelectedListener{
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
@@ -292,9 +291,13 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @OnClick(R.id.cb_title)
     public void onTitleClick(View view){
-        Intent intent = new Intent(getContext(), WatchlistSelectActivity.class);
-        intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
-        startActivityForResult(intent, REQUEST_CODE_SELECT_WATCHLIST);
+        WatchlistSelectFragment fragment = new WatchlistSelectFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_PARAM_WATCHLIST, mWatchlistData);
+        fragment.setArguments(bundle);
+        fragment.setTargetFragment(this, REQUEST_CODE_SELECT_WATCHLIST);
+        fragment.show(getFragmentManager(), WatchlistSelectFragment.class.getSimpleName());
+        fragment.setOnWatchlistSelectListener(this);
     }
 
     @Override
@@ -510,4 +513,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     }
 
+
+    @Override
+    public void onWatchlistSelectDismiss() {
+        mCbTitle.setChecked(false);
+    }
 }

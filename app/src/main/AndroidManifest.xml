@@ -78,10 +78,6 @@
             android:name=".activity.OwnOrderHistoryActivity"
             android:screenOrientation="portrait"
             android:label="" />
-        <activity android:name=".activity.WatchlistSelectActivity"
-            android:theme="@style/AppTheme.Dialog"
-            android:label="" />
-
         <activity
             android:name=".activity.DepositActivity"
             android:label=""

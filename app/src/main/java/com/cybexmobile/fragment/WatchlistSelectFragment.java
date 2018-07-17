@@ -1,26 +1,28 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.fragment;
 
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.WatchlistSelectRecyclerViewAdapter;
-import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -34,17 +36,18 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 
+import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class WatchlistSelectActivity extends BaseActivity implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener{
+public class WatchlistSelectFragment extends DialogFragment implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener{
 
     @BindView(R.id.activity_watchlist_select_rv_watchlist)
     RecyclerView mRvWatchlist;
@@ -64,57 +67,76 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
 
     private String mCurrentBaseAssetId = Constant.ASSET_ID_ETH;
 
+    private OnWatchlistSelectedListener mListener;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_watchlist_select);
-        ButterKnife.bind(this);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_Dialog);
         EventBus.getDefault().register(this);
-        mCurrWatchlist = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
-        initWindow();
-        initRadioButton();
-        mRvWatchlist.setLayoutManager(new LinearLayoutManager(this));
+        mCurrWatchlist = (WatchlistData) getArguments().getSerializable(INTENT_PARAM_WATCHLIST);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Window window = getDialog().getWindow();
+        View view = inflater.inflate(R.layout.activity_watchlist_select, window.findViewById(android.R.id.content), false);
+        WindowManager manager = window.getWindowManager();
+        Display display = manager.getDefaultDisplay();
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = (int)(display.getHeight() * 0.7);
+        params.gravity = Gravity.TOP;
+        window.setAttributes(params);
+        ButterKnife.bind(this, view);
+        mRvWatchlist.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvWatchlist.setItemAnimator(null);
-        mWatchlistSelectRecyclerViewAdapter = new WatchlistSelectRecyclerViewAdapter(this, mCurrWatchlist, mWatchlists);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mWatchlistSelectRecyclerViewAdapter = new WatchlistSelectRecyclerViewAdapter(getContext(), mCurrWatchlist, mWatchlists);
         mWatchlistSelectRecyclerViewAdapter.setOnItemClickListener(this);
         mRvWatchlist.setAdapter(mWatchlistSelectRecyclerViewAdapter);
-        Intent intent = new Intent(this, WebSocketService.class);
-        bindService(intent, mConnection, BIND_AUTO_CREATE);
+        initRadioButton();
+        Intent intent = new Intent(getContext(), WebSocketService.class);
+        getContext().bindService(intent, mConnection, BIND_AUTO_CREATE);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        unbindService(mConnection);
+        getContext().unbindService(mConnection);
     }
 
     @Override
-    public void onNetWorkStateChanged(boolean isAvailable) {
-
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if(mListener != null){
+            mListener.onWatchlistSelectDismiss();
+        }
     }
 
     @Override
     public void onItemClick(WatchlistData watchlist) {
         Intent intent = new Intent();
         intent.putExtra(INTENT_PARAM_WATCHLIST, watchlist);
-        setResult(RESULT_CODE_SELECTED_WATCHLIST, intent);
-        finish();
+        getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_CODE_SELECTED_WATCHLIST, intent);
+        this.dismiss();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
+    @OnClick(R.id.toolbar)
+    public void onToolBarClick(View view){
+        this.dismiss();
     }
 
     @OnCheckedChanged({R.id.activity_watchlist_select_rb_eth, R.id.activity_watchlist_select_rb_cyb,
@@ -192,15 +214,6 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
         }
     };
 
-    private void initWindow(){
-        WindowManager windowManager = getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = (int)(display.getHeight() * 0.7);
-        params.gravity = Gravity.TOP;
-    }
-
     private void initRadioButton(){
         if(mCurrWatchlist == null){
             return;
@@ -227,5 +240,13 @@ public class WatchlistSelectActivity extends BaseActivity implements WatchlistSe
                 mCurrentBaseAssetId = Constant.ASSET_ID_BTC;
                 break;
         }
+    }
+
+    public void setOnWatchlistSelectListener(OnWatchlistSelectedListener listener){
+        mListener = listener;
+    }
+
+    public interface OnWatchlistSelectedListener{
+        void onWatchlistSelectDismiss();
     }
 }

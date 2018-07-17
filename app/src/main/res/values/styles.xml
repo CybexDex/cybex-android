@@ -20,7 +20,7 @@
         <item name="android:windowIsFloating">true</item><!-- 窗体是否浮动 -->
         <item name="android:backgroundDimEnabled">false</item><!-- 背景是否昏暗 -->
         <item name="android:windowAnimationStyle">@style/Animation.Activity.Dialog</item>
-        <!--<item name="android:backgroundDimAmount">0.6</item>&lt;!&ndash; 昏暗数量 &ndash;&gt;-->
+        <!--<item name="android:backgroundDimAmount">0.6</item>-->
     </style>
 
     <!-- coin pair style -->
@@ -209,8 +209,8 @@
 
     <!-- Activity.Dialog Open Or Close Animation -->
     <style name="Animation.Activity.Dialog" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@anim/in_from_top</item>
-        <item name="android:activityCloseExitAnimation">@anim/out_to_top</item>
+        <item name="android:windowEnterAnimation">@anim/in_from_top</item>
+        <item name="android:windowExitAnimation">@anim/out_to_top</item>
     </style>
 
     <!-- Load Dialog Style -->

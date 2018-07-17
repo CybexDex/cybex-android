@@ -3,132 +3,148 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="80dp"
-        android:layout_height="match_parent"
-        android:background="@color/bg_watchlist_item_focus_color"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_small"
-            android:paddingTop="@dimen/activity_padding"
-            android:paddingBottom="@dimen/activity_padding"
-            android:gravity="center"
-            android:text="@string/text_markets"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey">
 
-        <RadioGroup
-            android:id="@+id/activity_watchlist_select_rg_base_asset"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RadioButton
-                android:id="@+id/activity_watchlist_select_rb_eth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
-                android:checked="true"
-                android:button="@null"
-                android:gravity="center"
-                style="@style/font_gray_medium"
-                android:textColor="@color/bottom_nav_button_selector"
-                android:tag="1.3.2"
-                android:text="ETH"/>
-
-            <RadioButton
-                android:id="@+id/activity_watchlist_select_rb_cyb"
-                android:layout_width="match_parent"
-                style="@style/font_gray_medium"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
-                android:button="@null"
-                android:gravity="center"
-                android:tag="1.3.0"
-                android:text="CYB"
-                android:textColor="@color/bottom_nav_button_selector"/>
-            <RadioButton
-                android:id="@+id/activity_watchlist_select_rb_usdt"
-                android:layout_width="match_parent"
-                style="@style/font_gray_medium"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
-                android:button="@null"
-                android:gravity="center"
-                android:textColor="@color/bottom_nav_button_selector"
-                android:tag="1.3.27"
-                android:text="USDT"/>
-            <RadioButton
-                android:id="@+id/activity_watchlist_select_rb_btc"
-                android:layout_width="match_parent"
-                style="@style/font_gray_medium"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
-                android:button="@null"
-                android:gravity="center"
-                android:textColor="@color/bottom_nav_button_selector"
-                android:tag="1.3.3"
-                android:text="BTC"/>
-
-        </RadioGroup>
-
-    </LinearLayout>
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/itemBackground"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:background="@color/bg_watchlist_item_focus_color"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_small"
+                android:paddingTop="@dimen/activity_padding"
+                android:paddingBottom="@dimen/activity_padding"
+                android:gravity="center"
+                android:text="@string/text_markets"/>
 
-            <TextView
-                android:layout_width="0dp"
+            <RadioGroup
+                android:id="@+id/activity_watchlist_select_rg_base_asset"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
-                style="@style/font_gray_small"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:text="@string/text_paris"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
-                style="@style/font_gray_small"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:text="@string/watch_list_vibration_range_title"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
-                style="@style/font_gray_small"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:text="@string/text_24_hour_volume"/>
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/activity_watchlist_select_rb_eth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    android:checked="true"
+                    android:button="@null"
+                    android:gravity="center"
+                    style="@style/font_gray_medium"
+                    android:textColor="@color/bottom_nav_button_selector"
+                    android:tag="1.3.2"
+                    android:text="ETH"/>
+
+                <RadioButton
+                    android:id="@+id/activity_watchlist_select_rb_cyb"
+                    android:layout_width="match_parent"
+                    style="@style/font_gray_medium"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:tag="1.3.0"
+                    android:text="CYB"
+                    android:textColor="@color/bottom_nav_button_selector"/>
+                <RadioButton
+                    android:id="@+id/activity_watchlist_select_rb_usdt"
+                    android:layout_width="match_parent"
+                    style="@style/font_gray_medium"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:textColor="@color/bottom_nav_button_selector"
+                    android:tag="1.3.27"
+                    android:text="USDT"/>
+                <RadioButton
+                    android:id="@+id/activity_watchlist_select_rb_btc"
+                    android:layout_width="match_parent"
+                    style="@style/font_gray_medium"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:textColor="@color/bottom_nav_button_selector"
+                    android:tag="1.3.3"
+                    android:text="BTC"/>
+
+            </RadioGroup>
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/activity_watchlist_select_rv_watchlist"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_watchlist_select">
+            android:background="@color/itemBackground"
+            android:orientation="vertical">
 
-        </android.support.v7.widget.RecyclerView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    style="@style/font_gray_small"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="@string/text_paris"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    style="@style/font_gray_small"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="@string/watch_list_vibration_range_title"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    style="@style/font_gray_small"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="@string/text_24_hour_volume"/>
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/activity_watchlist_select_rv_watchlist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/item_watchlist_select">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
 
     </LinearLayout>
-
 
 </LinearLayout>
