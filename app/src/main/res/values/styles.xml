@@ -11,6 +11,10 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <style name="AppTheme.FullScreen">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowFrame">@null</item><!-- 移除边框 -->
         <item name="android:windowNoTitle">true</item><!-- 去除顶部标题栏 -->
