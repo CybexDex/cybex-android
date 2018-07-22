@@ -17,6 +17,21 @@ import java.util.List;
 
 public class Event {
 
+    public static class IsOnBackground {
+        public boolean isOnBackground;
+        public IsOnBackground(boolean isOnBackground) {
+            this.isOnBackground = isOnBackground;
+        }
+
+        public boolean isOnBackground() {
+            return isOnBackground;
+        }
+
+        public void setOnBackground(boolean onBackground) {
+            isOnBackground = onBackground;
+        }
+    }
+
     //更新币价格
     public static class UpdateRmbPrice{
         private List<AssetRmbPrice> data;

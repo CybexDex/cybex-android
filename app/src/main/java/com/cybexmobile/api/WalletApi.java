@@ -191,10 +191,10 @@ public class WalletApi {
 
     public int reset() {
         mWebSocketClient.close();
-        mWalletObject = null;
-        mbLogin = false;
-        mHashMapPub2Priv.clear();
-        mCheckSum = new Sha512Object();
+//        mWalletObject = null;
+//        mbLogin = false;
+//        mHashMapPub2Priv.clear();
+//        mCheckSum = new Sha512Object();
 
         return 0;
     }
