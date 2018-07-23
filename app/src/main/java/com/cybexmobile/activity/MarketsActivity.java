@@ -97,7 +97,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected TextView mCurrentPriceView, mHighPriceView, mLowPriceView, mChangeRateView, mVolumeBaseView, mVolumeQuoteView, mDuration5mView, mDuration1hView, mDuration1dView;
     protected TextView mTvHighIndex, mTvLowIndex, mTvOpenIndex, mTvCloseIndex, mTvChangeIndex, mTvPriceIndex, mTvDateIndex;
     protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart, mIndexHeaderLayout;
-    protected ImageView mChangeSymbol;
     private Button mBtnBuy, mBtnSell;
     private LinearLayout mLayoutFooter;
 
@@ -254,7 +253,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mDuration1dView = (TextView) findViewById(R.id.market_page_1_day);
         mViewPager = (ViewPager) findViewById(R.id.market_page_view_pager);
         mTabLayout = (TabLayout) findViewById(R.id.market_page_tab_layout);
-        mChangeSymbol = findViewById(R.id.market_page_change_symbol);
 
         mTvKMa5 = (TextView) findViewById(R.id.view_kline_tv_ma5);
         mTvKMa10 = (TextView) findViewById(R.id.view_kline_tv_ma10);
@@ -341,11 +339,11 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         if (change > 0.f) {
             mChangeRateView.setText(String.format(Locale.US, "+%.2f%%", change * 100));
             mChangeRateView.setTextColor(getResources().getColor(R.color.increasing_color));
-            mChangeSymbol.setBackground(getResources().getDrawable(R.drawable.ic_arrow_drop_up_24px));
+            mChangeRateView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_drop_up_24px, 0, 0, 0);
         } else if (change < 0.f) {
             mChangeRateView.setTextColor(getResources().getColor(R.color.decreasing_color));
             mChangeRateView.setText(String.format(Locale.US, "%.2f%%", change * 100));
-            mChangeSymbol.setBackground(getResources().getDrawable(R.drawable.ic_arrow_drop_down_24px));
+            mChangeRateView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_drop_down_24px, 0, 0, 0);
         } else {
             mChangeRateView.setText(volQuote == 0.f ? "--" : "0.00%");
             mChangeRateView.setTextColor(getResources().getColor(R.color.no_change_color));

@@ -59,7 +59,7 @@ public class BitsharesWalletWraper {
 
     public void reset() {
         mWalletApi.reset();
-        mWalletApi = new WalletApi();
+//        mWalletApi = new WalletApi();
         mMapAccountId2Object.clear();
         mMapAccountId2Asset.clear();
         mMapAssetId2Object.clear();

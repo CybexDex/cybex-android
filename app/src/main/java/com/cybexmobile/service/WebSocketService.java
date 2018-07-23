@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -62,6 +63,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Function4;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+
 public class WebSocketService extends Service {
 
     private static final String TAG = "WebSocketService";
@@ -73,6 +76,8 @@ public class WebSocketService extends Service {
     private Disposable mDisposable;
 
     private List<String> mNames = new ArrayList<>();
+
+    private String mName;
 
     private volatile List<AssetObject> mAssetObjects = new ArrayList<>();
 
@@ -119,12 +124,15 @@ public class WebSocketService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.e(TAG, "onUnbindService");
         return super.onUnbind(intent);
     }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e( TAG, "OnDestroyService");
         cancelRMBSubscription();
         cancelCallFullAccount();
         EventBus.getDefault().unregister(this);
@@ -205,6 +213,25 @@ public class WebSocketService extends Service {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWebSocketTimeOut(Event.WebSocketTimeOut webSocketTimeOut) {
         subscribeAfterNetworkAvailable();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void isOnBackground(Event.IsOnBackground isOnBackground) {
+        mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+        if (isOnBackground.isOnBackground()) {
+            Log.e(TAG, "background");
+            BitsharesWalletWraper.getInstance().reset();
+            cancelCallFullAccount();
+            cancelRMBSubscription();
+        } else {
+            Log.e(TAG, "foreground");
+            BitsharesWalletWraper.getInstance().build_connect();
+            if (!mName.isEmpty()) {
+                callFullAccount(mName);
+            }
+            subscribeAfterNetworkAvailable();
+            loadAssetsRmbPrice();
+        }
     }
 
     private void loadAllAssetsPairData(){
@@ -660,6 +687,9 @@ public class WebSocketService extends Service {
             return;
         }
         mNames.add(name);
+        if (mTimer == null) {
+            mTimer = new Timer();
+        }
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -695,7 +725,7 @@ public class WebSocketService extends Service {
     }
 
     public void cancelRMBSubscription() {
-        if(mDisposable != null && mDisposable.isDisposed()){
+        if(mDisposable != null && !mDisposable.isDisposed()){
             mDisposable.dispose();
             mDisposable = null;
         }

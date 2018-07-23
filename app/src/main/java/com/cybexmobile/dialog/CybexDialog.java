@@ -218,7 +218,7 @@ public class CybexDialog {
     public static void showVersionUpdateDialogForced(Context context, String updateMessage, ConfirmationDialogClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.dialog_update_version_dialog);
+        dialog.setContentView(R.layout.dialog_update_version_forced);
         TextView message  = dialog.findViewById(R.id.dialog_version_update_text_view);
         message.setText(updateMessage);
         Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);

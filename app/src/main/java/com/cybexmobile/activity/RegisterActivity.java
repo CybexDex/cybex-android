@@ -149,7 +149,7 @@ public class RegisterActivity extends BaseActivity {
                     mRegisterErrorText.setText(R.string.create_account_account_name_error_start_letter);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
-                } else if(!strAccountName.matches("^[A-Za-z0-9-]+$")){
+                } else if(!strAccountName.matches("^[a-z0-9-]+$")){
                     mRegisterErrorText.setText(R.string.create_account_account_name_should_only_contain_letter_dash_and_numbers);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
@@ -166,7 +166,7 @@ public class RegisterActivity extends BaseActivity {
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                     mUserNameChecker.setVisibility(View.GONE);
                 } else {
-                    if (strAccountName.matches("^[A-Za-z]+$")) {
+                    if (strAccountName.matches("^[a-z]+$")) {
                         mRegisterErrorText.setText(R.string.create_account_account_name_error_full_letter);
                         mRegisterErrorSign.setVisibility(View.VISIBLE);
                         mUserNameChecker.setVisibility(View.GONE);

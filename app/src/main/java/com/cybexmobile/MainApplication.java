@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
-import android.util.DisplayMetrics;
 
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.utils.SSLSocketFactoryUtils;

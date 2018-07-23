@@ -1,5 +1,6 @@
 package com.cybexmobile.base;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -20,9 +20,11 @@ import com.cybexmobile.dialog.LoadDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreLanguageHelper;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
 import java.util.Locale;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -30,6 +32,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final String TAG = BaseActivity.class.getSimpleName();
 
     private static final String PARAM_NETWORK_AVAILABLE = "param_network_available";
+
+    public static boolean isActive;
 
     public boolean mIsNetWorkAvailable = true;
 
@@ -67,6 +71,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        if (!isActive) {
+            //app 从后台唤醒，进入前台
+            isActive = true;
+            Log.i("ACTIVITY", "程序从后台唤醒");
+            EventBus.getDefault().post(new Event.IsOnBackground(false));
+        }
         super.onResume();
         Log.d(TAG, "onResume");
     }
@@ -85,6 +95,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        if (!isAppOnForeground()) {
+            //app 进入后台
+            isActive = false;//记录当前已经进入后台
+            Log.i("ACTIVITY", "程序进入后台");
+            EventBus.getDefault().post(new Event.IsOnBackground(true));
+        }
         super.onStop();
         Log.d(TAG, "onStop");
     }
@@ -210,4 +226,22 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public abstract void onNetWorkStateChanged(boolean isAvailable);
 
+    public boolean isAppOnForeground() {
+        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        String packageName = getApplicationContext().getPackageName();
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager
+                .getRunningAppProcesses();
+        if (appProcesses == null)
+            return false;
+
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            // The name of the process that this object is associated with.
+            if (appProcess.processName.equals(packageName)
+                    && appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
