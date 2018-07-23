@@ -125,7 +125,7 @@
     <string name="create_account_account_name_error_start_letter">The account name should start with a letter</string>
     <string name="create_account_account_name_error_dash_end">The account name can not end with a dash</string>
     <string name="create_account_account_name_should_not_contain_continuous_dashes">The account name should not contain continuous dashes</string>
-    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">The account name should only contain letter,dash and numbers</string>
+    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">The account name should only contain lowercase letter,dash and numbers</string>
     <string name="create_account_pin_code_not_correct">Incorrect verify code</string>
     <string name="create_account_failure">create account is failed</string>
     <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>

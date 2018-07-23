@@ -121,7 +121,7 @@
     <string name="create_account_account_name_error_start_letter">帐户名需要以字母开头</string>
     <string name="create_account_password_must_at_least_12_characters">输入12位以上的密码</string>
     <string name="create_account_password_confirm_error">密码输入不一致</string>
-    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">帐户名仅能包含字母、数字、横杠</string>
+    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">帐户名仅能包含小写字母、数字、横杠</string>
     <string name="create_account_pin_code_not_correct">验证码不正确</string>
     <string name="create_account_failure">注册失败</string>
 
