@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey"
+        app:navigationIcon="@drawable/ic_arrow_forward_16px">
+
+        <TextView
+            android:id="@+id/transfer_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/font_white_dark_bold_large"
+            android:text="@string/title_transfer_details"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/activity_padding"
+        android:paddingEnd="@dimen/activity_padding"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_item"
+            android:paddingTop="@dimen/activity_padding_triple"
+            android:paddingBottom="@dimen/activity_padding_triple"
+            android:paddingStart="@dimen/activity_padding"
+            android:paddingEnd="@dimen/activity_padding"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/transfer_details_iv_transfer_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_transfer_in"/>
+
+            <TextView
+                android:id="@+id/transfer_details_tv_transfer_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/activity_margin"
+                style="@style/font_white_dark_xxxlarge"
+                android:layout_toEndOf="@+id/transfer_details_iv_transfer_action"
+                android:layout_gravity="end"
+                android:text="@string/text_empty" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                style="@style/font_orange_xxxxlarge"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:text="@string/text_empty" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_item"
+            android:paddingStart="@dimen/activity_padding"
+            android:paddingEnd="@dimen/activity_padding"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/layout_padding_top_bottom"
+                android:paddingBottom="@dimen/layout_padding_top_bottom">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_gray_medium"
+                    android:text="@string/text_to"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_white_dark_medium"
+                    android:layout_gravity="end"
+                    android:text="@string/text_empty"/>
+
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/layout_padding_top_bottom"
+                android:paddingBottom="@dimen/layout_padding_top_bottom">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_gray_medium"
+                    android:text="@string/text_vesting_period"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_white_dark_medium"
+                    android:layout_gravity="end"
+                    android:text="@string/text_empty"/>
+
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/layout_padding_top_bottom"
+                android:paddingBottom="@dimen/layout_padding_top_bottom">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_gray_medium"
+                    android:text="@string/text_fee"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_white_dark_medium"
+                    android:layout_gravity="end"
+                    android:text="@string/text_empty"/>
+
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/layout_padding_top_bottom"
+                android:paddingBottom="@dimen/layout_padding_top_bottom">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_gray_medium"
+                    android:text="@string/text_memo"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="@dimen/text_memo_max_width"
+                    style="@style/font_white_dark_medium"
+                    android:layout_gravity="end"
+                    android:lines="3"
+                    android:lineSpacingExtra="@dimen/text_line_spacing_extra"
+                    android:text="@string/text_empty"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

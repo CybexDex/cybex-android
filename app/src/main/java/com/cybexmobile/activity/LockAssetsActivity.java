@@ -55,6 +55,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
 
@@ -81,7 +82,7 @@ public class LockAssetsActivity extends BaseActivity {
         setContentView(R.layout.activity_lock_assets);
         EventBus.getDefault().register(this);
         Intent intent = getIntent();
-        String userName = intent.getStringExtra("userName");
+        String userName = intent.getStringExtra(INTENT_PARAM_NAME);
         Intent serviceIntent = new Intent(this, WebSocketService.class);
         bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
 

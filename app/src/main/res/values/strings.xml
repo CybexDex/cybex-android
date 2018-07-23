@@ -9,6 +9,9 @@
     <string name="title_faq">Application</string>
     <string name="title_exchange">Exchange</string>
     <string name="title_order_history">Order History</string>
+    <string name="title_transfer">Transfer</string>
+    <string name="title_transfer_records">Transfer Records</string>
+    <string name="title_transfer_details">Transfer Details</string>
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>
@@ -158,6 +161,7 @@
     <string name="tab_sell">SELL</string>
     <string name="tab_open_orders">Open Orders</string>
     <string name="menu_order_history">Order History</string>
+    <string name="menu_transfer_records">Transfer Records</string>
     <string name="text_limit">Limit</string>
     <string name="text_empty">--</string>
     <string name="text_asset_price">Price(--)</string>
@@ -167,7 +171,7 @@
     <string name="text_percentage_75">75%</string>
     <string name="text_percentage_100">100%</string>
     <string name="text_available">Available</string>
-    <string name="text_free">Free</string>
+    <string name="text_fee">Fee</string>
     <string name="text_total">Total</string>
     <string name="text_buy">Buy</string>
     <string name="text_sell">Sell</string>
@@ -274,4 +278,17 @@
 
     <!--Dialog Version Update -->
     <string name="dialog_version_update">Version Update</string>
+    
+    <!-- Transfer Activity -->
+    <string name="text_to_account_name">To account name</string>
+    <string name="text_crypto">Crypto</string>
+    <string name="text_quantity">Quantity</string>
+    <string name="text_memo">Memo</string>
+    <string name="text_no_transfer_records">No transfer records</string>
+
+    <!-- Transfer Details Activity -->
+    <string name="text_to">To</string>
+    <string name="text_from">From</string>
+    <string name="text_vesting_period">Vesting Period</string>
+
 </resources>

@@ -47,8 +47,7 @@ import static com.cybexmobile.activity.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 
-public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener,
-        AccountFragment.OnAccountFragmentInteractionListener {
+public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener {
 
     private BottomNavigationView mBottomNavigationView;
     private static final String KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID = "KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID";
@@ -239,11 +238,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         intent.putExtra(INTENT_PARAM_WATCHLIST, item);
         intent.putExtra("id", position);
         startActivityForResult(intent, REQUEST_CODE_BACK);
-    }
-
-    @Override
-    public void onAccountFragmentInteraction(Uri uri) {
-
     }
 
     private void checkVersion() {

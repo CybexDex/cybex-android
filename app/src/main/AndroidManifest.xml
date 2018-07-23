@@ -20,6 +20,7 @@
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme.FullScreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -91,6 +92,19 @@
             android:label=""
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"/>
+
+        <activity android:name=".activity.transfer.TransferActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <activity android:name=".activity.transfer.TransferRecordsActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".activity.transfer.TransferDetailsActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
 
         <service android:name=".service.WebSocketService" />
     </application>

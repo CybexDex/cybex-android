@@ -66,7 +66,7 @@ public class MemoData {
      */
     transient UnsignedLong unsignedNonce = UnsignedLong.ZERO;
 
-    long nonce = 0;
+    String nonce;
     /**
      * This field contains the AES encrypted packed @ref memo_message
      */
@@ -96,10 +96,10 @@ public class MemoData {
             lEntropy <<= 32;
             lEntropy &= 0xff00000000000000l;
             unsignedNonce = UnsignedLong.fromLongBits((System.currentTimeMillis() & 0x00ffffffffffffffl) | lEntropy);
-            nonce = unsignedNonce.longValue();
+            nonce = unsignedNonce.toString();
         } else {
             unsignedNonce = UnsignedLong.valueOf(lCustomNonce);
-            nonce = unsignedNonce.longValue();
+            nonce = unsignedNonce.toString();
         }
         Sha512Object sha512Object = privateKey.get_shared_secret(publicKey);
         String strNoncePlusSecret = unsignedNonce.toString() + sha512Object.toString();

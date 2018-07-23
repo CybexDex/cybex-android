@@ -11,6 +11,10 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <style name="AppTheme.FullScreen">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowFrame">@null</item><!-- 移除边框 -->
         <item name="android:windowNoTitle">true</item><!-- 去除顶部标题栏 -->
@@ -41,6 +45,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="font_orange_xxxxlarge">
+        <item name="android:fontFamily">Rubik</item>
+        <item name="android:textColor">@color/primary_color_orange</item>
+        <item name="android:textSize">@dimen/font_xxxxlarge</item>
+    </style>
+
     <style name="font_orange_large">
         <item name="android:fontFamily">Rubik</item>
         <item name="android:textColor">@color/primary_color_orange</item>
@@ -68,8 +78,13 @@
     </style>
 
     <!-- font white dark -->
+
     <style name="font_white_dark_bold_xxlarge" parent="font_white_dark_xxlarge">
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_white_dark_xxxlarge" parent="font_white_dark">
+        <item name="android:textSize">@dimen/font_xxxlarge</item>
     </style>
 
     <style name="font_white_dark_xxlarge" parent="font_white_dark">

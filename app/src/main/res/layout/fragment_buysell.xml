@@ -223,7 +223,7 @@
                         android:layout_height="match_parent"
                         style="@style/font_gray_small"
                         android:gravity="center_vertical"
-                        android:text="@string/text_free" />
+                        android:text="@string/text_fee" />
 
                     <TextView
                         android:id="@+id/buysell_tv_exchange_free"
@@ -262,7 +262,7 @@
                     android:layout_height="@dimen/layout_input_height"
                     android:textAllCaps="false"
                     style="@style/font_white_large"
-                    android:text="@string/text_buy"
+                    android:text="@string/text_empty"
                     android:background="@drawable/bg_btn_green_gradient_enabled"/>
 
             </LinearLayout>

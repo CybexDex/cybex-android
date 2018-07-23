@@ -611,9 +611,6 @@ public class WebSocketService extends Service {
             EventBus.getDefault().post(new Event.InitExchangeWatchlist(getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB)));
             //更新行情
             EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
-            if (mWatchlistHashMap.get("1.3.2") != null && mWatchlistHashMap.get("1.3.27") != null && mWatchlistHashMap.get("1.3.3") != null && mWatchlistHashMap.get("1.3.0") != null) {
-                EventBus.getDefault().post(new Event.UpdateAccountPage());
-            }
             //加载价格和交易历史
             loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(mCurrentBaseAssetId));
         }

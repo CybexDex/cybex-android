@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey"
+        app:navigationIcon="@drawable/ic_arrow_forward_16px">
+
+        <TextView
+            android:id="@+id/transfer_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/font_white_dark_bold_large"
+            android:text="@string/title_transfer"/>
+
+        <TextView
+            android:id="@+id/transfer_tv_transfer_records"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_transfer_records"
+            android:layout_marginEnd="@dimen/activity_margin"
+            android:layout_gravity="end"
+            style="@style/font_gray_large"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/activity_padding"
+        android:paddingEnd="@dimen/activity_padding"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_item"
+            android:padding="@dimen/activity_padding"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_medium"
+                android:text="@string/prompt_user_name"/>
+            <EditText
+                android:id="@+id/transfer_et_account_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/font_white_dark_large"
+                android:layout_marginTop="5dp"
+                android:textColorHint="@color/text_hint_color"
+                android:hint="@string/text_to_account_name"
+                android:background="@android:color/transparent"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_item"
+            android:padding="@dimen/activity_padding"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_medium"
+                android:text="@string/text_crypto"/>
+
+            <TextView
+                android:id="@+id/transfer_tv_crypto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/font_white_dark_large"
+                android:layout_marginTop="5dp"
+                android:drawableEnd="@drawable/ic_arrow_drop_down_grey"
+                android:maxLines="1"
+                android:textColorHint="@color/text_hint_color"
+                android:hint="@string/text_empty"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_medium"
+                android:text="@string/text_quantity"/>
+
+            <EditText
+                android:id="@+id/transfer_et_quantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/text_hint_color"
+                style="@style/font_white_dark_large"
+                android:hint="@string/text_empty"
+                android:gravity="end"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/transparent"
+                android:maxLines="1"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_medium"
+                android:text="@string/text_memo"/>
+
+            <EditText
+                android:id="@+id/transfer_et_remark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/text_hint_color"
+                style="@style/font_white_dark_large"
+                android:gravity="top"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/transparent"
+                android:lineSpacingExtra="@dimen/text_line_spacing_extra"
+                android:lines="3"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/activity_padding_double"
+        android:paddingEnd="@dimen/activity_padding_double"
+        android:layout_marginTop="@dimen/activity_margin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_gray_medium"
+            android:text="@string/text_fee"/>
+
+        <TextView
+            android:id="@+id/transfer_tv_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_white_dark_large"
+            android:layout_gravity="end"
+            android:text="@string/text_empty" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/activity_margin_double">
+
+        <Button
+            android:id="@+id/transfer_btn_transfer"
+            style="@style/font_white_dark_large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="@dimen/activity_margin"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:background="@drawable/bg_btn_orange_gradient_enabled"
+            android:enabled="false"
+            android:text="@string/title_transfer" />
+
+    </FrameLayout>
+
+</LinearLayout>

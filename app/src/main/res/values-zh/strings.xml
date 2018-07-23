@@ -10,6 +10,9 @@
     <string name="title_account">账户</string>
     <string name="title_exchange">交易</string>
     <string name="title_order_history">我的记录</string>
+    <string name="title_transfer">转账</string>
+    <string name="title_transfer_records">转账记录</string>
+    <string name="title_transfer_details">转账详情</string>
 
     <!-- Watch List Page -->
     <string name="popular_title">最热</string>
@@ -162,6 +165,7 @@
     <string name="tab_sell">卖出</string>
     <string name="tab_open_orders">我的委单</string>
     <string name="menu_order_history">我的记录</string>
+    <string name="menu_transfer_records">转账记录</string>
     <string name="text_limit">限价单</string>
     <string name="text_empty">--</string>
     <string name="text_asset_price">价格(--)</string>
@@ -278,4 +282,12 @@
 
     <!--Dialog Version Update -->
     <string name="dialog_version_update">版本更新</string>
+
+    <!-- Transfer Activity -->
+    <string name="text_to_account_name">请输入收款方账户名</string>
+    <string name="text_crypto">币种</string>
+    <string name="text_quantity">金额</string>
+    <string name="text_memo">备注</string>
+    <string name="text_fee">手续费</string>
+    <string name="text_no_transfer_records">暂无转账记录</string>
 </resources>
