@@ -21,15 +21,6 @@
             style="@style/font_white_dark_bold_large"
             android:text="@string/title_transfer"/>
 
-        <TextView
-            android:id="@+id/transfer_tv_transfer_records"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/menu_transfer_records"
-            android:layout_marginEnd="@dimen/activity_margin"
-            android:layout_gravity="end"
-            style="@style/font_gray_large"/>
-
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout

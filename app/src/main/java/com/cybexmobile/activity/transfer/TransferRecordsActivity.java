@@ -21,21 +21,27 @@ import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.faucet.AssetsPair;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
+import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.GlobalConfigObject;
+import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.utils.Constant;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +63,8 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
 
+    private ObjectId<AccountObject> mAccountId;
+
     private boolean mIsLoginIn;
     private String mName;
     private List<TransferHistoryItem> mTransferHistoryItems = new ArrayList<>();
@@ -72,9 +80,6 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mRvTransferRecords.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mTransferRecordsAdapter = new TransferRecordsRecyclerViewAdapter(this, mTransferHistoryItems);
-        mTransferRecordsAdapter.setOnItemClickListener(this);
-        mRvTransferRecords.setAdapter(mTransferRecordsAdapter);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
     }
@@ -93,6 +98,7 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        unbindService(mConnection);
         EventBus.getDefault().unregister(this);
     }
 
@@ -102,9 +108,55 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
     }
 
     @Override
-    public void onItemClick() {
+    public void onItemClick(TransferHistoryItem transferHistoryItem) {
         Intent intent = new Intent(this, TransferDetailsActivity.class);
+        intent.putExtra(Constant.INTENT_PARAM_TRANSFER_OPERATION, transferHistoryItem.transferOperation);
+        intent.putExtra(Constant.INTENT_PARAM_TRANSFER_BLOCK, transferHistoryItem.block);
+        intent.putExtra(Constant.INTENT_PARAM_TRANSFER_FROM_ACCOUNT, transferHistoryItem.fromAccount);
+        intent.putExtra(Constant.INTENT_PARAM_TRANSFER_TO_ACCOUNT, transferHistoryItem.toAccount);
+        intent.putExtra(Constant.INTENT_PARAM_TRANSFER_FEE_ASSET, transferHistoryItem.feeAsset);
+        intent.putExtra(Constant.INTENT_PARAM_TRANSFER_ASSET, transferHistoryItem.transferAsset);
         startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadBlock(Event.LoadBlock event){
+        if(mTransferHistoryItems == null || mTransferHistoryItems.size() == 0){
+            return;
+        }
+        for(int i = 0; i < mTransferHistoryItems.size(); i++){
+            if(mTransferHistoryItems.get(i).callId == event.getCallId()){
+                mTransferHistoryItems.get(i).block = event.getBlockHeader();
+                mTransferRecordsAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadAccountObject(Event.LoadAccountObject event){
+        AccountObject accountObject = event.getAccountObject();
+        if(accountObject == null || mTransferHistoryItems == null){
+            return;
+        }
+        for(int i = 0; i < mTransferHistoryItems.size(); i++){
+            if(mTransferHistoryItems.get(i).transferOperation.from.equals(accountObject.id)){
+                if(mTransferHistoryItems.get(i).fromAccount != null){
+                    continue;
+                }
+                mTransferHistoryItems.get(i).fromAccount = accountObject;
+                mTransferRecordsAdapter.notifyItemChanged(i);
+                break;
+            }
+            if(mTransferHistoryItems.get(i).transferOperation.to.equals(accountObject.id)){
+                if(mTransferHistoryItems.get(i).toAccount != null){
+                    continue;
+                }
+                mTransferHistoryItems.get(i).toAccount = accountObject;
+                mTransferRecordsAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -123,15 +175,26 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                 item = new TransferHistoryItem();
                 item.accountHistoryObject = accountHistoryObject;
                 item.transferOperation = gson.fromJson(accountHistoryObject.op.get(1), Operations.transfer_operation.class);
+                item.transferAsset = mWebSocketService.getAssetObject(item.transferOperation.amount.asset_id.toString());
+                item.feeAsset = mWebSocketService.getAssetObject(item.transferOperation.fee.asset_id.toString());
                 //加载区块信息
                 item.callId = BitsharesWalletWraper.getInstance().get_call_id().getAndIncrement();
-                //mWebSocketService.loadBlock(item.callId, item.accountHistoryObject.block_num);
+                mWebSocketService.loadBlock(item.callId, item.accountHistoryObject.block_num);
+                mWebSocketService.loadAccountObject(item.transferOperation.from.equals(mAccountId) ?
+                        item.transferOperation.to.toString() : item.transferOperation.from.toString());
                 mTransferHistoryItems.add(item);
             } else {
                 it.remove();
             }
         }
-        mTransferRecordsAdapter.notifyDataSetChanged();
+        hideLoadDialog();
+        if(mTransferRecordsAdapter == null){
+            mTransferRecordsAdapter = new TransferRecordsRecyclerViewAdapter(this, mTransferHistoryItems);
+            mRvTransferRecords.setAdapter(mTransferRecordsAdapter);
+            mTransferRecordsAdapter.setOnItemClickListener(this);
+        } else {
+            mTransferRecordsAdapter.notifyDataSetChanged();
+        }
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -140,8 +203,10 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             if(mIsLoginIn){
+                showLoadDialog(true);
                 FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
                 if(fullAccountObject != null){
+                    mAccountId = fullAccountObject.account.id;
                     mWebSocketService.loadAccountHistory(fullAccountObject.account.id, 100);
                 }
             }
@@ -153,10 +218,14 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         }
     };
 
-    public class TransferHistoryItem {
+    public class TransferHistoryItem{
         public int callId;//通过callid对应请求结果
         public AccountHistoryObject accountHistoryObject;
         public Operations.transfer_operation transferOperation;
         public BlockHeader block;
+        public AccountObject fromAccount;
+        public AccountObject toAccount;
+        public AssetObject feeAsset;
+        public AssetObject transferAsset;
     }
 }

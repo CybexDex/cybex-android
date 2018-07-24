@@ -12,6 +12,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public class Operations {
     }
 
 
-    public static class transfer_operation implements base_operation {
+    public static class transfer_operation implements base_operation, Serializable {
         public static class fee_parameters_type {
             long fee       = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
             long price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
@@ -132,7 +133,7 @@ public class Operations {
         public Asset amount;
         public MemoData memo;
         //public extensions_type   extensions;
-        public Set<Types.void_t> extensions;
+        public Set<Set<Object>> extensions;
 
         @Override
         public List<Authority> get_required_authorities() {

@@ -103,6 +103,11 @@
         <item name="android:textSize">@dimen/font_large</item>
     </style>
 
+
+    <style name="font_white_dark_bold_medium" parent="font_white_dark_medium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="font_white_dark_medium" parent="font_white_dark">
         <item name="android:textSize">@dimen/font_medium</item>
     </style>

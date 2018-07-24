@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_transfer_in"/>
+                android:src="@drawable/ic_income_40_px"/>
 
             <TextView
                 android:id="@+id/transfer_details_tv_transfer_action"
@@ -59,6 +59,7 @@
                 android:text="@string/text_empty" />
 
             <TextView
+                android:id="@+id/transfer_details_tv_transfer_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -84,12 +85,14 @@
                 android:paddingBottom="@dimen/layout_padding_top_bottom">
 
                 <TextView
+                    android:id="@+id/transfer_details_tv_transfer_to_or_from"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/font_gray_medium"
                     android:text="@string/text_to"/>
 
                 <TextView
+                    android:id="@+id/transfer_details_tv_transfer_to_or_from_account_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/font_white_dark_medium"
@@ -110,12 +113,13 @@
                 android:paddingBottom="@dimen/layout_padding_top_bottom">
 
                 <TextView
+                    style="@style/font_gray_medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/font_gray_medium"
-                    android:text="@string/text_vesting_period"/>
+                    android:text="@string/text_time" />
 
                 <TextView
+                    android:id="@+id/transfer_details_tv_transfer_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/font_white_dark_medium"
@@ -142,6 +146,34 @@
                     android:text="@string/text_fee"/>
 
                 <TextView
+                    android:id="@+id/transfer_details_tv_transfer_fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_white_dark_medium"
+                    android:layout_gravity="end"
+                    android:text="@string/text_empty"/>
+
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/layout_padding_top_bottom"
+                android:paddingBottom="@dimen/layout_padding_top_bottom">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_gray_medium"
+                    android:text="@string/text_vesting_period"/>
+
+                <TextView
+                    android:id="@+id/transfer_details_tv_vesting_period"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/font_white_dark_medium"
@@ -168,14 +200,22 @@
                     android:text="@string/text_memo"/>
 
                 <TextView
+                    android:id="@+id/transfer_details_tv_transfer_memo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxWidth="@dimen/text_memo_max_width"
                     style="@style/font_white_dark_medium"
                     android:layout_gravity="end"
                     android:lines="3"
-                    android:lineSpacingExtra="@dimen/text_line_spacing_extra"
-                    android:text="@string/text_empty"/>
+                    android:lineSpacingExtra="@dimen/text_line_spacing_extra" />
+
+                <TextView
+                    android:id="@+id/transfer_details_tv_click_to_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_orange_medium"
+                    android:layout_gravity="end"
+                    android:text="@string/text_click_to_view"/>
 
             </FrameLayout>
 

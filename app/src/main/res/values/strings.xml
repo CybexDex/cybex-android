@@ -285,10 +285,18 @@
     <string name="text_quantity">Quantity</string>
     <string name="text_memo">Memo</string>
     <string name="text_no_transfer_records">No transfer records</string>
+    <string name="text_sent">Sent</string>
+    <string name="text_received">Received</string>
 
     <!-- Transfer Details Activity -->
     <string name="text_to">To</string>
     <string name="text_from">From</string>
     <string name="text_vesting_period">Vesting Period</string>
+    <string name="text_time">Time</string>
+    <string name="text_none">none</string>
+    <string name="text_click_to_view">Click to view</string>
+    <string name="text_minutes">minutes</string>
+    <string name="text_in">In</string>
+    <string name="text_out">Out</string>
 
 </resources>

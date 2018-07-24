@@ -345,8 +345,12 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, callObject, replyObject);
     }
 
+    public void get_account_by_id(){
 
-    public void get_accounts(List<ObjectId<AccountObject>> listAccountObjectId, MessageCallback<Reply<List<AccountObject>>> callback) throws NetworkStatusException {
+    }
+
+
+    public void get_accounts(List<String> listAccountObjectId, MessageCallback<Reply<List<AccountObject>>> callback) throws NetworkStatusException {
         Call callObject = new Call();
         callObject.id = mCallId.getAndIncrement();
         callObject.method = "call";

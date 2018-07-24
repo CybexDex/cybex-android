@@ -12,10 +12,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.primitives.UnsignedLong;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-public class MemoData {
+public class MemoData implements Serializable{
 
     private final static char[] hexArray = "0123456789abcdef".toCharArray();
 

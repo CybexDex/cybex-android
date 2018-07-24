@@ -20,6 +20,13 @@ public class Constant {
     public static final String INTENT_PARAM_FEE = "intent_param_fee";
     public static final String INTENT_PARAM_CYB_ASSET_OBJECT = "intent_param_cyb_asset_object";
     public static final String INTENT_PARAM_FULL_ACCOUNT_OBJECT = "intent_param_full_account_object";
+    public static final String INTENT_PARAM_TRANSFER_OPERATION = "intent_param_transfer_operation";
+    public static final String INTENT_PARAM_TRANSFER_FROM_ACCOUNT = "intent_param_transfer_from_account";
+    public static final String INTENT_PARAM_TRANSFER_TO_ACCOUNT = "intent_param_transfer_to_account";
+    public static final String INTENT_PARAM_TRANSFER_FEE_ASSET = "intent_param_transfer_fee_asset";
+    public static final String INTENT_PARAM_TRANSFER_ASSET = "intent_param_transfer_asset";
+    public static final String INTENT_PARAM_TRANSFER_BLOCK = "intent_param_transfer_block";
+
 
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";

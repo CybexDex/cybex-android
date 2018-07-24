@@ -84,6 +84,7 @@ public class WebSocketService extends Service {
     private ConcurrentHashMap<String, List<AssetsPair>> mAssetsPairHashMap = new ConcurrentHashMap<>();
 
     private ConcurrentHashMap<String, List<WatchlistData>> mWatchlistHashMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, AccountObject> mAccountHashMap = new ConcurrentHashMap<>();
     private List<FeeAmountObject> mLimitOrderCreateFees = null;
     private List<FeeAmountObject> mLimitOrderCancelFees = null;
     //当前行情tab页
@@ -398,6 +399,20 @@ public class WebSocketService extends Service {
         }
     }
 
+    public void loadAccountObject(String accountId){
+        if(mAccountHashMap.containsKey(accountId)){
+            EventBus.getDefault().post(new Event.LoadAccountObject(mAccountHashMap.get(accountId)));
+            return;
+        }
+        List<String> accountIds = new ArrayList<>();
+        accountIds.add(accountId);
+        try {
+            BitsharesWalletWraper.getInstance().get_accounts(accountIds, mAccountObjectCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
     private WebSocketClient.MessageCallback mLimitOrderCreateFeeCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
         @Override
         public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
@@ -555,6 +570,25 @@ public class WebSocketService extends Service {
 
         }
     };
+
+    private WebSocketClient.MessageCallback mAccountObjectCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountObject>>>() {
+
+        @Override
+        public void onMessage(WebSocketClient.Reply<List<AccountObject>> reply) {
+            AccountObject accountObject = reply.result.get(0);
+            mAccountHashMap.put(accountObject.id.toString(), accountObject);
+            if(accountObject != null){
+                EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
+            }
+
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
 
     private WatchlistData getWatchlist(Map<String, List<WatchlistData>> map, BucketObject bucket) {
         List<WatchlistData> baseWatchlistDatas = map.get(bucket.key.base.toString());

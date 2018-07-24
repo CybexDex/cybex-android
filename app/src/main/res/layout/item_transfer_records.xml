@@ -8,13 +8,12 @@
     android:padding="@dimen/activity_padding">
 
     <ImageView
-        android:id="@+id/item_iv_transfer_action"
+        android:id="@+id/item_transfer_records_iv_transfer_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:paddingTop="@dimen/activity_padding"
-        android:paddingBottom="@dimen/activity_padding"
-        android:src="@drawable/ic_transfer_in" />
+        android:paddingBottom="@dimen/activity_padding" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +30,7 @@
                 android:id="@+id/item_transfer_records_tv_account_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/font_white_dark_large"
+                style="@style/font_white_dark_bold_large"
                 android:text="@string/text_empty"/>
 
             <TextView
@@ -39,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                style="@style/font_white_dark_medium"
+                style="@style/font_white_dark_bold_medium"
                 android:text="@string/text_empty"/>
 
         </FrameLayout>

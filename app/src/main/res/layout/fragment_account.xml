@@ -16,164 +16,176 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_padding_double">
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_padding_double">
+
+            <ImageView
+                android:id="@+id/account_iv_avatar"
+                android:layout_width="@dimen/webview_width_height"
+                android:layout_height="@dimen/webview_width_height"
+                android:src="@drawable/account_avatar" />
+
+            <TextView
+                android:id="@+id/account_tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.01"
+                android:text="@string/log_in_cybex"
+                android:textColor="@color/font_color_white_dark"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:drawablePadding="@dimen/text_quote_margin_start"
+                android:textSize="34sp" />
+
+            <LinearLayout
+                android:id="@+id/account_layout_item_my_portfolio"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/layout_item_height"
+                android:layout_marginTop="@dimen/activity_margin_double">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_balance_wallet"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/activity_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
+                        android:layout_centerVertical="true"
+                        style="@style/font_white_dark_large"
+                        android:text="我的资产"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/divider_color"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/account_layout_item_gateway"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/layout_item_height">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_gateway"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/activity_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
+                        android:layout_centerVertical="true"
+                        style="@style/font_white_dark_large"
+                        android:text="充值提现"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/divider_color"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/account_layout_item_open_order"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/layout_item_height">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_open_order"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/activity_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
+                        android:layout_centerVertical="true"
+                        style="@style/font_white_dark_large"
+                        android:text="委单"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/divider_color"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/account_layout_item_lockup_asset"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/layout_item_height">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_lock_asset"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/activity_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
+                        android:layout_centerVertical="true"
+                        style="@style/font_white_dark_large"
+                        android:text="锁定期资产"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/divider_color"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <ImageView
-            android:id="@+id/account_iv_avatar"
-            android:layout_width="@dimen/webview_width_height"
-            android:layout_height="@dimen/webview_width_height"
-            android:src="@drawable/account_avatar" />
-
-        <TextView
-            android:id="@+id/account_tv_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:letterSpacing="0.01"
-            android:text="@string/log_in_cybex"
-            android:textColor="@color/font_color_white_dark"
-            android:layout_marginTop="@dimen/activity_margin"
-            android:drawablePadding="@dimen/text_quote_margin_start"
-            android:textSize="34sp" />
+            android:background="@drawable/account_bg"
+            android:layout_gravity="bottom"/>
 
-        <LinearLayout
-            android:id="@+id/account_layout_item_my_portfolio"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_item_height"
-            android:layout_marginTop="@dimen/activity_margin_double">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_balance_wallet"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/activity_margin">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
-                    android:layout_centerVertical="true"
-                    style="@style/font_white_dark_large"
-                    android:text="我的资产"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/divider_color"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-        
-        <LinearLayout
-            android:id="@+id/account_layout_item_gateway"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_item_height">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_gateway"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/activity_margin">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
-                    android:layout_centerVertical="true"
-                    style="@style/font_white_dark_large"
-                    android:text="充值提现"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/divider_color"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/account_layout_item_open_order"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_item_height">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_open_order"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/activity_margin">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
-                    android:layout_centerVertical="true"
-                    style="@style/font_white_dark_large"
-                    android:text="委单"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/divider_color"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/account_layout_item_lockup_asset"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_item_height">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_lock_asset"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/activity_margin">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
-                    android:layout_centerVertical="true"
-                    style="@style/font_white_dark_large"
-                    android:text="锁定期资产"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/divider_color"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

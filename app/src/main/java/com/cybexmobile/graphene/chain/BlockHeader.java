@@ -1,6 +1,8 @@
 package com.cybexmobile.graphene.chain;
 
-public class BlockHeader {
+import java.io.Serializable;
+
+public class BlockHeader implements Serializable{
     public String previous;
     public String timestamp;
     public String witness;

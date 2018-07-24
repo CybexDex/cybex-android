@@ -394,6 +394,11 @@ public class Types{
     class void_t {
 
     }
+
+    class transfer_extension {
+        long vesting_period;
+        public_key_type public_key;
+    }
     public static class TestClass {
         public String id;
     }

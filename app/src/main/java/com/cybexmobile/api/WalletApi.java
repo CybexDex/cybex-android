@@ -371,13 +371,9 @@ public class WalletApi {
         return accountObjectList;
     }
 
-    public void get_account(String strAccountNameOrId, WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>> callback) throws NetworkStatusException {
-        get_account_by_name(strAccountNameOrId, callback);
+    public void get_accounts(List<String> accountIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountObject>>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_accounts(accountIds, callback);
     }
-
-//    public List<AccountObject> get_accounts(List<ObjectId<AccountObject>> listAccountObjectId) throws NetworkStatusException {
-//        return mWebSocketClient.get_accounts(listAccountObjectId);
-//    }
 
 //    public void lookup_account_names(String strAccountName, WebSocketClient.MessageCallback callback) throws NetworkStatusException {
 //        mWebSocketClient.lookup_account_names(strAccountName, callback);

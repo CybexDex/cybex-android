@@ -3,6 +3,7 @@ package com.cybexmobile.event;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
+import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
@@ -456,6 +457,21 @@ public class Event {
 
         public WatchlistData getWatchlist() {
             return watchlist;
+        }
+    }
+
+    /**
+     * 加载账户信息
+     */
+    public static class LoadAccountObject{
+        private AccountObject accountObject;
+
+        public LoadAccountObject(AccountObject accountObject) {
+            this.accountObject = accountObject;
+        }
+
+        public AccountObject getAccountObject() {
+            return accountObject;
         }
     }
 

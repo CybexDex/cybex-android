@@ -6,11 +6,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.transfer.TransferRecordsActivity;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
+import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.Operations;
+import com.cybexmobile.utils.AssetUtil;
+import com.cybexmobile.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,15 +63,34 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         }
         ViewHolder viewHolder = (ViewHolder) holder;
         TransferRecordsActivity.TransferHistoryItem transferHistoryItem = mTransferRecords.get(position);
-        viewHolder.mTvAccountName.setText(transferHistoryItem.transferOperation.from.toString());
-        viewHolder.mTvAmount.setText(transferHistoryItem.transferOperation.amount.amount + "");
-        viewHolder.mTvDate.setText("");
-        viewHolder.mTvStatus.setText("");
+        Operations.transfer_operation transferOperation = transferHistoryItem.transferOperation;
+        AccountObject fromAccount = transferHistoryItem.fromAccount;
+        AccountObject toAccount = transferHistoryItem.toAccount;
+        AssetObject transferAsset = transferHistoryItem.transferAsset;
+        if(fromAccount != null || toAccount != null){
+            if(fromAccount != null){
+                viewHolder.mTvAccountName.setText(fromAccount.name);
+                viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
+            }
+            if(toAccount != null){
+                viewHolder.mTvAccountName.setText(toAccount.name);
+            }
+            viewHolder.mTvStatus.setText(mContext.getResources().getString(fromAccount == null ? R.string.text_sent : R.string.text_received));
+            viewHolder.mIvTransferAction.setImageResource(fromAccount == null ? R.drawable.ic_transfer_out : R.drawable.ic_transfer_in);
+            if(transferAsset != null){
+                viewHolder.mTvAmount.setText(String.format(fromAccount == null ? "-%s %s" : "+%s %s",
+                        AssetUtil.formatNumberRounding( transferOperation.amount.amount / Math.pow(10, transferAsset.precision), transferAsset.precision),
+                        AssetUtil.parseSymbol(transferAsset.symbol)));
+            }
+        }
+        if(transferHistoryItem.block != null){
+            viewHolder.mTvDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(transferHistoryItem.block.timestamp)));
+        }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mOnItemClickListener != null){
-                    mOnItemClickListener.onItemClick();
+                    mOnItemClickListener.onItemClick(transferHistoryItem);
                 }
             }
         });
@@ -91,6 +116,8 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         TextView mTvDate;
         @BindView(R.id.item_transfer_records_tv_status)
         TextView mTvStatus;
+        @BindView(R.id.item_transfer_records_iv_transfer_action)
+        ImageView mIvTransferAction;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -99,6 +126,6 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     }
 
     public interface OnItemClickListener{
-        void onItemClick();
+        void onItemClick(TransferRecordsActivity.TransferHistoryItem transferHistoryItem);
     }
 }

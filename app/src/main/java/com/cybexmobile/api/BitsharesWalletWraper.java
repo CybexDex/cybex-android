@@ -335,29 +335,9 @@ public class BitsharesWalletWraper {
         mWalletApi.get_objects(objectIds, callback);
     }
 
-//    public Map<ObjectId<AccountObject>, AccountObject> get_accounts(List<ObjectId<AccountObject>> listAccountObjectId) throws NetworkStatusException {
-//        Map<ObjectId<AccountObject>, AccountObject> mapId2Object = new HashMap<>();
-//
-//        List<ObjectId<AccountObject>> listRequestId = new ArrayList<>();
-//        for (ObjectId<AccountObject> objectId : listAccountObjectId) {
-//            AccountObject accountObject = mMapAccountId2Object.get(objectId);
-//            if (accountObject != null) {
-//                mapId2Object.put(objectId, accountObject);
-//            } else {
-//                listRequestId.add(objectId);
-//            }
-//        }
-//
-//        if (listRequestId.isEmpty() == false) {
-//            List<AccountObject> listAccountObject = mWalletApi.get_accounts(listRequestId);
-//            for (AccountObject accountObject : listAccountObject) {
-//                mapId2Object.put(accountObject.id, accountObject);
-//                mMapAccountId2Object.put(accountObject.id, accountObject);
-//            }
-//        }
-//
-//        return mapId2Object;
-//    }
+    public void get_accounts(List<String> accountIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_accounts(accountIds, callback);
+    }
 
     public void get_block(int callId, int blockNumber, WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>> callback) throws NetworkStatusException {
         mWalletApi.get_block(callId, blockNumber, callback);
@@ -615,7 +595,7 @@ public class BitsharesWalletWraper {
 //    }
 
     public void get_account_object(String strAccount, WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>> callback) throws NetworkStatusException {
-        mWalletApi.get_account(strAccount, callback);
+        mWalletApi.get_account_by_name(strAccount, callback);
     }
 
 //    public Asset transfer_calculate_fee(String strAmount,
