@@ -60,6 +60,11 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         mAccountBalanceObjcetItemList = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_ACCOUNT_BALANCE_ITEMS);
         mViewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
         mViewPager.addOnPageChangeListener(onPageChangeListener);
+        if (getIntent().getBooleanExtra(INTENT_IS_DEPOSIT, false)) {
+            mViewPager.setCurrentItem(0);
+        } else {
+            mViewPager.setCurrentItem(1);
+        }
     }
 
     private void setViews() {

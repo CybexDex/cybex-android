@@ -145,6 +145,15 @@ public class AccountBalanceActivity extends BaseActivity {
         Intent intent = new Intent(this, GatewayActivity.class);
         intent.putExtra(GatewayActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         intent.putExtra(GatewayActivity.INTENT_IS_DEPOSIT, true);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.account_balance_withdraw_layout)
+    public void onWithdrawButtonClicked(View view) {
+        Intent intent = new Intent(this, GatewayActivity.class);
+        intent.putExtra(GatewayActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        intent.putExtra(GatewayActivity.INTENT_IS_DEPOSIT, false);
+        startActivity(intent);
     }
 
     @OnClick(R.id.account_balance_transfer_layout)
