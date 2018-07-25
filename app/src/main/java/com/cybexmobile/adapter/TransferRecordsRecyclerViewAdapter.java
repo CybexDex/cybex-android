@@ -74,6 +74,7 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
             }
             if(toAccount != null){
                 viewHolder.mTvAccountName.setText(toAccount.name);
+                viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
             }
             viewHolder.mTvStatus.setText(mContext.getResources().getString(fromAccount == null ? R.string.text_sent : R.string.text_received));
             viewHolder.mIvTransferAction.setImageResource(fromAccount == null ? R.drawable.ic_transfer_out : R.drawable.ic_transfer_in);

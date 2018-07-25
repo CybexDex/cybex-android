@@ -162,13 +162,14 @@
 
         <Button
             android:id="@+id/transfer_btn_transfer"
-            style="@style/font_white_dark_large"
+            style="@style/font_white_large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginEnd="@dimen/activity_margin"
             android:layout_marginStart="@dimen/activity_margin"
             android:background="@drawable/bg_btn_orange_gradient_enabled"
+            android:textAllCaps="false"
             android:enabled="false"
             android:text="@string/title_transfer" />
 
