@@ -120,7 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/text_hint_color"
-                style="@style/font_white_dark_large"
+                style="@style/font_white_dark_medium"
                 android:gravity="top"
                 android:layout_marginTop="5dp"
                 android:background="@android:color/transparent"

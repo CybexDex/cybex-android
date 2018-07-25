@@ -73,6 +73,7 @@
 
     <!-- Setting Activity -->
     <dimen name="cardview_hint_margin_top">8dp</dimen>
+    <dimen name="text_drawable_padding">3dp</dimen>
 
     <!-- Markets Activity -->
     <dimen name="text_kline_header_margin_start">10dp</dimen>
@@ -124,4 +125,5 @@
 
     <dimen name="text_memo_max_width">200dp</dimen>
     <dimen name="layout_padding_top_bottom">16dp</dimen>
+    <dimen name="item_line_margin_top">4dp</dimen>
 </resources>

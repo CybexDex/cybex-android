@@ -32,9 +32,10 @@
     <string name="account_balance_dialog_title">BALANCE</string>
     <string name="account_balance_dialog_content">This is the estimated value of all your assets,including any hidden assets,open orders,debt and collateral.The estimate is done using only live blockchain data and may not be perfectly accurate.</string>
     <string name="account_balance_dialog_button">OK</string>
-    <string name="text_opened_orders">Opened\nOrders</string>
-    <string name="text_lockup_assets">Lockup\nAssets</string>
-    <string name="account_text_gateway">Gateway</string>
+    <string name="text_my_balance">My Balance</string>
+    <string name="text_opened_orders">Opened Orders</string>
+    <string name="text_lockup_assets">Lockup Assets</string>
+    <string name="text_deposit_withdraw">Deposit/Withdraw</string>
 
     <!-- Balance Page -->
     <string name="balance_page_title">My Balance</string>

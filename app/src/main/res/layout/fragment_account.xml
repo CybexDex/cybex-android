@@ -66,7 +66,7 @@
                         android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
                         android:layout_centerVertical="true"
                         style="@style/font_white_dark_large"
-                        android:text="我的资产"/>
+                        android:text="@string/text_my_balance"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -99,7 +99,7 @@
                         android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
                         android:layout_centerVertical="true"
                         style="@style/font_white_dark_large"
-                        android:text="充值提现"/>
+                        android:text="@string/text_deposit_withdraw"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -132,7 +132,7 @@
                         android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
                         android:layout_centerVertical="true"
                         style="@style/font_white_dark_large"
-                        android:text="委单"/>
+                        android:text="@string/text_opened_orders"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -166,7 +166,7 @@
                         android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
                         android:layout_centerVertical="true"
                         style="@style/font_white_dark_large"
-                        android:text="锁定期资产"/>
+                        android:text="@string/text_lockup_assets"/>
 
                     <View
                         android:layout_width="match_parent"

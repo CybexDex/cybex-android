@@ -51,17 +51,18 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/font_white_dark_bold_large"
+                        style="@style/font_white_dark_large"
                         android:text="@string/setting_language"
                         android:layout_centerVertical="true" />
 
                     <TextView
                         android:id="@+id/setting_tv_language"
+                        style="@style/font_grey_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerHorizontal="true"
-                        style="@style/font_grey_large"
+                        android:drawablePadding="@dimen/text_drawable_padding"
                         android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
 
                 </RelativeLayout>
@@ -80,7 +81,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/font_white_dark_bold_large"
+                        style="@style/font_white_dark_large"
                         android:text="@string/setting_frequency"
                         android:layout_centerVertical="true" />
 
@@ -91,7 +92,8 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerHorizontal="true"
                         android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                        style="@style/font_grey_large" />
+                        android:drawablePadding="@dimen/text_drawable_padding"
+                        style="@style/font_grey_medium" />
 
                 </RelativeLayout>
 
@@ -109,7 +111,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/font_white_dark_bold_large"
+                        style="@style/font_white_dark_large"
                         android:text="@string/setting_version"
                         android:layout_centerVertical="true" />
 
@@ -120,7 +122,8 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerHorizontal="true"
                         android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                        style="@style/font_grey_large" />
+                        android:drawablePadding="@dimen/text_drawable_padding"
+                        style="@style/font_grey_medium" />
 
                 </RelativeLayout>
 
@@ -145,7 +148,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/font_white_dark_bold_large"
+                    style="@style/font_white_dark_large"
                     android:text="@string/setting_theme"
                     android:layout_centerVertical="true" />
 
@@ -155,7 +158,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerHorizontal="true"
-                    style="@style/font_grey_large"
+                    android:drawablePadding="@dimen/text_drawable_padding"
+                    style="@style/font_grey_medium"
                     android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
             </RelativeLayout>
 
