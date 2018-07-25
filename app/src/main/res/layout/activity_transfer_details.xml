@@ -34,8 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_item"
-            android:paddingTop="@dimen/activity_padding_triple"
-            android:paddingBottom="@dimen/activity_padding_triple"
+            android:paddingTop="@dimen/activity_padding_double"
+            android:paddingBottom="@dimen/activity_padding_double"
             android:paddingStart="@dimen/activity_padding"
             android:paddingEnd="@dimen/activity_padding"
             android:orientation="vertical">
@@ -52,7 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/activity_margin"
                 style="@style/font_white_dark_xxxlarge"
                 android:layout_toEndOf="@+id/transfer_details_iv_transfer_action"
                 android:layout_gravity="end"
@@ -104,7 +103,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider_color" />
+                android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -131,7 +130,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider_color" />
+                android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -158,7 +157,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider_color" />
+                android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -185,7 +184,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider_color" />
+                android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
