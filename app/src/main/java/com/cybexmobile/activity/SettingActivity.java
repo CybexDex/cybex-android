@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
@@ -19,6 +18,7 @@ import com.cybexmobile.BuildConfig;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AppVersion;
+import com.cybexmobile.dialog.FrequencyModeDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.R;
@@ -27,31 +27,53 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
+import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
+import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOAD_MODE;
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends BaseActivity implements FrequencyModeDialog.OnFrequencyModeSelectedListener {
 
-    private CardView mLanguageSettingView, mThemeSettingView, mSettingVersionView;
-    private Button mLogOutButton;
+    @BindView(R.id.setting_tv_language)
+    TextView mTvLanguage;
+    @BindView(R.id.setting_tv_frequency)
+    TextView mTvFrequency;
+    @BindView(R.id.setting_tv_version)
+    TextView mTvVersion;
+    @BindView(R.id.setting_tv_theme)
+    TextView mTvTheme;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.log_out)
+    Button mLogOutButton;
+
     private SharedPreferences mSharedPreference;
-    private Toolbar mToolbar;
+    private Unbinder mUnbinder;
+    private int mMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        mUnbinder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
-        initViews();
-        onClickListener();
+        mMode = mSharedPreference.getInt("load_mode", 3);
+        setSupportActionBar(mToolbar);
         displayLanguage();
+        displayFrequency();
         displayTheme();
         displayVersionNumber();
         displayLogOutButton();
@@ -78,85 +100,86 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mUnbinder.unbind();
         EventBus.getDefault().unregister(this);
     }
 
-    private void initViews() {
-        mLanguageSettingView = findViewById(R.id.setting_language);
-        mThemeSettingView = findViewById(R.id.setting_theme);
-        mSettingVersionView = findViewById(R.id.setting_version);
-        mLogOutButton = findViewById(R.id.log_out);
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+    @OnClick(R.id.setting_layout_language)
+    public void onLanguageClick(View view){
+        Intent intent = new Intent(SettingActivity.this, ChooseLanguageActivity.class);
+        startActivity(intent);
     }
 
-    private void onClickListener() {
-        mLanguageSettingView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingActivity.this, ChooseLanguageActivity.class);
-                startActivity(intent);
-            }
-        });
+    @OnClick(R.id.setting_layout_version)
+    public void onVersionClick(View view){
+        showLoadDialog();
+        checkVersion();
+    }
 
-        mThemeSettingView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingActivity.this, ChooseThemeActivity.class);
-                startActivity(intent);
-            }
-        });
+    @OnClick(R.id.setting_layout_theme)
+    public void onThemeClick(View view){
+        Intent intent = new Intent(SettingActivity.this, ChooseThemeActivity.class);
+        startActivity(intent);
+    }
 
-        mSettingVersionView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLoadDialog();
-                checkVersion();
-            }
-        });
+    @OnClick(R.id.log_out)
+    public void onLoginOutClick(){
+        mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
+        mSharedPreference.edit().putString(PREF_NAME, null).apply();
+        mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
+        EventBus.getDefault().post(new Event.LoginOut());
+        finish();
+    }
 
-        mLogOutButton.setOnClickListener(v -> {
-            mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
-            mSharedPreference.edit().putString(PREF_NAME, null).apply();
-            mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
-            EventBus.getDefault().post(new Event.LoginOut());
-            finish();
-        });
+    @OnClick(R.id.setting_layout_frequency)
+    public void onFrequencyClick(View view){
+        FrequencyModeDialog dialog = new FrequencyModeDialog();
+        Bundle bundle = new Bundle();
+        bundle.putInt(INTENT_PARAM_LOAD_MODE, mMode);
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), FrequencyModeDialog.class.getSimpleName());
+        dialog.setOnFrequencyModeSelectedListener(this);
     }
 
     private void displayLanguage() {
         String defaultLanguage = StoreLanguageHelper.getLanguageLocal(this);
-        TextView textView = mLanguageSettingView.findViewById(R.id.setting_language_type);
         if (defaultLanguage != null) {
             if (defaultLanguage.equals("en")) {
-                textView.setText(getResources().getString(R.string.setting_language_english));
+                mTvLanguage.setText(getResources().getString(R.string.setting_language_english));
             } else if (defaultLanguage.equals("zh")) {
-                textView.setText(getResources().getString(R.string.setting_language_chinese));
+                mTvLanguage.setText(getResources().getString(R.string.setting_language_chinese));
             }
 
         }
     }
 
+    private void displayFrequency(){
+        if(mMode == FREQUENCY_MODE_ORDINARY_MARKET){
+            mTvFrequency.setText(getResources().getString(R.string.setting_frequency_ordinary_market));
+        } else if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET){
+            mTvFrequency.setText(getResources().getString(R.string.setting_frequency_real_time_market));
+        } else if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI){
+            mTvFrequency.setText(getResources().getString(R.string.setting_frequency_real_time_market_only_wifi));
+        }
+    }
+
     private void displayTheme() {
         boolean isNight = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("night_mode", false);
-        TextView textView = (TextView) mThemeSettingView.findViewById(R.id.setting_theme_content);
         if (isNight) {
-            textView.setText(getString(R.string.setting_theme_light));
+            mTvTheme.setText(getString(R.string.setting_theme_light));
         } else {
-            textView.setText(getString(R.string.setting_theme_dark));
+            mTvTheme.setText(getString(R.string.setting_theme_dark));
         }
 
     }
 
     private void displayVersionNumber() {
         String versionName = BuildConfig.VERSION_NAME;
-        TextView versionNumber = mSettingVersionView.findViewById(R.id.setting_version_content);
-        versionNumber.setText(versionName);
+        mTvVersion.setText(versionName);
     }
 
     private void displayLogOutButton() {
-        mLogOutButton.setVisibility(mSharedPreference.getBoolean(PREF_IS_LOGIN_IN, false) ?
-                View.VISIBLE : View.GONE);
+        mLogOutButton.setVisibility(mSharedPreference.getBoolean(PREF_IS_LOGIN_IN, false) ? View.VISIBLE : View.GONE);
     }
 
     private void checkVersion() {
@@ -215,4 +238,12 @@ public class SettingActivity extends BaseActivity {
 
     }
 
+    @Override
+    public void onFrequencyModeSelected(int mode) {
+        if(mMode == mode){
+            return;
+        }
+        mMode = mode;
+        displayFrequency();
+    }
 }

@@ -28,7 +28,12 @@
         <item name="android:windowIsFloating">true</item><!-- 窗体是否浮动 -->
         <item name="android:backgroundDimEnabled">false</item><!-- 背景是否昏暗 -->
         <item name="android:windowAnimationStyle">@style/Animation.Activity.Dialog</item>
-        <!--<item name="android:backgroundDimAmount">0.6</item>-->
+    </style>
+
+    <style name="AppTheme.Dialog.Bottom" parent="AppTheme.Dialog">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Activity.Dialog.Bottom</item>
     </style>
 
     <!-- coin pair style -->
@@ -243,6 +248,11 @@
     <style name="Animation.Activity.Dialog" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/in_from_top</item>
         <item name="android:windowExitAnimation">@anim/out_to_top</item>
+    </style>
+
+    <style name="Animation.Activity.Dialog.Bottom" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/in_from_bottom</item>
+        <item name="android:windowExitAnimation">@anim/out_to_bottom</item>
     </style>
 
     <!-- Load Dialog Style -->

@@ -30,102 +30,134 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView
-            android:id="@+id/setting_language"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/itemBackground"
             app:cardCornerRadius="4dp"
             app:cardUseCompatPadding="true"
             android:layout_marginTop="@dimen/activity_margin">
-            <RelativeLayout
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/activity_padding">
-                <TextView
-                    android:id="@+id/setting_language_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/font_white_dark_bold_large"
-                    android:text="@string/setting_language"
-                    android:layout_centerVertical="true" />
-                <TextView
-                    android:id="@+id/setting_language_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/setting_language_title"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerHorizontal="true"
-                    style="@style/font_grey_large"
-                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                    android:text="English"/>
-            </RelativeLayout>
+                android:orientation="vertical">
 
+                <RelativeLayout
+                    android:id="@+id/setting_layout_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_bold_large"
+                        android:text="@string/setting_language"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/setting_tv_language"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        style="@style/font_grey_large"
+                        android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorPrimary"/>
+
+                <RelativeLayout
+                    android:id="@+id/setting_layout_frequency"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_bold_large"
+                        android:text="@string/setting_frequency"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/setting_tv_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
+                        style="@style/font_grey_large" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorPrimary"/>
+
+                <RelativeLayout
+                    android:id="@+id/setting_layout_version"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_bold_large"
+                        android:text="@string/setting_version"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/setting_tv_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
+                        style="@style/font_grey_large" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/setting_theme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/itemBackground"
             app:cardCornerRadius="4dp"
             app:cardUseCompatPadding="true"
             android:layout_marginTop="@dimen/activity_margin">
+
             <RelativeLayout
+                android:id="@+id/setting_layout_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/activity_padding">
+
                 <TextView
-                    android:id="@+id/setting_theme_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/font_white_dark_bold_large"
                     android:text="@string/setting_theme"
                     android:layout_centerVertical="true" />
+
                 <TextView
-                    android:id="@+id/setting_theme_content"
+                    android:id="@+id/setting_tv_theme"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/setting_theme_title"
                     android:layout_alignParentRight="true"
                     android:layout_centerHorizontal="true"
                     style="@style/font_grey_large"
-                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                    android:text="@string/setting_theme_dark"/>
+                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
             </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/setting_version"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/itemBackground"
-            app:cardCornerRadius="4dp"
-            app:cardUseCompatPadding="true"
-            android:layout_marginTop="@dimen/activity_margin">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/activity_padding">
-                <TextView
-                    android:id="@+id/setting_version_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/font_white_dark_bold_large"
-                    android:text="@string/setting_version"
-                    android:layout_centerVertical="true" />
-                <TextView
-                    android:id="@+id/setting_version_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/setting_version_title"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerHorizontal="true"
-                    android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                    style="@style/font_grey_large" />
-            </RelativeLayout>
-
 
         </android.support.v7.widget.CardView>
 

@@ -34,4 +34,7 @@
 
     <!-- deposit item divider -->
     <color name="deposit_item_divider">#f7f8fa</color>
+
+    <!-- dialog load mode background color -->
+    <color name="dialog_frequency_mode_background_color">#ffffff</color>
 </resources>

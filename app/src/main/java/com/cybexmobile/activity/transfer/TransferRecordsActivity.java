@@ -179,10 +179,10 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                 item.feeAsset = mWebSocketService.getAssetObject(item.transferOperation.fee.asset_id.toString());
                 //加载区块信息
                 item.callId = BitsharesWalletWraper.getInstance().get_call_id().getAndIncrement();
+                mTransferHistoryItems.add(item);
                 mWebSocketService.loadBlock(item.callId, item.accountHistoryObject.block_num);
                 mWebSocketService.loadAccountObject(item.transferOperation.from.equals(mAccountId) ?
                         item.transferOperation.to.toString() : item.transferOperation.from.toString());
-                mTransferHistoryItems.add(item);
             } else {
                 it.remove();
             }

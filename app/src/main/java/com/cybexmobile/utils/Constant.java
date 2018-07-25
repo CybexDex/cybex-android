@@ -26,10 +26,15 @@ public class Constant {
     public static final String INTENT_PARAM_TRANSFER_FEE_ASSET = "intent_param_transfer_fee_asset";
     public static final String INTENT_PARAM_TRANSFER_ASSET = "intent_param_transfer_asset";
     public static final String INTENT_PARAM_TRANSFER_BLOCK = "intent_param_transfer_block";
+    public static final String INTENT_PARAM_LOAD_MODE = "intent_param_load_mode";
 
 
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";
+
+    public static final int FREQUENCY_MODE_ORDINARY_MARKET = 1;
+    public static final int FREQUENCY_MODE_REAL_TIME_MARKET = 2;
+    public static final int FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI = 3;
 
     /**
      * SharePreference参数

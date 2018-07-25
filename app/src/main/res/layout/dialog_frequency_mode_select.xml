@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_frequency_mode_select_tv_ordinary_market"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_padding"
+        android:paddingBottom="@dimen/activity_padding"
+        style="@style/font_gray_large"
+        android:textColor="@color/text_frequency_mode_selector"
+        android:textIsSelectable="true"
+        android:gravity="center"
+        android:background="@color/dialog_frequency_mode_background_color"
+        android:text="@string/setting_frequency_ordinary_market"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/dialog_frequency_mode_select_tv_real_time_market"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_padding"
+        android:paddingBottom="@dimen/activity_padding"
+        style="@style/font_gray_large"
+        android:textColor="@color/text_frequency_mode_selector"
+        android:textIsSelectable="true"
+        android:gravity="center"
+        android:background="@color/dialog_frequency_mode_background_color"
+        android:text="@string/setting_frequency_real_time_market"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/dialog_frequency_mode_select_tv_real_time_market_only_wifi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_padding"
+        android:paddingBottom="@dimen/activity_padding"
+        style="@style/font_gray_large"
+        android:textColor="@color/text_frequency_mode_selector"
+        android:gravity="center"
+        android:background="@color/dialog_frequency_mode_background_color"
+        android:text="@string/setting_frequency_real_time_market_only_wifi"/>
+
+    <TextView
+        android:id="@+id/dialog_frequency_mode_select_tv_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_padding"
+        android:paddingBottom="@dimen/activity_padding"
+        android:layout_marginTop="@dimen/activity_margin"
+        style="@style/font_gray_large"
+        android:gravity="center"
+        android:background="@color/dialog_frequency_mode_background_color"
+        android:text="@string/text_cancel"/>
+
+</LinearLayout>

@@ -87,6 +87,7 @@
     <string name="setting_language_chinese">简体中文</string>
     <string name="setting_theme">主题</string>
     <string name="setting_version">版本</string>
+    <string name="setting_frequency">行情刷新频率</string>
     <string name="setting_theme_dark">黑色</string>
     <string name="setting_theme_light">白色</string>
     <string name="action_log_out">退出登录</string>
@@ -99,6 +100,10 @@
     <string name="setting_version_update_content">新版CybexDex可用，请立即更新至最新版本.</string>
     <string name="setting_version_update_next_time">下次</string>
     <string name="setting_version_update_now">更新</string>
+    <string name="setting_frequency_ordinary_market">普通行情</string>
+    <string name="setting_frequency_real_time_market">实时行情</string>
+    <string name="setting_frequency_real_time_market_only_wifi">仅在WiFi下实时行情</string>
+
 
     <!-- Login/Register -->
     <string name="create_account">创建新账号</string>

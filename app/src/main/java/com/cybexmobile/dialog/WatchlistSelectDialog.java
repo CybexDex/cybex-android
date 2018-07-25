@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.dialog;
 
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -47,7 +47,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class WatchlistSelectFragment extends DialogFragment implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener{
+public class WatchlistSelectDialog extends DialogFragment implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener{
 
     @BindView(R.id.activity_watchlist_select_rv_watchlist)
     RecyclerView mRvWatchlist;

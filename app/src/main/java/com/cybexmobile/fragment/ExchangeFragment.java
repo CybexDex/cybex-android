@@ -26,6 +26,7 @@ import com.cybexmobile.activity.OwnOrderHistoryActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.AssetRmbPrice;
+import com.cybexmobile.dialog.WatchlistSelectDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -67,7 +68,7 @@ import static com.cybexmobile.utils.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
 public class ExchangeFragment extends BaseFragment implements View.OnClickListener,
-        Toolbar.OnMenuItemClickListener, TabLayout.OnTabSelectedListener, WatchlistSelectFragment.OnWatchlistSelectedListener{
+        Toolbar.OnMenuItemClickListener, TabLayout.OnTabSelectedListener, WatchlistSelectDialog.OnWatchlistSelectedListener{
 
     private static final String TAG_BUY = "Buy";
     private static final String TAG_SELL = "Sell";
@@ -291,12 +292,12 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @OnClick(R.id.cb_title)
     public void onTitleClick(View view){
-        WatchlistSelectFragment fragment = new WatchlistSelectFragment();
+        WatchlistSelectDialog fragment = new WatchlistSelectDialog();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_WATCHLIST, mWatchlistData);
         fragment.setArguments(bundle);
         fragment.setTargetFragment(this, REQUEST_CODE_SELECT_WATCHLIST);
-        fragment.show(getFragmentManager(), WatchlistSelectFragment.class.getSimpleName());
+        fragment.show(getFragmentManager(), WatchlistSelectDialog.class.getSimpleName());
         fragment.setOnWatchlistSelectListener(this);
     }
 
