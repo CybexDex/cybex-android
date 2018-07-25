@@ -73,6 +73,7 @@ public class WebSocketClient extends WebSocketListener {
     private WebSocket mWebSocket;
     //websocket connect status
     private volatile int mConnectStatus = WEBSOCKET_CONNECT_CLOSED;
+    private static int WEBSOCKET_CONNECT_MANUALLY_CLOSED = -3;
     private static int WEBSOCKET_CONNECT_FAIL = -2;
     private static int WEBSOCKET_CONNECT_CLOSED = -1;
     private static int WEBSOCKET_CONNECT_ING = 0;
@@ -249,7 +250,7 @@ public class WebSocketClient extends WebSocketListener {
         mWebSocket.close(1000, "Close");
         mOkHttpClient = null;
         mWebSocket = null;
-        mConnectStatus = WEBSOCKET_CONNECT_CLOSED;
+        mConnectStatus = WEBSOCKET_CONNECT_MANUALLY_CLOSED;
         _nDatabaseId = -1;
         _nBroadcastId = -1;
         _nHistoryId = -1;
@@ -764,7 +765,9 @@ public class WebSocketClient extends WebSocketListener {
             sendForReplyImpl(callObject, replyObjectProcess);
         }else {
             delayCalls.add(new DelayCall(flag, callObject, replyObjectProcess));
-            connect();
+            if (mConnectStatus != WEBSOCKET_CONNECT_MANUALLY_CLOSED) {
+                connect();
+            }
         }
     }
 

@@ -30,7 +30,7 @@ public class PortfolioActivity extends BaseActivity {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mPortfolioRecyclerView = findViewById(R.id.portfolio_page_recycler_view);
-        mPortfolioListAdapter = new PortfolioRecyclerViewAdapter(R.layout.item_portfolio_vertical, mAccountBalanceObjectItems);
+        mPortfolioListAdapter = new PortfolioRecyclerViewAdapter(R.layout.item_portfolio_vertical, mAccountBalanceObjectItems, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mPortfolioRecyclerView.setLayoutManager(layoutManager);
         mPortfolioRecyclerView.setAdapter(mPortfolioListAdapter);

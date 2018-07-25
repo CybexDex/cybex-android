@@ -15,6 +15,10 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="AppTheme.TransparentStatusBar">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowFrame">@null</item><!-- 移除边框 -->
         <item name="android:windowNoTitle">true</item><!-- 去除顶部标题栏 -->
@@ -187,12 +191,20 @@
         <item name="android:textSize">@dimen/font_medium</item>
     </style>
 
+    <style name="font_white_title_large_bold" parent="font_white">
+        <item name="android:textSize">@dimen/font_title_large</item>
+        <item name="android:textStyle">bold</item>
+    </style>
     <style name="font_white_bold_large" parent="font_white_large">
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="font_white_large" parent="font_white">
         <item name="android:textSize">@dimen/font_large</item>
+    </style>
+
+    <style name="font_white_small" parent="font_white">
+        <item name="android:textSize">@dimen/font_small</item>
     </style>
 
     <style name="font_white_xxsmall" parent="font_white">
@@ -251,5 +263,9 @@
     <style name="DialogButton">
         <item name="android:textColor">@color/font_color_dark_white</item>
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

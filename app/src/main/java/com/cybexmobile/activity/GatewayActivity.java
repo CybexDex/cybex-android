@@ -32,6 +32,8 @@ import info.hoang8f.android.segmented.SegmentedGroup;
 public class GatewayActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, DepositItemFragment.OnListFragmentInteractionListener {
 
     public static String INTENT_ACCOUNT_BALANCE_ITEMS = "intent_account_balance_items";
+    public static String INTENT_IS_DEPOSIT = "intent_is_deposit";
+    public static String INTENT_IS_WITHDRAW = "intent_is_withdraw";
 
     @BindView(R.id.gate_way_segmented_group)
     SegmentedGroup mSegmentedGroup;

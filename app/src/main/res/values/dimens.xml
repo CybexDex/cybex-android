@@ -6,10 +6,12 @@
     <dimen name="activity_padding_double">26dp</dimen>
     <dimen name="activity_margin_triple">39dp</dimen>
     <dimen name="activity_padding_triple">39dp</dimen>
+    <dimen name="android_status_bar_height">24dp</dimen>
 
     <!-- font size -->
     <dimen name="font_xxxxlarge">24sp</dimen>
     <dimen name="font_xxxlarge">22sp</dimen>
+    <dimen name="font_title_large">24sp</dimen>
     <dimen name="font_xxlarge">20sp</dimen>
     <dimen name="font_xlarge">18sp</dimen>
     <dimen name="font_large">16sp</dimen>

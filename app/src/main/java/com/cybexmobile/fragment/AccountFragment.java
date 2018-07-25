@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
+import com.cybexmobile.activity.AccountBalanceActivity;
 import com.cybexmobile.activity.GatewayActivity;
 import com.cybexmobile.activity.LockAssetsActivity;
 import com.cybexmobile.activity.LoginActivity;
@@ -127,11 +128,11 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @OnClick(R.id.account_layout_item_my_portfolio)
     public void onAllPortfolioClick(View view){
-//        if(!mIsLoginIn){
-//            toLogin();
-//            return;
-//        }
-        Intent intent = new Intent(getActivity(), TransferActivity.class);
+        if(!mIsLoginIn){
+            toLogin();
+            return;
+        }
+        Intent intent = new Intent(getActivity(), AccountBalanceActivity.class);
         startActivity(intent);
     }
 

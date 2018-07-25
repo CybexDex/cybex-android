@@ -6,6 +6,7 @@
     <dimen name="activity_padding_double">26dp</dimen>
 
     <!-- font size -->
+    <dimen name="font_title_large">24sp</dimen>
     <dimen name="font_xxlarge">20sp</dimen>
     <dimen name="font_xlarge">18sp</dimen>
     <dimen name="font_large">16sp</dimen>
