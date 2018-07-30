@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,16 +56,24 @@ import butterknife.Unbinder;
 
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 
+import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();
 
     private static final int MESSAGE_WHAT_REFRUSH_TOTAL_CYB = 1;
     private static final int MESSAGE_WHAT_REFRESH_PORTFOLIO = 2;
 
+    private static final String PARAM_TOTAL_CYB_VALUE = "total_cyb_value";
+    private static final String PARAM_TOTAL_RMB_VALUE = "total_rmb_value";
+    private static final String PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS = "account_balance_object_items";
+
     private String mAccountName;
     private double mTotalBalanceCyb;
     private double mCybRmbPrice;
     private int mRefreshCount;
+    private boolean mIsLoginIn;
 
 
     private Unbinder mUnbinder;
@@ -113,7 +123,8 @@ public class AccountBalanceActivity extends BaseActivity {
         mUnbinder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
-        mAccountName = getIntent().getStringExtra("AccountName");
+        mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+        mIsLoginIn = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_IS_LOGIN_IN, false);
         mAccountBalanceRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mAccountBalanceRecyclerView.getItemAnimator().setChangeDuration(0);
         addCustomDivider();
@@ -121,6 +132,27 @@ public class AccountBalanceActivity extends BaseActivity {
         mAccountBalanceRecyclerView.setAdapter(mBalanceRecyclerAdapter);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        if (mIsLoginIn) {
+            if (!mIsNetWorkAvailable) {
+                mTotalBalanceCyb = savedInstanceState.getDouble(PARAM_TOTAL_CYB_VALUE);
+                mCybRmbPrice = savedInstanceState.getDouble(PARAM_TOTAL_RMB_VALUE);
+                mAccountBalanceObjectItems.addAll((List<AccountBalanceObjectItem>) savedInstanceState.getSerializable(PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS));
+                mBalanceRecyclerAdapter.notifyDataSetChanged();
+                mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
+                setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (!mIsNetWorkAvailable) {
+            outState.putDouble(PARAM_TOTAL_CYB_VALUE, mTotalBalanceCyb);
+            outState.putDouble(PARAM_TOTAL_RMB_VALUE, mCybRmbPrice);
+            outState.putSerializable(PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        }
     }
 
     @Override
@@ -163,6 +195,11 @@ public class AccountBalanceActivity extends BaseActivity {
         Intent intent = new Intent(this, TransferActivity.class);
         intent.putExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginOut(Event.LoginOut event) {
+        resetAccountDate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -210,9 +247,9 @@ public class AccountBalanceActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateFullAccount(Event.UpdateFullAccount event){
+    public void onUpdateFullAccount(Event.UpdateFullAccount event) {
         mRefreshCount++;
-        if(mRefreshCount == 1 || mRefreshCount % 10 == 0){
+        if (mRefreshCount == 1 || mRefreshCount % 10 == 0) {
             loadData(event.getFullAccount());
         }
     }
@@ -364,5 +401,13 @@ public class AccountBalanceActivity extends BaseActivity {
         } else {
             mTotalRmbTv.setText(totalRmb == 0 ? "≈¥0.00" : String.format(Locale.US, "≈¥%.2f", totalRmb));
         }
+    }
+
+    private void resetAccountDate() {
+        mAccountName = null;
+        mTotalBalanceCyb = 0;
+        mAccountBalanceObjectItems.clear();
+        mLimitOrderObjectList.clear();
+        mBalanceRecyclerAdapter.notifyDataSetChanged();
     }
 }

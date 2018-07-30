@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.R;
+import com.cybexmobile.utils.MyUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

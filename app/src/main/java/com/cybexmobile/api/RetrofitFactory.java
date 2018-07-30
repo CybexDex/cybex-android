@@ -16,6 +16,8 @@ public class RetrofitFactory {
     public static final String baseUrl = "https://app.cybex.io/";
     public static final String url_pin_code = "https://faucet.cybex.io/captcha";
     public static final String url_register = "https://faucet.cybex.io/register";
+    public static final String url_deposit_withdraw_log_in = "https://gateway-query.cybex.io/login";
+    public static final String url_deposit_withdraw_records = "https://gateway-query.cybex.io/records";
 
     private CybexHttpApi cybexHttpApi;
 

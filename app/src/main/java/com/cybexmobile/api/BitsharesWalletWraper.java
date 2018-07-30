@@ -14,6 +14,7 @@ import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
+import com.cybexmobile.graphene.chain.MemoData;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.AccountHistoryObject;
 import com.cybexmobile.graphene.chain.Operations;
@@ -24,7 +25,6 @@ import com.cybexmobile.market.MarketTicker;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -361,20 +361,32 @@ public class BitsharesWalletWraper {
                                                                                 ObjectId<AssetObject> assetReceiveId,
                                                                                 long amountFee,
                                                                                 long amountSell,
-                                                                                long amountReceive){
+                                                                                long amountReceive) {
         return mWalletApi.getLimitOrderCreateOperation(accountId, assetFeeId, assetSellId, assetReceiveId, amountFee, amountSell, amountReceive);
     }
 
     public Operations.limit_order_cancel_operation getLimitOrderCancelOperation(ObjectId<AccountObject> accountId,
                                                                                 ObjectId<AssetObject> assetFeeId,
                                                                                 ObjectId<LimitOrderObject> limitOrderId,
-                                                                                long amountFee){
+                                                                                long amountFee) {
         return mWalletApi.getLimitOrderCancelOperation(accountId, assetFeeId, limitOrderId, amountFee);
+    }
+
+    public Operations.withdraw_deposit_history_operation getWithdrawDepositOperation(String accountName, int offset, int size, String fundType, String asset, Date expiration) {
+        return mWalletApi.getWithdrawDepositOperation(accountName, offset, size, fundType, asset, expiration);
     }
 
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
 
         return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
+    }
+
+    public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
+        return mWalletApi.getWithdrawDepositSignature(accountObject, operation);
+    }
+
+    public String getMemoMessage(MemoData memoData) {
+        return mWalletApi.getMemoMessage(memoData);
     }
 
 //    public signed_transaction transfer(String strFrom,

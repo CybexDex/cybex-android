@@ -1,25 +1,28 @@
 package com.cybexmobile.activity;
 
-import android.net.Uri;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.cybexmobile.R;
-import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
+import com.cybexmobile.graphene.chain.AccountBalanceObject;
+import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybexmobile.service.WebSocketService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +32,12 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+
 public class GatewayActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, DepositItemFragment.OnListFragmentInteractionListener {
 
     public static String INTENT_ACCOUNT_BALANCE_ITEMS = "intent_account_balance_items";
     public static String INTENT_IS_DEPOSIT = "intent_is_deposit";
-    public static String INTENT_IS_WITHDRAW = "intent_is_withdraw";
 
     @BindView(R.id.gate_way_segmented_group)
     SegmentedGroup mSegmentedGroup;
@@ -46,8 +50,26 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     @BindView(R.id.gate_way_segment_withdraw)
     RadioButton mWithdrawButton;
 
+    private String mAccountName;
+
     private Unbinder mUnbinder;
-    private List<AccountBalanceObjectItem> mAccountBalanceObjcetItemList = new ArrayList<>();
+    private List<AccountBalanceObjectItem> mAccountBalanceObjectItemList = new ArrayList<>();
+    private WebSocketService mWebSocketService;
+    private ScreenSlidePagerAdapter mScreenSlidePagerAdapter;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
+            loadData(mWebSocketService.getFullAccount(mAccountName));
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
 
 
     @Override
@@ -57,10 +79,17 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         setViews();
-        mAccountBalanceObjcetItemList = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_ACCOUNT_BALANCE_ITEMS);
+        mAccountBalanceObjectItemList = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_ACCOUNT_BALANCE_ITEMS);
+        if (mAccountBalanceObjectItemList == null) {
+            mAccountBalanceObjectItemList = new ArrayList<>();
+            mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+            Intent intent = new Intent(this, WebSocketService.class);
+            bindService(intent, mConnection, BIND_AUTO_CREATE);
+        }
+        mScreenSlidePagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
         mViewPager.addOnPageChangeListener(onPageChangeListener);
-        if (getIntent().getBooleanExtra(INTENT_IS_DEPOSIT, false)) {
+        if (getIntent().getBooleanExtra(INTENT_IS_DEPOSIT, true)) {
             mViewPager.setCurrentItem(0);
         } else {
             mViewPager.setCurrentItem(1);
@@ -95,7 +124,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                 default:
                     mDepositButton.setChecked(true);
                     break;
-                case  1:
+                case 1:
                     mWithdrawButton.setChecked(true);
                     break;
             }
@@ -111,6 +140,9 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        if (mWebSocketService != null) {
+            unbindService(mConnection);
+        }
     }
 
     @Override
@@ -129,10 +161,10 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
             Fragment fragment;
             switch (position) {
                 default:
-                    fragment = DepositItemFragment.newInstance(mAccountBalanceObjcetItemList);
+                    fragment = DepositItemFragment.newInstance(mAccountBalanceObjectItemList);
                     break;
                 case 1:
-                    fragment = WithdrawItemFragment.newInstance(mAccountBalanceObjcetItemList);
+                    fragment = WithdrawItemFragment.newInstance(mAccountBalanceObjectItemList);
                     break;
             }
             return fragment;
@@ -147,5 +179,28 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
+    }
+
+    private void loadData(FullAccountObject fullAccountObject) {
+        if (fullAccountObject == null) {
+            return;
+        }
+        if (!mIsNetWorkAvailable) {
+            return;
+        }
+        List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
+        if (accountBalanceObjects != null && accountBalanceObjects.size() > 0) {
+            for (AccountBalanceObject balance : accountBalanceObjects) {
+                if (balance.balance == 0) {
+                    continue;
+                }
+                AccountBalanceObjectItem item = new AccountBalanceObjectItem();
+                item.accountBalanceObject = balance;
+                item.assetObject = mWebSocketService.getAssetObject(balance.asset_type.toString());
+                mAccountBalanceObjectItemList.add(item);
+            }
+
+        }
+        mScreenSlidePagerAdapter.notifyDataSetChanged();
     }
 }

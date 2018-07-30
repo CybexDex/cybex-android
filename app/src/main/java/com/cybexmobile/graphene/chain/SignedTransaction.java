@@ -1,5 +1,7 @@
 package com.cybexmobile.graphene.chain;
 
+import android.util.Log;
+
 import com.cybexmobile.crypto.Sha256Object;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,6 +17,14 @@ public class SignedTransaction extends Transaction {
         Sha256Object digest = sig_digest(chain_id);
         SignaturesBuffer.add(privateKeyType.getPrivateKey().sign_compact(digest, true));
         signatures.add(bytesToHex(privateKeyType.getPrivateKey().sign_compact(digest, true).data));
+    }
+
+    public String sign(Types.private_key_type privateKeyType) {
+        Sha256Object digest = sig_digest();
+        SignaturesBuffer.add(privateKeyType.getPrivateKey().sign_compact(digest, true));
+        signatures.add(bytesToHex(privateKeyType.getPrivateKey().sign_compact(digest, true).data));
+        Log.e("withdraw_deposit_hash", signatures.get(0));
+        return signatures.get(0);
     }
 
     private String bytesToHex(byte[] bytes) {

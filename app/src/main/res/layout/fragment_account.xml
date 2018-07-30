@@ -36,7 +36,6 @@
                 android:id="@+id/account_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:letterSpacing="0.01"
                 android:text="@string/log_in_cybex"
                 android:textColor="@color/font_color_white_dark"
                 android:layout_marginTop="@dimen/activity_margin"

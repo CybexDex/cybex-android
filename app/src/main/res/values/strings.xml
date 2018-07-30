@@ -12,6 +12,8 @@
     <string name="title_transfer">Send</string>
     <string name="title_transfer_records">Transfer Records</string>
     <string name="title_transfer_details">Transfer Details</string>
+    <string name="title_deposit_records">Deposit Records</string>
+    <string name="title_withdraw_records">Withdraw Records</string>
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>
@@ -232,6 +234,7 @@
     <string name="deposit_eos_deposit_account">EOS Deposit Account</string>
     <string name="deposit_eos_verification_code">Verification code</string>
     <string name="deposit_eos_alert_message">(Must transfer your EOS to deposit account with this verification code in memo)</string>
+    <string name="deposit_record_button">Deposit Records</string>
 
     <!-- Withdraw Page Related -->
     <string name="withdraw_available_amount">Available</string>
@@ -251,6 +254,11 @@
     <string name="withdraw_error_not_enough">Not enough</string>
     <string name="withdraw_error_less_than_minimum">Less than the minimum withdrawal</string>
     <string name="withdraw_error_invalid_address">Invalid Address</string>
+    <string name="withdraw_records_button">Withdraw Records</string>
+
+    <!-- Deposit Withdraw Records -->
+    <string name="deposit_withdraw_records_update_time">Update time:&#032;&#032;</string>
+    <string name="deposit_withdraw_records_address">Address:&#032;&#032;</string>
 
     <!-- Snack Bar Text -->
     <string name="snack_bar_saved">Saved</string>

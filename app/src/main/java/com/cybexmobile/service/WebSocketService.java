@@ -217,6 +217,11 @@ public class WebSocketService extends Service {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogOut(Event.LoginOut event) {
+        clearAccountCache();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void isOnBackground(Event.IsOnBackground isOnBackground) {
         mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         if (isOnBackground.isOnBackground()) {

@@ -29,7 +29,7 @@ public class RawType {
 
     public byte get_byte(boolean value) {
         byte byteValue = 0;
-        if (value == true) {
+        if (value) {
             byteValue = 1;
         }
 

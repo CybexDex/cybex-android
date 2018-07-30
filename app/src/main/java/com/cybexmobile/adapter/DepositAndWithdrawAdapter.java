@@ -86,6 +86,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
                         intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
                         intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
                         intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
+                        intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
                         mContext.startActivity(intent);
                     } else {
                         Intent intent = new Intent(mContext, WithdrawActivity.class);

@@ -21,6 +21,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="ETH" />
+        <ImageView
+            android:src="@drawable/ic_records_24_px"
+            android:id="@+id/withdraw_records_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/activity_margin" />
     </android.support.v7.widget.Toolbar>
 
     <ScrollView

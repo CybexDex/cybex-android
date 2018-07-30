@@ -16,14 +16,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -54,7 +52,6 @@ import com.cybexmobile.graphene.chain.SignedTransaction;
 import com.cybexmobile.graphene.chain.Types;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
-import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.DecimalDigitsInputFilter;
 import com.cybexmobile.utils.SoftKeyBoardListener;
 
@@ -67,8 +64,6 @@ import javax.annotation.Nonnull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnEditorAction;
-import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
@@ -108,6 +103,8 @@ public class WithdrawActivity extends BaseActivity {
     Toolbar mToolbar;
     @BindView(R.id.withdraw_toolbar_text_view)
     TextView mToolbarTextView;
+    @BindView(R.id.withdraw_records_button)
+    ImageView mWithdrawRecordsButton;
     @BindView(R.id.withdraw_available_amount)
     TextView mAvailableAmountTextView;
     @BindView(R.id.withdraw_address_tv)
@@ -252,6 +249,14 @@ public class WithdrawActivity extends BaseActivity {
         } else {
             displayFee();
         }
+    }
+
+    @OnClick(R.id.withdraw_records_button)
+    public void onClickWithdrawRecordsButton(View view) {
+        Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
+        intent.putExtra("assetObject", mAssetObject);
+        intent.putExtra("fundType", "WITHDRAW");
+        startActivity(intent);
     }
 
     @OnTextChanged(value = R.id.withdraw_withdrawal_address, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)

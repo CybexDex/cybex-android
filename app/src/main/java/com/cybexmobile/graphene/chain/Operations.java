@@ -1,7 +1,11 @@
 package com.cybexmobile.graphene.chain;
 
+import android.util.Log;
+
+import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.fc.io.BaseEncoder;
 import com.cybexmobile.fc.io.RawType;
+import com.cybexmobile.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -15,6 +19,7 @@ import com.google.gson.JsonSerializer;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,11 +35,14 @@ public class Operations {
     public static final int ID_UPDATE_LMMIT_ORDER_OPERATION = 3;
     public static final int ID_FILL_LMMIT_ORDER_OPERATION = 4;
     public static final int ID_CREATE_ACCOUNT_OPERATION = 5;
+    public static final int ID_WITHDRAW_DEPOSIT_OPERATION = 6;
 
     public static operation_id_map operations_map = new operation_id_map();
+
     public static class operation_id_map {
         private HashMap<Integer, Type> mHashId2Operation = new HashMap<>();
         private HashMap<Integer, Type> mHashId2OperationFee = new HashMap<>();
+
         public operation_id_map() {
 
             mHashId2Operation.put(ID_TRANSER_OPERATION, transfer_operation.class);
@@ -43,6 +51,7 @@ public class Operations {
             mHashId2Operation.put(ID_UPDATE_LMMIT_ORDER_OPERATION, call_order_update_operation.class);
             mHashId2Operation.put(ID_FILL_LMMIT_ORDER_OPERATION, fill_order_operation.class);
             mHashId2Operation.put(ID_CREATE_ACCOUNT_OPERATION, account_create_operation.class);
+            mHashId2Operation.put(ID_WITHDRAW_DEPOSIT_OPERATION, withdraw_deposit_history_operation.class);
 
             mHashId2OperationFee.put(ID_TRANSER_OPERATION, transfer_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_CREATE_LIMIT_ORDER_OPERATION, limit_order_create_operation.fee_parameters_type.class);
@@ -50,11 +59,13 @@ public class Operations {
             mHashId2OperationFee.put(ID_UPDATE_LMMIT_ORDER_OPERATION, call_order_update_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_FILL_LMMIT_ORDER_OPERATION, fill_order_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_CREATE_ACCOUNT_OPERATION, account_create_operation.fee_parameters_type.class);
+            mHashId2OperationFee.put(ID_WITHDRAW_DEPOSIT_OPERATION, withdraw_deposit_history_operation.class);
         }
 
         public Type getOperationObjectById(int nId) {
             return mHashId2Operation.get(nId);
         }
+
         public Type getOperationFeeObjectById(int nId) {
             return mHashId2OperationFee.get(nId);
         }
@@ -94,17 +105,21 @@ public class Operations {
                 jsonArray.add(src.nOperationType);
                 Type type = operations_map.getOperationObjectById(src.nOperationType);
 
-                assert(type != null);
+                assert (type != null);
                 jsonArray.add(context.serialize(src.operationContent, type));
 
                 return jsonArray;
             }
         }
-    };
+    }
+
+    ;
 
     public interface base_operation {
         List<Authority> get_required_authorities();
+
         List<ObjectId<AccountObject>> get_required_active_authorities();
+
         List<ObjectId<AccountObject>> get_required_owner_authorities();
 
         void write_to_encoder(BaseEncoder baseEncoder);
@@ -123,9 +138,11 @@ public class Operations {
 
     public static class transfer_operation implements base_operation, Serializable {
         public static class fee_parameters_type {
-            long fee       = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
+            long fee = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
             long price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
-        };
+        }
+
+        ;
 
         public Asset fee;
         public ObjectId<AccountObject> from;
@@ -182,8 +199,8 @@ public class Operations {
 
         @Override
         public long calculate_fee(Object objectFeeParameter) {
-            assert(fee_parameters_type.class.isInstance(objectFeeParameter));
-            fee_parameters_type feeParametersType = (fee_parameters_type)objectFeeParameter;
+            assert (fee_parameters_type.class.isInstance(objectFeeParameter));
+            fee_parameters_type feeParametersType = (fee_parameters_type) objectFeeParameter;
 
 
             return calculate_fee(feeParametersType);
@@ -236,10 +253,10 @@ public class Operations {
             long fee = 5 * GRAPHENE_BLOCKCHAIN_PRECISION;
         }
 
-        public Asset                     fee;
+        public Asset fee;
         public ObjectId<AccountObject> seller;
-        public Asset                     amount_to_sell;
-        public Asset                     min_to_receive;
+        public Asset amount_to_sell;
+        public Asset min_to_receive;
 
         /// The order will be removed from the books if not filled by expiration
         /// Upon expiration, all unsold asset will be returned to seller
@@ -247,7 +264,7 @@ public class Operations {
 
         /// If this flag is set the entire order must be filled or the operation is rejected
         public boolean fill_or_kill = false;
-        public Set<Types.void_t>   extensions;
+        public Set<Types.void_t> extensions;
 
         @Override
         public List<Authority> get_required_authorities() {
@@ -299,8 +316,8 @@ public class Operations {
 
         @Override
         public long calculate_fee(Object objectFeeParameter) {
-            assert(fee_parameters_type.class.isInstance(objectFeeParameter));
-            fee_parameters_type feeParametersType = (fee_parameters_type)objectFeeParameter;
+            assert (fee_parameters_type.class.isInstance(objectFeeParameter));
+            fee_parameters_type feeParametersType = (fee_parameters_type) objectFeeParameter;
             return feeParametersType.fee;
         }
 
@@ -333,13 +350,17 @@ public class Operations {
     public static class limit_order_cancel_operation implements base_operation {
         class fee_parameters_type {
             long fee = 0;
-        };
+        }
 
-        public Asset                         fee;
+        ;
+
+        public Asset fee;
         public ObjectId<LimitOrderObject> order;
-        /** must be order->seller */
-        public ObjectId<AccountObject>     fee_paying_account;
-        public Set<Types.void_t>             extensions;
+        /**
+         * must be order->seller
+         */
+        public ObjectId<AccountObject> fee_paying_account;
+        public Set<Types.void_t> extensions;
 
         @Override
         public List<Authority> get_required_authorities() {
@@ -379,8 +400,8 @@ public class Operations {
 
         @Override
         public long calculate_fee(Object objectFeeParameter) {
-            assert(fee_parameters_type.class.isInstance(objectFeeParameter));
-            fee_parameters_type feeParametersType = (fee_parameters_type)objectFeeParameter;
+            assert (fee_parameters_type.class.isInstance(objectFeeParameter));
+            fee_parameters_type feeParametersType = (fee_parameters_type) objectFeeParameter;
             return feeParametersType.fee;
         }
 
@@ -409,16 +430,20 @@ public class Operations {
     }
 
     public static class call_order_update_operation implements base_operation {
-        /** this is slightly more expensive than limit orders, this pricing impacts prediction markets */
+        /**
+         * this is slightly more expensive than limit orders, this pricing impacts prediction markets
+         */
         class fee_parameters_type {
             long fee = 20 * GRAPHENE_BLOCKCHAIN_PRECISION;
-        };
+        }
 
-        Asset                     fee;
+        ;
+
+        Asset fee;
         ObjectId<AccountObject> funding_account; ///< pays fee, collateral, and cover
-        Asset                     delta_collateral; ///< the amount of collateral to add to the margin position
-        Asset                     delta_debt; ///< the amount of the debt to be paid off, may be negative to issue new debt
-        Set<Types.void_t>         extensions;
+        Asset delta_collateral; ///< the amount of collateral to add to the margin position
+        Asset delta_debt; ///< the amount of the debt to be paid off, may be negative to issue new debt
+        Set<Types.void_t> extensions;
 
         @Override
         public List<Authority> get_required_authorities() {
@@ -475,11 +500,11 @@ public class Operations {
         class fee_parameters_type {
         }
 
-        public ObjectId                     order_id;
-        public ObjectId<AccountObject>     account_id;
-        public Asset                         pays;
-        public Asset                         receives;
-        public Asset                         fee; // paid by receiving account
+        public ObjectId order_id;
+        public ObjectId<AccountObject> account_id;
+        public Asset pays;
+        public Asset receives;
+        public Asset fee; // paid by receiving account
 
         @Override
         public List<Authority> get_required_authorities() {
@@ -537,9 +562,9 @@ public class Operations {
 
     public static class account_create_operation implements base_operation {
         class fee_parameters_type {
-            long basic_fee       = 5*GRAPHENE_BLOCKCHAIN_PRECISION; ///< the cost to register the cheapest non-free account
-            long premium_fee     = 2000*GRAPHENE_BLOCKCHAIN_PRECISION; ///< the cost to register the cheapest non-free account
-            int  price_per_kbyte = GRAPHENE_BLOCKCHAIN_PRECISION;
+            long basic_fee = 5 * GRAPHENE_BLOCKCHAIN_PRECISION; ///< the cost to register the cheapest non-free account
+            long premium_fee = 2000 * GRAPHENE_BLOCKCHAIN_PRECISION; ///< the cost to register the cheapest non-free account
+            int price_per_kbyte = GRAPHENE_BLOCKCHAIN_PRECISION;
         }
 
         public Asset fee;
@@ -613,5 +638,104 @@ public class Operations {
             return listAssetId;
         }
 
+    }
+
+    public static class withdraw_deposit_history_operation implements base_operation {
+        public String accountName;
+        public String asset;
+        public String fundType;
+        transient public UnsignedInteger sizeInteger;
+        transient public UnsignedInteger offsetInteger;
+        public long size;
+        public long offset;
+        transient public Date expirationDate;
+        public long expiration;
+
+
+
+
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawObject = new RawType();
+            byte[] accountNameByte = accountName.getBytes();
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(accountNameByte.length));
+            baseEncoder.write(accountNameByte);
+            baseEncoder.write(rawObject.get_byte(asset != null));
+            if (asset != null) {
+                byte[] assetByte = asset.getBytes();
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(assetByte.length));
+                baseEncoder.write(assetByte);
+            }
+            baseEncoder.write(rawObject.get_byte(fundType != null));
+            if (fundType != null) {
+                byte[] fundTypeByte = fundType.getBytes();
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(fundTypeByte.length));
+                baseEncoder.write(fundTypeByte);
+            }
+
+            baseEncoder.write(rawObject.get_byte(sizeInteger != null));
+            if (sizeInteger != null) {
+                baseEncoder.write(rawObject.get_byte_array(sizeInteger.intValue()));
+            }
+//            if (size != 0) {
+//            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(size));
+//            }
+            baseEncoder.write(rawObject.get_byte(offsetInteger != null));
+            if (offsetInteger != null) {
+                baseEncoder.write(rawObject.get_byte_array(offsetInteger.intValue()));
+            }
+//            if (offset != 0) {
+//            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(offset));
+//            }
+            baseEncoder.write(rawObject.get_byte_array(expirationDate));
+
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
+        }
+
+        public void sign(Types.private_key_type privateKey) {
+            Sha256Object.encoder enc = new Sha256Object.encoder();
+            this.write_to_encoder(enc);
+            byte[] signature = privateKey.getPrivateKey().sign_compact(enc.result(), true).data;
+            Log.e("signWithdraw", MyUtils.bytesToHex(signature));
+        }
     }
 }

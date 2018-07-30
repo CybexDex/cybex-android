@@ -73,8 +73,8 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 priceCyb = marketTicker.latest;
             }
             double price = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
-            viewHolder.mAssetCybAmount.setText(AssetUtil.formatNumberRounding(price, 5));
-            viewHolder.mAssetAmount.setText(item.frozenAmount == 0 ? mContext.getResources().getString(R.string.balance_page_frozen_no_asset) : mContext.getResources().getString(R.string.balance_page_frozen_asset) + AssetUtil.formatNumberRounding(item.frozenAmount, assetObject.precision));
+            viewHolder.mAssetCybAmount.setText(AssetUtil.formatNumberRounding(price, assetObject.precision));
+            viewHolder.mAssetFrozenAmount.setText(item.frozenAmount == 0 ? mContext.getResources().getString(R.string.balance_page_frozen_no_asset) : mContext.getResources().getString(R.string.balance_page_frozen_asset) + AssetUtil.formatNumberRounding(item.frozenAmount, assetObject.precision));
 //            holder.mAssetAmount.setText(price * priceCyb == 0 ? "- CYB" : String.format("%s CYB", AssetUtil.formatNumberRounding(price * priceCyb, 5)));
             viewHolder.mAssetRmb.setText(price * priceCyb == 0 ? "-" : "≈¥" + AssetUtil.formatNumberRounding(item.cybPrice * price * priceCyb, 2));
         }
@@ -89,7 +89,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mAssetImage;
         TextView mAssetSymbol;
-        TextView mAssetAmount;
+        TextView mAssetFrozenAmount;
         TextView mAssetCybAmount;
         TextView mAssetRmb;
 
@@ -97,7 +97,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             super(view);
             mAssetImage = view.findViewById(R.id.item_portfolio_asset_image);
             mAssetSymbol = view.findViewById(R.id.item_portfolio_asset_symbol);
-            mAssetAmount = view.findViewById(R.id.item_portfolio_asset_amount);
+            mAssetFrozenAmount = view.findViewById(R.id.item_portfolio_asset_amount);
             mAssetCybAmount = view.findViewById(R.id.item_portfolio_assets_cyb_amount);
             mAssetRmb = view.findViewById(R.id.item_portfolio_assets_rmb);
         }

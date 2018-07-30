@@ -37,6 +37,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import org.spongycastle.asn1.cms.TimeStampAndCRL;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -46,6 +48,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -711,6 +715,22 @@ public class WalletApi {
         return operation;
     }
 
+    public Operations.withdraw_deposit_history_operation getWithdrawDepositOperation(String accountName, int offset, int size, String fundType, String asset, Date expiration) {
+        Operations.withdraw_deposit_history_operation operation = new Operations.withdraw_deposit_history_operation();
+        operation.accountName = accountName;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MINUTE, 5);
+        operation.expirationDate = expiration;
+        operation.expiration = expiration.getTime() / 1000;
+        operation.fundType = fundType;
+        operation.asset = asset;
+        operation.sizeInteger = UnsignedInteger.valueOf(size);
+        operation.offsetInteger = UnsignedInteger.valueOf(offset);
+        Log.e("expiration", String.valueOf(calendar.getTime().getTime()));
+        return operation;
+    }
+
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
         SignedTransaction signedTransaction = new SignedTransaction();
         Operations.operation_type operationType = new Operations.operation_type();
@@ -739,6 +759,30 @@ public class WalletApi {
         signedTransaction.sign(privateKey, mWalletObject.chain_id);
 
         return signedTransaction;
+    }
+
+    public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        signedTransaction.operation = operation;
+        Types.private_key_type privateKey = mHashMapPub2Priv.get(accountObject.active.get_keys().get(0));
+        return signedTransaction.sign(privateKey);
+    }
+
+    public String getMemoMessage(MemoData memoData) {
+        try {
+            if (memoData != null) {
+                Types.public_key_type memoKeyFrom = new Types.public_key_type(memoData.from.toString());
+                Types.public_key_type memoKeyTo = new Types.public_key_type(memoData.to.toString());
+                if (mHashMapPub2Priv.get(memoKeyFrom) != null) {
+                    return memoData.get_message(mHashMapPub2Priv.get(memoKeyFrom).getPrivateKey(), memoKeyTo.getPublicKey(), memoData.message, memoData.nonce);
+                } else if (mHashMapPub2Priv.get(memoKeyTo) != null) {
+                    return memoData.get_message(mHashMapPub2Priv.get(memoKeyTo).getPrivateKey(), memoKeyFrom.getPublicKey(), memoData.message, memoData.nonce);
+                }
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

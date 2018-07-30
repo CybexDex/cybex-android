@@ -13,6 +13,8 @@
     <string name="title_transfer">转账</string>
     <string name="title_transfer_records">转账记录</string>
     <string name="title_transfer_details">转账详情</string>
+    <string name="title_deposit_records">充值记录</string>
+    <string name="title_withdraw_records">提现记录</string>
 
     <!-- Watch List Page -->
     <string name="popular_title">最热</string>
@@ -235,6 +237,7 @@
     <string name="deposit_eos_deposit_account">EOS充值账户</string>
     <string name="deposit_eos_verification_code">备注验证码</string>
     <string name="deposit_eos_alert_message">(请务必在转账备注中填写并核对正确)</string>
+    <string name="deposit_record_button">充值记录</string>
 
     <!-- Withdraw Page Related -->
     <string name="withdraw_available_amount">可用余额</string>
@@ -254,6 +257,11 @@
     <string name="withdraw_error_not_enough">余额不足</string>
     <string name="withdraw_error_less_than_minimum">小于最小提现额度</string>
     <string name="withdraw_error_invalid_address">地址不合法</string>
+    <string name="withdraw_records_button">提现记录</string>
+
+    <!-- Deposit Withdraw Records -->
+    <string name="deposit_withdraw_records_update_time">更新时间:&#032;&#032;</string>
+    <string name="deposit_withdraw_records_address">地址:&#032;&#032;</string>
 
 
     <!-- Snack Bar Text -->

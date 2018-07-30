@@ -97,21 +97,25 @@
         <activity
             android:name=".activity.AccountBalanceActivity"
             android:label=""
-            android:theme="@style/AppTheme.TransparentStatusBar"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".activity.transfer.TransferActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.TransparentStatusBar" />
+        <activity
+            android:name=".activity.transfer.TransferActivity"
             android:label=""
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"/>
-
-        <activity android:name=".activity.transfer.TransferRecordsActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.transfer.TransferRecordsActivity"
             android:label=""
             android:screenOrientation="portrait" />
-
-        <activity android:name=".activity.transfer.TransferDetailsActivity"
+        <activity
+            android:name=".activity.transfer.TransferDetailsActivity"
             android:label=""
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.DepositWithdrawRecordsActivity"
+            android:label=""
+            android:screenOrientation="portrait"/>
 
         <service android:name=".service.WebSocketService" />
 

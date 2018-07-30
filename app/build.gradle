@@ -111,5 +111,8 @@ dependencies {
     //Jadeticon
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
     implementation 'com.contrarywind:wheelview:4.0.8'
+    //Pull-to-Refresh
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-14'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-14'
     implementation project(':MPChartLib')
 }

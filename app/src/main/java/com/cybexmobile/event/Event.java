@@ -20,6 +20,7 @@ public class Event {
 
     public static class IsOnBackground {
         public boolean isOnBackground;
+
         public IsOnBackground(boolean isOnBackground) {
             this.isOnBackground = isOnBackground;
         }
@@ -34,7 +35,7 @@ public class Event {
     }
 
     //更新币价格
-    public static class UpdateRmbPrice{
+    public static class UpdateRmbPrice {
         private List<AssetRmbPrice> data;
 
         public UpdateRmbPrice(List<AssetRmbPrice> data) {
@@ -50,7 +51,7 @@ public class Event {
         }
     }
 
-    public static class UpdateFullAccount{
+    public static class UpdateFullAccount {
         private FullAccountObject fullAccount;
 
         public UpdateFullAccount(FullAccountObject fullAccount) {
@@ -108,7 +109,7 @@ public class Event {
     }
 
     //
-    public static class UpdateOrderBook{
+    public static class UpdateOrderBook {
         private OrderBook data;
 
         public UpdateOrderBook(OrderBook data) {
@@ -141,7 +142,7 @@ public class Event {
     }
 
     //更新K线图
-    public static class UpdateKLineChar{
+    public static class UpdateKLineChar {
         private List<HistoryPrice> data;
 
         public UpdateKLineChar() {
@@ -162,7 +163,7 @@ public class Event {
     }
 
     //加载单个AssertAbject
-    public static class LoadAsset{
+    public static class LoadAsset {
         private AssetObject data;
 
         public LoadAsset(AssetObject data) {
@@ -179,7 +180,7 @@ public class Event {
     }
 
     //加载多个AssertAbject
-    public static class LoadAssets{
+    public static class LoadAssets {
         private List<AssetObject> data;
 
         public LoadAssets(List<AssetObject> data) {
@@ -196,12 +197,12 @@ public class Event {
     }
 
     //登出
-    public static class LoginOut{
+    public static class LoginOut {
 
     }
 
     //登录
-    public static class LoginIn{
+    public static class LoginIn {
         private String name;
 
         public LoginIn(String name) {
@@ -214,17 +215,17 @@ public class Event {
     }
 
     //http请求超时
-    public static class HttpTimeOut{
+    public static class HttpTimeOut {
 
     }
 
     //websocket请求超时
-    public static class WebSocketTimeOut{
+    public static class WebSocketTimeOut {
 
     }
 
     //线程调度
-    public static class ThreadScheduler<T>{
+    public static class ThreadScheduler<T> {
         private T data;
 
         public ThreadScheduler(T data) {
@@ -240,7 +241,7 @@ public class Event {
         }
     }
 
-    public static class NetWorkStateChanged{
+    public static class NetWorkStateChanged {
         private boolean isAvailable;
 
         public boolean isAvailable() {
@@ -251,13 +252,13 @@ public class Event {
             isAvailable = available;
         }
 
-        public NetWorkStateChanged(boolean isAvailable){
+        public NetWorkStateChanged(boolean isAvailable) {
             this.isAvailable = isAvailable;
 
         }
     }
 
-    public static class SubscribeMarket{
+    public static class SubscribeMarket {
         private int callId;
 
         public SubscribeMarket(int callId) {
@@ -273,7 +274,7 @@ public class Event {
         }
     }
 
-    public static class ConfigChanged{
+    public static class ConfigChanged {
         private String configName;
 
         public ConfigChanged(String configName) {
@@ -289,7 +290,7 @@ public class Event {
         }
     }
 
-    public static class UpdateBuySellOrders{
+    public static class UpdateBuySellOrders {
         private List<Order> buyOrders;
         private List<Order> sellOrders;
 
@@ -310,7 +311,7 @@ public class Event {
     /**
      * 通过K线图界面快捷买入卖出
      */
-    public static class MarketIntentToExchange{
+    public static class MarketIntentToExchange {
         private String action;
         private WatchlistData watchlist;
 
@@ -331,11 +332,11 @@ public class Event {
     /**
      * 交易界面委单被点击 委单价格设置到EditText
      */
-    public static class LimitOrderClick{
+    public static class LimitOrderClick {
         private double price;
         private double quoteAmount;
 
-        public LimitOrderClick(double price){
+        public LimitOrderClick(double price) {
             this.price = price;
         }
 
@@ -353,7 +354,7 @@ public class Event {
         }
     }
 
-    public static class LoadAccountHistory{
+    public static class LoadAccountHistory {
         private List<AccountHistoryObject> accountHistoryObjects;
 
         public LoadAccountHistory(List<AccountHistoryObject> accountHistoryObjects) {
@@ -365,7 +366,7 @@ public class Event {
         }
     }
 
-    public static class LoadBlock{
+    public static class LoadBlock {
         private int callId;
         private BlockHeader blockHeader;
 
@@ -384,9 +385,9 @@ public class Event {
     }
 
     /**
-     *  加载交易手续费
+     * 加载交易手续费
      */
-    public static class LoadRequiredFee{
+    public static class LoadRequiredFee {
         private FeeAmountObject fee;
 
         public LoadRequiredFee(FeeAmountObject fee) {
@@ -420,9 +421,9 @@ public class Event {
     }
 
     /**
-     *  加载交易撤单手续费
+     * 加载交易撤单手续费
      */
-    public static class LoadRequiredCancelFee{
+    public static class LoadRequiredCancelFee {
         private FeeAmountObject fee;
 
         public LoadRequiredCancelFee(FeeAmountObject fee) {
@@ -437,7 +438,7 @@ public class Event {
     /**
      * 创建委单
      */
-    public static class LimitOrderCreate{
+    public static class LimitOrderCreate {
         private boolean isSuccess;
 
         public LimitOrderCreate(boolean isSuccess) {
@@ -453,7 +454,7 @@ public class Event {
     /**
      * 撤销委单
      */
-    public static class LimitOrderCancel{
+    public static class LimitOrderCancel {
         private boolean isSuccess;
 
         public LimitOrderCancel(boolean isSuccess) {
@@ -484,7 +485,7 @@ public class Event {
     /**
      * 行情数据加载完通知交易界面刷新 防止行情界面数据没加载出来进入交易界面交易界面数据为空
      */
-    public static class InitExchangeWatchlist{
+    public static class InitExchangeWatchlist {
         private WatchlistData watchlist;
 
         public InitExchangeWatchlist(WatchlistData watchlist) {
@@ -499,7 +500,7 @@ public class Event {
     /**
      * 加载账户信息
      */
-    public static class LoadAccountObject{
+    public static class LoadAccountObject {
         private AccountObject accountObject;
 
         public LoadAccountObject(AccountObject accountObject) {

@@ -36,21 +36,18 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.GetDepositAddress;
 import com.apollographql.apollo.NewDepositAddress;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.fragment.AccountAddressRecord;
-import com.apollographql.apollo.internal.cache.http.HttpCacheFetchStrategy;
 import com.cybexmobile.R;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.toast.message.ToastMessage;
 import com.cybexmobile.utils.AntiMultiClick;
 import com.cybexmobile.utils.DateUtils;
 import com.cybexmobile.utils.QRCode;
-import com.cybexmobile.utils.SnackBarUtils;
 
-import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -69,6 +66,8 @@ public class DepositActivity extends BaseActivity {
     private ApolloClient mApolloClient;
     private Handler mHandler = new Handler();
     private Context mContext;
+    private AssetObject mAssetObject;
+
     private String mUserName;
     private String mAssetName;
     private String mEnMsg;
@@ -106,6 +105,8 @@ public class DepositActivity extends BaseActivity {
     Toolbar mToolbar;
     @BindView(R.id.deposit_toolbar_text_view)
     TextView mToolbarTextView;
+    @BindView(R.id.deposit_records_button)
+    ImageView mDepositRecordButton;
     @BindView(R.id.deposit_coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.deposit_detail_message)
@@ -129,6 +130,7 @@ public class DepositActivity extends BaseActivity {
         mCnMsg = intent.getStringExtra("cnMsg");
         mEnInfo = intent.getStringExtra("enInfo");
         mCnInfo = intent.getStringExtra("cnInfo");
+        mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_deposit), mAssetName));
         if (mIsEnabled) {
             if (mAssetName.equals(EOS_NAME)) {
@@ -200,6 +202,14 @@ public class DepositActivity extends BaseActivity {
             Animation animation = getAnimation();
             mutateNewAddress(mUserName, mAssetName);
         }
+    }
+
+    @OnClick(R.id.deposit_records_button)
+    public void onClickDepositRecords(View view) {
+        Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
+        intent.putExtra("assetObject", mAssetObject);
+        intent.putExtra("fundType", "DEPOSIT");
+        startActivity(intent);
     }
 
     private void requestDetailMessage() {

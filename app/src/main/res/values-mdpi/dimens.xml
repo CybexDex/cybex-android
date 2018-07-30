@@ -42,7 +42,7 @@
 
     <!-- Portfolio Horizontal Item -->
     <dimen name="card_width">218dp</dimen>
-    <dimen name="image_asset_width_height">24dp</dimen>
+    <dimen name="image_asset_width_height">16dp</dimen>
 
     <!-- Account Fragment -->
     <dimen name="webview_width_height">56dp</dimen>

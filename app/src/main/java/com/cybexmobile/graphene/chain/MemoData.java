@@ -7,6 +7,7 @@ import com.cybexmobile.crypto.Sha224Object;
 import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.crypto.Sha512Object;
 import com.cybexmobile.fc.io.RawType;
+import com.cybexmobile.utils.MyUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -67,14 +68,14 @@ public class MemoData implements Serializable{
      */
     transient UnsignedLong unsignedNonce = UnsignedLong.ZERO;
 
-    String nonce;
+    public String nonce;
     /**
      * This field contains the AES encrypted packed @ref memo_message
      */
     //vector<char> messageBuffer;
     transient ByteBuffer messageBuffer;
 
-    String message;
+    public String message;
 
     /// @note custom_nonce is for debugging only; do not set to a nonzero value in production
     public void set_message(PrivateKey privateKey,
@@ -148,6 +149,33 @@ public class MemoData implements Serializable{
         System.arraycopy(sha512Object.hash, 32, ivBytes, 0, ivBytes.length);
 
         ByteBuffer byteDecrypt = Aes.decrypt(byteKey, ivBytes, messageBuffer.array());
+        memo_message memoMessage = memo_message.deserialize(byteDecrypt);
+
+        Sha256Object messageHash = Sha256Object.create_from_string(memoMessage.text);
+        byte[] byteChecksum = new byte[4];
+        System.arraycopy(messageHash.hash, 0, byteChecksum, 0, byteChecksum.length);
+
+        RawType rawType = new RawType();
+        int nChecksum = rawType.byte_array_to_int(byteChecksum);
+        if (nChecksum == memoMessage.checksum) {
+            return memoMessage.text;
+        }
+
+        return "";
+    }
+
+    public String get_message(PrivateKey privateKey, PublicKey publicKey, String message, String nonce) {
+        Sha512Object sha512Object = privateKey.get_shared_secret(publicKey);
+        String strNoncePlusSecret = nonce + sha512Object.toString();
+        sha512Object = Sha512Object.create_from_string(strNoncePlusSecret);
+
+        byte[] byteKey = new byte[32];
+        System.arraycopy(sha512Object.hash, 0, byteKey, 0, byteKey.length);
+        byte[] ivBytes = new byte[16];
+        System.arraycopy(sha512Object.hash, 32, ivBytes, 0, ivBytes.length);
+
+        byte[] messageByte = MyUtils.hexToBytes(message);
+        ByteBuffer byteDecrypt = Aes.decrypt(byteKey, ivBytes, messageByte);
         memo_message memoMessage = memo_message.deserialize(byteDecrypt);
 
         Sha256Object messageHash = Sha256Object.create_from_string(memoMessage.text);

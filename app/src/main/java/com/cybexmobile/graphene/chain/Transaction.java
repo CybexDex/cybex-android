@@ -23,12 +23,13 @@ public class Transaction {
      * Least significant 16 bits from the reference block number. If @ref relative_expiration is zero, this field
      * must be zero as well.
      */
-    public transient UnsignedShort unsign_ref_block_num    = UnsignedShort.ZERO;
+    public transient UnsignedShort unsign_ref_block_num = UnsignedShort.ZERO;
 
     long ref_block_num;
     /**
      * The first non-block-number 32-bits of the reference block ID. Recall that block IDs have 32 bits of block
      * number followed by the actual block hash, so this field should be set using the second 32 bits in the
+     *
      * @ref block_id_type
      */
     public transient UnsignedInteger unsign_ref_block_prefix = UnsignedInteger.ZERO;
@@ -40,6 +41,7 @@ public class Transaction {
     public Date expiration;
     public transient List<Operations.operation_type> operationTypes;
     public List<Object> operations;
+    public transient Operations.base_operation operation;
     public Set<Types.void_t> extensions;
 
     public Ripemd160Object id() {
@@ -96,7 +98,13 @@ public class Transaction {
         rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(extensions.size()));
 
 
+        return enc.result();
+    }
 
+    public Sha256Object sig_digest() {
+        Sha256Object.encoder enc = new Sha256Object.encoder();
+        Operations.base_operation baseOperation = operation;
+        baseOperation.write_to_encoder(enc);
         return enc.result();
     }
 }

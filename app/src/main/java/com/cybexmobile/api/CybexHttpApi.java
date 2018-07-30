@@ -3,10 +3,9 @@ package com.cybexmobile.api;
 
 import com.cybexmobile.data.AppVersion;
 import com.cybexmobile.data.AssetsPairResponse;
+import com.cybexmobile.data.GateWayRecordsResponse;
 import com.cybexmobile.faucet.CnyResponse;
-import com.cybexmobile.faucet.CreateAccountRequest;
 import com.cybexmobile.faucet.CreateAccountResponse;
-import com.cybexmobile.faucet.DepositAndWithdrawObject;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
@@ -15,7 +14,6 @@ import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -41,4 +39,10 @@ public interface CybexHttpApi {
 
     @GET("market_list")
     Observable<AssetsPairResponse> getAssetsPair(@Query("base") String base);
+
+    @POST
+    Observable<ResponseBody> gatewayLogIn(@Url String url, @Body RequestBody body);
+
+    @POST
+    Observable<GateWayRecordsResponse> gatewayRecords(@Url String url, @Body RequestBody body);
 }

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/itemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="@dimen/activity_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/item_deposit_withdraw_asset_icon"
+                    android:layout_width="@dimen/image_asset_width_height"
+                    android:layout_height="@dimen/image_asset_width_height"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/item_deposit_withdraw_asset_symbol"
+                    style="@style/font_white_dark_bold_large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_quote_margin_start"
+                    android:text="--" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/item_deposit_withdraw_asset_amount"
+                style="@style/font_white_dark_bold_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="-----" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/font_gray_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.5"
+                    android:text="@string/deposit_withdraw_records_update_time"/>
+
+                <TextView
+                    android:id="@+id/item_deposit_withdraw_update_time"
+                    style="@style/font_gray_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/item_deposit_withdraw_status"
+                style="@style/font_gray_bold_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="--" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                style="@style/font_gray_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.5"
+                android:text="@string/deposit_withdraw_records_address"/>
+            <TextView
+                style="@style/font_gray_small"
+                android:id="@+id/item_deposit_withdraw_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

@@ -200,6 +200,7 @@
         <item name="android:textSize">@dimen/font_title_large</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="font_white_bold_large" parent="font_white_large">
         <item name="android:textStyle">bold</item>
     </style>
