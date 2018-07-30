@@ -69,8 +69,10 @@ public class CybexDialog {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_unclock_wallet);
-        Button confirmButton = dialog.findViewById(R.id.unlock_wallet_dialog_confirm);
-        Button cancelButton = dialog.findViewById(R.id.unlock_wallet_dialog_cancel);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.unlock_wallet_dialog_title));
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         EditText passwordEditText = dialog.findViewById(R.id.unlock_wallet_dialog_edit_text);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +96,8 @@ public class CybexDialog {
                                               String transferFee, String gatewayFee, String receiveAmount ) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_withdraw_confirmation);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.withdraw_confirmation));
         TextView withdrawAddressView = dialog.findViewById(R.id.confirm_dialog_withdraw_address);
         TextView withdrawAmountView = dialog.findViewById(R.id.confirm_dialog_withdraw_amount);
         TextView withdrawFeeView = dialog.findViewById(R.id.confirm_dialog_withdraw_withdraw_fee);
@@ -104,8 +108,8 @@ public class CybexDialog {
         withdrawFeeView.setText(transferFee);
         gatewayFeeView.setText(gatewayFee);
         receiveAmountView.setText(receiveAmount);
-        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
-        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,6 +133,8 @@ public class CybexDialog {
                                                               String total, ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_limit_order_create_confirmation);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_limit_order_create_confirmation));
         TextView tvPrice = dialog.findViewById(R.id.dialog_limit_order_create_tv_price);
         TextView tvAmount = dialog.findViewById(R.id.dialog_limit_order_create_tv_amount);
         TextView tvTotal = dialog.findViewById(R.id.dialog_limit_order_create_tv_total);
@@ -136,8 +142,8 @@ public class CybexDialog {
         tvAmount.setText(amount);
         tvTotal.setText(total);
         tvPrice.setTextColor(context.getResources().getColor(isBuy ? R.color.increasing_color : R.color.decreasing_color));
-        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
-        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,6 +166,8 @@ public class CybexDialog {
                                                               String total, String fee, ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_limit_order_cancel_confirmation);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_limit_order_cancel_confirmation));
         TextView tvPrice = dialog.findViewById(R.id.dialog_limit_order_create_tv_price);
         TextView tvAmount = dialog.findViewById(R.id.dialog_limit_order_create_tv_amount);
         TextView tvTotal = dialog.findViewById(R.id.dialog_limit_order_create_tv_total);
@@ -169,8 +177,8 @@ public class CybexDialog {
         tvTotal.setText(total);
         tvFee.setText(fee);
         tvPrice.setTextColor(context.getResources().getColor(isBuy ? R.color.increasing_color : R.color.decreasing_color));
-        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
-        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,6 +201,8 @@ public class CybexDialog {
                                                       String fee, String memo, ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_transfer_confirmation);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_transfer_confirmation));
         TextView tvAccount = dialog.findViewById(R.id.dialog_transfer_tv_account);
         TextView tvQuantity = dialog.findViewById(R.id.dialog_transfer_tv_quantity);
         TextView tvFee = dialog.findViewById(R.id.dialog_transfer_tv_fee);
@@ -201,8 +211,8 @@ public class CybexDialog {
         tvQuantity.setText(quantity);
         tvFee.setText(fee);
         tvMemo.setText(memo);
-        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
-        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,10 +235,12 @@ public class CybexDialog {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_update_version_dialog);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.dialog_version_update));
         TextView message  = dialog.findViewById(R.id.dialog_version_update_text_view);
         message.setText(updateMessage);
-        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
-        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,9 +263,11 @@ public class CybexDialog {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_update_version_forced);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.dialog_version_update));
         TextView message  = dialog.findViewById(R.id.dialog_version_update_text_view);
         message.setText(updateMessage);
-        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
