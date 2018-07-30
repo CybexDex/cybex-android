@@ -37,4 +37,7 @@
 
     <!-- dialog load mode background color -->
     <color name="dialog_frequency_mode_background_color">#ffffff</color>
+
+    <color name="dialog_asset_select_background_color">#f0f1f4</color>
+
 </resources>

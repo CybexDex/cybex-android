@@ -110,5 +110,6 @@ dependencies {
     implementation 'com.androidadvance:topsnackbar:1.1.1'
     //Jadeticon
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
+    implementation 'com.contrarywind:wheelview:4.0.8'
     implementation project(':MPChartLib')
 }

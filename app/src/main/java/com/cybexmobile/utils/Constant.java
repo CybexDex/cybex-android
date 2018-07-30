@@ -27,7 +27,8 @@ public class Constant {
     public static final String INTENT_PARAM_TRANSFER_ASSET = "intent_param_transfer_asset";
     public static final String INTENT_PARAM_TRANSFER_BLOCK = "intent_param_transfer_block";
     public static final String INTENT_PARAM_LOAD_MODE = "intent_param_load_mode";
-
+    public static final String INTENT_PARAM_ACCOUNT_BALANCE_ITEMS = "intent_param_account_balance_items";
+    public static final String INTENT_PARAM_ACCOUNT_BALANCE_ITEM = "intent_param_account_balance_item";
 
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";

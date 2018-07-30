@@ -2,6 +2,7 @@ package com.cybexmobile.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
@@ -13,6 +14,8 @@ public class EmptyViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.text_empty)
     public TextView mTvEmpty;
+    @BindView(R.id.iv_img)
+    public ImageView mIvImage;
 
     public EmptyViewHolder(View itemView) {
         super(itemView);

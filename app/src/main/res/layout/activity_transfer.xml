@@ -34,6 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_item"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:padding="@dimen/activity_padding"
             android:orientation="vertical">
             <TextView
@@ -76,7 +78,7 @@
                 android:drawableEnd="@drawable/ic_ieo_more"
                 android:maxLines="1"
                 android:textColorHint="@color/text_hint_color"
-                android:hint="@string/text_empty"/>
+                android:hint="@string/text_please_select_crypto_type"/>
 
             <View
                 android:layout_width="match_parent"
@@ -91,16 +93,31 @@
                 style="@style/font_gray_medium"
                 android:text="@string/text_quantity"/>
 
-            <EditText
-                android:id="@+id/transfer_et_quantity"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="@color/text_hint_color"
-                style="@style/font_white_dark_large"
+                android:layout_marginTop="5dp" >
 
-                android:layout_marginTop="5dp"
-                android:background="@android:color/transparent"
-                android:maxLines="1"/>
+                <EditText
+                    android:id="@+id/transfer_et_quantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/text_hint_color"
+                    style="@style/font_white_dark_large"
+                    android:inputType="numberDecimal"
+                    android:background="@android:color/transparent"
+                    android:maxLines="1"/>
+
+                <TextView
+                    android:id="@+id/transfer_tv_available"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_grey_medium"
+                    android:textColor="@color/text_hint_color"
+                    android:layout_gravity="end"
+                    android:text="@string/text_available_empty"/>
+
+            </FrameLayout>
 
             <View
                 android:layout_width="match_parent"

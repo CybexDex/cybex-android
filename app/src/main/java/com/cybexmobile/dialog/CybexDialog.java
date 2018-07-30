@@ -189,6 +189,38 @@ public class CybexDialog {
         dialog.show();
     }
 
+    public static void showTransferConfirmationDialog(Context context, String account, String quantity,
+                                                      String fee, String memo, ConfirmationDialogClickListener listener){
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_transfer_confirmation);
+        TextView tvAccount = dialog.findViewById(R.id.dialog_transfer_tv_account);
+        TextView tvQuantity = dialog.findViewById(R.id.dialog_transfer_tv_quantity);
+        TextView tvFee = dialog.findViewById(R.id.dialog_transfer_tv_fee);
+        TextView tvMemo = dialog.findViewById(R.id.dialog_transfer_tv_memo);
+        tvAccount.setText(account);
+        tvQuantity.setText(quantity);
+        tvFee.setText(fee);
+        tvMemo.setText(memo);
+        Button confirmButton = dialog.findViewById(R.id.confirm_dialog_confirm_button);
+        Button cancelButton = dialog.findViewById(R.id.confirm_dialog_cancel_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     public static void showVersionUpdateDialog(Context context, String updateMessage, ConfirmationDialogClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);

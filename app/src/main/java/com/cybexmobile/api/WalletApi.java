@@ -661,18 +661,20 @@ public class WalletApi {
         transferOperation.fee = new Asset(feeAmount, ObjectId.create_from_string(feeAssetId));
         transferOperation.amount = assetObject.amount_from_string(amount);
         transferOperation.extensions = new HashSet<>();
-        transferOperation.memo = new MemoData();
-        transferOperation.memo.from = fromMemoKey;
-        transferOperation.memo.to = toMemoKey;
-        Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
-        transferOperation.memo.set_message(
-                privateKeyType.getPrivateKey(),
-                toMemoKey.getPublicKey(),
-                memo,
-                0);
-        transferOperation.memo.get_message(
-                privateKeyType.getPrivateKey(),
-                toMemoKey.getPublicKey());
+        if(memo != null && memo.length() > 0){
+            transferOperation.memo = new MemoData();
+            transferOperation.memo.from = fromMemoKey;
+            transferOperation.memo.to = toMemoKey;
+            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            transferOperation.memo.set_message(
+                    privateKeyType.getPrivateKey(),
+                    toMemoKey.getPublicKey(),
+                    memo,
+                    0);
+            transferOperation.memo.get_message(
+                    privateKeyType.getPrivateKey(),
+                    toMemoKey.getPublicKey());
+        }
         return transferOperation;
     }
 

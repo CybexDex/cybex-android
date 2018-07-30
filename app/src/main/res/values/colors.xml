@@ -50,8 +50,7 @@
 
     <color name="btn_orange_start">#ffc478</color>
     <color name="btn_orange_end">#ff9143</color>
-    <color name="btn_grey_start">#A9A9A9</color>
-    <color name="btn_grey_end">#78819a</color>
+    <color name="btn_grey_end">#8078819a</color>
 
     <color name="btn_green_start">#a9e06e</color>
     <color name="btn_green_end">#8dc84f</color>
@@ -74,5 +73,6 @@
     <!-- dialog load mode background color -->
     <color name="dialog_frequency_mode_background_color">#212939</color>
 
+    <color name="dialog_asset_select_background_color">#2a3243</color>
 
 </resources>

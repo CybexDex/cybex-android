@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:minWidth="@dimen/toast_width"
         android:minHeight="@dimen/toast_height"
-        android:background="@color/toast_message_background_color"
+        android:background="@drawable/bg_toast_message"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/activity_padding">

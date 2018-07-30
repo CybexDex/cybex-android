@@ -52,6 +52,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
+
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();
 
@@ -159,6 +161,7 @@ public class AccountBalanceActivity extends BaseActivity {
     @OnClick(R.id.account_balance_transfer_layout)
     public void onTransferButtonClicked(View view) {
         Intent intent = new Intent(this, TransferActivity.class);
+        intent.putExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         startActivity(intent);
     }
 

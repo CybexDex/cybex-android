@@ -270,6 +270,8 @@
     <string name="toast_message_place_order_failed">挂单失败</string>
     <string name="toast_message_cancel_order_successfully">委单撤销成功</string>
     <string name="toast_message_cancel_order_failed">委单撤销失败</string>
+    <string name="toast_message_transfer_success">转账成功</string>
+    <string name="toast_message_transfer_failed">转账失败</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">解锁钱包</string>
@@ -294,6 +296,12 @@
     <string name="dialog_withdraw_confirmation_transfer_fee">转账手续费:</string>
     <string name="dialog_withdraw_confirmation_receive_amount">到账数量:</string>
 
+    <!-- Dialog transfer confirmation -->
+    <string name="dialog_text_account">账户名:</string>
+    <string name="dialog_text_fee">手续费:</string>
+    <string name="dialog_text_quantity">数量:</string>
+    <string name="dialog_text_memo">备注:</string>
+
     <!--Dialog Version Update -->
     <string name="dialog_version_update">版本更新</string>
 
@@ -306,6 +314,9 @@
     <string name="text_no_transfer_records">暂无转账记录</string>
     <string name="text_sent">已转出</string>
     <string name="text_received">已收到</string>
+    <string name="text_account_not_exist">账户不存在</string>
+    <string name="text_please_select_crypto_type">请选择转账币种</string>
+    <string name="text_available_empty">余额 --</string>
 
     <!-- Transfer Details Activity -->
     <string name="text_to">收款账户</string>

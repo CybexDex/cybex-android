@@ -399,6 +399,27 @@ public class Event {
     }
 
     /**
+     * 加载转账手续费
+     */
+    public static class LoadTransferFee{
+        private FeeAmountObject fee;
+        private boolean isToTransfer;
+
+        public LoadTransferFee(FeeAmountObject fee, boolean isToTransfer) {
+            this.fee = fee;
+            this.isToTransfer = isToTransfer;
+        }
+
+        public FeeAmountObject getFee() {
+            return fee;
+        }
+
+        public boolean isToTransfer() {
+            return isToTransfer;
+        }
+    }
+
+    /**
      *  加载交易撤单手续费
      */
     public static class LoadRequiredCancelFee{
@@ -443,6 +464,21 @@ public class Event {
             return isSuccess;
         }
 
+    }
+
+    /**
+     * 转账
+     */
+    public static class Transfer{
+        private boolean isSuccess;
+
+        public Transfer(boolean isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        public boolean isSuccess() {
+            return isSuccess;
+        }
     }
 
     /**

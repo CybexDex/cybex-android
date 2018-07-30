@@ -266,6 +266,8 @@
     <string name="toast_message_place_order_failed">Place order failed</string>
     <string name="toast_message_cancel_order_successfully">Cancel order successfully</string>
     <string name="toast_message_cancel_order_failed">Cancel order failed</string>
+    <string name="toast_message_transfer_success">Transfer success</string>
+    <string name="toast_message_transfer_failed">Transfer failed</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
@@ -290,6 +292,12 @@
     <string name="dialog_withdraw_confirmation_transfer_fee">Transfer Fee:</string>
     <string name="dialog_withdraw_confirmation_receive_amount">Receive Amount:</string>
 
+    <!-- Dialog transfer confirmation -->
+    <string name="dialog_text_account">Account:</string>
+    <string name="dialog_text_fee">Fee:</string>
+    <string name="dialog_text_quantity">Quantity:</string>
+    <string name="dialog_text_memo">Memo:</string>
+
     <!--Dialog Version Update -->
     <string name="dialog_version_update">Version Update</string>
 
@@ -301,6 +309,8 @@
     <string name="text_no_transfer_records">No transfer records</string>
     <string name="text_sent">Sent</string>
     <string name="text_received">Received</string>
+    <string name="text_account_not_exist">Account doesn’t exist</string>
+    <string name="text_please_select_crypto_type">Please select crypto type</string>
 
     <!-- Transfer Details Activity -->
     <string name="text_to">To</string>
@@ -312,6 +322,7 @@
     <string name="text_minutes">minutes</string>
     <string name="text_in">In</string>
     <string name="text_out">Out</string>
+    <string name="text_available_empty">Available --</string>
 
     <string name="title_activity_account_balance">AccountBalanceActivity</string>
 </resources>
