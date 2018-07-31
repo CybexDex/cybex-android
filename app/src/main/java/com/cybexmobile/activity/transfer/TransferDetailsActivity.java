@@ -88,6 +88,7 @@ public class TransferDetailsActivity extends BaseActivity {
         mToAccount = (AccountObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_TO_ACCOUNT);
         mFeeAsset = (AssetObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_FEE_ASSET);
         mTransferAsset = (AssetObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_ASSET);
+        mAccountObject = (AccountObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT);
         setContentView(R.layout.activity_transfer_details);
         mUnbinder = ButterKnife.bind(this);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
@@ -119,7 +120,12 @@ public class TransferDetailsActivity extends BaseActivity {
     @OnClick(R.id.transfer_details_tv_click_to_view)
     public void onClickToViewClick(View view){
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, mUnLockDialogListener);
+            CybexDialog.showUnlockWalletDialog(this, mAccountObject, mUserName, new CybexDialog.UnLockDialogClickListener() {
+                @Override
+                public void onUnLocked(String password) {
+                    showMemoMessage(mTransferOperation.memo);
+                }
+            });
         } else {
             showMemoMessage(mTransferOperation.memo);
         }
@@ -145,6 +151,10 @@ public class TransferDetailsActivity extends BaseActivity {
             }
         }
         if(mTransferOperation != null){
+            if(mTransferOperation.memo == null){
+                mTvTransferMemo.setText(getResources().getString(R.string.text_none));
+                mTvTransferClickToView.setVisibility(View.GONE);
+            }
             try {
                 Iterator it = mTransferOperation.extensions.iterator();
                 if(!it.hasNext()){
@@ -172,44 +182,10 @@ public class TransferDetailsActivity extends BaseActivity {
 
     }
 
-    private CybexDialog.UnLockDialogClickListener mUnLockDialogListener = new CybexDialog.UnLockDialogClickListener() {
-        @Override
-        public void onClick(String password, Dialog dialog) {
-            showLoadDialog(true);
-            try {
-                BitsharesWalletWraper.getInstance().get_account_object(mUserName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
-                    @Override
-                    public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
-                        mAccountObject = reply.result;
-                        int result = BitsharesWalletWraper.getInstance().import_account_password(mAccountObject, mUserName, password);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (result == 0) {
-                                    hideLoadDialog();
-                                    dialog.dismiss();
-                                    showMemoMessage(mTransferOperation.memo);
-                                } else {
-                                    hideLoadDialog();
-                                    LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                                    errorLayout.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        hideLoadDialog();
-                    }
-                });
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
     private void showMemoMessage(MemoData memo) {
+        if(memo == null){
+            return;
+        }
         String memomessage = BitsharesWalletWraper.getInstance().getMemoMessage(memo);
         mTvTransferMemo.setText(memomessage);
         mTvTransferClickToView.setVisibility(View.GONE);

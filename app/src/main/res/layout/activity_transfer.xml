@@ -43,16 +43,31 @@
                 android:layout_height="wrap_content"
                 style="@style/font_gray_medium"
                 android:text="@string/prompt_user_name"/>
-            <EditText
-                android:id="@+id/transfer_et_account_name"
+
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/font_white_dark_large"
-                android:layout_marginTop="5dp"
-                android:textColorHint="@color/text_hint_color"
-                android:hint="@string/text_to_account_name"
-                android:background="@android:color/transparent"
-                android:maxLines="1"/>
+                android:layout_marginTop="5dp">
+
+                <EditText
+                    android:id="@+id/transfer_et_account_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/font_white_dark_large"
+                    android:textColorHint="@color/text_hint_color"
+                    android:hint="@string/text_to_account_name"
+                    android:background="@android:color/transparent"
+                    android:maxLines="1"/>
+
+                <ProgressBar
+                    android:id="@+id/transfer_pb_load_account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:visibility="gone"
+                    android:layout_gravity="end|center_vertical"/>
+
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout

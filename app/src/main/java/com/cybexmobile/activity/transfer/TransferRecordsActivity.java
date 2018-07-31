@@ -62,8 +62,7 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
-
-    private ObjectId<AccountObject> mAccountId;
+    private AccountObject mAccountObject;
 
     private boolean mIsLoginIn;
     private String mName;
@@ -116,6 +115,7 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         intent.putExtra(Constant.INTENT_PARAM_TRANSFER_TO_ACCOUNT, transferHistoryItem.toAccount);
         intent.putExtra(Constant.INTENT_PARAM_TRANSFER_FEE_ASSET, transferHistoryItem.feeAsset);
         intent.putExtra(Constant.INTENT_PARAM_TRANSFER_ASSET, transferHistoryItem.transferAsset);
+        intent.putExtra(Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT, mAccountObject);
         startActivity(intent);
     }
 
@@ -177,11 +177,17 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                 item.transferOperation = gson.fromJson(accountHistoryObject.op.get(1), Operations.transfer_operation.class);
                 item.transferAsset = mWebSocketService.getAssetObject(item.transferOperation.amount.asset_id.toString());
                 item.feeAsset = mWebSocketService.getAssetObject(item.transferOperation.fee.asset_id.toString());
+                if(item.transferOperation.from.equals(mAccountObject.id)){
+                    item.fromAccount = mAccountObject;
+                }
+                if(item.transferOperation.to.equals(mAccountObject.id)){
+                    item.toAccount = mAccountObject;
+                }
                 //加载区块信息
                 item.callId = BitsharesWalletWraper.getInstance().get_call_id().getAndIncrement();
                 mTransferHistoryItems.add(item);
                 mWebSocketService.loadBlock(item.callId, item.accountHistoryObject.block_num);
-                mWebSocketService.loadAccountObject(item.transferOperation.from.equals(mAccountId) ?
+                mWebSocketService.loadAccountObject(item.transferOperation.from.equals(mAccountObject.id) ?
                         item.transferOperation.to.toString() : item.transferOperation.from.toString());
             } else {
                 it.remove();
@@ -206,8 +212,8 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                 showLoadDialog(true);
                 FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
                 if(fullAccountObject != null){
-                    mAccountId = fullAccountObject.account.id;
-                    mWebSocketService.loadAccountHistory(fullAccountObject.account.id, 100);
+                    mAccountObject = fullAccountObject.account;
+                    mWebSocketService.loadAccountHistory(mAccountObject.id, 100);
                 }
             }
         }

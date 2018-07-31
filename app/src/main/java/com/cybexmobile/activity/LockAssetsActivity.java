@@ -30,6 +30,7 @@ import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.service.WebSocketService;
 
@@ -75,19 +76,18 @@ public class LockAssetsActivity extends BaseActivity {
     private List<LockUpAssetItem> mLockUpAssetItems = new ArrayList<>();
 
     private WebSocketService mWebSocketService;
+    private AccountObject mAccountObject;
+    private String mName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_assets);
         EventBus.getDefault().register(this);
-        Intent intent = getIntent();
-        String userName = intent.getStringExtra(INTENT_PARAM_NAME);
+        mName = getIntent().getStringExtra(INTENT_PARAM_NAME);
         Intent serviceIntent = new Intent(this, WebSocketService.class);
         bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
-
         initViews();
-        checkIfLocked(userName);
     }
 
     @Override
@@ -95,11 +95,24 @@ public class LockAssetsActivity extends BaseActivity {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadFullAccount(Event.UpdateFullAccount event){
+        if(mAccountObject == null){
+            mAccountObject = event.getFullAccount().account;
+            checkIfLocked(mName);
+        }
+    }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
+            if(fullAccountObject != null){
+                mAccountObject = fullAccountObject.account;
+                checkIfLocked(mName);
+            }
             if(mLockUpAssetItems != null && mLockUpAssetItems.size() > 0){
                 for (LockUpAssetItem item : mLockUpAssetItems) {
                     item.assetObject = mWebSocketService == null ? null : mWebSocketService.getAssetObject(item.lockUpAssetobject.balance.asset_id.toString());
@@ -116,40 +129,14 @@ public class LockAssetsActivity extends BaseActivity {
     };
 
     private void checkIfLocked(String userName) {
+        if(mAccountObject == null){
+            return;
+        }
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, new CybexDialog.UnLockDialogClickListener() {
+            CybexDialog.showUnlockWalletDialog(this, mAccountObject, userName, new CybexDialog.UnLockDialogClickListener() {
                 @Override
-                public void onClick(String password, Dialog dialog) {
-                    try {
-                        BitsharesWalletWraper.getInstance().get_account_object(userName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
-                            @Override
-                            public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
-                                AccountObject accountObject = reply.result;
-                                int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, userName, password);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (result == 0) {
-                                            dialog.dismiss();
-                                            loadData(userName, password);
-                                        } else {
-                                            hideLoadDialog();
-                                            LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                                            errorLayout.setVisibility(View.VISIBLE);
-                                        }
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure() {
-                                hideLoadDialog();
-                            }
-                        });
-                    } catch (NetworkStatusException e) {
-                        e.printStackTrace();
-                    }
-
+                public void onUnLocked(String password) {
+                    loadData(userName, password);
                 }
             });
         } else {

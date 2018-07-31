@@ -23,6 +23,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
@@ -88,6 +89,8 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     TextView mTvFee;//手续费
     @BindView(R.id.transfer_btn_transfer)
     Button mBtnTransfer;
+    @BindView(R.id.transfer_pb_load_account)
+    ProgressBar mPbLoadAccount;
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
@@ -123,6 +126,17 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     @Override
     protected void onResume() {
         super.onResume();
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @Override
@@ -267,6 +281,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
             mToAccountObject = null;
             return;
         }
+        mPbLoadAccount.setVisibility(View.VISIBLE);
         try {
             BitsharesWalletWraper.getInstance().get_account_object(accountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
                 @Override
@@ -288,6 +303,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadAccountObject(Event.LoadAccountObject event){
         mToAccountObject = event.getAccountObject();
+        mPbLoadAccount.setVisibility(View.GONE);
         resetTransferButtonState();
         if(mToAccountObject == null){
             ToastMessage.showNotEnableDepositToastMessage(this,
@@ -369,21 +385,13 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
      */
     private void checkIsLockAndTransfer(){
         if(BitsharesWalletWraper.getInstance().is_locked()){
-            CybexDialog.showUnlockWalletDialog(this, new CybexDialog.UnLockDialogClickListener() {
+            CybexDialog.showUnlockWalletDialog(this, mFromAccountObject, mFromAccountObject.name, new CybexDialog.UnLockDialogClickListener() {
                 @Override
-                public void onClick(String password, Dialog dialog) {
-                    int result = BitsharesWalletWraper.getInstance().import_account_password(mFromAccountObject, mFromAccountObject.name, password);
-                    if (result == 0) {
-                        if(mTransferOperation == null){
-                            loadTransferFee(ASSET_ID_CYB, true);
-                        } else {
-                            showTransferConfirmationDialog();
-                        }
-                        dialog.dismiss();
+                public void onUnLocked(String password) {
+                    if(mTransferOperation == null){
+                        loadTransferFee(ASSET_ID_CYB, true);
                     } else {
-                        hideLoadDialog();
-                        LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                        errorLayout.setVisibility(View.VISIBLE);
+                        showTransferConfirmationDialog();
                     }
                 }
             });
@@ -402,18 +410,10 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
      */
     private void checkIsLockAndLoadTransferFee(){
         if(BitsharesWalletWraper.getInstance().is_locked()){
-            CybexDialog.showUnlockWalletDialog(this, new CybexDialog.UnLockDialogClickListener() {
+            CybexDialog.showUnlockWalletDialog(this, mFromAccountObject, mFromAccountObject.name, new CybexDialog.UnLockDialogClickListener() {
                 @Override
-                public void onClick(String password, Dialog dialog) {
-                    int result = BitsharesWalletWraper.getInstance().import_account_password(mFromAccountObject, mFromAccountObject.name, password);
-                    if (result == 0) {
-                        loadTransferFee(ASSET_ID_CYB, false);
-                        dialog.dismiss();
-                    } else {
-                        hideLoadDialog();
-                        LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                        errorLayout.setVisibility(View.VISIBLE);
-                    }
+                public void onUnLocked(String password) {
+                    loadTransferFee(ASSET_ID_CYB, false);
                 }
             });
         } else {

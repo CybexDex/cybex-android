@@ -726,17 +726,10 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             toExchange();
             return;
         }
-        CybexDialog.showUnlockWalletDialog(getContext(), new CybexDialog.UnLockDialogClickListener() {
+        CybexDialog.showUnlockWalletDialog(getContext(), mFullAccountObject.account, userName, new CybexDialog.UnLockDialogClickListener() {
             @Override
-            public void onClick(String password, Dialog dialog) {
-                int result = BitsharesWalletWraper.getInstance().import_account_password(mFullAccountObject.account, userName, password);
-                if (result == 0) {
-                    dialog.dismiss();
-                    toExchange();
-                } else {
-                    LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                    errorLayout.setVisibility(View.VISIBLE);
-                }
+            public void onUnLocked(String password) {
+                toExchange();
             }
         });
     }

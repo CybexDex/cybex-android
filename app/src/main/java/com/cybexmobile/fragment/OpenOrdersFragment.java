@@ -283,18 +283,11 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             toCancelLimitOrder(feeAmount);
             return;
         }
-        CybexDialog.showUnlockWalletDialog(getContext(), new CybexDialog.UnLockDialogClickListener() {
+        CybexDialog.showUnlockWalletDialog(getContext(), mFullAccount.account, userName, new CybexDialog.UnLockDialogClickListener() {
             @Override
-            public void onClick(String password, Dialog dialog) {
-                int result = BitsharesWalletWraper.getInstance().import_account_password(mFullAccount.account, userName, password);
-                if (result == 0) {
-                    dialog.dismiss();
-                    showLoadDialog();
-                    toCancelLimitOrder(feeAmount);
-                } else {
-                    LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                    errorLayout.setVisibility(View.VISIBLE);
-                }
+            public void onUnLocked(String password) {
+                showLoadDialog();
+                toCancelLimitOrder(feeAmount);
             }
         });
     }

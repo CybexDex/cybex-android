@@ -27,6 +27,7 @@ import com.cybexmobile.data.GatewayDepositWithdrawRecordsItem;
 import com.cybexmobile.data.GatewayLogInRecordRequest;
 import com.cybexmobile.data.Record;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -40,6 +41,8 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,7 +79,6 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
     private AccountObject mAccountObject;
     private AssetObject mAssetObject;
     private WebSocketService mWebSocketService;
-    private FullAccountObject mFullAccountObject;
     private DepositWithdrawRecordAdapter mDepositWithdrawRecordAdapter;
     private List<GatewayDepositWithdrawRecordsItem> mGatewayDepositWithdrawRecordsItemList = new ArrayList<>();
 
@@ -90,9 +92,11 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            mFullAccountObject = mWebSocketService.getFullAccount(mAccountName);
-            mAccountObject = mFullAccountObject.account;
-            checkIfLocked(true);
+            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mAccountName);
+            if(fullAccountObject != null){
+                mAccountObject = fullAccountObject.account;
+                checkIfLocked(true);
+            }
         }
 
         @Override
@@ -151,11 +155,31 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
         });
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void on(Event.UpdateFullAccount event){
+        if(mAccountObject == null){
+            mAccountObject = event.getFullAccount().account;
+            checkIfLocked(true);
+        }
+    }
+
     private void checkIfLocked(boolean isRefresh) {
+        if(mAccountObject == null){
+            return;
+        }
         mIsRefresh = isRefresh;
         mOffset = mTotalItemAmount - 20 >= 0 ? mTotalItemAmount - 20 : 0;
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, mUnLockDialogListener);
+            CybexDialog.showUnlockWalletDialog(this, mAccountObject, mAccountName, new CybexDialog.UnLockDialogClickListener(){
+
+                @Override
+                public void onUnLocked(String password) {
+                    Date expiration = getExpiration();
+                    Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(mAccountName, 0, 0, null, null, expiration);
+                    String signature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
+                    requestLogIn(operation, signature);
+                }
+            });
         } else {
             mRefreshLayout.autoRefresh();
             Date expiration = getExpiration();
@@ -164,46 +188,6 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
             requestLogIn(operation, signature);
         }
     }
-
-    private CybexDialog.UnLockDialogClickListener mUnLockDialogListener = new CybexDialog.UnLockDialogClickListener() {
-        @Override
-        public void onClick(String password, Dialog dialog) {
-            showLoadDialog(true);
-            try {
-                BitsharesWalletWraper.getInstance().get_account_object(mAccountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
-                    @Override
-                    public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
-                        mAccountObject = reply.result;
-                        int result = BitsharesWalletWraper.getInstance().import_account_password(mAccountObject, mAccountName, password);
-                        Date expiration = getExpiration();
-                        Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(mAccountName, 0, 0, null, null, expiration);
-                        String signature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (result == 0) {
-                                    dialog.dismiss();
-                                    requestLogIn(operation, signature);
-
-                                } else {
-                                    hideLoadDialog();
-                                    LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-                                    errorLayout.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        hideLoadDialog();
-                    }
-                });
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
     @Override
     protected void onStart() {

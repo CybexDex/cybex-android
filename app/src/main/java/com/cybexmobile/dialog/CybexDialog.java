@@ -7,14 +7,20 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
+import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.graphene.chain.AccountObject;
+
+import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
 
 public class CybexDialog {
 
     public interface UnLockDialogClickListener {
-        void onClick(String password, Dialog dialog);
+        void onUnLocked(String password);
     }
 
     public interface ConfirmationDialogClickListener {
@@ -64,7 +70,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showUnlockWalletDialog(Context context, UnLockDialogClickListener listener) {
+    public static void showUnlockWalletDialog(Context context, AccountObject accountObject, String account, UnLockDialogClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -74,12 +80,24 @@ public class CybexDialog {
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         EditText passwordEditText = dialog.findViewById(R.id.unlock_wallet_dialog_edit_text);
+        ProgressBar pbLoading = dialog.findViewById(R.id.dialog_confirm_pb_loading);
+        LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String password = passwordEditText.getText().toString();
                 if (listener != null && !TextUtils.isEmpty(password)) {
-                    listener.onClick(password, dialog);
+                    pbLoading.setVisibility(View.VISIBLE);
+                    confirmButton.setEnabled(false);
+                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, account, password);
+                    if (result == 0) {
+                        listener.onUnLocked(password);
+                        dialog.dismiss();
+                    } else {
+                        errorLayout.setVisibility(View.VISIBLE);
+                        pbLoading.setVisibility(View.INVISIBLE);
+                        confirmButton.setEnabled(true);
+                    }
                 }
             }
         });

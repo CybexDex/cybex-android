@@ -23,6 +23,7 @@ public class Constant {
     public static final String INTENT_PARAM_TRANSFER_OPERATION = "intent_param_transfer_operation";
     public static final String INTENT_PARAM_TRANSFER_FROM_ACCOUNT = "intent_param_transfer_from_account";
     public static final String INTENT_PARAM_TRANSFER_TO_ACCOUNT = "intent_param_transfer_to_account";
+    public static final String INTENT_PARAM_TRANSFER_MY_ACCOUNT = "intent_param_transfer_my_account";
     public static final String INTENT_PARAM_TRANSFER_FEE_ASSET = "intent_param_transfer_fee_asset";
     public static final String INTENT_PARAM_TRANSFER_ASSET = "intent_param_transfer_asset";
     public static final String INTENT_PARAM_TRANSFER_BLOCK = "intent_param_transfer_block";

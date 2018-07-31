@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="@dimen/dialog_padding">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/dialog_header_background_color">
@@ -33,7 +33,16 @@
                 android:textColor="@color/font_color_white_dark"
                 android:textColorHint="@color/text_hint_color"
                 android:textCursorDrawable="@null" />
-        </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/dialog_confirm_pb_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/progressBarStyleSmall"
+                android:visibility="invisible"
+                android:layout_gravity="end|center_vertical"/>
+
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/unlock_wallet_dialog_error_layout"
