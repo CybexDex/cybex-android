@@ -52,6 +52,7 @@
     <!-- Account Fragment -->
     <dimen name="webview_width_height">56dp</dimen>
     <dimen name="text_line_spacing_extra">8dp</dimen>
+    <dimen name="text_line_spacing_extra_small">4dp</dimen>
     <dimen name="layout_item_height">60dp</dimen>
 
     <!-- Login Activity -->

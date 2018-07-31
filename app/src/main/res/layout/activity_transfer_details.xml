@@ -205,8 +205,9 @@
                     android:maxWidth="@dimen/text_memo_max_width"
                     style="@style/font_white_dark_medium"
                     android:layout_gravity="end"
-                    android:lines="3"
-                    android:lineSpacingExtra="@dimen/text_line_spacing_extra" />
+                    android:lines="4"
+                    android:scrollbars="none"
+                    android:lineSpacingExtra="@dimen/text_line_spacing_extra_small" />
 
                 <TextView
                     android:id="@+id/transfer_details_tv_click_to_view"

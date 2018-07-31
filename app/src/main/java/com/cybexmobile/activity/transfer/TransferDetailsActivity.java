@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -93,6 +94,7 @@ public class TransferDetailsActivity extends BaseActivity {
         mUnbinder = ButterKnife.bind(this);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         setSupportActionBar(mToolbar);
+        mTvTransferMemo.setMovementMethod(ScrollingMovementMethod.getInstance());
         initViewData();
     }
 
@@ -133,21 +135,33 @@ public class TransferDetailsActivity extends BaseActivity {
     }
 
     private void initViewData(){
-        if(mFromAccount != null || mToAccount != null){
-            if(mFromAccount != null){
-                mTvTransferToFromAccountName.setText(mFromAccount.name);
-                mTvTransferToFrom.setText(getResources().getString(R.string.text_from));
-            }
-            if(mToAccount != null){
+        /**
+         * fix bug：CYM-518
+         * 解决转入转出状态错误
+         */
+        if(mFromAccount != null && mToAccount != null && mAccountObject != null){
+            if(mFromAccount.id.equals(mAccountObject.id)){
                 mTvTransferToFromAccountName.setText(mToAccount.name);
                 mTvTransferToFrom.setText(getResources().getString(R.string.text_to));
-            }
-            mIvTransferAction.setImageResource(mFromAccount == null ? R.drawable.ic_sent_40_px : R.drawable.ic_income_40_px);
-            mTvTransferAction.setText(getResources().getString(mFromAccount == null ? R.string.text_out : R.string.text_in));
-            if(mTransferAsset != null){
-                mTvTransferAmount.setText(String.format(mFromAccount == null ? "-%s %s" : "+%s %s",
-                        AssetUtil.formatNumberRounding( mTransferOperation.amount.amount / Math.pow(10, mTransferAsset.precision), mTransferAsset.precision),
-                        AssetUtil.parseSymbol(mTransferAsset.symbol)));
+                mIvTransferAction.setImageResource(R.drawable.ic_sent_40_px);
+                mTvTransferAction.setText(getResources().getString(R.string.text_out));
+                mTvTransferAmount.setTextColor(getResources().getColor(R.color.font_color_white_dark));
+                if(mTransferAsset != null){
+                    mTvTransferAmount.setText(String.format("-%s %s",
+                            AssetUtil.formatNumberRounding( mTransferOperation.amount.amount / Math.pow(10, mTransferAsset.precision), mTransferAsset.precision),
+                            AssetUtil.parseSymbol(mTransferAsset.symbol)));
+                }
+            } else if(mToAccount.id.equals(mAccountObject.id)){
+                mTvTransferToFromAccountName.setText(mFromAccount.name);
+                mTvTransferToFrom.setText(getResources().getString(R.string.text_from));
+                mIvTransferAction.setImageResource(R.drawable.ic_income_40_px);
+                mTvTransferAction.setText(getResources().getString(R.string.text_in));
+                mTvTransferAmount.setTextColor(getResources().getColor(R.color.primary_color_orange));
+                if(mTransferAsset != null){
+                    mTvTransferAmount.setText(String.format("+%s %s",
+                            AssetUtil.formatNumberRounding( mTransferOperation.amount.amount / Math.pow(10, mTransferAsset.precision), mTransferAsset.precision),
+                            AssetUtil.parseSymbol(mTransferAsset.symbol)));
+                }
             }
         }
         if(mTransferOperation != null){

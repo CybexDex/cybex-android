@@ -129,8 +129,7 @@
                     android:layout_height="wrap_content"
                     style="@style/font_grey_medium"
                     android:textColor="@color/text_hint_color"
-                    android:layout_gravity="end"
-                    android:text="@string/text_available_empty"/>
+                    android:layout_gravity="end" />
 
             </FrameLayout>
 
@@ -156,8 +155,8 @@
                 android:gravity="top"
                 android:layout_marginTop="5dp"
                 android:background="@android:color/transparent"
-                android:lineSpacingExtra="@dimen/text_line_spacing_extra"
-                android:lines="3"/>
+                android:lineSpacingExtra="@dimen/text_line_spacing_extra_small"
+                android:lines="4"/>
 
         </LinearLayout>
 

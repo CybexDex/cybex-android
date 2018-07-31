@@ -331,7 +331,6 @@
     <string name="text_minutes">minutes</string>
     <string name="text_in">In</string>
     <string name="text_out">Out</string>
-    <string name="text_available_empty">Available --</string>
 
     <string name="title_activity_account_balance">AccountBalanceActivity</string>
 </resources>

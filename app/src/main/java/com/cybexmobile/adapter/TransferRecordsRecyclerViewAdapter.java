@@ -32,10 +32,12 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     private Context mContext;
     private List<TransferRecordsActivity.TransferHistoryItem> mTransferRecords = new ArrayList<>();
     private OnItemClickListener mOnItemClickListener;
+    private AccountObject mAccountObject;
 
-    public TransferRecordsRecyclerViewAdapter(Context context, List<TransferRecordsActivity.TransferHistoryItem> transferHistoryItems){
+    public TransferRecordsRecyclerViewAdapter(Context context, AccountObject accountObject, List<TransferRecordsActivity.TransferHistoryItem> transferHistoryItems){
         mContext = context;
         mTransferRecords = transferHistoryItems;
+        mAccountObject = accountObject;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -67,21 +69,31 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         AccountObject fromAccount = transferHistoryItem.fromAccount;
         AccountObject toAccount = transferHistoryItem.toAccount;
         AssetObject transferAsset = transferHistoryItem.transferAsset;
-        if(fromAccount != null || toAccount != null){
-            if(fromAccount != null){
+        /**
+         * fix bug：CYM-518
+         * 解决转入转出状态错误
+         */
+        if(fromAccount != null && toAccount != null && mAccountObject != null){
+            if(toAccount.id.equals(mAccountObject.id)){
                 viewHolder.mTvAccountName.setText(fromAccount.name);
                 viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
-            }
-            if(toAccount != null){
+                viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_received));
+                viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_transfer_in);
+                if(transferAsset != null){
+                    viewHolder.mTvAmount.setText(String.format("+%s %s",
+                            AssetUtil.formatNumberRounding( transferOperation.amount.amount / Math.pow(10, transferAsset.precision), transferAsset.precision),
+                            AssetUtil.parseSymbol(transferAsset.symbol)));
+                }
+            } else if(fromAccount.id.equals(mAccountObject.id)){
                 viewHolder.mTvAccountName.setText(toAccount.name);
                 viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
-            }
-            viewHolder.mTvStatus.setText(mContext.getResources().getString(fromAccount == null ? R.string.text_sent : R.string.text_received));
-            viewHolder.mIvTransferAction.setImageResource(fromAccount == null ? R.drawable.ic_transfer_out : R.drawable.ic_transfer_in);
-            if(transferAsset != null){
-                viewHolder.mTvAmount.setText(String.format(fromAccount == null ? "-%s %s" : "+%s %s",
-                        AssetUtil.formatNumberRounding( transferOperation.amount.amount / Math.pow(10, transferAsset.precision), transferAsset.precision),
-                        AssetUtil.parseSymbol(transferAsset.symbol)));
+                viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_sent));
+                viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_transfer_out);
+                if(transferAsset != null){
+                    viewHolder.mTvAmount.setText(String.format("-%s %s",
+                            AssetUtil.formatNumberRounding( transferOperation.amount.amount / Math.pow(10, transferAsset.precision), transferAsset.precision),
+                            AssetUtil.parseSymbol(transferAsset.symbol)));
+                }
             }
         }
         if(transferHistoryItem.block != null){

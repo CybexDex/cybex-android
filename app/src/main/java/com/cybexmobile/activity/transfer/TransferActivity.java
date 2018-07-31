@@ -547,7 +547,12 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
      * reset 转账状态
      */
     private void resetTransferButtonState(){
-        mBtnTransfer.setEnabled(mIsBalanceEngouh && mSelectedAccountBalanceObjectItem != null && mToAccountObject != null);
+        /**
+         * fix bug:CYM-507
+         * 转账金额必须大于0
+         */
+        mBtnTransfer.setEnabled(mIsBalanceEngouh && Double.parseDouble(mEtQuantity.getText().toString()) > 0 && mSelectedAccountBalanceObjectItem != null &&
+                mToAccountObject != null);
     }
 
     /**

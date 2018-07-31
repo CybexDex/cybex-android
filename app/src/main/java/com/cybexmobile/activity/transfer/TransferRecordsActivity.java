@@ -195,7 +195,7 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         }
         hideLoadDialog();
         if(mTransferRecordsAdapter == null){
-            mTransferRecordsAdapter = new TransferRecordsRecyclerViewAdapter(this, mTransferHistoryItems);
+            mTransferRecordsAdapter = new TransferRecordsRecyclerViewAdapter(this, mAccountObject, mTransferHistoryItems);
             mRvTransferRecords.setAdapter(mTransferRecordsAdapter);
             mTransferRecordsAdapter.setOnItemClickListener(this);
         } else {

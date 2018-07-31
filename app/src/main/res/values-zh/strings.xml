@@ -325,7 +325,6 @@
     <string name="text_received">已收到</string>
     <string name="text_account_not_exist">账户不存在</string>
     <string name="text_please_select_crypto_type">请选择转账币种</string>
-    <string name="text_available_empty">余额 --</string>
 
     <!-- Transfer Details Activity -->
     <string name="text_to">收款账户</string>
