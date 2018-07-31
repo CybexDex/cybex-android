@@ -150,6 +150,11 @@ public class CybexDialog {
     public static void showLimitOrderCreateConfirmationDialog(Context context, boolean isBuy, String price, String amount,
                                                               String total, ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
+        /**
+         * fix bug:CYM-503
+         * 点击空白地方dialog不能消失
+         */
+        dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_limit_order_create_confirmation);
         TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
         tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_limit_order_create_confirmation));
@@ -183,6 +188,11 @@ public class CybexDialog {
     public static void showLimitOrderCancelConfirmationDialog(Context context, boolean isBuy, String price, String amount,
                                                               String total, String fee, ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
+        /**
+         * fix bug:CYM-503
+         * 点击空白地方dialog不能消失
+         */
+        dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_limit_order_cancel_confirmation);
         TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
         tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_limit_order_cancel_confirmation));
@@ -218,6 +228,11 @@ public class CybexDialog {
     public static void showTransferConfirmationDialog(Context context, String account, String quantity,
                                                       String fee, String memo, ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
+        /**
+         * fix bug:CYM-503
+         * 点击空白地方dialog不能消失
+         */
+        dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_transfer_confirmation);
         TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
         tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_transfer_confirmation));
