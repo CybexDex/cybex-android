@@ -202,7 +202,7 @@
             android:background="@drawable/bg_btn_orange_gradient_enabled"
             android:textAllCaps="false"
             android:enabled="false"
-            android:text="@string/title_transfer" />
+            android:text="@string/text_send" />
 
     </FrameLayout>
 

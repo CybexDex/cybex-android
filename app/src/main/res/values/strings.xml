@@ -9,7 +9,7 @@
     <string name="title_faq">Application</string>
     <string name="title_exchange">Exchange</string>
     <string name="title_order_history">Order History</string>
-    <string name="title_transfer">Send</string>
+    <string name="title_transfer">Transfer</string>
     <string name="title_transfer_records">Transfer Records</string>
     <string name="title_transfer_details">Transfer Details</string>
     <string name="title_deposit_records">Deposit Records</string>
@@ -320,6 +320,7 @@
     <string name="text_received">Received</string>
     <string name="text_account_not_exist">Account doesn’t exist</string>
     <string name="text_please_select_crypto_type">Please select crypto type</string>
+    <string name="text_send">Send</string>
 
     <!-- Transfer Details Activity -->
     <string name="text_to">To</string>
