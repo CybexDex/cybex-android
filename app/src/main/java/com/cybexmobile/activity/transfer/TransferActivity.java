@@ -251,7 +251,11 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
 
     @OnTextChanged(value = R.id.transfer_et_quantity, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onQuantityTextChanged(Editable editable){
-        checkBalanceEnough(editable.toString());
+        /**
+         * fix bug:CYM-544
+         * 不实时计判断余额是否足够
+         */
+        //checkBalanceEnough(editable.toString());
     }
 
     @OnFocusChange(R.id.transfer_et_quantity)
@@ -266,6 +270,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
                 }
                 mEtQuantity.setText(String.format(String.format(Locale.US, "%%.%df",
                         mSelectedAccountBalanceObjectItem.assetObject.precision), Double.parseDouble(amountStr)));
+                checkBalanceEnough(mEtQuantity.getText().toString().trim());
             }
         }
     }
@@ -578,12 +583,11 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         if(!mIsCybEnough && mCurrAssetFeeAmountObject == null){
             mBtnTransfer.setEnabled(true);
         }
-        double amount = Double.parseDouble(amountStr);
         double fee = mIsCybEnough || mCurrAssetFeeAmountObject == null ? 0 : mCurrAssetFeeAmountObject.amount /
                 Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision);
         double balanceAmount = mSelectedAccountBalanceObjectItem.accountBalanceObject.balance /
                 Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision);
-        BigDecimal balance = new BigDecimal(balanceAmount).subtract(new BigDecimal(amount)).subtract(new BigDecimal(fee));
+        BigDecimal balance = new BigDecimal(Double.toString(balanceAmount)).subtract(new BigDecimal(amountStr)).subtract(new BigDecimal(Double.toString(fee)));
         if(balance.doubleValue() < 0){
             mIsBalanceEnough = false;
             ToastMessage.showNotEnableDepositToastMessage(this,
