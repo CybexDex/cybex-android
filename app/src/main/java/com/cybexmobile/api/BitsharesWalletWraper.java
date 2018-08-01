@@ -345,14 +345,14 @@ public class BitsharesWalletWraper {
 
     public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
                                                               ObjectId<AccountObject> to,
-                                                              AssetObject assetObject,
+                                                              ObjectId<AssetObject> transferAssetId,
                                                               long feeAmount,
-                                                              String feeAssetId,
-                                                              String amount,
+                                                              ObjectId<AssetObject> feeAssetId,
+                                                              long transferAmount,
                                                               String memo,
                                                               Types.public_key_type fromMemoKey,
-                                                              Types.public_key_type toMemokey) {
-        return mWalletApi.getTransferOperation(from, to, assetObject, feeAmount, feeAssetId, amount, memo, fromMemoKey, toMemokey);
+                                                              Types.public_key_type toMemoKey) {
+        return mWalletApi.getTransferOperation(from, to, transferAssetId, feeAmount, feeAssetId, transferAmount, memo, fromMemoKey, toMemoKey);
     }
 
     public Operations.limit_order_create_operation getLimitOrderCreateOperation(ObjectId<AccountObject> accountId,

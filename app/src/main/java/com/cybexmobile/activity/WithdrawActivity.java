@@ -46,6 +46,7 @@ import com.cybexmobile.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.FullAccountObjectReply;
+import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.graphene.chain.Operations;
 import com.cybexmobile.graphene.chain.PrivateKey;
 import com.cybexmobile.graphene.chain.SignedTransaction;
@@ -583,7 +584,16 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private Operations.transfer_operation getTransferOperation(AccountObject accountObject, FullAccountObject toAccountObject, AssetObject assetObject, String memo, String amount, String feeAssetId, long feeAmount) {
-        return BitsharesWalletWraper.getInstance().getTransferOperation(accountObject.id, toAccountObject.account.id, assetObject, feeAmount, feeAssetId, amount, memo, accountObject.options.memo_key, toAccountObject.account.options.memo_key);
+        return BitsharesWalletWraper.getInstance().getTransferOperation(
+                accountObject.id,
+                toAccountObject.account.id,
+                assetObject.id,
+                feeAmount,
+                ObjectId.create_from_string(feeAssetId),
+                (long) (Double.parseDouble(amount) * Math.pow(10, assetObject.precision)),
+                memo,
+                accountObject.options.memo_key,
+                toAccountObject.account.options.memo_key);
     }
 
     @Override

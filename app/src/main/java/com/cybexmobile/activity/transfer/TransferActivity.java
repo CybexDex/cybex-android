@@ -37,6 +37,7 @@ import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.Asset;
+import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
@@ -101,12 +102,12 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     private AccountObject mFromAccountObject;
     private AccountObject mToAccountObject;
     private FeeAmountObject mCybFeeAmountObject;
-    private FeeAmountObject mCurrAssetFeeAmountBoject;
+    private FeeAmountObject mCurrAssetFeeAmountObject;
 
-    private Operations.transfer_operation mTransferOperation;
+    private Operations.transfer_operation mTransferOperationFee;
 
     private boolean mIsCybEnough;
-    private boolean mIsBalanceEngouh;
+    private boolean mIsBalanceEnough;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -184,7 +185,10 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
                 AssetUtil.formatNumberRounding(accountBalanceObjectItem.accountBalanceObject.balance /
                         Math.pow(10, accountBalanceObjectItem.assetObject.precision), accountBalanceObjectItem.assetObject.precision),
                 AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol)));
-        checkIsLockAndLoadTransferFee();
+        //选择币种时 CYB不够重新计算手续费
+        if(!mIsCybEnough){
+            checkIsLockAndLoadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(), false);
+        }
         resetTransferButtonState();
     }
 
@@ -268,7 +272,8 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         if(isFocused){
             return;
         }
-        checkIsLockAndLoadTransferFee();
+        //输入完备注 重新计算手续费
+        checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
     }
 
     @OnFocusChange(R.id.transfer_et_account_name)
@@ -308,22 +313,25 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         if(mToAccountObject == null){
             ToastMessage.showNotEnableDepositToastMessage(this,
                     getResources().getString(R.string.text_account_not_exist), R.drawable.ic_error_16px);
-        } else {
-            checkIsLockAndLoadTransferFee();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadTransferFee(Event.LoadTransferFee event){
         FeeAmountObject fee = event.getFee();
-        mTransferOperation.fee = new Asset(fee.amount, ObjectId.create_from_string(fee.asset_id));
         if(fee.asset_id.equals(ASSET_ID_CYB)){
             mCybFeeAmountObject = fee;
-            //当前选择币种为CYB时
-            if(fee.asset_id.equals(mSelectedAccountBalanceObjectItem.assetObject.id.toString())){
+            //未选择币种时 手续费默认显示CYB
+            if(mSelectedAccountBalanceObjectItem == null){
+                mIsCybEnough = mCybAccountBalanceObjectItem != null && mCybAccountBalanceObjectItem.accountBalanceObject.balance >= fee.amount;
+                mTvFee.setText(String.format("%s %s",
+                        AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
+                                mCybAccountBalanceObjectItem.assetObject.precision),
+                        AssetUtil.parseSymbol(mCybAccountBalanceObjectItem.assetObject.symbol)));
+            } else if (fee.asset_id.equals(mSelectedAccountBalanceObjectItem.assetObject.id.toString())){
                 //只有当CYB不足时才会扣除当前币的手续费 而当前选择币种为CYB时 默认CYB不足
                 mIsCybEnough = false;
-                mCurrAssetFeeAmountBoject = fee;
+                mCurrAssetFeeAmountObject = fee;
                 mTvFee.setText(String.format("%s %s",
                         AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
                                 mSelectedAccountBalanceObjectItem.assetObject.precision),
@@ -331,7 +339,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
             } else {
                 if(mCybAccountBalanceObjectItem == null || mCybAccountBalanceObjectItem.accountBalanceObject.balance < fee.amount){
                     mIsCybEnough = false;
-                    loadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(), event.isToTransfer());
+                    checkIsLockAndLoadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(), event.isToTransfer());
                 } else {
                     mIsCybEnough = true;
                     mTvFee.setText(String.format("%s %s",
@@ -341,20 +349,25 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
                 }
             }
         } else {
-            mCurrAssetFeeAmountBoject = fee;
+            mCurrAssetFeeAmountObject = fee;
             mTvFee.setText(String.format("%s %s",
                     AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
                             mSelectedAccountBalanceObjectItem.assetObject.precision),
                     AssetUtil.parseSymbol(mSelectedAccountBalanceObjectItem.assetObject.symbol)));
         }
         checkBalanceEnough(mEtQuantity.getText().toString().trim());
-        if(event.isToTransfer() && mIsBalanceEngouh){
+        if(event.isToTransfer() && mIsBalanceEnough){
             showTransferConfirmationDialog();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTransfer(Event.Transfer event){
+        /**
+         * fix bug:CYM-505
+         * 转账成功和失败清除数据
+         */
+        clearTransferData();
         if(event.isSuccess()){
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
                     R.string.toast_message_transfer_success), R.drawable.ic_check_circle_green);
@@ -372,6 +385,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(TransferActivity.this);
             FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(pref.getString(PREF_NAME, null));
             mFromAccountObject = fullAccountObject == null ? null : fullAccountObject.account;
+            checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
         }
 
         @Override
@@ -381,6 +395,40 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     };
 
     /**
+     * fix bug:CYM-505
+     * 转账完清除数据
+     */
+    private void clearTransferData(){
+        mIsCybEnough = false;
+        mIsBalanceEnough = false;
+        mTransferOperationFee = null;
+        mSelectedAccountBalanceObjectItem = null;
+        mToAccountObject = null;
+        mEtQuantity.setText("");
+        mEtRemark.setText("");
+        mEtAccountName.setText("");
+        mTvAvailable.setText("");
+        mTvCrypto.setText("");
+        checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
+    }
+
+    /**
+     * 检查钱包锁定状态 -> 加载转账手续费
+     */
+    private void checkIsLockAndLoadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer){
+        if(BitsharesWalletWraper.getInstance().is_locked()){
+            CybexDialog.showUnlockWalletDialog(this, mFromAccountObject, mFromAccountObject.name, new CybexDialog.UnLockDialogClickListener() {
+                @Override
+                public void onUnLocked(String password) {
+                    loadTransferFee(feeAssetId, isLoadFeeToTransfer);
+                }
+            });
+        } else {
+            loadTransferFee(feeAssetId, isLoadFeeToTransfer);
+        }
+    }
+
+    /**
      * 检查钱包锁定状态 -> 加载转账手续费 -> 转账
      */
     private void checkIsLockAndTransfer(){
@@ -388,36 +436,11 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
             CybexDialog.showUnlockWalletDialog(this, mFromAccountObject, mFromAccountObject.name, new CybexDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
-                    if(mTransferOperation == null){
-                        loadTransferFee(ASSET_ID_CYB, true);
-                    } else {
-                        showTransferConfirmationDialog();
-                    }
+                    showTransferConfirmationDialog();
                 }
             });
         } else {
-            if(mTransferOperation == null){
-                loadTransferFee(ASSET_ID_CYB, true);
-            } else {
-                showTransferConfirmationDialog();
-            }
-
-        }
-    }
-
-    /**
-     * 检查钱包锁定状态 -> 加载转账手续费
-     */
-    private void checkIsLockAndLoadTransferFee(){
-        if(BitsharesWalletWraper.getInstance().is_locked()){
-            CybexDialog.showUnlockWalletDialog(this, mFromAccountObject, mFromAccountObject.name, new CybexDialog.UnLockDialogClickListener() {
-                @Override
-                public void onUnLocked(String password) {
-                    loadTransferFee(ASSET_ID_CYB, false);
-                }
-            });
-        } else {
-            loadTransferFee(ASSET_ID_CYB, false);
+            showTransferConfirmationDialog();
         }
     }
 
@@ -442,14 +465,25 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
      * 转账
      */
     private void toTransfer(){
-        mTransferOperation.amount = mSelectedAccountBalanceObjectItem.assetObject.amount_from_string(
-                mEtQuantity.getText().toString().trim());
+        if(mFromAccountObject == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null){
+            return;
+        }
+        Operations.base_operation transferOperation =  BitsharesWalletWraper.getInstance().getTransferOperation(
+                mFromAccountObject.id,
+                mToAccountObject.id,
+                mSelectedAccountBalanceObjectItem.assetObject.id,
+                mIsCybEnough ? mCybFeeAmountObject.amount : mCurrAssetFeeAmountObject.amount,
+                ObjectId.create_from_string(mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
+                (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision)),
+                mEtRemark.getText().toString().trim(),
+                mFromAccountObject.options.memo_key,
+                mToAccountObject.options.memo_key);
         try {
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                            mFromAccountObject, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
+                            mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
                     try {
                         BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mTransferCallback);
                     } catch (NetworkStatusException e) {
@@ -473,21 +507,21 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
      * @param isLoadFeeToTransfer 是否加载完手续费之后 自动转账
      */
     private void loadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer){
-        if(mFromAccountObject == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null){
+        if(mFromAccountObject == null){
             return;
         }
-        mTransferOperation =  BitsharesWalletWraper.getInstance().getTransferOperation(
+        mTransferOperationFee =  BitsharesWalletWraper.getInstance().getTransferOperation(
                 mFromAccountObject.id,
-                mToAccountObject.id,
-                mSelectedAccountBalanceObjectItem.assetObject,
+                mFromAccountObject.id,
+                ObjectId.create_from_string(ASSET_ID_CYB),
                 0,
-                feeAssetId,
-                TextUtils.isEmpty(mEtQuantity.getText().toString().trim()) ? "0" : mEtQuantity.getText().toString().trim(),
+                ObjectId.create_from_string(feeAssetId),
+                0,
                 mEtRemark.getText().toString().trim(),
                 mFromAccountObject.options.memo_key,
-                mToAccountObject.options.memo_key);
+                mFromAccountObject.options.memo_key);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
                     EventBus.getDefault().post(new Event.LoadTransferFee(reply.result.get(0), isLoadFeeToTransfer));
@@ -524,21 +558,21 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
                 TextUtils.isEmpty(amountStr) || amountStr.endsWith(".")){
             return;
         }
-        if(!mIsCybEnough && mCurrAssetFeeAmountBoject == null){
+        if(!mIsCybEnough && mCurrAssetFeeAmountObject == null){
             mBtnTransfer.setEnabled(true);
         }
         double amount = Double.parseDouble(amountStr);
-        double fee = mIsCybEnough || mCurrAssetFeeAmountBoject == null ? 0 : mCurrAssetFeeAmountBoject.amount /
+        double fee = mIsCybEnough || mCurrAssetFeeAmountObject == null ? 0 : mCurrAssetFeeAmountObject.amount /
                 Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision);
         double balanceAmount = mSelectedAccountBalanceObjectItem.accountBalanceObject.balance /
                 Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision);
         BigDecimal balance = new BigDecimal(balanceAmount).subtract(new BigDecimal(amount)).subtract(new BigDecimal(fee));
         if(balance.doubleValue() < 0){
-            mIsBalanceEngouh = false;
+            mIsBalanceEnough = false;
             ToastMessage.showNotEnableDepositToastMessage(this,
                     getResources().getString(R.string.text_not_enough), R.drawable.ic_error_16px);
         } else {
-            mIsBalanceEngouh = true;
+            mIsBalanceEnough = true;
         }
         resetTransferButtonState();
     }
@@ -551,7 +585,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
          * fix bug:CYM-507
          * 转账金额必须大于0
          */
-        mBtnTransfer.setEnabled(mIsBalanceEngouh && Double.parseDouble(mEtQuantity.getText().toString()) > 0 && mSelectedAccountBalanceObjectItem != null &&
+        mBtnTransfer.setEnabled(mIsBalanceEnough && Double.parseDouble(mEtQuantity.getText().toString()) > 0 && mSelectedAccountBalanceObjectItem != null &&
                 mToAccountObject != null);
     }
 

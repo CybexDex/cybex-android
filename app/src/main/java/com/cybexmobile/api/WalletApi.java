@@ -651,10 +651,10 @@ public class WalletApi {
 
     public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
                                                               ObjectId<AccountObject> to,
-                                                              AssetObject assetObject,
+                                                              ObjectId<AssetObject> transferAssetId,
                                                               long feeAmount,
-                                                              String feeAssetId,
-                                                              String amount,
+                                                              ObjectId<AssetObject> feeAssetId,
+                                                              long transferAmount,
                                                               String memo,
                                                               Types.public_key_type fromMemoKey,
                                                               Types.public_key_type toMemoKey) {
@@ -662,8 +662,8 @@ public class WalletApi {
         Operations.transfer_operation transferOperation = new Operations.transfer_operation();
         transferOperation.from = from;
         transferOperation.to = to;
-        transferOperation.fee = new Asset(feeAmount, ObjectId.create_from_string(feeAssetId));
-        transferOperation.amount = assetObject.amount_from_string(amount);
+        transferOperation.fee = new Asset(feeAmount, feeAssetId);
+        transferOperation.amount = new Asset(transferAmount, transferAssetId);
         transferOperation.extensions = new HashSet<>();
         if(memo != null && memo.length() > 0){
             transferOperation.memo = new MemoData();
