@@ -96,8 +96,6 @@ public class AccountBalanceActivity extends BaseActivity {
     LinearLayout mWithdrawButtonLayout;
     @BindView(R.id.account_balance_transfer_layout)
     LinearLayout mTransferButtonLayout;
-    @BindView(R.id.account_balance_no_asset_layout)
-    LinearLayout mNoAssetLayout;
     @BindView(R.id.account_balance_recycler_view)
     RecyclerView mAccountBalanceRecyclerView;
 

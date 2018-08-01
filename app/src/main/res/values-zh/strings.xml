@@ -262,6 +262,7 @@
     <!-- Deposit Withdraw Records -->
     <string name="deposit_withdraw_records_update_time">更新时间:&#032;&#032;</string>
     <string name="deposit_withdraw_records_address">地址:&#032;&#032;</string>
+    <string name="deposit_withdraw_records_no_record">暂无记录</string>
 
 
     <!-- Snack Bar Text -->
@@ -337,4 +338,24 @@
     <string name="text_minutes">分钟</string>
     <string name="text_in">收入</string>
     <string name="text_out">支出</string>
+
+    <string name="srl_header_pulling">下拉可以刷新</string>
+    <string name="srl_header_refreshing">正在刷新…</string>
+    <string name="srl_header_loading">正在加载…</string>
+    <string name="srl_header_release">释放立即刷新</string>
+    <string name="srl_header_finish">刷新完成</string>
+    <string name="srl_header_failed">刷新失败</string>
+    <string name="srl_header_update">上次更新 M-d HH:mm</string>
+    <string name="srl_header_secondary">释放进入二楼</string>
+
+    <string name="srl_footer_pulling">上拉加载更多</string>
+    <string name="srl_footer_release">释放立即加载</string>
+    <string name="srl_footer_loading">正在加载…</string>
+    <string name="srl_footer_refreshing">正在刷新…</string>
+    <string name="srl_footer_finish">加载完成</string>
+    <string name="srl_footer_failed">加载失败</string>
+    <string name="srl_footer_nothing">没有更多数据了</string>
+
+    <string name="srl_content_empty">SmartRefreshLayout中没有找到内容视图。您是否忘记在xml布局文件中添加？</string>
+    <string name="srl_component_falsify" formatted="false">%s 虚假区域\n代表运行时拖动的高度【%.1fdp】 \n而不会显示任何东西</string>
 </resources>

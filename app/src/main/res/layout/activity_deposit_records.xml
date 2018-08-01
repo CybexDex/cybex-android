@@ -31,14 +31,6 @@
         app:srlEnableScrollContentWhenLoaded="true"
         app:srlEnableFooterFollowWhenLoadFinished="true">
 
-        <com.scwang.smartrefresh.layout.header.ClassicsHeader
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srlAccentColor="#aaa"
-            app:srlDrawableProgressSize="25dp"
-            app:srlDrawableProgress="@drawable/animation_loading_rotate"
-            app:srlPrimaryColor="@color/itemBackground"/>
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/deposit_records_rv_deposit_records"
             android:layout_width="match_parent"

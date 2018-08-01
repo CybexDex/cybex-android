@@ -38,6 +38,7 @@ import com.cybexmobile.service.WebSocketService;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -121,7 +122,9 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
         mDepositRecordsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mDepositRecordsRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
         setSupportActionBar(toolbar);
+        ClassicsHeader classicsHeader = new ClassicsHeader(this);
         mRefreshLayout.setEnableAutoLoadMore(true);
+        mRefreshLayout.setRefreshHeader(classicsHeader);
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

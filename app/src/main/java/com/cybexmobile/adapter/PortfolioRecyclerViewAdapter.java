@@ -2,6 +2,7 @@ package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final static int TYPE_EMPTY = 0;
+    private final static int TYPE_CONTENT = 1;
+
     private int mLayoutId;
     private List<AccountBalanceObjectItem> mBalanceObjectItems;
     private Context mContext;
@@ -32,15 +36,26 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         mContext = context;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(mLayoutId, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
+        if (viewType == TYPE_EMPTY) {
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
+            return new EmptyViewHolder(view);
+        }
+        view = LayoutInflater.from(parent.getContext()).inflate(mLayoutId, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof EmptyViewHolder) {
+            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
+            emptyViewHolder.mIvImage.setImageResource(R.drawable.img_wallet_no_assert);
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.balance_page_no_asset));
+            return;
+        }
         ViewHolder viewHolder = (ViewHolder) holder;
         AccountBalanceObjectItem item = mBalanceObjectItems.get(position);
         AccountBalanceObject accountBalanceObject = item.accountBalanceObject;
@@ -82,8 +97,13 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return mBalanceObjectItems == null || mBalanceObjectItems.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
+    }
+
+    @Override
     public int getItemCount() {
-        return mBalanceObjectItems.size();
+        return mBalanceObjectItems == null || mBalanceObjectItems.size() == 0 ? 1 : mBalanceObjectItems.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
