@@ -1,0 +1,360 @@
+<resources>
+    <string name="app_name">CybexDex</string>
+
+    <!-- Bottom Navigation Title -->
+    <string name="title_watchlist">Watchlist</string>
+    <string name="title_explorer">Explorer</string>
+    <string name="title_setting">Settings</string>
+    <string name="title_account">Account</string>
+    <string name="title_faq">Application</string>
+    <string name="title_exchange">Exchange</string>
+    <string name="title_order_history">Order History</string>
+    <string name="title_transfer">Transfer</string>
+    <string name="title_transfer_records">Transfer Records</string>
+    <string name="title_transfer_details">Transfer Details</string>
+    <string name="title_deposit_records">Deposit Records</string>
+    <string name="title_withdraw_records">Withdraw Records</string>
+
+    <!-- WatchList Page -->
+    <string name="popular_title">most popular</string>
+    <string name="watch_list_name_vol">Name/Vol</string>
+    <string name="watch_list_new_price_title">Last Price</string>
+    <string name="watch_list_vibration_range_title">24h Chg%</string>
+
+    <!-- Account page -->
+    <string name="log_in_cybex">Log in Cybex</string>
+    <string name="account_balance">Your Total Balance(CYB):</string>
+    <string name="account_introduction_text">CYBEX is a decentralized exchange that seeks to improve the liquidity of crypto-assets that’s more transparent, highly efficient and secure.</string>
+    <string name="account_available_asset">Your Portfolio</string>
+    <string name="account_view_all">View All</string>
+    <string name="account_other_asset">Asset Operations</string>
+    <string name="account_hello">Hello,</string>
+    <string name="account_membership_basic">Basic Member</string>
+    <string name="account_membership_lifetime">Lifetime Member</string>
+    <string name="account_balance_dialog_title">BALANCE</string>
+    <string name="account_balance_dialog_content">This is the estimated value of all your assets,including any hidden assets,open orders,debt and collateral.The estimate is done using only live blockchain data and may not be perfectly accurate.</string>
+    <string name="account_balance_dialog_button">OK</string>
+    <string name="text_my_balance">My Balance</string>
+    <string name="text_opened_orders">Opened Orders</string>
+    <string name="text_lockup_assets">Lockup Assets</string>
+    <string name="text_deposit_withdraw">Deposit/Withdraw</string>
+
+    <!-- Balance Page -->
+    <string name="balance_page_title">My Balance</string>
+    <string name="balance_page_total_balance">Your Total Balance(CYB)</string>
+    <string name="balance_page_transfer">Transfer</string>
+    <string name="balance_page_no_asset">No Asset</string>
+    <string name="balance_page_frozen_no_asset">Frozen: --</string>
+    <string name="balance_page_frozen_asset">Frozen:</string>
+
+    <!-- Open Orders Page -->
+    <string name="open_order_asset_amount">Asset/Order Amount</string>
+    <string name="open_order_order_value">Order Price</string>
+    <string name="open_order_buy">BUY</string>
+    <string name="open_order_sell">SELL</string>
+    <string name="open_orders_title">Opened Orders</string>
+    <string name="open_order_price_amount">Order Price/Order Amount</string>
+    <string name="open_order_filled_cancel">Filled/Cancel</string>
+
+    <!-- Markets Page -->
+    <string name="markets_title">Market</string>
+    <string name="market_page_buy_price">Buy Price(--)</string>
+    <string name="market_page_volume_short">Vol</string>
+    <string name="market_page_sell_price">Sell Price(--)</string>
+    <string name="market_page_trade_history_price">Price(--)</string>
+    <string name="market_page_trade_history_date">Time</string>
+    <string name="market_page_trade_history_base">Total(--)</string>
+    <string name="market_page_trade_history_quote">Amount(--)</string>
+    <string name="market_page_order_book">Order Book</string>
+    <string name="market_page_trade_history">Market Trades</string>
+    <string name="k_ma">MA(5):</string>
+    <string name="k_ma5">MA(5):</string>
+    <string name="k_ma10">MA(10):</string>
+    <string name="k_ma20">MA(20):</string>
+    <string name="k_boll">BOLL:</string>
+    <string name="k_ema5">EMA(5):</string>
+    <string name="k_ema10">EMA(10)</string>
+    <string name="index_high">High</string>
+    <string name="index_low">Low</string>
+    <string name="index_open">Open</string>
+    <string name="index_close">Close</string>
+    <string name="index_vary">Change</string>
+    <string name="index_price">Price</string>
+
+    <!-- Setting Strings -->
+    <string name="setting_language">Language</string>
+    <string name="setting_language_english">English</string>
+    <string name="setting_language_chinese">简体中文</string>
+    <string name="setting_theme">Theme</string>
+    <string name="setting_version">Version</string>
+    <string name="setting_frequency">Frequency</string>
+    <string name="setting_theme_dark">Dark</string>
+    <string name="setting_theme_light">Light</string>
+    <string name="setting_version_is_the_latest">The current version is the latest one</string>
+    <string name="setting_version_update_available">Update Available</string>
+    <string name="setting_version_update_content">A new version of CybexDex is available,Please update to newest version now.</string>
+    <string name="setting_version_update_next_time">Next</string>
+    <string name="setting_version_update_now">Update</string>
+    <string name="setting_frequency_ordinary_market">Ordinary Market</string>
+    <string name="setting_frequency_real_time_market">Real-time Market</string>
+    <string name="setting_frequency_real_time_market_only_wifi">Real-time Market(WiFi Only)</string>
+    <string name="text_cancel">Cancel</string>
+
+    <!-- Strings related to login -->
+    <string name="create_account">Create Account</string>
+    <string name="create_account_register">Sign Up</string>
+    <string name="have_account_login">Already have an account?</string>
+    <string name="prompt_user_name">Account Name</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="prompt_pin_code">Pin Code</string>
+    <string name="action_sign_in">Log In</string>
+    <string name="action_log_out">Log Out</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_incorrect_password">Incorrect Password or Account</string>
+    <string name="text_ok">OK</string>
+    <string name="permission_rationale">Contacts permissions are needed for providing email completions.</string>
+    <string name="login_cloud_wallet">Use Cloud Wallet mode to login Account</string>
+    <string name="register_create_cloud_wallet">Use Cloud Wallet mode to create Account</string>
+    <string name="register_dialog_title">ATTENTIONS</string>
+    <string name="register_dialog_confirm">CONFIRM</string>
+    <string name="register_dialog_content_current_password">Current Password:</string>
+    <string name="register_dialog_content_attentions">
+        • I understand that i will lose access to my funds if i LOSE my password\n
+        • I understand that no one can RECOVER my password if i lose or forget it\n
+        • I have WRITTEN DOWN or otherwise STORED my password</string>
+
+    <string name="import_activity_unknown_error">Some error occurred.</string>
+    <string name="import_activity_private_key_invalid">Invalid private key.</string>
+    <string name="import_activity_account_invalid">The account does not exist.</string>
+    <string name="import_activity_account_not_match_key">The account and the private key do not match.</string>
+    <string name="import_activity_account_name_invalid">The account name cannot be found.</string>
+    <string name="import_activity_connect_failed">Failed to connect to server.</string>
+    <string name="import_activity_file_failed">Cannot read content from the file.</string>
+    <string name="import_activity_password_invalid">Invalid password.</string>
+    <string name="import_activity_file_bin_password_invalid">Invalid wallet file or password.</string>
+
+    <string name="create_account_activity_network_fail">Failed to connect to server</string>
+    <string name="create_account_activity_account_object_exist">The account has already existed</string>
+    <string name="create_account_activity_response_fail">Server failed to response</string>
+    <string name="create_account_activity_create_fail">Failed to sign up</string>
+
+    <string name="create_account_account_name_error_full_letter">The account name cannot contain only letters</string>
+    <string name="create_account_account_name_too_short">The account name is too short</string>
+    <string name="create_account_account_name_error_start_letter">The account name should start with a letter</string>
+    <string name="create_account_account_name_error_dash_end">The account name can not end with a dash</string>
+    <string name="create_account_account_name_should_not_contain_continuous_dashes">The account name should not contain continuous dashes</string>
+    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">The account name should only contain lowercase letter,dash and numbers</string>
+    <string name="create_account_pin_code_not_correct">Incorrect verify code</string>
+    <string name="create_account_failure">create account is failed</string>
+    <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>
+    <string name="create_account_password_confirm_error">Two passwords do not match</string>
+
+    <!-- Open Orders Page Related -->
+    <string name="open_orders_all">All</string>
+    <string name="open_orders_buy">Buy</string>
+    <string name="open_orders_sell">Sell</string>
+    <string name="open_orders_total_value">Total Value:</string>
+    <string name="open_orders_sell_total_value">Sell Total Value:</string>
+    <string name="open_orders_buy_total_value">Buy Total Value:</string>
+    <string name="open_orders_volume">Amount:</string>
+
+    <!-- Portfolio Page Related -->
+    <string name="portfolio_price">Price(CYB)</string>
+    <string name="portfolio_24h">24h</string>
+    <string name="portfolio_title">Your Portfolio</string>
+
+    <!-- Activity Lock Assets -->
+    <string name="assets_amount">Assets/Amount</string>
+    <string name="progress_expire_date">Progress/Expiration Time</string>
+    <string name="locked_assets">Lockup Assets</string>
+
+
+    <string name="network_connection_is_not_available">network connection is not available</string>
+
+    <!-- Exchange Fragment -->
+    <string name="tab_buy">BUY</string>
+    <string name="tab_sell">SELL</string>
+    <string name="tab_open_orders">Open Orders</string>
+    <string name="menu_order_history">Order History</string>
+    <string name="menu_transfer_records">Transfer Records</string>
+    <string name="text_limit">Limit</string>
+    <string name="text_empty">--</string>
+    <string name="text_asset_price">Price(--)</string>
+    <string name="text_asset_amount">Amount(--)</string>
+    <string name="text_percentage_25">25%</string>
+    <string name="text_percentage_50">50%</string>
+    <string name="text_percentage_75">75%</string>
+    <string name="text_percentage_100">100%</string>
+    <string name="text_available">Available</string>
+    <string name="text_fee">Fee</string>
+    <string name="text_total">Total</string>
+    <string name="text_buy">Buy</string>
+    <string name="text_sell">Sell</string>
+    <string name="text_not_enough">Not enough</string>
+    <string name="text_login_in_to_exchange">Login in to exchange</string>
+    <string name="text_hint_price">Price</string>
+    <string name="text_hint_amount">Amount</string>
+
+    <string name="item_text_open_order_price">Price:</string>
+    <string name="item_text_open_order_amount">Amount:</string>
+    <string name="item_text_open_order_cancel">Cancel</string>
+    <string name="text_no_open_order">No open orders</string>
+
+    <!-- Own Order History Activity -->
+    <string name="text_asset_and_amount">Asset/Amount</string>
+    <string name="text_filled_and_price">Filled/Price</string>
+    <string name="text_no_exchange_history">No exchange history</string>
+
+    <!-- Own Order History Item -->
+    <string name="item_own_order_history_time">Time:</string>
+    <string name="item_own_order_history_done">Done</string>
+
+    <!-- Watchlist Select Activity -->
+    <string name="text_markets">Markets</string>
+    <string name="text_paris">Pairs</string>
+    <string name="text_24_hour_volume">24h Volume</string>
+
+    <string name="text_press_again_to_exit">Press again to exit</string>
+
+
+    <!-- Gateway Page Related -->
+    <string name="gate_way_title">Gateway</string>
+    <string name="gate_way_deposit">Deposit</string>
+    <string name="gate_way_withdraw">Withdraw</string>
+    <string name="gate_way_select_coin">Select Coin</string>
+
+    <!-- Deposit Page Related -->
+    <string name="deposit_save_qr_code">Save QR Code</string>
+    <string name="deposit_copy_address">Copy Address</string>
+    <string name="deposit_get_new_address">Get New Address</string>
+    <string name="deposit_eos_copy_account_name">Copy Account Name</string>
+    <string name="deposit_eos_copy_code">Copy Code</string>
+    <string name="deposit_eos_get_new_code">Get New Code</string>
+    <string name="deposit_eos_deposit_account">EOS Deposit Account</string>
+    <string name="deposit_eos_verification_code">Verification code</string>
+    <string name="deposit_eos_alert_message">(Must transfer your EOS to deposit account with this verification code in memo)</string>
+    <string name="deposit_record_button">Deposit Records</string>
+
+    <!-- Withdraw Page Related -->
+    <string name="withdraw_available_amount">Available</string>
+    <string name="withdraw_withdrawal_address">Withdrawal Address</string>
+    <string name="withdraw_account_eos">Withdrawal Account</string>
+    <string name="withdraw_amount">Amount</string>
+    <string name="withdraw_minimum_hint">Minimum </string>
+    <string name="withdraw_all">All</string>
+    <string name="withdraw_transfer_fee">Transfer Fee</string>
+    <string name="withdraw_gateway_fee">Gateway Fee</string>
+    <string name="withdraw_receive_amount">Receive Amount</string>
+    <string name="withdraw_withdraw_button">WITHDRAW</string>
+    <string name="withdraw_enter_or_paste_address_hint">Enter or paste address</string>
+    <string name="withdraw_enter_or_paste_account_hint_eos">Enter or paste account</string>
+    <string name="withdraw_amount_hint">Min 1</string>
+    <string name="withdraw_confirmation">CONFIRMATION</string>
+    <string name="withdraw_error_not_enough">Not enough</string>
+    <string name="withdraw_error_less_than_minimum">Less than the minimum withdrawal</string>
+    <string name="withdraw_error_invalid_address">Invalid Address</string>
+    <string name="withdraw_records_button">Withdraw Records</string>
+
+    <!-- Deposit Withdraw Records -->
+    <string name="deposit_withdraw_records_update_time">Update time:&#032;&#032;</string>
+    <string name="deposit_withdraw_records_address">Address:&#032;&#032;</string>
+    <string name="deposit_withdraw_records_no_record">No record</string>
+
+    <!-- Snack Bar Text -->
+    <string name="snack_bar_saved">Saved</string>
+    <string name="snack_bar_copied">Copied</string>
+    <string name="snack_bar_please_retry">Please retry 5 minutes later</string>
+
+    <!-- Toast Message -->
+    <string name="toast_message_can_not_deposit">Missing authority for deposit</string>
+    <string name="toast_message_can_not_withdraw">Missing authority for withdrawal</string>
+    <string name="toast_message_withdraw_sent">Withdrawal request has been sent</string>
+    <string name="toast_message_withdraw_failed">Withdrawal request failed</string>
+    <string name="toast_message_place_order_successfully">Place order successfully</string>
+    <string name="toast_message_place_order_failed">Place order failed</string>
+    <string name="toast_message_cancel_order_successfully">Cancel order successfully</string>
+    <string name="toast_message_cancel_order_failed">Cancel order failed</string>
+    <string name="toast_message_transfer_success">Transfer success</string>
+    <string name="toast_message_transfer_failed">Transfer failed</string>
+
+    <!-- unlock wallet -->
+    <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
+    <string name="unlock_wallet_dialog_cancel">CANCEL</string>
+    <string name="unlock_wallet_dialog_confirm">CONFIRM</string>
+    <string name="unlock_wallet_dialog_error_invalid_password">Invalid password</string>
+
+    <!-- Dialog limit order create and cancel -->
+    <string name="dialog_text_title_limit_order_create_confirmation">CONFIRMATION</string>
+    <string name="dialog_text_title_limit_order_cancel_confirmation">CONFIRMATION</string>
+    <string name="dialog_text_price">Price:</string>
+    <string name="dialog_text_amount">Amount:</string>
+    <string name="dialog_text_total">Total:</string>
+    <string name="dialog_text_cancellation_fee">Cancellation Fee:</string>
+    <string name="dialog_text_cancel">Cancel</string>
+    <string name="dialog_text_confirm">Confirm</string>
+    <string name="dialog_text_title_transfer_confirmation">Confirmation</string>
+
+    <!-- Dialog withdraw confirmation -->
+    <string name="dialog_withdraw_confirmation_address">Withdrawal Address:</string>
+    <string name="dialog_withdraw_confirmation_amount">Amount:</string>
+    <string name="dialog_withdraw_confirmation_gateway_fee">Gateway Fee:</string>
+    <string name="dialog_withdraw_confirmation_transfer_fee">Transfer Fee:</string>
+    <string name="dialog_withdraw_confirmation_receive_amount">Receive Amount:</string>
+
+    <!-- Dialog transfer confirmation -->
+    <string name="dialog_text_account">Account:</string>
+    <string name="dialog_text_fee">Fee:</string>
+    <string name="dialog_text_quantity">Quantity:</string>
+    <string name="dialog_text_memo">Memo:</string>
+
+    <!--Dialog Version Update -->
+    <string name="dialog_version_update">Version Update</string>
+
+    <!-- Transfer Activity -->
+    <string name="text_to_account_name">To account name</string>
+    <string name="text_crypto">Crypto</string>
+    <string name="text_quantity">Quantity</string>
+    <string name="text_memo">Memo</string>
+    <string name="text_no_transfer_records">No transfer records</string>
+    <string name="text_sent">Sent</string>
+    <string name="text_received">Received</string>
+    <string name="text_account_not_exist">Account doesn’t exist</string>
+    <string name="text_please_select_crypto_type">Please select crypto type</string>
+    <string name="text_send">Send</string>
+
+    <!-- Transfer Details Activity -->
+    <string name="text_to">To</string>
+    <string name="text_from">From</string>
+    <string name="text_vesting_period">Vesting Period</string>
+    <string name="text_time">Time</string>
+    <string name="text_none">none</string>
+    <string name="text_click_to_view">Click to view</string>
+    <string name="text_minutes">minutes</string>
+    <string name="text_in">In</string>
+    <string name="text_out">Out</string>
+
+    <string name="title_activity_account_balance">AccountBalanceActivity</string>
+
+
+    <string name="srl_header_pulling">Pull Down To Refresh</string>
+    <string name="srl_header_release">Release To Refresh</string>
+    <string name="srl_header_refreshing">Refreshing…</string>
+    <string name="srl_header_loading">Loading…</string>
+    <string name="srl_header_finish">Refresh Success</string>
+    <string name="srl_header_failed">Refresh Failed</string>
+    <string name="srl_header_update">\'Last Update\' M-d HH:mm</string>
+    <string name="srl_header_secondary">Release To Second Floor</string>
+
+    <string name="srl_footer_pulling">Pull Up To Load More</string>
+    <string name="srl_footer_release">Release To Load More</string>
+    <string name="srl_footer_loading">Loading…</string>
+    <string name="srl_footer_refreshing">Refreshing…</string>
+    <string name="srl_footer_finish">Load Success</string>
+    <string name="srl_footer_failed">Load Failed</string>
+    <string name="srl_footer_nothing">No More Data</string>
+
+    <string name="srl_content_empty">The content view in SmartRefreshLayout is empty. Do you forget to add it in xml layout file?</string>
+    <string name="srl_component_falsify" formatted="false">%s falsify area,\n Represents the height[%.1fdp] of drag at run time,\n It does not show anything.</string>
+
+</resources>

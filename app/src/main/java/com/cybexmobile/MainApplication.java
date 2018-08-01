@@ -39,9 +39,21 @@ public class MainApplication extends Application {
 
     private Context updateResources(Context context) {
         String language = StoreLanguageHelper.getLanguageLocal(context);
+        String defaultLanguage = Locale.getDefault().getLanguage();
+        /**
+         * fix bug
+         * 第一次安装跟随系统语言 如果系统语言非中文和英文时默认为英文
+         */
+        if(language.equals("")){
+            if(defaultLanguage.equals("en") || defaultLanguage.equals("zh")){
+                StoreLanguageHelper.setLanguageLocal(context, defaultLanguage);
+                return context;
+            }
+            language = "en";
+            StoreLanguageHelper.setLanguageLocal(context, language);
+        }
         Locale locale = new Locale(language);
         Locale.setDefault(locale);
-
         Resources res = context.getResources();
         Configuration config = new Configuration(res.getConfiguration());
         config.setLocale(locale);
