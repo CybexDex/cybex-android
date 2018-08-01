@@ -260,6 +260,11 @@
     <string name="deposit_withdraw_records_update_time">Update time:&#032;&#032;</string>
     <string name="deposit_withdraw_records_address">Address:&#032;&#032;</string>
     <string name="deposit_withdraw_records_no_record">No record</string>
+    <string name="deposit_withdraw_state_done">Done</string>
+    <string name="deposit_withdraw_state_new">New</string>
+    <string name="deposit_withdraw_state_init">Init</string>
+    <string name="deposit_withdraw_state_pending">Pending</string>
+    <string name="deposit_withdraw_state_failed">Failed</string>
 
     <!-- Snack Bar Text -->
     <string name="snack_bar_saved">Saved</string>
@@ -333,8 +338,6 @@
     <string name="text_minutes">minutes</string>
     <string name="text_in">In</string>
     <string name="text_out">Out</string>
-
-    <string name="title_activity_account_balance">AccountBalanceActivity</string>
 
 
     <string name="srl_header_pulling">Pull Down To Refresh</string>

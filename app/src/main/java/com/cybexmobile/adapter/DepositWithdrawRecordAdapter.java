@@ -84,7 +84,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof EmptyViewHolder){
+        if (holder instanceof EmptyViewHolder) {
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
             emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.deposit_withdraw_records_no_record));
             return;
@@ -96,12 +96,28 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         viewHolder.mAssetSymbol.setText(item.getRecord().getCoinType());
         viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getRecord().getAmount() / Math.pow(10, itemAssetObject.precision), item.getRecord().getCoinType()));
         viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getUpdateAt())));
-        viewHolder.mAssetStatus.setText(String.format("%s%s", item.getRecord().getState().substring(0, 1).toUpperCase(), item.getRecord().getState().substring(1)));
+        viewHolder.mAssetStatus.setText(getStateString(item.getRecord().getState()));
         viewHolder.mAssetAddress.setText(item.getRecord().getAddress());
     }
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
         Picasso.get().load("https://app.cybex.io/icons/" + quoteIdWithUnderLine + "_grey.png").into(mCoinSymbol);
+    }
+
+    private String getStateString(String state) {
+        switch (state) {
+            case "done":
+                return mContext.getResources().getString(R.string.deposit_withdraw_state_done);
+            case "failed":
+                return mContext.getResources().getString(R.string.deposit_withdraw_state_failed);
+            case "pending":
+                return mContext.getResources().getString(R.string.deposit_withdraw_state_pending);
+            case "init":
+                return mContext.getResources().getString(R.string.deposit_withdraw_state_init);
+            case "new":
+                return mContext.getResources().getString(R.string.deposit_withdraw_state_new);
+        }
+        return null;
     }
 }
