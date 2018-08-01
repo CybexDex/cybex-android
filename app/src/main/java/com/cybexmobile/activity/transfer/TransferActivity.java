@@ -67,6 +67,7 @@ import butterknife.Unbinder;
 
 import static com.cybexmobile.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
+import static com.cybexmobile.utils.Constant.ASSET_SYMBOL_CYB;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEM;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
@@ -103,6 +104,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     private AccountObject mToAccountObject;
     private FeeAmountObject mCybFeeAmountObject;
     private FeeAmountObject mCurrAssetFeeAmountObject;
+    private AssetObject mCybAssetObject;
 
     private Operations.transfer_operation mTransferOperationFee;
 
@@ -325,10 +327,24 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
             //未选择币种时 手续费默认显示CYB
             if(mSelectedAccountBalanceObjectItem == null){
                 mIsCybEnough = mCybAccountBalanceObjectItem != null && mCybAccountBalanceObjectItem.accountBalanceObject.balance >= fee.amount;
-                mTvFee.setText(String.format("%s %s",
-                        AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
-                                mCybAccountBalanceObjectItem.assetObject.precision),
-                        AssetUtil.parseSymbol(mCybAccountBalanceObjectItem.assetObject.symbol)));
+                /**
+                 * fix bug:CYM-543
+                 * 解决账户无资产时不显示手续费
+                 */
+                if(mCybAccountBalanceObjectItem == null){
+                    if(mCybAssetObject == null){
+                        mCybAssetObject = mWebSocketService.getAssetObject(fee.asset_id);
+                    }
+                    mTvFee.setText(String.format("%s %s",
+                            AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mCybAssetObject == null ? 5 : mCybAssetObject.precision),
+                                    mCybAssetObject == null ? 5 : mCybAssetObject.precision),
+                            mCybAssetObject == null ? ASSET_SYMBOL_CYB : AssetUtil.parseSymbol(mCybAssetObject.symbol)));
+                } else {
+                    mTvFee.setText(String.format("%s %s",
+                            AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
+                                    mCybAccountBalanceObjectItem.assetObject.precision),
+                            AssetUtil.parseSymbol(mCybAccountBalanceObjectItem.assetObject.symbol)));
+                }
             } else if (fee.asset_id.equals(mSelectedAccountBalanceObjectItem.assetObject.id.toString())){
                 //只有当CYB不足时才会扣除当前币的手续费 而当前选择币种为CYB时 默认CYB不足
                 mIsCybEnough = false;
