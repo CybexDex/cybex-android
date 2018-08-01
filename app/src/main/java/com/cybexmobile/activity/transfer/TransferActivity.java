@@ -55,6 +55,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -122,6 +123,11 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         mEtQuantity.setFilters(new InputFilter[]{mQuantityFilter});
         mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
         mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
+        /**
+         * fix bug:CYM-551
+         * 去除资产为0的币种
+         */
+        removeZeroBalance(mAccountBalanceObjectItems);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
     }
@@ -396,6 +402,23 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         } else {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
                     R.string.toast_message_transfer_failed), R.drawable.ic_error_16px);
+        }
+    }
+
+    /**
+     * 删除0资产币种
+     * @param items
+     */
+    private void removeZeroBalance(List<AccountBalanceObjectItem> items){
+        if(items == null || items.size() == 0){
+            return;
+        }
+        Iterator<AccountBalanceObjectItem> it = items.iterator();
+        while (it.hasNext()) {
+            AccountBalanceObjectItem item = it.next();
+            if (item.accountBalanceObject.balance == 0) {
+                it.remove();
+            }
         }
     }
 
