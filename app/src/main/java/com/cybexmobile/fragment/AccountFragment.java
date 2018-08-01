@@ -187,7 +187,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     }
 
     private void setViewData() {
-        mTvName.setText(mIsLoginIn ? mName : getResources().getString(R.string.log_in_cybex));
+        mTvName.setText(mIsLoginIn ? getResources().getString(R.string.account_hello) + " " + mName : getResources().getString(R.string.log_in_cybex));
         if (mIsLoginIn) {
             loadAvatar(mIvAvatar, 56);
         } else {

@@ -87,8 +87,10 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:background="@color/account_action_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:src="@drawable/ic_deposit_24_px" />
 
                 <TextView
@@ -107,8 +109,10 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:background="@color/account_action_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:src="@drawable/ic_withdraw_24_px" />
 
                 <TextView
@@ -127,8 +131,10 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:background="@color/account_action_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:src="@drawable/ic_send_24_px" />
 
                 <TextView

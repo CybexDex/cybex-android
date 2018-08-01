@@ -367,9 +367,6 @@ public class AccountBalanceActivity extends BaseActivity {
                             item.frozenAmount += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision));
                         }
                     }
-                    if (item.accountBalanceObject.balance == 0) {
-                        mAccountBalanceObjectItems.remove(item);
-                    }
                     Message message = Message.obtain();
                     message.what = MESSAGE_WHAT_REFRESH_PORTFOLIO;
                     message.obj = i;

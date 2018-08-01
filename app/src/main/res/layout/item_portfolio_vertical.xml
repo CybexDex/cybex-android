@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="12.9833"
-                style="@style/font_gray_large" />
+                style="@style/font_gray_small" />
 
             <TextView
                 android:id="@+id/item_portfolio_assets_rmb"

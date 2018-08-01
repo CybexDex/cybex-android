@@ -3,8 +3,10 @@ package com.cybexmobile.activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +17,16 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
+import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.event.Event;
+import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.market.OpenOrder;
 import com.cybexmobile.service.WebSocketService;
 
@@ -36,9 +42,16 @@ import java.util.Locale;
 
 import info.hoang8f.android.segmented.SegmentedGroup;
 
+import static com.cybexmobile.utils.Constant.PREF_NAME;
+
 public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, OpenOrderRecyclerViewAdapter.getTotalValueInterface {
 
     private static final String TAG = "OpenOrdersActivity";
+
+    private String mUserName;
+    private double mTotalOpenOrderBalance;
+    private double mSellOpenOrderBalance;
+    private double mBuyOpenOrderBalance;
 
     private SegmentedGroup mSegmentedGroup;
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
@@ -47,6 +60,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB"});
     private Toolbar mToolbar;
     private WebSocketService mWebSocketService;
+    private SharedPreferences mSharedPreference;
+    private FullAccountObject mFullAccountObject;
 
     private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
 
@@ -60,6 +75,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         initViews();
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
+        mUserName = mSharedPreference.getString(PREF_NAME, null);
         mOpenOrderRecycerViewAdapter = new OpenOrderRecyclerViewAdapter(mOpenOrderItems, this, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -88,8 +105,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             //AccountFragment已经获取了FullAccount数据
-            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(true);
-            List<LimitOrderObject> limitOrderObjects = fullAccountObject == null ? null : fullAccountObject.limit_orders;
+            mFullAccountObject = mWebSocketService.getFullAccount(mUserName);
+            List<LimitOrderObject> limitOrderObjects = mFullAccountObject == null ? null : mFullAccountObject.limit_orders;
             if (limitOrderObjects == null || limitOrderObjects.size() == 0) {
                 hideLoadDialog();
                 return;
@@ -111,14 +128,64 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 item.openOrder = openOrder;
                 mOpenOrderItems.add(item);
             }
+            calculateTotalValue();
             hideLoadDialog();
             mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
-            displayTotalValue(getIntent().getDoubleExtra("TotalValue", 0));
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mWebSocketService = null;
+        }
+    };
+
+    private void calculateTotalValue() {
+        if (mOpenOrderItems.size() != 0) {
+            for (OpenOrderItem item : mOpenOrderItems) {
+                if (item.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals("1.3.0")) {
+                    if (item.isSell) {
+                        mSellOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
+                        mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
+                    } else {
+                        mBuyOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
+                        mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
+                    }
+                } else {
+                    try {
+                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", item.openOrder.getLimitOrder().sell_price.base.asset_id.toString(), onTickerCallback);
+                    } catch (NetworkStatusException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            displayTotalValue(mTotalOpenOrderBalance);
+        }
+    }
+
+    private WebSocketClient.MessageCallback onTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
+            MarketTicker ticker = reply.result;
+            if (ticker == null) {
+                return;
+            }
+            for (OpenOrderItem item : mOpenOrderItems) {
+                if (item.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ticker.quote)) {
+                    if (item.isSell) {
+                        mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
+                        mSellOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
+                    } else {
+                        mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
+                        mBuyOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
+                    }
+                }
+            }
+            displayTotalValue(mTotalOpenOrderBalance);
+        }
+
+        @Override
+        public void onFailure() {
+
         }
     };
 
@@ -137,20 +204,20 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             case R.id.open_orders_segment_all:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("All");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_total_value);
-                displayTotalValue(getIntent().getDoubleExtra("TotalValue", 0));
+                displayTotalValue(mTotalOpenOrderBalance);
 
                 break;
 
             case R.id.open_orders_segment_buy:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("Buy");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_buy_total_value);
-                displayTotalValue(getIntent().getDoubleExtra("TotalBuyValue", 0));
+                displayTotalValue(mBuyOpenOrderBalance);
                 break;
 
             case R.id.open_orders_segment_sell:
                 mOpenOrderRecycerViewAdapter.getFilter().filter("Sell");
                 mTvOpenOrderTotalTitle.setText(R.string.open_orders_sell_total_value);
-                displayTotalValue((getIntent().getDoubleExtra("TotalSellValue", 0)));
+                displayTotalValue(mSellOpenOrderBalance);
                 break;
 
         }
@@ -185,6 +252,38 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 mOpenOrderRecycerViewAdapter.notifyItemChanged(i);
                 break;
             }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateFullAccount(Event.UpdateFullAccount event) {
+        if (mFullAccountObject == null) {
+            mFullAccountObject = event.getFullAccount();
+            List<LimitOrderObject> limitOrderObjects = mFullAccountObject == null ? null : mFullAccountObject.limit_orders;
+            if (limitOrderObjects == null || limitOrderObjects.size() == 0) {
+                hideLoadDialog();
+                return;
+            }
+            for (LimitOrderObject limitOrderObject : limitOrderObjects) {
+                OpenOrderItem item = new OpenOrderItem();
+                OpenOrder openOrder = new OpenOrder();
+                openOrder.setLimitOrder(limitOrderObject);
+                String baseId = limitOrderObject.sell_price.base.asset_id.toString();
+                String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
+                List<AssetObject> assetObjects = mWebSocketService.getAssetObjects(baseId, quoteId);
+                if (assetObjects != null && assetObjects.size() == 2) {
+                    String baseSymbol = assetObjects.get(0).symbol;
+                    String quoteSymbol = assetObjects.get(1).symbol;
+                    item.isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
+                    openOrder.setBaseObject(assetObjects.get(0));
+                    openOrder.setQuoteObject(assetObjects.get(1));
+                }
+                item.openOrder = openOrder;
+                mOpenOrderItems.add(item);
+            }
+            calculateTotalValue();
+            hideLoadDialog();
+            mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
         }
     }
 
