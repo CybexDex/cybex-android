@@ -106,6 +106,11 @@ public class MarketTradeHistoryFragment extends BaseFragment {
         if(mWatchlistData == null){
             return;
         }
+        /**
+         * fix bug:CYM-498
+         * 交易对改变时清空数据
+         */
+        mMarketTradeList.clear();
         String trimmedBase = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());
         String trimmedQuote = AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol());
         mTvBasePrice.setText(getResources().getString(R.string.market_page_trade_history_price).replace("--", trimmedBase));

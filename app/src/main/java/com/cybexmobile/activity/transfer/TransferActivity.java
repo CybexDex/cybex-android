@@ -149,6 +149,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        unbindService(mConnection);
         EventBus.getDefault().unregister(this);
     }
 
