@@ -87,6 +87,8 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
     RecyclerView mDepositRecordsRecyclerView;
     @BindView(R.id.deposit_records_refresh_layout)
     SmartRefreshLayout mRefreshLayout;
+    @BindView(R.id.deposit_withdraw_record_no_asset_layout)
+    LinearLayout mDepositRecordsNoAssetLinearLayout;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -316,6 +318,13 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
                         if (mIsRefresh) {
                             mGatewayDepositWithdrawRecordsItemList.clear();
                             mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItemList);
+                            if (mGatewayDepositWithdrawRecordsItemList.size() == 0) {
+                                mDepositRecordsNoAssetLinearLayout.setVisibility(View.VISIBLE);
+                                mRefreshLayout.setVisibility(View.GONE);
+                            } else {
+                                mRefreshLayout.setVisibility(View.VISIBLE);
+                                mDepositRecordsNoAssetLinearLayout.setVisibility(View.GONE);
+                            }
                         } else {
                             mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItemList);
                         }

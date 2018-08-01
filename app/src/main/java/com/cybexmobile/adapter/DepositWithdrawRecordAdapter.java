@@ -26,9 +26,6 @@ import static com.cybexmobile.utils.DateUtils.PATTERN_MM_dd_HH_mm_ss;
 
 public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final static int TYPE_EMPTY = 0;
-    private final static int TYPE_CONTENT = 1;
-
     Context mContext;
     private List<GatewayDepositWithdrawRecordsItem> mGatewayDepositWithdrawRecordsItem = new ArrayList<>();
 
@@ -62,33 +59,17 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
-        if (viewType == TYPE_EMPTY) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
-            return new EmptyViewHolder(view);
-        } else {
-
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.deposit_withdraw_records_item, parent, false);
-            return new ViewHolder(view);
-        }
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.deposit_withdraw_records_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
     public int getItemCount() {
-        return mGatewayDepositWithdrawRecordsItem == null || mGatewayDepositWithdrawRecordsItem.size() == 0 ? 1 : mGatewayDepositWithdrawRecordsItem.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return mGatewayDepositWithdrawRecordsItem == null || mGatewayDepositWithdrawRecordsItem.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
+        return mGatewayDepositWithdrawRecordsItem.size();
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof EmptyViewHolder) {
-            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
-            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.deposit_withdraw_records_no_record));
-            return;
-        }
         ViewHolder viewHolder = (ViewHolder) holder;
         GatewayDepositWithdrawRecordsItem item = mGatewayDepositWithdrawRecordsItem.get(position);
         AssetObject itemAssetObject = item.getItemAsset();
