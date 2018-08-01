@@ -75,4 +75,7 @@
 
     <color name="dialog_asset_select_background_color">#2a3243</color>
 
+    <!-- Account action background -->
+    <color name="account_action_bg">#212939</color>
+
 </resources>

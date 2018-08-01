@@ -40,4 +40,6 @@
 
     <color name="dialog_asset_select_background_color">#f0f1f4</color>
 
+    <color name="account_action_bg">#1c78819a</color>
+
 </resources>
