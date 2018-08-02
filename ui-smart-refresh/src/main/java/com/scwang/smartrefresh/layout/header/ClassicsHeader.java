@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cybexmobile.R;
+import com.scwang.smartrefresh.R;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -50,7 +50,7 @@ public class ClassicsHeader extends InternalClassics<ClassicsHeader> implements 
     public static String REFRESH_HEADER_RELEASE = null;//"释放立即刷新";
     public static String REFRESH_HEADER_FINISH = null;//"刷新完成";
     public static String REFRESH_HEADER_FAILED = null;//"刷新失败";
-    public static String REFRESH_HEADER_UPDATE = null;//"上次更新 M-d HH:mm";
+    public static String REFRESH_HEADER_UPDATE = null;//"上次更新 MM-dd HH:mm";
     public static String REFRESH_HEADER_SECONDARY = null;//"释放进入二楼";
 //    public static String REFRESH_HEADER_UPDATE = "'Last update' M-d HH:mm";
 
@@ -73,32 +73,14 @@ public class ClassicsHeader extends InternalClassics<ClassicsHeader> implements 
 
     public ClassicsHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        Log.e("HeaderLocale",context.getResources().getConfiguration().locale.getLanguage());
-        if (REFRESH_HEADER_PULLING == null) {
-            REFRESH_HEADER_PULLING = context.getResources().getString(R.string.srl_header_pulling);
-        }
-        if (REFRESH_HEADER_REFRESHING == null) {
-            REFRESH_HEADER_REFRESHING = context.getResources().getString(R.string.srl_header_refreshing);
-        }
-        if (REFRESH_HEADER_LOADING == null) {
-            REFRESH_HEADER_LOADING = context.getResources().getString(R.string.srl_header_loading);
-        }
-        if (REFRESH_HEADER_RELEASE == null) {
-            REFRESH_HEADER_RELEASE = context.getResources().getString(R.string.srl_header_release);
-        }
-        if (REFRESH_HEADER_FINISH == null) {
-            REFRESH_HEADER_FINISH = context.getResources().getString(R.string.srl_header_finish);
-        }
-        if (REFRESH_HEADER_FAILED == null) {
-            REFRESH_HEADER_FAILED = context.getResources().getString(R.string.srl_header_failed);
-        }
-        if (REFRESH_HEADER_UPDATE == null) {
-            REFRESH_HEADER_UPDATE = context.getResources().getString(R.string.srl_header_update);
-        }
-        if (REFRESH_HEADER_SECONDARY == null) {
-            REFRESH_HEADER_SECONDARY = context.getResources().getString(R.string.srl_header_secondary);
-        }
+        REFRESH_HEADER_PULLING = context.getResources().getString(R.string.srl_header_pulling);
+        REFRESH_HEADER_REFRESHING = context.getResources().getString(R.string.srl_header_refreshing);
+        REFRESH_HEADER_LOADING = context.getResources().getString(R.string.srl_header_loading);
+        REFRESH_HEADER_RELEASE = context.getResources().getString(R.string.srl_header_release);
+        REFRESH_HEADER_FINISH = context.getResources().getString(R.string.srl_header_finish);
+        REFRESH_HEADER_FAILED = context.getResources().getString(R.string.srl_header_failed);
+        REFRESH_HEADER_UPDATE = context.getResources().getString(R.string.srl_header_update);
+        REFRESH_HEADER_SECONDARY = context.getResources().getString(R.string.srl_header_secondary);
 
         mLastUpdateText = new TextView(context);
         mLastUpdateText.setTextColor(0xff7c7c7c);

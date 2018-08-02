@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cybexmobile.R;
+import com.scwang.smartrefresh.R;
 import com.scwang.smartrefresh.layout.api.OnTwoLevelListener;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshInternal;

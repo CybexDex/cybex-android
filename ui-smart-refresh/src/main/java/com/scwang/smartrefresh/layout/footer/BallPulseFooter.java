@@ -14,7 +14,7 @@ import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.cybexmobile.R;
+import com.scwang.smartrefresh.R;
 import com.scwang.smartrefresh.layout.api.RefreshFooter;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;

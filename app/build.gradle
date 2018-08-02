@@ -106,10 +106,8 @@ dependencies {
     //apollo
     implementation 'com.apollographql.apollo:apollo-runtime:0.3.2'
     implementation 'com.apollographql.apollo:apollo-android-support:0.3.2'
-    //top snack bar
-    implementation 'com.androidadvance:topsnackbar:1.1.1'
     //Jadeticon
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
-    implementation 'com.contrarywind:wheelview:4.0.8'
     implementation project(':MPChartLib')
+    implementation project(':ui-smart-refresh')
 }

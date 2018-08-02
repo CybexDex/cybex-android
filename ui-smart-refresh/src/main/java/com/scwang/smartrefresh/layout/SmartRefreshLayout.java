@@ -33,7 +33,7 @@ import android.view.animation.Interpolator;
 import android.widget.Scroller;
 import android.widget.TextView;
 
-import com.cybexmobile.R;
+import com.scwang.smartrefresh.R;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshFooterCreator;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshInitializer;

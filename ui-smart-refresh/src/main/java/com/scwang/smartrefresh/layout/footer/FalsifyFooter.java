@@ -1,4 +1,4 @@
-package com.scwang.smartrefresh.layout.header;
+package com.scwang.smartrefresh.layout.footer;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,8 +10,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.cybexmobile.R;
-import com.scwang.smartrefresh.layout.api.RefreshHeader;
+import com.scwang.smartrefresh.R;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
 import com.scwang.smartrefresh.layout.api.RefreshKernel;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -22,27 +22,25 @@ import static android.view.View.MeasureSpec.EXACTLY;
 import static android.view.View.MeasureSpec.makeMeasureSpec;
 
 /**
- * 虚假的 Header
- * 用于 正真的 Header 在 RefreshLayout 外部时，
- * 使用本虚假的 FalsifyHeader 填充在 RefreshLayout 内部
- * 具体使用方法 参考 纸飞机（FlyRefreshHeader）
+ * 虚假的 Footer
+ * 用于 正真的 Footer 在 RefreshLayout 外部时，
  * Created by SCWANG on 2017/6/14.
  */
+@SuppressWarnings("unused")
+public class FalsifyFooter extends InternalAbstract implements RefreshFooter {
 
-public class FalsifyHeader extends InternalAbstract implements RefreshHeader {
-
-    protected RefreshKernel mRefreshKernel;
+    private RefreshKernel mRefreshKernel;
 
     //<editor-fold desc="FalsifyHeader">
-    public FalsifyHeader(Context context) {
+    public FalsifyFooter(Context context) {
         this(context, null);
     }
 
-    public FalsifyHeader(Context context, AttributeSet attrs) {
+    public FalsifyFooter(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public FalsifyHeader(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FalsifyFooter(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -71,14 +69,14 @@ public class FalsifyHeader extends InternalAbstract implements RefreshHeader {
             view.draw(canvas);
         }
     }
-
     //</editor-fold>
 
-    //<editor-fold desc="RefreshHeader">
+    //<editor-fold desc="RefreshFooter">
 
     @Override
     public void onInitialized(@NonNull RefreshKernel kernel, int height, int maxDragHeight) {
         mRefreshKernel = kernel;
+        kernel.getRefreshLayout().setEnableAutoLoadMore(false);
     }
 
     @Override
@@ -86,10 +84,15 @@ public class FalsifyHeader extends InternalAbstract implements RefreshHeader {
         if (mRefreshKernel != null) {
             mRefreshKernel.setState(RefreshState.None);
             //onReleased 的时候 调用 setState(RefreshState.None); 并不会立刻改变成 None
-            //而是先执行一个回弹动画，RefreshFinish 是介于 Refreshing 和 None 之间的状态
-            //RefreshFinish 用于在回弹动画结束时候能顺利改变为 None
-            mRefreshKernel.setState(RefreshState.RefreshFinish);
+            //而是先执行一个回弹动画，LoadFinish 是介于 Refreshing 和 None 之间的状态
+            //LoadFinish 用于在回弹动画结束时候能顺利改变为 None
+            mRefreshKernel.setState(RefreshState.LoadFinish);
         }
+    }
+
+    @Override
+    public boolean setNoMoreData(boolean noMoreData) {
+        return false;
     }
 
     //</editor-fold>

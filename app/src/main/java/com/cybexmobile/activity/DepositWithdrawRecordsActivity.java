@@ -67,7 +67,7 @@ import okhttp3.ResponseBody;
 
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
-public class DepositWithdrawRecordsActivity extends BaseActivity {
+public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
     public static final String TAG = DepositWithdrawRecordsActivity.class.getName();
 
     private String mAccountName;
@@ -87,8 +87,8 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
     RecyclerView mDepositRecordsRecyclerView;
     @BindView(R.id.deposit_records_refresh_layout)
     SmartRefreshLayout mRefreshLayout;
-    @BindView(R.id.deposit_withdraw_record_no_asset_layout)
-    LinearLayout mDepositRecordsNoAssetLinearLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -98,7 +98,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
             FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mAccountName);
             if(fullAccountObject != null){
                 mAccountObject = fullAccountObject.account;
-                checkIfLocked(true);
+                mRefreshLayout.autoRefresh();
             }
         }
 
@@ -113,49 +113,42 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deposit_records);
         mUnbinder = ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mAssetObject = (AssetObject) getIntent().getSerializableExtra("assetObject");
         mFundType = getIntent().getStringExtra("fundType");
-        Intent intent = new Intent(this, WebSocketService.class);
-        bindService(intent, mConnection, BIND_AUTO_CREATE);
-        mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(this, mGatewayDepositWithdrawRecordsItemList);
         mDepositRecordsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mDepositRecordsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mDepositRecordsRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
-        setSupportActionBar(toolbar);
-        ClassicsHeader classicsHeader = new ClassicsHeader(this);
-        mRefreshLayout.setEnableAutoLoadMore(true);
-        mRefreshLayout.setRefreshHeader(classicsHeader);
-        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(this);
+        mRefreshLayout.setOnLoadMoreListener(this);
+        Intent intent = new Intent(this, WebSocketService.class);
+        bindService(intent, mConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        refreshLayout.getLayout().post(new Runnable() {
             @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                refreshLayout.getLayout().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        checkIfLocked(true);
-                        refreshLayout.finishRefresh();
-                        refreshLayout.setNoMoreData(true);
-                    }
-                });
+            public void run() {
+                checkIfLocked(true);
+                refreshLayout.finishRefresh();
+                refreshLayout.setNoMoreData(true);
             }
         });
+    }
 
-        mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        refreshLayout.getLayout().post(new Runnable() {
             @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                refreshLayout.getLayout().post(new Runnable() {
-                    @Override
-                    public void run() {
-                       if (mDepositWithdrawRecordAdapter.getItemCount() == mTotalItemAmount) {
-                           refreshLayout.finishLoadMoreWithNoMoreData();
-                       } else {
-                           checkIfLocked(false);
-                           refreshLayout.finishLoadMore();
-                       }
+            public void run() {
+                if (mDepositWithdrawRecordAdapter.getItemCount() == mTotalItemAmount) {
+                    refreshLayout.finishLoadMoreWithNoMoreData();
+                } else {
+                    checkIfLocked(false);
+                    refreshLayout.finishLoadMore();
+                }
 
-                    }
-                });
             }
         });
     }
@@ -186,7 +179,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
                 }
             });
         } else {
-            mRefreshLayout.autoRefresh();
+            //mRefreshLayout.autoRefresh();
             Date expiration = getExpiration();
             Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(mAccountName, 0, 0, null, null, expiration);
             String signature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
@@ -318,18 +311,15 @@ public class DepositWithdrawRecordsActivity extends BaseActivity {
                         if (mIsRefresh) {
                             mGatewayDepositWithdrawRecordsItemList.clear();
                             mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItemList);
-                            if (mGatewayDepositWithdrawRecordsItemList.size() == 0) {
-                                mDepositRecordsNoAssetLinearLayout.setVisibility(View.VISIBLE);
-                                mRefreshLayout.setVisibility(View.GONE);
-                            } else {
-                                mRefreshLayout.setVisibility(View.VISIBLE);
-                                mDepositRecordsNoAssetLinearLayout.setVisibility(View.GONE);
-                            }
                         } else {
                             mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItemList);
                         }
-                        mDepositWithdrawRecordAdapter.notifyDataSetChanged();
-
+                        if(mDepositWithdrawRecordAdapter == null){
+                            mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(DepositWithdrawRecordsActivity.this, mGatewayDepositWithdrawRecordsItemList);
+                            mDepositRecordsRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
+                        } else {
+                            mDepositWithdrawRecordAdapter.notifyDataSetChanged();
+                        }
                     }
 
                     @Override

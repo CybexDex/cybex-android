@@ -1,3 +1,3 @@
 rootProject.name = 'cybexMobile'
-include ':MPChartLib'
+include ':MPChartLib', ':ui-smart-refresh'
 include ':app'
