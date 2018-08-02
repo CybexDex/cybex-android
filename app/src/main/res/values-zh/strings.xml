@@ -339,7 +339,10 @@
     <string name="text_time">时间</string>
     <string name="text_none">无</string>
     <string name="text_click_to_view">点击查看</string>
-    <string name="text_minutes">分钟</string>
+    <string name="text_day">天</string>
+    <string name="text_hours">时</string>
+    <string name="text_minutes">分</string>
+    <string name="text_seconds">秒</string>
     <string name="text_in">收入</string>
     <string name="text_out">支出</string>
 

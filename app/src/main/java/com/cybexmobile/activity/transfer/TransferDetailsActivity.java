@@ -177,8 +177,11 @@ public class TransferDetailsActivity extends BaseActivity {
                     Iterator its = ((Set) it.next()).iterator();
                     its.next();
                     Map map = (Map) its.next();
-                    mTvTransferVestingPeriod.setText(String.format("%s%s", map.get("vesting_period"),
-                            getResources().getString(R.string.text_minutes)));
+                    /**
+                     * fix bug:CYM-557
+                     * 解决锁定期时间显示错误的问题
+                     */
+                    mTvTransferVestingPeriod.setText(parseTime((int) ((double) map.get("vesting_period"))));
                 }
             } catch (Exception e){
                 e.printStackTrace();
@@ -194,6 +197,30 @@ public class TransferDetailsActivity extends BaseActivity {
             mTvTransferTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(mBlock.timestamp)));
         }
 
+    }
+
+    private String parseTime(int time){
+        if(time <= 0){
+            return "";
+        }
+        StringBuffer sb = new StringBuffer();
+        int day = time / DateUtils.DAY_IN_SECOND;
+        if(day > 0){
+            sb.append(day).append(getResources().getString(R.string.text_day));
+        }
+        int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
+        if(hours > 0){
+            sb.append(hours).append(getResources().getString(R.string.text_hours));
+        }
+        int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
+        if(minutes > 0){
+            sb.append(minutes).append(getResources().getString(R.string.text_minutes));
+        }
+        int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
+        if(seconds > 0){
+            sb.append(seconds).append(getResources().getString(R.string.text_seconds));
+        }
+        return sb.toString();
     }
 
     private void showMemoMessage(MemoData memo) {

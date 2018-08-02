@@ -330,7 +330,10 @@
     <string name="text_time">Time</string>
     <string name="text_none">none</string>
     <string name="text_click_to_view">Click to view</string>
-    <string name="text_minutes">minutes</string>
+    <string name="text_day">d</string>
+    <string name="text_hours">h</string>
+    <string name="text_minutes">m</string>
+    <string name="text_seconds">s</string>
     <string name="text_in">In</string>
     <string name="text_out">Out</string>
 
