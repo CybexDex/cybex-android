@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -92,8 +93,8 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     TextView mTvFee;//手续费
     @BindView(R.id.transfer_btn_transfer)
     Button mBtnTransfer;
-    @BindView(R.id.transfer_pb_load_account)
-    ProgressBar mPbLoadAccount;
+    @BindView(R.id.transfer_iv_account_check)
+    ImageView mIvAccountCheck;
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
@@ -255,6 +256,13 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         checkIsLockAndTransfer();
     }
 
+    @OnTextChanged(value = R.id.transfer_et_account_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onAccountNameTextChanged(Editable editable){
+        if(editable.toString().length() == 0){
+            mIvAccountCheck.setVisibility(View.GONE);
+        }
+    }
+
     @OnTextChanged(value = R.id.transfer_et_quantity, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onQuantityTextChanged(Editable editable){
         /**
@@ -300,7 +308,6 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
             mToAccountObject = null;
             return;
         }
-        mPbLoadAccount.setVisibility(View.VISIBLE);
         try {
             BitsharesWalletWraper.getInstance().get_account_object(accountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
                 @Override
@@ -322,11 +329,14 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadAccountObject(Event.LoadAccountObject event){
         mToAccountObject = event.getAccountObject();
-        mPbLoadAccount.setVisibility(View.GONE);
         resetTransferButtonState();
+        mIvAccountCheck.setVisibility(View.VISIBLE);
         if(mToAccountObject == null){
+            mIvAccountCheck.setImageResource(R.drawable.ic_close_red_24_px);
             ToastMessage.showNotEnableDepositToastMessage(this,
                     getResources().getString(R.string.text_account_not_exist), R.drawable.ic_error_16px);
+        } else {
+            mIvAccountCheck.setImageResource(R.drawable.register_check);
         }
     }
 
@@ -454,6 +464,11 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         mEtAccountName.setText("");
         mTvAvailable.setText("");
         mTvCrypto.setText("");
+        /**
+         * fix bug:CYM-555
+         * 重置按钮状态
+         */
+        resetTransferButtonState();
         checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
     }
 
