@@ -708,4 +708,8 @@ public class BitsharesWalletWraper {
     public String getPassword() {
         return password;
     }
+
+    public void clearAddressesForLockAsset(){
+        addressList.clear();
+    }
 }

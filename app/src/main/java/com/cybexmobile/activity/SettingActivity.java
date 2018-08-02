@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AppVersion;
@@ -127,6 +128,11 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
         mSharedPreference.edit().putString(PREF_NAME, null).apply();
         mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
+        /**
+         * fix bug:CYM-558
+         * 转账存在锁定期，在锁定期页面没有显示出来
+         */
+        BitsharesWalletWraper.getInstance().clearAddressesForLockAsset();
         EventBus.getDefault().post(new Event.LoginOut());
         finish();
     }
