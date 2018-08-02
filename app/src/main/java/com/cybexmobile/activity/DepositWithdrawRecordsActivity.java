@@ -90,6 +90,8 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    private Disposable mDisposable;
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -197,6 +199,9 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
+        if(!mDisposable.isDisposed()){
+            mDisposable.dispose();
+        }
         if (mUnbinder != null) {
             mUnbinder.unbind();
         }
@@ -301,7 +306,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                 .subscribe(new Observer<List<GatewayDepositWithdrawRecordsItem>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        mDisposable = d;
                     }
 
                     @Override

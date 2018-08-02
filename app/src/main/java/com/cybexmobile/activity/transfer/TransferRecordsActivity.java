@@ -175,6 +175,15 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                 item = new TransferHistoryItem();
                 item.accountHistoryObject = accountHistoryObject;
                 item.transferOperation = gson.fromJson(accountHistoryObject.op.get(1), Operations.transfer_operation.class);
+                /**
+                 * fix bug:CYM-572
+                 * 转账记录列表过滤充值提现记录
+                 */
+                if(!mAccountObject.id.toString().equals("1.2.4733") &&
+                        (item.transferOperation.to.toString().equals("1.2.4733") ||
+                                item.transferOperation.from.toString().equals("1.2.4733"))){
+                    continue;
+                }
                 item.transferAsset = mWebSocketService.getAssetObject(item.transferOperation.amount.asset_id.toString());
                 item.feeAsset = mWebSocketService.getAssetObject(item.transferOperation.fee.asset_id.toString());
                 if(item.transferOperation.from.equals(mAccountObject.id)){
