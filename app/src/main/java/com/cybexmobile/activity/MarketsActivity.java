@@ -177,6 +177,12 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
             List<BucketObject> bucketObjects = reply.result;
             if (bucketObjects == null || bucketObjects.size() == 0) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                });
                 return;
             }
             List<HistoryPrice> prices = new ArrayList<>();
