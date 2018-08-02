@@ -87,7 +87,7 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:background="@color/account_action_bg"
+                    android:background="@drawable/bg_account_action_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="4dp"
@@ -109,7 +109,7 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:background="@color/account_action_bg"
+                    android:background="@drawable/bg_account_action_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="4dp"
@@ -131,7 +131,7 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:background="@color/account_action_bg"
+                    android:background="@drawable/bg_account_action_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="4dp"

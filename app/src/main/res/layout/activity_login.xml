@@ -13,7 +13,7 @@
         android:layout_height="?android:actionBarSize"
         app:subtitleTextColor="@color/primary_color_grey"
         app:titleTextColor="@color/primary_color_grey"
-        app:navigationIcon="@drawable/ic_close_24_px"/>
+        app:navigationIcon="@drawable/ic_close_grey_24_px"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

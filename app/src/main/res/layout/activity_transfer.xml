@@ -57,13 +57,13 @@
                     android:textColorHint="@color/text_hint_color"
                     android:hint="@string/text_to_account_name"
                     android:background="@android:color/transparent"
+                    android:layout_gravity="end|center_vertical"
                     android:maxLines="1"/>
 
-                <ProgressBar
-                    android:id="@+id/transfer_pb_load_account"
+                <ImageView
+                    android:id="@+id/transfer_iv_account_check"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="?android:attr/progressBarStyleSmall"
                     android:visibility="gone"
                     android:layout_gravity="end|center_vertical"/>
 
