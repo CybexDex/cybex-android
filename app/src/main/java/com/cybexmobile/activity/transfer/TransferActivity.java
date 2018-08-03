@@ -36,6 +36,7 @@ import com.cybexmobile.dialog.AssetSelectDialog;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
+import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -337,6 +338,31 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
                     getResources().getString(R.string.text_account_not_exist), R.drawable.ic_error_16px);
         } else {
             mIvAccountCheck.setImageResource(R.drawable.register_check);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateFullAccount(Event.UpdateFullAccount event){
+        /**
+         * fix bug:CYM-577
+         * 转账成功后刷新余额
+         */
+        FullAccountObject fullAccountObject = event.getFullAccount();
+        if(fullAccountObject == null){
+            return;
+        }
+        List<AccountBalanceObject> balances = fullAccountObject.balances;
+        if(balances == null || balances.size() == 0 ||
+                mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0){
+            return;
+        }
+        for (AccountBalanceObjectItem item : mAccountBalanceObjectItems) {
+            for (AccountBalanceObject balance : balances) {
+                if(item.accountBalanceObject.asset_type.equals(balance.asset_type)){
+                    item.accountBalanceObject = balance;
+                    break;
+                }
+            }
         }
     }
 
