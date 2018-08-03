@@ -199,7 +199,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
-        if(!mDisposable.isDisposed()){
+        if(mDisposable != null && !mDisposable.isDisposed()){
             mDisposable.dispose();
         }
         if (mUnbinder != null) {

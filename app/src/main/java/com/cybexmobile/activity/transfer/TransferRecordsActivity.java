@@ -145,7 +145,9 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                     continue;
                 }
                 mTransferHistoryItems.get(i).fromAccount = accountObject;
-                mTransferRecordsAdapter.notifyItemChanged(i);
+                if(mTransferRecordsAdapter != null){
+                    mTransferRecordsAdapter.notifyItemChanged(i);
+                }
                 break;
             }
             if(mTransferHistoryItems.get(i).transferOperation.to.equals(accountObject.id)){
@@ -153,7 +155,9 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                     continue;
                 }
                 mTransferHistoryItems.get(i).toAccount = accountObject;
-                mTransferRecordsAdapter.notifyItemChanged(i);
+                if(mTransferRecordsAdapter != null){
+                    mTransferRecordsAdapter.notifyItemChanged(i);
+                }
                 break;
             }
         }

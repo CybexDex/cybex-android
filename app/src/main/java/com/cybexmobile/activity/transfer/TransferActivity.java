@@ -109,10 +109,12 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     private FeeAmountObject mCurrAssetFeeAmountObject;
     private AssetObject mCybAssetObject;
 
-    private Operations.transfer_operation mTransferOperationFee;
+    private Operations.transfer_operation mTransferOperationFee;//手续费TransferOperation
 
-    private boolean mIsCybEnough;
-    private boolean mIsBalanceEnough;
+    private boolean mIsCybEnough;//cyb余额是否足够
+    private boolean mIsBalanceEnough;//选择币种余额是否足够
+
+    private boolean mIsActivityActive;//当前activity是否可见
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,17 +139,13 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     @Override
     protected void onResume() {
         super.onResume();
-        if(!EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().register(this);
-        }
+        mIsActivityActive = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().unregister(this);
-        }
+        mIsActivityActive = false;
     }
 
     @Override
@@ -329,6 +327,9 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadAccountObject(Event.LoadAccountObject event){
+        if(!event.getAccountObject().name.equals(mEtAccountName.getText().toString().trim()) || !mIsActivityActive){
+            return;
+        }
         mToAccountObject = event.getAccountObject();
         resetTransferButtonState();
         mIvAccountCheck.setVisibility(View.VISIBLE);
