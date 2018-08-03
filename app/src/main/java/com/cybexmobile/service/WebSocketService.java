@@ -267,7 +267,11 @@ public class WebSocketService extends Service {
         cancelFullAccountWorkerSchedule();
         cancelWatchlistWorkerSchedule();
         //重启任务
-        startWatchlistWorkerSchedule();
+        if(mWatchlistHashMap.isEmpty()){
+            loadWatchlistData(mCurrentBaseAssetId);
+        } else {
+            startWatchlistWorkerSchedule();
+        }
         startFullAccountWorkerSchedule();
         loadAssetsRmbPrice();
     }

@@ -108,8 +108,8 @@ public class AccountBalanceActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
             if (!(mNetworkState == NetworkUtils.TYPE_NOT_CONNECTED)) {
-                mWebSocketService = binder.getService();
                 loadData(mWebSocketService.getFullAccount(mAccountName));
             }
         }
