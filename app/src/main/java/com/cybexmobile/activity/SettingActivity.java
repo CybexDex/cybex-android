@@ -42,6 +42,7 @@ import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
 import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOAD_MODE;
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
+import static com.cybexmobile.utils.Constant.PREF_LOAD_MODE;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
 
@@ -71,7 +72,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         mUnbinder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
-        mMode = mSharedPreference.getInt("load_mode", 3);
+        mMode = mSharedPreference.getInt(PREF_LOAD_MODE, FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI);
         setSupportActionBar(mToolbar);
         displayLanguage();
         displayFrequency();
@@ -250,6 +251,10 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
             return;
         }
         mMode = mode;
+        SharedPreferences.Editor editor = mSharedPreference.edit();
+        editor.putInt(PREF_LOAD_MODE, mMode);
+        editor.apply();
+        EventBus.getDefault().post(new Event.LoadModeChanged(mMode));
         displayFrequency();
     }
 }

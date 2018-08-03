@@ -189,13 +189,14 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSubscribeMarket(Event.SubscribeMarket event) {
+    public void onSubscribeMarket(Event.UpdateRmbPrice event) {
         if(mWatchlistData == null){
             return;
         }
-        if(mWatchlistData.getSubscribeId() == event.getCallId()) {
-            loadMarketTradHistory();
-        }
+        /**
+         * rmb价格刷新 重新加载数据
+         */
+        loadMarketTradHistory();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

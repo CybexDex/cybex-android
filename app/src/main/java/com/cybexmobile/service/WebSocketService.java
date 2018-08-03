@@ -32,7 +32,7 @@ import com.cybexmobile.graphene.chain.FullAccountObjectReply;
 import com.cybexmobile.graphene.chain.ObjectId;
 import com.cybexmobile.market.HistoryPrice;
 import com.cybexmobile.market.MarketTicker;
-import com.cybexmobile.utils.Constant;
+import com.cybexmobile.utils.NetworkUtils;
 import com.cybexmobile.utils.PriceUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,12 +44,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -63,7 +65,15 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Function4;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
+import static com.cybexmobile.utils.Constant.ASSET_ID_ETH;
+import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
+import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
+import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
+import static com.cybexmobile.utils.Constant.PREF_LOAD_MODE;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybexmobile.utils.NetworkUtils.TYPE_MOBILE;
+import static com.cybexmobile.utils.NetworkUtils.TYPE_WIFI;
 
 public class WebSocketService extends Service {
 
@@ -75,9 +85,9 @@ public class WebSocketService extends Service {
 
     private Disposable mDisposable;
 
-    private List<String> mNames = new ArrayList<>();
-
     private String mName;
+    private int mMode;//网络加载模式
+    private int mNetworkState;
 
     private volatile List<AssetObject> mAssetObjects = new ArrayList<>();
 
@@ -90,9 +100,13 @@ public class WebSocketService extends Service {
     //当前行情tab页
     private volatile String mCurrentBaseAssetId;
 
-    private Timer mTimer;
-
     private boolean mIsWebSocketAvailable;
+
+    private ScheduledExecutorService mScheduled = Executors.newScheduledThreadPool(2);
+    private WatchlistWorker mWatchlistWorker;
+    private FullAccountWorker mFullAccountWorker;
+    private ScheduledFuture mWatchlistFuture;
+    private ScheduledFuture mFullAccountFuture;
 
     public class WebSocketBinder extends Binder {
         public WebSocketService getService() {
@@ -103,8 +117,10 @@ public class WebSocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mTimer = new Timer();
         EventBus.getDefault().register(this);
+        mMode = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_LOAD_MODE, FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI);
+        mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+        mNetworkState = NetworkUtils.getConnectivityStatus(this);
     }
 
     @Override
@@ -112,7 +128,6 @@ public class WebSocketService extends Service {
         Log.v("WebSocketClient", "WebSocketService");
         //连接websocket
         BitsharesWalletWraper.getInstance().build_connect();
-        //每10秒获取一次币Rmb价格
         loadAssetsRmbPrice();
         return START_NOT_STICKY;
     }
@@ -129,13 +144,11 @@ public class WebSocketService extends Service {
         return super.onUnbind(intent);
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.e( TAG, "OnDestroyService");
         cancelRMBSubscription();
-        cancelCallFullAccount();
         EventBus.getDefault().unregister(this);
     }
 
@@ -145,30 +158,11 @@ public class WebSocketService extends Service {
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
         if (watchlistDatas != null) {
             EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistDatas));
-            if(watchlistDatas.get(0).getHistoryPrices() == null){
-                loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(baseAssetId));
-            }
+            //开启周期性任务刷新行情
+            startWatchlistWorkerSchedule();
             return;
         }
         loadAllAssetsPairData();
-    }
-
-    public void subscribeAfterNetworkAvailable() {
-        Iterator<Map.Entry<String, List<WatchlistData>>> entries = mWatchlistHashMap.entrySet().iterator();
-        while (entries.hasNext()) {
-            List<WatchlistData> watchlists = entries.next().getValue();
-            for (WatchlistData watchlistData : watchlists) {
-                /**
-                 * fix bug:CYM-249
-                 * 重新订阅保持callId不变
-                 */
-                if (watchlistData.getSubscribeId() == 0) {
-                    AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
-                    watchlistData.setSubscribeId(id.getAndIncrement());
-                }
-                subscribeToMarket(String.valueOf(watchlistData.getSubscribeId()), watchlistData.getBaseId(), watchlistData.getQuoteId());
-            }
-        }
     }
 
     public void loadLimitOrderCreateFee(String assetId, int operationId, Operations.base_operation operation){
@@ -213,29 +207,84 @@ public class WebSocketService extends Service {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWebSocketTimeOut(Event.WebSocketTimeOut webSocketTimeOut) {
-        subscribeAfterNetworkAvailable();
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadModeChanged(Event.LoadModeChanged event){
+        int mode = event.getMode();
+        if(mMode == FREQUENCY_MODE_ORDINARY_MARKET && mode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                mNetworkState == NetworkUtils.TYPE_MOBILE){
+            mMode = event.getMode();
+            return;
+        }
+        if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET && mode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                mNetworkState == NetworkUtils.TYPE_WIFI){
+            mMode = event.getMode();
+            return;
+        }
+        if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI && mode == FREQUENCY_MODE_ORDINARY_MARKET &&
+                mNetworkState == NetworkUtils.TYPE_MOBILE){
+            mMode = event.getMode();
+            return;
+        }
+        if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI && mode == FREQUENCY_MODE_REAL_TIME_MARKET &&
+                mNetworkState == NetworkUtils.TYPE_WIFI){
+            mMode = event.getMode();
+            return;
+        }
+        mMode = event.getMode();
+        //先关闭当前任务
+        cancelRMBSubscription();
+        cancelFullAccountWorkerSchedule();
+        cancelWatchlistWorkerSchedule();
+        //重启任务
+        startWatchlistWorkerSchedule();
+        startFullAccountWorkerSchedule();
+        loadAssetsRmbPrice();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogOut(Event.LoginOut event) {
         clearAccountCache();
+        cancelFullAccountWorkerSchedule();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogin(Event.LoginIn event){
+        mName = event.getName();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
+        if(mMode != FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI){
+            mNetworkState = event.getState();
+            return;
+        }
+        mNetworkState = event.getState();
+        //先关闭当前任务
+        cancelRMBSubscription();
+        cancelFullAccountWorkerSchedule();
+        cancelWatchlistWorkerSchedule();
+        //重启任务
+        startWatchlistWorkerSchedule();
+        startFullAccountWorkerSchedule();
+        loadAssetsRmbPrice();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void isOnBackground(Event.IsOnBackground isOnBackground) {
-        mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         if (isOnBackground.isOnBackground()) {
             Log.e(TAG, "background");
             BitsharesWalletWraper.getInstance().reset();
-            cancelCallFullAccount();
+            cancelWatchlistWorkerSchedule();
+            cancelFullAccountWorkerSchedule();
             cancelRMBSubscription();
         } else {
             Log.e(TAG, "foreground");
             BitsharesWalletWraper.getInstance().build_connect();
-            if (!mName.isEmpty()) {
-                callFullAccount(mName);
-            }
-            subscribeAfterNetworkAvailable();
+            startWatchlistWorkerSchedule();
+            startFullAccountWorkerSchedule();
             loadAssetsRmbPrice();
         }
     }
@@ -349,11 +398,58 @@ public class WebSocketService extends Service {
         }
     }
 
-    public void updateHistoryPriceAndMarketTicker(AssetObject baseAsset, AssetObject quoteAsset) {
-        loadMarketTicker(baseAsset.id.toString(), quoteAsset.id.toString());
-        Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
-        Date endDate = new Date(System.currentTimeMillis());
-        loadHistoryPrice(baseAsset, quoteAsset, startDate, endDate);
+    private void shutdownSchedule(){
+        mScheduled.shutdown();
+    }
+
+    private void startWatchlistWorkerSchedule(){
+        if(mWatchlistWorker == null){
+            mWatchlistWorker = new WatchlistWorker();
+        }
+        if(mWatchlistFuture != null && !mWatchlistFuture.isCancelled()){
+            mWatchlistFuture.cancel(true);
+        }
+        mWatchlistFuture = mScheduled.scheduleAtFixedRate(mWatchlistWorker, 0,
+                mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
+                    (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                        mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS);
+    }
+
+    private void cancelWatchlistWorkerSchedule(){
+        if(mWatchlistFuture == null){
+            return;
+        }
+        if(mWatchlistFuture.isCancelled()){
+            return;
+        }
+        mWatchlistFuture.cancel(true);
+        mWatchlistFuture = null;
+    }
+
+    private void startFullAccountWorkerSchedule(){
+        if(TextUtils.isEmpty(mName)){
+            return;
+        }
+        if(mFullAccountFuture != null && !mFullAccountFuture.isCancelled()){
+            return;
+        }
+        if(mFullAccountWorker == null){
+            mFullAccountWorker = new FullAccountWorker();
+        }
+        mFullAccountFuture = mScheduled.scheduleAtFixedRate(mFullAccountWorker, 0,
+                mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
+                    (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                        mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS);
+    }
+
+    private void cancelFullAccountWorkerSchedule(){
+        if(mFullAccountFuture == null){
+            return;
+        }
+        if(mFullAccountFuture.isCancelled()){
+            return;
+        }
+        mFullAccountFuture.cancel(true);
     }
 
     private void loadHistoryPrice(AssetObject baseAsset, AssetObject quoteAsset, Date startDate, Date endDate) {
@@ -367,14 +463,6 @@ public class WebSocketService extends Service {
     private void loadMarketTicker(String base, String quote) {
         try {
             BitsharesWalletWraper.getInstance().get_ticker(base, quote, mMarketTickerCallback);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void subscribeToMarket(String id, String base, String quote) {
-        try {
-            BitsharesWalletWraper.getInstance().subscribe_to_market(id, base, quote, mSubscribeCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -532,18 +620,6 @@ public class WebSocketService extends Service {
         }
     };
 
-    private WebSocketClient.MessageCallback mSubscribeCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
-        @Override
-        public void onMessage(WebSocketClient.Reply<String> reply) {
-            String id = reply.id;
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
     //get history price callback
     private WebSocketClient.MessageCallback mHistoryPriceCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>>() {
 
@@ -667,18 +743,14 @@ public class WebSocketService extends Service {
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
                     watchlist.setSubscribeId(id.getAndIncrement());
                     watchlistData.add(watchlist);
-                    //订阅
-                    subscribeToMarket(String.valueOf(id), watchlist.getBaseId(), watchlist.getQuoteId());
                 }
                 mWatchlistHashMap.put(entry.getKey(), watchlistData);
             }
-            List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
-            //初始化交易界面 默认交易对CYB/ETH
-            EventBus.getDefault().post(new Event.InitExchangeWatchlist(getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB)));
             //更新行情
+            List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
             EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
-            //加载价格和交易历史
-            loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(mCurrentBaseAssetId));
+            //开启周期性任务加载当前Tab下的所有交易对数据
+            startWatchlistWorkerSchedule();
         }
 
         @Override
@@ -720,47 +792,25 @@ public class WebSocketService extends Service {
         }
     };
 
-    public void callFullAccount(String name) {
-        //防止多次执行TimeTask
-        if (mNames.size() != 0) {
-            return;
+    public void loadFullAccount(String name) {
+        List<String> names = new ArrayList<>();
+        names.add(name);
+        try {
+            BitsharesWalletWraper.getInstance().get_full_accounts(names, true, mFullAccountCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
         }
-        mNames.add(name);
-        if (mTimer == null) {
-            mTimer = new Timer();
-        }
-        mTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    BitsharesWalletWraper.getInstance().get_full_accounts(mNames, true, mFullAccountCallback);
-                } catch (NetworkStatusException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 0, 5 * 1000);
-    }
-
-    public FullAccountObject getFullAccount(boolean isLoginIn) {
-        return isLoginIn ? mFullAccount : null;
     }
 
     public FullAccountObject getFullAccount(String name) {
+        mName = name;
         if (mFullAccount != null) {
             return mFullAccount;
         }
         if (!TextUtils.isEmpty(name) && mAssetsPairHashMap != null) {
-            callFullAccount(name);
+            startFullAccountWorkerSchedule();
         }
         return null;
-    }
-
-    public void cancelCallFullAccount() {
-        mNames.clear();
-        if(mTimer != null){
-            mTimer.cancel();
-            mTimer = null;
-        }
     }
 
     public void cancelRMBSubscription() {
@@ -779,7 +829,10 @@ public class WebSocketService extends Service {
          * fix bug:CYM-446
          * 人民币价格请求失败立马重新请求
          */
-        mDisposable = Flowable.interval(0, 3, TimeUnit.SECONDS)
+        mDisposable = Flowable.interval(0,
+                mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
+                    (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                        mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS)
                 .flatMap(new Function<Long, Publisher<CnyResponse>>() {
                     @Override
                     public Publisher<CnyResponse> apply(Long aLong) {
@@ -802,6 +855,9 @@ public class WebSocketService extends Service {
                         Log.v(TAG, "getAssetsRmbPrice: success");
                         mAssetRmbPrices = assetRmbPrices;
                         EventBus.getDefault().post(new Event.UpdateRmbPrice(assetRmbPrices));
+                        //初始化交易界面 默认交易对CYB/ETH
+                        EventBus.getDefault().post(new Event.InitExchangeWatchlist(getWatchlist(ASSET_ID_ETH, ASSET_ID_CYB)));
+
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -865,7 +921,7 @@ public class WebSocketService extends Service {
      */
     public void clearAccountCache() {
         mFullAccount = null;
-        mNames.clear();
+        mName = null;
     }
 
     /**
@@ -897,4 +953,21 @@ public class WebSocketService extends Service {
     public Map<String, List<AssetsPair>> getAssetPairHashMap(){
         return mAssetsPairHashMap;
     }
+
+    private class WatchlistWorker implements Runnable {
+
+        @Override
+        public void run() {
+            loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(mCurrentBaseAssetId));
+        }
+    }
+
+    private class FullAccountWorker implements Runnable {
+
+        @Override
+        public void run() {
+            loadFullAccount(mName);
+        }
+    }
+
 }

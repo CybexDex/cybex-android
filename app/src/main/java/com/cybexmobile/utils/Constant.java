@@ -44,6 +44,7 @@ public class Constant {
     public static final String PREF_IS_LOGIN_IN = "isLoginIn";
     public static final String PREF_NAME = "name";
     public static final String PREF_PASSWORD = "password";
+    public static final String PREF_LOAD_MODE = "load_mode";
 
     /**
      *  币ID

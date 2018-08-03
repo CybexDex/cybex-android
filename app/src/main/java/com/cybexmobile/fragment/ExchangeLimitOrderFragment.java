@@ -155,16 +155,6 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSubcribeMarket(Event.SubscribeMarket event) {
-        if(mWatchlistData == null){
-            return;
-        }
-        if(event.getCallId() == mWatchlistData.getSubscribeId()) {
-            loadBuySellOrder();
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateWatchlist(Event.UpdateWatchlist event) {
         WatchlistData data = event.getData();
         if(data == null || mWatchlistData == null){
@@ -181,6 +171,11 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(mWatchlistData == null){
             return;
         }
+        /**
+         * rmb价格刷新 重新加载数据
+         */
+        loadBuySellOrder();
+
         List<AssetRmbPrice> assetRmbPrices = event.getData();
         if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
             return;

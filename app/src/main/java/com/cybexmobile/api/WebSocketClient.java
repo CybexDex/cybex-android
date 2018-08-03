@@ -179,15 +179,6 @@ public class WebSocketClient extends WebSocketListener {
                 if(callback != null){
                     callback.onMessage(iReplyProcess.getReply());
                 }
-            } else {
-                try {
-                    JSONObject noticeObject = new JSONObject(text);
-                    JSONArray params = noticeObject.getJSONArray("params");
-                    int id = params.getInt(0);
-                    EventBus.getDefault().post(new Event.SubscribeMarket(id));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
         } catch (JsonSyntaxException e) {
             e.printStackTrace();

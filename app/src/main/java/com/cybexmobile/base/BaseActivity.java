@@ -27,6 +27,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 import java.util.Locale;
 
+import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
+
 public abstract class BaseActivity extends AppCompatActivity {
 
     private final String TAG = BaseActivity.class.getSimpleName();
@@ -218,7 +220,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
-        mIsNetWorkAvailable = event.isAvailable();
+        mIsNetWorkAvailable = event.getState() != TYPE_NOT_CONNECTED;
         onNetWorkStateChanged(mIsNetWorkAvailable);
         Toast.makeText(this, getResources().getString(R.string.network_connection_is_not_available), Toast.LENGTH_SHORT).show();
 

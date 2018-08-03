@@ -14,6 +14,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 
+import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
+
 public abstract class BaseFragment extends Fragment{
 
     private static final String PARAM_NETWORK_AVAILABLE = "network_available";
@@ -38,7 +40,7 @@ public abstract class BaseFragment extends Fragment{
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
-        mIsNetWorkAvailable = event.isAvailable();
+        mIsNetWorkAvailable = event.getState() != TYPE_NOT_CONNECTED;
         onNetWorkStateChanged(mIsNetWorkAvailable);
     }
 

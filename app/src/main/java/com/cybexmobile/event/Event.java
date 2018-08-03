@@ -242,35 +242,14 @@ public class Event {
     }
 
     public static class NetWorkStateChanged {
-        private boolean isAvailable;
+        private int state;
 
-        public boolean isAvailable() {
-            return isAvailable;
+        public NetWorkStateChanged(int state) {
+            this.state = state;
         }
 
-        public void setAvailable(boolean available) {
-            isAvailable = available;
-        }
-
-        public NetWorkStateChanged(boolean isAvailable) {
-            this.isAvailable = isAvailable;
-
-        }
-    }
-
-    public static class SubscribeMarket {
-        private int callId;
-
-        public SubscribeMarket(int callId) {
-            this.callId = callId;
-        }
-
-        public int getCallId() {
-            return callId;
-        }
-
-        public void setCallId(int callId) {
-            this.callId = callId;
+        public int getState() {
+            return state;
         }
     }
 
@@ -509,6 +488,21 @@ public class Event {
 
         public AccountObject getAccountObject() {
             return accountObject;
+        }
+    }
+
+    /**
+     * 网络加载模式改变
+     */
+    public static class LoadModeChanged{
+        private int mode;
+
+        public LoadModeChanged(int mode) {
+            this.mode = mode;
+        }
+
+        public int getMode() {
+            return mode;
         }
     }
 

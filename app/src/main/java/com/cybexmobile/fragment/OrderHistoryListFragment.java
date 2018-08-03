@@ -132,10 +132,11 @@ public class OrderHistoryListFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSubcribeMarket(Event.SubscribeMarket event) {
-        if(event.getCallId() == mWatchlistData.getSubscribeId()) {
-            loadOrderBook();
-        }
+    public void onSubcribeMarket(Event.UpdateRmbPrice event) {
+        /**
+         * rmb价格刷新 重新加载数据
+         */
+        loadOrderBook();
     }
 
     private void loadOrderBook(){
