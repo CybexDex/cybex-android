@@ -3,6 +3,7 @@ package com.cybexmobile.api;
 
 import android.util.Log;
 
+import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.Asset;
@@ -45,6 +46,12 @@ public class BitsharesWalletWraper {
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
     private String password;
+
+
+    //Balance Account page
+    private double mTotalCybBalance;
+    private double mTotalRmbBalance;
+    private List<AccountBalanceObjectItem> mAccountBalanceObjectItemList;
 
     private BitshareData mBitshareData;
 
@@ -711,5 +718,29 @@ public class BitsharesWalletWraper {
 
     public void clearAddressesForLockAsset(){
         addressList.clear();
+    }
+
+    public double getmTotalCybBalance() {
+        return mTotalCybBalance;
+    }
+
+    public void setmTotalCybBalance(double mTotalCybBalance) {
+        this.mTotalCybBalance = mTotalCybBalance;
+    }
+
+    public List<AccountBalanceObjectItem> getmAccountBalanceObjectItemList() {
+        return mAccountBalanceObjectItemList;
+    }
+
+    public void setmAccountBalanceObjectItemList(List<AccountBalanceObjectItem> mAccountBalanceObjectItemList) {
+        this.mAccountBalanceObjectItemList = mAccountBalanceObjectItemList;
+    }
+
+    public double getmTotalRmbBalance() {
+        return mTotalRmbBalance;
+    }
+
+    public void setmTotalRmbBalance(double mTotalRmbBalance) {
+        this.mTotalRmbBalance = mTotalRmbBalance;
     }
 }
