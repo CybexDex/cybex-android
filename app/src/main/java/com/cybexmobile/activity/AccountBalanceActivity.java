@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -38,6 +39,7 @@ import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.utils.NetworkUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,6 +75,7 @@ public class AccountBalanceActivity extends BaseActivity {
     private double mTotalBalanceCyb;
     private double mCybRmbPrice;
     private int mRefreshCount;
+    private int mNetworkState;
     private boolean mIsLoginIn;
 
 
@@ -81,6 +84,7 @@ public class AccountBalanceActivity extends BaseActivity {
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItems = new ArrayList<>();
     private List<LimitOrderObject> mLimitOrderObjectList = new ArrayList<>();
     private WebSocketService mWebSocketService;
+    private SharedPreferences mSharedPreferences;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -104,8 +108,10 @@ public class AccountBalanceActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
-            mWebSocketService = binder.getService();
-            loadData(mWebSocketService.getFullAccount(mAccountName));
+            if (!(mNetworkState == NetworkUtils.TYPE_NOT_CONNECTED)) {
+                mWebSocketService = binder.getService();
+                loadData(mWebSocketService.getFullAccount(mAccountName));
+            }
         }
 
         @Override
@@ -121,8 +127,10 @@ public class AccountBalanceActivity extends BaseActivity {
         mUnbinder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
-        mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
-        mIsLoginIn = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_IS_LOGIN_IN, false);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mAccountName = mSharedPreferences.getString(PREF_NAME, "");
+        mIsLoginIn = mSharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
+        mNetworkState = NetworkUtils.getConnectivityStatus(this);
         mAccountBalanceRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mAccountBalanceRecyclerView.getItemAnimator().setChangeDuration(0);
         addCustomDivider();
@@ -131,31 +139,22 @@ public class AccountBalanceActivity extends BaseActivity {
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         if (mIsLoginIn) {
-            if (!mIsNetWorkAvailable) {
-                mTotalBalanceCyb = savedInstanceState.getDouble(PARAM_TOTAL_CYB_VALUE);
-                mCybRmbPrice = savedInstanceState.getDouble(PARAM_TOTAL_RMB_VALUE);
-                mAccountBalanceObjectItems.addAll((List<AccountBalanceObjectItem>) savedInstanceState.getSerializable(PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS));
-                mBalanceRecyclerAdapter.notifyDataSetChanged();
+            if (mNetworkState == NetworkUtils.TYPE_NOT_CONNECTED) {
+                mTotalBalanceCyb =  BitsharesWalletWraper.getInstance().getmTotalCybBalance();
+                mCybRmbPrice =  BitsharesWalletWraper.getInstance().getmTotalRmbBalance();
+                mAccountBalanceObjectItems.addAll( BitsharesWalletWraper.getInstance().getmAccountBalanceObjectItemList());
                 mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
                 setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
-                return;
             }
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (!mIsNetWorkAvailable) {
-            outState.putDouble(PARAM_TOTAL_CYB_VALUE, mTotalBalanceCyb);
-            outState.putDouble(PARAM_TOTAL_RMB_VALUE, mCybRmbPrice);
-            outState.putSerializable(PARAM_ACCOUNT_BALANCE_OBJECT_ITEMS, (Serializable) mAccountBalanceObjectItems);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        BitsharesWalletWraper.getInstance().setmTotalCybBalance(mTotalBalanceCyb);
+        BitsharesWalletWraper.getInstance().setmTotalRmbBalance(mCybRmbPrice);
+        BitsharesWalletWraper.getInstance().setmAccountBalanceObjectItemList(mAccountBalanceObjectItems);
         mUnbinder.unbind();
         unbindService(mConnection);
         EventBus.getDefault().unregister(this);
