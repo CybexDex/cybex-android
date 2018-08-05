@@ -106,7 +106,7 @@
     <string name="setting_frequency_ordinary_market">普通行情</string>
     <string name="setting_frequency_real_time_market">实时行情</string>
     <string name="setting_frequency_real_time_market_only_wifi">仅在WiFi下实时行情</string>
-
+    <string name="text_cancel">取消</string>
 
     <!-- Login/Register -->
     <string name="create_account">创建新账号</string>
