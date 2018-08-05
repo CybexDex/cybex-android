@@ -194,9 +194,16 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
                 AssetUtil.formatNumberRounding(accountBalanceObjectItem.accountBalanceObject.balance /
                         Math.pow(10, accountBalanceObjectItem.assetObject.precision), accountBalanceObjectItem.assetObject.precision),
                 AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol)));
-        //选择币种时 CYB不够重新计算手续费
+        String amountStr = mEtQuantity.getText().toString().trim();
+        if(amountStr.length() > 0){
+            mEtQuantity.setText(String.format(String.format(Locale.US, "%%.%df",
+                    mSelectedAccountBalanceObjectItem.assetObject.precision), Double.parseDouble(amountStr)));
+        }
+        //选择币种时 CYB不够重新计算手续费并判断余额是否足够
         if(!mIsCybEnough){
             checkIsLockAndLoadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(), false);
+        } else {
+            checkBalanceEnough(mEtQuantity.getText().toString().trim());
         }
         resetTransferButtonState();
     }
@@ -258,7 +265,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     @OnTextChanged(value = R.id.transfer_et_account_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onAccountNameTextChanged(Editable editable){
         if(editable.toString().length() == 0){
-            mIvAccountCheck.setVisibility(View.GONE);
+            mIvAccountCheck.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -271,32 +278,6 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         //checkBalanceEnough(editable.toString());
     }
 
-    @OnFocusChange(R.id.transfer_et_quantity)
-    public void onQuantityFocusChanged(View view, boolean isFocused){
-        String amountStr = mEtQuantity.getText().toString().trim();
-        if(!isFocused && !TextUtils.isEmpty(amountStr)){
-            if(amountStr.equals(".")){
-                mEtQuantity.setText("");
-            } else {
-                if(mSelectedAccountBalanceObjectItem == null){
-                    return;
-                }
-                mEtQuantity.setText(String.format(String.format(Locale.US, "%%.%df",
-                        mSelectedAccountBalanceObjectItem.assetObject.precision), Double.parseDouble(amountStr)));
-                checkBalanceEnough(mEtQuantity.getText().toString().trim());
-            }
-        }
-    }
-
-    @OnFocusChange(R.id.transfer_et_remark)
-    public void onRemarkFocusChanged(View view, boolean isFocused){
-        if(isFocused){
-            return;
-        }
-        //输入完备注 重新计算手续费
-        checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
-    }
-
     @OnFocusChange(R.id.transfer_et_account_name)
     public void onAccountNameFocusChanged(View view, boolean isFocused){
         String accountName = mEtAccountName.getText().toString().trim();
@@ -305,6 +286,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         }
         if(TextUtils.isEmpty(accountName)){
             mToAccountObject = null;
+            resetTransferButtonState();
             return;
         }
         try {
@@ -323,6 +305,33 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
+    }
+
+    @OnFocusChange(R.id.transfer_et_quantity)
+    public void onQuantityFocusChanged(View view, boolean isFocused){
+        if(isFocused){
+            return;
+        }
+        String amountStr = mEtQuantity.getText().toString().trim();
+        if(TextUtils.isEmpty(amountStr) || amountStr.equals(".")){
+            resetTransferButtonState();
+            return;
+        }
+        if(mSelectedAccountBalanceObjectItem == null){
+            return;
+        }
+        mEtQuantity.setText(String.format(String.format(Locale.US, "%%.%df",
+                mSelectedAccountBalanceObjectItem.assetObject.precision), Double.parseDouble(amountStr)));
+        checkBalanceEnough(mEtQuantity.getText().toString().trim());
+    }
+
+    @OnFocusChange(R.id.transfer_et_remark)
+    public void onRemarkFocusChanged(View view, boolean isFocused){
+        if(isFocused){
+            return;
+        }
+        //输入完备注 重新计算手续费
+        checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -676,8 +685,16 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
          * fix bug:CYM-507
          * 转账金额必须大于0
          */
-        mBtnTransfer.setEnabled(mIsBalanceEnough && Double.parseDouble(mEtQuantity.getText().toString()) > 0 && mSelectedAccountBalanceObjectItem != null &&
-                mToAccountObject != null);
+        try {
+            mBtnTransfer.setEnabled(
+                    mToAccountObject != null &&
+                            mSelectedAccountBalanceObjectItem != null &&
+                            Double.parseDouble(mEtQuantity.getText().toString()) > 0 &&
+                            mIsBalanceEnough);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mBtnTransfer.setEnabled(false);
+        }
     }
 
     /**
