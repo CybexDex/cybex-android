@@ -60,6 +60,7 @@ import butterknife.Unbinder;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
@@ -93,7 +94,8 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     @BindView(R.id.deposit_records_tv_title)
     TextView mTvTitle;
 
-    private Disposable mDisposable;
+    private Disposable mRequestRecordsDisposable;
+    private Disposable mGatewayLogInDisposable;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -207,8 +209,15 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
-        if(mDisposable != null && !mDisposable.isDisposed()){
-            mDisposable.dispose();
+        /**
+         * fix bug:CYM-586
+         * 退出页面取消网络请求
+         */
+        if(mGatewayLogInDisposable != null && !mGatewayLogInDisposable.isDisposed()){
+            mGatewayLogInDisposable.dispose();
+        }
+        if(mRequestRecordsDisposable != null && !mRequestRecordsDisposable.isDisposed()){
+            mRequestRecordsDisposable.dispose();
         }
         if (mUnbinder != null) {
             mUnbinder.unbind();
@@ -242,20 +251,14 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     }
 
     private void processLoginCall(String request, String signature) {
-        RetrofitFactory.getInstance()
+        mGatewayLogInDisposable = RetrofitFactory.getInstance()
                 .api()
                 .gatewayLogIn(RetrofitFactory.url_deposit_withdraw_log_in, RequestBody.create(MediaType.parse("application/json"), request))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
+                .subscribe(new Consumer<ResponseBody>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        Log.v(TAG, "onNext");
+                    public void accept(ResponseBody responseBody) throws Exception {
                         JSONObject jsonObject;
                         try {
                             String responseMessage = responseBody.string();
@@ -271,17 +274,10 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onError(Throwable e) {
-                        Log.v(TAG, "onError");
-                        Log.e(TAG, "onError");
-                    }
-
-                    @Override
-                    public void onComplete() {
+                    public void accept(Throwable throwable) throws Exception {
 
                     }
                 });
@@ -291,7 +287,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(mAccountName, mOffset, 20, mFundType, mAssetObject.symbol , new Date());
         Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
         String request = gson.toJson(createLogInRequest(operation, signature));
-        RetrofitFactory.getInstance()
+        mRequestRecordsDisposable = RetrofitFactory.getInstance()
                 .api()
                 .gatewayRecords(RetrofitFactory.url_deposit_withdraw_records, RequestBody.create(MediaType.parse("application/json"), request))
                 .map(new Function<GateWayRecordsResponse, List<GatewayDepositWithdrawRecordsItem>>() {
@@ -311,21 +307,15 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<GatewayDepositWithdrawRecordsItem>>() {
+                .subscribe(new Consumer<List<GatewayDepositWithdrawRecordsItem>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        mDisposable = d;
-                    }
-
-                    @Override
-                    public void onNext(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
-                        Log.e(TAG, "onNext");
+                    public void accept(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) throws Exception {
                         hideLoadDialog();
                         if (mIsRefresh) {
                             mGatewayDepositWithdrawRecordsItemList.clear();
-                            mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItemList);
+                            mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItems);
                         } else {
-                            mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItemList);
+                            mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItems);
                         }
                         if(mDepositWithdrawRecordAdapter == null){
                             mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(DepositWithdrawRecordsActivity.this, mGatewayDepositWithdrawRecordsItemList);
@@ -334,16 +324,34 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                             mDepositWithdrawRecordAdapter.notifyDataSetChanged();
                         }
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
+                    public void accept(Throwable throwable) throws Exception {
 
                     }
                 });
+
+//        new Observer<List<GatewayDepositWithdrawRecordsItem>>() {
+//            @Override
+//            public void onSubscribe(Disposable d) {
+//                mDisposable = d;
+//            }
+//
+//            @Override
+//            public void onNext(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
+//                Log.e(TAG, "onNext");
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onComplete() {
+//
+//            }
+//        }
     }
 }
