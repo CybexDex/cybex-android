@@ -327,7 +327,12 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadAccountObject(Event.LoadAccountObject event){
-        if(!event.getAccountObject().name.equals(mEtAccountName.getText().toString().trim()) || !mIsActivityActive){
+        /**
+         * fix bug:CYM-581
+         * 修复账户名验证报错
+         */
+        if(!mIsActivityActive || (event.getAccountObject() != null &&
+                !event.getAccountObject().name.equals(mEtAccountName.getText().toString().trim()))){
             return;
         }
         mToAccountObject = event.getAccountObject();
