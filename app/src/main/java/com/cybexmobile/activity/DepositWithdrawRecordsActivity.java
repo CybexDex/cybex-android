@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
@@ -89,6 +90,8 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     SmartRefreshLayout mRefreshLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.deposit_records_tv_title)
+    TextView mTvTitle;
 
     private Disposable mDisposable;
 
@@ -119,6 +122,11 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mAssetObject = (AssetObject) getIntent().getSerializableExtra("assetObject");
         mFundType = getIntent().getStringExtra("fundType");
+        if(mFundType.equals("DEPOSIT")){
+            mTvTitle.setText(getResources().getString(R.string.title_deposit_records));
+        } else if(mFundType.equals("WITHDRAW")){
+            mTvTitle.setText(getResources().getString(R.string.title_withdraw_records));
+        }
         mDepositRecordsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mDepositRecordsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mRefreshLayout.setOnRefreshListener(this);
