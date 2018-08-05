@@ -3,10 +3,15 @@ package com.cybexmobile.base;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkRequest;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +24,8 @@ import com.cybexmobile.R;
 import com.cybexmobile.dialog.LoadDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreLanguageHelper;
+import com.cybexmobile.receiver.NetWorkBroadcastReceiver;
+import com.cybexmobile.receiver.NetworkChangedCallback;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -42,6 +49,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     private LoadDialog mLoadDialog;
     private AlertDialog mHintDialog;
 
+    private NetWorkBroadcastReceiver mNetWorkBroadcastReceiver;
+    private NetworkChangedCallback mNetworkChangedCallback;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(updateResources(newBase));
@@ -51,6 +61,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            registerNetWorkCallback();
+        } else {
+            registerNetWorkReceiver();
+        }
     }
 
     @Override
@@ -117,6 +132,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            unregisterNetWorkCallback();
+        } else {
+            unregisterNetWorkReceiver();
+        }
     }
 
     @Override
@@ -167,6 +187,41 @@ public abstract class BaseActivity extends AppCompatActivity {
             resources.updateConfiguration(newConf, resources.getDisplayMetrics());
         }
         return resources;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void registerNetWorkCallback(){
+        ConnectivityManager conn = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        mNetworkChangedCallback = new NetworkChangedCallback(this);
+        conn.requestNetwork(new NetworkRequest.Builder().build(), mNetworkChangedCallback);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void unregisterNetWorkCallback(){
+        if(mNetworkChangedCallback != null){
+            ConnectivityManager conn = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            conn.unregisterNetworkCallback(mNetworkChangedCallback);
+        }
+    }
+
+    /**
+     * 注册广播
+     */
+    private void registerNetWorkReceiver(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        mNetWorkBroadcastReceiver = new NetWorkBroadcastReceiver();
+        registerReceiver(mNetWorkBroadcastReceiver, intentFilter);
+    }
+
+    /**
+     * 注销广播
+     */
+    private void unregisterNetWorkReceiver(){
+        if(mNetWorkBroadcastReceiver != null){
+            unregisterReceiver(mNetWorkBroadcastReceiver);
+            mNetWorkBroadcastReceiver = null;
+        }
     }
 
     protected final void showHintDialog(@StringRes int messageId){
@@ -222,8 +277,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
         mIsNetWorkAvailable = event.getState() != TYPE_NOT_CONNECTED;
         onNetWorkStateChanged(mIsNetWorkAvailable);
-        Toast.makeText(this, getResources().getString(R.string.network_connection_is_not_available), Toast.LENGTH_SHORT).show();
-
     }
 
     public abstract void onNetWorkStateChanged(boolean isAvailable);

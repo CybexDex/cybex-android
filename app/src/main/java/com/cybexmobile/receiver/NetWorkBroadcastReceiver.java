@@ -4,17 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkRequest;
-import android.widget.Toast;
-
-import com.cybexmobile.R;
+import android.net.NetworkInfo;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.utils.NetworkUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
+import static com.cybexmobile.utils.NetworkUtils.TYPE_MOBILE;
 import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
+import static com.cybexmobile.utils.NetworkUtils.TYPE_WIFI;
 
 public class NetWorkBroadcastReceiver extends BroadcastReceiver{
 
@@ -25,26 +22,17 @@ public class NetWorkBroadcastReceiver extends BroadcastReceiver{
             if(conn == null){
                 return;
             }
-            conn.requestNetwork(new NetworkRequest.Builder().build(), new ConnectivityManager.NetworkCallback(){
-                @Override
-                public void onAvailable(Network network) {
-                    super.onAvailable(network);
-                    EventBus.getDefault().post(new Event.NetWorkStateChanged(NetworkUtils.getConnectivityStatus(conn)));
-                }
-
-                @Override
-                public void onLost(Network network) {
-                    super.onLost(network);
-                    //无网
-                    EventBus.getDefault().post(new Event.NetWorkStateChanged(TYPE_NOT_CONNECTED));
-                }
-
-                @Override
-                public void onUnavailable() {
-                    super.onUnavailable();
-                }
-
-            });
+            NetworkInfo networkWifi = conn.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if(networkWifi != null && networkWifi.isConnected()){
+                EventBus.getDefault().post(new Event.NetWorkStateChanged(TYPE_WIFI));
+                return;
+            }
+            NetworkInfo networkMobile = conn.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if(networkMobile != null && networkMobile.isConnected()){
+                EventBus.getDefault().post(new Event.NetWorkStateChanged(TYPE_MOBILE));
+                return;
+            }
+            EventBus.getDefault().post(new Event.NetWorkStateChanged(TYPE_NOT_CONNECTED));
         }
     }
 }

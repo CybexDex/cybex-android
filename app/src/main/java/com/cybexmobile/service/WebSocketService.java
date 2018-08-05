@@ -73,6 +73,7 @@ import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONL
 import static com.cybexmobile.utils.Constant.PREF_LOAD_MODE;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 import static com.cybexmobile.utils.NetworkUtils.TYPE_MOBILE;
+import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybexmobile.utils.NetworkUtils.TYPE_WIFI;
 
 public class WebSocketService extends Service {
@@ -149,11 +150,17 @@ public class WebSocketService extends Service {
         super.onDestroy();
         Log.e( TAG, "OnDestroyService");
         cancelRMBSubscription();
+        cancelWatchlistWorkerSchedule();
+        cancelFullAccountWorkerSchedule();
+        shutdownSchedule();
         EventBus.getDefault().unregister(this);
     }
 
     //加载行情数据
     public void loadWatchlistData(String baseAssetId) {
+        if(mNetworkState == TYPE_NOT_CONNECTED){
+            return;
+        }
         mCurrentBaseAssetId = baseAssetId;
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
         if (watchlistDatas != null) {
@@ -257,6 +264,9 @@ public class WebSocketService extends Service {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
+        if(mNetworkState == event.getState()){
+            return;
+        }
         if(mMode != FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI){
             mNetworkState = event.getState();
             return;
@@ -403,10 +413,13 @@ public class WebSocketService extends Service {
     }
 
     private void shutdownSchedule(){
-        mScheduled.shutdown();
+        mScheduled.shutdownNow();
     }
 
     private void startWatchlistWorkerSchedule(){
+        if(mNetworkState == TYPE_NOT_CONNECTED){
+            return;
+        }
         if(mWatchlistWorker == null){
             mWatchlistWorker = new WatchlistWorker();
         }
@@ -431,6 +444,9 @@ public class WebSocketService extends Service {
     }
 
     private void startFullAccountWorkerSchedule(){
+        if(mNetworkState == TYPE_NOT_CONNECTED){
+            return;
+        }
         if(TextUtils.isEmpty(mName)){
             return;
         }
@@ -825,6 +841,9 @@ public class WebSocketService extends Service {
     }
 
     public void loadAssetsRmbPrice() {
+        if(mNetworkState == TYPE_NOT_CONNECTED){
+            return;
+        }
         //防止多次执行
         if (mDisposable != null) {
             return;

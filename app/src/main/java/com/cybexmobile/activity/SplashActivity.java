@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,8 +27,6 @@ public class SplashActivity extends BaseActivity{
 
     private static final int REQUEST_CODE_WRITE_SETTING = 1;
 
-    private NetWorkBroadcastReceiver mNetWorkBroadcastReceiver;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,16 +40,8 @@ public class SplashActivity extends BaseActivity{
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             requestPermissions();
         } else {
-            registerBroadcast();
+            gotoMain();
         }
-    }
-
-    private void registerBroadcast(){
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        mNetWorkBroadcastReceiver = new NetWorkBroadcastReceiver();
-        registerReceiver(mNetWorkBroadcastReceiver, intentFilter);
-        gotoMain();
     }
 
     private void gotoMain(){
@@ -83,7 +74,7 @@ public class SplashActivity extends BaseActivity{
                     @Override
                     public void onNext(Permission permission) {
                         if(permission.granted || canWriteSetting()){
-                            registerBroadcast();
+                            gotoMain();
                         } else {
                             Intent intentSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                             intentSetting.setData(Uri.parse("package:" + getPackageName()));
@@ -111,10 +102,6 @@ public class SplashActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mNetWorkBroadcastReceiver != null){
-            unregisterReceiver(mNetWorkBroadcastReceiver);
-            mNetWorkBroadcastReceiver = null;
-        }
     }
 
     @Override
@@ -122,7 +109,7 @@ public class SplashActivity extends BaseActivity{
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE_WRITE_SETTING){
             if(canWriteSetting()){
-                registerBroadcast();
+                gotoMain();
             } else {
               finish();
             }

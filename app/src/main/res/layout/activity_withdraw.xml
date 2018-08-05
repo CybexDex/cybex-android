@@ -31,6 +31,7 @@
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
+        android:id="@+id/withdraw_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/activity_padding"
@@ -70,6 +71,8 @@
                 android:layout_marginTop="@dimen/activity_margin"
                 android:background="@drawable/bg_item"
                 android:orientation="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:padding="@dimen/activity_padding">
 
                 <TextView
@@ -110,7 +113,7 @@
 
                     <EditText
                         android:id="@+id/withdraw_amount"
-                        style="@style/font_white_dark_large"
+                        style="@style/font_white_dark_medium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/transparent"

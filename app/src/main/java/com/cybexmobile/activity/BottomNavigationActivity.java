@@ -128,7 +128,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
-
+        if(!isAvailable){
+            Toast.makeText(this, getResources().getString(R.string.network_connection_is_not_available), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
