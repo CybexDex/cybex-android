@@ -34,6 +34,11 @@ public class AssetUtil {
         NumberFormat format = NumberFormat.getInstance();
         format.setMinimumFractionDigits(scale);
         format.setMaximumFractionDigits(scale);
+        /**
+         * fix bug:CYM-584
+         * 取消千分位
+         */
+        format.setGroupingUsed(false);
         format.setRoundingMode(mode);
         return format.format(number);
     }
