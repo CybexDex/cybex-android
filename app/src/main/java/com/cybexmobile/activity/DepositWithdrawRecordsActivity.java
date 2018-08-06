@@ -67,7 +67,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
 
     public static final String TAG = DepositWithdrawRecordsActivity.class.getName();
-    private static final int LOAD_COUNT = 5;
+    private static final int LOAD_COUNT = 20;
     private String mAccountName;
     private String mFundType;
     private int mTotalItemAmount = 0;
