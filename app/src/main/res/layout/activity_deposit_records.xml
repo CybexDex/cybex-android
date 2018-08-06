@@ -29,8 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:srlEnableFooterFollowWhenLoadFinished="true"
-        app:srlEnableScrollContentWhenLoaded="true"
-        app:srlEnableAutoLoadMore="true">
+        app:srlEnableScrollContentWhenLoaded="true">
 
         <com.scwang.smartrefresh.layout.header.ClassicsHeader
             android:layout_width="match_parent"

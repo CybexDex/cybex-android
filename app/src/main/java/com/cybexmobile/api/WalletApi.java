@@ -725,7 +725,9 @@ public class WalletApi {
         operation.expiration = expiration.getTime() / 1000;
         operation.fundType = fundType;
         operation.asset = asset;
+        operation.size = size;
         operation.sizeInteger = UnsignedInteger.valueOf(size);
+        operation.offset = offset;
         operation.offsetInteger = UnsignedInteger.valueOf(offset);
         Log.e("expiration", String.valueOf(calendar.getTime().getTime()));
         return operation;
