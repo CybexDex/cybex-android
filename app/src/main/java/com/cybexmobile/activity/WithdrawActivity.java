@@ -171,22 +171,6 @@ public class WithdrawActivity extends BaseActivity {
         setKeyboardListener();
     }
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//            if(mWithdrawAddress.isFocused()){
-//                manager.hideSoftInputFromWindow(mWithdrawAddress.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-//                mWithdrawAddress.clearFocus();
-//            }
-//            if(mWithdrawAmountEditText.isFocused()){
-//                manager.hideSoftInputFromWindow(mWithdrawAmountEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-//                mWithdrawAmountEditText.clearFocus();
-//            }
-//        }
-//        return false;
-//    }
-
     @OnTouch(R.id.withdraw_scrollview)
     public boolean onTouchEvent(View view, MotionEvent event){
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -388,6 +372,9 @@ public class WithdrawActivity extends BaseActivity {
             BitsharesWalletWraper.getInstance().get_required_fees("1.3.0", ID_TRANSER_OPERATION, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+                    if(mHandler == null){
+                        return;
+                    }
                     FeeAmountObject feeAmountObject = reply.result.get(0);
                     if (feeAmountObject.amount <= cybBalance) {
                         mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, feeAmountObject.asset_id, feeAmountObject.amount);
@@ -423,6 +410,9 @@ public class WithdrawActivity extends BaseActivity {
             BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<String> reply) {
+                    if(mHandler == null){
+                        return;
+                    }
                     if (reply.result == null && reply.error == null) {
                         mHandler.post(new Runnable() {
                             @Override
@@ -493,6 +483,9 @@ public class WithdrawActivity extends BaseActivity {
             BitsharesWalletWraper.getInstance().get_required_fees(mAssetObject.id.toString(), 0, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+                    if(mHandler == null){
+                        return;
+                    }
                     FeeAmountObject feeAmountObject = reply.result.get(0);
                     mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, getSubmitAmount(feeAmountObject), feeAmountObject.asset_id, feeAmountObject.amount);
                     mHandler.post(new Runnable() {
@@ -545,6 +538,9 @@ public class WithdrawActivity extends BaseActivity {
                 .enqueueAndWatch(new ApolloCall.Callback<VerifyAddress.Data>() {
                     @Override
                     public void onResponse(@Nonnull Response<VerifyAddress.Data> response) {
+                        if(mHandler == null){
+                            return;
+                        }
                         if (response.data() != null) {
                             if (!response.data().verifyAddress().fragments().withdrawAddressInfo().valid()) {
                                 mHandler.post(new Runnable() {
@@ -599,6 +595,9 @@ public class WithdrawActivity extends BaseActivity {
                 .enqueue(new ApolloCall.Callback<GetWithdrawInfo.Data>() {
                     @Override
                     public void onResponse(@Nonnull Response<GetWithdrawInfo.Data> response) {
+                        if(mHandler == null){
+                            return;
+                        }
                         if (response.data() != null) {
                             if (response.data().withdrawInfo().fragments().withdrawinfoObject() != null) {
                                 WithdrawinfoObject withdrawinfoObject = response.data().withdrawInfo().fragments().withdrawinfoObject();
@@ -606,7 +605,6 @@ public class WithdrawActivity extends BaseActivity {
                                 mGatewayFee = withdrawinfoObject.fee();
                                 mToAccountId = withdrawinfoObject.gatewayAccount();
                                 mAssetPrecision = withdrawinfoObject.precision();
-
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -688,6 +686,8 @@ public class WithdrawActivity extends BaseActivity {
         super.onDestroy();
         mUnbinder.unbind();
         unbindService(mConnection);
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler = null;
     }
 
     @Override
