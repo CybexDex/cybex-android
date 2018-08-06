@@ -67,11 +67,10 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
 
     public static final String TAG = DepositWithdrawRecordsActivity.class.getName();
-    private static final int LOAD_COUNT = 20;
+    private static final int LOAD_COUNT = 5;
     private String mAccountName;
     private String mFundType;
     private int mTotalItemAmount = 0;
-    private int mOffset = 0;
     private boolean mIsRefresh;
 
     private Unbinder mUnbinder;
@@ -79,7 +78,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     private AssetObject mAssetObject;
     private WebSocketService mWebSocketService;
     private DepositWithdrawRecordAdapter mDepositWithdrawRecordAdapter;
-    private List<GatewayDepositWithdrawRecordsItem> mGatewayDepositWithdrawRecordsItemList = new ArrayList<>();
+    private List<GatewayDepositWithdrawRecordsItem> mRecordsItems = new ArrayList<>();
 
     @BindView(R.id.deposit_records_rv_deposit_records)
     RecyclerView mDepositRecordsRecyclerView;
@@ -145,7 +144,6 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
             refreshLayout.finishLoadMoreWithNoMoreData();
         } else {
             checkIfLocked(false);
-            refreshLayout.finishLoadMore();
         }
     }
 
@@ -162,7 +160,6 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
             return;
         }
         mIsRefresh = isRefresh;
-        mOffset = mTotalItemAmount - LOAD_COUNT >= 0 ? mTotalItemAmount - LOAD_COUNT : 0;
         if (BitsharesWalletWraper.getInstance().is_locked()) {
             CybexDialog.showUnlockWalletDialog(this, mAccountObject, mAccountName, new CybexDialog.UnLockDialogClickListener(){
 
@@ -245,7 +242,13 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                 if (jsonObject.getInt("code") != 200) {
                     return Observable.error(new Exception(jsonObject.getString("error")));
                 }
-                Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(mAccountName, mOffset, LOAD_COUNT, mFundType, mAssetObject.symbol , new Date());
+                Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(
+                        mAccountName,
+                        mIsRefresh ? 0 : mRecordsItems.size(),
+                        mIsRefresh && mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT,
+                        mFundType,
+                        mAssetObject.symbol ,
+                        new Date());
                 Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
                 String request = gson.toJson(createLogInRequest(operation, mSignature));
                 Log.v("gatewayRequestBody", request);
@@ -276,15 +279,15 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
             @Override
             public void accept(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) {
                 mRefreshLayout.finishRefresh();
-                mRefreshLayout.setNoMoreData(true);
+                mRefreshLayout.finishLoadMore();
                 if (mIsRefresh) {
-                    mGatewayDepositWithdrawRecordsItemList.clear();
-                    mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItems);
+                    mRecordsItems.clear();
+                    mRecordsItems.addAll(gatewayDepositWithdrawRecordsItems);
                 } else {
-                    mGatewayDepositWithdrawRecordsItemList.addAll(gatewayDepositWithdrawRecordsItems);
+                    mRecordsItems.addAll(gatewayDepositWithdrawRecordsItems);
                 }
                 if(mDepositWithdrawRecordAdapter == null){
-                    mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(DepositWithdrawRecordsActivity.this, mGatewayDepositWithdrawRecordsItemList);
+                    mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(DepositWithdrawRecordsActivity.this, mRecordsItems);
                     mDepositRecordsRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
                 } else {
                     mDepositWithdrawRecordAdapter.notifyDataSetChanged();
@@ -294,7 +297,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
             @Override
             public void accept(Throwable throwable) throws Exception {
                 mRefreshLayout.finishRefresh();
-                mRefreshLayout.setNoMoreData(true);
+                mRefreshLayout.finishLoadMore();
             }
         });
     }
