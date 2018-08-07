@@ -290,6 +290,7 @@
     <string name="unlock_wallet_dialog_cancel">取消</string>
     <string name="unlock_wallet_dialog_confirm">确认</string>
     <string name="unlock_wallet_dialog_error_invalid_password">解锁失败，请重新输入密码</string>
+    <string name="key_unlock">解锁</string>
 
     <!-- Dialog limit order create and cancel -->
     <string name="dialog_text_title_limit_order_create_confirmation">买卖确认</string>

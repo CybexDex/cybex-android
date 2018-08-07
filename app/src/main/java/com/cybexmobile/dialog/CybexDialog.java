@@ -3,8 +3,10 @@ package com.cybexmobile.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -81,6 +83,16 @@ public class CybexDialog {
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         EditText passwordEditText = dialog.findViewById(R.id.unlock_wallet_dialog_edit_text);
         ProgressBar pbLoading = dialog.findViewById(R.id.dialog_confirm_pb_loading);
+        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                    confirmButton.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
         LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override

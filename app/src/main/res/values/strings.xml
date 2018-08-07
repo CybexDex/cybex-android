@@ -288,6 +288,7 @@
     <string name="unlock_wallet_dialog_cancel">CANCEL</string>
     <string name="unlock_wallet_dialog_confirm">CONFIRM</string>
     <string name="unlock_wallet_dialog_error_invalid_password">Invalid password</string>
+    <string name="key_unlock">Unlock</string>
 
     <!-- Dialog limit order create and cancel -->
     <string name="dialog_text_title_limit_order_create_confirmation">CONFIRMATION</string>

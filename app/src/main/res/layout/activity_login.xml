@@ -76,6 +76,7 @@
                             android:backgroundTint="@android:color/transparent"
                             android:hint="@string/prompt_user_name"
                             android:inputType="textEmailAddress"
+                            android:imeOptions="actionNext"
                             android:maxLines="1"
                             android:singleLine="true"
                             style="@style/font_white_dark_large"
