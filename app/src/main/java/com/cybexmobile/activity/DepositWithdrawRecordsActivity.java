@@ -24,6 +24,7 @@ import com.cybexmobile.data.GatewayDepositWithdrawRecordsItem;
 import com.cybexmobile.data.GatewayLogInRecordRequest;
 import com.cybexmobile.data.Record;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -161,7 +162,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         }
         mIsRefresh = isRefresh;
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, mAccountObject, mAccountName, new CybexDialog.UnLockDialogClickListener(){
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mAccountName, new UnlockDialog.UnLockDialogClickListener(){
 
                 @Override
                 public void onUnLocked(String password) {

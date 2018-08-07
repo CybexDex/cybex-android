@@ -19,7 +19,7 @@
             android:background="@color/dialog_header_background_color">
 
             <EditText
-                android:id="@+id/unlock_wallet_dialog_edit_text"
+                android:id="@+id/dialog_confirm_et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
@@ -45,7 +45,7 @@
         </FrameLayout>
 
         <LinearLayout
-            android:id="@+id/unlock_wallet_dialog_error_layout"
+            android:id="@+id/dialog_confirm_layout_unlock_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -53,13 +53,11 @@
             android:visibility="gone">
 
             <ImageView
-                android:id="@+id/unlock_wallet_dialog_error_sign"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_error_16px" />
 
             <TextView
-                android:id="@+id/withdraw_error_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/font_red_small"

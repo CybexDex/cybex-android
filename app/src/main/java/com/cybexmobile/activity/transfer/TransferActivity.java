@@ -34,6 +34,7 @@ import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.dialog.AssetSelectDialog;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
@@ -518,7 +519,8 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
      */
     private void checkIsLockAndLoadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer){
         if(BitsharesWalletWraper.getInstance().is_locked()){
-            CybexDialog.showUnlockWalletDialog(this, mFromAccountObject, mFromAccountObject.name, new CybexDialog.UnLockDialogClickListener() {
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
+                    mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
                     loadTransferFee(feeAssetId, isLoadFeeToTransfer);
@@ -534,7 +536,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
      */
     private void checkIsLockAndTransfer(){
         if(BitsharesWalletWraper.getInstance().is_locked()){
-            CybexDialog.showUnlockWalletDialog(this, mFromAccountObject, mFromAccountObject.name, new CybexDialog.UnLockDialogClickListener() {
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject, mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
                     showTransferConfirmationDialog();

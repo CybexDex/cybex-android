@@ -25,6 +25,7 @@ import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -283,7 +284,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
             toCancelLimitOrder(feeAmount);
             return;
         }
-        CybexDialog.showUnlockWalletDialog(getContext(), mFullAccount.account, userName, new CybexDialog.UnLockDialogClickListener() {
+        CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccount.account, userName, new UnlockDialog.UnLockDialogClickListener() {
             @Override
             public void onUnLocked(String password) {
                 showLoadDialog();

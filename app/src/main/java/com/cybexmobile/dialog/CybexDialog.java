@@ -2,6 +2,8 @@ package com.cybexmobile.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,12 +20,10 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.graphene.chain.AccountObject;
 
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
 public class CybexDialog {
-
-    public interface UnLockDialogClickListener {
-        void onUnLocked(String password);
-    }
 
     public interface ConfirmationDialogClickListener {
         void onClick(Dialog dialog);
@@ -67,56 +67,6 @@ public class CybexDialog {
                 if (listener != null) {
                     listener.onClick(v);
                 }
-            }
-        });
-        dialog.show();
-    }
-
-    public static void showUnlockWalletDialog(Context context, AccountObject accountObject, String account, UnLockDialogClickListener listener) {
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.dialog_unclock_wallet);
-        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
-        tvTitle.setText(context.getResources().getString(R.string.unlock_wallet_dialog_title));
-        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
-        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
-        EditText passwordEditText = dialog.findViewById(R.id.unlock_wallet_dialog_edit_text);
-        ProgressBar pbLoading = dialog.findViewById(R.id.dialog_confirm_pb_loading);
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
-                    confirmButton.performClick();
-                    return true;
-                }
-                return false;
-            }
-        });
-        LinearLayout errorLayout = dialog.findViewById(R.id.unlock_wallet_dialog_error_layout);
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String password = passwordEditText.getText().toString();
-                if (listener != null && !TextUtils.isEmpty(password)) {
-                    pbLoading.setVisibility(View.VISIBLE);
-                    confirmButton.setEnabled(false);
-                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, account, password);
-                    if (result == 0) {
-                        listener.onUnLocked(password);
-                        dialog.dismiss();
-                    } else {
-                        errorLayout.setVisibility(View.VISIBLE);
-                        pbLoading.setVisibility(View.INVISIBLE);
-                        confirmButton.setEnabled(true);
-                    }
-                }
-            }
-        });
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
             }
         });
         dialog.show();
@@ -322,6 +272,17 @@ public class CybexDialog {
             }
         });
         dialog.show();
+    }
+
+    public static void showUnlockWalletDialog(FragmentManager fragmentManager, AccountObject accountObject,
+                                       String username,UnlockDialog.UnLockDialogClickListener unLockListener){
+        UnlockDialog dialog = new UnlockDialog();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT, accountObject);
+        bundle.putString(INTENT_PARAM_NAME, username);
+        dialog.setArguments(bundle);
+        dialog.show(fragmentManager, UnlockDialog.class.getSimpleName());
+        dialog.setUnLockListener(unLockListener);
     }
 
 }

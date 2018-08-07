@@ -23,6 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEM;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
@@ -33,6 +34,8 @@ public class AssetSelectDialog extends DialogFragment implements AssetSelectRecy
     TextView mTvOrdinaryMarket;
     @BindView(R.id.dialog_asset_select_rv_asset)
     RecyclerView mRvAsset;
+
+    private Unbinder mUnbinder;
 
     private OnAssetSelectedListener mAssetSelectedListener;
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItems;
@@ -56,7 +59,7 @@ public class AssetSelectDialog extends DialogFragment implements AssetSelectRecy
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         params.gravity = Gravity.BOTTOM;
         window.setAttributes(params);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         mRvAsset.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         return view;
     }
@@ -73,6 +76,7 @@ public class AssetSelectDialog extends DialogFragment implements AssetSelectRecy
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

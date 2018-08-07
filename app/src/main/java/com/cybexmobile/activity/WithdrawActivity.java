@@ -41,6 +41,7 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AccountObject;
@@ -187,7 +188,7 @@ public class WithdrawActivity extends BaseActivity {
         return false;
     }
 
-    private CybexDialog.UnLockDialogClickListener mUnLockDialogListener = new CybexDialog.UnLockDialogClickListener() {
+    private UnlockDialog.UnLockDialogClickListener mUnLockDialogListener = new UnlockDialog.UnLockDialogClickListener() {
         @Override
         public void onUnLocked(String password) {
             checkWithdrawAuthority(mAccountObject, password);
@@ -303,7 +304,7 @@ public class WithdrawActivity extends BaseActivity {
             mErrorLinearLayout.setVisibility(View.GONE);
             mWithdrawButton.setEnabled(true);
             if (BitsharesWalletWraper.getInstance().is_locked()) {
-                CybexDialog.showUnlockWalletDialog(mContext, mAccountObject, mUserName, mUnLockDialogListener);
+                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
             }
         }
     }
@@ -557,7 +558,7 @@ public class WithdrawActivity extends BaseActivity {
                                         mIsAddressInvalidate = true;
                                         resetWithdrawBtnState();
                                         if (BitsharesWalletWraper.getInstance().is_locked()) {
-                                            CybexDialog.showUnlockWalletDialog(mContext, mAccountObject, mUserName, mUnLockDialogListener);
+                                            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
                                         } else {
                                             displayFee();
                                         }
@@ -647,7 +648,7 @@ public class WithdrawActivity extends BaseActivity {
 
     private void checkIfLocked() {
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, mAccountObject, mUserName, mUnLockDialogListener);
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
         } else {
             checkWithdrawAuthority(mAccountObject, BitsharesWalletWraper.getInstance().getPassword());
         }

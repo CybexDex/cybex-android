@@ -18,6 +18,7 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
@@ -122,7 +123,7 @@ public class TransferDetailsActivity extends BaseActivity {
     @OnClick(R.id.transfer_details_tv_click_to_view)
     public void onClickToViewClick(View view){
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, mAccountObject, mUserName, new CybexDialog.UnLockDialogClickListener() {
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
                     showMemoMessage(mTransferOperation.memo);

@@ -42,6 +42,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
@@ -59,6 +60,8 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
     RadioButton mRbUsdt;
     @BindView(R.id.activity_watchlist_select_rb_btc)
     RadioButton mRbBtc;
+
+    private Unbinder mUnbinder;
 
     private WebSocketService mWebSocketService;
     private WatchlistSelectRecyclerViewAdapter mWatchlistSelectRecyclerViewAdapter;
@@ -89,7 +92,7 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         params.height = (int)(display.getHeight() * 0.7);
         params.gravity = Gravity.TOP;
         window.setAttributes(params);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         mRvWatchlist.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvWatchlist.setItemAnimator(null);
         return view;
@@ -109,6 +112,7 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

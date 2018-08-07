@@ -18,6 +18,7 @@ import com.cybexmobile.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOAD_MODE;
 import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
@@ -32,6 +33,8 @@ public class FrequencyModeDialog extends DialogFragment {
     TextView mTvRealTimeMarket;
     @BindView(R.id.dialog_frequency_mode_select_tv_real_time_market_only_wifi)
     TextView mTvRealTimeMarketOnlyWifi;
+
+    private Unbinder mUnbinder;
 
     private int mMode;
     private OnFrequencyModeSelectedListener mFrequencyModeSelectedListener;
@@ -53,7 +56,7 @@ public class FrequencyModeDialog extends DialogFragment {
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         params.gravity = Gravity.BOTTOM;
         window.setAttributes(params);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -72,6 +75,7 @@ public class FrequencyModeDialog extends DialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override

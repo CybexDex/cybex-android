@@ -1,23 +1,18 @@
 package com.cybexmobile.activity;
 
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
@@ -25,14 +20,13 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AssetRmbPrice;
-import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
-import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.service.WebSocketService;
@@ -60,8 +54,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
-import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
 
 public class LockAssetsActivity extends BaseActivity {
 
@@ -136,7 +128,8 @@ public class LockAssetsActivity extends BaseActivity {
             return;
         }
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(this, mAccountObject, userName, new CybexDialog.UnLockDialogClickListener() {
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject,
+                    userName, new UnlockDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
                     loadData(userName, password);

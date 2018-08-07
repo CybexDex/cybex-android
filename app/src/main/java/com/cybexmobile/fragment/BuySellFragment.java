@@ -34,6 +34,7 @@ import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.dialog.CybexDialog;
+import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
@@ -726,7 +727,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             toExchange();
             return;
         }
-        CybexDialog.showUnlockWalletDialog(getContext(), mFullAccountObject.account, userName, new CybexDialog.UnLockDialogClickListener() {
+        CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccountObject.account, userName, new UnlockDialog.UnLockDialogClickListener() {
             @Override
             public void onUnLocked(String password) {
                 toExchange();
