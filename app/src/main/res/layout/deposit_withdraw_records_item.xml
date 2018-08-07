@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/text_quote_margin_start"
-                    android:text="--" />
+                    android:text="@string/text_empty" />
 
             </LinearLayout>
 
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="-----" />
+                android:text="@string/text_empty" />
 
         </RelativeLayout>
 
@@ -69,7 +69,7 @@
                     style="@style/font_gray_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="--" />
+                    android:text="@string/text_empty" />
             </LinearLayout>
 
             <TextView
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="--" />
+                android:text="@string/text_empty" />
         </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -95,7 +95,8 @@
                 style="@style/font_gray_small"
                 android:id="@+id/item_deposit_withdraw_address"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/text_empty"/>
 
         </LinearLayout>
 

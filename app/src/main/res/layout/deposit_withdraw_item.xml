@@ -17,14 +17,13 @@
         <ImageView
             android:id="@+id/gate_way_asset_icon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_btc_grey" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/gate_way_asset_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BTC"
+            android:text="@string/text_empty"
             style="@style/font_white_dark_bold_large"
             android:layout_marginLeft="@dimen/text_quote_margin_start"/>
 

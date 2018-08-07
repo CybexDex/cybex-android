@@ -319,7 +319,6 @@ public class CybexDialog {
                 if (listener != null) {
                     listener.onClick(dialog);
                 }
-                dialog.dismiss();
             }
         });
         dialog.show();

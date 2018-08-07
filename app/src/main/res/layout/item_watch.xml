@@ -13,7 +13,6 @@
 
         <ImageView
             android:id="@+id/watch_list_coin_symbol"
-            android:src="@drawable/ic_cyb_grey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -22,7 +21,7 @@
             style="@style/font_white_dark_bold_large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="XRP"
+            android:text="@string/text_empty"
             android:layout_marginStart="@dimen/text_quote_margin_start"/>
 
         <TextView
@@ -30,7 +29,7 @@
             style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="/USD" />
+            android:text="/--" />
     </LinearLayout>
 
     <TextView
@@ -42,7 +41,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/text_price_margin_end"
         android:maxLines="1"
-        android:text="$11,309.109" />
+        android:text="@string/text_empty" />
 
     <LinearLayout
         android:id="@+id/layout_volume"
@@ -65,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/text_volume_margin_start"
-            android:text="288,980,254" />
+            android:text="@string/text_empty" />
 
     </LinearLayout>
 
@@ -75,7 +74,7 @@
         android:layout_height="wrap_content"
         style="@style/font_gray_bold_small"
         android:lineSpacingMultiplier="1.67"
-        android:text="≈￥23.15"
+        android:text="@string/text_empty"
         android:layout_alignBottom="@+id/layout_volume"
         android:layout_alignEnd="@id/current_price_watchlist" />
 
@@ -88,6 +87,6 @@
         android:layout_centerVertical="true"
         android:background="@color/increasing_color"
         android:gravity="center"
-        android:text="+130.28%" />
+        android:text="@string/text_empty" />
 
 </RelativeLayout>

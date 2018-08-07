@@ -12,6 +12,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.activity.LockAssetsActivity;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
+import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 
@@ -64,6 +65,8 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     public void onBindViewHolder(ViewHolder holder, int position) {
         LockAssetsActivity.LockUpAssetItem item = mDatas.get(position);
         LockUpAssetObject lockUpAssetObject = item.lockUpAssetobject;
+        MarketTicker marketTicker = item.ticker;
+        double rmbPrice = 0;
         if(lockUpAssetObject != null){
             loadImage(lockUpAssetObject.balance.asset_id.toString(), holder.mAssetSymbol);
             long timeStamp = DateUtils.formatToMillis(lockUpAssetObject.vesting_policy.begin_timestamp);
@@ -79,7 +82,12 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             String precisionFormmatter ="%." + assetObject.precision + "f";
             double price = (lockUpAssetObject.balance.amount) / Math.pow(10, assetObject.precision);
             holder.mAssetPrice.setText(String.format(Locale.US, precisionFormmatter, price));
-            holder.mRmbPrice.setText(String.format(Locale.US, "≈¥%.2f", item.cybRmbPrice * price ));
+            if (assetObject.symbol.equals("CYB")) {
+                rmbPrice = price * item.cybRmbPrice;
+            } else if (marketTicker != null) {
+                rmbPrice = marketTicker.latest * item.cybRmbPrice * price;
+            }
+            holder.mRmbPrice.setText(rmbPrice != 0 ? String.format(Locale.US, "≈¥%.2f", rmbPrice) : "--");
             if (assetObject.symbol.contains("JADE")) {
                 holder.mAssetText.setText(assetObject.symbol.substring(5, assetObject.symbol.length()));
             } else {
