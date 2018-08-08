@@ -50,6 +50,8 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
     private int basePrecision;
     //quote精度
     private int quotePrecision;
+    //排序
+    private int order;
 
     public WatchlistData() {
 
@@ -177,6 +179,14 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         this.quoteId = quoteId;
     }
 
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
     public void setSubscribeId(int subscribeId) {
         this.subscribeId = subscribeId;
     }
@@ -297,6 +307,9 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
 
     @Override
     public int compareTo(@NonNull WatchlistData o) {
-        return this.getBaseVol() > o.getBaseVol() ? -1 : 1;
+        if(o.getOrder() == 0 && this.getOrder() == 0){
+            return this.getBaseVol() > o.getBaseVol() ? -1 : 1;
+        }
+        return this.getOrder() > o.getOrder() ? -1 : 1;
     }
 }

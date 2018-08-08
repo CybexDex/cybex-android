@@ -1,11 +1,13 @@
 package com.cybexmobile.api;
 
-
 import com.cybexmobile.data.AppVersion;
 import com.cybexmobile.data.AssetsPairResponse;
+import com.cybexmobile.data.AssetsPairToppingResponse;
 import com.cybexmobile.data.GateWayRecordsResponse;
 import com.cybexmobile.faucet.CnyResponse;
 import com.cybexmobile.faucet.CreateAccountResponse;
+
+import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
@@ -39,6 +41,9 @@ public interface CybexHttpApi {
 
     @GET("market_list")
     Observable<AssetsPairResponse> getAssetsPair(@Query("base") String base);
+
+    @GET("json/marketlists.json")
+    Observable<List<AssetsPairToppingResponse>> getAssetsPairTopping();
 
     @POST
     Observable<ResponseBody> gatewayLogIn(@Url String url, @Body RequestBody body);

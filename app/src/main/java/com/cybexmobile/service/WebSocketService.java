@@ -15,6 +15,7 @@ import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.data.AssetRmbPrice;
 import com.cybexmobile.data.AssetsPairResponse;
+import com.cybexmobile.data.AssetsPairToppingResponse;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.faucet.AssetsPair;
@@ -63,6 +64,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Function4;
+import io.reactivex.functions.Function5;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
@@ -169,6 +171,7 @@ public class WebSocketService extends Service {
             startWatchlistWorkerSchedule();
             return;
         }
+        loadToppingAssetsPair();
         loadAllAssetsPairData();
     }
 
@@ -303,16 +306,81 @@ public class WebSocketService extends Service {
         }
     }
 
+//    //加载交易对数据
+//    private Observable<Map<String, List<AssetsPair>>> loadAssetsPairData(String baseAsset) {
+//        return Observable.zip(RetrofitFactory.getInstance().api().getAssetsPair(baseAsset),
+//                RetrofitFactory.getInstance().api().getAssetsPairToplist(),
+//                new BiFunction<AssetsPairResponse, List<AssetsPairToplistResponse>, Map<String, List<AssetsPair>>>() {
+//                    @Override
+//                    public Map<String, List<AssetsPair>> apply(AssetsPairResponse assetsPairResponse, List<AssetsPairToplistResponse> assetsPairToplistResponses) throws Exception {
+//                        AssetsPairToplistResponse assetsPairToplistResponse = null;
+//                        if(assetsPairToplistResponses != null && assetsPairToplistResponses.size() > 0){
+//                            for(AssetsPairToplistResponse response : assetsPairToplistResponses){
+//                                if(response.getBase().equals(baseAsset)){
+//                                    assetsPairToplistResponse = response;
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                        List<String> quoteTops = null;
+//                        if(assetsPairToplistResponse != null){
+//                            quoteTops = assetsPairToplistResponse.getQuotes();
+//                        }
+//                        Map<String, List<AssetsPair>> assetsPairMap = new HashMap<>();
+//                        List<AssetsPair> assetsPairs = new ArrayList<>();
+//                        if (assetsPairResponse.getData() != null && assetsPairResponse.getData().size() > 0) {
+//                            for (String quote : assetsPairResponse.getData()) {
+//                                if(quoteTops != null && quoteTops.size() > 0){
+//                                    for(int i=0; i<quoteTops.size(); i++){
+//                                        if(quote.equals(quoteTops.get(i))){
+//                                            assetsPairs.add(new AssetsPair(baseAsset, quote, quoteTops.size() - i));
+//                                            break;
+//                                        } else {
+//                                            if(i == quoteTops.size() - 1) {
+//                                                assetsPairs.add(new AssetsPair(baseAsset, quote, 0));
+//                                            }
+//                                        }
+//                                    }
+//                                } else {
+//                                    assetsPairs.add(new AssetsPair(baseAsset, quote, 0));
+//                                }
+//                            }
+//                        }
+//                        assetsPairMap.put(baseAsset, assetsPairs);
+//                        return assetsPairMap;
+//                    }
+//                });
+//    }
+
     private void loadAllAssetsPairData(){
-        Observable.zip(loadAssetsPairData("1.3.2"), loadAssetsPairData("1.3.0"),
+        Observable.zip(loadToppingAssetsPair(), loadAssetsPairData("1.3.2"), loadAssetsPairData("1.3.0"),
                 loadAssetsPairData("1.3.27"), loadAssetsPairData("1.3.3"),
-                new Function4<Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>>() {
+                new Function5<List<AssetsPairToppingResponse>, Map<String,List<AssetsPair>>,
+                        Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>,
+                        Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>>() {
                     @Override
-                    public Map<String,List<AssetsPair>> apply(Map<String, List<AssetsPair>> stringListMap, Map<String, List<AssetsPair>> stringListMap2, Map<String, List<AssetsPair>> stringListMap3, Map<String, List<AssetsPair>> stringListMap4) {
-                        stringListMap.putAll(stringListMap2);
-                        stringListMap.putAll(stringListMap3);
-                        stringListMap.putAll(stringListMap4);
-                        return stringListMap;
+                    public Map<String,List<AssetsPair>> apply(List<AssetsPairToppingResponse> assetsPairToppingResponses,
+                                                              Map<String, List<AssetsPair>> assetsPairs1,
+                                                              Map<String, List<AssetsPair>> assetsPairs2,
+                                                              Map<String, List<AssetsPair>> assetsPairs3,
+                                                              Map<String, List<AssetsPair>> assetsPairs4) {
+                        assetsPairs1.putAll(assetsPairs2);
+                        assetsPairs1.putAll(assetsPairs3);
+                        assetsPairs1.putAll(assetsPairs4);
+                        if(assetsPairToppingResponses != null && assetsPairToppingResponses.size() > 0){
+                            for(AssetsPairToppingResponse toppingResponse : assetsPairToppingResponses){
+                                List<String> quotes = toppingResponse.getQuotes();
+                                List<AssetsPair> assetsPairs = assetsPairs1.get(toppingResponse.getBase());
+                                for(int i=0; i<quotes.size(); i++){
+                                    for(AssetsPair assetsPair : assetsPairs){
+                                        if(quotes.get(i).equals(assetsPair.getQuote())){
+                                            assetsPair.setOrder(quotes.size() - i);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return assetsPairs1;
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -360,6 +428,13 @@ public class WebSocketService extends Service {
                         return assetsPairMap;
                     }
                 });
+    }
+
+    //加载置顶交易对
+    private Observable<List<AssetsPairToppingResponse>> loadToppingAssetsPair() {
+        return RetrofitFactory.getInstance()
+                .api()
+                .getAssetsPairTopping();
     }
 
     /**
@@ -762,6 +837,7 @@ public class WebSocketService extends Service {
                     WatchlistData watchlist = new WatchlistData(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset());
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
                     watchlist.setSubscribeId(id.getAndIncrement());
+                    watchlist.setOrder(assetsPair.getOrder());
                     watchlistData.add(watchlist);
                 }
                 mWatchlistHashMap.put(entry.getKey(), watchlistData);

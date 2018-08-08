@@ -107,17 +107,6 @@ public class WatchlistFragment extends BaseFragment {
         getContext().unbindService(mConnection);
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onSubscribeMarket(Event.SubscribeMarket event) {
-//        if (mWebSocketService != null) {
-//            for (WatchlistData watchlistItem : mWatchlistData) {
-//                if (mCurrentBaseAssetId.equals(mWatchlistData.get(0).getBaseId()) && event.getCallId() == watchlistItem.getSubscribeId()) {
-//                    mWebSocketService.updateHistoryPriceAndMarketTicker(watchlistItem.getBaseAsset(), watchlistItem.getQuoteAsset());
-//                }
-//            }
-//        }
-//    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateWatchlist(Event.UpdateWatchlist event) {
         WatchlistData data = event.getData();

@@ -7,6 +7,7 @@ public class AssetsPair {
 
     private String base;
     private String quote;
+    private int order;
     private AssetObject baseAsset;
     private AssetObject quoteAsset;
 
@@ -45,5 +46,13 @@ public class AssetsPair {
 
     public void setQuoteAsset(AssetObject quoteAsset) {
         this.quoteAsset = quoteAsset;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }
