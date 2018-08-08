@@ -23,8 +23,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
@@ -39,7 +37,6 @@ import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.graphene.chain.Asset;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybexmobile.graphene.chain.FeeAmountObject;
@@ -169,14 +166,14 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_transfer_records, menu);
+        getMenuInflater().inflate(R.menu.menu_records, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_transfer_records:
+            case R.id.action_records:
                 Intent intent = new Intent(this, TransferRecordsActivity.class);
                 startActivity(intent);
                 break;

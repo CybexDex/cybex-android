@@ -24,6 +24,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -105,8 +107,6 @@ public class DepositActivity extends BaseActivity {
     Toolbar mToolbar;
     @BindView(R.id.deposit_toolbar_text_view)
     TextView mToolbarTextView;
-    @BindView(R.id.deposit_records_button)
-    ImageView mDepositRecordButton;
     @BindView(R.id.deposit_coordinatorLayout)
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.deposit_detail_message)
@@ -163,6 +163,25 @@ public class DepositActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_records, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_records:
+                Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
+                intent.putExtra("assetObject", mAssetObject);
+                intent.putExtra("fundType", "DEPOSIT");
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
@@ -202,14 +221,6 @@ public class DepositActivity extends BaseActivity {
             Animation animation = getAnimation();
             mutateNewAddress(mUserName, mAssetName);
         }
-    }
-
-    @OnClick(R.id.deposit_records_button)
-    public void onClickDepositRecords(View view) {
-        Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
-        intent.putExtra("assetObject", mAssetObject);
-        intent.putExtra("fundType", "DEPOSIT");
-        startActivity(intent);
     }
 
     private void requestDetailMessage() {

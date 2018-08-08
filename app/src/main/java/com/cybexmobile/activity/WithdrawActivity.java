@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,13 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -110,8 +109,6 @@ public class WithdrawActivity extends BaseActivity {
     Toolbar mToolbar;
     @BindView(R.id.withdraw_toolbar_text_view)
     TextView mToolbarTextView;
-    @BindView(R.id.withdraw_records_button)
-    ImageView mWithdrawRecordsButton;
     @BindView(R.id.withdraw_available_amount)
     TextView mAvailableAmountTextView;
     @BindView(R.id.withdraw_address_tv)
@@ -228,14 +225,6 @@ public class WithdrawActivity extends BaseActivity {
         } else {
             displayFee();
         }
-    }
-
-    @OnClick(R.id.withdraw_records_button)
-    public void onClickWithdrawRecordsButton(View view) {
-        Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
-        intent.putExtra("assetObject", mAssetObject);
-        intent.putExtra("fundType", "WITHDRAW");
-        startActivity(intent);
     }
 
     @OnFocusChange(R.id.withdraw_withdrawal_address)
@@ -680,6 +669,25 @@ public class WithdrawActivity extends BaseActivity {
                 memo,
                 accountObject.options.memo_key,
                 toAccountObject.account.options.memo_key);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_records, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_records:
+                Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
+                intent.putExtra("assetObject", mAssetObject);
+                intent.putExtra("fundType", "WITHDRAW");
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
