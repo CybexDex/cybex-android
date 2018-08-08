@@ -160,10 +160,10 @@ public class WebSocketService extends Service {
 
     //加载行情数据
     public void loadWatchlistData(String baseAssetId) {
+        mCurrentBaseAssetId = baseAssetId;
         if(mNetworkState == TYPE_NOT_CONNECTED){
             return;
         }
-        mCurrentBaseAssetId = baseAssetId;
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
         if (watchlistDatas != null) {
             EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistDatas));
@@ -305,52 +305,6 @@ public class WebSocketService extends Service {
             loadAssetsRmbPrice();
         }
     }
-
-//    //加载交易对数据
-//    private Observable<Map<String, List<AssetsPair>>> loadAssetsPairData(String baseAsset) {
-//        return Observable.zip(RetrofitFactory.getInstance().api().getAssetsPair(baseAsset),
-//                RetrofitFactory.getInstance().api().getAssetsPairToplist(),
-//                new BiFunction<AssetsPairResponse, List<AssetsPairToplistResponse>, Map<String, List<AssetsPair>>>() {
-//                    @Override
-//                    public Map<String, List<AssetsPair>> apply(AssetsPairResponse assetsPairResponse, List<AssetsPairToplistResponse> assetsPairToplistResponses) throws Exception {
-//                        AssetsPairToplistResponse assetsPairToplistResponse = null;
-//                        if(assetsPairToplistResponses != null && assetsPairToplistResponses.size() > 0){
-//                            for(AssetsPairToplistResponse response : assetsPairToplistResponses){
-//                                if(response.getBase().equals(baseAsset)){
-//                                    assetsPairToplistResponse = response;
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                        List<String> quoteTops = null;
-//                        if(assetsPairToplistResponse != null){
-//                            quoteTops = assetsPairToplistResponse.getQuotes();
-//                        }
-//                        Map<String, List<AssetsPair>> assetsPairMap = new HashMap<>();
-//                        List<AssetsPair> assetsPairs = new ArrayList<>();
-//                        if (assetsPairResponse.getData() != null && assetsPairResponse.getData().size() > 0) {
-//                            for (String quote : assetsPairResponse.getData()) {
-//                                if(quoteTops != null && quoteTops.size() > 0){
-//                                    for(int i=0; i<quoteTops.size(); i++){
-//                                        if(quote.equals(quoteTops.get(i))){
-//                                            assetsPairs.add(new AssetsPair(baseAsset, quote, quoteTops.size() - i));
-//                                            break;
-//                                        } else {
-//                                            if(i == quoteTops.size() - 1) {
-//                                                assetsPairs.add(new AssetsPair(baseAsset, quote, 0));
-//                                            }
-//                                        }
-//                                    }
-//                                } else {
-//                                    assetsPairs.add(new AssetsPair(baseAsset, quote, 0));
-//                                }
-//                            }
-//                        }
-//                        assetsPairMap.put(baseAsset, assetsPairs);
-//                        return assetsPairMap;
-//                    }
-//                });
-//    }
 
     private void loadAllAssetsPairData(){
         Observable.zip(loadToppingAssetsPair(), loadAssetsPairData("1.3.2"), loadAssetsPairData("1.3.0"),

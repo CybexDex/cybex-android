@@ -60,6 +60,7 @@ import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();
@@ -109,7 +110,7 @@ public class AccountBalanceActivity extends BaseActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            if (!(mNetworkState == NetworkUtils.TYPE_NOT_CONNECTED)) {
+            if (!(mNetworkState == TYPE_NOT_CONNECTED)) {
                 loadData(mWebSocketService.getFullAccount(mAccountName));
             }
         }
@@ -139,7 +140,7 @@ public class AccountBalanceActivity extends BaseActivity {
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         if (mIsLoginIn) {
-            if (mNetworkState == NetworkUtils.TYPE_NOT_CONNECTED) {
+            if (mNetworkState == TYPE_NOT_CONNECTED) {
                 mTotalBalanceCyb =  BitsharesWalletWraper.getInstance().getmTotalCybBalance();
                 mCybRmbPrice =  BitsharesWalletWraper.getInstance().getmTotalRmbBalance();
                 mAccountBalanceObjectItems.addAll( BitsharesWalletWraper.getInstance().getmAccountBalanceObjectItemList());
@@ -261,7 +262,7 @@ public class AccountBalanceActivity extends BaseActivity {
         if (fullAccountObject == null) {
             return;
         }
-        if (!mIsNetWorkAvailable) {
+        if (NetworkUtils.getConnectivityStatus(this) == TYPE_NOT_CONNECTED) {
             return;
         }
         mTotalBalanceCyb = 0;

@@ -23,6 +23,7 @@ import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.FullAccountObject;
 import com.cybexmobile.service.WebSocketService;
+import com.cybexmobile.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
 import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class GatewayActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, DepositItemFragment.OnListFragmentInteractionListener {
 
@@ -185,7 +187,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         if (fullAccountObject == null) {
             return;
         }
-        if (!mIsNetWorkAvailable) {
+        if (NetworkUtils.getConnectivityStatus(this) == TYPE_NOT_CONNECTED) {
             return;
         }
         List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;

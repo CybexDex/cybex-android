@@ -44,8 +44,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public static boolean isActive;
 
-    public boolean mIsNetWorkAvailable = true;
-
     private LoadDialog mLoadDialog;
     private AlertDialog mHintDialog;
 
@@ -71,7 +69,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mIsNetWorkAvailable = savedInstanceState.getBoolean(PARAM_NETWORK_AVAILABLE);
     }
 
     @Override
@@ -125,7 +122,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(PARAM_NETWORK_AVAILABLE, mIsNetWorkAvailable);
     }
 
     @Override
@@ -275,8 +271,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
-        mIsNetWorkAvailable = event.getState() != TYPE_NOT_CONNECTED;
-        onNetWorkStateChanged(mIsNetWorkAvailable);
+        onNetWorkStateChanged(event.getState() != TYPE_NOT_CONNECTED);
     }
 
     public abstract void onNetWorkStateChanged(boolean isAvailable);
