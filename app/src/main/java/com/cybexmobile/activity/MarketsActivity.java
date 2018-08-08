@@ -698,13 +698,13 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private void setVolumeByChart(MyCombinedChart combinedChart) {
 
         String unit = MyUtils.getVolUnit(mData.getVolmax());
-        String wan = "万手";
-        String yi = "亿手";
+        String k = "k";
+        String m = "m";
         int u = 1;
-        if (wan.equals(unit)) {
-            u = 4;
-        } else if (yi.equals(unit)) {
-            u = 8;
+        if (k.equals(unit)) {
+            u = 3;
+        } else if (m.equals(unit)) {
+            u = 6;
         }
         combinedChart.getAxisLeft().setValueFormatter(new VolFormatter((int) Math.pow(10, u)));
 //        combinedChart.getAxisLeft().setAxisMaxValue(mData.getVolmax());

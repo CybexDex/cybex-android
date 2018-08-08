@@ -13,12 +13,12 @@ public class MyUtils {
 
         int e = (int) Math.floor(Math.log10(num));
 
-        if (e >= 8) {
-            return "亿手";
-        } else if (e >= 4) {
-            return "万手";
+        if (e >= 6) {
+            return "m";
+        } else if (e >= 3) {
+            return "k";
         } else {
-            return "手";
+            return "";
         }
     }
 
