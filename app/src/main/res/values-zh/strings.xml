@@ -242,6 +242,7 @@
     <string name="withdraw_available_amount">可用余额</string>
     <string name="withdraw_withdrawal_address">提现地址</string>
     <string name="withdraw_account_eos">提现账户</string>
+    <string name="withdraw_memo_eos">备注</string>
     <string name="withdraw_amount">数量</string>
     <string name="withdraw_minimum_hint">最小提现数量 </string>
     <string name="withdraw_all">全部</string>
@@ -251,7 +252,7 @@
     <string name="withdraw_withdraw_button">提现</string>
     <string name="withdraw_enter_or_paste_address_hint">输入或长按粘贴地址</string>
     <string name="withdraw_enter_or_paste_account_hint_eos">输入或长按粘贴账户</string>
-    <string name="withdraw_amount_hint">最小提现数量 1</string>
+    <string name="withdraw_amount_hint">最小提现数量 </string>
     <string name="withdraw_confirmation">确认提现</string>
     <string name="withdraw_error_not_enough">余额不足</string>
     <string name="withdraw_error_less_than_minimum">小于最小提现额度</string>
@@ -309,6 +310,7 @@
     <string name="dialog_withdraw_confirmation_gateway_fee">提现手续费:</string>
     <string name="dialog_withdraw_confirmation_transfer_fee">转账手续费:</string>
     <string name="dialog_withdraw_confirmation_receive_amount">到账数量:</string>
+    <string name="dialog_withdraw_confirmation_memo_eos">备注:</string>
 
     <!-- Dialog transfer confirmation -->
     <string name="dialog_text_account">账户名:</string>

@@ -73,17 +73,25 @@ public class CybexDialog {
     }
 
     public static void showConfirmationDialog(Context context, ConfirmationDialogClickListener listener, String withdrawAddress, String withdrawAmount,
-                                              String transferFee, String gatewayFee, String receiveAmount ) {
+                                              String transferFee, String gatewayFee, String receiveAmount, String memo) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_withdraw_confirmation);
         TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
         tvTitle.setText(context.getResources().getString(R.string.withdraw_confirmation));
         TextView withdrawAddressView = dialog.findViewById(R.id.confirm_dialog_withdraw_address);
+        LinearLayout withdrawMemoLayout = dialog.findViewById(R.id.confirm_dialog_withdraw_memo_layout);
+        TextView withdrawMemoView = dialog.findViewById(R.id.confirm_dialog_withdraw_memo);
         TextView withdrawAmountView = dialog.findViewById(R.id.confirm_dialog_withdraw_amount);
         TextView withdrawFeeView = dialog.findViewById(R.id.confirm_dialog_withdraw_withdraw_fee);
         TextView gatewayFeeView = dialog.findViewById(R.id.confirm_dialog_gateway_fee);
         TextView receiveAmountView = dialog.findViewById(R.id.confirm_dialog_receive_amount);
         withdrawAddressView.setText(withdrawAddress);
+        if (TextUtils.isEmpty(memo)) {
+            withdrawMemoLayout.setVisibility(View.GONE);
+        } else {
+            withdrawMemoLayout.setVisibility(View.VISIBLE);
+            withdrawMemoView.setText(memo);
+        }
         withdrawAmountView.setText(withdrawAmount);
         withdrawFeeView.setText(transferFee);
         gatewayFeeView.setText(gatewayFee);

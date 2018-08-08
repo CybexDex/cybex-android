@@ -63,9 +63,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_margin"
                 android:background="@drawable/bg_item"
-                android:orientation="vertical"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
+                android:orientation="vertical"
                 android:padding="@dimen/activity_padding">
 
                 <TextView
@@ -93,6 +93,37 @@
                     android:layout_marginTop="9dp"
                     android:background="@color/colorPrimary" />
 
+                <LinearLayout
+                    android:id="@+id/withdraw_memo_eos_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/withdraw_memo_eos" />
+
+                    <EditText
+                        android:id="@+id/withdraw_memo_eos_et"
+                        style="@style/font_white_dark_medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textCursorDrawable="@null" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="9dp"
+                        android:background="@color/colorPrimary" />
+                </LinearLayout>
+
                 <TextView
                     style="@style/font_gray_medium"
                     android:layout_width="wrap_content"
@@ -111,9 +142,9 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/transparent"
                         android:hint="@string/withdraw_amount_hint"
-                        android:textColorHint="@color/text_hint_color"
                         android:imeOptions="actionDone"
                         android:inputType="numberDecimal"
+                        android:textColorHint="@color/text_hint_color"
                         android:textCursorDrawable="@null" />
 
                     <TextView
@@ -191,7 +222,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:text="-- CYB"/>
+                        android:text="-- CYB" />
                 </RelativeLayout>
 
 
@@ -212,9 +243,9 @@
                     <TextView
                         android:id="@+id/withdraw_message"
                         style="@style/font_gray_small"
-                        android:lineSpacingExtra="@dimen/withdraw_deposit_line_spacing"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="@dimen/withdraw_deposit_line_spacing" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
 

@@ -117,6 +117,10 @@ public class WithdrawActivity extends BaseActivity {
     EditText mWithdrawAddress;
     @BindView(R.id.withdraw_amount)
     EditText mWithdrawAmountEditText;
+    @BindView(R.id.withdraw_memo_eos_layout)
+    LinearLayout mWithdrawMemoEosLayout;
+    @BindView(R.id.withdraw_memo_eos_et)
+    EditText mWithdrawMemoEosEditText;
     @BindView(R.id.withdraw_error)
     LinearLayout mErrorLinearLayout;
     @BindView(R.id.withdraw_error_text)
@@ -162,6 +166,7 @@ public class WithdrawActivity extends BaseActivity {
         if (mAssetName.equals(EOS)) {
             mWithdrawAddressTv.setText(getResources().getString(R.string.withdraw_account_eos));
             mWithdrawAddress.setHint(getResources().getString(R.string.withdraw_enter_or_paste_account_hint_eos));
+            mWithdrawMemoEosLayout.setVisibility(View.VISIBLE);
         }
         setAvailableAmount(mAvailableAmount, mAssetName);
         requestDetailMessage();
@@ -170,16 +175,20 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     @OnTouch(R.id.withdraw_scrollview)
-    public boolean onTouchEvent(View view, MotionEvent event){
+    public boolean onTouchEvent(View view, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if(mWithdrawAddress.isFocused()){
+            if (mWithdrawAddress.isFocused()) {
                 manager.hideSoftInputFromWindow(mWithdrawAddress.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 mWithdrawAddress.clearFocus();
             }
-            if(mWithdrawAmountEditText.isFocused()){
+            if (mWithdrawAmountEditText.isFocused()) {
                 manager.hideSoftInputFromWindow(mWithdrawAmountEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 mWithdrawAmountEditText.clearFocus();
+            }
+            if (mWithdrawMemoEosEditText.isFocused()) {
+                manager.hideSoftInputFromWindow(mWithdrawMemoEosEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                mWithdrawMemoEosEditText.clearFocus();
             }
         }
         return false;
@@ -228,17 +237,25 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     @OnFocusChange(R.id.withdraw_withdrawal_address)
-    public void onWithdrawAddressFocusChanged(View view, boolean isFocused){
-        if(isFocused){
+    public void onWithdrawAddressFocusChanged(View view, boolean isFocused) {
+        if (isFocused) {
             return;
         }
         verifyAddress(mWithdrawAddress.getText().toString().trim());
     }
 
     @OnFocusChange(R.id.withdraw_amount)
-    public void onWithdrawAmountFocusChanged(View view, boolean isFocused){
-        if(isFocused){
+    public void onWithdrawAmountFocusChanged(View view, boolean isFocused) {
+        if (isFocused) {
             mIsFeeLoaded = false;
+            return;
+        }
+        displayFee();
+    }
+
+    @OnFocusChange(R.id.withdraw_memo_eos_et)
+    public void onWithdrawMemoEosEtFocusChanged(View view, boolean isFocused) {
+        if (isFocused) {
             return;
         }
         displayFee();
@@ -258,12 +275,12 @@ public class WithdrawActivity extends BaseActivity {
         resetWithdrawBtnState();
     }
 
-    private void resetWithdrawBtnState(){
-        if(TextUtils.isEmpty(mWithdrawAddress.getText().toString().trim())){
+    private void resetWithdrawBtnState() {
+        if (TextUtils.isEmpty(mWithdrawAddress.getText().toString().trim())) {
             mWithdrawButton.setEnabled(false);
             return;
         }
-        if(mIsAddressInvalidate){
+        if (mIsAddressInvalidate) {
             mErrorLinearLayout.setVisibility(View.GONE);
         } else {
             mErrorLinearLayout.setVisibility(View.VISIBLE);
@@ -271,12 +288,12 @@ public class WithdrawActivity extends BaseActivity {
             mWithdrawButton.setEnabled(false);
             return;
         }
-        if(!mIsFeeLoaded){
+        if (!mIsFeeLoaded) {
             mWithdrawButton.setEnabled(false);
             return;
         }
         String amountStr = mWithdrawAmountEditText.getText().toString().trim();
-        if(TextUtils.isEmpty(amountStr)){
+        if (TextUtils.isEmpty(amountStr)) {
             mWithdrawButton.setEnabled(false);
             return;
         }
@@ -301,32 +318,33 @@ public class WithdrawActivity extends BaseActivity {
     @OnClick(value = R.id.withdraw_button)
     public void onWithdrawButtonClicked(View view) {
         CybexDialog.showConfirmationDialog(this, new CybexDialog.ConfirmationDialogClickListener() {
-            @Override
-            public void onClick(Dialog dialog) {
-                try {
-                    BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
-                        @Override
-                        public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
-                            mDynamicGlobalPropertyObject = reply.result;
-                            mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
-                            broadCastTransaction(mSignedTransaction);
+                    @Override
+                    public void onClick(Dialog dialog) {
+                        try {
+                            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+                                @Override
+                                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                                    mDynamicGlobalPropertyObject = reply.result;
+                                    mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
+                                    broadCastTransaction(mSignedTransaction);
+                                }
+
+                                @Override
+                                public void onFailure() {
+
+                                }
+                            });
+                        } catch (NetworkStatusException e) {
+                            e.printStackTrace();
                         }
 
-                        @Override
-                        public void onFailure() {
-
-                        }
-                    });
-                } catch (NetworkStatusException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, mWithdrawAddress.getText().toString().trim(),
-            mWithdrawAmountEditText.getText().toString().trim() + " " + mAssetName,
-            mGateWayFeeTextView.getText().toString(),
-            mTransferFeeTextView.getText().toString(),
-            mReceiveAmountTextView.getText().toString());
+                    }
+                }, mWithdrawAddress.getText().toString().trim(),
+                mWithdrawAmountEditText.getText().toString().trim() + " " + mAssetName,
+                mGateWayFeeTextView.getText().toString(),
+                mTransferFeeTextView.getText().toString(),
+                mReceiveAmountTextView.getText().toString(),
+                mWithdrawMemoEosEditText.getText().toString());
     }
 
     private void setKeyboardListener() {
@@ -338,11 +356,14 @@ public class WithdrawActivity extends BaseActivity {
 
             @Override
             public void keyBoardHide(int height) {
-                if(mWithdrawAddress.isFocused()){
+                if (mWithdrawAddress.isFocused()) {
                     mWithdrawAddress.clearFocus();
                 }
-                if(mWithdrawAmountEditText.isFocused()){
+                if (mWithdrawAmountEditText.isFocused()) {
                     mWithdrawAmountEditText.clearFocus();
+                }
+                if (mWithdrawMemoEosEditText.isFocused()) {
+                    mWithdrawMemoEosEditText.clearFocus();
                 }
             }
         });
@@ -351,18 +372,19 @@ public class WithdrawActivity extends BaseActivity {
     private void displayFee() {
         String address = mWithdrawAddress.getText().toString().trim();
         String amount = mWithdrawAmountEditText.getText().toString().trim();
-        if(TextUtils.isEmpty(address) || TextUtils.isEmpty(amount) ||
-                mAccountObject == null || mToAccountObject == null || BitsharesWalletWraper.getInstance().is_locked()){
+        String eosMemo = mWithdrawMemoEosEditText.getText().toString().trim();
+        if (TextUtils.isEmpty(address) || TextUtils.isEmpty(amount) ||
+                mAccountObject == null || mToAccountObject == null || BitsharesWalletWraper.getInstance().is_locked()) {
             return;
         }
-        String memo = getMemo(address, mAssetName);
+        String memo = getMemo(address, mAssetName, eosMemo);
         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, "1.3.0", 0);
         double cybBalance = getBalance(mFullAccountObject, "1.3.0");
         try {
             BitsharesWalletWraper.getInstance().get_required_fees("1.3.0", ID_TRANSER_OPERATION, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
-                    if(mHandler == null){
+                    if (mHandler == null) {
                         return;
                     }
                     FeeAmountObject feeAmountObject = reply.result.get(0);
@@ -400,7 +422,7 @@ public class WithdrawActivity extends BaseActivity {
             BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<String> reply) {
-                    if(mHandler == null){
+                    if (mHandler == null) {
                         return;
                     }
                     if (reply.result == null && reply.error == null) {
@@ -462,8 +484,8 @@ public class WithdrawActivity extends BaseActivity {
         return 0;
     }
 
-    private String getMemo(String address, String assetName) {
-        return "withdraw:" + "CybexGateway:" + assetName + ":" + address;
+    private String getMemo(String address, String assetName, String memo) {
+        return "withdraw:" + "CybexGateway:" + assetName + ":" + address + ":" + memo;
     }
 
     private void getNoneCybFee(String memo) {
@@ -473,7 +495,7 @@ public class WithdrawActivity extends BaseActivity {
             BitsharesWalletWraper.getInstance().get_required_fees(mAssetObject.id.toString(), 0, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
-                    if(mHandler == null){
+                    if (mHandler == null) {
                         return;
                     }
                     FeeAmountObject feeAmountObject = reply.result.get(0);
@@ -515,7 +537,7 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void verifyAddress(String address) {
-        if(TextUtils.isEmpty(address)){
+        if (TextUtils.isEmpty(address)) {
             return;
         }
         mApolloClient.query(VerifyAddress
@@ -528,7 +550,7 @@ public class WithdrawActivity extends BaseActivity {
                 .enqueueAndWatch(new ApolloCall.Callback<VerifyAddress.Data>() {
                     @Override
                     public void onResponse(@Nonnull Response<VerifyAddress.Data> response) {
-                        if(mHandler == null){
+                        if (mHandler == null) {
                             return;
                         }
                         if (response.data() != null) {
@@ -585,7 +607,7 @@ public class WithdrawActivity extends BaseActivity {
                 .enqueue(new ApolloCall.Callback<GetWithdrawInfo.Data>() {
                     @Override
                     public void onResponse(@Nonnull Response<GetWithdrawInfo.Data> response) {
-                        if(mHandler == null){
+                        if (mHandler == null) {
                             return;
                         }
                         if (response.data() != null) {
@@ -601,7 +623,7 @@ public class WithdrawActivity extends BaseActivity {
                                         getToAccountMemoKey(mToAccountId);
                                         mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
                                         mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
-                                        mWithdrawAmountEditText.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
+                                        mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
                                     }
                                 });
                             }

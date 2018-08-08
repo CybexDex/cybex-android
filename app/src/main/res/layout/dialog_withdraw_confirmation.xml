@@ -25,7 +25,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="2"
-            android:text="0x2ced84f6bccdc06e36c2975af6a80b" />
+            android:text="@string/text_empty" />
+
+        <LinearLayout
+            android:id="@+id/confirm_dialog_withdraw_memo_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_withdraw_confirmation_memo_eos" />
+
+            <TextView
+                android:id="@+id/confirm_dialog_withdraw_memo"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="@string/text_empty" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
