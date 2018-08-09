@@ -1,6 +1,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <corners android:radius="5dp"/>
+    <corners android:radius="@dimen/corner_radius_4"/>
     <solid android:color="@color/toast_message_background_color"/>
 
 </shape>

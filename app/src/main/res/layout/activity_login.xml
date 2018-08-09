@@ -23,8 +23,8 @@
             android:id="@+id/img_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/image_logo_margin_top_bottom"
-            android:layout_marginBottom="@dimen/image_logo_margin_top_bottom"
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_16"
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_logo" />
 
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/img_logo"
-            android:layout_marginTop="@dimen/layout_login_margin_top"
+            android:layout_marginTop="@dimen/margin_50"
             android:padding="@dimen/activity_padding"
             android:orientation="vertical">
 
@@ -88,7 +88,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/height_1"
                     android:background="@color/colorPrimary"/>
 
                 <android.support.design.widget.TextInputLayout
@@ -134,7 +134,7 @@
                 android:id="@+id/email_sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/btn_login_margin_top"
+                android:layout_marginTop="@dimen/margin_74"
                 android:background="@drawable/bg_btn_orange_gradient_enabled"
                 android:enabled="false"
                 android:text="@string/action_sign_in"
@@ -150,7 +150,7 @@
             android:text="@string/create_account"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/text_register_margin_bottom"
+            android:layout_marginBottom="@dimen/margin_40"
             android:textColor="@color/login_register_color" />
 
     </RelativeLayout>

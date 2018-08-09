@@ -14,7 +14,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:textColor="@color/watchlist_select_item_symbol_color_selector"
-        android:layout_marginStart="@dimen/text_quote_margin_start"
+        android:layout_marginStart="@dimen/margin_8"
         android:text="--/--" />
 
     <TextView

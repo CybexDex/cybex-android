@@ -6,7 +6,7 @@
                 android:angle="45"
                 android:startColor="@color/btn_orange_start"
                 android:endColor="@color/btn_orange_end" />
-            <corners android:radius="4dp"/>
+            <corners android:radius="@dimen/corner_radius_4"/>
         </shape>
     </item>
 
@@ -16,7 +16,7 @@
                 android:angle="45"
                 android:startColor="@color/btn_grey_end"
                 android:endColor="@color/btn_grey_end" />
-            <corners android:radius="4dp"/>
+            <corners android:radius="@dimen/corner_radius_4"/>
         </shape>
     </item>
 

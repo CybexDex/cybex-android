@@ -46,7 +46,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/order_history_rv"
-        android:layout_marginTop="@dimen/recycler_view_margin_top"
+        android:layout_marginTop="@dimen/margin_10"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

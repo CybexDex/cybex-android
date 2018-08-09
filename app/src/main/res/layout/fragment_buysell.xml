@@ -25,14 +25,14 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_input_header_height"
+                    android:layout_height="@dimen/height_24"
                     android:gravity="center_vertical"
                     style="@style/font_gray_medium"
                     android:text="@string/text_limit"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_input_height"
+                    android:layout_height="@dimen/height_48"
                     android:background="@drawable/bg_item"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
@@ -53,14 +53,14 @@
 
                     <View
                         android:id="@+id/view_divider"
-                        android:layout_width="1dp"
+                        android:layout_width="@dimen/width_1"
                         android:layout_height="match_parent"
                         android:layout_toStartOf="@+id/buysell_tv_sub"
                         android:background="@color/divider_color"/>
 
                     <TextView
                         android:id="@+id/buysell_tv_sub"
-                        android:layout_width="@dimen/text_add_sub_width"
+                        android:layout_width="@dimen/width_40"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:layout_toStartOf="@+id/buysell_tv_add"
@@ -69,7 +69,7 @@
 
                     <TextView
                         android:id="@+id/buysell_tv_add"
-                        android:layout_width="@dimen/text_add_sub_width"
+                        android:layout_width="@dimen/width_40"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         style="@style/font_gray_large"
@@ -87,7 +87,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_input_height"
+                    android:layout_height="@dimen/height_48"
                     android:layout_marginTop="@dimen/activity_margin"
                     android:background="@drawable/bg_item"
                     android:focusable="true"
@@ -109,14 +109,14 @@
 
                     <View
                         android:id="@+id/view_divider2"
-                        android:layout_width="1dp"
+                        android:layout_width="@dimen/width_1"
                         android:layout_height="match_parent"
                         android:layout_toStartOf="@+id/buysell_tv_asset_symbol"
                         android:background="@color/divider_color"/>
 
                     <TextView
                         android:id="@+id/buysell_tv_asset_symbol"
-                        android:layout_width="@dimen/text_asset_symbol"
+                        android:layout_width="@dimen/width_65"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         style="@style/font_gray_medium"
@@ -137,7 +137,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_input_header_height"
+                    android:layout_height="@dimen/height_24"
                     android:orientation="horizontal">
 
                     <TextView
@@ -149,10 +149,10 @@
                         style="@style/font_gray_medium"
                         android:text="@string/text_percentage_25"/>
                     <View
-                        android:layout_width="1dp"
+                        android:layout_width="@dimen/width_1"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:layout_marginBottom="@dimen/margin_3"
                         android:background="@color/divider_color"/>
                     <TextView
                         android:id="@+id/buysell_tv_percentage_50"
@@ -163,10 +163,10 @@
                         style="@style/font_gray_medium"
                         android:text="@string/text_percentage_50"/>
                     <View
-                        android:layout_width="1dp"
+                        android:layout_width="@dimen/width_1"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:layout_marginBottom="@dimen/margin_3"
                         android:background="@color/divider_color"/>
                     <TextView
                         android:id="@+id/buysell_tv_percentage_75"
@@ -177,10 +177,10 @@
                         style="@style/font_gray_medium"
                         android:text="@string/text_percentage_75"/>
                     <View
-                        android:layout_width="1dp"
+                        android:layout_width="@dimen/width_1"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:layout_marginBottom="@dimen/margin_3"
                         android:background="@color/divider_color"/>
                     <TextView
                         android:id="@+id/buysell_tv_percentage_100"
@@ -195,7 +195,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_item_buy_sell_height">
+                    android:layout_height="@dimen/height_26"
+                    android:layout_marginTop="@dimen/margin_6">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -216,7 +217,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_item_buy_sell_height">
+                    android:layout_height="@dimen/height_26">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -237,7 +238,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_item_buy_sell_height">
+                    android:layout_height="@dimen/height_26">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -259,7 +260,7 @@
                 <Button
                     android:id="@+id/buysell_btn_buy_sell"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/layout_input_height"
+                    android:layout_height="@dimen/height_48"
                     android:textAllCaps="false"
                     style="@style/font_white_large"
                     android:text="@string/text_empty"
@@ -280,7 +281,7 @@
         <FrameLayout
             android:id="@+id/layout_trade_history"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_trade_history_height"
+            android:layout_height="@dimen/height_32"
             android:layout_marginTop="@dimen/activity_margin">
 
             <TextView

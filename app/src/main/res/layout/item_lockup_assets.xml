@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="3dp"
+    app:cardCornerRadius="@dimen/corner_radius_4"
+    app:cardElevation="@dimen/elevation_3"
     android:layout_marginStart="@dimen/activity_margin"
     android:layout_marginEnd="@dimen/activity_margin"
     android:layout_marginBottom="@dimen/activity_margin"
@@ -35,7 +35,7 @@
                 android:id="@+id/lock_up_asset_symbol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/text_quote_margin_start"
+                android:layout_marginStart="@dimen/margin_8"
                 android:text="@string/text_empty" />
 
         </LinearLayout>
@@ -43,8 +43,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/text_asset_price_padding_top"
-            android:paddingBottom="@dimen/text_asset_price_padding_bottom">
+            android:paddingTop="@dimen/padding_8"
+            android:paddingBottom="@dimen/padding_6">
 
             <TextView
                 style="@style/font_white_dark_bold_large"
@@ -72,8 +72,8 @@
                 <ProgressBar
                     android:id="@+id/lock_up_asset_progress_bar"
                     style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="@dimen/progress_asset_width"
-                    android:layout_height="@dimen/progress_asset_height"
+                    android:layout_width="@dimen/width_60"
+                    android:layout_height="@dimen/height_5"
                     android:max="100"
                     android:progressDrawable="@drawable/bg_progress_bar" />
             </LinearLayout>

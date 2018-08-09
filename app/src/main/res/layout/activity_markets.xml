@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/market_page_current_money"
             android:layout_below="@id/market_page_current_money"
-            android:layout_marginTop="@dimen/text_kline_header_price_margin_top"
+            android:layout_marginTop="@dimen/margin_6"
             android:text="High:$11,984.124" />
 
         <TextView
@@ -123,13 +123,13 @@
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_k"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/layout_kline_height"
+                android:layout_height="@dimen/height_180"
                 android:visibility="invisible" />
 
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_volume"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/layout_volume_height"
+                android:layout_height="@dimen/margin_40"
                 android:visibility="invisible" />
 
             <com.cybexmobile.mychart.MyCombinedChart
@@ -179,7 +179,7 @@
                 android:id="@+id/market_page_tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/tab_order_margin_top"
+                android:layout_marginTop="@dimen/margin_22"
                 android:background="@android:color/transparent"
                 app:tabBackground="@android:color/transparent"
                 app:tabIndicatorColor="@color/primary_color_orange"
@@ -211,16 +211,16 @@
         android:id="@+id/market_page_layout_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/layout_footer_padding"
+        android:padding="@dimen/padding_6"
         android:layout_alignParentBottom="true"
         android:background="@android:color/transparent"
         android:orientation="horizontal">
         <Button
             android:id="@+id/market_page_btn_buy"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_input_height"
-            android:layout_marginStart="@dimen/btn_buy_sell_margin"
-            android:layout_marginEnd="@dimen/btn_buy_sell_margin"
+            android:layout_height="@dimen/height_48"
+            android:layout_marginStart="@dimen/margin_6"
+            android:layout_marginEnd="@dimen/margin_6"
             android:layout_weight="1"
             style="@style/font_white_large"
             android:text="@string/text_buy"
@@ -230,9 +230,9 @@
         <Button
             android:id="@+id/market_page_btn_sell"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/layout_input_height"
-            android:layout_marginStart="@dimen/btn_buy_sell_margin"
-            android:layout_marginEnd="@dimen/btn_buy_sell_margin"
+            android:layout_height="@dimen/height_48"
+            android:layout_marginStart="@dimen/margin_6"
+            android:layout_marginEnd="@dimen/margin_6"
             android:layout_weight="1"
             style="@style/font_white_large"
             android:text="@string/text_sell"

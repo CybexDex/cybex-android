@@ -47,7 +47,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
+                android:layout_marginTop="@dimen/margin_6">
 
                 <EditText
                     android:id="@+id/transfer_et_account_name"
@@ -89,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/font_white_dark_large"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/margin_6"
                 android:drawableEnd="@drawable/ic_ieo_more"
                 android:maxLines="1"
                 android:textColorHint="@color/text_hint_color"
@@ -97,10 +97,10 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/height_1"
                 android:background="@color/colorPrimary"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_10"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -111,7 +111,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" >
+                android:layout_marginTop="@dimen/margin_6" >
 
                 <EditText
                     android:id="@+id/transfer_et_quantity"
@@ -135,10 +135,10 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/height_1"
                 android:background="@color/colorPrimary"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_10"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -153,9 +153,9 @@
                 android:textColorHint="@color/text_hint_color"
                 style="@style/font_white_dark_medium"
                 android:gravity="top"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/margin_6"
                 android:background="@android:color/transparent"
-                android:lineSpacingExtra="@dimen/text_line_spacing_extra_small"
+                android:lineSpacingExtra="@dimen/line_spacing_extra_4"
                 android:lines="4"/>
 
         </LinearLayout>

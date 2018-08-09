@@ -80,8 +80,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/layout_padding_top_bottom"
-                android:paddingBottom="@dimen/layout_padding_top_bottom">
+                android:paddingTop="@dimen/padding_16"
+                android:paddingBottom="@dimen/padding_16">
 
                 <TextView
                     android:id="@+id/transfer_details_tv_transfer_to_or_from"
@@ -102,14 +102,14 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/height_1"
                 android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/layout_padding_top_bottom"
-                android:paddingBottom="@dimen/layout_padding_top_bottom">
+                android:paddingTop="@dimen/padding_16"
+                android:paddingBottom="@dimen/padding_16">
 
                 <TextView
                     style="@style/font_gray_medium"
@@ -129,14 +129,14 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/height_1"
                 android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/layout_padding_top_bottom"
-                android:paddingBottom="@dimen/layout_padding_top_bottom">
+                android:paddingTop="@dimen/padding_16"
+                android:paddingBottom="@dimen/padding_16">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -156,14 +156,14 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/height_1"
                 android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/layout_padding_top_bottom"
-                android:paddingBottom="@dimen/layout_padding_top_bottom">
+                android:paddingTop="@dimen/padding_16"
+                android:paddingBottom="@dimen/padding_16">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -183,14 +183,14 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/height_1"
                 android:background="@color/colorPrimary" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/layout_padding_top_bottom"
-                android:paddingBottom="@dimen/layout_padding_top_bottom">
+                android:paddingTop="@dimen/padding_16"
+                android:paddingBottom="@dimen/padding_16">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -202,12 +202,12 @@
                     android:id="@+id/transfer_details_tv_transfer_memo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:maxWidth="@dimen/text_memo_max_width"
+                    android:maxWidth="@dimen/width_200"
                     style="@style/font_white_dark_medium"
                     android:layout_gravity="end"
                     android:lines="4"
                     android:scrollbars="none"
-                    android:lineSpacingExtra="@dimen/text_line_spacing_extra_small" />
+                    android:lineSpacingExtra="@dimen/line_spacing_extra_4" />
 
                 <TextView
                     android:id="@+id/transfer_details_tv_click_to_view"

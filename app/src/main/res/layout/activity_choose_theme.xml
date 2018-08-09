@@ -33,9 +33,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
-            android:layout_marginTop="@dimen/cardview_hint_margin_top"
+            android:layout_marginTop="@dimen/margin_8"
             android:divider="@color/colorPrimary"
-            android:dividerHeight="1dp"
+            android:dividerHeight="@dimen/height_1"
             android:background="@drawable/bg_item"
             android:cacheColorHint="@android:color/transparent"
             android:listSelector="@android:color/transparent"/>

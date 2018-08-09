@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/layout_input_header_height"
+        android:layout_height="@dimen/height_24"
         android:orientation="horizontal">
 
         <TextView

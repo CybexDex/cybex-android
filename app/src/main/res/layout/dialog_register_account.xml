@@ -24,14 +24,14 @@
             android:layout_height="wrap_content"
             style="@style/font_grey_medium"
             android:text="@string/register_dialog_content_current_password"
-            android:paddingBottom="@dimen/dialog_content_line_spacing_extra" />
+            android:paddingBottom="@dimen/line_spacing_extra_10" />
 
         <TextView
             android:id="@+id/register_dialog_content_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/font_grey_medium"
-            android:paddingBottom="@dimen/dialog_content_line_spacing_extra"
+            android:paddingBottom="@dimen/line_spacing_extra_10"
             android:textColor="@color/primary_color_orange"
             android:text="123456"/>
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             style="@style/font_grey_medium"
             android:text="@string/register_dialog_content_attentions"
-            android:lineSpacingExtra="@dimen/dialog_content_line_spacing_extra" />
+            android:lineSpacingExtra="@dimen/line_spacing_extra_10" />
 
         <Button
             android:id="@+id/register_dialog_button"

@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:background="#0FFFFFFF"
             android:text="@string/k_ma10"
             style="@style/font_gray_xsmall"/>
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:background="#0FFFFFFF"
             android:text="@string/k_ma20"
             style="@style/font_gray_xsmall" />
@@ -81,7 +81,7 @@
             android:id="@+id/view_boll_tv_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:text="0.00"
             android:textColor="@color/ma_5_color"
             android:textSize="@dimen/font_xsmall" />
@@ -90,7 +90,7 @@
             android:id="@+id/view_boll_tv_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:text="0.00"
             android:textColor="@color/ma_10_color"
             android:textSize="@dimen/font_xsmall" />
@@ -99,7 +99,7 @@
             android:id="@+id/view_boll_tv_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:text="0.00"
             android:textColor="@color/ma_20_color"
             android:textSize="@dimen/font_xsmall" />
@@ -126,7 +126,7 @@
             android:id="@+id/view_ema_tv_5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:text="0.00"
             android:textColor="@color/ma_5_color"
             android:textSize="@dimen/font_xsmall" />
@@ -134,7 +134,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:background="#0FFFFFFF"
             android:text="@string/k_ema10"
             style="@style/font_gray_xsmall" />
@@ -143,7 +143,7 @@
             android:id="@+id/view_ema_tv_10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_kline_header_margin_start"
+            android:layout_marginStart="@dimen/margin_10"
             android:text="0.00"
             android:textColor="@color/ma_10_color"
             android:textSize="@dimen/font_xsmall" />

@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/height_68"
     android:paddingStart="@dimen/activity_padding"
     android:paddingEnd="@dimen/activity_padding"
-    android:paddingTop="25dp"
-    android:paddingBottom="25dp"
     android:background="@color/itemBackground">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:gravity="center">
-
 
         <ImageView
             android:id="@+id/gate_way_asset_icon"
@@ -25,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="@string/text_empty"
             style="@style/font_white_dark_bold_large"
-            android:layout_marginLeft="@dimen/text_quote_margin_start"/>
+            android:layout_marginLeft="@dimen/margin_8"/>
 
         <TextView
             android:id="@+id/gate_way_asset_full_name"
@@ -39,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:gravity="center">
         <TextView
             android:id="@+id/gate_way_asset_price"

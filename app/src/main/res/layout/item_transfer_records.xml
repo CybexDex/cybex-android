@@ -46,7 +46,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/item_line_margin_top">
+            android:layout_marginTop="@dimen/margin_3">
 
             <TextView
                 android:id="@+id/item_transfer_records_tv_date"

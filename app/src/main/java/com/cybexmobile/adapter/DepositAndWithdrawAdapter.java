@@ -2,9 +2,7 @@ package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +17,11 @@ import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Locale;
 
 public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWithdrawAdapter.ViewHolder> {
 
@@ -110,7 +106,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.deposit_withdraw_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_deposit_withdraw, parent, false);
         return new ViewHolder(view);
     }
 

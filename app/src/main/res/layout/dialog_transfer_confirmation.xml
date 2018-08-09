@@ -15,7 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dialog_line_height"
+            android:layout_height="@dimen/height_24"
             android:orientation="horizontal">
 
             <TextView
@@ -31,14 +31,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:layout_marginLeft="@dimen/margin_8"
                 android:text="@string/text_empty" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dialog_line_height"
+            android:layout_height="@dimen/height_24"
             android:orientation="horizontal">
 
             <TextView
@@ -54,13 +54,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:layout_marginLeft="@dimen/margin_8"
                 android:text="@string/text_empty" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dialog_line_height"
+            android:layout_height="@dimen/height_24"
             android:orientation="horizontal">
 
             <TextView
@@ -76,14 +76,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:layout_marginLeft="@dimen/margin_8"
                 android:text="@string/text_empty" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dialog_line_height"
+            android:layout_height="@dimen/height_24"
             android:orientation="horizontal">
 
             <TextView
@@ -101,7 +101,7 @@
                 android:lines="1"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="@dimen/dialog_content_margin_start"
+                android:layout_marginLeft="@dimen/margin_8"
                 android:text="@string/text_empty" />
 
         </LinearLayout>
@@ -110,7 +110,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/height_1"
         android:background="@color/divider_color"/>
 
     <include layout="@layout/include_dialog_footer" />

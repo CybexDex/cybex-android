@@ -35,7 +35,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/height_1"
         android:background="@color/divider_color"/>
 
     <RelativeLayout
@@ -54,7 +54,7 @@
             android:text="@string/watch_list_new_price_title"
             style="@style/font_gray_small"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/text_hint_margin_end"
+            android:layout_marginEnd="@dimen/margin_111"
             android:layout_alignParentEnd="true"/>
         <TextView
             android:layout_width="wrap_content"

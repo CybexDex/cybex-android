@@ -41,8 +41,8 @@
 
                 <ImageView
                     android:id="@+id/deposit_qr_code"
-                    android:layout_width="155dp"
-                    android:layout_height="155dp"
+                    android:layout_width="@dimen/width_155"
+                    android:layout_height="@dimen/height_155"
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
@@ -51,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/activity_margin"
                     android:text="@string/deposit_save_qr_code" />
 
             </LinearLayout>
@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/activity_margin"
                     android:layout_marginRight="@dimen/activity_margin"
-                    android:layout_marginTop="@dimen/image_asset_width_height"
+                    android:layout_marginTop="@dimen/margin_16"
                     android:background="@drawable/bg_item"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -89,10 +89,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                        android:layout_height="@dimen/height_1"
                         android:layout_marginTop="@dimen/activity_padding"
                         android:background="@color/deposit_item_divider" />
-
 
                     <LinearLayout
                         android:id="@+id/deposit_eos_copy_account_name"
@@ -136,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_margin"
                 android:layout_marginRight="@dimen/activity_margin"
-                android:layout_marginTop="@dimen/image_asset_width_height"
+                android:layout_marginTop="@dimen/margin_16"
                 android:background="@drawable/bg_item"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -150,7 +149,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/height_1"
                     android:layout_marginTop="@dimen/activity_padding"
                     android:background="@color/deposit_item_divider" />
 
@@ -175,7 +174,7 @@
                             style="@style/font_orange_large"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/text_line_spacing_extra"
+                            android:layout_marginLeft="@dimen/line_spacing_extra_8"
                             android:text="@string/deposit_copy_address" />
                     </LinearLayout>
 
@@ -196,7 +195,7 @@
                             style="@style/font_orange_large"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/text_line_spacing_extra"
+                            android:layout_marginLeft="@dimen/line_spacing_extra_8"
                             android:text="@string/deposit_get_new_address" />
 
                     </LinearLayout>
@@ -211,10 +210,10 @@
                 style="@style/font_gray_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginTop="36dp"
-                android:lineSpacingExtra="@dimen/withdraw_deposit_line_spacing" />
+                android:layout_marginLeft="@dimen/activity_margin_double"
+                android:layout_marginRight="@dimen/activity_margin_double"
+                android:layout_marginTop="@dimen/activity_margin_triple"
+                android:lineSpacingExtra="@dimen/line_spacing_extra_4" />
 
 
         </LinearLayout>

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/font_color_white_dark"
-        android:padding="@dimen/text_marker_padding"
+        android:padding="@dimen/padding_3"
         android:textColor="@color/font_color_dark_white" />
 
 </LinearLayout>

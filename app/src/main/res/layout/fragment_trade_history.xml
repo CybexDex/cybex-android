@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="@dimen/layout_header_order_history_padding"
-        android:paddingBottom="@dimen/layout_header_order_history_padding">
+        android:paddingTop="@dimen/padding_6"
+        android:paddingBottom="@dimen/padding_6">
 
         <TextView
             android:id="@+id/market_page_base_asset_price"
@@ -56,8 +56,8 @@
         android:name="com.cybexmobile.Fragments.MarketTradeHistory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/recycler_view_margin_start_end"
-        android:layout_marginEnd="@dimen/recycler_view_margin_start_end"
+        android:layout_marginStart="@dimen/margin_6"
+        android:layout_marginEnd="@dimen/margin_6"
         tools:context="com.cybexmobile.fragment.MarketTradeHistoryFragment"
         tools:listitem="@layout/item_trade_history" />
 

@@ -15,8 +15,8 @@
                 android:id="@+id/item_exchange_open_order_tv_buy_sell"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="@dimen/text_sell_or_buy_padding"
-                android:paddingEnd="@dimen/text_sell_or_buy_padding"
+                android:paddingStart="@dimen/padding_6"
+                android:paddingEnd="@dimen/padding_6"
                 android:text="@string/text_empty"
                 style="@style/font_white_xxsmall"
                 android:gravity="center"
@@ -28,7 +28,7 @@
                 style="@style/font_white_dark_bold_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/text_quote_margin_start"
+                android:layout_marginStart="@dimen/margin_8"
                 android:text="@string/text_empty" />
 
             <TextView
@@ -58,7 +58,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/text_volume_margin_top">
+        android:layout_marginTop="@dimen/margin_6">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
                     style="@style/font_gray_bold_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_quote_margin_start"
+                    android:layout_marginStart="@dimen/margin_8"
                     android:text="@string/text_empty" />
 
             </LinearLayout>
@@ -90,7 +90,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/text_volume_margin_top"
+                android:layout_marginTop="@dimen/margin_3"
                 android:orientation="horizontal">
 
                 <TextView
@@ -104,7 +104,7 @@
                     style="@style/font_gray_bold_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_quote_margin_start"
+                    android:layout_marginStart="@dimen/margin_8"
                     android:text="@string/text_empty" />
 
             </LinearLayout>

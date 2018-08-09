@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_empty"
-            android:layout_marginStart="@dimen/text_quote_margin_start"/>
+            android:layout_marginStart="@dimen/margin_8"/>
 
         <TextView
             android:id="@+id/base_currency_watchlist"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/coinpair_linear_layout"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/text_price_margin_end"
+        android:layout_marginEnd="@dimen/margin_111"
         android:maxLines="1"
         android:text="@string/text_empty" />
 
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/coinpair_linear_layout"
         android:layout_below="@id/coinpair_linear_layout"
-        android:layout_marginTop="@dimen/text_volume_margin_top"
+        android:layout_marginTop="@dimen/margin_6"
         android:orientation="horizontal">
 
         <TextView
@@ -63,7 +63,7 @@
             style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/text_volume_margin_start"
+            android:layout_marginLeft="@dimen/margin_3"
             android:text="@string/text_empty" />
 
     </LinearLayout>
@@ -81,8 +81,8 @@
     <TextView
         android:id="@+id/change_rate_watchlist"
         style="@style/font_white_bold_large"
-        android:layout_width="@dimen/text_rate_width"
-        android:layout_height="@dimen/text_rate_height"
+        android:layout_width="@dimen/width_80"
+        android:layout_height="@dimen/height_32"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:background="@color/increasing_color"

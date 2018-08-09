@@ -1,17 +1,73 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_margin">13dp</dimen>
-    <dimen name="activity_padding">13dp</dimen>
-    <dimen name="activity_margin_double">26dp</dimen>
-    <dimen name="activity_padding_double">26dp</dimen>
-    <dimen name="activity_margin_triple">39dp</dimen>
-    <dimen name="activity_padding_triple">39dp</dimen>
-    <dimen name="android_status_bar_height">24dp</dimen>
+    <dimen name="activity_margin">12dp</dimen>
+    <dimen name="activity_padding">12dp</dimen>
+    <dimen name="activity_margin_double">24dp</dimen>
+    <dimen name="activity_padding_double">24dp</dimen>
+    <dimen name="activity_margin_triple">36dp</dimen>
+    <dimen name="activity_padding_triple">36dp</dimen>
+    <dimen name="dialog_padding">18dp</dimen>
+    <dimen name="dialog_margin">18dp</dimen>
+
+    <!-- width -->
+    <dimen name="width_1">1dp</dimen>
+    <dimen name="width_16">16dp</dimen>
+    <dimen name="width_24">24dp</dimen>
+    <dimen name="width_80">80dp</dimen>
+    <dimen name="width_40">40dp</dimen>
+    <dimen name="width_56">56dp</dimen>
+    <dimen name="width_60">60dp</dimen>
+    <dimen name="width_65">65dp</dimen>
+    <dimen name="width_100">100dp</dimen>
+    <dimen name="width_130">130dp</dimen>
+    <dimen name="width_155">155dp</dimen>
+    <dimen name="width_200">200dp</dimen>
+    <dimen name="width_220">220dp</dimen>
+
+    <!-- height -->
+    <dimen name="height_1">1dp</dimen>
+    <dimen name="height_2">2dp</dimen>
+    <dimen name="height_5">5dp</dimen>
+    <dimen name="height_16">16dp</dimen>
+    <dimen name="height_24">24dp</dimen>
+    <dimen name="height_26">26dp</dimen>
+    <dimen name="height_32">32dp</dimen>
+    <dimen name="height_40">40dp</dimen>
+    <dimen name="height_48">48dp</dimen>
+    <dimen name="height_50">50dp</dimen>
+    <dimen name="height_56">56dp</dimen>
+    <dimen name="height_60">60dp</dimen>
+    <dimen name="height_68">68dp</dimen>
+    <dimen name="height_80">80dp</dimen>
+    <dimen name="height_110">110dp</dimen>
+    <dimen name="height_155">155dp</dimen>
+    <dimen name="height_162">162dp</dimen>
+    <dimen name="height_180">180dp</dimen>
+    <dimen name="height_200">200dp</dimen>
+
+    <!-- margin -->
+    <dimen name="margin_3">3dp</dimen>
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_22">22dp</dimen>
+    <dimen name="margin_40">40dp</dimen>
+    <dimen name="margin_50">50dp</dimen>
+    <dimen name="margin_74">74dp</dimen>
+    <dimen name="margin_111">111dp</dimen>
+
+    <!-- padding -->
+    <dimen name="padding_3">3dp</dimen>
+    <dimen name="padding_6">6dp</dimen>
+    <dimen name="padding_8">8dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_18">18dp</dimen>
+    <dimen name="padding_24">24dp</dimen>
 
     <!-- font size -->
     <dimen name="font_xxxxlarge">24sp</dimen>
     <dimen name="font_xxxlarge">22sp</dimen>
-    <dimen name="font_title_large">24sp</dimen>
     <dimen name="font_xxlarge">20sp</dimen>
     <dimen name="font_xlarge">18sp</dimen>
     <dimen name="font_large">16sp</dimen>
@@ -20,113 +76,16 @@
     <dimen name="font_xsmall">10sp</dimen>
     <dimen name="font_xxsmall">8sp</dimen>
 
-    <!-- dialog -->
-    <dimen name="dialog_padding">18dp</dimen>
-    <dimen name="dialog_margin">18dp</dimen>
+    <!-- line spacing extra -->
+    <dimen name="line_spacing_extra_4">4dp</dimen>
+    <dimen name="line_spacing_extra_8">8dp</dimen>
+    <dimen name="line_spacing_extra_10">10dp</dimen>
 
-    <!-- Splash Activity -->
-    <dimen name="text_splash_margin_bottom">10dp</dimen>
+    <!-- corner radius -->
+    <dimen name="corner_radius_4">4dp</dimen>
+    <dimen name="corner_radius_2">2dp</dimen>
 
-    <!-- Watch List Fragment -->
-    <dimen name="text_hint_margin_end">111dp</dimen>
+    <!-- elevation -->
+    <dimen name="elevation_3">3dp</dimen>
 
-    <!-- Watch List Item -->
-    <dimen name="item_elevation">3dp</dimen>
-    <dimen name="text_rate_width">80dp</dimen>
-    <dimen name="text_rate_height">32dp</dimen>
-    <dimen name="text_price_margin_end">111dp</dimen>
-    <dimen name="text_quote_margin_start">8dp</dimen>
-    <dimen name="text_volume_margin_top">5dp</dimen>
-
-    <!-- Lockup Assets Item -->
-    <dimen name="text_asset_price_padding_top">9dp</dimen>
-    <dimen name="text_asset_price_padding_bottom">5dp</dimen>
-    <dimen name="progress_asset_width">60dp</dimen>
-    <dimen name="progress_asset_height">5dp</dimen>
-    <dimen name="text_sell_or_buy_padding">5dp</dimen>
-
-    <!-- Portfolio Horizontal Item -->
-    <dimen name="card_width">218dp</dimen>
-    <dimen name="image_asset_width_height">16dp</dimen>
-
-    <!-- Account Fragment -->
-    <dimen name="webview_width_height">56dp</dimen>
-    <dimen name="text_line_spacing_extra">8dp</dimen>
-    <dimen name="text_line_spacing_extra_small">4dp</dimen>
-    <dimen name="layout_item_height">60dp</dimen>
-
-    <!-- Login Activity -->
-    <dimen name="image_logo_margin_top_bottom">15dp</dimen>
-    <dimen name="layout_login_margin_top">50dp</dimen>
-    <dimen name="btn_login_margin_top">74dp</dimen>
-    <dimen name="text_register_margin_bottom">40dp</dimen>
-
-    <!-- Register Activity -->
-    <dimen name="layout_register_margin_top">22dp</dimen>
-    <dimen name="image_success_margin_end">6dp</dimen>
-    <dimen name="image_pin_code_width">99dp</dimen>
-    <dimen name="image_pin_code_height">33dp</dimen>
-    <dimen name="layout_error_hint_height">54dp</dimen>
-    <dimen name="btn_register_margin_top">7dp</dimen>
-
-    <!-- Wallet Introduction Activity -->
-    <dimen name="layout_wallet_padding">20dp</dimen>
-
-    <!-- Setting Activity -->
-    <dimen name="cardview_hint_margin_top">8dp</dimen>
-    <dimen name="text_drawable_padding">3dp</dimen>
-
-    <!-- Markets Activity -->
-    <dimen name="text_kline_header_margin_start">10dp</dimen>
-    <dimen name="text_kline_header_price_margin_top">6dp</dimen>
-    <dimen name="layout_kline_header_type_padding">6dp</dimen>
-    <dimen name="text_kline_header_value_margin_start">3dp</dimen>
-    <dimen name="text_volume_margin_start">3dp</dimen>
-    <dimen name="text_marker_padding">3dp</dimen>
-    <dimen name="layout_kline_height">180dp</dimen>
-    <dimen name="layout_volume_height">40dp</dimen>
-    <dimen name="tab_order_margin_top">26dp</dimen>
-    <dimen name="layout_footer_padding">6.5dp</dimen>
-    <dimen name="btn_buy_sell_margin">6.5dp</dimen>
-
-    <!-- Load Dialog -->
-    <dimen name="dialog_width_height">80dp</dimen>
-    <dimen name="dialog_progress_width_height">40dp</dimen>
-
-    <!-- Balance Dialog -->
-    <dimen name="dialog_content_line_spacing_extra">10dp</dimen>
-
-    <!-- OrderHistoryList Fragment -->
-    <dimen name="layout_header_order_history_padding">6dp</dimen>
-
-    <!-- Open Order Activity -->
-    <dimen name="recycler_view_margin_top">10dp</dimen>
-
-    <!-- order history fragment and trade history fragment -->
-    <dimen name="recycler_view_margin_start_end">5dp</dimen>
-    <dimen name="text_margin">16dp</dimen>
-
-    <dimen name="layout_item_buy_sell_height">26dp</dimen>
-    <dimen name="layout_input_header_height">24dp</dimen>
-    <dimen name="layout_input_height">48dp</dimen>
-    <dimen name="text_add_sub_width">40dp</dimen>
-    <dimen name="text_asset_symbol">65dp</dimen>
-    <dimen name="layout_trade_history_height">34dp</dimen>
-
-    <dimen name="dialog_content_margin_start">8dp</dimen>
-    <dimen name="dialog_line_height">24dp</dimen>
-
-    <!-- withdraw/deposit line spacing -->
-    <dimen name="withdraw_deposit_line_spacing">4dp</dimen>
-
-    <dimen name="toast_width">220dp</dimen>
-    <dimen name="toast_height">110dp</dimen>
-    <dimen name="toast_image_width_height">24dp</dimen>
-    <dimen name="toast_message_margin_top">5dp</dimen>
-
-    <dimen name="text_memo_max_width">200dp</dimen>
-    <dimen name="layout_padding_top_bottom">16dp</dimen>
-    <dimen name="item_line_margin_top">4dp</dimen>
-
-    <dimen name="dialog_asset_select_height">200dp</dimen>
 </resources>

@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_item"
-            android:layout_marginTop="@dimen/cardview_hint_margin_top"
+            android:layout_marginTop="@dimen/margin_8"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -62,7 +62,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/height_1"
                 android:background="@color/colorPrimary"/>
 
             <RelativeLayout

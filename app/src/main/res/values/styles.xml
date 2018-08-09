@@ -188,17 +188,17 @@
     </style>
 
     <!-- font white -->
+    <style name="font_white_bold_xxxxlarge" parent="font_white">
+        <item name="android:textSize">@dimen/font_xxxxlarge</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="font_white_bold_medium" parent="font_white_medium">
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="font_white_medium" parent="font_white">
         <item name="android:textSize">@dimen/font_medium</item>
-    </style>
-
-    <style name="font_white_title_large_bold" parent="font_white">
-        <item name="android:textSize">@dimen/font_title_large</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="font_white_bold_large" parent="font_white_large">

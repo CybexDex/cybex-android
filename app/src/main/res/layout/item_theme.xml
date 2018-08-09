@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         style="@style/font_white_dark_bold_large"
         android:layout_centerVertical="true"/>
+
     <RadioButton
         android:id="@+id/theme_radio_button"
         android:layout_width="wrap_content"

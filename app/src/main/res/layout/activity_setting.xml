@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/itemBackground"
-            app:cardCornerRadius="4dp"
+            app:cardCornerRadius="@dimen/corner_radius_4"
             app:cardUseCompatPadding="true"
             android:layout_marginTop="@dimen/activity_margin">
 
@@ -62,14 +62,14 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerHorizontal="true"
-                        android:drawablePadding="@dimen/text_drawable_padding"
+                        android:drawablePadding="@dimen/padding_3"
                         android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
 
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/height_1"
                     android:background="@color/colorPrimary"/>
 
                 <RelativeLayout
@@ -92,14 +92,14 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerHorizontal="true"
                         android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                        android:drawablePadding="@dimen/text_drawable_padding"
+                        android:drawablePadding="@dimen/padding_3"
                         style="@style/font_grey_medium" />
 
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/height_1"
                     android:background="@color/colorPrimary"/>
 
                 <RelativeLayout
@@ -122,7 +122,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerHorizontal="true"
                         android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
-                        android:drawablePadding="@dimen/text_drawable_padding"
+                        android:drawablePadding="@dimen/padding_3"
                         style="@style/font_grey_medium" />
 
                 </RelativeLayout>
@@ -135,7 +135,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/itemBackground"
-            app:cardCornerRadius="4dp"
+            app:cardCornerRadius="@dimen/corner_radius_4"
             app:cardUseCompatPadding="true"
             android:layout_marginTop="@dimen/activity_margin">
 
@@ -158,7 +158,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerHorizontal="true"
-                    android:drawablePadding="@dimen/text_drawable_padding"
+                    android:drawablePadding="@dimen/padding_3"
                     style="@style/font_grey_medium"
                     android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
             </RelativeLayout>

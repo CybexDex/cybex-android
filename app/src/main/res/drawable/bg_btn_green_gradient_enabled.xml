@@ -7,7 +7,7 @@
                 android:startColor="@color/btn_green_start"
                 android:endColor="@color/btn_green_end" />
             <corners
-                android:radius="4dp"/>
+                android:radius="@dimen/corner_radius_4"/>
         </shape>
     </item>
 
@@ -18,7 +18,7 @@
                 android:startColor="@color/btn_grey_end"
                 android:endColor="@color/btn_grey_end" />
             <corners
-                android:radius="4dp"/>
+                android:radius="@dimen/corner_radius_4"/>
         </shape>
     </item>
 

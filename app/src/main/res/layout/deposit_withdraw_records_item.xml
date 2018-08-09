@@ -23,8 +23,8 @@
 
                 <ImageView
                     android:id="@+id/item_deposit_withdraw_asset_icon"
-                    android:layout_width="@dimen/image_asset_width_height"
-                    android:layout_height="@dimen/image_asset_width_height"
+                    android:layout_width="@dimen/width_16"
+                    android:layout_height="@dimen/height_16"
                     android:layout_gravity="center" />
 
                 <TextView
@@ -32,7 +32,7 @@
                     style="@style/font_white_dark_bold_large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_quote_margin_start"
+                    android:layout_marginStart="@dimen/margin_8"
                     android:text="@string/text_empty" />
 
             </LinearLayout>
@@ -50,7 +50,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_margin">
+            android:layout_marginTop="@dimen/margin_6">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -84,6 +84,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_3"
             android:orientation="horizontal">
             <TextView
                 style="@style/font_gray_small"

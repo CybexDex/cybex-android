@@ -6,8 +6,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="@dimen/toast_width"
-        android:minHeight="@dimen/toast_height"
+        android:minWidth="@dimen/width_220"
+        android:minHeight="@dimen/height_110"
         android:background="@drawable/bg_toast_message"
         android:gravity="center"
         android:orientation="vertical"
@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/toast_center_message_icon"
-            android:layout_width="@dimen/toast_image_width_height"
-            android:layout_height="@dimen/toast_image_width_height"
+            android:layout_width="@dimen/width_24"
+            android:layout_height="@dimen/height_24"
             android:layout_gravity="center" />
 
         <TextView
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/toast_message_margin_top" />
+            android:layout_marginTop="@dimen/margin_6" />
 
     </LinearLayout>
 </RelativeLayout>

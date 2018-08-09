@@ -45,7 +45,7 @@
                 style="@style/font_white_dark_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="@dimen/margin_6"
                 android:text="@string/text_empty" />
         </LinearLayout>
 
@@ -65,7 +65,7 @@
                 style="@style/font_white_dark_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="@dimen/margin_6"
                 android:text="@string/text_empty" />
         </LinearLayout>
 
@@ -85,7 +85,7 @@
                 style="@style/font_white_dark_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="@dimen/margin_6"
                 android:text="@string/text_empty" />
 
         </LinearLayout>
@@ -106,7 +106,7 @@
                 style="@style/font_white_dark_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="@dimen/margin_6"
                 android:text="@string/text_empty" />
         </LinearLayout>
 
@@ -124,7 +124,7 @@
             <TextView
                 android:id="@+id/confirm_dialog_receive_amount"
                 style="@style/font_white_dark_medium"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="@dimen/margin_6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_empty" />
@@ -136,7 +136,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/height_1"
         android:background="@color/divider_color" />
 
     <include layout="@layout/include_dialog_footer" />

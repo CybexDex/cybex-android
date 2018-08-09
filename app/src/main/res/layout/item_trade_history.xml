@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:weightSum="4"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:weightSum="4">
 
     <me.grantland.widget.AutofitTextView
         android:id="@+id/market_page_trade_history_price_value"

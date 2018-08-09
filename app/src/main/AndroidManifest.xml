@@ -72,10 +72,6 @@
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.PortfolioActivity"
-            android:label=""
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.LockAssetsActivity"
             android:label=""
             android:screenOrientation="portrait" />
