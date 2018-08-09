@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -378,6 +379,7 @@ public class WithdrawActivity extends BaseActivity {
             return;
         }
         String memo = getMemo(address, mAssetName, eosMemo);
+        Log.e("memo", memo);
         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, "1.3.0", 0);
         double cybBalance = getBalance(mFullAccountObject, "1.3.0");
         try {
@@ -485,7 +487,10 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private String getMemo(String address, String assetName, String memo) {
-        return "withdraw:" + "CybexGateway:" + assetName + ":" + address + ":" + memo;
+        if (mAssetName.equals(EOS)) {
+            return "withdraw:" + "CybexGateway:" + assetName + ":" + address + "[" + memo + "]";
+        }
+        return "withdraw:" + "CybexGateway:" + assetName + ":" + address;
     }
 
     private void getNoneCybFee(String memo) {
