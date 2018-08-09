@@ -309,7 +309,6 @@ public class AccountBalanceActivity extends BaseActivity {
                     for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
                         if (limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0")) {
                             mTotalBalanceCyb += limitOrderObject.for_sale / Math.pow(10, 5);
-                            Log.e("shefengLimitValue", String.valueOf(limitOrderObject.for_sale / Math.pow(10, 5)));
                             item.frozenAmount += limitOrderObject.for_sale / Math.pow(10, 5);
 
                         }
@@ -363,7 +362,6 @@ public class AccountBalanceActivity extends BaseActivity {
                     for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
                         if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString()) && !limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0")) {
                             mTotalBalanceCyb += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
-                            Log.e("shefengTotalLimitTicker", String.valueOf((limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest));
                             item.frozenAmount += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision));
                         }
                     }
