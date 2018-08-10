@@ -3,6 +3,7 @@ package com.cybexmobile.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,11 +67,8 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
                 e.printStackTrace();
             }
         }
-        if (change > 10) {
-            holder.mChangeRate.setTextSize(12);
-        } else {
-            holder.mChangeRate.setTextSize(16);
-        }
+        holder.mChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
             holder.mChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
             holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.increasing_color));

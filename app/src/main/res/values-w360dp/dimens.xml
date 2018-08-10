@@ -1,0 +1,93 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- 适配屏幕大小1920x1080 dpi480 -->
+    <dimen name="activity_margin">10dp</dimen>
+    <dimen name="activity_padding">10dp</dimen>
+    <dimen name="activity_margin_double">20dp</dimen>
+    <dimen name="activity_padding_double">20dp</dimen>
+    <dimen name="activity_margin_triple">30dp</dimen>
+    <dimen name="activity_padding_triple">30dp</dimen>
+    <dimen name="dialog_padding">15dp</dimen>
+    <dimen name="dialog_margin">15dp</dimen>
+
+    <!-- width -->
+    <dimen name="width_1">0.83dp</dimen>
+    <dimen name="width_16">13.33dp</dimen>
+    <dimen name="width_24">20dp</dimen>
+    <dimen name="width_80">66.66dp</dimen>
+    <dimen name="width_40">33.33dp</dimen>
+    <dimen name="width_56">46.66dp</dimen>
+    <dimen name="width_60">50dp</dimen>
+    <dimen name="width_65">54.16dp</dimen>
+    <dimen name="width_100">83.33dp</dimen>
+    <dimen name="width_130">108.33dp</dimen>
+    <dimen name="width_155">129.16dp</dimen>
+    <dimen name="width_200">166.66dp</dimen>
+    <dimen name="width_220">183.33dp</dimen>
+
+    <!-- height -->
+    <dimen name="height_1">0.83dp</dimen>
+    <dimen name="height_2">1.66dp</dimen>
+    <dimen name="height_5">4.16dp</dimen>
+    <dimen name="height_16">13.33dp</dimen>
+    <dimen name="height_24">20dp</dimen>
+    <dimen name="height_26">21.66dp</dimen>
+    <dimen name="height_32">26.66dp</dimen>
+    <dimen name="height_40">33.33dp</dimen>
+    <dimen name="height_48">40dp</dimen>
+    <dimen name="height_50">41.66dp</dimen>
+    <dimen name="height_56">46.66dp</dimen>
+    <dimen name="height_60">50dp</dimen>
+    <dimen name="height_68">56.66dp</dimen>
+    <dimen name="height_80">66.66dp</dimen>
+    <dimen name="height_110">91.66dp</dimen>
+    <dimen name="height_155">129.16dp</dimen>
+    <dimen name="height_162">135dp</dimen>
+    <dimen name="height_180">150dp</dimen>
+    <dimen name="height_200">166.66dp</dimen>
+
+    <!-- margin -->
+    <dimen name="margin_3">2.49dp</dimen>
+    <dimen name="margin_6">4.99dp</dimen>
+    <dimen name="margin_8">6.66dp</dimen>
+    <dimen name="margin_10">8.33dp</dimen>
+    <dimen name="margin_16">13.33dp</dimen>
+    <dimen name="margin_22">18.33dp</dimen>
+    <dimen name="margin_40">33.33dp</dimen>
+    <dimen name="margin_50">41.66dp</dimen>
+    <dimen name="margin_74">61.66dp</dimen>
+    <dimen name="margin_111">92.49dp</dimen>
+
+    <!-- padding -->
+    <dimen name="padding_3">2.49dp</dimen>
+    <dimen name="padding_6">4.99dp</dimen>
+    <dimen name="padding_8">6.66dp</dimen>
+    <dimen name="padding_16">13.33dp</dimen>
+    <dimen name="padding_18">15dp</dimen>
+    <dimen name="padding_24">20dp</dimen>
+
+    <!-- font size -->
+    <dimen name="font_34">28.33sp</dimen>
+    <dimen name="font_xxxxlarge">20sp</dimen>
+    <dimen name="font_xxxlarge">18.33sp</dimen>
+    <dimen name="font_xxlarge">16.66sp</dimen>
+    <dimen name="font_xlarge">15sp</dimen>
+    <dimen name="font_large">13.33sp</dimen>
+    <dimen name="font_medium">11.66sp</dimen>
+    <dimen name="font_small">10sp</dimen>
+    <dimen name="font_xsmall">8.33sp</dimen>
+    <dimen name="font_xxsmall">6.66sp</dimen>
+
+    <!-- line spacing extra -->
+    <dimen name="line_spacing_extra_4">3.33dp</dimen>
+    <dimen name="line_spacing_extra_8">6.66dp</dimen>
+    <dimen name="line_spacing_extra_10">8.33dp</dimen>
+
+    <!-- corner radius -->
+    <dimen name="corner_radius_4">3.33dp</dimen>
+    <dimen name="corner_radius_2">1.66dp</dimen>
+
+    <!-- elevation -->
+    <dimen name="elevation_3">2.49dp</dimen>
+
+</resources>
