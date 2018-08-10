@@ -1,6 +1,7 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <!-- 适配屏幕大小1920x1080 dpi480 -->
+    <!-- 适配屏幕大小1280x720 dpi320 -->
     <dimen name="activity_margin">10dp</dimen>
     <dimen name="activity_padding">10dp</dimen>
     <dimen name="activity_margin_double">20dp</dimen>

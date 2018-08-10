@@ -16,10 +16,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.cybexmobile.R;
-import com.cybexmobile.adapter.ExchangeOpenOrderRecyclerViewAdapter;
+import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
@@ -70,7 +69,7 @@ import static com.cybexmobile.utils.Constant.PREF_NAME;
 /**
  * 交易界面当前用户当前交易对委单
  */
-public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrderRecyclerViewAdapter.OnItemClickListener {
+public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecyclerViewAdapter.OnItemClickListener {
 
     @BindView(R.id.open_orders_recycler_view)
     RecyclerView mRvOpenOrders;
@@ -83,7 +82,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
     private Unbinder mUnbinder;
 
     private WebSocketService mWebSocketService;
-    private ExchangeOpenOrderRecyclerViewAdapter mOpenOrderRecyclerViewAdapter;
+    private OpenOrderRecyclerViewAdapter mOpenOrderRecyclerViewAdapter;
 
     private boolean mIsLoginIn;
     private String mName;
@@ -131,7 +130,7 @@ public class OpenOrdersFragment extends BaseFragment implements ExchangeOpenOrde
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mOpenOrderRecyclerViewAdapter = new ExchangeOpenOrderRecyclerViewAdapter(getContext(), mOpenOrderItems);
+        mOpenOrderRecyclerViewAdapter = new OpenOrderRecyclerViewAdapter(getContext(), mOpenOrderItems);
         mOpenOrderRecyclerViewAdapter.setOnItemClickListener(this);
         mRvOpenOrders.setAdapter(mOpenOrderRecyclerViewAdapter);
     }

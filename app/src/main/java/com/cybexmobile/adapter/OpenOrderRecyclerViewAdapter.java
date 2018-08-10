@@ -1,6 +1,7 @@
 package com.cybexmobile.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,65 +12,70 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.activity.OpenOrdersActivity;
+import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LimitOrderObject;
 import com.cybexmobile.utils.AssetUtil;
-import com.cybexmobile.utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrderRecyclerViewAdapter.ViewHolder> implements Filterable {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+
+    private final static int TYPE_EMPTY = 0;
+    private final static int TYPE_CONTENT = 1;
 
     private List<OpenOrderItem> mOpenOrderItems;
     private List<OpenOrderItem> mOriginalOpenOrderItems;
     private Context mContext;
-    private double mTotal;
-    private getTotalValueInterface mListener;
+    private OnItemClickListener mOnItemClickListener;
 
-    public interface getTotalValueInterface {
-        void displayTotalValue(double total);
-    }
-
-    public OpenOrderRecyclerViewAdapter(List<OpenOrderItem> dataList, Context context, getTotalValueInterface listener) {
+    public OpenOrderRecyclerViewAdapter(Context context, List<OpenOrderItem> dataList) {
         mOpenOrderItems = dataList;
         mOriginalOpenOrderItems = dataList;
         mContext = context;
-        mListener = listener;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        View mView;
-        TextView mSellOrBuyTextView;
-        TextView mBaseTextView;
-        TextView mQuoteTextView;
-        TextView mVolumeTextView;
-        TextView mPriceTextView;
+    public void setOpenOrderItems(List<OpenOrderItem> openOrderItems){
+        mOpenOrderItems = openOrderItems;
+        mOriginalOpenOrderItems = openOrderItems;
+        notifyDataSetChanged();
+    }
 
-        ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mSellOrBuyTextView = view.findViewById(R.id.sell_or_buy_text);
-            mBaseTextView = view.findViewById(R.id.base_currency_open_order);
-            mQuoteTextView = view.findViewById(R.id.quote_currency_open_order);
-            mVolumeTextView = view.findViewById(R.id.volume);
-            mPriceTextView = view.findViewById(R.id.current_price_open_order);
-        }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mOnItemClickListener = listener;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = null;
+        if(viewType == TYPE_EMPTY){
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
+            return new EmptyViewHolder(view);
+        }
+        view = LayoutInflater.from(mContext).inflate(R.layout.item_exchange_open_order, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(holder instanceof EmptyViewHolder){
+            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_open_order));
+            return;
+        }
+        ViewHolder viewHolder = (ViewHolder) holder;
         OpenOrderItem openOrderItem = mOpenOrderItems.get(position);
         AssetObject base = openOrderItem.openOrder.getBaseObject();
         AssetObject quote = openOrderItem.openOrder.getQuoteObject();
         LimitOrderObject data = openOrderItem.openOrder.getLimitOrder();
         double amount;
         double price;
-        if (position == 0) {
-            mTotal = 0;
-        }
         if (base != null && quote != null) {
             if ((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE")) ||
                     (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE"))) {
@@ -84,29 +90,34 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                 holder.itemView.setVisibility(View.VISIBLE);
                 String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
                 String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
-                //String quotePrecision = MyUtils.getPrecisedFormatter(quote.precision);
                 if (openOrderItem.isSell) {
+                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
+                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
+                    price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), quoteSymbol));
                     /**
-                     * fix bug:CYM-426
+                     * fix bug:CYM-349
                      * 订单部分撮合
                      */
-                    holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_sell));
-                    holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
                     amount = data.for_sale / Math.pow(10, base.precision);
-                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), AssetUtil.formatNumberRounding(amount, base.precision), baseSymbol));
-                    holder.mQuoteTextView.setText(baseSymbol);
-                    holder.mBaseTextView.setText(String.format("/%s", quoteSymbol));
-                    price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
-                    holder.mPriceTextView.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, quote.precision), quoteSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), baseSymbol));
+                    viewHolder.mTvQuoteSymbol.setText(baseSymbol);
+                    viewHolder.mTvBaseSymbol.setText(quoteSymbol);
+                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price * amount, AssetUtil.pricePrecision(price)), quoteSymbol));
                 } else {
-                    holder.mSellOrBuyTextView.setText(mContext.getResources().getString(R.string.open_order_buy));
-                    holder.mSellOrBuyTextView.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
+                    /**
+                     * fix bug:CYM-412
+                     * 买单数据显示错误
+                     */
+                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
+                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
                     amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                    holder.mVolumeTextView.setText(String.format("%s %s %s", mContext.getResources().getString(R.string.open_orders_volume), AssetUtil.formatNumberRounding(amount, quote.precision), quoteSymbol));
-                    holder.mQuoteTextView.setText(quoteSymbol);
-                    holder.mBaseTextView.setText(String.format("/%s", baseSymbol));
-                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / (data.sell_price.quote.amount / Math.pow(10, quote.precision));
-                    holder.mPriceTextView.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, base.precision), baseSymbol));
+                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / amount;
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), baseSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), quoteSymbol));
+                    viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
+                    viewHolder.mTvBaseSymbol.setText(baseSymbol);
+                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(data.for_sale / Math.pow(10, base.precision), AssetUtil.pricePrecision(price)), baseSymbol));
                 }
             }
         }else{
@@ -114,19 +125,17 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
                 layoutParams.height = 0;
                 layoutParams.width = 0;
                 holder.itemView.setVisibility(View.GONE);
-            }
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mOpenOrderItems.size();
+        return mOpenOrderItems == null || mOpenOrderItems.size() == 0 ? 1 : mOpenOrderItems.size();
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_open_order, parent, false);
-        return new ViewHolder(view);
+    public int getItemViewType(int position) {
+        return mOpenOrderItems == null || mOpenOrderItems.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
     }
 
     @Override
@@ -164,4 +173,38 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<OpenOrder
             notifyDataSetChanged();
         }
     }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.item_exchange_open_order_tv_buy_sell)
+        TextView mTvBuySell;
+        @BindView(R.id.item_exchange_open_order_tv_quote_symbol)
+        TextView mTvQuoteSymbol;
+        @BindView(R.id.item_exchange_open_order_tv_base_symbol)
+        TextView mTvBaseSymbol;
+        @BindView(R.id.item_exchange_open_order_tv_filled)
+        TextView mTvFilled;
+        @BindView(R.id.item_exchange_open_order_tv_asset_price)
+        TextView mTvAssetPrice;
+        @BindView(R.id.item_exchange_open_order_tv_asset_amount)
+        TextView mTvAssetAmount;
+        @BindView(R.id.item_exchange_open_order_btn_cancel)
+        TextView mBtnCancel;
+
+        ViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+
+        @OnClick(R.id.item_exchange_open_order_btn_cancel)
+        public void onCancelClick(View view){
+            if(mOnItemClickListener != null){
+                mOnItemClickListener.onItemClick(mOpenOrderItems.get(getAdapterPosition()));
+            }
+        }
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(OpenOrderItem itemValue);
+    }
+
 }
