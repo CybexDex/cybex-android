@@ -148,6 +148,7 @@
     <string name="create_account_pin_code_not_correct">Incorrect verify code</string>
     <string name="create_account_failure">create account is failed</string>
     <string name="create_account_password_must_at_least_12_characters">The password must at least 12 characters</string>
+    <string name="create_account_password_error">Password must be at least 12 characters and must contain upper case, lower case, numbers and special characters</string>
     <string name="create_account_password_confirm_error">Two passwords do not match</string>
 
     <!-- Open Orders Page Related -->

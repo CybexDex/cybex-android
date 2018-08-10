@@ -201,8 +201,8 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String strPassword = s.toString();
-                if (strPassword.length() < 12) {
-                    mRegisterErrorText.setText(R.string.create_account_password_must_at_least_12_characters);
+                if (!strPassword.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
+                    mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
                     mPasswordChecker.setVisibility(View.GONE);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                 } else {
