@@ -94,16 +94,16 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
                     price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), quoteSymbol));
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, quote.precision), quoteSymbol));
                     /**
                      * fix bug:CYM-349
                      * 订单部分撮合
                      */
                     amount = data.for_sale / Math.pow(10, base.precision);
-                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), baseSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, base.precision), baseSymbol));
                     viewHolder.mTvQuoteSymbol.setText(baseSymbol);
                     viewHolder.mTvBaseSymbol.setText(quoteSymbol);
-                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price * amount, AssetUtil.pricePrecision(price)), quoteSymbol));
+                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price * amount, quote.precision), quoteSymbol));
                 } else {
                     /**
                      * fix bug:CYM-412
@@ -113,11 +113,11 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
                     amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
                     price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / amount;
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), baseSymbol));
-                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), quoteSymbol));
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, base.precision), baseSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, quote.precision), quoteSymbol));
                     viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
                     viewHolder.mTvBaseSymbol.setText(baseSymbol);
-                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(data.for_sale / Math.pow(10, base.precision), AssetUtil.pricePrecision(price)), baseSymbol));
+                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(data.for_sale / Math.pow(10, base.precision), base.precision), baseSymbol));
                 }
             }
         }else{
