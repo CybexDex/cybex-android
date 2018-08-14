@@ -347,5 +347,11 @@
     <string name="text_transfer_account">Transfer Account</string>
     <string name="text_transfer_account_manager">Transfer Account Manager</string>
     <string name="text_add_transfer_account">Add Transfer Account</string>
+    <string name="text_account">Account</string>
+    <string name="text_label">Label</string>
+    <string name="text_add">Add</string>
+    <string name="text_add_transfer_account_successful">Add transfer account successful</string>
+    <string name="text_add_transfer_account_failed">Add transfer account failed</string>
+
 
 </resources>

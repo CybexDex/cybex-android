@@ -10,6 +10,8 @@ public interface DBProvider {
 
     Observable<List<Address>> getAddress(String account, String token, int type);
 
+    Observable<List<Address>> getAddress(String account, int type);
+
     Observable<Long> insertAddress(Address address);
 
     Observable<Void> deleteAddress(long id);

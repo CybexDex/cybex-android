@@ -37,6 +37,23 @@ public class DBProviderImpl implements DBProvider{
     }
 
     @Override
+    public Observable<List<Address>> getAddress(final String account, final int type) {
+        return Observable.create(new ObservableOnSubscribe<List<Address>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Address>> e) throws Exception {
+                if(e.isDisposed()){
+                    return;
+                }
+                e.onNext(mDaoSession.getAddressDao().queryBuilder()
+                        .where(AddressDao.Properties.Account.eq(account),
+                                AddressDao.Properties.Type.eq(type))
+                        .list());
+                e.onComplete();
+            }
+        });
+    }
+
+    @Override
     public Observable<Long> insertAddress(final Address address) {
         return Observable.create(new ObservableOnSubscribe<Long>() {
             @Override

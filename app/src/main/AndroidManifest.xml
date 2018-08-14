@@ -125,6 +125,12 @@
             android:label=""
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".activity.address.AddTransferAccountActivity"
+            android:label=""
+            android:screenOrientation="portrait"/>
+
+
         <service android:name=".service.WebSocketService" />
 
     </application>
