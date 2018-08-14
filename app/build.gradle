@@ -110,4 +110,5 @@ dependencies {
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
     implementation project(':MPChartLib')
     implementation project(':ui-smart-refresh')
+    implementation project(':database-provider')
 }
