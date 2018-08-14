@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cybexmobile.activity.address.AddressManagerActivity"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey"
+        app:navigationIcon="@drawable/ic_arrow_forward_16px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_address_manager"
+            android:layout_gravity="center"
+            style="@style/font_white_dark_bold_large" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/activity_padding"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_item"
+            android:paddingStart="@dimen/activity_padding"
+            android:paddingEnd="@dimen/activity_padding"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/address_manager_tv_withdraw_address"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_54"
+                android:gravity="center_vertical"
+                android:text="@string/text_withdraw_address"
+                style="@style/font_white_dark_large"
+                android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_1"
+                android:background="@color/colorPrimary"/>
+
+            <TextView
+                android:id="@+id/address_manager_tv_transfer_account"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_54"
+                android:gravity="center_vertical"
+                android:text="@string/text_transfer_account"
+                style="@style/font_white_dark_large"
+                android:drawableEnd="@drawable/ic_arrow_forward_right_16_px" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

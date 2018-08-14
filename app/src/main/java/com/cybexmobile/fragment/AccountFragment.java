@@ -23,6 +23,7 @@ import com.cybexmobile.activity.LockAssetsActivity;
 import com.cybexmobile.activity.LoginActivity;
 import com.cybexmobile.activity.OpenOrdersActivity;
 import com.cybexmobile.activity.SettingActivity;
+import com.cybexmobile.activity.address.AddressManagerActivity;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.crypto.Sha256Object;
 import com.cybexmobile.event.Event;
@@ -131,6 +132,16 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
             return;
         }
         Intent intent = new Intent(getActivity(), AccountBalanceActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.account_layout_item_address_manager)
+    public void onAddressManagerClick(View view) {
+        if(!mIsLoginIn){
+            toLogin();
+            return;
+        }
+        Intent intent = new Intent(getActivity(), AddressManagerActivity.class);
         startActivity(intent);
     }
 

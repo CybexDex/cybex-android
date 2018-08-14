@@ -36,6 +36,7 @@
     <dimen name="height_40">40dp</dimen>
     <dimen name="height_48">48dp</dimen>
     <dimen name="height_50">50dp</dimen>
+    <dimen name="height_54">54dp</dimen>
     <dimen name="height_56">56dp</dimen>
     <dimen name="height_60">60dp</dimen>
     <dimen name="height_68">68dp</dimen>

@@ -38,6 +38,7 @@
     <string name="text_opened_orders">Opened Orders</string>
     <string name="text_lockup_assets">Lockup Assets</string>
     <string name="text_deposit_withdraw">Deposit/Withdraw</string>
+    <string name="text_address_manager">Address Manager</string>
 
     <!-- Balance Page -->
     <string name="balance_page_title">My Balance</string>
@@ -340,5 +341,11 @@
     <string name="text_out">Out</string>
 
     <string name="title_activity_account_balance">AccountBalanceActivity</string>
+
+    <!-- Address Manager Activity-->
+    <string name="text_withdraw_address">Withdraw Address</string>
+    <string name="text_transfer_account">Transfer Account</string>
+    <string name="text_transfer_account_manager">Transfer Account Manager</string>
+    <string name="text_add_transfer_account">Add Transfer Account</string>
 
 </resources>
