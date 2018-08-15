@@ -1,5 +1,7 @@
 package com.cybexmobile.activity.address;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +18,8 @@ import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferAccountManagerRecyclerViewAdapter;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.dialog.AddressOperationSelectDialog;
+import com.cybexmobile.toast.message.ToastMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +35,8 @@ import io.reactivex.schedulers.Schedulers;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
 public class TransferAccountManagerActivity extends BaseActivity implements
-        TransferAccountManagerRecyclerViewAdapter.OnItemClickListener {
+        TransferAccountManagerRecyclerViewAdapter.OnItemClickListener,
+        AddressOperationSelectDialog.OnAddressOperationSelectedListener {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -40,9 +45,11 @@ public class TransferAccountManagerActivity extends BaseActivity implements
 
     private String mUserName;
     private TransferAccountManagerRecyclerViewAdapter mTransferAccountAdapter;
+    private Address mCurrAddress;
 
     private Unbinder mUnbinder;
-    private Disposable mDisposable;
+    private Disposable mLoadAddressDisposable;
+    private Disposable mDeleteAddressDisposable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,9 +84,13 @@ public class TransferAccountManagerActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mDisposable != null && !mDisposable.isDisposed()){
-            mDisposable.dispose();
+        if(mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()){
+            mLoadAddressDisposable.dispose();
         }
+        if(mDeleteAddressDisposable != null && !mDeleteAddressDisposable.isDisposed()){
+            mDeleteAddressDisposable.dispose();
+        }
+
     }
 
     @Override
@@ -104,11 +115,35 @@ public class TransferAccountManagerActivity extends BaseActivity implements
 
     }
 
+    @Override
+    public void onItemClick(Address address) {
+        mCurrAddress = address;
+        AddressOperationSelectDialog dialog = new AddressOperationSelectDialog();
+        dialog.show(getSupportFragmentManager(), AddressOperationSelectDialog.class.getSimpleName());
+        dialog.setOnAddressOperationSelectedListener(this);
+    }
+
+    @Override
+    public void onAddressOperationSelected(int operation) {
+        if(mCurrAddress == null){
+            return;
+        }
+        switch (operation) {
+            case AddressOperationSelectDialog.OPERATION_COPY:
+                copyAddress();
+                break;
+            case AddressOperationSelectDialog.OPERATION_DELETE:
+                deleteAddress();
+                break;
+            case AddressOperationSelectDialog.OPETATION_CANCEL:
+        }
+    }
+
     private void loadAddress(){
         if(TextUtils.isEmpty(mUserName)){
             return;
         }
-        mDisposable = DBManager.getDbProvider(this).getAddress(mUserName, Address.TYPE_TRANSFER)
+        mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mUserName, Address.TYPE_TRANSFER)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Address>>() {
@@ -124,8 +159,35 @@ public class TransferAccountManagerActivity extends BaseActivity implements
                 });
     }
 
-    @Override
-    public void onItemClick(Address address) {
-
+    private void deleteAddress(){
+        mDeleteAddressDisposable = DBManager.getDbProvider(this).deleteAddress(mCurrAddress)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean result) throws Exception {
+                        ToastMessage.showNotEnableDepositToastMessage(TransferAccountManagerActivity.this,
+                                getResources().getString(R.string.text_delete_transfer_account_successful),
+                                R.drawable.ic_check_circle_green);
+                        loadAddress();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        ToastMessage.showNotEnableDepositToastMessage(TransferAccountManagerActivity.this,
+                                getResources().getString(R.string.text_delete_transfer_account_failed),
+                                R.drawable.ic_error_16px);
+                    }
+                });
     }
+
+    private void copyAddress() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("address", mCurrAddress.getAddress());
+        clipboard.setPrimaryClip(clip);
+        ToastMessage.showNotEnableDepositToastMessage(TransferAccountManagerActivity.this,
+                getResources().getString(R.string.text_copy_transfer_account_successful),
+                R.drawable.ic_check_circle_green);
+    }
+
 }

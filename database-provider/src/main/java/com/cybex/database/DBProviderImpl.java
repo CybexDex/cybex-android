@@ -68,30 +68,30 @@ public class DBProviderImpl implements DBProvider{
     }
 
     @Override
-    public Observable<Void> deleteAddress(final long id) {
-        return Observable.create(new ObservableOnSubscribe<Void>() {
+    public Observable<Boolean> deleteAddress(final long id) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void subscribe(ObservableEmitter<Void> e) throws Exception {
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 if(e.isDisposed()){
                     return;
                 }
                 mDaoSession.getAddressDao().deleteByKey(id);
-                e.onNext(null);
+                e.onNext(true);
                 e.onComplete();
             }
         });
     }
 
     @Override
-    public Observable<Void> deleteAddress(final Address address) {
-        return Observable.create(new ObservableOnSubscribe<Void>() {
+    public Observable<Boolean> deleteAddress(final Address address) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
             @Override
-            public void subscribe(ObservableEmitter<Void> e) throws Exception {
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
                 if(e.isDisposed()){
                     return;
                 }
                 mDaoSession.getAddressDao().delete(address);
-                e.onNext(null);
+                e.onNext(true);
                 e.onComplete();
             }
         });

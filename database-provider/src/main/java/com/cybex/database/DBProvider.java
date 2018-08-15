@@ -14,8 +14,8 @@ public interface DBProvider {
 
     Observable<Long> insertAddress(Address address);
 
-    Observable<Void> deleteAddress(long id);
+    Observable<Boolean> deleteAddress(long id);
 
-    Observable<Void> deleteAddress(Address address);
+    Observable<Boolean> deleteAddress(Address address);
 
 }

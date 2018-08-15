@@ -352,6 +352,11 @@
     <string name="text_add">Add</string>
     <string name="text_add_transfer_account_successful">Add transfer account successful</string>
     <string name="text_add_transfer_account_failed">Add transfer account failed</string>
-
+    <string name="text_delete_transfer_account_successful">Delete transfer account successful</string>
+    <string name="text_delete_transfer_account_failed">Delete transfer account failed</string>
+    <string name="text_copy_transfer_account_successful">Copy transfer account successful</string>
+    <string name="text_copy_transfer_account_failed">Copy transfer account failed</string>
+    <string name="text_copy">Copy</string>
+    <string name="text_delete">Delete</string>
 
 </resources>
