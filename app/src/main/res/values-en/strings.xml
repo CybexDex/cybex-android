@@ -356,6 +356,7 @@
     <string name="text_delete_transfer_account_failed">Delete transfer account failed</string>
     <string name="text_copy_transfer_account_successful">Copy transfer account successful</string>
     <string name="text_copy_transfer_account_failed">Copy transfer account failed</string>
+    <string name="text_transfer_account_already_exists">Transfer account already exists</string>
     <string name="text_copy">Copy</string>
     <string name="text_delete">Delete</string>
 

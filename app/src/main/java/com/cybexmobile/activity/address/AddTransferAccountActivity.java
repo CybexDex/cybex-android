@@ -58,8 +58,9 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
 
     private String mUserName;
     private Unbinder mUnbinder;
-    private Disposable mDisposable;
+    private Disposable mAddTransferAccountDisposable;
     private boolean mIsAccountValid;
+    private boolean mIsAccountExist;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,8 +88,8 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         super.onDestroy();
         mUnbinder.unbind();
         EventBus.getDefault().unregister(this);
-        if(mDisposable != null && !mDisposable.isDisposed()){
-            mDisposable.dispose();
+        if(mAddTransferAccountDisposable != null && !mAddTransferAccountDisposable.isDisposed()){
+            mAddTransferAccountDisposable.dispose();
         }
     }
 
@@ -139,6 +140,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         } else {
             mIvAccountCheck.setImageResource(R.drawable.register_check);
             mIsAccountValid = true;
+            checkAccountExist();
         }
         resetBtnState();
     }
@@ -188,7 +190,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
     }
 
     private void addTransferAccount(Address address){
-        mDisposable = DBManager.getDbProvider(this).insertAddress(address)
+        mAddTransferAccountDisposable = DBManager.getDbProvider(this).insertAddress(address)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
@@ -215,6 +217,32 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                 });
     }
 
+    private void checkAccountExist(){
+        mAddTransferAccountDisposable = DBManager.getDbProvider(this)
+                .checkAddressExist(mUserName, mEtAccount.getText().toString().trim(), Address.TYPE_TRANSFER)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        mIsAccountExist = aBoolean;
+                        if(aBoolean){
+                            ToastMessage.showNotEnableDepositToastMessage(AddTransferAccountActivity.this,
+                                    getResources().getString(R.string.text_transfer_account_already_exists),
+                                    R.drawable.ic_error_16px);
+                            mIvAccountCheck.setImageResource(R.drawable.ic_close_red_24_px);
+                        }
+                        resetBtnState();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mIsAccountExist = false;
+                        resetBtnState();
+                    }
+                });
+    }
+
     private void clearData(){
         mEtAccount.setText("");
         mEtLabel.setText("");
@@ -223,7 +251,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
     }
 
     private void resetBtnState(){
-        mBtnAdd.setEnabled(mIsAccountValid && !TextUtils.isEmpty(mEtLabel.getText().toString().trim()));
+        mBtnAdd.setEnabled(mIsAccountValid && !mIsAccountExist && !TextUtils.isEmpty(mEtLabel.getText().toString().trim()));
     }
 
 }

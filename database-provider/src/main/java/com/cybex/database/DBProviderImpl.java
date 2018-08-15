@@ -96,4 +96,23 @@ public class DBProviderImpl implements DBProvider{
             }
         });
     }
+
+    @Override
+    public Observable<Boolean> checkAddressExist(final String account, final String address, final int type) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                if(e.isDisposed()){
+                    return;
+                }
+                Address addressResult = mDaoSession.getAddressDao().queryBuilder()
+                        .where(AddressDao.Properties.Account.eq(account),
+                                AddressDao.Properties.Address.eq(address),
+                                AddressDao.Properties.Type.eq(type))
+                        .unique();
+                e.onNext(addressResult != null);
+                e.onComplete();
+            }
+        });
+    }
 }

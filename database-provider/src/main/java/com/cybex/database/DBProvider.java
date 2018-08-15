@@ -18,4 +18,14 @@ public interface DBProvider {
 
     Observable<Boolean> deleteAddress(Address address);
 
+    /**
+     * 检查地址是否存在
+     * @param account 登录账户名
+     * @param address 地址
+     * @param type 地址类型
+     * @return
+     */
+    Observable<Boolean> checkAddressExist(String account, String address, int type);
+
+
 }
