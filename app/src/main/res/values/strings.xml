@@ -38,7 +38,7 @@
     <string name="text_opened_orders">Opened Orders</string>
     <string name="text_lockup_assets">Lockup Assets</string>
     <string name="text_deposit_withdraw">Deposit/Withdraw</string>
-    <string name="text_address_manager">Address Manager</string>
+    <string name="text_address_management">Address Management</string>
 
     <!-- Balance Page -->
     <string name="balance_page_title">My Balance</string>
@@ -346,13 +346,12 @@
     <string name="text_out">Out</string>
 
     <!-- Address Manager Activity-->
-    <string name="text_withdraw_address">Withdraw Address</string>
+    <string name="text_withdraw_address">Withdrawal Address</string>
     <string name="text_transfer_account">Transfer Account</string>
-    <string name="text_transfer_account_manager">Transfer Account Manager</string>
     <string name="text_add_transfer_account">Add Transfer Account</string>
     <string name="text_no_transfer_addresses">No transfer addresses</string>
     <string name="text_account">Account</string>
-    <string name="text_label">Label</string>
+    <string name="text_note">Note</string>
     <string name="text_add">Add</string>
     <string name="text_add_transfer_account_successful">Add transfer account successful</string>
     <string name="text_add_transfer_account_failed">Add transfer account failed</string>

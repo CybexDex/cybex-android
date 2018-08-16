@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -25,12 +24,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cybex.database.DBManager;
+import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.address.AddTransferAccountActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
-import com.cybexmobile.dialog.AssetSelectDialog;
+import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.event.Event;
@@ -65,15 +67,21 @@ import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
 import static com.cybexmobile.utils.Constant.ASSET_SYMBOL_CYB;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEM;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ITEMS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_SELECTED_ITEM;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
-public class TransferActivity extends BaseActivity implements AssetSelectDialog.OnAssetSelectedListener,
+public class TransferActivity extends BaseActivity implements
+        CommonSelectDialog.OnAssetSelectedListener<AccountBalanceObjectItem>,
         SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
 
     @BindView(R.id.toolbar)
@@ -94,10 +102,13 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     Button mBtnTransfer;
     @BindView(R.id.transfer_iv_account_check)
     ImageView mIvAccountCheck;
+    @BindView(R.id.transfer_tv_select_account)
+    TextView mTvSelectAccount;
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
 
+    private List<Address> mAddresses;
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItems;
     private AccountBalanceObjectItem mSelectedAccountBalanceObjectItem;
     private AccountBalanceObjectItem mCybAccountBalanceObjectItem;
@@ -106,6 +117,8 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
     private FeeAmountObject mCybFeeAmountObject;
     private FeeAmountObject mCurrAssetFeeAmountObject;
     private AssetObject mCybAssetObject;
+    private String mUserName;
+    private Disposable mLoadAddressDisposable;
 
     private Operations.transfer_operation mTransferOperationFee;//手续费TransferOperation
 
@@ -122,6 +135,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         SoftKeyBoardListener.setListener(this, this);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
+        mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, null);
         mEtQuantity.setFilters(new InputFilter[]{mQuantityFilter});
         mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
         mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
@@ -132,6 +146,13 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         removeZeroBalance(mAccountBalanceObjectItems);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
+        loadAddress();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadAddress();
     }
 
     @Override
@@ -157,6 +178,9 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         mUnbinder.unbind();
         unbindService(mConnection);
         EventBus.getDefault().unregister(this);
+        if(mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()){
+            mLoadAddressDisposable.dispose();
+        }
     }
 
     @Override
@@ -244,14 +268,35 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         return false;
     }
 
+    @OnClick(R.id.transfer_tv_select_account)
+    public void onSelectAccountClick(View view) {
+        if(mAddresses == null || mAddresses.size() == 0){
+            Intent intent = new Intent(this, AddTransferAccountActivity.class);
+            startActivity(intent);
+            return;
+        }
+        CommonSelectDialog<Address> dialog = new CommonSelectDialog<Address>();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_PARAM_ITEMS, (Serializable) mAddresses);
+        bundle.putSerializable(INTENT_PARAM_SELECTED_ITEM, null);
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), CommonSelectDialog.class.getSimpleName());
+        dialog.setOnAssetSelectedListener(new CommonSelectDialog.OnAssetSelectedListener<Address>() {
+            @Override
+            public void onAssetSelected(Address address) {
+                mEtAccountName.setText(address.getAddress());
+            }
+        });
+    }
+
     @OnClick(R.id.transfer_tv_crypto)
     public void onCryptoClick(View view){
-        AssetSelectDialog dialog = new AssetSelectDialog();
+        CommonSelectDialog<AccountBalanceObjectItem> dialog = new CommonSelectDialog<AccountBalanceObjectItem>();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
-        bundle.putSerializable(INTENT_PARAM_ACCOUNT_BALANCE_ITEM, mSelectedAccountBalanceObjectItem);
+        bundle.putSerializable(INTENT_PARAM_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        bundle.putSerializable(INTENT_PARAM_SELECTED_ITEM, mSelectedAccountBalanceObjectItem);
         dialog.setArguments(bundle);
-        dialog.show(getSupportFragmentManager(), AssetSelectDialog.class.getSimpleName());
+        dialog.show(getSupportFragmentManager(), CommonSelectDialog.class.getSimpleName());
         dialog.setOnAssetSelectedListener(this);
     }
 
@@ -476,8 +521,7 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(TransferActivity.this);
-            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(pref.getString(PREF_NAME, null));
+            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mUserName);
             mFromAccountObject = fullAccountObject == null ? null : fullAccountObject.account;
             checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
         }
@@ -487,6 +531,26 @@ public class TransferActivity extends BaseActivity implements AssetSelectDialog.
             mWebSocketService = null;
         }
     };
+
+    private void loadAddress(){
+        if(TextUtils.isEmpty(mUserName)){
+            return;
+        }
+        mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mUserName, Address.TYPE_TRANSFER)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Address>>() {
+                    @Override
+                    public void accept(List<Address> addresses) throws Exception {
+                        mAddresses = addresses;
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                });
+    }
 
     /**
      * fix bug:CYM-505

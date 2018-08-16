@@ -41,7 +41,7 @@
     <string name="text_opened_orders">委单</string>
     <string name="text_lockup_assets">锁定期资产</string>
     <string name="text_deposit_withdraw">充值提现</string>
-    <string name="text_address_manager">地址管理</string>
+    <string name="text_address_management">地址管理</string>
 
     <!-- Balance Page -->
     <string name="balance_page_title">我的资产</string>
@@ -351,10 +351,9 @@
     <!-- Address Manager Activity-->
     <string name="text_withdraw_address">提现地址</string>
     <string name="text_transfer_account">转账账户</string>
-    <string name="text_transfer_account_manager">转账账户管理</string>
     <string name="text_add_transfer_account">添加转账账户</string>
     <string name="text_account">账户</string>
-    <string name="text_label">标签</string>
+    <string name="text_note">标签</string>
     <string name="text_add">添加</string>
     <string name="text_add_transfer_account_successful">转账账户添加成功</string>
     <string name="text_add_transfer_account_failed">转账账户添加失败</string>
