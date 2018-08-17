@@ -10,6 +10,8 @@ public interface DBProvider {
 
     Observable<List<Address>> getAddress(String account, String token, int type);
 
+    Observable<Long> getCount(String account, String token, int type);
+
     Observable<List<Address>> getAddress(String account, int type);
 
     Observable<Long> insertAddress(Address address);
@@ -27,5 +29,6 @@ public interface DBProvider {
      */
     Observable<Boolean> checkAddressExist(String account, String address, int type);
 
+    Observable<Boolean> checkWithdrawAddressExist(String account, String address, String token, int type);
 
 }

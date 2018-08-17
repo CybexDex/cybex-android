@@ -9,20 +9,35 @@
 
     <TextView
         android:id="@+id/item_transfer_account_manager_tv_label"
+        style="@style/font_white_dark_large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="1"
-        style="@style/font_white_dark_large"
-        android:text="@string/text_empty"/>
+        android:text="@string/text_empty" />
 
-    <TextView
-        android:id="@+id/item_transfer_account_manager_tv_address"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_6"
-        android:singleLine="true"
-        android:ellipsize="middle"
-        style="@style/font_gray_small"
-        android:text="@string/text_empty"/>
+        android:layout_marginTop="@dimen/margin_6">
+
+        <TextView
+            android:id="@+id/item_transfer_account_manager_tv_address"
+            style="@style/font_gray_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:text="@string/text_empty" />
+        <TextView
+            android:id="@+id/item_transfer_account_manager_tv_memo"
+            style="@style/font_gray_small"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_empty"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:visibility="gone"/>
+    </RelativeLayout>
 
 </LinearLayout>

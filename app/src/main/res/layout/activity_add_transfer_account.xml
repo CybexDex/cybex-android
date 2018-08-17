@@ -1,52 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cybexmobile.activity.address.AddressManagerActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.cybexmobile.activity.address.AddressManagerActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_forward_16px"
         app:subtitleTextColor="@color/primary_color_grey"
-        app:titleTextColor="@color/primary_color_grey"
-        app:navigationIcon="@drawable/ic_arrow_forward_16px">
+        app:titleTextColor="@color/primary_color_grey">
 
         <TextView
+            android:id="@+id/add_transfer_account_toolbar_title"
+            style="@style/font_white_dark_bold_large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_add_transfer_account"
             android:layout_gravity="center"
-            style="@style/font_white_dark_bold_large" />
+            android:text="@string/text_add_transfer_account" />
 
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:paddingStart="@dimen/activity_padding"
-        android:paddingEnd="@dimen/activity_padding">
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/activity_padding"
+        android:paddingStart="@dimen/activity_padding">
 
         <LinearLayout
+            android:id="@+id/add_transfer_account_crypto_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_item"
             android:orientation="vertical"
+            android:paddingEnd="@dimen/activity_padding"
             android:paddingStart="@dimen/activity_padding"
-            android:paddingEnd="@dimen/activity_padding">
+            android:visibility="gone">
 
             <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:text="@string/text_crypto" />
+
+            <TextView
+                android:id="@+id/add_transfer_account_crypto_tv"
+                style="@style/font_white_dark_large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:paddingBottom="@dimen/activity_padding"
+                android:paddingTop="@dimen/activity_padding"
+                android:textColorHint="@color/text_hint_color" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:background="@drawable/bg_item"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/activity_padding"
+            android:paddingStart="@dimen/activity_padding">
+
+            <TextView
+                android:id="@+id/add_transfer_account_tv_account_address"
+                style="@style/font_grey_medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_margin"
-                style="@style/font_grey_medium"
                 android:text="@string/text_account" />
 
             <RelativeLayout
@@ -58,13 +91,13 @@
                     style="@style/font_white_dark_large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/activity_padding"
-                    android:paddingBottom="@dimen/activity_padding"
-                    android:inputType="textMultiLine"
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@+id/add_transfer_account_iv_account_check"
                     android:background="@null"
+                    android:inputType="textMultiLine"
                     android:maxLength="63"
+                    android:paddingBottom="@dimen/activity_padding"
+                    android:paddingTop="@dimen/activity_padding"
                     android:singleLine="true"
                     android:textColorHint="@color/text_hint_color" />
 
@@ -72,9 +105,9 @@
                     android:id="@+id/add_transfer_account_iv_account_check"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="invisible"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true"/>
+                    android:visibility="invisible" />
 
             </RelativeLayout>
 
@@ -84,9 +117,9 @@
                 android:background="@color/colorPrimary" />
 
             <TextView
+                style="@style/font_grey_medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/font_grey_medium"
                 android:layout_marginTop="@dimen/activity_margin"
                 android:text="@string/text_note" />
 
@@ -95,21 +128,54 @@
                 style="@style/font_white_dark_large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_padding"
-                android:paddingBottom="@dimen/activity_padding"
                 android:background="@null"
-                android:maxLines="1"
                 android:maxLength="15"
+                android:maxLines="1"
+                android:paddingBottom="@dimen/activity_padding"
+                android:paddingTop="@dimen/activity_padding"
                 android:textColorHint="@color/text_hint_color"
                 android:hint="@string/text_less_than_15_characters"/>
+
+            <LinearLayout
+                android:id="@+id/add_transfer_account_memo_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    style="@style/font_grey_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_margin"
+                    android:text="@string/text_memo" />
+
+                <EditText
+                    android:id="@+id/add_transfer_account_et_memo"
+                    style="@style/font_white_dark_large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:paddingBottom="@dimen/activity_padding"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:textColorHint="@color/text_hint_color" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="@dimen/margin_40">
+            android:layout_marginBottom="@dimen/margin_40"
+            android:layout_weight="1">
 
             <Button
                 android:id="@+id/add_transfer_account_btn_add"
@@ -118,9 +184,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:background="@drawable/bg_btn_orange_gradient_enabled"
-                android:textAllCaps="false"
                 android:enabled="false"
-                android:text="@string/text_add" />
+                android:text="@string/text_add"
+                android:textAllCaps="false" />
 
         </FrameLayout>
 

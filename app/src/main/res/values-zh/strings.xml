@@ -354,6 +354,7 @@
     <string name="text_transfer_account">转账账户</string>
     <string name="text_add_transfer_account">添加转账账户</string>
     <string name="text_account">账户</string>
+    <string name="text_address">地址</string>
     <string name="text_note">标签</string>
     <string name="text_add">添加</string>
     <string name="text_add_transfer_account_successful">转账账户添加成功</string>
@@ -368,6 +369,15 @@
     <string name="text_add_account">添加</string>
     <string name="text_select_account">选择</string>
     <string name="text_less_than_15_characters">最多不超过15个字符</string>
+    <string name="text_add_withdraw_account">添加提现账户</string>
+    <string name="text_add_withdraw_address">添加提现地址</string>
+    <string name="text_address_not_exist">地址错误</string>
 
+    <!-- Withdraw Address -->
+    <string name="text_withdraw_address_title">提现地址管理</string>
+    <string name="withdraw_account_title">提现账户</string>
+    <string name="withdraw_address_title">提现地址</string>
+    <string name="withdraw_address_note_address">标签/账户</string>
+    <string name="withdraw_address_memo">备注</string>
 
 </resources>

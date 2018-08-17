@@ -71,6 +71,12 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
         Address address = mTransferAddresses.get(position);
         viewHolder.mTvAddress.setText(address.getAddress());
         viewHolder.mTvLabel.setText(address.getLabel());
+        if (mTransferAddresses.get(position).getMemo() != null) {
+            viewHolder.mTvMemo.setVisibility(View.VISIBLE);
+            viewHolder.mTvMemo.setText(mTransferAddresses.get(position).getMemo());
+        } else {
+            viewHolder.mTvMemo.setVisibility(View.GONE);
+        }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +103,8 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
         TextView mTvLabel;
         @BindView(R.id.item_transfer_account_manager_tv_address)
         TextView mTvAddress;
+        @BindView(R.id.item_transfer_account_manager_tv_memo)
+        TextView mTvMemo;
 
         public ViewHolder(View itemView) {
             super(itemView);

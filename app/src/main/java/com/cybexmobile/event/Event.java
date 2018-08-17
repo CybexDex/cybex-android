@@ -491,6 +491,18 @@ public class Event {
         }
     }
 
+    public static class VerifyAddress {
+        private boolean isValid;
+
+        public VerifyAddress(boolean isValid) {
+            this.isValid = isValid;
+        }
+
+        public boolean isValid() {
+            return isValid;
+        }
+    }
+
     /**
      * 网络加载模式改变
      */
