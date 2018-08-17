@@ -76,7 +76,9 @@ import static com.cybexmobile.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
 import static com.cybexmobile.utils.Constant.ASSET_SYMBOL_CYB;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ITEMS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_SELECTED_ITEM;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
@@ -534,13 +536,14 @@ public class TransferActivity extends BaseActivity implements
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
+                        Intent intent = new Intent(TransferActivity.this, AddTransferAccountActivity.class);
+                        intent.putExtra(INTENT_PARAM_ADDRESS, mEtAccountName.getText().toString().trim());
+                        startActivity(intent);
                         /**
                          * fix bug:CYM-505
                          * 转账成功和失败清除数据
                          */
                         clearTransferData();
-                        Intent intent = new Intent(TransferActivity.this, AddTransferAccountActivity.class);
-                        startActivity(intent);
                     }
                 },
                 new CybexDialog.ConfirmationDialogCancelListener() {

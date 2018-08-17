@@ -303,8 +303,8 @@ public class CybexDialog {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_add_address);
-        TextView tvMessage  = dialog.findViewById(R.id.dialog_add_address_tv_message);
-        TextView tvSubMessage  = dialog.findViewById(R.id.dialog_add_address_tv_sub_message);
+        TextView tvMessage = dialog.findViewById(R.id.dialog_add_address_tv_message);
+        TextView tvSubMessage = dialog.findViewById(R.id.dialog_add_address_tv_sub_message);
         tvMessage.setText(message);
         tvSubMessage.setText(subMessage);
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);

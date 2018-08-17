@@ -41,6 +41,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
 public class AddTransferAccountActivity extends BaseActivity implements SoftKeyBoardListener.OnSoftKeyBoardChangeListener{
@@ -71,6 +72,11 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         EventBus.getDefault().register(this);
         SoftKeyBoardListener.setListener(this, this);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+        String address = getIntent().getStringExtra(INTENT_PARAM_ADDRESS);
+        if(!TextUtils.isEmpty(address)){
+            mEtAccount.setText(address);
+            onAccountNameFocusChanged(mEtAccount, false);
+        }
     }
 
     @Override
