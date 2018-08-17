@@ -29,6 +29,10 @@ public class CybexDialog {
         void onClick(Dialog dialog);
     }
 
+    public interface ConfirmationDialogCancelListener {
+        void onCancel(Dialog dialog);
+    }
+
     public static void showRegisterDialog(Context context, String message, View.OnClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -291,6 +295,39 @@ public class CybexDialog {
         dialog.setArguments(bundle);
         dialog.show(fragmentManager, UnlockDialog.class.getSimpleName());
         dialog.setUnLockListener(unLockListener);
+    }
+
+    public static void showAddAddressDialog(Context context, String message, String subMessage,
+                                            ConfirmationDialogClickListener confirmListener,
+                                            ConfirmationDialogCancelListener cancelListener){
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_add_address);
+        TextView tvMessage  = dialog.findViewById(R.id.dialog_add_address_tv_message);
+        TextView tvSubMessage  = dialog.findViewById(R.id.dialog_add_address_tv_sub_message);
+        tvMessage.setText(message);
+        tvSubMessage.setText(subMessage);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if (confirmListener != null) {
+                    confirmListener.onClick(dialog);
+                }
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if (cancelListener != null) {
+                    cancelListener.onCancel(dialog);
+                }
+            }
+        });
+        dialog.show();
     }
 
 }

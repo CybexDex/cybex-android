@@ -119,6 +119,7 @@ public class TransferActivity extends BaseActivity implements
     private AssetObject mCybAssetObject;
     private String mUserName;
     private Disposable mLoadAddressDisposable;
+    private Disposable mCheckAddressExistDisposable;
 
     private Operations.transfer_operation mTransferOperationFee;//手续费TransferOperation
 
@@ -180,6 +181,9 @@ public class TransferActivity extends BaseActivity implements
         EventBus.getDefault().unregister(this);
         if(mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()){
             mLoadAddressDisposable.dispose();
+        }
+        if(mCheckAddressExistDisposable != null && !mCheckAddressExistDisposable.isDisposed()){
+            mCheckAddressExistDisposable.dispose();
         }
     }
 
@@ -284,7 +288,13 @@ public class TransferActivity extends BaseActivity implements
         dialog.setOnAssetSelectedListener(new CommonSelectDialog.OnAssetSelectedListener<Address>() {
             @Override
             public void onAssetSelected(Address address) {
+                if(address == null){
+                    return;
+                }
                 mEtAccountName.setText(address.getAddress());
+                if(!mEtAccountName.isFocused()){
+                    onAccountNameFocusChanged(mEtAccountName, false);
+                }
             }
         });
     }
@@ -485,18 +495,64 @@ public class TransferActivity extends BaseActivity implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTransfer(Event.Transfer event){
-        /**
-         * fix bug:CYM-505
-         * 转账成功和失败清除数据
-         */
-        clearTransferData();
         if(event.isSuccess()){
-            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
-                    R.string.toast_message_transfer_success), R.drawable.ic_check_circle_green);
+            mCheckAddressExistDisposable = DBManager.getDbProvider(this).checkAddressExist(mUserName,
+                    mEtAccountName.getText().toString().trim(), Address.TYPE_TRANSFER)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean aBoolean) throws Exception {
+                            if(aBoolean){
+                                ToastMessage.showNotEnableDepositToastMessage(
+                                        TransferActivity.this,
+                                        getResources().getString(R.string.toast_message_transfer_success),
+                                        R.drawable.ic_check_circle_green);
+                            } else {
+                                showAddAddressDialog();
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            ToastMessage.showNotEnableDepositToastMessage(
+                                    TransferActivity.this,
+                                    getResources().getString(R.string.toast_message_transfer_success),
+                                    R.drawable.ic_check_circle_green);
+                        }
+                    });
         } else {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
                     R.string.toast_message_transfer_failed), R.drawable.ic_error_16px);
         }
+    }
+
+    private void showAddAddressDialog(){
+        CybexDialog.showAddAddressDialog(this,
+                getResources().getString(R.string.toast_message_transfer_success),
+                getResources().getString(R.string.toast_message_add_this_account_to_list),
+                new CybexDialog.ConfirmationDialogClickListener() {
+                    @Override
+                    public void onClick(Dialog dialog) {
+                        /**
+                         * fix bug:CYM-505
+                         * 转账成功和失败清除数据
+                         */
+                        clearTransferData();
+                        Intent intent = new Intent(TransferActivity.this, AddTransferAccountActivity.class);
+                        startActivity(intent);
+                    }
+                },
+                new CybexDialog.ConfirmationDialogCancelListener() {
+                    @Override
+                    public void onCancel(Dialog dialog) {
+                        /**
+                         * fix bug:CYM-505
+                         * 转账成功和失败清除数据
+                         */
+                        clearTransferData();
+                    }
+                });
     }
 
     /**
@@ -543,6 +599,11 @@ public class TransferActivity extends BaseActivity implements
                     @Override
                     public void accept(List<Address> addresses) throws Exception {
                         mAddresses = addresses;
+                        if(mAddresses == null || mAddresses.size() == 0){
+                            mTvSelectAccount.setText(getResources().getString(R.string.text_add_account));
+                        } else {
+                            mTvSelectAccount.setText(getResources().getString(R.string.text_select_account));
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override

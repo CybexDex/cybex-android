@@ -186,6 +186,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         address.setLabel(mEtLabel.getText().toString().trim());
         address.setAccount(mUserName);
         address.setAddress(mEtAccount.getText().toString().trim());
+
         addTransferAccount(address);
     }
 
@@ -200,7 +201,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                             ToastMessage.showNotEnableDepositToastMessage(AddTransferAccountActivity.this,
                                     getResources().getString(R.string.text_add_transfer_account_successful),
                                     R.drawable.ic_check_circle_green);
-                            clearData();
+                            finish();
                         } else {
                             ToastMessage.showNotEnableDepositToastMessage(AddTransferAccountActivity.this,
                                     getResources().getString(R.string.text_add_transfer_account_failed),
@@ -241,13 +242,6 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                         resetBtnState();
                     }
                 });
-    }
-
-    private void clearData(){
-        mEtAccount.setText("");
-        mEtLabel.setText("");
-        mIsAccountValid = false;
-        mIvAccountCheck.setVisibility(View.INVISIBLE);
     }
 
     private void resetBtnState(){

@@ -59,7 +59,7 @@
                     android:background="@android:color/transparent"
                     android:layout_gravity="end|center_vertical"
                     android:layout_toStartOf="@+id/transfer_layout_select_account"
-                    android:maxLines="1"/>
+                    android:singleLine="true"/>
 
                 <LinearLayout
                     android:id="@+id/transfer_layout_select_account"
@@ -80,7 +80,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/font_grey_medium"
-                        android:text="@string/text_account"
+                        android:text="@string/text_select_account"
                         android:drawableStart="@drawable/ic_address_16_px"/>
 
                 </LinearLayout>

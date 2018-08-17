@@ -285,6 +285,7 @@
     <string name="toast_message_cancel_order_failed">委单撤销失败</string>
     <string name="toast_message_transfer_success">转账成功</string>
     <string name="toast_message_transfer_failed">转账失败</string>
+    <string name="toast_message_add_this_account_to_list">是否将该地址储存到提现地址列表?</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">解锁钱包</string>
@@ -364,6 +365,9 @@
     <string name="text_transfer_account_already_exists">转账账户已经存在</string>
     <string name="text_copy">复制</string>
     <string name="text_delete">删除</string>
+    <string name="text_add_account">添加</string>
+    <string name="text_select_account">选择</string>
+    <string name="text_less_than_15_characters">最多不超过15个字符</string>
 
 
 </resources>

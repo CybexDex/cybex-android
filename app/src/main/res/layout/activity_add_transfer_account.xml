@@ -100,7 +100,8 @@
                 android:background="@null"
                 android:maxLines="1"
                 android:maxLength="15"
-                android:textColorHint="@color/text_hint_color" />
+                android:textColorHint="@color/text_hint_color"
+                android:hint="@string/text_less_than_15_characters"/>
 
         </LinearLayout>
 

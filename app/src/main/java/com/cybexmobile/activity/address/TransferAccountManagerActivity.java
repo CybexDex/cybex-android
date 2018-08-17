@@ -22,6 +22,7 @@ import com.cybexmobile.dialog.AddressOperationSelectDialog;
 import com.cybexmobile.toast.message.ToastMessage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -149,6 +150,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
                 .subscribe(new Consumer<List<Address>>() {
                     @Override
                     public void accept(List<Address> addresses) throws Exception {
+                        Collections.sort(addresses);
                         mTransferAccountAdapter.setAddresses(addresses);
                     }
                 }, new Consumer<Throwable>() {

@@ -40,7 +40,9 @@
                 android:textColor="@color/font_color_white_dark"
                 android:layout_marginTop="@dimen/activity_margin"
                 android:drawablePadding="@dimen/margin_8"
-                android:textSize="@dimen/font_34" />
+                android:textSize="@dimen/font_34"
+                android:singleLine="true"
+                android:ellipsize="end"/>
 
             <LinearLayout
                 android:id="@+id/account_layout_item_my_portfolio"

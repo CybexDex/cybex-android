@@ -278,6 +278,7 @@
     <string name="toast_message_cancel_order_failed">Cancel order failed</string>
     <string name="toast_message_transfer_success">Transfer success</string>
     <string name="toast_message_transfer_failed">Transfer failed</string>
+    <string name="toast_message_add_this_account_to_list">Add this account to list?</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
@@ -358,5 +359,8 @@
     <string name="text_transfer_account_already_exists">Transfer account already exists</string>
     <string name="text_copy">Copy</string>
     <string name="text_delete">Delete</string>
+    <string name="text_add_account">Add</string>
+    <string name="text_select_account">Select</string>
+    <string name="text_less_than_15_characters">Less than 15 characters</string>
 
 </resources>

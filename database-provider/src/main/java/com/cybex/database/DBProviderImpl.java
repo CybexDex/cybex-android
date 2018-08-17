@@ -30,6 +30,7 @@ public class DBProviderImpl implements DBProvider{
                         .where(AddressDao.Properties.Account.eq(account),
                                 AddressDao.Properties.Token.eq(token),
                                 AddressDao.Properties.Type.eq(type))
+                        .orderAsc(AddressDao.Properties.Label)
                         .list());
                 e.onComplete();
             }
@@ -47,6 +48,7 @@ public class DBProviderImpl implements DBProvider{
                 e.onNext(mDaoSession.getAddressDao().queryBuilder()
                         .where(AddressDao.Properties.Account.eq(account),
                                 AddressDao.Properties.Type.eq(type))
+                        .orderAsc(AddressDao.Properties.Label)
                         .list());
                 e.onComplete();
             }

@@ -1,12 +1,17 @@
 package com.cybex.database.entity;
 
+import android.support.annotation.NonNull;
+
+import com.github.promeg.pinyinhelper.Pinyin;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity(nameInDb = "address")
-public class Address {
+public class Address implements Comparable<Address>{
 
     public static final int TYPE_TRANSFER = 1;//转账类型
     public static final int TYPE_WITHDRAW = 2;//提现类型
@@ -105,4 +110,9 @@ public class Address {
         this.type = type;
     }
 
+    @Override
+    public int compareTo(@NonNull Address o) {
+
+        return Pinyin.toPinyin(this.getLabel(), "").compareToIgnoreCase(Pinyin.toPinyin(o.getLabel(), ""));
+    }
 }

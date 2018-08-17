@@ -12,7 +12,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 2
-        versionName "1.3.1"
+        versionName "1.4.0"
         multiDexEnabled true
     }
     buildTypes {
@@ -108,6 +108,7 @@ dependencies {
     implementation 'com.apollographql.apollo:apollo-android-support:0.3.2'
     //Jadeticon
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
+
     implementation project(':MPChartLib')
     implementation project(':ui-smart-refresh')
     implementation project(':database-provider')
