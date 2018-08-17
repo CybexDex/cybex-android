@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.DepositActivity;
 import com.cybexmobile.activity.WithdrawActivity;
+import com.cybexmobile.activity.address.WithdrawAddressManageListActivity;
+import com.cybexmobile.activity.address.WithdrawAddressManagerActivity;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
@@ -61,45 +63,60 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
         AssetObject assetObject = mDataList.get(position).getAssetObject();
         AccountBalanceObject accountBalanceObject = mDataList.get(position).getAccountBalanceObject();
         if (assetObject != null) {
-            holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
-            loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
-
-            if (accountBalanceObject != null) {
-                double balanceAmount = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
-                holder.mAssetPrice.setText(AssetUtil.formatNumberRounding(balanceAmount, assetObject.precision));
-            } else {
-                holder.mAssetPrice.setText("");
-            }
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mName.equals(DepositItemFragment.class.getName())) {
-                        Intent intent = new Intent(mContext, DepositActivity.class);
+            if (mName.equals(WithdrawAddressManagerActivity.class.getName())) {
+                holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
+                loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
+                holder.mAssetPrice.setText(String.valueOf(mDataList.get(position).getCount()));
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, WithdrawAddressManageListActivity.class);
                         intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
-                        intent.putExtra("isEnabled", mDataList.get(position).isEnable());
-                        intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
-                        intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
-                        intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
-                        intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
-                        intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
-                        mContext.startActivity(intent);
-                    } else {
-                        Intent intent = new Intent(mContext, WithdrawActivity.class);
-                        intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
-                        intent.putExtra("isEnabled", mDataList.get(position).isEnable());
-                        intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
-                        intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
-                        intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
-                        intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
-                        intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
-                        if(accountBalanceObject != null) {
-                            intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, assetObject.precision));
-                        }
+                        intent.putExtra("assetId", mDataList.get(position).getId());
                         mContext.startActivity(intent);
                     }
+                });
+            } else {
+                holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
+                loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
+
+                if (accountBalanceObject != null) {
+                    double balanceAmount = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
+                    holder.mAssetPrice.setText(AssetUtil.formatNumberRounding(balanceAmount, assetObject.precision));
+                } else {
+                    holder.mAssetPrice.setText("");
                 }
-            });
+
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mName.equals(DepositItemFragment.class.getName())) {
+                            Intent intent = new Intent(mContext, DepositActivity.class);
+                            intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
+                            intent.putExtra("isEnabled", mDataList.get(position).isEnable());
+                            intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
+                            intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
+                            intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
+                            intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
+                            intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
+                            mContext.startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(mContext, WithdrawActivity.class);
+                            intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
+                            intent.putExtra("isEnabled", mDataList.get(position).isEnable());
+                            intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
+                            intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
+                            intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
+                            intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
+                            intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
+                            if (accountBalanceObject != null) {
+                                intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, assetObject.precision));
+                            }
+                            mContext.startActivity(intent);
+                        }
+                    }
+                });
+            }
         }
     }
 

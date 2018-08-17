@@ -38,6 +38,24 @@ public class DBProviderImpl implements DBProvider{
     }
 
     @Override
+    public Observable<Long> getCount(final String account, final String token, final int type) {
+        return Observable.create(new ObservableOnSubscribe<Long>() {
+            @Override
+            public void subscribe(ObservableEmitter<Long> e) throws Exception {
+                if(e.isDisposed()){
+                    return;
+                }
+                e.onNext(mDaoSession.getAddressDao().queryBuilder()
+                        .where(AddressDao.Properties.Account.eq(account),
+                                AddressDao.Properties.Token.eq(token),
+                                AddressDao.Properties.Type.eq(type))
+                        .count());
+                e.onComplete();
+            }
+        });
+    }
+
+    @Override
     public Observable<List<Address>> getAddress(final String account, final int type) {
         return Observable.create(new ObservableOnSubscribe<List<Address>>() {
             @Override
@@ -110,6 +128,26 @@ public class DBProviderImpl implements DBProvider{
                 Address addressResult = mDaoSession.getAddressDao().queryBuilder()
                         .where(AddressDao.Properties.Account.eq(account),
                                 AddressDao.Properties.Address.eq(address),
+                                AddressDao.Properties.Type.eq(type))
+                        .unique();
+                e.onNext(addressResult != null);
+                e.onComplete();
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> checkWithdrawAddressExist(final String account, final String address, final String token, final int type) {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+                if(e.isDisposed()){
+                    return;
+                }
+                Address addressResult = mDaoSession.getAddressDao().queryBuilder()
+                        .where(AddressDao.Properties.Account.eq(account),
+                                AddressDao.Properties.Address.eq(address),
+                                AddressDao.Properties.Token.eq(token),
                                 AddressDao.Properties.Type.eq(type))
                         .unique();
                 e.onNext(addressResult != null);

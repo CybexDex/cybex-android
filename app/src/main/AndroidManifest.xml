@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -113,25 +113,30 @@
         <activity
             android:name=".activity.DepositWithdrawRecordsActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.address.AddressManagerActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.address.TransferAccountManagerActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.address.AddTransferAccountActivity"
             android:label=""
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.address.WithdrawAddressManagerActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.address.WithdrawAddressManageListActivity"
+            android:label=""
             android:screenOrientation="portrait"/>
 
-
         <service android:name=".service.WebSocketService" />
+
 
     </application>
 

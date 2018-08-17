@@ -10,6 +10,7 @@ public class DepositAndWithdrawObject {
     public String cnMsg;
     String enInfo;
     String cnInfo;
+    long count;
     public AssetObject assetObject;
     private AccountBalanceObject accountBalanceObject;
 
@@ -75,5 +76,13 @@ public class DepositAndWithdrawObject {
 
     public void setAccountBalanceObject(AccountBalanceObject accountBalanceObject) {
         this.accountBalanceObject = accountBalanceObject;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 }

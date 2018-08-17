@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class AddressManagerActivity extends BaseActivity{
+public class AddressManagerActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -51,12 +51,14 @@ public class AddressManagerActivity extends BaseActivity{
     }
 
     @OnClick(R.id.address_manager_tv_withdraw_address)
-    public void onWithdrawAddressClick(View view){
+    public void onWithdrawAddressClick(View view) {
+        Intent intent = new Intent(this, WithdrawAddressManagerActivity.class);
+        startActivity(intent);
 
     }
 
     @OnClick(R.id.address_manager_tv_transfer_account)
-    public void onTransferAccountClick(View view){
+    public void onTransferAccountClick(View view) {
         Intent intent = new Intent(this, TransferAccountManagerActivity.class);
         startActivity(intent);
     }
