@@ -39,7 +39,7 @@ dependencies {
     //GreenDao
     implementation 'org.greenrobot:greendao:3.2.2'
 
-    implementation 'com.github.promeg:tinypinyin:2.0.3'
+    implementation 'com.belerweb:pinyin4j:2.5.0'
 }
 
 greendao {

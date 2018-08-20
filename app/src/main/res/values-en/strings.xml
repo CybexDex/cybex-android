@@ -348,8 +348,10 @@
     <string name="text_transfer_account">Transfer Account</string>
     <string name="text_add_transfer_account">Add Transfer Account</string>
     <string name="text_account">Account</string>
+    <string name="text_account_dot">Account:</string>
     <string name="text_address">Address</string>
     <string name="text_note">Note</string>
+    <string name="text_note_dot">Note:</string>
     <string name="text_add">Add</string>
     <string name="text_add_transfer_account_successful">Add transfer account successful</string>
     <string name="text_add_transfer_account_failed">Add transfer account failed</string>
@@ -366,6 +368,8 @@
     <string name="text_add_withdraw_account">Add Withdraw Account</string>
     <string name="text_add_withdraw_address">Add Withdraw Address</string>
     <string name="text_address_not_exist">Address does not exist</string>
+    <string name="text_confirm_to_delete_this_account">Confirm to delete this account?</string>
+    <string name="text_delete_confirm">Confirm</string>
 
     <!-- Withdraw Address -->
     <string name="text_withdraw_address_title">Withdrawal Address Management</string>

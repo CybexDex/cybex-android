@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.graphene.chain.AccountObject;
@@ -307,6 +308,43 @@ public class CybexDialog {
         TextView tvSubMessage = dialog.findViewById(R.id.dialog_add_address_tv_sub_message);
         tvMessage.setText(message);
         tvSubMessage.setText(subMessage);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if (confirmListener != null) {
+                    confirmListener.onClick(dialog);
+                }
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if (cancelListener != null) {
+                    cancelListener.onCancel(dialog);
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    public static void showDeleteConfirmDialog(Context context, String title, String message, Address address,
+                                            ConfirmationDialogClickListener confirmListener,
+                                            ConfirmationDialogCancelListener cancelListener){
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_delete_address);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(title);
+        TextView tvMessage = dialog.findViewById(R.id.dialog_delete_address_tv_message);
+        tvMessage.setText(message);
+        TextView tvNote = dialog.findViewById(R.id.dialog_delete_address_tv_note);
+        tvNote.setText(address.getLabel());
+        TextView tvAccount = dialog.findViewById(R.id.dialog_delete_address_tv_account);
+        tvAccount.setText(address.getAddress());
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {

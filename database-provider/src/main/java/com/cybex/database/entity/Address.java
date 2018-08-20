@@ -2,13 +2,18 @@ package com.cybex.database.entity;
 
 import android.support.annotation.NonNull;
 
-import com.github.promeg.pinyinhelper.Pinyin;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
+
+import java.text.Collator;
+import java.util.Locale;
 
 @Entity(nameInDb = "address")
 public class Address implements Comparable<Address>{
@@ -111,8 +116,44 @@ public class Address implements Comparable<Address>{
     }
 
     @Override
-    public int compareTo(@NonNull Address o) {
+    public int compareTo(@NonNull Address address) {
+        String pingyin = toPinYin(address.getLabel());
+        String pingyinCurr = toPinYin(getLabel());
+        if (pingyinCurr.startsWith("#") && !pingyin.startsWith("#")) {
+            return 1;
+        } else if (!pingyinCurr.startsWith("#") && pingyin.startsWith("#")) {
+            return -1;
+        } else {
+            return pingyinCurr.compareToIgnoreCase(pingyin);
+        }
+    }
 
-        return Pinyin.toPinyin(this.getLabel(), "").compareToIgnoreCase(Pinyin.toPinyin(o.getLabel(), ""));
+    private String toPinYin(String str){
+        StringBuffer sb = new StringBuffer();
+        char[] nameChar = str.toCharArray();
+        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+        defaultFormat.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+        for (int i = 0; i < nameChar.length; i++) {
+            if (nameChar[i] > 128) {
+                try {
+                    sb.append(PinyinHelper.toHanyuPinyinStringArray(nameChar[i], defaultFormat)[0]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sb.append(nameChar[i]);
+                }
+            } else {
+                sb.append(nameChar[i]);
+            }
+        }
+        String result = sb.toString();
+        if(result.length() == 0){
+            return "#";
+        }
+        String first = result.substring(0, 1);
+        if (!first.matches("[a-zA-Z]")) { // 如果不在A-Z中则默认为“#”
+            result = "#" + result;
+        }
+        return result;
     }
 }

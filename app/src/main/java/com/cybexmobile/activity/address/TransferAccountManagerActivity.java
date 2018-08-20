@@ -1,5 +1,6 @@
 package com.cybexmobile.activity.address;
 
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferAccountManagerRecyclerViewAdapter;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.AddressOperationSelectDialog;
+import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.toast.message.ToastMessage;
 
 import java.util.ArrayList;
@@ -134,9 +136,10 @@ public class TransferAccountManagerActivity extends BaseActivity implements
                 copyAddress();
                 break;
             case AddressOperationSelectDialog.OPERATION_DELETE:
-                deleteAddress();
+                deleteAddressConfirm();
                 break;
             case AddressOperationSelectDialog.OPETATION_CANCEL:
+                break;
         }
     }
 
@@ -159,6 +162,21 @@ public class TransferAccountManagerActivity extends BaseActivity implements
 
                     }
                 });
+    }
+
+    private void deleteAddressConfirm(){
+        CybexDialog.showDeleteConfirmDialog(
+                this,
+                getResources().getString(R.string.text_delete_confirm),
+                getResources().getString(R.string.text_confirm_to_delete_this_account),
+                mCurrAddress,
+                new CybexDialog.ConfirmationDialogClickListener() {
+                    @Override
+                    public void onClick(Dialog dialog) {
+                        deleteAddress();
+                    }
+                }, null);
+
     }
 
     private void deleteAddress(){

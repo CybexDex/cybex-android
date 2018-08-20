@@ -12,6 +12,7 @@
 
     <!-- Item background color -->
     <color name="itemBackground">#FFFFFF</color>
+    <color name="itemBackground_translucent">#4DFFFFFF</color>
     <color name="horizontalItemBackground">#CCFFFFFF</color>
 
     <!-- font color -->

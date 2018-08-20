@@ -3,7 +3,7 @@
     xmlns:autofit="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/itemBackground"
+    android:background="@drawable/bg_item_selector"
     android:orientation="vertical"
     android:padding="@dimen/activity_padding">
 
