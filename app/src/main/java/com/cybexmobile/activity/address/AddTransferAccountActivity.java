@@ -1,6 +1,8 @@
 package com.cybexmobile.activity.address;
 
+import android.app.AppOpsManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -25,6 +27,7 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.cybex.database.DBManager;
 import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.WithdrawActivity;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;

@@ -214,7 +214,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
 
     private void copyAddress() {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("address", mCurrAddress.getAddress());
+        ClipData clip = ClipData.newPlainText("address", mCurrAddress.getAddress() + (TextUtils.isEmpty(mCurrAddress.getMemo()) ? "" : mCurrAddress.getMemo()));
         clipboard.setPrimaryClip(clip);
         ToastMessage.showNotEnableDepositToastMessage(WithdrawAddressManageListActivity.this,
                 getResources().getString(R.string.text_copy_transfer_account_successful),

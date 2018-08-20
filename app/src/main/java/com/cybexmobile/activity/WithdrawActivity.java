@@ -203,6 +203,12 @@ public class WithdrawActivity extends BaseActivity {
         loadAddress();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loadAddress();
+    }
+
     @OnTouch(R.id.withdraw_scrollview)
     public boolean onTouchEvent(View view, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -413,7 +419,7 @@ public class WithdrawActivity extends BaseActivity {
     public void onWithdraw(Event.Withdraw withdrawEvent) {
         if (withdrawEvent.isSuccess()) {
             mCheckAddressExistDisposable = DBManager.getDbProvider(this).checkWithdrawAddressExist(mUserName,
-                    mWithdrawAddress.getText().toString().trim(), mAssetName, Address.TYPE_WITHDRAW)
+                    mWithdrawAddress.getText().toString().trim(), mAssetObject.id.toString(), Address.TYPE_WITHDRAW)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<Boolean>() {
@@ -462,6 +468,7 @@ public class WithdrawActivity extends BaseActivity {
                             intent.putExtra(INTENT_PARAM_CRYPTO_MEMO, mWithdrawMemoEosEditText.getText().toString().trim());
                         }
                         startActivity(intent);
+                        finish();
                     }
                 },
                 new CybexDialog.ConfirmationDialogCancelListener() {
@@ -549,31 +556,6 @@ public class WithdrawActivity extends BaseActivity {
                 @Override
                 public void onMessage(WebSocketClient.Reply<String> reply) {
                     EventBus.getDefault().post(new Event.Withdraw(reply.result == null && reply.error == null));
-//                    if (mHandler == null) {
-//                        return;
-//                    }
-//                    if (reply.result == null && reply.error == null) {
-//                        mHandler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
-//                            }
-//                        });
-//                        mHandler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                finish();
-//                            }
-//                        }, 3500);
-//                    }
-//                    if (reply.error != null) {
-//                        mHandler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_failed), R.drawable.ic_error_16px);
-//                            }
-//                        });
-//                    }
                 }
 
                 @Override
