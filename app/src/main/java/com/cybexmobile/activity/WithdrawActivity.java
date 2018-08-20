@@ -35,13 +35,19 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.fragment.WithdrawinfoObject;
+import com.cybex.database.DBManager;
+import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.address.AddTransferAccountActivity;
+import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
+import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.dialog.UnlockDialog;
+import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountBalanceObject;
 import com.cybexmobile.graphene.chain.AccountObject;
@@ -60,6 +66,11 @@ import com.cybexmobile.toast.message.ToastMessage;
 import com.cybexmobile.utils.DecimalDigitsInputFilter;
 import com.cybexmobile.utils.SoftKeyBoardListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -73,8 +84,18 @@ import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.graphene.chain.Operations.ID_TRANSER_OPERATION;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_ID;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_MEMO;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_NAME;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_ITEMS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_SELECTED_ITEM;
 
 public class WithdrawActivity extends BaseActivity {
     private static String EOS = "EOS";
@@ -103,6 +124,9 @@ public class WithdrawActivity extends BaseActivity {
     private SignedTransaction mSignedTransaction;
     private DynamicGlobalPropertyObject mDynamicGlobalPropertyObject;
     private Context mContext;
+    private Disposable mLoadAddressDisposable;
+    private Disposable mCheckAddressExistDisposable;
+    private List<Address> mAddresses;
 
     //private boolean
 
@@ -116,6 +140,8 @@ public class WithdrawActivity extends BaseActivity {
     TextView mWithdrawAddressTv;
     @BindView(R.id.withdraw_withdrawal_address)
     EditText mWithdrawAddress;
+    @BindView(R.id.withdraw_tv_select_address)
+    TextView mTvWithdrawSelectAddress;
     @BindView(R.id.withdraw_amount)
     EditText mWithdrawAmountEditText;
     @BindView(R.id.withdraw_memo_eos_layout)
@@ -146,6 +172,7 @@ public class WithdrawActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_withdraw);
+        EventBus.getDefault().register(this);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         Intent serviceIntent = new Intent(this, WebSocketService.class);
@@ -173,6 +200,7 @@ public class WithdrawActivity extends BaseActivity {
         requestDetailMessage();
         setMinWithdrawAmountAndGateWayFee();
         setKeyboardListener();
+        loadAddress();
     }
 
     @OnTouch(R.id.withdraw_scrollview)
@@ -225,6 +253,39 @@ public class WithdrawActivity extends BaseActivity {
             mWebSocketService = null;
         }
     };
+
+    @OnClick(R.id.withdraw_tv_select_address)
+    public void onSelectAddressClick(View view) {
+        if (mAddresses == null || mAddresses.size() == 0) {
+            Intent intent = new Intent(this, AddTransferAccountActivity.class);
+            intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mAssetName);
+            intent.putExtra(INTENT_PARAM_CRYPTO_ID, mAssetObject.id.toString());
+            intent.putExtra(INTENT_PARAM_ADDRESS, mWithdrawAddress.getText().toString().trim());
+            if (mAssetName.equals(EOS)) {
+                intent.putExtra(INTENT_PARAM_CRYPTO_MEMO, mWithdrawMemoEosEditText.getText().toString().trim());
+            }
+            startActivity(intent);
+            return;
+        }
+        CommonSelectDialog<Address> dialog = new CommonSelectDialog<Address>();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_PARAM_ITEMS, (Serializable) mAddresses);
+        bundle.putSerializable(INTENT_PARAM_SELECTED_ITEM, null);
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), CommonSelectDialog.class.getSimpleName());
+        dialog.setOnAssetSelectedListener(new CommonSelectDialog.OnAssetSelectedListener<Address>() {
+            @Override
+            public void onAssetSelected(Address address) {
+                if (address == null) {
+                    return;
+                }
+                mWithdrawAddress.setText(address.getAddress());
+                if (!mWithdrawAddress.isFocused()) {
+                    onWithdrawAddressFocusChanged(mWithdrawAddress, false);
+                }
+            }
+        });
+    }
 
     @OnClick(value = R.id.withdraw_all_button)
     public void onAllButtonClicked(View view) {
@@ -348,6 +409,69 @@ public class WithdrawActivity extends BaseActivity {
                 mWithdrawMemoEosEditText.getText().toString());
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onWithdraw(Event.Withdraw withdrawEvent) {
+        if (withdrawEvent.isSuccess()) {
+            mCheckAddressExistDisposable = DBManager.getDbProvider(this).checkWithdrawAddressExist(mUserName,
+                    mWithdrawAddress.getText().toString().trim(), mAssetName, Address.TYPE_WITHDRAW)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean aBoolean) throws Exception {
+                            if (aBoolean) {
+                                ToastMessage.showNotEnableDepositToastMessage(
+                                        WithdrawActivity.this,
+                                        getResources().getString(R.string.toast_message_withdraw_sent),
+                                        R.drawable.ic_check_circle_green);
+                                mHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                }, 3500);
+
+                            } else {
+                                showAddAddressDialog();
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            ToastMessage.showNotEnableDepositToastMessage(
+                                    WithdrawActivity.this,
+                                    getResources().getString(R.string.toast_message_withdraw_sent),
+                                    R.drawable.ic_check_circle_green);
+                        }
+                    });
+        }
+    }
+
+    private void showAddAddressDialog() {
+        CybexDialog.showAddAddressDialog(this,
+                getResources().getString(R.string.toast_message_withdraw_sent),
+                getResources().getString(R.string.toast_message_add_this_account_to_list),
+                new CybexDialog.ConfirmationDialogClickListener() {
+                    @Override
+                    public void onClick(Dialog dialog) {
+                        Intent intent = new Intent(WithdrawActivity.this, AddTransferAccountActivity.class);
+                        intent.putExtra(INTENT_PARAM_ADDRESS, mWithdrawAddress.getText().toString().trim());
+                        intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mAssetName);
+                        intent.putExtra(INTENT_PARAM_CRYPTO_ID, mAssetObject.id.toString());
+                        if (mAssetName.equals(EOS)) {
+                            intent.putExtra(INTENT_PARAM_CRYPTO_MEMO, mWithdrawMemoEosEditText.getText().toString().trim());
+                        }
+                        startActivity(intent);
+                    }
+                },
+                new CybexDialog.ConfirmationDialogCancelListener() {
+                    @Override
+                    public void onCancel(Dialog dialog) {
+                        finish();
+                    }
+                });
+    }
+
     private void setKeyboardListener() {
         SoftKeyBoardListener.setListener(this, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
             @Override
@@ -424,36 +548,37 @@ public class WithdrawActivity extends BaseActivity {
             BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<String> reply) {
-                    if (mHandler == null) {
-                        return;
-                    }
-                    if (reply.result == null && reply.error == null) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
-                            }
-                        });
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        }, 3500);
-                    }
-                    if (reply.error != null) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_failed), R.drawable.ic_error_16px);
-                            }
-                        });
-                    }
+                    EventBus.getDefault().post(new Event.Withdraw(reply.result == null && reply.error == null));
+//                    if (mHandler == null) {
+//                        return;
+//                    }
+//                    if (reply.result == null && reply.error == null) {
+//                        mHandler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_sent), R.drawable.ic_check_circle_green);
+//                            }
+//                        });
+//                        mHandler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                finish();
+//                            }
+//                        }, 3500);
+//                    }
+//                    if (reply.error != null) {
+//                        mHandler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.toast_message_withdraw_failed), R.drawable.ic_error_16px);
+//                            }
+//                        });
+//                    }
                 }
 
                 @Override
                 public void onFailure() {
-
+                    EventBus.getDefault().post(new Event.Withdraw(false));
                 }
             });
         } catch (NetworkStatusException e) {
@@ -698,6 +823,31 @@ public class WithdrawActivity extends BaseActivity {
                 toAccountObject.account.options.memo_key);
     }
 
+    private void loadAddress() {
+        if (TextUtils.isEmpty(mUserName)) {
+            return;
+        }
+        mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mUserName, mAssetObject.id.toString(), Address.TYPE_WITHDRAW)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Address>>() {
+                    @Override
+                    public void accept(List<Address> addresses) throws Exception {
+                        mAddresses = addresses;
+                        if (mAddresses == null || mAddresses.size() == 0) {
+                            mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_add_account));
+                        } else {
+                            mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_select_account));
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_records, menu);
@@ -723,7 +873,14 @@ public class WithdrawActivity extends BaseActivity {
         mUnbinder.unbind();
         unbindService(mConnection);
         mHandler.removeCallbacksAndMessages(null);
+        EventBus.getDefault().unregister(this);
         mHandler = null;
+        if (mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()) {
+            mLoadAddressDisposable.dispose();
+        }
+        if (mCheckAddressExistDisposable != null && !mCheckAddressExistDisposable.isDisposed()) {
+            mCheckAddressExistDisposable.dispose();
+        }
     }
 
     @Override

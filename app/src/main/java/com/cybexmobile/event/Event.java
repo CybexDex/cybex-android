@@ -462,6 +462,20 @@ public class Event {
     }
 
     /**
+     * 提现
+     */
+    public static class Withdraw {
+        private boolean isSuccess;
+
+        public Withdraw(boolean isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        public boolean isSuccess() {
+            return isSuccess;
+        }
+    }
+    /**
      * 行情数据加载完通知交易界面刷新 防止行情界面数据没加载出来进入交易界面交易界面数据为空
      */
     public static class InitExchangeWatchlist {

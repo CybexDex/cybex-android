@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.address.TransferAccountManagerActivity;
 import com.cybexmobile.activity.transfer.TransferRecordsActivity;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.graphene.chain.AccountObject;
@@ -33,10 +34,12 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
     private Context mContext;
     private List<Address> mTransferAddresses = new ArrayList<>();
     private OnItemClickListener mOnItemClickListener;
+    private String mTokenName;
 
-    public TransferAccountManagerRecyclerViewAdapter(Context context, List<Address> addresses){
+    public TransferAccountManagerRecyclerViewAdapter(Context context, List<Address> addresses, String tokenName){
         mContext = context;
         mTransferAddresses = addresses;
+        mTokenName = tokenName;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -64,7 +67,15 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof EmptyViewHolder){
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
-            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_transfer_addresses));
+            if (mContext instanceof TransferAccountManagerActivity) {
+                emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_transfer_addresses));
+            } else {
+                if (!mTokenName.equals("EOS")) {
+                    emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_withdraw_addresses));
+                } else {
+                    emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_withdraw_account));
+                }
+            }
             return;
         }
         ViewHolder viewHolder = (ViewHolder) holder;

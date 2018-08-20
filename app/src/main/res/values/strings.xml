@@ -275,7 +275,7 @@
     <!-- Toast Message -->
     <string name="toast_message_can_not_deposit">Missing authority for deposit</string>
     <string name="toast_message_can_not_withdraw">Missing authority for withdrawal</string>
-    <string name="toast_message_withdraw_sent">Withdrawal request has been sent</string>
+    <string name="toast_message_withdraw_sent">Withdraw application  has been sent</string>
     <string name="toast_message_withdraw_failed">Withdrawal request failed</string>
     <string name="toast_message_place_order_successfully">Place order successfully</string>
     <string name="toast_message_place_order_failed">Place order failed</string>
@@ -351,8 +351,12 @@
     <string name="text_transfer_account">Transfer Account</string>
     <string name="text_add_transfer_account">Add Transfer Account</string>
     <string name="text_no_transfer_addresses">No transfer addresses</string>
+    <string name="text_no_withdraw_account">No withdraw accounts</string>
+    <string name="text_no_withdraw_addresses">No withdraw addresses</string>
     <string name="text_account">Account</string>
     <string name="text_account_dot">Account:</string>
+    <string name="text_memo_dot">Memo:</string>
+    <string name="text_address_dot">Address:</string>
     <string name="text_address">Address</string>
     <string name="text_note">Note</string>
     <string name="text_note_dot">Note:</string>

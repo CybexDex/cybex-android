@@ -62,7 +62,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
         setSupportActionBar(mToolbar);
         mRvTransferAccount.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
-        mTransferAccountAdapter = new TransferAccountManagerRecyclerViewAdapter(TransferAccountManagerActivity.this, new ArrayList<>());
+        mTransferAccountAdapter = new TransferAccountManagerRecyclerViewAdapter(TransferAccountManagerActivity.this, new ArrayList<>(), null);
         mTransferAccountAdapter.setOnItemClickListener(this);
         mRvTransferAccount.setAdapter(mTransferAccountAdapter);
         loadAddress();

@@ -15,29 +15,33 @@
         android:maxLines="1"
         android:text="@string/text_empty" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
         android:layout_marginTop="@dimen/margin_6">
 
         <TextView
             android:id="@+id/item_transfer_account_manager_tv_address"
             style="@style/font_gray_small"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:singleLine="true"
             android:ellipsize="middle"
             android:text="@string/text_empty" />
         <TextView
             android:id="@+id/item_transfer_account_manager_tv_memo"
             style="@style/font_gray_small"
-            android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
             android:text="@string/text_empty"
             android:singleLine="true"
             android:ellipsize="middle"
             android:visibility="gone"/>
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

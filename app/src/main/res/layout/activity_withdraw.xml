@@ -75,17 +75,46 @@
                     android:layout_height="wrap_content"
                     android:text="@string/withdraw_withdrawal_address" />
 
-                <EditText
-                    android:id="@+id/withdraw_withdrawal_address"
-                    style="@style/font_white_dark_large"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/transparent"
-                    android:hint="@string/withdraw_enter_or_paste_address_hint"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColorHint="@color/text_hint_color"
-                    android:textCursorDrawable="@null" />
+                    android:layout_marginTop="@dimen/margin_6">
+
+                    <EditText
+                        android:id="@+id/withdraw_withdrawal_address"
+                        style="@style/font_white_dark_large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:hint="@string/withdraw_enter_or_paste_address_hint"
+                        android:inputType="textMultiLine"
+                        android:textColorHint="@color/text_hint_color"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_toStartOf="@id/withdraw_address_select_layout"/>
+
+                    <LinearLayout
+                        android:id="@+id/withdraw_address_select_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/transfer_iv_account_check"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="invisible" />
+
+                        <TextView
+                            android:id="@+id/withdraw_tv_select_address"
+                            style="@style/font_grey_medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_address_16_px"
+                            android:text="@string/text_select_account" />
+                    </LinearLayout>
+                </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -113,8 +142,8 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/transparent"
                         android:ellipsize="end"
-                        android:singleLine="true"
                         android:scrollHorizontally="true"
+                        android:singleLine="true"
                         android:textCursorDrawable="@null" />
 
                     <View

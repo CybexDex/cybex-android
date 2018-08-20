@@ -1,5 +1,6 @@
 package com.cybexmobile.activity.address;
 
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -20,9 +21,11 @@ import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferAccountManagerRecyclerViewAdapter;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.AddressOperationSelectDialog;
+import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.toast.message.ToastMessage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,6 +36,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_ID;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_NAME;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
 public class WithdrawAddressManageListActivity extends BaseActivity implements TransferAccountManagerRecyclerViewAdapter.OnItemClickListener,
@@ -75,7 +80,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
             mTvToolbarTitle.setText(getResources().getString(R.string.withdraw_address_title));
         }
         mWithdrawAddressRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mWithdrawAddressManagerAdapter = new TransferAccountManagerRecyclerViewAdapter(this, new ArrayList<>());
+        mWithdrawAddressManagerAdapter = new TransferAccountManagerRecyclerViewAdapter(this, new ArrayList<>(), mTokenName);
         mWithdrawAddressManagerAdapter.setOnItemClickListener(this);
         mWithdrawAddressRecyclerView.setAdapter(mWithdrawAddressManagerAdapter);
         loadAddress();
@@ -110,8 +115,8 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
         switch (item.getItemId()) {
             case R.id.action_add_transfer_account:
                 Intent intent = new Intent(this, AddTransferAccountActivity.class);
-                intent.putExtra("cryptoName", mTokenName);
-                intent.putExtra("cryptoId", mTokenId);
+                intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mTokenName);
+                intent.putExtra(INTENT_PARAM_CRYPTO_ID, mTokenId);
                 startActivity(intent);
                 break;
         }
@@ -136,7 +141,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
                 copyAddress();
                 break;
             case AddressOperationSelectDialog.OPERATION_DELETE:
-                deleteAddress();
+                deleteAddressConfirm();
                 break;
             case AddressOperationSelectDialog.OPETATION_CANCEL:
         }
@@ -145,6 +150,21 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
 
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
+
+    }
+
+    private void deleteAddressConfirm(){
+        CybexDialog.showDeleteConfirmDialog(
+                this,
+                getResources().getString(R.string.text_delete_confirm),
+                getResources().getString(R.string.text_confirm_to_delete_this_account),
+                mCurrAddress,
+                new CybexDialog.ConfirmationDialogClickListener() {
+                    @Override
+                    public void onClick(Dialog dialog) {
+                        deleteAddress();
+                    }
+                }, null);
 
     }
 
@@ -159,6 +179,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
                 .subscribe(new Consumer<List<Address>>() {
                     @Override
                     public void accept(List<Address> addresses) throws Exception {
+                        Collections.sort(addresses);
                         mWithdrawAddressManagerAdapter.setAddresses(addresses);
                     }
                 }, new Consumer<Throwable>() {

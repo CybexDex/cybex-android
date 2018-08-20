@@ -48,6 +48,7 @@
             android:layout_marginTop="@dimen/margin_6">
 
             <TextView
+                android:id="@+id/dialog_delete_address_tv_account_label"
                 style="@style/font_gray_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,6 +60,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_6"
+                android:text="@string/text_empty" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dialog_delete_address_layout_memo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_6"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_memo_dot" />
+
+            <TextView
+                android:id="@+id/dialog_delete_address_tv_memo"
+                style="@style/font_white_dark_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_6"
+                android:ellipsize="middle"
+                android:singleLine="true"
                 android:text="@string/text_empty" />
 
         </LinearLayout>

@@ -54,6 +54,9 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_ID;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_MEMO;
+import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_NAME;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
 public class AddTransferAccountActivity extends BaseActivity implements SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
@@ -100,21 +103,26 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         setSupportActionBar(mToolbar);
         EventBus.getDefault().register(this);
         SoftKeyBoardListener.setListener(this, this);
+        mApolloClient = ApolloClientApi.getApolloClient();
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         String address = getIntent().getStringExtra(INTENT_PARAM_ADDRESS);
+        String eosMemo = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_MEMO);
+        mTokenName = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_NAME);
+        mTokenId = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_ID);
         if(!TextUtils.isEmpty(address)){
             mEtAccount.setText(address);
             onAccountNameFocusChanged(mEtAccount, false);
         }
-        mTokenName = getIntent().getStringExtra("cryptoName");
-        mTokenId = getIntent().getStringExtra("cryptoId");
+
         if (mTokenName != null) {
-            mApolloClient = ApolloClientApi.getApolloClient();
             mLinearLayoutCrypto.setVisibility(View.VISIBLE);
             mTvCrypto.setText(mTokenName);
             if (mTokenName.equals(EOS)) {
                 mLinearLayoutMemo.setVisibility(View.VISIBLE);
                 mTvToolbarTitle.setText(getResources().getString(R.string.text_add_withdraw_account));
+                if (!TextUtils.isEmpty(eosMemo)) {
+                    mEtMemo.setText(eosMemo);
+                }
             } else {
                 mLinearLayoutMemo.setVisibility(View.GONE);
                 mTvAccountAddress.setText(getResources().getString(R.string.text_address));

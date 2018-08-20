@@ -353,8 +353,13 @@
     <string name="text_withdraw_address">提现地址</string>
     <string name="text_transfer_account">转账账户</string>
     <string name="text_add_transfer_account">添加转账账户</string>
+    <string name="text_no_transfer_addresses">无转账地址</string>
+    <string name="text_no_withdraw_account">无提现账户</string>
+    <string name="text_no_withdraw_addresses">无提现地址</string>
     <string name="text_account">账户</string>
     <string name="text_account_dot">账户:</string>
+    <string name="text_memo_dot">备注:</string>
+    <string name="text_address_dot">地址:</string>
     <string name="text_address">地址</string>
     <string name="text_note">标签</string>
     <string name="text_note_dot">标签:</string>

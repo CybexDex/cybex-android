@@ -33,6 +33,9 @@ public class Constant {
     public static final String INTENT_PARAM_ITEMS = "intent_param_items";
     public static final String INTENT_PARAM_SELECTED_ITEM = "intent_param_selected_item";
     public static final String INTENT_PARAM_ADDRESS = "intent_param_address";
+    public static final String INTENT_PARAM_CRYPTO_NAME = "cryptoName";
+    public static final String INTENT_PARAM_CRYPTO_ID = "cryptoId";
+    public static final String INTENT_PARAM_CRYPTO_MEMO = "cryptoMemo";
 
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";

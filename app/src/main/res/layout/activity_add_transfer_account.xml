@@ -161,8 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:maxLength="15"
-                    android:maxLines="1"
+                    android:inputType="textMultiLine"
                     android:paddingBottom="@dimen/activity_padding"
                     android:paddingTop="@dimen/activity_padding"
                     android:textColorHint="@color/text_hint_color" />

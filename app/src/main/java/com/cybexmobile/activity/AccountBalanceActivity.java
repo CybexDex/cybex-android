@@ -208,7 +208,9 @@ public class AccountBalanceActivity extends BaseActivity {
         for (AssetRmbPrice assetRmbPrice : assetRmbPrices) {
             if ("CYB".equals(assetRmbPrice.getName())) {
                 mCybRmbPrice = assetRmbPrice.getValue();
-                setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
+                if (mTickerCount == mFullAccountObject.balances.size() + mFullAccountObject.limit_orders.size()) {
+                    setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
+                }
                 break;
             }
         }
@@ -287,6 +289,7 @@ public class AccountBalanceActivity extends BaseActivity {
                         }
                     }
                     if (shouldHide) {
+                        mTickerCount ++;
                         continue;
                     }
 
