@@ -112,4 +112,6 @@ dependencies {
     implementation project(':MPChartLib')
     implementation project(':ui-smart-refresh')
     implementation project(':database-provider')
+    //Umeng
+    implementation 'com.umeng.analytics:analytics:latest.integration'
 }

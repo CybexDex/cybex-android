@@ -26,6 +26,7 @@ import com.cybexmobile.event.Event;
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.receiver.NetWorkBroadcastReceiver;
 import com.cybexmobile.receiver.NetworkChangedCallback;
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -92,6 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             EventBus.getDefault().post(new Event.IsOnBackground(false));
         }
         super.onResume();
+        MobclickAgent.onResume(this);
         Log.d(TAG, "onResume");
     }
 
@@ -104,6 +106,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
         Log.d(TAG, "onPause");
     }
 

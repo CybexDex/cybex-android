@@ -19,6 +19,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <meta-data android:value="5b6bfb6da40fa34f04000050" android:name="UMENG_APPKEY"/>
+        <meta-data android:value="unknown" android:name="UMENG_CHANNEL"/>
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name"
