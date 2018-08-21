@@ -28,9 +28,10 @@ public class AddressDao extends AbstractDao<Address, Long> {
         public final static Property Account = new Property(1, String.class, "account", false, "account");
         public final static Property Token = new Property(2, String.class, "token", false, "token");
         public final static Property Address = new Property(3, String.class, "address", false, "address");
-        public final static Property Label = new Property(4, String.class, "label", false, "label");
+        public final static Property Note = new Property(4, String.class, "note", false, "note");
         public final static Property Memo = new Property(5, String.class, "memo", false, "memo");
         public final static Property Type = new Property(6, int.class, "type", false, "type");
+        public final static Property CreateTime = new Property(7, long.class, "createTime", false, "createTime");
     }
 
 
@@ -50,9 +51,10 @@ public class AddressDao extends AbstractDao<Address, Long> {
                 "\"account\" TEXT," + // 1: account
                 "\"token\" TEXT," + // 2: token
                 "\"address\" TEXT," + // 3: address
-                "\"label\" TEXT," + // 4: label
+                "\"note\" TEXT," + // 4: note
                 "\"memo\" TEXT," + // 5: memo
-                "\"type\" INTEGER NOT NULL );"); // 6: type
+                "\"type\" INTEGER NOT NULL ," + // 6: type
+                "\"createTime\" INTEGER NOT NULL );"); // 7: createTime
     }
 
     /** Drops the underlying database table. */
@@ -85,9 +87,9 @@ public class AddressDao extends AbstractDao<Address, Long> {
             stmt.bindString(4, address);
         }
  
-        String label = entity.getLabel();
-        if (label != null) {
-            stmt.bindString(5, label);
+        String note = entity.getNote();
+        if (note != null) {
+            stmt.bindString(5, note);
         }
  
         String memo = entity.getMemo();
@@ -95,6 +97,7 @@ public class AddressDao extends AbstractDao<Address, Long> {
             stmt.bindString(6, memo);
         }
         stmt.bindLong(7, entity.getType());
+        stmt.bindLong(8, entity.getCreateTime());
     }
 
     @Override
@@ -121,9 +124,9 @@ public class AddressDao extends AbstractDao<Address, Long> {
             stmt.bindString(4, address);
         }
  
-        String label = entity.getLabel();
-        if (label != null) {
-            stmt.bindString(5, label);
+        String note = entity.getNote();
+        if (note != null) {
+            stmt.bindString(5, note);
         }
  
         String memo = entity.getMemo();
@@ -131,6 +134,7 @@ public class AddressDao extends AbstractDao<Address, Long> {
             stmt.bindString(6, memo);
         }
         stmt.bindLong(7, entity.getType());
+        stmt.bindLong(8, entity.getCreateTime());
     }
 
     @Override
@@ -145,9 +149,10 @@ public class AddressDao extends AbstractDao<Address, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // account
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // token
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // address
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // label
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // note
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // memo
-            cursor.getInt(offset + 6) // type
+            cursor.getInt(offset + 6), // type
+            cursor.getLong(offset + 7) // createTime
         );
         return entity;
     }
@@ -158,9 +163,10 @@ public class AddressDao extends AbstractDao<Address, Long> {
         entity.setAccount(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setToken(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setAddress(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setLabel(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setNote(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setMemo(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setType(cursor.getInt(offset + 6));
+        entity.setCreateTime(cursor.getLong(offset + 7));
      }
     
     @Override

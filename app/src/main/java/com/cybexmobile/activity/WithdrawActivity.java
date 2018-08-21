@@ -39,7 +39,6 @@ import com.cybex.database.DBManager;
 import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
-import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
@@ -832,7 +831,7 @@ public class WithdrawActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_records, menu);
+        getMenuInflater().inflate(R.menu.menu_withdraw_records, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

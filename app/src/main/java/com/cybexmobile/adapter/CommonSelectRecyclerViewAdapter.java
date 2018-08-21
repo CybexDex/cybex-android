@@ -79,7 +79,7 @@ public class CommonSelectRecyclerViewAdapter<T> extends RecyclerView.Adapter<Rec
             viewHolder.mTvSymbol.setText(AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol));
         } else if(item instanceof Address){
             Address address = (Address) item;
-            viewHolder.mTvSymbol.setText(address.getLabel());
+            viewHolder.mTvSymbol.setText(address.getNote());
         }
 
     }

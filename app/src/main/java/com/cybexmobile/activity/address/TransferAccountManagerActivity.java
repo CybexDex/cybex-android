@@ -98,7 +98,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_transfer_account_manager, menu);
+        getMenuInflater().inflate(R.menu.menu_add_transfer_account, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -187,7 +187,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
                     @Override
                     public void accept(Boolean result) throws Exception {
                         ToastMessage.showNotEnableDepositToastMessage(TransferAccountManagerActivity.this,
-                                getResources().getString(R.string.text_delete_transfer_account_successful),
+                                getResources().getString(R.string.text_deleted),
                                 R.drawable.ic_check_circle_green);
                         loadAddress();
                     }
@@ -195,7 +195,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         ToastMessage.showNotEnableDepositToastMessage(TransferAccountManagerActivity.this,
-                                getResources().getString(R.string.text_delete_transfer_account_failed),
+                                getResources().getString(R.string.text_deleted_failed),
                                 R.drawable.ic_error_16px);
                     }
                 });
@@ -206,7 +206,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
         ClipData clip = ClipData.newPlainText("address", mCurrAddress.getAddress());
         clipboard.setPrimaryClip(clip);
         ToastMessage.showNotEnableDepositToastMessage(TransferAccountManagerActivity.this,
-                getResources().getString(R.string.text_copy_transfer_account_successful),
+                getResources().getString(R.string.text_copied),
                 R.drawable.ic_check_circle_green);
     }
 

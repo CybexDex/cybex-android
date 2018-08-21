@@ -78,7 +78,6 @@ import static com.cybexmobile.utils.Constant.ASSET_SYMBOL_CYB;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ITEMS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_SELECTED_ITEM;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
@@ -196,7 +195,7 @@ public class TransferActivity extends BaseActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_records, menu);
+        getMenuInflater().inflate(R.menu.menu_transfer_records, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

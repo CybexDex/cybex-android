@@ -178,6 +178,8 @@
     <string name="tab_open_orders">Open Orders</string>
     <string name="menu_order_history">Order History</string>
     <string name="menu_transfer_records">Transfer Records</string>
+    <string name="menu_withdraw_records">Withdraw Records</string>
+    <string name="menu_deposit_records">Deposit Records</string>
     <string name="text_limit">Limit</string>
     <string name="text_empty">--</string>
     <string name="text_asset_price">Price(--)</string>
@@ -349,10 +351,11 @@
     <!-- Address Manager Activity-->
     <string name="text_withdraw_address">Withdrawal Address</string>
     <string name="text_transfer_account">Transfer Account</string>
+    <string name="text_transfer_account_management">Transfer Account</string>
     <string name="text_add_transfer_account">Add Transfer Account</string>
-    <string name="text_no_transfer_addresses">No transfer addresses</string>
-    <string name="text_no_withdraw_account">No withdraw accounts</string>
-    <string name="text_no_withdraw_addresses">No withdraw addresses</string>
+    <string name="text_no_transfer_account">No transfer account</string>
+    <string name="text_no_withdraw_account">No withdraw account</string>
+    <string name="text_no_withdraw_address">No withdraw address</string>
     <string name="text_account">Account</string>
     <string name="text_account_dot">Account:</string>
     <string name="text_memo_dot">Memo:</string>
@@ -361,12 +364,12 @@
     <string name="text_note">Note</string>
     <string name="text_note_dot">Note:</string>
     <string name="text_add">Add</string>
-    <string name="text_add_transfer_account_successful">Add transfer account successful</string>
-    <string name="text_add_transfer_account_failed">Add transfer account failed</string>
-    <string name="text_delete_transfer_account_successful">Delete transfer account successful</string>
-    <string name="text_delete_transfer_account_failed">Delete transfer account failed</string>
-    <string name="text_copy_transfer_account_successful">Copy transfer account successful</string>
-    <string name="text_copy_transfer_account_failed">Copy transfer account failed</string>
+    <string name="text_added">Added</string>
+    <string name="text_added_failed">Added failed</string>
+    <string name="text_deleted">Deleted</string>
+    <string name="text_deleted_failed">Deleted failed</string>
+    <string name="text_copied">Copied</string>
+    <string name="text_copied_failed">Copy transfer account failed</string>
     <string name="text_transfer_account_already_exists">Transfer account already exists</string>
     <string name="text_copy">Copy</string>
     <string name="text_delete">Delete</string>

@@ -6,19 +6,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.address.TransferAccountManagerActivity;
-import com.cybexmobile.activity.transfer.TransferRecordsActivity;
+import com.cybexmobile.activity.address.WithdrawAddressManageListActivity;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
-import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.Operations;
-import com.cybexmobile.utils.AssetUtil;
-import com.cybexmobile.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,11 +61,12 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof EmptyViewHolder){
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
+            emptyViewHolder.mIvImage.setImageResource(R.drawable.img_no_address);
             if (mContext instanceof TransferAccountManagerActivity) {
-                emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_transfer_addresses));
-            } else {
+                emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_transfer_account));
+            } else if (mContext instanceof WithdrawAddressManageListActivity){
                 if (!mTokenName.equals("EOS")) {
-                    emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_withdraw_addresses));
+                    emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_withdraw_address));
                 } else {
                     emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_withdraw_account));
                 }
@@ -81,7 +76,7 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
         ViewHolder viewHolder = (ViewHolder) holder;
         Address address = mTransferAddresses.get(position);
         viewHolder.mTvAddress.setText(address.getAddress());
-        viewHolder.mTvLabel.setText(address.getLabel());
+        viewHolder.mTvLabel.setText(address.getNote());
         if (mTransferAddresses.get(position).getMemo() != null) {
             viewHolder.mTvMemo.setVisibility(View.VISIBLE);
             viewHolder.mTvMemo.setText(mTransferAddresses.get(position).getMemo());

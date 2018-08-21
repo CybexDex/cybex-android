@@ -1,8 +1,6 @@
 package com.cybexmobile.activity.address;
 
-import android.app.AppOpsManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -27,12 +25,10 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.cybex.database.DBManager;
 import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
-import com.cybexmobile.activity.WithdrawActivity;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.exception.NetworkStatusException;
 import com.cybexmobile.graphene.chain.AccountObject;
@@ -297,19 +293,21 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         Address address = new Address();
         if (mTokenName != null) {
             address.setType(Address.TYPE_WITHDRAW);
-            address.setLabel(mEtLabel.getText().toString().trim());
+            address.setNote(mEtLabel.getText().toString());
             address.setToken(mTokenId);
             address.setAddress(mEtAccount.getText().toString().trim());
             address.setAccount(mUserName);
+            address.setCreateTime(System.currentTimeMillis());
             if (mTokenName.equals(EOS)) {
                 address.setMemo(mEtMemo.getText().toString().trim());
             }
             addTransferAccount(address);
         } else {
             address.setType(Address.TYPE_TRANSFER);
-            address.setLabel(mEtLabel.getText().toString().trim());
+            address.setNote(mEtLabel.getText().toString());
             address.setAccount(mUserName);
             address.setAddress(mEtAccount.getText().toString().trim());
+            address.setCreateTime(System.currentTimeMillis());
             addTransferAccount(address);
         }
     }
@@ -323,12 +321,12 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                     public void accept(Long aLong) throws Exception {
                         if (aLong != -1) {
                             ToastMessage.showNotEnableDepositToastMessage(AddTransferAccountActivity.this,
-                                    getResources().getString(R.string.text_add_transfer_account_successful),
+                                    getResources().getString(R.string.text_added),
                                     R.drawable.ic_check_circle_green);
                             finish();
                         } else {
                             ToastMessage.showNotEnableDepositToastMessage(AddTransferAccountActivity.this,
-                                    getResources().getString(R.string.text_add_transfer_account_failed),
+                                    getResources().getString(R.string.text_added_failed),
                                     R.drawable.ic_error_16px);
                         }
                     }
@@ -336,7 +334,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         ToastMessage.showNotEnableDepositToastMessage(AddTransferAccountActivity.this,
-                                getResources().getString(R.string.text_add_transfer_account_failed),
+                                getResources().getString(R.string.text_added_failed),
                                 R.drawable.ic_error_16px);
                     }
                 });
@@ -396,7 +394,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
     }
 
     private void resetBtnState(){
-        mBtnAdd.setEnabled(mIsAccountValid && !mIsAccountExist && !TextUtils.isEmpty(mEtLabel.getText().toString().trim()));
+        mBtnAdd.setEnabled(mIsAccountValid && !mIsAccountExist && !TextUtils.isEmpty(mEtLabel.getText().toString()));
     }
 
 }

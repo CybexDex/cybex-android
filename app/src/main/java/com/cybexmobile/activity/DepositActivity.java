@@ -164,7 +164,7 @@ public class DepositActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_records, menu);
+        getMenuInflater().inflate(R.menu.menu_deposit_records, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

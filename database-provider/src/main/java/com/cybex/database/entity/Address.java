@@ -12,9 +12,6 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
 
-import java.text.Collator;
-import java.util.Locale;
-
 @Entity(nameInDb = "address")
 public class Address implements Comparable<Address>{
 
@@ -34,8 +31,8 @@ public class Address implements Comparable<Address>{
     @Property(nameInDb = "address")
     private String address;//地址
 
-    @Property(nameInDb = "label")
-    private String label;//标签
+    @Property(nameInDb = "note")
+    private String note;//标签
 
     @Property(nameInDb = "memo")
     private String memo;//memo
@@ -43,16 +40,21 @@ public class Address implements Comparable<Address>{
     @Property(nameInDb = "type")
     private int type;//类型
 
-    @Generated(hash = 354826096)
-    public Address(Long id, String account, String token, String address,
-            String label, String memo, int type) {
+    @Property(nameInDb = "createTime")
+    private long createTime;//创建时间
+
+
+    @Generated(hash = 1619031669)
+    public Address(Long id, String account, String token, String address, String note, String memo,
+            int type, long createTime) {
         this.id = id;
         this.account = account;
         this.token = token;
         this.address = address;
-        this.label = label;
+        this.note = note;
         this.memo = memo;
         this.type = type;
+        this.createTime = createTime;
     }
 
     @Generated(hash = 388317431)
@@ -65,22 +67,6 @@ public class Address implements Comparable<Address>{
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getLabel() {
-        return this.label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     public String getAccount() {
@@ -99,6 +85,22 @@ public class Address implements Comparable<Address>{
         this.token = token;
     }
 
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getNote() {
+        return this.note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     public String getMemo() {
         return this.memo;
     }
@@ -115,10 +117,18 @@ public class Address implements Comparable<Address>{
         this.type = type;
     }
 
+    public long getCreateTime() {
+        return this.createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
     @Override
     public int compareTo(@NonNull Address address) {
-        String pingyin = toPinYin(address.getLabel());
-        String pingyinCurr = toPinYin(getLabel());
+        String pingyin = toPinYin(address.getNote());
+        String pingyinCurr = toPinYin(getNote());
         if (pingyinCurr.startsWith("#") && !pingyin.startsWith("#")) {
             return 1;
         } else if (!pingyinCurr.startsWith("#") && pingyin.startsWith("#")) {
@@ -156,4 +166,5 @@ public class Address implements Comparable<Address>{
         }
         return result;
     }
+
 }

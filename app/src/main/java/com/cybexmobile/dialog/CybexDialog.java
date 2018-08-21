@@ -342,7 +342,7 @@ public class CybexDialog {
         TextView tvMessage = dialog.findViewById(R.id.dialog_delete_address_tv_message);
         tvMessage.setText(message);
         TextView tvNote = dialog.findViewById(R.id.dialog_delete_address_tv_note);
-        tvNote.setText(address.getLabel());
+        tvNote.setText(address.getNote());
         TextView tvAccount = dialog.findViewById(R.id.dialog_delete_address_tv_account);
         tvAccount.setText(address.getAddress());
         TextView tvAccountLabel = dialog.findViewById(R.id.dialog_delete_address_tv_account_label);

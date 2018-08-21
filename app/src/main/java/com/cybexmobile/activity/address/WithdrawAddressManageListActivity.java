@@ -106,7 +106,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_transfer_account_manager, menu);
+        getMenuInflater().inflate(R.menu.menu_add_withdraw_address, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -198,7 +198,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
                     @Override
                     public void accept(Boolean result) throws Exception {
                         ToastMessage.showNotEnableDepositToastMessage(WithdrawAddressManageListActivity.this,
-                                getResources().getString(R.string.text_delete_transfer_account_successful),
+                                getResources().getString(R.string.text_deleted),
                                 R.drawable.ic_check_circle_green);
                         loadAddress();
                     }
@@ -206,7 +206,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         ToastMessage.showNotEnableDepositToastMessage(WithdrawAddressManageListActivity.this,
-                                getResources().getString(R.string.text_delete_transfer_account_failed),
+                                getResources().getString(R.string.text_deleted_failed),
                                 R.drawable.ic_error_16px);
                     }
                 });
@@ -217,7 +217,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
         ClipData clip = ClipData.newPlainText("address", mCurrAddress.getAddress() + (TextUtils.isEmpty(mCurrAddress.getMemo()) ? "" : mCurrAddress.getMemo()));
         clipboard.setPrimaryClip(clip);
         ToastMessage.showNotEnableDepositToastMessage(WithdrawAddressManageListActivity.this,
-                getResources().getString(R.string.text_copy_transfer_account_successful),
+                getResources().getString(R.string.text_copied),
                 R.drawable.ic_check_circle_green);
     }
 }
