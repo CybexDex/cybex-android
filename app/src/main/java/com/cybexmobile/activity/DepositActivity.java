@@ -339,7 +339,7 @@ public class DepositActivity extends BaseActivity {
     }
 
     private void generateBarCode(String barcode) {
-        Bitmap bitmap = QRCode.createQRCodeWithLogo(barcode, BitmapFactory.decodeResource(getResources(), R.drawable.icon));
+        Bitmap bitmap = QRCode.createQRCodeWithLogo(barcode, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         mQRCodeView.setImageBitmap(bitmap);
     }
 

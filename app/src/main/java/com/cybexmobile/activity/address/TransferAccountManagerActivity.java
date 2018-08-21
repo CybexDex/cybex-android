@@ -49,6 +49,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
     private String mUserName;
     private TransferAccountManagerRecyclerViewAdapter mTransferAccountAdapter;
     private Address mCurrAddress;
+    private int mCurrPosition;
 
     private Unbinder mUnbinder;
     private Disposable mLoadAddressDisposable;
@@ -119,8 +120,9 @@ public class TransferAccountManagerActivity extends BaseActivity implements
     }
 
     @Override
-    public void onItemClick(Address address) {
+    public void onItemClick(Address address, int position) {
         mCurrAddress = address;
+        mCurrPosition = position;
         AddressOperationSelectDialog dialog = new AddressOperationSelectDialog();
         dialog.show(getSupportFragmentManager(), AddressOperationSelectDialog.class.getSimpleName());
         dialog.setOnAddressOperationSelectedListener(this);
@@ -131,6 +133,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
         if(mCurrAddress == null){
             return;
         }
+        mTransferAccountAdapter.notifyItemChanged(mCurrPosition);
         switch (operation) {
             case AddressOperationSelectDialog.OPERATION_COPY:
                 copyAddress();

@@ -49,6 +49,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
     private Disposable mLoadAddressDisposable;
     private Disposable mDeleteAddressDisposable;
     private Address mCurrAddress;
+    private int mCurrPosition;
 
     private String mUserName;
     private String mTokenName;
@@ -124,8 +125,9 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
     }
 
     @Override
-    public void onItemClick(Address address) {
+    public void onItemClick(Address address, int position) {
         mCurrAddress = address;
+        mCurrPosition = position;
         AddressOperationSelectDialog dialog = new AddressOperationSelectDialog();
         dialog.show(getSupportFragmentManager(), AddressOperationSelectDialog.class.getSimpleName());
         dialog.setOnAddressOperationSelectedListener(this);
@@ -136,6 +138,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
         if (mCurrAddress == null) {
             return;
         }
+        mWithdrawAddressManagerAdapter.notifyItemChanged(mCurrPosition);
         switch (operation) {
             case AddressOperationSelectDialog.OPERATION_COPY:
                 copyAddress();

@@ -120,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_address_28_px"/>
+                    android:src="@drawable/ic_address_28px"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

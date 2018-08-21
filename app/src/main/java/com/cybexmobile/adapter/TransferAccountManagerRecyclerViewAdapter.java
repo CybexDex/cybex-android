@@ -74,6 +74,7 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
             return;
         }
         ViewHolder viewHolder = (ViewHolder) holder;
+        viewHolder.itemView.setSelected(false);
         Address address = mTransferAddresses.get(position);
         viewHolder.mTvAddress.setText(address.getAddress());
         viewHolder.mTvLabel.setText(address.getNote());
@@ -87,7 +88,8 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
             @Override
             public void onClick(View v) {
                 if(mOnItemClickListener != null){
-                    mOnItemClickListener.onItemClick(address);
+                    mOnItemClickListener.onItemClick(address, position);
+                    viewHolder.itemView.setSelected(true);
                 }
             }
         });
@@ -119,6 +121,6 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
     }
 
     public interface OnItemClickListener{
-        void onItemClick(Address address);
+        void onItemClick(Address address, int position);
     }
 }
