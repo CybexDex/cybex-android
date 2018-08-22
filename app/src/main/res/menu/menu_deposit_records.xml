@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_records"
-        android:title="@string/menu_deposit_records"
+        android:title=""
         android:icon="@drawable/ic_deposit_record_24_px"
         app:showAsAction="always" />
 

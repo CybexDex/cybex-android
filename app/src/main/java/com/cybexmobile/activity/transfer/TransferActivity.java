@@ -509,6 +509,11 @@ public class TransferActivity extends BaseActivity implements
                                         TransferActivity.this,
                                         getResources().getString(R.string.toast_message_transfer_success),
                                         R.drawable.ic_check_circle_green);
+                                /**
+                                 * fix bug:CYM-505
+                                 * 转账成功和失败清除数据
+                                 */
+                                clearTransferData();
                             } else {
                                 showAddAddressDialog();
                             }
@@ -520,6 +525,11 @@ public class TransferActivity extends BaseActivity implements
                                     TransferActivity.this,
                                     getResources().getString(R.string.toast_message_transfer_success),
                                     R.drawable.ic_check_circle_green);
+                            /**
+                             * fix bug:CYM-505
+                             * 转账成功和失败清除数据
+                             */
+                            clearTransferData();
                         }
                     });
         } else {
@@ -531,7 +541,7 @@ public class TransferActivity extends BaseActivity implements
     private void showAddAddressDialog(){
         CybexDialog.showAddAddressDialog(this,
                 getResources().getString(R.string.toast_message_transfer_success),
-                getResources().getString(R.string.toast_message_add_this_account_to_list),
+                getResources().getString(R.string.toast_message_add_to_transfer_account_list),
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {

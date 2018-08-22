@@ -286,6 +286,7 @@
     <string name="toast_message_transfer_success">Transfer success</string>
     <string name="toast_message_transfer_failed">Transfer failed</string>
     <string name="toast_message_add_this_account_to_list">Add this account to list?</string>
+    <string name="toast_message_add_to_transfer_account_list">Add to transfer account list?</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
