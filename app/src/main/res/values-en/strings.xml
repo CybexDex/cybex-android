@@ -369,7 +369,9 @@
     <string name="text_copy">Copy</string>
     <string name="text_delete">Delete</string>
     <string name="text_add_account">Add</string>
+    <string name="text_add_address">Add</string>
     <string name="text_select_account">Select</string>
+    <string name="text_select_address">Select</string>
     <string name="text_less_than_15_characters">Less than 15 characters</string>
     <string name="text_add_withdraw_account">Add Withdraw Account</string>
     <string name="text_add_withdraw_address">Add Withdraw Address</string>

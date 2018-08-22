@@ -816,9 +816,17 @@ public class WithdrawActivity extends BaseActivity {
                     public void accept(List<Address> addresses) throws Exception {
                         mAddresses = addresses;
                         if (mAddresses == null || mAddresses.size() == 0) {
-                            mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_add_account));
+                            if (mAssetName.equals(EOS)) {
+                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_add_account));
+                            } else {
+                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_add_address));
+                            }
                         } else {
-                            mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_select_account));
+                            if (mAssetName.equals(EOS)) {
+                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_select_account));
+                            } else {
+                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_select_address));
+                            }
                         }
                     }
                 }, new Consumer<Throwable>() {

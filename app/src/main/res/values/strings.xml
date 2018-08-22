@@ -373,7 +373,9 @@
     <string name="text_copy">Copy</string>
     <string name="text_delete">Delete</string>
     <string name="text_add_account">Add</string>
+    <string name="text_add_address">Add</string>
     <string name="text_select_account">Select</string>
+    <string name="text_select_address">Select</string>
     <string name="text_less_than_15_characters">Less than 15 characters</string>
     <string name="text_confirm_to_delete_this_account">Confirm to delete this account?</string>
     <string name="text_delete_confirm">CONFIRMATION</string>
