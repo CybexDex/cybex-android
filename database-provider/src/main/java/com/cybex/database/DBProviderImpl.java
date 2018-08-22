@@ -27,8 +27,7 @@ public class DBProviderImpl implements DBProvider{
                     return;
                 }
                 e.onNext(mDaoSession.getAddressDao().queryBuilder()
-                        .where(AddressDao.Properties.Account.eq(account),
-                                AddressDao.Properties.Token.eq(token),
+                        .where(AddressDao.Properties.Token.eq(token),
                                 AddressDao.Properties.Type.eq(type))
                         .orderAsc(AddressDao.Properties.Note)
                         .list());
@@ -46,8 +45,7 @@ public class DBProviderImpl implements DBProvider{
                     return;
                 }
                 e.onNext(mDaoSession.getAddressDao().queryBuilder()
-                        .where(AddressDao.Properties.Account.eq(account),
-                                AddressDao.Properties.Token.eq(token),
+                        .where(AddressDao.Properties.Token.eq(token),
                                 AddressDao.Properties.Type.eq(type))
                         .count());
                 e.onComplete();
@@ -64,8 +62,7 @@ public class DBProviderImpl implements DBProvider{
                     return;
                 }
                 e.onNext(mDaoSession.getAddressDao().queryBuilder()
-                        .where(AddressDao.Properties.Account.eq(account),
-                                AddressDao.Properties.Type.eq(type))
+                        .where(AddressDao.Properties.Type.eq(type))
                         .orderAsc(AddressDao.Properties.Note)
                         .list());
                 e.onComplete();
@@ -126,8 +123,7 @@ public class DBProviderImpl implements DBProvider{
                     return;
                 }
                 Address addressResult = mDaoSession.getAddressDao().queryBuilder()
-                        .where(AddressDao.Properties.Account.eq(account),
-                                AddressDao.Properties.Address.eq(address),
+                        .where(AddressDao.Properties.Address.eq(address),
                                 AddressDao.Properties.Type.eq(type))
                         .unique();
                 e.onNext(addressResult != null);
@@ -145,8 +141,7 @@ public class DBProviderImpl implements DBProvider{
                     return;
                 }
                 Address addressResult = mDaoSession.getAddressDao().queryBuilder()
-                        .where(AddressDao.Properties.Account.eq(account),
-                                AddressDao.Properties.Address.eq(address),
+                        .where(AddressDao.Properties.Address.eq(address),
                                 AddressDao.Properties.Token.eq(token),
                                 AddressDao.Properties.Type.eq(type))
                         .unique();
