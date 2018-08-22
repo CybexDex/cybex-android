@@ -312,7 +312,7 @@
     <string name="dialog_withdraw_confirmation_memo_eos">Memo:</string>
 
     <!-- Dialog transfer confirmation -->
-    <string name="dialog_text_account">Account Name:</string>
+    <string name="dialog_text_account">Account:</string>
     <string name="dialog_text_fee">Fee:</string>
     <string name="dialog_text_quantity">Quantity:</string>
     <string name="dialog_text_memo">Memo:</string>

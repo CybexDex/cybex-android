@@ -38,7 +38,7 @@
     <string name="account_balance_dialog_content">这是你所有资产的估值，包含了在界面中设置了隐藏的资产、委单中的资产、债仓及抵押物。估值采用实时获得的区块链上的价格，可能不那么精确。</string>
     <string name="account_balance_dialog_button">我知道了</string>
     <string name="text_my_balance">我的资产</string>
-    <string name="text_opened_orders">委单</string>
+    <string name="text_opened_orders">我的委单</string>
     <string name="text_lockup_assets">锁定期资产</string>
     <string name="text_deposit_withdraw">充值提现</string>
     <string name="text_address_management">地址管理</string>
@@ -316,7 +316,7 @@
     <string name="dialog_withdraw_confirmation_memo_eos">备注:</string>
 
     <!-- Dialog transfer confirmation -->
-    <string name="dialog_text_account">账户名:</string>
+    <string name="dialog_text_account">账户:</string>
     <string name="dialog_text_fee">手续费:</string>
     <string name="dialog_text_quantity">数量:</string>
     <string name="dialog_text_memo">备注:</string>
