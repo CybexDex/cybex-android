@@ -200,7 +200,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
         if (mIsLoginIn) {
             loadAvatar(mIvAvatar, 56);
         } else {
-            mIvAvatar.setImageResource(R.drawable.account_avatar);
+            mIvAvatar.setImageResource(R.drawable.ic_account_avatar);
         }
     }
 

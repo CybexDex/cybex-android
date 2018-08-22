@@ -205,7 +205,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                     getResources().getString(R.string.text_account_not_exist), R.drawable.ic_error_16px);
             mIsAccountValid = false;
         } else {
-            mIvAccountCheck.setImageResource(R.drawable.register_check);
+            mIvAccountCheck.setImageResource(R.drawable.ic_check_success);
             mIsAccountValid = true;
             checkAccountExist();
         }
@@ -224,7 +224,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
             }
             mIsAccountValid = false;
         } else {
-            mIvAccountCheck.setImageResource(R.drawable.register_check);
+            mIvAccountCheck.setImageResource(R.drawable.ic_check_success);
             mIsAccountValid = true;
             checkAccountExist();
         }

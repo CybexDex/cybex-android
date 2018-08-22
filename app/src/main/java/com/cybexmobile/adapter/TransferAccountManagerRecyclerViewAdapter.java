@@ -61,7 +61,7 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof EmptyViewHolder){
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
-            emptyViewHolder.mIvImage.setImageResource(R.drawable.img_no_address);
+            emptyViewHolder.mIvImage.setImageResource(R.drawable.ic_no_address);
             if (mContext instanceof TransferAccountManagerActivity) {
                 emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_transfer_account));
             } else if (mContext instanceof WithdrawAddressManageListActivity){

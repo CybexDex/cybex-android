@@ -406,7 +406,7 @@ public class TransferActivity extends BaseActivity implements
             ToastMessage.showNotEnableDepositToastMessage(this,
                     getResources().getString(R.string.text_account_not_exist), R.drawable.ic_error_16px);
         } else {
-            mIvAccountCheck.setImageResource(R.drawable.register_check);
+            mIvAccountCheck.setImageResource(R.drawable.ic_check_success);
         }
     }
 

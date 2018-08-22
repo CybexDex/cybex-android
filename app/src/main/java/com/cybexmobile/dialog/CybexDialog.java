@@ -215,10 +215,16 @@ public class CybexDialog {
         TextView tvQuantity = dialog.findViewById(R.id.dialog_transfer_tv_quantity);
         TextView tvFee = dialog.findViewById(R.id.dialog_transfer_tv_fee);
         TextView tvMemo = dialog.findViewById(R.id.dialog_transfer_tv_memo);
+        LinearLayout layoutMemo = dialog.findViewById(R.id.dialog_transfer_confirmation_layout_memo);
         tvAccount.setText(account);
         tvQuantity.setText(quantity);
         tvFee.setText(fee);
-        tvMemo.setText(memo);
+        if(TextUtils.isEmpty(memo)){
+            layoutMemo.setVisibility(View.GONE);
+        } else {
+            layoutMemo.setVisibility(View.VISIBLE);
+            tvMemo.setText(memo);
+        }
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {

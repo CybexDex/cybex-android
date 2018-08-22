@@ -82,6 +82,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/dialog_transfer_confirmation_layout_memo"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_24"
             android:orientation="horizontal">

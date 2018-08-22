@@ -30,7 +30,7 @@
                 android:id="@+id/account_iv_avatar"
                 android:layout_width="@dimen/width_56"
                 android:layout_height="@dimen/height_56"
-                android:src="@drawable/account_avatar" />
+                android:src="@drawable/ic_account_avatar" />
 
             <TextView
                 android:id="@+id/account_tv_name"
@@ -217,7 +217,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/account_bg"
+            android:background="@drawable/bg_account"
             android:layout_gravity="bottom"/>
 
     </FrameLayout>

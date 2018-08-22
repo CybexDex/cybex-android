@@ -75,10 +75,10 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
         mTokenId = getIntent().getStringExtra("assetId");
         if (mTokenName.equals(EOS)) {
             mTvSubtitleMemo.setVisibility(View.VISIBLE);
-            mTvToolbarTitle.setText(getResources().getString(R.string.withdraw_account_title));
+            mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_account_title)));
         } else {
             mTvSubtitleMemo.setVisibility(View.GONE);
-            mTvToolbarTitle.setText(getResources().getString(R.string.withdraw_address_title));
+            mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_address_title)));
         }
         mWithdrawAddressRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mWithdrawAddressManagerAdapter = new TransferAccountManagerRecyclerViewAdapter(this, new ArrayList<>(), mTokenName);

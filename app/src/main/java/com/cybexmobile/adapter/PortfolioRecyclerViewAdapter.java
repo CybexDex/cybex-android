@@ -20,7 +20,6 @@ import com.cybexmobile.utils.AssetUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Locale;
 
 public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final static int TYPE_EMPTY = 0;
@@ -52,7 +51,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof EmptyViewHolder) {
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
-            emptyViewHolder.mIvImage.setImageResource(R.drawable.img_wallet_no_assert);
+            emptyViewHolder.mIvImage.setImageResource(R.drawable.ic_no_assert);
             emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.balance_page_no_asset));
             return;
         }

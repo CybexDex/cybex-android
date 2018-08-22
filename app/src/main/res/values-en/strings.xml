@@ -116,7 +116,7 @@
     <string name="login_cloud_wallet">Use Cloud Wallet mode to login Account</string>
     <string name="register_create_cloud_wallet">Use Cloud Wallet mode to create Account</string>
     <string name="register_dialog_title">ATTENTIONS</string>
-    <string name="register_dialog_confirm">CONFIRM</string>
+    <string name="register_dialog_confirm">Confirm</string>
     <string name="register_dialog_content_current_password">Current Password:</string>
     <string name="register_dialog_content_attentions">
         • I understand that i will lose access to my funds if i LOSE my password\n
@@ -284,8 +284,6 @@
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
-    <string name="unlock_wallet_dialog_cancel">CANCEL</string>
-    <string name="unlock_wallet_dialog_confirm">CONFIRM</string>
     <string name="unlock_wallet_dialog_error_invalid_password">Invalid password</string>
     <string name="key_unlock">Unlock</string>
 
@@ -298,7 +296,7 @@
     <string name="dialog_text_cancellation_fee">Cancellation Fee:</string>
     <string name="dialog_text_cancel">Cancel</string>
     <string name="dialog_text_confirm">Confirm</string>
-    <string name="dialog_text_title_transfer_confirmation">Confirmation</string>
+    <string name="dialog_text_title_transfer_confirmation">CONFIRMATION</string>
 
     <!-- Dialog withdraw confirmation -->
     <string name="dialog_withdraw_confirmation_address">Withdrawal Address:</string>
@@ -377,7 +375,7 @@
     <string name="text_add_withdraw_address">Add Withdraw Address</string>
     <string name="text_address_not_exist">Address does not exist</string>
     <string name="text_confirm_to_delete_this_account">Confirm to delete this account?</string>
-    <string name="text_delete_confirm">Confirm</string>
+    <string name="text_delete_confirm">CONFIRMATION</string>
 
     <!-- Withdraw Address -->
     <string name="text_withdraw_address_title">Withdrawal Address Management</string>

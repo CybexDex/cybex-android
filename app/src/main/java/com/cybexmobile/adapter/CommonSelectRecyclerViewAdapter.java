@@ -11,11 +11,9 @@ import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.utils.AssetUtil;
 
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +56,7 @@ public class CommonSelectRecyclerViewAdapter<T> extends RecyclerView.Adapter<Rec
         if(holder instanceof EmptyViewHolder){
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
             emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.balance_page_no_asset));
-            emptyViewHolder.mIvImage.setImageResource(R.drawable.img_wallet_no_assert);
+            emptyViewHolder.mIvImage.setImageResource(R.drawable.ic_no_assert);
             return;
         }
         ViewHolder viewHolder = (ViewHolder) holder;

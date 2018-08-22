@@ -162,12 +162,13 @@
                         android:id="@+id/deposit_copy_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/content_copy" />
+                            android:src="@drawable/ic_copy" />
 
                         <TextView
                             android:id="@+id/deposit_copy_address_tv"
@@ -182,6 +183,7 @@
                         android:id="@+id/deposit_get_new_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:layout_alignParentRight="true">
 
                         <ImageView
