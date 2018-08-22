@@ -378,7 +378,7 @@
     <string name="text_delete_confirm">CONFIRMATION</string>
 
     <!-- Withdraw Address -->
-    <string name="text_withdraw_address_title">Withdrawal Address Management</string>
+    <string name="text_withdraw_address_title">Withdrawal Address </string>
     <string name="withdraw_account_title">Withdrawal Account</string>
     <string name="withdraw_address_title">Withdraw Address</string>
     <string name="withdraw_address_note_address">Note/Address</string>
