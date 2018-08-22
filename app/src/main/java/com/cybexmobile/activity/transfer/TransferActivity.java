@@ -496,6 +496,7 @@ public class TransferActivity extends BaseActivity implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTransfer(Event.Transfer event){
+        hideLoadDialog();
         if(event.isSuccess()){
             mCheckAddressExistDisposable = DBManager.getDbProvider(this).checkAddressExist(mUserName,
                     mEtAccountName.getText().toString().trim(), Address.TYPE_TRANSFER)
@@ -705,6 +706,7 @@ public class TransferActivity extends BaseActivity implements
         if(mFromAccountObject == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null){
             return;
         }
+        showLoadDialog();
         Operations.base_operation transferOperation =  BitsharesWalletWraper.getInstance().getTransferOperation(
                 mFromAccountObject.id,
                 mToAccountObject.id,
