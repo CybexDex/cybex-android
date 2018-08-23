@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatDelegate;
 
 import com.cybexmobile.helper.StoreLanguageHelper;
 import com.cybexmobile.utils.SSLSocketFactoryUtils;
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
@@ -25,6 +26,9 @@ public class MainApplication extends Application {
         }
         Picasso picasso = SSLSocketFactoryUtils.getPicassoInstance(this);
         Picasso.setSingletonInstance(picasso);
+        if(!LeakCanary.isInAnalyzerProcess(this)){
+            LeakCanary.install(this);
+        }
     }
 
     @Override
