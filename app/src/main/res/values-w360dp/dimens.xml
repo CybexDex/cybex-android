@@ -1,7 +1,6 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <!-- 适配屏幕大小1920x1080 dpi480 -->
-    <!-- 适配屏幕大小1280x720 dpi320 -->
+    <!-- 以屏幕大小1920x1080/dpi400/w432dp为基准 -->
     <dimen name="activity_margin">10dp</dimen>
     <dimen name="activity_padding">10dp</dimen>
     <dimen name="activity_margin_double">20dp</dimen>
@@ -37,6 +36,7 @@
     <dimen name="height_40">33.33dp</dimen>
     <dimen name="height_48">40dp</dimen>
     <dimen name="height_50">41.66dp</dimen>
+    <dimen name="height_54">45dp</dimen>
     <dimen name="height_56">46.66dp</dimen>
     <dimen name="height_60">50dp</dimen>
     <dimen name="height_68">56.66dp</dimen>
@@ -48,8 +48,8 @@
     <dimen name="height_200">166.66dp</dimen>
 
     <!-- margin -->
-    <dimen name="margin_3">2.49dp</dimen>
-    <dimen name="margin_6">4.99dp</dimen>
+    <dimen name="margin_3">2.5dp</dimen>
+    <dimen name="margin_6">5dp</dimen>
     <dimen name="margin_8">6.66dp</dimen>
     <dimen name="margin_10">8.33dp</dimen>
     <dimen name="margin_16">13.33dp</dimen>
@@ -57,11 +57,11 @@
     <dimen name="margin_40">33.33dp</dimen>
     <dimen name="margin_50">41.66dp</dimen>
     <dimen name="margin_74">61.66dp</dimen>
-    <dimen name="margin_111">92.49dp</dimen>
+    <dimen name="margin_111">92.5dp</dimen>
 
     <!-- padding -->
-    <dimen name="padding_3">2.49dp</dimen>
-    <dimen name="padding_6">4.99dp</dimen>
+    <dimen name="padding_3">2.5dp</dimen>
+    <dimen name="padding_6">5dp</dimen>
     <dimen name="padding_8">6.66dp</dimen>
     <dimen name="padding_16">13.33dp</dimen>
     <dimen name="padding_18">15dp</dimen>
@@ -89,6 +89,7 @@
     <dimen name="corner_radius_2">1.66dp</dimen>
 
     <!-- elevation -->
-    <dimen name="elevation_3">2.49dp</dimen>
+    <dimen name="elevation_3">2.5dp</dimen>
 
 </resources>
+
