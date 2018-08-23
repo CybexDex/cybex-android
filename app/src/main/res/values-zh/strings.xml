@@ -391,7 +391,8 @@
     <string name="text_withdraw_address_title">提现地址管理</string>
     <string name="withdraw_account_title">提现账户</string>
     <string name="withdraw_address_title">提现地址</string>
-    <string name="withdraw_address_note_address">标签/账户</string>
+    <string name="withdraw_address_note_address">标签/地址</string>
+    <string name="withdraw_address_note_account">标签/账户</string>
     <string name="withdraw_address_memo">备注</string>
 
 </resources>

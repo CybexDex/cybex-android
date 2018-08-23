@@ -59,6 +59,8 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
     Toolbar mToolbar;
     @BindView(R.id.withdraw_address_toolbar_title)
     TextView mTvToolbarTitle;
+    @BindView(R.id.withdraw_address_note_address_account)
+    TextView mTvNoteAddressAccount;
     @BindView(R.id.withdraw_address_account_rv)
     RecyclerView mWithdrawAddressRecyclerView;
     @BindView(R.id.withdraw_address_subtitle_memo)
@@ -76,9 +78,11 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
         if (mTokenName.equals(EOS)) {
             mTvSubtitleMemo.setVisibility(View.VISIBLE);
             mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_account_title)));
+            mTvNoteAddressAccount.setText(getResources().getString(R.string.withdraw_address_note_account));
         } else {
             mTvSubtitleMemo.setVisibility(View.GONE);
             mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_address_title)));
+            mTvNoteAddressAccount.setText(getResources().getString(R.string.withdraw_address_note_address));
         }
         mWithdrawAddressRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mWithdrawAddressManagerAdapter = new TransferAccountManagerRecyclerViewAdapter(this, new ArrayList<>(), mTokenName);
