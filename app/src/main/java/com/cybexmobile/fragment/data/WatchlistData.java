@@ -1,11 +1,9 @@
 package com.cybexmobile.fragment.data;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.market.HistoryPrice;
-import com.cybexmobile.market.MarketStat;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.PriceUtil;
 

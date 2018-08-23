@@ -17,12 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.activity.AccountBalanceActivity;
-import com.cybexmobile.activity.GatewayActivity;
-import com.cybexmobile.activity.LockAssetsActivity;
-import com.cybexmobile.activity.LoginActivity;
-import com.cybexmobile.activity.OpenOrdersActivity;
-import com.cybexmobile.activity.SettingActivity;
+import com.cybexmobile.activity.balance.AccountBalanceActivity;
+import com.cybexmobile.activity.gateway.GatewayActivity;
+import com.cybexmobile.activity.lockassets.LockAssetsActivity;
+import com.cybexmobile.activity.login.LoginActivity;
+import com.cybexmobile.activity.openorders.OpenOrdersActivity;
+import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybexmobile.activity.address.AddressManagerActivity;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.crypto.Sha256Object;

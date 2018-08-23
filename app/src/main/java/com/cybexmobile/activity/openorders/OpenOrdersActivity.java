@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.openorders;
 
 import android.app.Dialog;
 import android.content.ComponentName;

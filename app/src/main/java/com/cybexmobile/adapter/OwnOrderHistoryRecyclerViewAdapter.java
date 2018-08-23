@@ -8,15 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.activity.OwnOrderHistoryActivity;
+import com.cybexmobile.activity.orderhistory.OwnOrderHistoryActivity;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
-import com.cybexmobile.data.item.OpenOrderItem;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BlockHeader;
-import com.cybexmobile.graphene.chain.LimitOrderObject;
-import com.cybexmobile.graphene.chain.OrderHistory;
-import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.DateUtils;
 
 import java.util.List;

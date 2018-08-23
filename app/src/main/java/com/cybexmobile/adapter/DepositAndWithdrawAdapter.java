@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.activity.DepositActivity;
-import com.cybexmobile.activity.WithdrawActivity;
+import com.cybexmobile.activity.gateway.deposit.DepositActivity;
+import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
 import com.cybexmobile.activity.address.WithdrawAddressManageListActivity;
 import com.cybexmobile.activity.address.WithdrawAddressManagerActivity;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;

@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.introduction;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;

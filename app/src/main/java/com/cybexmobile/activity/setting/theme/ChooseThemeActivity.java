@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.setting.theme;
 
 import android.content.Context;
 import android.os.Bundle;

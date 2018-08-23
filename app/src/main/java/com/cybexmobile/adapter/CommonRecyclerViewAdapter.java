@@ -9,21 +9,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.activity.LockAssetsActivity;
+import com.cybexmobile.activity.lockassets.LockAssetsActivity;
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.LockUpAssetObject;
 import com.cybexmobile.market.MarketTicker;
 import com.cybexmobile.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecyclerViewAdapter.ViewHolder> {
 

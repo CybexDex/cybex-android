@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.setting;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
+import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;

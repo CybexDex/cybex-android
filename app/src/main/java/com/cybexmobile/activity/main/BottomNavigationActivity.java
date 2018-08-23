@@ -1,25 +1,21 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.main;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.activity.markets.MarketsActivity;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.data.AppVersion;
@@ -31,7 +27,6 @@ import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.R;
-import com.cybexmobile.utils.MyUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,7 +40,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybexmobile.activity.MarketsActivity.RESULT_CODE_BACK;
+import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
 

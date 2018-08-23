@@ -23,7 +23,7 @@
         <meta-data android:value="5b6bfb6da40fa34f04000050" android:name="UMENG_APPKEY"/>
         <meta-data android:value="unknown" android:name="UMENG_CHANNEL"/>
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".activity.splash.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.FullScreen">
@@ -35,68 +35,68 @@
         </activity>
         <!-- DayNight主题下使用WebView activity重绘 uiMode禁止重绘 -->
         <activity
-            android:name=".activity.BottomNavigationActivity"
+            android:name=".activity.main.BottomNavigationActivity"
             android:configChanges="uiMode"
             android:label=""
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.MarketsActivity"
+            android:name=".activity.markets.MarketsActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ChooseLanguageActivity"
+            android:name=".activity.setting.language.ChooseLanguageActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ChooseThemeActivity"
+            android:name=".activity.setting.theme.ChooseThemeActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.login.LoginActivity"
             android:label=""
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.RegisterActivity"
+            android:name=".activity.register.RegisterActivity"
             android:label=""
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.SettingActivity"
+            android:name=".activity.setting.SettingActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.WalletIntroductionActivity"
+            android:name=".activity.introduction.WalletIntroductionActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.OpenOrdersActivity"
+            android:name=".activity.openorders.OpenOrdersActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.LockAssetsActivity"
+            android:name=".activity.lockassets.LockAssetsActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.OwnOrderHistoryActivity"
+            android:name=".activity.orderhistory.OwnOrderHistoryActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.DepositActivity"
+            android:name=".activity.gateway.deposit.DepositActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.GatewayActivity"
+            android:name=".activity.gateway.GatewayActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.WithdrawActivity"
+            android:name=".activity.gateway.withdraw.WithdrawActivity"
             android:label=""
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.AccountBalanceActivity"
+            android:name=".activity.balance.AccountBalanceActivity"
             android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.TransparentStatusBar" />
@@ -114,7 +114,7 @@
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.DepositWithdrawRecordsActivity"
+            android:name=".activity.gateway.records.DepositWithdrawRecordsActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity

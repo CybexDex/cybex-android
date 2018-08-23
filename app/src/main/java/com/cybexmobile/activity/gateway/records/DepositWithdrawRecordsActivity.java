@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.gateway.records;
 
 import android.content.ComponentName;
 import android.content.Intent;

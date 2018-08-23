@@ -1,12 +1,9 @@
 package com.cybexmobile.utils;
 
-import android.util.Log;
-
 import com.cybexmobile.graphene.chain.AssetObject;
 import com.cybexmobile.graphene.chain.BucketObject;
 import com.cybexmobile.graphene.chain.Utils;
 import com.cybexmobile.market.HistoryPrice;
-import com.cybexmobile.market.MarketStat;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.gateway.withdraw;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -38,6 +38,7 @@ import com.apollographql.apollo.fragment.WithdrawinfoObject;
 import com.cybex.database.DBManager;
 import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.api.BitsharesWalletWraper;

@@ -15,6 +15,7 @@
            android:id="@+id/text_empty"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/margin_6"
            style="@style/font_gray_medium"
            android:alpha="0.5"
            android:text="@string/text_no_open_order"/>

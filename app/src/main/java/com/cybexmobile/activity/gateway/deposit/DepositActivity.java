@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.gateway.deposit;
 
 import android.Manifest;
 import android.app.Activity;
@@ -42,6 +42,7 @@ import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.fragment.AccountAddressRecord;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybexmobile.api.ApolloClientApi;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.graphene.chain.AssetObject;

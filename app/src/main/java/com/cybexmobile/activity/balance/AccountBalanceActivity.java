@@ -1,4 +1,4 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.balance;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
@@ -47,7 +47,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 

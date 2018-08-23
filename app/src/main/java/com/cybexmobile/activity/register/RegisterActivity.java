@@ -1,10 +1,9 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.register;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -20,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
+import com.cybexmobile.activity.main.BottomNavigationActivity;
+import com.cybexmobile.activity.introduction.WalletIntroductionActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.api.RetrofitFactory;
 import com.cybexmobile.api.WebSocketClient;

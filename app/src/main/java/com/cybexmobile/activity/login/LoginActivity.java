@@ -1,13 +1,9 @@
-package com.cybexmobile.activity;
+package com.cybexmobile.activity.login;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
@@ -15,7 +11,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +35,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cybexmobile.activity.register.RegisterActivity;
+import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.R;
 import com.cybexmobile.api.WebSocketClient;
@@ -52,12 +49,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import static android.Manifest.permission.READ_CONTACTS;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
-import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
 
 /**
  * A login screen that offers login via email/password.

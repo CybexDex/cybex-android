@@ -21,8 +21,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import com.cybexmobile.R;
-import com.cybexmobile.activity.MarketsActivity;
-import com.cybexmobile.activity.OwnOrderHistoryActivity;
+import com.cybexmobile.activity.markets.MarketsActivity;
+import com.cybexmobile.activity.orderhistory.OwnOrderHistoryActivity;
 import com.cybexmobile.api.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.data.AssetRmbPrice;
