@@ -390,7 +390,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                 break;
         }
         //amount 不四舍五入
-        mEtAssetAmount.setText(AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price), RoundingMode.DOWN));
+        mEtAssetAmount.setText(AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice()), RoundingMode.DOWN));
     }
 
     @OnClick(R.id.buysell_btn_buy_sell)
