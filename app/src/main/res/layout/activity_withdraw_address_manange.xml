@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        app:navigationIcon="@drawable/ic_arrow_forward_16px"
+        app:navigationIcon="@drawable/ic_back_24_px"
         app:subtitleTextColor="@color/primary_color_grey"
         app:titleTextColor="@color/primary_color_grey">
 
