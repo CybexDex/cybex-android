@@ -24,7 +24,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.apollographql.apollo.ApolloCall;
@@ -140,6 +142,10 @@ public class WithdrawActivity extends BaseActivity {
     TextView mWithdrawAddressTv;
     @BindView(R.id.withdraw_withdrawal_address)
     EditText mWithdrawAddress;
+    @BindView(R.id.withdraw_loading_progress_bar)
+    ProgressBar mPbLoading;
+    @BindView(R.id.withdraw_iv_address_check)
+    ImageView mIvAddressCheck;
     @BindView(R.id.withdraw_tv_select_address)
     TextView mTvWithdrawSelectAddress;
     @BindView(R.id.withdraw_amount)
@@ -309,6 +315,10 @@ public class WithdrawActivity extends BaseActivity {
         if (isFocused) {
             return;
         }
+        if (!TextUtils.isEmpty(mWithdrawAddress.getText().toString())) {
+            mIvAddressCheck.setVisibility(View.GONE);
+            mPbLoading.setVisibility(View.VISIBLE);
+        }
         verifyAddress(mWithdrawAddress.getText().toString().trim());
     }
 
@@ -331,7 +341,10 @@ public class WithdrawActivity extends BaseActivity {
 
     @OnTextChanged(value = R.id.withdraw_withdrawal_address, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onWithdrawAddressEditTextChanged(Editable editable) {
-
+        if (editable.toString().length() == 0) {
+            mIvAddressCheck.setVisibility(View.INVISIBLE);
+            mErrorLinearLayout.setVisibility(View.GONE);
+        }
     }
 
     @OnTextChanged(value = R.id.withdraw_amount, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -671,6 +684,9 @@ public class WithdrawActivity extends BaseActivity {
                                     @Override
                                     public void run() {
                                         mIsAddressInvalidate = false;
+                                        mPbLoading.setVisibility(View.INVISIBLE);
+                                        mIvAddressCheck.setVisibility(View.VISIBLE);
+                                        mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
                                         resetWithdrawBtnState();
                                     }
                                 });
@@ -679,6 +695,9 @@ public class WithdrawActivity extends BaseActivity {
                                     @Override
                                     public void run() {
                                         mIsAddressInvalidate = true;
+                                        mPbLoading.setVisibility(View.INVISIBLE);
+                                        mIvAddressCheck.setVisibility(View.VISIBLE);
+                                        mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
                                         resetWithdrawBtnState();
                                         if (BitsharesWalletWraper.getInstance().is_locked()) {
                                             CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
