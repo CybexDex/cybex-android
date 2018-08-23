@@ -27,9 +27,6 @@ android {
             storeFile keystoreFile
             storePassword keystorePassword
         }
-        debug {
-
-        }
     }
 
     flavorDimensions "default"
@@ -113,7 +110,7 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'org.greenrobot:eventbus:3.0.0'
-    implementation 'me.grantland:autofittextview:0.2.+'
+    implementation 'me.grantland:autofittextview:0.2.1'
     implementation 'info.hoang8f:android-segmented:1.0.6'
     implementation 'com.pixplicity.sharp:library:1.1.0'
     implementation 'com.madgag.spongycastle:core:1.56.0.0'
@@ -154,7 +151,7 @@ dependencies {
     implementation project(':ui-smart-refresh')
     implementation project(':database-provider')
     //Umeng
-    implementation 'com.umeng.analytics:analytics:latest.integration'
+    implementation 'com.umeng.analytics:analytics:6.1.4'
     //Leakcanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'

@@ -99,9 +99,16 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:gravity="center_vertical">
+                        <ProgressBar
+                            android:id="@+id/withdraw_loading_progress_bar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="?android:attr/progressBarStyleSmall"
+                            android:visibility="invisible"
+                            android:layout_gravity="end|center_vertical"/>
 
                         <ImageView
-                            android:id="@+id/transfer_iv_account_check"
+                            android:id="@+id/withdraw_iv_address_check"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:visibility="invisible" />

@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybex.database.DBManager;
@@ -101,6 +102,8 @@ public class TransferActivity extends BaseActivity implements
     TextView mTvFee;//手续费
     @BindView(R.id.transfer_btn_transfer)
     Button mBtnTransfer;
+    @BindView(R.id.transfer_loading_progress_bar)
+    ProgressBar mPbLoading;
     @BindView(R.id.transfer_iv_account_check)
     ImageView mIvAccountCheck;
     @BindView(R.id.transfer_tv_select_account)
@@ -343,6 +346,8 @@ public class TransferActivity extends BaseActivity implements
             resetTransferButtonState();
             return;
         }
+        mPbLoading.setVisibility(View.VISIBLE);
+        mIvAccountCheck.setVisibility(View.GONE);
         try {
             BitsharesWalletWraper.getInstance().get_account_object(accountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
                 @Override
@@ -400,6 +405,7 @@ public class TransferActivity extends BaseActivity implements
         }
         mToAccountObject = event.getAccountObject();
         resetTransferButtonState();
+        mPbLoading.setVisibility(View.INVISIBLE);
         mIvAccountCheck.setVisibility(View.VISIBLE);
         if(mToAccountObject == null){
             mIvAccountCheck.setImageResource(R.drawable.ic_close_red_24_px);

@@ -69,6 +69,14 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true">
 
+                    <ProgressBar
+                        android:id="@+id/transfer_loading_progress_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?android:attr/progressBarStyleSmall"
+                        android:visibility="invisible"
+                        android:layout_gravity="end|center_vertical"/>
+
                     <ImageView
                         android:id="@+id/transfer_iv_account_check"
                         android:layout_width="wrap_content"
