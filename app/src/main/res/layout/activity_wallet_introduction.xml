@@ -14,7 +14,7 @@
         app:subtitleTextColor="@color/primary_color_grey"
         app:titleTextColor="@color/primary_color_grey"
         app:title=""
-        app:navigationIcon="@drawable/ic_arrow_forward_16px"/>
+        app:navigationIcon="@drawable/ic_back_24_px"/>
 
     <ScrollView
         android:layout_width="match_parent"
