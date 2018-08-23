@@ -7,6 +7,46 @@ android {
     compileSdkVersion 27
     buildToolsVersion '28.0.0'
 
+    def keystoreAlias = ''
+    def keystoreAliasPassword = ''
+    def keystoreFile = ''
+    def keystorePassword = ''
+
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('keystores/release.keystore.properties').newDataInputStream())
+
+    keystoreAlias = properties.getProperty("key.alias")
+    keystoreAliasPassword = properties.getProperty("key.alias.password")
+    keystoreFile = file(properties.getProperty("key.path"))
+    keystorePassword = properties.getProperty("key.store.password")
+
+    signingConfigs {
+        release {
+            keyAlias keystoreAlias
+            keyPassword keystoreAliasPassword
+            storeFile keystoreFile
+            storePassword keystorePassword
+        }
+        debug {
+
+        }
+    }
+
+    flavorDimensions "default"
+    productFlavors {
+        googleplay {
+            applicationId 'com.cybexmobile'
+            dimension 'default'
+            manifestPlaceholders = [UMENG_CHANNEL: "googleplay"]
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "Cybex_${defaultConfig.versionName}_${variant.flavorName}_${variant.buildType.name}.apk"
+        }
+    }
+
     defaultConfig {
         applicationId "com.cybexmobile"
         minSdkVersion 17
@@ -19,6 +59,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     lintOptions {
