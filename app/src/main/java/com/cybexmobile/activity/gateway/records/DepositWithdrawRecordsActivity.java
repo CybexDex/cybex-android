@@ -11,9 +11,12 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.cybex.database.DBManager;
+import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
@@ -44,6 +47,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -80,6 +84,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     private WebSocketService mWebSocketService;
     private DepositWithdrawRecordAdapter mDepositWithdrawRecordAdapter;
     private List<GatewayDepositWithdrawRecordsItem> mRecordsItems = new ArrayList<>();
+    private List<Address> mAddressList = new ArrayList<>();
 
     @BindView(R.id.deposit_records_rv_deposit_records)
     RecyclerView mDepositRecordsRecyclerView;
@@ -91,6 +96,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     TextView mTvTitle;
 
     private Disposable mRequestRecordsDisposable;
+    private Disposable mLoadAddressDisposable;
 
     private String mSignature;
 
@@ -166,11 +172,11 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
 
                 @Override
                 public void onUnLocked(String password) {
-                    createWithdrawDepositSignature();
+                    loadAddress();
                 }
             });
         } else {
-            createWithdrawDepositSignature();
+            loadAddress();
         }
     }
 
@@ -191,6 +197,9 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         if(mRequestRecordsDisposable != null && !mRequestRecordsDisposable.isDisposed()){
             mRequestRecordsDisposable.dispose();
         }
+        if(mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()){
+            mLoadAddressDisposable.dispose();
+        }
         if (mUnbinder != null) {
             mUnbinder.unbind();
         }
@@ -206,6 +215,27 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         calendar.setTime(new Date());
         calendar.add(Calendar.MINUTE, 5);
         return calendar.getTime();
+    }
+
+    private void loadAddress() {
+        if (TextUtils.isEmpty(mAccountName)) {
+            return;
+        }
+        mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mAccountName, mAssetObject.id.toString(), Address.TYPE_WITHDRAW)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Address>>() {
+                    @Override
+                    public void accept(List<Address> addresses) throws Exception {
+                        mAddressList.addAll(addresses);
+                        createWithdrawDepositSignature();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                });
     }
 
     /**
@@ -269,6 +299,12 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                     GatewayDepositWithdrawRecordsItem gatewayDepositWithdrawRecordsItem = new GatewayDepositWithdrawRecordsItem();
                     gatewayDepositWithdrawRecordsItem.setItemAsset(mAssetObject);
                     gatewayDepositWithdrawRecordsItem.setRecord(record);
+                    for (Address address : mAddressList) {
+                        if (address.getAddress().equals(record.getAddress())) {
+                            gatewayDepositWithdrawRecordsItem.setNote(address.getNote());
+                            break;
+                        }
+                    }
                     gatewayDepositWithdrawRecordsItemList.add(gatewayDepositWithdrawRecordsItem);
                 }
                 return gatewayDepositWithdrawRecordsItemList;

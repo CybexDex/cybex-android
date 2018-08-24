@@ -5,8 +5,9 @@ import com.cybexmobile.graphene.chain.AssetObject;
 import java.util.List;
 
 public class GatewayDepositWithdrawRecordsItem {
-    AssetObject itemAsset;
-    Record record;
+    private AssetObject itemAsset;
+    private Record record;
+    private String note;
 
     public AssetObject getItemAsset() {
         return itemAsset;
@@ -22,5 +23,13 @@ public class GatewayDepositWithdrawRecordsItem {
 
     public void setRecord(Record record) {
         this.record = record;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getNote() {
+        return note;
     }
 }

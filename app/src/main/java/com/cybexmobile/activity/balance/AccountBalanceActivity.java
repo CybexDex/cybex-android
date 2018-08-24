@@ -158,6 +158,7 @@ public class AccountBalanceActivity extends BaseActivity {
         unbindService(mConnection);
         EventBus.getDefault().unregister(this);
         mHandler.removeCallbacksAndMessages(null);
+        mHandler = null;
     }
 
     @Override

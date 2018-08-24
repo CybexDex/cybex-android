@@ -3,6 +3,7 @@ package com.cybexmobile.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,8 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         TextView mAssetUpdateTime;
         @BindView(R.id.item_deposit_withdraw_status)
         TextView mAssetStatus;
+        @BindView(R.id.item_deposit_withdraw_note)
+        TextView mAssetNote;
         @BindView(R.id.item_deposit_withdraw_address)
         TextView mAssetAddress;
 
@@ -97,6 +100,12 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getUpdateAt())));
         viewHolder.mAssetStatus.setText(getStateString(item.getRecord().getState()));
         viewHolder.mAssetAddress.setText(item.getRecord().getAddress());
+        if (TextUtils.isEmpty(item.getNote())) {
+            viewHolder.mAssetNote.setVisibility(View.GONE);
+        } else {
+            viewHolder.mAssetNote.setVisibility(View.VISIBLE);
+            viewHolder.mAssetNote.setText(item.getNote());
+        }
     }
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
