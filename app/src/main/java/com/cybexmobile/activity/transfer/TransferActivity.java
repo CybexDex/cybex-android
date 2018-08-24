@@ -528,15 +528,7 @@ public class TransferActivity extends BaseActivity implements
                     }, new Consumer<Throwable>() {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
-                            ToastMessage.showNotEnableDepositToastMessage(
-                                    TransferActivity.this,
-                                    getResources().getString(R.string.toast_message_transfer_success),
-                                    R.drawable.ic_check_circle_green);
-                            /**
-                             * fix bug:CYM-505
-                             * 转账成功和失败清除数据
-                             */
-                            clearTransferData();
+                            showAddAddressDialog();
                         }
                     });
         } else {
