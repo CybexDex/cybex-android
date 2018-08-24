@@ -96,6 +96,7 @@
 
 
     <com.cybexmobile.widget.OverScrollView
+        android:id="@+id/market_page_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/market_page_layout_header"

@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -40,6 +41,7 @@ import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.MyUtils;
 import com.cybexmobile.utils.PriceUtil;
 import com.cybexmobile.utils.VolFormatter;
+import com.cybexmobile.widget.OverScrollView;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -54,6 +56,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
@@ -98,6 +101,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart, mIndexHeaderLayout;
     private Button mBtnBuy, mBtnSell;
     private LinearLayout mLayoutFooter;
+    private OverScrollView mOverScrollerView;
 
     protected ProgressBar mProgressBar;
     private ViewPager mViewPager;
@@ -238,6 +242,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initViews() {
+        mOverScrollerView = findViewById(R.id.market_page_scroll_view);
         mChartKline = (MyCombinedChart) findViewById(R.id.kline_chart_k);
         mChartVolume = (MyCombinedChart) findViewById(R.id.kline_chart_volume);
         mChartCharts = (MyCombinedChart) findViewById(R.id.kline_chart_chart);
@@ -543,6 +548,20 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mIndexHeaderLayout.setVisibility(View.GONE);
                 mHeaderKlineChart.setVisibility(View.GONE);
 
+            }
+        });
+
+        mChartKline.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    //允许ScrollView截断点击事件，ScrollView可滑动
+                    mOverScrollerView.requestDisallowInterceptTouchEvent(false);
+                } else {
+                    //不允许ScrollView截断点击事件，点击事件由子View处理
+                    mOverScrollerView.requestDisallowInterceptTouchEvent(true);
+                }
+                return false;
             }
         });
 

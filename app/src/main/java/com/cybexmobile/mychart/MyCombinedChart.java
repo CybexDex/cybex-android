@@ -48,6 +48,11 @@ public class MyCombinedChart extends CombinedChart {
     }
 
     @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+
+    @Override
     protected void drawMarkers(Canvas canvas) {
         if (!mDrawMarkerViews || !valuesToHighlight())
             return;
