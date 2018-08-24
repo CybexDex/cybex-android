@@ -371,15 +371,17 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                     .checkAddressExist(mUserName, mEtAccount.getText().toString().trim(), Address.TYPE_TRANSFER)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<Boolean>() {
+                    .subscribe(new Consumer<Address>() {
                         @Override
-                        public void accept(Boolean aBoolean) throws Exception {
-                            mIsAccountExist = aBoolean;
-                            if (aBoolean) {
+                        public void accept(Address address) throws Exception {
+                            if (address != null) {
+                                mIsAccountExist = true;
                                 ToastMessage.showNotEnableDepositToastMessage(AddTransferAccountActivity.this,
                                         getResources().getString(R.string.text_transfer_account_already_exists),
                                         R.drawable.ic_error_16px);
                                 mIvAccountCheck.setImageResource(R.drawable.ic_close_red_24_px);
+                            } else {
+                                mIsAccountExist = false;
                             }
                             resetBtnState();
                         }

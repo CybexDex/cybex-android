@@ -508,10 +508,10 @@ public class TransferActivity extends BaseActivity implements
                     mEtAccountName.getText().toString().trim(), Address.TYPE_TRANSFER)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<Boolean>() {
+                    .subscribe(new Consumer<Address>() {
                         @Override
-                        public void accept(Boolean aBoolean) throws Exception {
-                            if(aBoolean){
+                        public void accept(Address address) throws Exception {
+                            if(address != null){
                                 ToastMessage.showNotEnableDepositToastMessage(
                                         TransferActivity.this,
                                         getResources().getString(R.string.toast_message_transfer_success),

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.transfer.TransferRecordsActivity;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
@@ -69,13 +70,14 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         AccountObject fromAccount = transferHistoryItem.fromAccount;
         AccountObject toAccount = transferHistoryItem.toAccount;
         AssetObject transferAsset = transferHistoryItem.transferAsset;
+        Address address = transferHistoryItem.address;
         /**
          * fix bug：CYM-518
          * 解决转入转出状态错误
          */
         if(fromAccount != null && toAccount != null && mAccountObject != null){
             if(toAccount.id.equals(mAccountObject.id)){
-                viewHolder.mTvAccountName.setText(fromAccount.name);
+                viewHolder.mTvAccountName.setText(address == null ? fromAccount.name : address.getNote());
                 viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
                 viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_received));
                 viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_transfer_in);
@@ -85,7 +87,7 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                             AssetUtil.parseSymbol(transferAsset.symbol)));
                 }
             } else if(fromAccount.id.equals(mAccountObject.id)){
-                viewHolder.mTvAccountName.setText(toAccount.name);
+                viewHolder.mTvAccountName.setText(address == null ? toAccount.name : address.getNote());
                 viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
                 viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_sent));
                 viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_transfer_out);

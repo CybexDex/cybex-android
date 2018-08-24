@@ -115,10 +115,10 @@ public class DBProviderImpl implements DBProvider{
     }
 
     @Override
-    public Observable<Boolean> checkAddressExist(final String account, final String address, final int type) {
-        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+    public Observable<Address> checkAddressExist(final String account, final String address, final int type) {
+        return Observable.create(new ObservableOnSubscribe<Address>() {
             @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
+            public void subscribe(ObservableEmitter<Address> e) throws Exception {
                 if(e.isDisposed()){
                     return;
                 }
@@ -126,7 +126,7 @@ public class DBProviderImpl implements DBProvider{
                         .where(AddressDao.Properties.Address.eq(address),
                                 AddressDao.Properties.Type.eq(type))
                         .unique();
-                e.onNext(addressResult != null);
+                e.onNext(addressResult);
                 e.onComplete();
             }
         });

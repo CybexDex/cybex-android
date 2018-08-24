@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.cybex.database.DBManager;
+import com.cybex.database.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferRecordsRecyclerViewAdapter;
 import com.cybexmobile.api.BitsharesWalletWraper;
@@ -47,6 +49,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
@@ -67,6 +73,7 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
     private boolean mIsLoginIn;
     private String mName;
     private List<TransferHistoryItem> mTransferHistoryItems = new ArrayList<>();
+    private Disposable mCheckAddressExistDisposable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,28 +146,65 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         if(accountObject == null || mTransferHistoryItems == null){
             return;
         }
-        for(int i = 0; i < mTransferHistoryItems.size(); i++){
-            if(mTransferHistoryItems.get(i).transferOperation.from.equals(accountObject.id)){
-                if(mTransferHistoryItems.get(i).fromAccount != null){
-                    continue;
-                }
-                mTransferHistoryItems.get(i).fromAccount = accountObject;
-                if(mTransferRecordsAdapter != null){
-                    mTransferRecordsAdapter.notifyItemChanged(i);
-                }
-                break;
-            }
-            if(mTransferHistoryItems.get(i).transferOperation.to.equals(accountObject.id)){
-                if(mTransferHistoryItems.get(i).toAccount != null){
-                    continue;
-                }
-                mTransferHistoryItems.get(i).toAccount = accountObject;
-                if(mTransferRecordsAdapter != null){
-                    mTransferRecordsAdapter.notifyItemChanged(i);
-                }
-                break;
-            }
-        }
+        mCheckAddressExistDisposable = DBManager.getDbProvider(this).checkAddressExist(null,
+                accountObject.name, Address.TYPE_TRANSFER)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Address>() {
+                    @Override
+                    public void accept(Address address) throws Exception {
+                        for(int i = 0; i < mTransferHistoryItems.size(); i++){
+                            if(mTransferHistoryItems.get(i).transferOperation.from.equals(accountObject.id)){
+                                if(mTransferHistoryItems.get(i).fromAccount != null){
+                                    continue;
+                                }
+                                mTransferHistoryItems.get(i).fromAccount = accountObject;
+                                mTransferHistoryItems.get(i).address = address;
+                                if(mTransferRecordsAdapter != null){
+                                    mTransferRecordsAdapter.notifyItemChanged(i);
+                                }
+                                break;
+                            }
+                            if(mTransferHistoryItems.get(i).transferOperation.to.equals(accountObject.id)){
+                                if(mTransferHistoryItems.get(i).toAccount != null){
+                                    continue;
+                                }
+                                mTransferHistoryItems.get(i).toAccount = accountObject;
+                                mTransferHistoryItems.get(i).address = address;
+                                if(mTransferRecordsAdapter != null){
+                                    mTransferRecordsAdapter.notifyItemChanged(i);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        for(int i = 0; i < mTransferHistoryItems.size(); i++){
+                            if(mTransferHistoryItems.get(i).transferOperation.from.equals(accountObject.id)){
+                                if(mTransferHistoryItems.get(i).fromAccount != null){
+                                    continue;
+                                }
+                                mTransferHistoryItems.get(i).fromAccount = accountObject;
+                                if(mTransferRecordsAdapter != null){
+                                    mTransferRecordsAdapter.notifyItemChanged(i);
+                                }
+                                break;
+                            }
+                            if(mTransferHistoryItems.get(i).transferOperation.to.equals(accountObject.id)){
+                                if(mTransferHistoryItems.get(i).toAccount != null){
+                                    continue;
+                                }
+                                mTransferHistoryItems.get(i).toAccount = accountObject;
+                                if(mTransferRecordsAdapter != null){
+                                    mTransferRecordsAdapter.notifyItemChanged(i);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -246,5 +290,6 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         public AccountObject toAccount;
         public AssetObject feeAsset;
         public AssetObject transferAsset;
+        public Address address;
     }
 }

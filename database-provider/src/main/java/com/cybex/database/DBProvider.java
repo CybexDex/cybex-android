@@ -27,7 +27,7 @@ public interface DBProvider {
      * @param type 地址类型
      * @return
      */
-    Observable<Boolean> checkAddressExist(String account, String address, int type);
+    Observable<Address> checkAddressExist(String account, String address, int type);
 
     Observable<Boolean> checkWithdrawAddressExist(String account, String address, String token, int type);
 
