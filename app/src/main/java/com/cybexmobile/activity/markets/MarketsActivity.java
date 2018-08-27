@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -101,7 +102,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart, mIndexHeaderLayout;
     private Button mBtnBuy, mBtnSell;
     private LinearLayout mLayoutFooter;
-    private OverScrollView mOverScrollerView;
+    private NestedScrollView mScrollerView;
 
     protected ProgressBar mProgressBar;
     private ViewPager mViewPager;
@@ -242,7 +243,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initViews() {
-        mOverScrollerView = findViewById(R.id.market_page_scroll_view);
+        mScrollerView = findViewById(R.id.market_page_scroll_view);
         mChartKline = (MyCombinedChart) findViewById(R.id.kline_chart_k);
         mChartVolume = (MyCombinedChart) findViewById(R.id.kline_chart_volume);
         mChartCharts = (MyCombinedChart) findViewById(R.id.kline_chart_chart);
@@ -555,10 +556,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     //允许ScrollView截断点击事件，ScrollView可滑动
-                    mOverScrollerView.requestDisallowInterceptTouchEvent(false);
+                    mScrollerView.requestDisallowInterceptTouchEvent(false);
                 } else {
                     //不允许ScrollView截断点击事件，点击事件由子View处理
-                    mOverScrollerView.requestDisallowInterceptTouchEvent(true);
+                    mScrollerView.requestDisallowInterceptTouchEvent(true);
                 }
                 return false;
             }

@@ -14,6 +14,7 @@ import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
+import com.cybexmobile.utils.AssetUtil;
 
 import java.util.List;
 import java.util.Locale;
@@ -48,12 +49,12 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         if (position < mValues.buyOrders.size()) {
-            holder.mBuyPrice.setText(String.format(Locale.US,"%.6f", mValues.buyOrders.get(position).price));
-            holder.mVolume.setText(String.format(Locale.US, "%.4f", mValues.buyOrders.get(position).quoteAmount));
+            holder.mBuyPrice.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).price, AssetUtil.pricePrecision(mValues.buyOrders.get(position).price)));
+            holder.mVolume.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.buyOrders.get(position).price)));
         }
         if (position < mValues.sellOrders.size()) {
-            holder.mSellPrice.setText(String.format(Locale.US, "%.6f", mValues.sellOrders.get(position).price));
-            holder.mSellVolume.setText(String.format(Locale.US, "%.4f", mValues.sellOrders.get(position).quoteAmount));
+            holder.mSellPrice.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).price, AssetUtil.pricePrecision(mValues.sellOrders.get(position).price)));
+            holder.mSellVolume.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.sellOrders.get(position).price)));
         }
 
         float percentageBids = 0f;
