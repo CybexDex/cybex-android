@@ -609,7 +609,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                         xIndex, y
                 };*/
                 float[] pts = new float[]{
-                        xIndex, high.getTouchYValue()
+                        xIndex, e.getClose()
                 };
 
                 mChart.getTransformer(set.getAxisDependency()).pointValuesToPixel(pts);

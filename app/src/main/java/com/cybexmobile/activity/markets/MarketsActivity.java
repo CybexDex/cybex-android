@@ -512,7 +512,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             @Override
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
                 mIndexHeaderLayout.setVisibility(View.VISIBLE);
-
                 Highlight highlight = new Highlight(h.getXIndex(), h.getValue(), h.getDataIndex(), h.getDataSetIndex());
 
                 float touchY = h.getTouchY() - mChartKline.getHeight();
@@ -669,7 +668,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         combinedChart.setMarker(leftMarkerView, bottomMarkerView, hMarkerView, mData);
     }
     private void setMarkerView(DataParse mData, MyCombinedChart combinedChart) {
-        MyLeftMarkerView leftMarkerView = new MyLeftMarkerView(MarketsActivity.this, R.layout.mymarkerview);
+        MyLeftMarkerView leftMarkerView = new MyLeftMarkerView(MarketsActivity.this, R.layout.my_marker_view);
         MyHMarkerView hMarkerView = new MyHMarkerView(MarketsActivity.this, R.layout.mymarkerview_line);
         combinedChart.setMarker(leftMarkerView, hMarkerView, mData);
     }

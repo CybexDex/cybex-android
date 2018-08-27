@@ -6,8 +6,10 @@ import android.util.AttributeSet;
 
 import com.cybexmobile.data.DataParse;
 import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet;
 
 public class MyCombinedChart extends CombinedChart {
 
@@ -85,18 +87,25 @@ public class MyCombinedChart extends CombinedChart {
                 }
 
                 if (null != myMarkerViewLeft) {
-                    //修改标记值
-                    float yValForHighlight = mIndicesToHighlight[i].getTouchYValue();
-                    myMarkerViewLeft.setData(yValForHighlight);
+                    if (getCandleData() != null) {
+                        ICandleDataSet set = getCandleData().getDataSetByIndex(dataSetIndex);
+                        CandleEntry b = set.getEntryForXIndex(xIndex);
+                        //修改标记值
+                        float yValForHighlight = mIndicesToHighlight[i].getTouchYValue();
+                        myMarkerViewLeft.setData(b.getClose());
 
-                    myMarkerViewLeft.refreshContent(e, mIndicesToHighlight[i]);
+                        myMarkerViewLeft.refreshContent(e, mIndicesToHighlight[i]);
 
-                    myMarkerViewLeft.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-                    myMarkerViewLeft.layout(0, 0, myMarkerViewLeft.getMeasuredWidth(),
-                            myMarkerViewLeft.getMeasuredHeight());
-
-                    myMarkerViewLeft.draw(canvas, mViewPortHandler.contentLeft(), mIndicesToHighlight[i].getTouchY() - myMarkerViewLeft.getHeight() / 2);
+                        myMarkerViewLeft.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                        myMarkerViewLeft.layout(0, 0, myMarkerViewLeft.getMeasuredWidth(),
+                                myMarkerViewLeft.getMeasuredHeight());
+                        float[] pts = new float[]{
+                                xIndex, b.getClose()
+                        };
+                        getTransformer(set.getAxisDependency()).pointValuesToPixel(pts);
+                        myMarkerViewLeft.draw(canvas, mViewPortHandler.contentLeft(),  pts[1]- myMarkerViewLeft.getHeight() / 2);
+                    }
 
                 }
 
