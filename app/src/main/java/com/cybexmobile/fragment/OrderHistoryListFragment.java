@@ -173,7 +173,21 @@ public class OrderHistoryListFragment extends BaseFragment {
                             / (double) limitOrder.sell_price.base.amount
                             / Math.pow(10, mWatchlistData.getQuotePrecision());
                     order.baseAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getBasePrecision());
-                    orderBook.buyOrders.add(order);
+                    /**
+                     * 合并深度
+                     */
+                    if(orderBook.buyOrders.size() == 0){
+                        orderBook.buyOrders.add(order);
+                    } else {
+                        Order lastOrder = orderBook.buyOrders.get(orderBook.buyOrders.size() - 1);
+                        if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)).equals(
+                                AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price)))){
+                            lastOrder.quoteAmount += order.quoteAmount;
+                            lastOrder.baseAmount += order.baseAmount;
+                        } else {
+                            orderBook.buyOrders.add(order);
+                        }
+                    }
                 } else {
                     if(orderBook.sellOrders.size() == 20){
                         continue;
@@ -184,7 +198,21 @@ public class OrderHistoryListFragment extends BaseFragment {
                     order.baseAmount = (double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount
                             / limitOrder.sell_price.base.amount
                             / Math.pow(10, mWatchlistData.getBasePrecision());
-                    orderBook.sellOrders.add(order);
+                    /**
+                     * 合并深度
+                     */
+                    if(orderBook.sellOrders.size() == 0){
+                        orderBook.sellOrders.add(order);
+                    } else {
+                        Order lastOrder = orderBook.sellOrders.get(orderBook.sellOrders.size() - 1);
+                        if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)).equals(
+                                AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price)))){
+                            lastOrder.quoteAmount += order.quoteAmount;
+                            lastOrder.baseAmount += order.baseAmount;
+                        } else {
+                            orderBook.sellOrders.add(order);
+                        }
+                    }
                 }
             }
             Collections.sort(orderBook.buyOrders, new Comparator<Order>() {
