@@ -1,9 +1,12 @@
-package com.cybexmobile.faucet;
+package com.cybex.provider.http.response;
 
-import com.cybexmobile.data.AssetRmbPrice;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 
 import java.util.List;
 
+/**
+ * 人名币Response
+ */
 public class CnyResponse {
     private int code;
     private List<AssetRmbPrice> prices;

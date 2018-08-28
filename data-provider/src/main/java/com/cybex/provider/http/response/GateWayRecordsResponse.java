@@ -1,11 +1,12 @@
-package com.cybexmobile.data;
+package com.cybex.provider.http.response;
+
+import com.cybex.provider.http.entity.Record;
 
 import java.util.List;
 
 public class GateWayRecordsResponse {
     private String code;
     private Data data;
-
 
     public class Data {
         int total;

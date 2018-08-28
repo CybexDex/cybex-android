@@ -1,7 +1,10 @@
-package com.cybexmobile.data;
+package com.cybex.provider.http.response;
 
 import java.util.List;
 
+/**
+ * 交易对置顶Response
+ */
 public class AssetsPairToppingResponse {
 
     private String base;

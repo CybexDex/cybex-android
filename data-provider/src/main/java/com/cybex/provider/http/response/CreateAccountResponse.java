@@ -1,4 +1,4 @@
-package com.cybexmobile.faucet;
+package com.cybex.provider.http.response;
 
 public class CreateAccountResponse {
 
