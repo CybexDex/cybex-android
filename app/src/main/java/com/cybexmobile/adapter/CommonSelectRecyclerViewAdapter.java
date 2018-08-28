@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.cybex.database.entity.Address;
+import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;

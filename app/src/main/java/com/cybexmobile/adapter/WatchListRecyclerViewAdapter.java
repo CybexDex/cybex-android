@@ -14,13 +14,7 @@ import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.AssetUtil;
-import com.cybexmobile.utils.MyUtils;
-import com.cybexmobile.utils.SSLSocketFactoryUtils;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
-
-import org.decimal4j.util.DoubleRounder;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

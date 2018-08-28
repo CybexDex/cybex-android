@@ -1,16 +1,15 @@
 package com.cybexmobile.event;
 
-import com.cybexmobile.data.AssetRmbPrice;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.fragment.data.WatchlistData;
-import com.cybexmobile.graphene.chain.AccountHistoryObject;
-import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.BlockHeader;
-import com.cybexmobile.graphene.chain.FeeAmountObject;
-import com.cybexmobile.graphene.chain.OrderHistory;
-import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.AccountHistoryObject;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.BlockHeader;
+import com.cybex.provider.graphene.chain.FeeAmountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybexmobile.market.HistoryPrice;
-import com.cybexmobile.market.MarketTrade;
+import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.market.OrderBook;
 

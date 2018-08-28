@@ -1,6 +1,6 @@
 package com.cybexmobile.data;
 
-import com.cybexmobile.graphene.chain.Operations;
+import com.cybex.provider.graphene.chain.Operations;
 
 public class GatewayLogInRecordRequest {
     private Operations.base_operation op;

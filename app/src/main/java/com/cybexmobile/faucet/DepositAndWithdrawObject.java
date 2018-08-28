@@ -1,7 +1,7 @@
 package com.cybexmobile.faucet;
 
-import com.cybexmobile.graphene.chain.AccountBalanceObject;
-import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.AssetObject;
 
 public class DepositAndWithdrawObject {
     public String id;

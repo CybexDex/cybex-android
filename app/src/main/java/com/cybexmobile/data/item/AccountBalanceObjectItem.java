@@ -1,8 +1,8 @@
 package com.cybexmobile.data.item;
 
-import com.cybexmobile.graphene.chain.AccountBalanceObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.market.MarketTicker;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.MarketTicker;
 
 import java.io.Serializable;
 

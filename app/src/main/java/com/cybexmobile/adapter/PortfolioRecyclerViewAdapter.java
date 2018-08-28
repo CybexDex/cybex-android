@@ -13,9 +13,9 @@ import android.widget.TextView;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.R;
-import com.cybexmobile.graphene.chain.AccountBalanceObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.market.MarketTicker;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybexmobile.utils.AssetUtil;
 import com.squareup.picasso.Picasso;
 

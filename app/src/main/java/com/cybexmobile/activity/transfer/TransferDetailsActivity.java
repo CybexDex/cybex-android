@@ -1,36 +1,30 @@
 package com.cybexmobile.activity.transfer;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WebSocketClient;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.dialog.UnlockDialog;
-import com.cybexmobile.exception.NetworkStatusException;
-import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.BlockHeader;
-import com.cybexmobile.graphene.chain.MemoData;
-import com.cybexmobile.graphene.chain.Operations;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.BlockHeader;
+import com.cybex.provider.graphene.chain.MemoData;
+import com.cybex.provider.graphene.chain.Operations;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.Constant;
 import com.cybexmobile.utils.DateUtils;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,9 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import de.bitsharesmunich.graphenej.objects.Memo;
 
-import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
 
 public class TransferDetailsActivity extends BaseActivity {

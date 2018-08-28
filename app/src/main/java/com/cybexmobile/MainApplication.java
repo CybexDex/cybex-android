@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.cybexmobile.helper.StoreLanguageHelper;
-import com.cybexmobile.utils.SSLSocketFactoryUtils;
+import com.cybexmobile.utils.PicassoUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
@@ -24,7 +24,7 @@ public class MainApplication extends Application {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
-        Picasso picasso = SSLSocketFactoryUtils.getPicassoInstance(this);
+        Picasso picasso = PicassoUtils.getPicassoInstance(this);
         Picasso.setSingletonInstance(picasso);
         if(!LeakCanary.isInAnalyzerProcess(this)){
             LeakCanary.install(this);

@@ -5,22 +5,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cybex.database.entity.Address;
+import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AccountObject;
 
-import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 

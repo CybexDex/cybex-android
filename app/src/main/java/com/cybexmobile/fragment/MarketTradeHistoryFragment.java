@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,14 +12,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WebSocketClient;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
+import com.cybex.provider.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
-import com.cybexmobile.market.MarketTrade;
+import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybexmobile.utils.AssetUtil;
 import com.google.gson.internal.LinkedTreeMap;
 

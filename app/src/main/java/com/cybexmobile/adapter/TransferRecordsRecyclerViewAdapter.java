@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cybex.database.entity.Address;
+import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.transfer.TransferRecordsActivity;
 import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
-import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.Operations;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.Operations;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybexmobile.utils.DateUtils;
 

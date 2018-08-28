@@ -25,19 +25,20 @@ import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WebSocketClient;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.data.AssetRmbPrice;
+import com.cybex.provider.http.entity.AssetRmbPrice;
+import com.cybexmobile.cache.BalanceCache;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
-import com.cybexmobile.graphene.chain.AccountBalanceObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.FullAccountObject;
-import com.cybexmobile.graphene.chain.LimitOrderObject;
-import com.cybexmobile.market.MarketTicker;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.LimitOrderObject;
+import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.utils.NetworkUtils;
 
@@ -139,9 +140,9 @@ public class AccountBalanceActivity extends BaseActivity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         if (mIsLoginIn) {
             if (mNetworkState == TYPE_NOT_CONNECTED) {
-                mTotalBalanceCyb =  BitsharesWalletWraper.getInstance().getmTotalCybBalance();
-                mCybRmbPrice =  BitsharesWalletWraper.getInstance().getmTotalRmbBalance();
-                mAccountBalanceObjectItems.addAll( BitsharesWalletWraper.getInstance().getmAccountBalanceObjectItemList());
+                mTotalBalanceCyb =  BalanceCache.getInstance().getmTotalCybBalance();
+                mCybRmbPrice =  BalanceCache.getInstance().getmTotalRmbBalance();
+                mAccountBalanceObjectItems.addAll(BalanceCache.getInstance().getmAccountBalanceObjectItemList());
                 mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
                 setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
             }
@@ -151,9 +152,9 @@ public class AccountBalanceActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BitsharesWalletWraper.getInstance().setmTotalCybBalance(mTotalBalanceCyb);
-        BitsharesWalletWraper.getInstance().setmTotalRmbBalance(mCybRmbPrice);
-        BitsharesWalletWraper.getInstance().setmAccountBalanceObjectItemList(mAccountBalanceObjectItems);
+        BalanceCache.getInstance().setmTotalCybBalance(mTotalBalanceCyb);
+        BalanceCache.getInstance().setmTotalRmbBalance(mCybRmbPrice);
+        BalanceCache.getInstance().setmAccountBalanceObjectItemList(mAccountBalanceObjectItems);
         mUnbinder.unbind();
         unbindService(mConnection);
         EventBus.getDefault().unregister(this);

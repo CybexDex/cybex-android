@@ -12,7 +12,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +19,12 @@ import android.widget.ProgressBar;
 
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
 import com.cybexmobile.base.BaseFragment;
-import com.cybexmobile.data.AssetRmbPrice;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
 
 import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,7 +32,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**

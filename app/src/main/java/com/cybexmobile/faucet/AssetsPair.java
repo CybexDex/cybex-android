@@ -1,6 +1,6 @@
 package com.cybexmobile.faucet;
 
-import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.AssetObject;
 
 //交易对
 public class AssetsPair {

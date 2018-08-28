@@ -16,9 +16,9 @@ import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.activity.markets.MarketsActivity;
-import com.cybexmobile.api.RetrofitFactory;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.data.AppVersion;
+import com.cybex.provider.http.entity.AppVersion;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.fragment.AccountFragment;

@@ -9,9 +9,8 @@ import android.widget.TextView;
 
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
-import com.cybexmobile.market.MarketTrade;
+import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybexmobile.utils.AssetUtil;
-import com.cybexmobile.utils.MyUtils;
 
 import java.util.List;
 import java.util.Locale;

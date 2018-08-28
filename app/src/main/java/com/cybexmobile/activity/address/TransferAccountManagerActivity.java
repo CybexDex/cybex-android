@@ -14,8 +14,8 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.cybex.database.DBManager;
-import com.cybex.database.entity.Address;
+import com.cybex.provider.db.DBManager;
+import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferAccountManagerRecyclerViewAdapter;
 import com.cybexmobile.base.BaseActivity;

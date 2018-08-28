@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.activity.lockassets.LockAssetsActivity;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.LockUpAssetObject;
-import com.cybexmobile.market.MarketTicker;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybexmobile.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 

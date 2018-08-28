@@ -20,8 +20,8 @@ import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
-import com.cybexmobile.graphene.chain.AccountBalanceObject;
-import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.utils.NetworkUtils;
 

@@ -1,0 +1,76 @@
+apply plugin: 'com.android.library'
+apply plugin: "com.apollographql.android"
+apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion 27
+
+
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //http3
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    //retrofit2
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
+    api 'com.squareup.retrofit2:converter-gson:2.4.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    //Rxjava2
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    //GreenDao
+    implementation 'org.greenrobot:greendao:3.2.2'
+    //apollo
+    api 'com.apollographql.apollo:apollo-runtime:0.3.2'
+    api 'com.apollographql.apollo:apollo-android-support:0.3.2'
+
+    //eventbus
+    api 'org.greenrobot:eventbus:3.0.0'
+
+    implementation 'com.google.code.gson:gson:2.8.2'
+
+    //加密库
+    implementation 'com.madgag.spongycastle:core:1.56.0.0'
+    implementation 'com.madgag.spongycastle:prov:1.56.0.0'
+    implementation 'com.madgag.spongycastle:pkix:1.51.0.0'
+    implementation 'com.madgag.spongycastle:pg:1.51.0.0'
+    implementation 'com.google.guava:guava:23.0-android'
+
+    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
+    implementation 'com.github.bilthon:graphenej:0.4.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+
+    implementation 'com.belerweb:pinyin4j:2.5.0'
+}
+
+greendao {
+    schemaVersion 1
+    daoPackage 'com.cybex.provider.db.dao'
+    targetGenDir 'src/main/java'
+}

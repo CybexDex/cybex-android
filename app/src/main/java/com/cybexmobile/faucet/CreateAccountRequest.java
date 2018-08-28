@@ -1,9 +1,6 @@
 package com.cybexmobile.faucet;
 
-import com.cybexmobile.graphene.chain.Types;
-
-import java.util.List;
-import java.util.Map;
+import com.cybex.provider.graphene.chain.Types;
 
 public class CreateAccountRequest {
 

@@ -5,30 +5,25 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import com.cybex.database.DBManager;
-import com.cybex.database.entity.Address;
+import com.cybex.provider.db.DBManager;
+import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
-import com.cybexmobile.api.RetrofitFactory;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
-import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.utils.MyUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;

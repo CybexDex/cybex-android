@@ -1,8 +1,8 @@
 package com.cybexmobile.utils;
 
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.BucketObject;
-import com.cybexmobile.graphene.chain.Utils;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.BucketObject;
+import com.cybex.provider.graphene.chain.Utils;
 import com.cybexmobile.market.HistoryPrice;
 
 import java.util.List;

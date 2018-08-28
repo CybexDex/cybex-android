@@ -15,15 +15,15 @@ import android.support.v7.widget.Toolbar;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.OwnOrderHistoryRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.event.Event;
 import com.cybexmobile.faucet.AssetsPair;
-import com.cybexmobile.graphene.chain.AccountHistoryObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.BlockHeader;
+import com.cybex.provider.graphene.chain.AccountHistoryObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.OrderHistory;
-import com.cybexmobile.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybexmobile.service.WebSocketService;
 import com.google.gson.Gson;
 

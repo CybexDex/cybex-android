@@ -13,16 +13,16 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.BuySellOrderRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WebSocketClient;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.WebSocketClient;
 import com.cybexmobile.base.BaseFragment;
-import com.cybexmobile.data.AssetRmbPrice;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
+import com.cybex.provider.exception.NetworkStatusException;
 import com.cybexmobile.fragment.data.WatchlistData;
-import com.cybexmobile.graphene.chain.Asset;
-import com.cybexmobile.graphene.chain.LimitOrderObject;
-import com.cybexmobile.graphene.chain.Price;
+import com.cybex.provider.graphene.chain.Asset;
+import com.cybex.provider.graphene.chain.LimitOrderObject;
+import com.cybex.provider.graphene.chain.Price;
 import com.cybexmobile.market.Order;
 import com.cybexmobile.utils.AssetUtil;
 

@@ -17,10 +17,10 @@ import com.cybexmobile.activity.address.WithdrawAddressManageListActivity;
 import com.cybexmobile.activity.address.WithdrawAddressManagerActivity;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.fragment.DepositItemFragment;
-import com.cybexmobile.graphene.chain.AccountBalanceObject;
-import com.cybexmobile.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybexmobile.utils.AssetUtil;
-import com.cybexmobile.utils.MyUtils;
+import com.cybex.provider.utils.MyUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

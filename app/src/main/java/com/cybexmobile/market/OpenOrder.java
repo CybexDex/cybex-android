@@ -1,8 +1,8 @@
 package com.cybexmobile.market;
 
 
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.LimitOrderObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.LimitOrderObject;
 
 public class OpenOrder {
 

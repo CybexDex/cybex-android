@@ -37,13 +37,13 @@ import java.util.List;
 
 import com.cybexmobile.activity.register.RegisterActivity;
 import com.cybexmobile.activity.setting.SettingActivity;
-import com.cybexmobile.api.BitsharesWalletWraper;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.R;
-import com.cybexmobile.api.WebSocketClient;
+import com.cybex.provider.websocket.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
-import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.AccountObject;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

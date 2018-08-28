@@ -17,8 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.graphene.chain.AccountObject;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.graphene.chain.AccountObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

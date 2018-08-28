@@ -16,19 +16,19 @@ import android.util.Log;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
-import com.cybexmobile.api.BitsharesWalletWraper;
-import com.cybexmobile.api.WebSocketClient;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.WebSocketClient;
 import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.data.AssetRmbPrice;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.dialog.UnlockDialog;
 import com.cybexmobile.event.Event;
-import com.cybexmobile.exception.NetworkStatusException;
-import com.cybexmobile.graphene.chain.AccountObject;
-import com.cybexmobile.graphene.chain.AssetObject;
-import com.cybexmobile.graphene.chain.FullAccountObject;
-import com.cybexmobile.graphene.chain.LockUpAssetObject;
-import com.cybexmobile.market.MarketTicker;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybexmobile.service.WebSocketService;
 
 import org.greenrobot.eventbus.EventBus;

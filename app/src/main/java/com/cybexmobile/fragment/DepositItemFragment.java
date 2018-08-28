@@ -16,10 +16,9 @@ import android.view.ViewGroup;
 
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
-import com.cybexmobile.api.RetrofitFactory;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.service.WebSocketService;
 
