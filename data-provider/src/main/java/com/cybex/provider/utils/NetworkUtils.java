@@ -12,7 +12,7 @@ public class NetworkUtils {
 
     public static int getConnectivityStatus(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm == null){
+        if (cm == null) {
             return TYPE_NOT_CONNECTED;
         }
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -26,7 +26,7 @@ public class NetworkUtils {
     }
 
     public static int getConnectivityStatus(ConnectivityManager cm) {
-        if(cm == null){
+        if (cm == null) {
             return TYPE_NOT_CONNECTED;
         }
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
