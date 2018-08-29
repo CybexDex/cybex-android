@@ -16,7 +16,7 @@ import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybex.provider.http.RetrofitFactory;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.service.WebSocketService;
 

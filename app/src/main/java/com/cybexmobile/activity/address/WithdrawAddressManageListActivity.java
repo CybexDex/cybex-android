@@ -19,7 +19,7 @@ import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferAccountManagerRecyclerViewAdapter;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.dialog.AddressOperationSelectDialog;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.toast.message.ToastMessage;

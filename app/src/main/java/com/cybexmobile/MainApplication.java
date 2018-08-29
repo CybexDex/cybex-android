@@ -7,7 +7,7 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
-import com.cybexmobile.helper.StoreLanguageHelper;
+import com.cybex.basemodule.help.StoreLanguageHelper;
 import com.cybexmobile.utils.PicassoUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;

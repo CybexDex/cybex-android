@@ -18,20 +18,21 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.utils.PriceUtil;
 import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.data.DataParse;
 import com.cybexmobile.data.KLineBean;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.fragment.MarketTradeHistoryFragment;
 import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybex.provider.graphene.chain.BucketObject;
-import com.cybexmobile.market.HistoryPrice;
+import com.cybex.provider.market.HistoryPrice;
 import com.cybexmobile.mychart.CoupleChartGestureListener;
 import com.cybexmobile.mychart.MyBottomMarkerView;
 import com.cybexmobile.mychart.MyCombinedChart;
@@ -40,7 +41,6 @@ import com.cybexmobile.mychart.MyLeftMarkerView;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.AssetUtil;
 import com.cybex.provider.utils.MyUtils;
-import com.cybexmobile.utils.PriceUtil;
 import com.cybexmobile.utils.VolFormatter;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.components.Legend;
@@ -435,7 +435,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         axisLeftVolume = mChartVolume.getAxisLeft();
         axisLeftVolume.setAxisMinValue(0);//设置Y轴坐标最小为多少
 //        axisLeftVolume.setShowOnlyMinMax(true);//设置Y轴坐标最小为多少
-        axisLeftVolume.setDrawGridLines(true);
+        axisLeftVolume.setDrawGridLines(false);
         axisLeftVolume.setDrawAxisLine(false);
 //        axisLeftVolume.setShowOnlyMinMax(true);
         axisLeftVolume.setDrawLabels(true);

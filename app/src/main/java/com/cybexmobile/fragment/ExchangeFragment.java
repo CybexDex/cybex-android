@@ -20,15 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
+import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.markets.MarketsActivity;
 import com.cybexmobile.activity.orderhistory.OwnOrderHistoryActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybexmobile.base.BaseFragment;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.dialog.WatchlistSelectDialog;
-import com.cybexmobile.event.Event;
-import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;

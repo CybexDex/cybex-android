@@ -2,7 +2,6 @@ package com.cybexmobile.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.AssetUtil;

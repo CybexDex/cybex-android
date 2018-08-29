@@ -17,11 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.adapter.WatchListRecyclerViewAdapter;
-import com.cybexmobile.base.BaseFragment;
 import com.cybex.provider.http.entity.AssetRmbPrice;
-import com.cybexmobile.event.Event;
-import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybex.basemodule.event.Event;
 import com.cybexmobile.R;
 
 import com.cybexmobile.service.WebSocketService;

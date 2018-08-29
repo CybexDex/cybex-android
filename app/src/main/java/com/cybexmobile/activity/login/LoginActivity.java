@@ -40,8 +40,8 @@ import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.R;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 

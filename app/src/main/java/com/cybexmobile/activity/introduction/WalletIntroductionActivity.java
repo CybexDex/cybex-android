@@ -3,8 +3,8 @@ package com.cybexmobile.activity.introduction;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.R;
-import com.cybexmobile.base.BaseActivity;
 
 public class WalletIntroductionActivity extends BaseActivity {
 

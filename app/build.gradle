@@ -131,11 +131,9 @@ dependencies {
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
     implementation project(':MPChartLib')
     implementation project(':ui-smart-refresh')
-    implementation project(':data-provider')
     implementation project(':module-eto')
+    implementation project(':module-base')
 
-    //Umeng
-    implementation 'com.umeng.analytics:analytics:6.1.4'
     //Leakcanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'

@@ -10,17 +10,19 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.utils.NetworkUtils;
+import com.cybex.provider.utils.PriceUtil;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.provider.http.response.AssetsPairResponse;
 import com.cybex.provider.http.response.AssetsPairToppingResponse;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybexmobile.faucet.AssetsPair;
 import com.cybex.provider.http.response.CnyResponse;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;
@@ -31,11 +33,8 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.ObjectId;
-import com.cybexmobile.market.HistoryPrice;
+import com.cybex.provider.market.HistoryPrice;
 import com.cybex.provider.graphene.chain.MarketTicker;
-import com.cybexmobile.utils.NetworkUtils;
-import com.cybexmobile.utils.PriceUtil;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -64,6 +63,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Function5;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
 import static com.cybexmobile.utils.Constant.ASSET_ID_ETH;
 import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
@@ -71,8 +72,6 @@ import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
 import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybexmobile.utils.Constant.PREF_LOAD_MODE;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
-import static com.cybexmobile.utils.NetworkUtils.TYPE_MOBILE;
-import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class WebSocketService extends Service {
 
@@ -212,15 +211,10 @@ public class WebSocketService extends Service {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onWebSocketTimeOut(Event.WebSocketTimeOut webSocketTimeOut) {
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadModeChanged(Event.LoadModeChanged event){
         int mode = event.getMode();
         if(mMode == FREQUENCY_MODE_ORDINARY_MARKET && mode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
-                mNetworkState == NetworkUtils.TYPE_MOBILE){
+                mNetworkState == TYPE_MOBILE){
             mMode = event.getMode();
             return;
         }
@@ -230,7 +224,7 @@ public class WebSocketService extends Service {
             return;
         }
         if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI && mode == FREQUENCY_MODE_ORDINARY_MARKET &&
-                mNetworkState == NetworkUtils.TYPE_MOBILE){
+                mNetworkState == TYPE_MOBILE){
             mMode = event.getMode();
             return;
         }

@@ -24,7 +24,7 @@ import com.cybexmobile.activity.introduction.WalletIntroductionActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.exception.ErrorCodeException;
 import com.cybex.provider.exception.NetworkStatusException;

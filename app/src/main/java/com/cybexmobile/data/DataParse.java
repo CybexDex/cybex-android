@@ -2,7 +2,7 @@ package com.cybexmobile.data;
 
 import android.util.SparseArray;
 
-import com.cybexmobile.market.HistoryPrice;
+import com.cybex.provider.market.HistoryPrice;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;

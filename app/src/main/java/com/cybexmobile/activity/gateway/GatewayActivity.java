@@ -14,8 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
@@ -23,7 +24,6 @@ import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +33,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
-import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class GatewayActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, DepositItemFragment.OnListFragmentInteractionListener {
 

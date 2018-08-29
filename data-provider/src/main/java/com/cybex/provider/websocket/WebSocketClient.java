@@ -6,31 +6,28 @@ import android.util.Log;
 
 import com.cybex.provider.constant.ErrorCode;
 import com.cybex.provider.crypto.Sha256Object;
-import com.cybex.provider.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
-import com.cybex.provider.graphene.chain.FullNodeServerSelect;
-import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
+import com.cybex.provider.graphene.chain.FullNodeServerSelect;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.MarketTicker;
+import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
-import com.cybex.provider.graphene.chain.MarketTicker;
-import com.cybex.provider.graphene.chain.MarketTrade;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -195,8 +192,6 @@ public class WebSocketClient extends WebSocketListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //websocket连接超时
-        EventBus.getDefault().post(new Event.WebSocketTimeOut());
     }
 
     @Override

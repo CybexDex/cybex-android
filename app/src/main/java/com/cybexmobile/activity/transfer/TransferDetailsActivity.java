@@ -10,9 +10,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.R;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.dialog.UnlockDialog;
 import com.cybex.provider.graphene.chain.AccountObject;

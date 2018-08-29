@@ -21,18 +21,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.cache.BalanceCache;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.dialog.CybexDialog;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
@@ -40,7 +41,6 @@ import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.utils.NetworkUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -56,11 +56,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 
 import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
 import static com.cybexmobile.utils.Constant.PREF_NAME;
-import static com.cybexmobile.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();

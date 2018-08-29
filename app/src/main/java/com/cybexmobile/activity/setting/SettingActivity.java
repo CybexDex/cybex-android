@@ -19,11 +19,11 @@ import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AppVersion;
 import com.cybexmobile.dialog.FrequencyModeDialog;
-import com.cybexmobile.event.Event;
-import com.cybexmobile.helper.StoreLanguageHelper;
+import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.help.StoreLanguageHelper;
 import com.cybexmobile.R;
 
 import org.greenrobot.eventbus.EventBus;

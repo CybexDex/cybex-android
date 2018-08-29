@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CybexDex</string>
+
+    <!-- Bottom Navigation Title -->
+    <string name="title_watchlist">行情</string>
+    <string name="title_explorer">探索</string>
+    <string name="title_setting">设置</string>
+    <string name="title_faq">申请</string>
+    <string name="title_account">账户</string>
+    <string name="title_exchange">交易</string>
+    <string name="title_eto">ETO</string>
+    <string name="title_order_history">我的记录</string>
+    <string name="title_transfer">转账</string>
+    <string name="title_transfer_records">转账记录</string>
+    <string name="title_transfer_details">转账详情</string>
+    <string name="title_deposit_records">充值记录</string>
+    <string name="title_withdraw_records">提现记录</string>
+
+    <!-- Watch List Page -->
+    <string name="popular_title">最热</string>
+    <string name="watch_list_name_vol">名称/成交量</string>
+    <string name="watch_list_new_price_title">最新价格</string>
+    <string name="watch_list_vibration_range_title">24h涨跌幅</string>
+
+    <!-- account page -->
+    <string name="log_in_cybex">您好，请登录</string>
+    <string name="account_introduction_text">CYBEX是一个旨在提高加密资产流动性的去中心化交易所，能够提供更多的透明性、更高的效率性和更好的安全性。</string>
+    <string name="login_cloud_wallet">登录您的云钱包帐户</string>
+    <string name="register_create_cloud_wallet">创建您的云钱包账户</string>
+    <string name="account_balance">账户总余额(CYB):</string>
+    <string name="account_available_asset">可用资产</string>
+    <string name="account_view_all">查看全部</string>
+    <string name="account_other_asset">其他资产</string>
+    <string name="account_hello">您好,</string>
+    <string name="account_membership_basic">普通会员</string>
+    <string name="account_membership_lifetime">终身会员</string>
+    <string name="account_balance_dialog_title">账户总余额</string>
+    <string name="account_balance_dialog_content">这是你所有资产的估值，包含了在界面中设置了隐藏的资产、委单中的资产、债仓及抵押物。估值采用实时获得的区块链上的价格，可能不那么精确。</string>
+    <string name="account_balance_dialog_button">我知道了</string>
+    <string name="text_my_balance">我的资产</string>
+    <string name="text_opened_orders">我的委单</string>
+    <string name="text_lockup_assets">锁定期资产</string>
+    <string name="text_deposit_withdraw">充值提现</string>
+    <string name="text_address_management">地址管理</string>
+
+    <!-- Balance Page -->
+    <string name="balance_page_title">我的资产</string>
+    <string name="balance_page_total_balance">账户资产估值(CYB)</string>
+    <string name="balance_page_transfer">转账</string>
+    <string name="balance_page_no_asset">暂无资产</string>
+    <string name="balance_page_frozen_no_asset">冻结: --</string>
+    <string name="balance_page_frozen_asset">冻结:</string>
+
+    <!-- Open Orders Page -->
+    <string name="open_order_buy">买入</string>
+    <string name="open_order_sell">卖出</string>
+    <string name="open_orders_title">我的委单</string>
+    <string name="open_order_price_amount">委托单价/委托数量</string>
+    <string name="open_order_filled_cancel">成交额/撤单</string>
+
+    <!-- Markets Page -->
+    <string name="markets_title">交易中心</string>
+    <string name="market_page_buy_price">买价(--)</string>
+    <string name="market_page_sell_price">卖价(--)</string>
+    <string name="market_page_volume_short">成交量</string>
+    <string name="market_page_trade_history_price">价格(--)</string>
+    <string name="market_page_trade_history_date">时间</string>
+    <string name="market_page_trade_history_base">成交额(--)</string>
+    <string name="market_page_trade_history_quote">数量(--)</string>
+    <string name="market_page_order_book">买卖单</string>
+    <string name="market_page_trade_history">交易历史</string>
+    <string name="k_ma">MA(5):</string>
+    <string name="k_ma5">MA(5):</string>
+    <string name="k_ma10">MA(10):</string>
+    <string name="k_ma20">MA(20):</string>
+    <string name="k_boll">BOLL:</string>
+    <string name="k_ema5">EMA(5):</string>
+    <string name="k_ema10">EMA(10)</string>
+    <string name="index_high">高</string>
+    <string name="index_low">低</string>
+    <string name="index_open">开</string>
+    <string name="index_close">收</string>
+    <string name="index_vary">幅</string>
+    <string name="index_price">额</string>
+
+    <!-- Setting page -->
+    <string name="setting_language">语言</string>
+    <string name="setting_language_english">English</string>
+    <string name="setting_language_chinese">简体中文</string>
+    <string name="setting_theme">主题</string>
+    <string name="setting_version">版本</string>
+    <string name="setting_frequency">行情刷新频率</string>
+    <string name="setting_theme_dark">黑色</string>
+    <string name="setting_theme_light">白色</string>
+    <string name="action_log_out">退出登录</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="error_incorrect_password">帐户名或密码错误</string>
+    <string name="text_ok">确定</string>
+    <string name="permission_rationale">提供电子邮件完成需要联系人权限.</string>
+    <string name="setting_version_is_the_latest">当前为最新版本</string>
+    <string name="setting_version_update_available">版本更新</string>
+    <string name="setting_version_update_content">新版CybexDex可用，请立即更新至最新版本.</string>
+    <string name="setting_version_update_next_time">下次</string>
+    <string name="setting_version_update_now">更新</string>
+    <string name="setting_frequency_ordinary_market">普通行情</string>
+    <string name="setting_frequency_real_time_market">实时行情</string>
+    <string name="setting_frequency_real_time_market_only_wifi">仅在WiFi下实时行情</string>
+    <string name="text_cancel">取消</string>
+
+    <!-- Login/Register -->
+    <string name="create_account">创建新账号</string>
+    <string name="create_account_register">注册</string>
+    <string name="register_dialog_title">注意事项</string>
+    <string name="register_dialog_confirm">我记住了</string>
+    <string name="prompt_user_name">帐户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="prompt_confirm_password">确认密码</string>
+    <string name="prompt_pin_code">验证码</string>
+
+    <string name="import_activity_unknown_error">发现错误</string>
+    <string name="import_activity_private_key_invalid">私钥不正确</string>
+    <string name="import_activity_account_invalid">账号不存在</string>
+    <string name="import_activity_account_not_match_key">账号密码不匹配</string>
+    <string name="import_activity_account_name_invalid">找不到账号名</string>
+    <string name="import_activity_connect_failed">无法连接到服务器</string>
+    <string name="import_activity_file_failed">从文件中读取不到信息</string>
+    <string name="import_activity_password_invalid">密码错误</string>
+    <string name="import_activity_file_bin_password_invalid">钱包文件或者密码错误</string>
+
+    <string name="create_account_activity_network_fail">服务器连接失败</string>
+    <string name="create_account_activity_account_object_exist">帐户名已存在</string>
+    <string name="create_account_activity_response_fail">服务器无响应</string>
+    <string name="create_account_activity_create_fail">注册失败</string>
+
+    <string name="create_account_account_name_error_full_letter">帐户名不能只包含字母</string>
+    <string name="create_account_account_name_too_short">帐户名过短</string>
+    <string name="create_account_account_name_error_dash_end">帐户名不能以横杠结尾</string>
+    <string name="create_account_account_name_should_not_contain_continuous_dashes">帐户名不能包含连续的横杠</string>
+    <string name="create_account_account_name_error_start_letter">帐户名需要以字母开头</string>
+    <string name="create_account_password_must_at_least_12_characters">输入12位以上的密码</string>
+    <string name="create_account_password_error">密码需包含大小写字母、数字、特殊字符，长度不少于12个字符</string>
+    <string name="create_account_password_confirm_error">密码输入不一致</string>
+    <string name="create_account_account_name_should_only_contain_letter_dash_and_numbers">帐户名仅能包含小写字母、数字、横杠</string>
+    <string name="create_account_pin_code_not_correct">验证码不正确</string>
+    <string name="create_account_failure">注册失败</string>
+
+    <string name="register_dialog_content_current_password">当前密码:</string>
+    <string name="register_dialog_content_attentions">
+        • 我明确知晓，一旦忘记密码，我将会失去获取并使用该账户资金的途径\n
+        • 我明确知晓，一旦忘记或丢失了密码，将没有任何人能够帮助我恢复\n
+        • 我已经记录下来，或者用其它方式保存了我的密码</string>
+
+    <!-- Open Orders Page Related -->
+    <string name="open_orders_all">全部</string>
+    <string name="open_orders_buy">买入</string>
+    <string name="open_orders_sell">卖出</string>
+    <string name="open_orders_total_value">全部总额:</string>
+    <string name="open_orders_sell_total_value">卖单总额:</string>
+    <string name="open_orders_buy_total_value">买单总额:</string>
+    <string name="open_orders_volume">数量:</string>
+
+
+    <!-- Portfolio Page Related -->
+    <string name="portfolio_price">价格(CYB)</string>
+    <string name="portfolio_24h">24h涨跌幅</string>
+    <string name="portfolio_title">可用资产</string>
+
+    <!-- Activity Lock Assets -->
+    <string name="assets_amount">资产/数量</string>
+    <string name="progress_expire_date">进度/到期时间</string>
+    <string name="locked_assets">锁定期资产</string>
+
+    <!-- Activity Register -->
+    <string name="have_account_login">已注册?</string>
+    <string name="action_sign_in">登录</string>
+
+    <string name="network_connection_is_not_available">无网络连接</string>
+
+    <!-- Exchange Fragment -->
+    <string name="tab_buy">买入</string>
+    <string name="tab_sell">卖出</string>
+    <string name="tab_open_orders">我的委单</string>
+    <string name="menu_order_history">我的记录</string>
+    <string name="menu_transfer_records">转账记录</string>
+    <string name="menu_withdraw_records">提现记录</string>
+    <string name="menu_deposit_records">充值记录</string>
+    <string name="text_limit">限价单</string>
+    <string name="text_empty">--</string>
+    <string name="text_asset_price">价格(--)</string>
+    <string name="text_asset_amount">数量(--)</string>
+    <string name="text_percentage_25">25%</string>
+    <string name="text_percentage_50">50%</string>
+    <string name="text_percentage_75">75%</string>
+    <string name="text_percentage_100">100%</string>
+    <string name="text_available">余额</string>
+    <string name="text_free">手续费</string>
+    <string name="text_total">成交额</string>
+    <string name="text_buy">买入</string>
+    <string name="text_sell">卖出</string>
+    <string name="text_not_enough">余额不足</string>
+    <string name="text_login_in_to_exchange">请登录</string>
+    <string name="text_hint_price">价格</string>
+    <string name="text_hint_amount">数量</string>
+
+    <string name="item_text_open_order_price">价格:</string>
+    <string name="item_text_open_order_amount">数量:</string>
+    <string name="item_text_open_order_cancel">撤单</string>
+    <string name="text_no_open_order">暂无委单</string>
+
+    <!-- Order History Activity -->
+    <string name="text_asset_and_amount">资产/数量</string>
+    <string name="text_filled_and_price">成交额/单价</string>
+    <string name="text_no_exchange_history">暂无交易记录</string>
+
+    <!-- Order History Item -->
+    <string name="item_own_order_history_time">时间:</string>
+    <string name="item_own_order_history_done">已成交</string>
+
+    <!-- Watchlist Select Activity -->
+    <string name="text_markets">计价币种</string>
+    <string name="text_paris">交易对</string>
+    <string name="text_24_hour_volume">24h成交量</string>
+
+    <string name="text_press_again_to_exit">再按一次退出</string>
+
+    <!-- Gateway Page Related -->
+    <string name="gate_way_title">充值提现</string>
+    <string name="gate_way_deposit">充值</string>
+    <string name="gate_way_withdraw">提现</string>
+    <string name="gate_way_select_coin">选择币种</string>
+
+    <!-- Deposit Page Related -->
+    <string name="deposit_save_qr_code">保存二维码</string>
+    <string name="deposit_copy_address">复制地址</string>
+    <string name="deposit_get_new_address">生成新地址</string>
+    <string name="deposit_eos_copy_account_name">复制账户</string>
+    <string name="deposit_eos_copy_code">复制验证码</string>
+    <string name="deposit_eos_get_new_code">重新生成</string>
+    <string name="deposit_eos_deposit_account">EOS充值账户</string>
+    <string name="deposit_eos_verification_code">备注验证码</string>
+    <string name="deposit_eos_alert_message">(请务必在转账备注中填写并核对正确)</string>
+
+    <!-- Withdraw Page Related -->
+    <string name="withdraw_available_amount">可用余额</string>
+    <string name="withdraw_withdrawal_address">提现地址</string>
+    <string name="withdraw_account_eos">提现账户</string>
+    <string name="withdraw_memo_eos">备注</string>
+    <string name="withdraw_amount">数量</string>
+    <string name="withdraw_minimum_hint">最小提现数量 </string>
+    <string name="withdraw_all">全部</string>
+    <string name="withdraw_transfer_fee">转账手续费</string>
+    <string name="withdraw_gateway_fee">提现手续费</string>
+    <string name="withdraw_receive_amount">到账数量</string>
+    <string name="withdraw_withdraw_button">提现</string>
+    <string name="withdraw_enter_or_paste_address_hint">输入或长按粘贴地址</string>
+    <string name="withdraw_enter_or_paste_account_hint_eos">输入或长按粘贴账户</string>
+    <string name="withdraw_amount_hint">最小提现数量 </string>
+    <string name="withdraw_confirmation">确认提现</string>
+    <string name="withdraw_error_not_enough">余额不足</string>
+    <string name="withdraw_error_less_than_minimum">小于最小提现额度</string>
+    <string name="withdraw_error_invalid_address">地址不合法</string>
+    <string name="withdraw_records_button">提现记录</string>
+
+    <!-- Deposit Withdraw Records -->
+    <string name="deposit_withdraw_records_update_time">更新时间:&#032;&#032;</string>
+    <string name="deposit_withdraw_records_address">地址:&#032;&#032;</string>
+    <string name="deposit_withdraw_records_no_record">暂无记录</string>
+    <string name="deposit_withdraw_state_done">成功</string>
+    <string name="deposit_withdraw_state_new">新建</string>
+    <string name="deposit_withdraw_state_init">正在上链</string>
+    <string name="deposit_withdraw_state_pending">待确认</string>
+    <string name="deposit_withdraw_state_failed">失败</string>
+
+    <!-- Snack Bar Text -->
+    <string name="snack_bar_saved">已保存二维码</string>
+    <string name="snack_bar_copied">已复制地址</string>
+    <string name="snack_bar_please_retry">请在5分钟后重新生成</string>
+
+    <!-- Toast Message -->
+    <string name="toast_message_can_not_deposit">暂不支持充值</string>
+    <string name="toast_message_can_not_withdraw">您没有权限提现</string>
+    <string name="toast_message_withdraw_sent">提现申请成功</string>
+    <string name="toast_message_withdraw_failed">提现申请失败</string>
+    <string name="toast_message_place_order_successfully">挂单成功</string>
+    <string name="toast_message_place_order_failed">挂单失败</string>
+    <string name="toast_message_cancel_order_successfully">委单撤销成功</string>
+    <string name="toast_message_cancel_order_failed">委单撤销失败</string>
+    <string name="toast_message_transfer_success">转账成功</string>
+    <string name="toast_message_transfer_failed">转账失败</string>
+    <string name="toast_message_add_this_account_to_list">是否将该地址储存到提现地址列表?</string>
+    <string name="toast_message_add_to_transfer_account_list">是否将该账户储存到转账账户列表?</string>
+
+    <!-- unlock wallet -->
+    <string name="unlock_wallet_dialog_title">解锁钱包</string>
+    <string name="unlock_wallet_dialog_cancel">取消</string>
+    <string name="unlock_wallet_dialog_confirm">确认</string>
+    <string name="unlock_wallet_dialog_error_invalid_password">解锁失败，请重新输入密码</string>
+    <string name="key_unlock">解锁</string>
+
+    <!-- Dialog limit order create and cancel -->
+    <string name="dialog_text_title_limit_order_create_confirmation">买卖确认</string>
+    <string name="dialog_text_title_limit_order_cancel_confirmation">确认取消该订单</string>
+    <string name="dialog_text_price">价格:</string>
+    <string name="dialog_text_amount">数量:</string>
+    <string name="dialog_text_total">成交额:</string>
+    <string name="dialog_text_cancellation_fee">取消手续费:</string>
+    <string name="dialog_text_cancel">取消</string>
+    <string name="dialog_text_confirm">确认</string>
+    <string name="dialog_text_title_transfer_confirmation">转账确认</string>
+
+    <!-- Dialog withdraw confirmation -->
+    <string name="dialog_withdraw_confirmation_address">提现地址:</string>
+    <string name="dialog_withdraw_confirmation_amount">提现数量:</string>
+    <string name="dialog_withdraw_confirmation_gateway_fee">提现手续费:</string>
+    <string name="dialog_withdraw_confirmation_transfer_fee">转账手续费:</string>
+    <string name="dialog_withdraw_confirmation_receive_amount">到账数量:</string>
+    <string name="dialog_withdraw_confirmation_memo_eos">备注:</string>
+
+    <!-- Dialog transfer confirmation -->
+    <string name="dialog_text_account">账户:</string>
+    <string name="dialog_text_fee">手续费:</string>
+    <string name="dialog_text_quantity">数量:</string>
+    <string name="dialog_text_memo">备注:</string>
+
+    <!--Dialog Version Update -->
+    <string name="dialog_version_update">版本更新</string>
+
+    <!-- Transfer Activity -->
+    <string name="text_to_account_name">请输入收款方账户名</string>
+    <string name="text_crypto">币种</string>
+    <string name="text_quantity">金额</string>
+    <string name="text_memo">备注</string>
+    <string name="text_fee">手续费</string>
+    <string name="text_no_transfer_records">暂无转账记录</string>
+    <string name="text_sent">已转出</string>
+    <string name="text_received">已收到</string>
+    <string name="text_account_not_exist">账户不存在</string>
+    <string name="text_please_select_crypto_type">请选择转账币种</string>
+    <string name="text_send">转账</string>
+
+    <!-- Transfer Details Activity -->
+    <string name="text_to">收款账户</string>
+    <string name="text_from">付款账户</string>
+    <string name="text_vesting_period">锁定期</string>
+    <string name="text_time">时间</string>
+    <string name="text_none">无</string>
+    <string name="text_click_to_view">点击查看</string>
+    <string name="text_day">天</string>
+    <string name="text_hours">时</string>
+    <string name="text_minutes">分</string>
+    <string name="text_seconds">秒</string>
+    <string name="text_in">收入</string>
+    <string name="text_out">支出</string>
+
+    <!-- Address Manager Activity-->
+    <string name="text_withdraw_address">提现地址</string>
+    <string name="text_transfer_account">转账账户</string>
+    <string name="text_transfer_account_management">转账账户管理</string>
+    <string name="text_add_transfer_account">添加转账账户</string>
+    <string name="text_no_transfer_account">暂无转账账户</string>
+    <string name="text_no_withdraw_account">暂无提现账户</string>
+    <string name="text_no_withdraw_address">暂无提现地址</string>
+    <string name="text_account">账户</string>
+    <string name="text_account_dot">账户:</string>
+    <string name="text_memo_dot">备注:</string>
+    <string name="text_address_dot">地址:</string>
+    <string name="text_address">地址</string>
+    <string name="text_note">标签</string>
+    <string name="text_note_dot">标签:</string>
+    <string name="text_add">添加</string>
+    <string name="text_added">添加成功</string>
+    <string name="text_added_failed">添加失败</string>
+    <string name="text_deleted">删除成功</string>
+    <string name="text_deleted_failed">删除失败</string>
+    <string name="text_copied">复制成功</string>
+    <string name="text_copied_failed">复制失败</string>
+    <string name="text_transfer_account_already_exists">转账账户已经存在</string>
+    <string name="text_copy">复制</string>
+    <string name="text_delete">删除</string>
+    <string name="text_add_account">添加账户</string>
+    <string name="text_add_address">添加地址</string>
+    <string name="text_select_account">选择账户</string>
+    <string name="text_select_address">选择地址</string>
+    <string name="text_less_than_15_characters">最多不超过15个字符</string>
+    <string name="text_add_withdraw_account">添加提现账户</string>
+    <string name="text_add_withdraw_address">添加提现地址</string>
+    <string name="text_address_not_exist">地址错误</string>
+    <string name="text_confirm_to_delete_this_account">确认删除该账户?</string>
+    <string name="text_delete_confirm">删除确认</string>
+
+    <!-- Withdraw Address -->
+    <string name="text_withdraw_address_title">提现地址管理</string>
+    <string name="withdraw_account_title">提现账户</string>
+    <string name="withdraw_address_title">提现地址</string>
+    <string name="withdraw_address_note_address">标签/地址</string>
+    <string name="withdraw_address_note_account">标签/账户</string>
+    <string name="withdraw_address_memo">备注</string>
+
+</resources>

@@ -9,8 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.activity.main.BottomNavigationActivity;
-import com.cybexmobile.base.BaseActivity;
 import com.cybexmobile.R;
 import com.cybexmobile.service.WebSocketService;
 import com.tbruyelle.rxpermissions2.Permission;
@@ -20,7 +20,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
-public class SplashActivity extends BaseActivity{
+public class SplashActivity extends BaseActivity {
 
     private static final int REQUEST_CODE_WRITE_SETTING = 1;
 

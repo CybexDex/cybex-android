@@ -14,15 +14,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybexmobile.base.BaseActivity;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.dialog.CybexDialog;
 import com.cybexmobile.dialog.UnlockDialog;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;

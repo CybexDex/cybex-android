@@ -11,20 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.adapter.OrderHistoryRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybexmobile.base.BaseFragment;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.Price;
 import com.cybexmobile.R;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
-import com.cybexmobile.market.Order;
-import com.cybexmobile.market.OrderBook;
+import com.cybex.provider.market.Order;
+import com.cybex.provider.market.OrderBook;
 import com.cybexmobile.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;

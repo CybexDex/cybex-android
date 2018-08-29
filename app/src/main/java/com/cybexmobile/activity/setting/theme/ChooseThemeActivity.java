@@ -14,8 +14,8 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.event.Event;
 import com.cybexmobile.helper.StoreThemeHelper;
 import com.cybexmobile.R;
 

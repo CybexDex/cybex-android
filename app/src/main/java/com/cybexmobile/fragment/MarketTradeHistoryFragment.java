@@ -11,13 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybexmobile.base.BaseFragment;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybexmobile.utils.AssetUtil;

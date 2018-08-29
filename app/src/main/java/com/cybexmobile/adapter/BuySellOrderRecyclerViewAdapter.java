@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybexmobile.R;
-import com.cybexmobile.market.Order;
+import com.cybex.provider.market.Order;
 import com.cybexmobile.utils.AssetUtil;
 
 import java.util.List;

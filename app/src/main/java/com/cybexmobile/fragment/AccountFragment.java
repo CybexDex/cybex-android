@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cybex.basemodule.base.BaseFragment;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.balance.AccountBalanceActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
@@ -24,9 +25,8 @@ import com.cybexmobile.activity.login.LoginActivity;
 import com.cybexmobile.activity.openorders.OpenOrdersActivity;
 import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybexmobile.activity.address.AddressManagerActivity;
-import com.cybexmobile.base.BaseFragment;
 import com.cybex.provider.crypto.Sha256Object;
-import com.cybexmobile.event.Event;
+import com.cybex.basemodule.event.Event;
 import com.cybexmobile.utils.KotlinAvatarJavaBridge;
 import com.pixplicity.sharp.Sharp;
 

@@ -21,11 +21,11 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.WatchlistSelectRecyclerViewAdapter;
 import com.cybex.provider.http.entity.AssetRmbPrice;
-import com.cybexmobile.event.Event;
-import com.cybexmobile.fragment.data.WatchlistData;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.utils.Constant;

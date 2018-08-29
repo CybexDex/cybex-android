@@ -44,7 +44,7 @@ import com.apollographql.apollo.fragment.AccountAddressRecord;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybex.provider.apollo.ApolloClientApi;
-import com.cybexmobile.base.BaseActivity;
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybexmobile.toast.message.ToastMessage;
 import com.cybexmobile.utils.AntiMultiClick;

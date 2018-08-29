@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
-import com.cybexmobile.fragment.data.WatchlistData;
 import com.cybexmobile.utils.AssetUtil;
 
 import java.util.List;

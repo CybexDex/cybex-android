@@ -7,9 +7,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cybexmobile.base.BaseActivity;
-import com.cybexmobile.event.Event;
-import com.cybexmobile.helper.StoreLanguageHelper;
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.help.StoreLanguageHelper;
 import com.cybexmobile.R;
 
 import org.greenrobot.eventbus.EventBus;

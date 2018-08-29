@@ -1,6 +1,6 @@
 package com.cybexmobile.data.item;
 
-import com.cybexmobile.market.OpenOrder;
+import com.cybex.provider.market.OpenOrder;
 
 /**
  * OpenOrder item

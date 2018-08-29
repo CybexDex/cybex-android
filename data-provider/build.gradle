@@ -50,9 +50,6 @@ dependencies {
     api 'com.apollographql.apollo:apollo-runtime:0.3.2'
     api 'com.apollographql.apollo:apollo-android-support:0.3.2'
 
-    //eventbus
-    api 'org.greenrobot:eventbus:3.0.0'
-
     implementation 'com.google.code.gson:gson:2.8.2'
 
     //加密库
