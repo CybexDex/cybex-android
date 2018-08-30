@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '28.0.0'
+    buildToolsVersion '27.0.3'
 
     def keystoreAlias = ''
     def keystoreAliasPassword = ''
@@ -133,7 +133,6 @@ dependencies {
     implementation project(':ui-smart-refresh')
     implementation project(':module-eto')
     implementation project(':module-base')
-
     //Leakcanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
