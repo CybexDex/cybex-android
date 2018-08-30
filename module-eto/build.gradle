@@ -16,7 +16,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -34,6 +34,24 @@ android {
                 manifest.srcFile 'src/main/application/AndroidManifest.xml'
             }
         }
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'license/LICENSE.dom-documentation.txt'
+        exclude 'license/LICENSE.dom-software.txt'
+        exclude 'license/README.dom.txt'
+        exclude 'license/README.sax.txt'
+        exclude 'license/NOTICE'
+        exclude 'license/LICENSE'
+        exclude 'license/*'
+
+        exclude 'lib/x86_64/darwin/libscrypt.dylib'
+        exclude 'lib/x86_64/freebsd/libscrypt.so'
+        exclude 'lib/x86_64/linux/libscrypt.so'
     }
 }
 
