@@ -61,9 +61,9 @@ public class FullNodeServerSelect {
 
         String strResultServer = "";
         synchronized (objectSync) {
-            if (listSelectedServer.isEmpty() == false && listSelectedServer.size() < nTotalCount ) {
+            if (!listSelectedServer.isEmpty() && listSelectedServer.size() < nTotalCount ) {
                 for (String strServer : listSelectedServer) {
-                    if (strServer.isEmpty() == false) {
+                    if (!strServer.isEmpty()) {
                         strResultServer = strServer;
                         break;
                     }
@@ -77,9 +77,9 @@ public class FullNodeServerSelect {
                     e.printStackTrace();
                 }
 
-                if (listSelectedServer.isEmpty() == false && listSelectedServer.size() < nTotalCount ) {
+                if (!listSelectedServer.isEmpty() && listSelectedServer.size() < nTotalCount ) {
                     for (String strServer : listSelectedServer) {
-                        if (strServer.isEmpty() == false) {
+                        if (!strServer.isEmpty()) {
                             strResultServer = strServer;
                             break;
                         }
