@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">CybexDex</string>
 
     <!-- Bottom Navigation Title -->
     <string name="title_watchlist">Watchlist</string>

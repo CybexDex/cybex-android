@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">ui-smart-refresh</string>
 
     <string name="srl_header_pulling">Pull Down To Refresh</string>
     <string name="srl_header_release">Release To Refresh</string>

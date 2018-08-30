@@ -1,10 +1,17 @@
-apply plugin: 'com.android.library'
+if(isModule.toBoolean()) {
+    apply plugin: 'com.android.library'
+} else {
+    apply plugin: 'com.android.application'
+}
 
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
 
     defaultConfig {
+        if(!isModule.toBoolean()) {
+            applicationId "com.cybex.eto"
+        }
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 1
@@ -19,6 +26,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            if (isModule.toBoolean()) {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/application/AndroidManifest.xml'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -27,5 +43,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation project(':data-provider')
+    api project(':module-base')
 }
