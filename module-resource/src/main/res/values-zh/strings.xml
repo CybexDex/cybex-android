@@ -396,6 +396,9 @@
     <string name="withdraw_address_note_account">标签/账户</string>
     <string name="withdraw_address_memo">备注</string>
 
+    <!-- Eto -->
+    <string name="text_popular_etos">热门项目</string>
+
     <!-- ETO Details Activity -->
     <string name="ETO_details_title">项目详情</string>
 

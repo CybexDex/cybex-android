@@ -9,11 +9,11 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class ActivityModule {
+public class BaseActivityModule {
 
     private Activity mActivity;
 
-    public ActivityModule(Activity activity) {
+    public BaseActivityModule(Activity activity) {
         mActivity = activity;
     }
 

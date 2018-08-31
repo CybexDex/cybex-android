@@ -1,6 +1,6 @@
 package com.cybex.eto.activity.details;
 
-import com.cybex.eto.base.IMvpView;
+import com.cybex.basemodule.base.IMvpView;
 
 public interface EtoDetailsView extends IMvpView {
 }

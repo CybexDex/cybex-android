@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.youth.banner.Banner
+        android:id="@+id/eto_banner"
+        android:layout_width="match_parent"
+        android:layout_height="190dp">
+
+    </com.youth.banner.Banner>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        style="@style/font_gray_small"
+        android:padding="@dimen/activity_padding"
+        android:text="@string/text_popular_etos"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/eto_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:scrollbars="none"
+        tools:listitem="@layout/item_eto"
+        tools:itemCount="3">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

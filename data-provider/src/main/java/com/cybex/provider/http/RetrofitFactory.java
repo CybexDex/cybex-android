@@ -18,12 +18,20 @@ public class RetrofitFactory {
     public static final String url_deposit_withdraw_log_in = "https://gateway-query.cybex.io/login";
     public static final String url_deposit_withdraw_records = "https://gateway-query.cybex.io/records";
 
+    //Eto测试服务器
+    public static final String baseUrlEto_test = "https://ieo-apitest.cybex.io/api/";
+    //Eto正式服务器
+    public static final String baseUrlEto = "https://eto.cybex.io/api/";
+
+    private OkHttpClient okHttpClient;
+
     private CybexHttpApi cybexHttpApi;
+    private EtoHttpApi etoHttpApi;
 
     private RetrofitFactory(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+        okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
@@ -32,15 +40,7 @@ public class RetrofitFactory {
                 .addInterceptor(interceptor)
                 .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
                 .hostnameVerifier(new SSLSocketFactoryUtils.TrustAllHostnameVerifier())
-
                 .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-        cybexHttpApi = retrofit.create(CybexHttpApi.class);
     }
     
     public static RetrofitFactory getInstance() {
@@ -52,9 +52,30 @@ public class RetrofitFactory {
     }
 
     public CybexHttpApi api(){
+        if(cybexHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            cybexHttpApi = retrofit.create(CybexHttpApi.class);
+        }
         return cybexHttpApi;
     }
 
+    public EtoHttpApi apiEto() {
+        if(etoHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrlEto_test)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            etoHttpApi = retrofit.create(EtoHttpApi.class);
+        }
+        return etoHttpApi;
+    }
 
 
 }

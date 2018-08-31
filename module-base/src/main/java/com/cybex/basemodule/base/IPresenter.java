@@ -1,4 +1,4 @@
-package com.cybex.eto.base;
+package com.cybex.basemodule.base;
 
 public interface IPresenter<V extends IMvpView> {
 

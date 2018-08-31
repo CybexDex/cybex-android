@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import com.cybex.basemodule.R;
 import com.cybex.basemodule.dialog.LoadDialog;
 import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.injection.component.BaseActivityComponent;
+import com.cybex.basemodule.injection.component.DaggerBaseActivityComponent;
+import com.cybex.basemodule.injection.module.BaseActivityModule;
 import com.cybex.provider.utils.NetworkUtils;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -21,6 +24,8 @@ public abstract class BaseFragment extends Fragment{
     private LoadDialog mLoadDialog;
 
     public boolean mIsNetWorkAvailable = true;
+
+    private BaseActivityComponent mBaseActivityComponent;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +45,15 @@ public abstract class BaseFragment extends Fragment{
     public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
         mIsNetWorkAvailable = event.getState() != NetworkUtils.TYPE_NOT_CONNECTED;
         onNetWorkStateChanged(mIsNetWorkAvailable);
+    }
+
+    public BaseActivityComponent baseActivityComponent() {
+        if (mBaseActivityComponent == null) {
+            mBaseActivityComponent = DaggerBaseActivityComponent.builder()
+                    .baseActivityModule(new BaseActivityModule(getActivity()))
+                    .build();
+        }
+        return mBaseActivityComponent;
     }
 
     public abstract void onNetWorkStateChanged(boolean isAvailable);

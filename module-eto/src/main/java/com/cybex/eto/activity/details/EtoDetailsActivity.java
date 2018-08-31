@@ -7,7 +7,7 @@ import android.view.MenuItem;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.eto.R;
-import com.cybex.eto.base.IMvpView;
+import com.cybex.eto.base.EtoBaseActivity;
 
 import javax.inject.Inject;
 
@@ -15,7 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class EtoDetailsActivity extends BaseActivity implements EtoDetailsView {
+public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsView {
 
     private Unbinder mUnbinder;
 
@@ -30,7 +30,7 @@ public class EtoDetailsActivity extends BaseActivity implements EtoDetailsView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_eto_details);
         mUnbinder = ButterKnife.bind(this);
-        activityComponent().inject(this);
+        etoActivityComponent().inject(this);
         mEtoDetailsPresenter.attachView(this);
         setSupportActionBar(mToolbar);
     }
