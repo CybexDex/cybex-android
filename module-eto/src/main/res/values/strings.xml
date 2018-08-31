@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">module-eto</string>
+    <string name="title_activity_eto_details">EtoDetailsActivity</string>
 </resources>

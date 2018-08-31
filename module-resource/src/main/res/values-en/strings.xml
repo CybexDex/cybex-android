@@ -388,4 +388,7 @@
     <string name="withdraw_address_note_account">Note/Account</string>
     <string name="withdraw_address_memo">Memo</string>
 
+    <!-- ETO Details Activity -->
+    <string name="ETO_details_title">Project Details</string>
+
 </resources>

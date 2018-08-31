@@ -24,6 +24,9 @@ import com.cybex.basemodule.R;
 import com.cybex.basemodule.dialog.LoadDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.help.StoreLanguageHelper;
+import com.cybex.basemodule.injection.component.ActivityComponent;
+import com.cybex.basemodule.injection.component.DaggerActivityComponent;
+import com.cybex.basemodule.injection.module.ActivityModule;
 import com.cybex.basemodule.receiver.NetWorkBroadcastReceiver;
 import com.cybex.basemodule.receiver.NetworkChangedCallback;
 import com.cybex.provider.utils.NetworkUtils;
@@ -49,6 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private NetWorkBroadcastReceiver mNetWorkBroadcastReceiver;
     private NetworkChangedCallback mNetworkChangedCallback;
+    private ActivityComponent mActivityComponent;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -257,6 +261,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(mLoadDialog != null && mLoadDialog.isShowing()){
             mLoadDialog.dismiss();
         }
+    }
+
+    public ActivityComponent activityComponent() {
+        if (mActivityComponent == null) {
+            mActivityComponent = DaggerActivityComponent.builder()
+                    .activityModule(new ActivityModule(this))
+                    .build();
+        }
+        return mActivityComponent;
     }
 
     private Context updateResources(Context context) {
