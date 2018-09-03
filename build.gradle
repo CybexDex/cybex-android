@@ -7,6 +7,7 @@ buildscript {
         mavenLocal()
         google()
         jcenter()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
@@ -14,6 +15,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.51"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
+        classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0-SNAPSHOT'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

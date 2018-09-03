@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.cybex.eto.R;
+import com.cybex.eto.R2;
 import com.cybex.eto.adapter.EtoRecyclerViewAdapter;
 import com.cybex.eto.base.EtoBaseFragment;
 import com.cybex.provider.http.entity.EtoBanner;
@@ -34,9 +35,9 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView {
     @Inject
     EtoPresenter<EtoMvpView> mEtoPresenter;
 
-    @BindView(R.id.eto_rv)
+    @BindView(R2.id.eto_rv)
     RecyclerView mEtoRv;
-    @BindView(R.id.eto_banner)
+    @BindView(R2.id.eto_banner)
     Banner mBanner;
 
     private EtoRecyclerViewAdapter mEtoRecyclerViewAdapter;

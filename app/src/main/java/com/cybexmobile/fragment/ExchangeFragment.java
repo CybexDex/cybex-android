@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
+import com.cybex.basemodule.R2;
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">module-eto</string>
     <string name="title_activity_eto_details">EtoDetailsActivity</string>
+    <string name="title_activity_attend_eto">AttendETOActivity</string>
 </resources>

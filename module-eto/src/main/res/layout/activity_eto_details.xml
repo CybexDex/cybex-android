@@ -63,7 +63,7 @@
                         android:src="@drawable/ic_account_avatar" />
 
                     <TextView
-                        android:id="@+id/eto_details_project_name"
+                        android:id="@+id/eto_details_project_name_title"
                         style="@style/font_white_dark_bold_large"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -162,7 +162,8 @@
                         android:background="@drawable/rect_board"
                         android:gravity="center"
                         android:padding="@dimen/margin_8"
-                        android:visibility="gone" />
+                        android:text="asdfasfasf"
+                        android:visibility="visible" />
 
                     <Button
                         android:id="@+id/eto_details_project_appointment_button"
@@ -171,7 +172,7 @@
                         android:layout_height="@dimen/margin_40"
                         android:layout_alignParentEnd="true"
                         android:background="@drawable/bg_btn_orange_gradient_enabled"
-                        android:visibility="gone" />
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
             </RelativeLayout>
@@ -180,8 +181,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_item"
                 android:layout_marginTop="@dimen/activity_margin"
+                android:background="@drawable/bg_item"
                 android:padding="@dimen/activity_padding">
 
                 <TextView
@@ -201,36 +202,317 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_item"
                 android:layout_marginTop="@dimen/activity_margin"
-                android:padding="@dimen/activity_padding">
+                android:background="@drawable/bg_item"
+                android:orientation="vertical">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        style="@style/font_white_dark_medium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ETO_details_eto_details"/>
-                    <ImageView
-                        android:id="@+id/eto_details_project_details_expand_arrow_iv"
-                        android:src="@drawable/ic_up_arrow_24_px"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"/>
-                </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/activity_padding">
 
-                <RelativeLayout
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            style="@style/font_white_dark_medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/ETO_details_eto_details" />
+
+                        <ImageView
+                            android:id="@+id/eto_details_project_details_expand_arrow_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_up_arrow_24_px" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_project_name" />
+
+                        <TextView
+                            android:id="@+id/eto_details_project_name_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_token_name" />
+
+                        <TextView
+                            android:id="@+id/eto_details_token_name_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_ETO_time" />
+
+                        <TextView
+                            android:id="@+id/eto_details_eto_time_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_end_at" />
+
+                        <TextView
+                            android:id="@+id/eto_details_end_at_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_circulation_on_cybex_start" />
+
+                        <TextView
+                            android:id="@+id/eto_details_circulation_on_cybex_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_token_releasing_time" />
+
+                        <TextView
+                            android:id="@+id/eto_details_token_releasing_time_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_currency" />
+
+                        <TextView
+                            android:id="@+id/eto_details_currency_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_exchange_rate" />
+
+                        <TextView
+                            android:id="@+id/eto_details_exchange_ratio_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="@dimen/height_1"
+                    android:background="@color/colorPrimary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/activity_padding">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            style="@style/font_white_dark_medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/ETO_details_project_introduction" />
+
+                        <ImageView
+                            android:id="@+id/eto_details_project_introduction_expand_arrow_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_up_arrow_24_px" />
+                    </RelativeLayout>
+
                     <TextView
                         style="@style/font_gray_small"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/eto_details_project_introduction_tv"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        />
-                </RelativeLayout>
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:text="Herdius is a forward-looking cross-chain interaction solution. Herdius USES a private key to get through all the blockchain. All it needs is a Herdius account and a matching Herdius wallet. Without specific tokens, users can use all kinds of blockchain. Centralize the application, touch each kind of ecosystem.Herdius is a forward-looking cross-chain interaction solution. Herdius USES a private key to get through all the blockchain. All it needs is a Herdius account and a matching Herdius wallet. Without specific tokens, users can use all kinds of blockchain. Centralize the application, touch each kind of ecosystem.Herdius is a forward-looking cross-chain interaction solution. "/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:background="@color/colorPrimary" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/activity_padding">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            style="@style/font_white_dark_medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/ETO_details_project_website" />
+
+                        <ImageView
+                            android:id="@+id/eto_details_project_website_expand_arrow_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_up_arrow_24_px" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_project_official_website" />
+
+                        <TextView
+                            android:id="@+id/eto_details_official_website_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_project_whitepaper" />
+
+                        <TextView
+                            android:id="@+id/eto_details_white_paper_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ETO_details_project_details" />
+
+                        <TextView
+                            android:id="@+id/eto_details_project_details_tv"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
 
             </LinearLayout>
 

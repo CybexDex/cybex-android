@@ -120,6 +120,8 @@ dependencies {
     implementation 'com.github.SumiMakito:AwesomeQRCode:1.0.0'
     //Jadeticon
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
     implementation project(':MPChartLib')
     implementation project(':ui-smart-refresh')
     if(isModule.toBoolean()){

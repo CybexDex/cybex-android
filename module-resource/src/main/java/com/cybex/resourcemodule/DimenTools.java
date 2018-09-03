@@ -14,7 +14,7 @@ public class DimenTools {
 
     public static void gen() {
         //以此文件夹下的dimens.xml文件内容为初始值参照
-        File file = new File("./app/src/main/res/values/dimens.xml");
+        File file = new File("./module-resource/src/main/res/values/dimens.xml");
         BufferedReader reader = null;
 
         StringBuilder w360 = new StringBuilder();
@@ -61,13 +61,13 @@ public class DimenTools {
                 line++;
             }
             reader.close();
-            String w360file = "./app/src/main/res/values-w360dp/dimens.xml";
-            String w384file = "./app/src/main/res/values-w384dp/dimens.xml";
-            String w411file = "./app/src/main/res/values-w411dp/dimens.xml";
-            String w432file = "./app/src/main/res/values-w432dp/dimens.xml";
-            String w460file = "./app/src/main/res/values-w460dp/dimens.xml";
-            String w533file = "./app/src/main/res/values-w533dp/dimens.xml";
-            String w640file = "./app/src/main/res/values-w640dp/dimens.xml";
+            String w360file = "./module-resource/src/main/res/values-w360dp/dimens.xml";
+            String w384file = "./module-resource/src/main/res/values-w384dp/dimens.xml";
+            String w411file = "./module-resource/src/main/res/values-w411dp/dimens.xml";
+            String w432file = "./module-resource/src/main/res/values-w432dp/dimens.xml";
+            String w460file = "./module-resource/src/main/res/values-w460dp/dimens.xml";
+            String w533file = "./module-resource/src/main/res/values-w533dp/dimens.xml";
+            String w640file = "./module-resource/src/main/res/values-w640dp/dimens.xml";
 
             //将新的内容，写入到指定的文件中去
             writeFile(w360file, w360.toString());

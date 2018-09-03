@@ -11,8 +11,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
+import com.cybexmobile.R;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;

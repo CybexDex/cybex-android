@@ -396,5 +396,27 @@
     <string name="ETO_details_user_agreement">《User Agreement》</string>
     <string name="ETO_details_get_white_list">Get Whitelist</string>
     <string name="ETO_details_eto_details">ETO Details</string>
+    <string name="ETO_details_project_name">Project Name:</string>
+    <string name="ETO_details_token_name">Token Name:</string>
+    <string name="ETO_details_ETO_time">ETO Time:</string>
+    <string name="ETO_details_end_at">End at:</string>
+    <string name="ETO_details_circulation_on_cybex_start">Circulation on Cybex Starts at:</string>
+    <string name="ETO_details_token_releasing_time">Token Releasing Time:</string>
+    <string name="ETO_details_currency">Currency:</string>
+    <string name="ETO_details_exchange_rate">Exchange Ratio:</string>
+    <string name="ETO_details_project_introduction">Project Introduction</string>
+    <string name="ETO_details_project_website">Project Website</string>
+    <string name="ETO_details_project_official_website">Official Website:</string>
+    <string name="ETO_details_project_whitepaper">Whitepaper:</string>
+    <string name="ETO_details_project_details">Project Details:</string>
 
+    <!-- Attend Eto Activity -->
+    <string name="attend_eto_personal_cap">Personal Cap</string>
+    <string name="attend_eto_subscription_unit">Subscription Unit</string>
+    <string name="attend_eto_remaining">Remaining</string>
+    <string name="attend_eto_min_subscription">Min.Subscription</string>
+    <string name="attend_eto_subscribed">Subscribed</string>
+    <string name="attend_eto_quantity">Quantity</string>
+    <string name="attend_eto_fee">Fee</string>
+    <string name="attend_eto_join_eto">Join in ETO</string>
 </resources>

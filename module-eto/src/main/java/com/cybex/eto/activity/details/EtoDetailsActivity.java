@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.eto.R;
+import com.cybex.eto.R2;
 import com.cybex.eto.base.EtoBaseActivity;
 
 import javax.inject.Inject;
@@ -22,7 +23,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     @Inject
     EtoDetailsPresenter<EtoDetailsView> mEtoDetailsPresenter;
 
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar mToolbar;
 
     @Override
@@ -50,7 +51,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.eto_details_share:
+            case R2.id.eto_details_share:
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -9,11 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cybex.eto.adapter.viewholder.EmptyViewHolder;
+import com.cybex.eto.R2;
+import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybex.eto.R;
 import com.cybex.provider.http.entity.EtoProject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -89,13 +89,13 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.item_eto_iv_logo)
+        @BindView(R2.id.item_eto_iv_logo)
         ImageView mIvLogo;
-        @BindView(R.id.item_eto_tv_status)
+        @BindView(R2.id.item_eto_tv_status)
         TextView mTvStatus;
-        @BindView(R.id.item_eto_tv_name)
+        @BindView(R2.id.item_eto_tv_name)
         TextView mTvName;
-        @BindView(R.id.item_eto_tv_keywords)
+        @BindView(R2.id.item_eto_tv_keywords)
         TextView mTvKeywords;
 
         public ViewHolder(View itemView) {
