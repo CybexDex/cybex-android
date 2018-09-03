@@ -107,13 +107,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.grantland:autofittextview:0.2.1'
     implementation 'info.hoang8f:android-segmented:1.0.6'
     implementation 'com.pixplicity.sharp:library:1.1.0'
     //rxpermissions
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     implementation 'org.decimal4j:decimal4j:1.0.3'
     //zxing

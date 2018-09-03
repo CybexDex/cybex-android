@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.transfer.TransferRecordsActivity;
-import com.cybexmobile.adapter.viewholder.EmptyViewHolder;
+import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.Operations;

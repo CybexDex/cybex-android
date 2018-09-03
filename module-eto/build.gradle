@@ -64,5 +64,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.youth.banner:banner:1.4.10'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.7'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     api project(':module-base')
 }

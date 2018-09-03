@@ -60,4 +60,9 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
+
+    @Override
+    public void onError() {
+
+    }
 }

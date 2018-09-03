@@ -1,11 +1,11 @@
-package com.cybexmobile.adapter.viewholder;
+package com.cybex.eto.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cybexmobile.R;
+import com.cybex.eto.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

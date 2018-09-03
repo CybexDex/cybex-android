@@ -1,6 +1,8 @@
 package com.cybex.provider.http;
 
-import com.cybex.provider.http.response.EtoProjectResponse;
+import com.cybex.provider.http.entity.EtoBanner;
+import com.cybex.provider.http.entity.EtoProject;
+import com.cybex.provider.http.response.EtoBaseResponse;
 
 import java.util.List;
 
@@ -11,7 +13,10 @@ import retrofit2.http.Query;
 public interface EtoHttpApi {
 
     @GET("cybex/projects")
-    Observable<List<EtoProjectResponse>> getEtoProjects(@Query("limit") int limit,
-                                                        @Query("offset") int offset,
-                                                        @Query("type") String type);
+    Observable<EtoBaseResponse<List<EtoProject>>> getEtoProjects(@Query("limit") int limit,
+                                                     @Query("offset") int offset,
+                                                     @Query("type") String type);
+
+    @GET("cybex/projects/banner")
+    Observable<EtoBaseResponse<List<EtoBanner>>> getEtoBanner();
 }
