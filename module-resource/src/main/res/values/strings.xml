@@ -396,4 +396,9 @@
 
     <!-- ETO Details Activity -->
     <string name="ETO_details_title">Project Details</string>
+    <string name="ETO_details_user_agreement">《User Agreement》</string>
+    <string name="ETO_details_get_white_list">Get Whitelist</string>
+    <string name="ETO_details_eto_details">ETO Details</string>
+    <string name="ETO_details_project_name">Project Name</string>
+    <string name="ETO_details_token_name">Token Name</string>
 </resources>

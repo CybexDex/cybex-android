@@ -139,6 +139,10 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="font_gray_bold_medium" parent="font_gray_medium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="font_gray_bold_large" parent="font_gray_large">
         <item name="android:textStyle">bold</item>
     </style>

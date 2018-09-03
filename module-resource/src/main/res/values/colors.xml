@@ -51,6 +51,7 @@
 
     <color name="btn_orange_start">#ffc478</color>
     <color name="btn_orange_end">#ff9143</color>
+    <color name="btn_grey_start">#78819a</color>
     <color name="btn_grey_end">#8078819a</color>
 
     <color name="btn_green_start">#a9e06e</color>
@@ -78,5 +79,8 @@
 
     <!-- Account action background -->
     <color name="account_action_bg">#212939</color>
+
+    <!-- Progress bar color -->
+    <color name="progress_bar_background_color">#080a0f</color>
 
 </resources>

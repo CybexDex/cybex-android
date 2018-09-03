@@ -401,5 +401,8 @@
 
     <!-- ETO Details Activity -->
     <string name="ETO_details_title">项目详情</string>
+    <string name="ETO_details_user_agreement">《用户协议》</string>
+    <string name="ETO_details_get_white_list">获取白名单</string>
+    <string name="ETO_details_eto_details">ETO 详情</string>
 
 </resources>

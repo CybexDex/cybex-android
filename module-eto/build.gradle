@@ -1,4 +1,4 @@
-if (isModule.toBoolean()) {
+if (isModule == "true") {
     apply plugin: 'com.android.library'
 } else {
     apply plugin: 'com.android.application'
@@ -9,7 +9,7 @@ android {
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        if (!isModule.toBoolean()) {
+        if (!isModule) {
             applicationId "com.cybex.eto"
         }
         minSdkVersion 17

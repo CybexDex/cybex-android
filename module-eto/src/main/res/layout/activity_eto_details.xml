@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -25,51 +24,219 @@
             android:text="@string/ETO_details_title" />
 
     </android.support.v7.widget.Toolbar>
-    
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/activity_padding"
         android:paddingRight="@dimen/activity_padding"
         android:scrollbars="none">
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_item"
                 android:elevation="@dimen/corner_radius_4">
+
                 <ImageView
-                    android:src="@drawable/img_inpprogress"
                     android:id="@+id/eto_details_project_detail_status_image"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_inpprogress" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="@dimen/activity_padding">
+
                     <ImageView
-                        android:src="@drawable/ic_account_avatar"
                         android:id="@+id/eto_details_project_icon"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:layout_gravity="center_horizontal"/>
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_account_avatar" />
+
                     <TextView
+                        android:id="@+id/eto_details_project_name"
+                        style="@style/font_white_dark_bold_large"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/activity_margin"
+                        android:text="Herdius" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_margin"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <ProgressBar
+                            android:id="@+id/lock_up_asset_progress_bar"
+                            style="@android:style/Widget.ProgressBar.Horizontal"
+                            android:layout_width="@dimen/width_200"
+                            android:layout_height="@dimen/height_5"
+                            android:layout_gravity="center"
+                            android:max="100"
+                            android:progress="50"
+                            android:progressDrawable="@drawable/bg_progress_bar" />
+
+                        <TextView
+                            style="@style/font_orange_bold_medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_10"
+                            android:text="48%" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_6"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/margin_16"
+                            android:layout_height="@dimen/margin_16"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/progress_pie" />
+
+                        <TextView
+                            android:id="@+id/eto_details_project_time"
+                            style="@style/font_gray_small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="@dimen/activity_margin"
+                            android:text="In：0D21H5M22S" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
+            </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/eto_details_project_appointment_status_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:paddingStart="@dimen/activity_padding">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/select_agreement_image_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_selected_1_24_px" />
+
+                    <TextView
+                        style="@style/font_gray_bold_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ETO_details_user_agreement" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/eto_details_project_appointment_status_tv"
+                        style="@style/font_orange_large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/rect_board"
+                        android:gravity="center"
+                        android:padding="@dimen/margin_8"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/eto_details_project_appointment_button"
+                        style="@style/font_white_large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/margin_40"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/bg_btn_orange_gradient_enabled"
+                        android:visibility="gone" />
+                </RelativeLayout>
 
             </RelativeLayout>
 
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_item"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:padding="@dimen/activity_padding">
+
+                <TextView
+                    style="@style/font_orange_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ETO_details_get_white_list" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_arrow_orange" />
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_item"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:padding="@dimen/activity_padding">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        style="@style/font_white_dark_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ETO_details_eto_details"/>
+                    <ImageView
+                        android:id="@+id/eto_details_project_details_expand_arrow_iv"
+                        android:src="@drawable/ic_up_arrow_24_px"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        style="@style/font_gray_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+                </RelativeLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
-        
-        
+
+
     </ScrollView>
 
 
