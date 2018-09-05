@@ -69,11 +69,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static com.cybexmobile.utils.Constant.ACTION_BUY;
-import static com.cybexmobile.utils.Constant.ACTION_SELL;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_FROM;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
+import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FROM;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
 public class MarketsActivity extends BaseActivity implements OrderHistoryListFragment.OnListFragmentInteractionListener{
 

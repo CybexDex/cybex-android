@@ -54,7 +54,9 @@
     <dimen name="margin_10">12.33dp</dimen>
     <dimen name="margin_14">17.27dp</dimen>
     <dimen name="margin_16">19.74dp</dimen>
+    <dimen name="margin_18">22.2dp</dimen>
     <dimen name="margin_22">27.14dp</dimen>
+    <dimen name="margin_30">37.01dp</dimen>
     <dimen name="margin_40">49.35dp</dimen>
     <dimen name="margin_50">61.68dp</dimen>
     <dimen name="margin_74">91.3dp</dimen>

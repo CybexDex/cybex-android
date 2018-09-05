@@ -27,7 +27,7 @@ import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.utils.Constant;
+import com.cybex.basemodule.constant.Constant;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,8 +46,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class TransferRecordsActivity extends BaseActivity implements TransferRecordsRecyclerViewAdapter.OnItemClickListener {
 

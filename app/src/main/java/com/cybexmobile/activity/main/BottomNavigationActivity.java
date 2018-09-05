@@ -42,8 +42,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
 public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener {
 

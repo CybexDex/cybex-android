@@ -15,8 +15,8 @@ import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.AccountObject;
 
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
 public class CybexDialog {
 

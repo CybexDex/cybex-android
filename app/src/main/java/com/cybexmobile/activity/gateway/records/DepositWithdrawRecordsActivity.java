@@ -66,7 +66,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
 

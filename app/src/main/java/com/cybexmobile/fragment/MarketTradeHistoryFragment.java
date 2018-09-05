@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
 
 /**
  * A fragment representing a list of Items.

@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.cybex.eto.R;
-import com.cybex.eto.R2;
+import com.cybex.eto.activity.details.EtoDetailsActivity;
 import com.cybex.eto.activity.record.EtoRecordActivity;
 import com.cybex.eto.adapter.EtoRecyclerViewAdapter;
 import com.cybex.eto.base.EtoBaseFragment;
@@ -34,7 +34,10 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class EtoFragment extends EtoBaseFragment implements EtoMvpView, Toolbar.OnMenuItemClickListener {
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_PROJECT_DETAILS;
+
+public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
+        Toolbar.OnMenuItemClickListener, EtoRecyclerViewAdapter.OnItemClickListener {
 
     @Inject
     EtoPresenter<EtoMvpView> mEtoPresenter;
@@ -69,6 +72,7 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView, Toolbar.
         mToolbar.setOnMenuItemClickListener(this);
         mEtoRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), new ArrayList<EtoProject>());
+        mEtoRecyclerViewAdapter.setOnItemClickListener(this);
         mEtoRv.setAdapter(mEtoRecyclerViewAdapter);
         mBanner.setImageLoader(new PicassoImageLoader());
         return view;
@@ -130,6 +134,13 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView, Toolbar.
             startActivity(intent);
         }
         return false;
+    }
+
+    @Override
+    public void onItemClick(EtoProject etoProject) {
+        Intent intent = new Intent(getActivity(), EtoDetailsActivity.class);
+        intent.putExtra(INTENT_PARAM_ETO_PROJECT_DETAILS, etoProject);
+        startActivity(intent);
     }
 
     private class PicassoImageLoader extends ImageLoader {

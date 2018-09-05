@@ -53,7 +53,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 
 public class LockAssetsActivity extends BaseActivity {
 

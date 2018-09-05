@@ -57,10 +57,10 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 
-import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();

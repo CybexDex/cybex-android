@@ -63,24 +63,24 @@ import butterknife.OnTouch;
 import butterknife.Unbinder;
 
 import static com.cybex.provider.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
-import static com.cybexmobile.utils.Constant.ACTION_BUY;
-import static com.cybexmobile.utils.Constant.ACTION_SELL;
-import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_ACTION;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_CYB_ASSET_OBJECT;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_CYB_FEE;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FEE;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_IS_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_NAME;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACTION;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_CYB_ASSET_OBJECT;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_FEE;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
+import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_ACTION;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_CYB_ASSET_OBJECT;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_CYB_FEE;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_FEE;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_NAME;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CYB_ASSET_OBJECT;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FEE;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
 public class BuySellFragment extends BaseFragment implements SoftKeyBoardListener.OnSoftKeyBoardChangeListener{
 

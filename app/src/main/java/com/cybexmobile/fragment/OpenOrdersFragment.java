@@ -56,13 +56,13 @@ import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybex.provider.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
-import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
-import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 /**
  * 交易界面当前用户当前交易对委单

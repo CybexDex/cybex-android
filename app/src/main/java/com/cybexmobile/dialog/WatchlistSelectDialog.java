@@ -28,7 +28,7 @@ import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.utils.Constant;
+import com.cybex.basemodule.constant.Constant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,8 +45,8 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
-import static com.cybexmobile.utils.Constant.RESULT_CODE_SELECTED_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
 public class WatchlistSelectDialog extends DialogFragment implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener{
 

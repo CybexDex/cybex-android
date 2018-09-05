@@ -33,8 +33,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
 public class UnlockDialog extends DialogFragment{
 

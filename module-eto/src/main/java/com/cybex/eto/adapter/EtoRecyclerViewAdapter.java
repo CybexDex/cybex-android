@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cybex.eto.R2;
+
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
@@ -120,26 +120,26 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R2.id.item_eto_iv_logo)
         ImageView mIvLogo;
-        @BindView(R2.id.item_eto_tv_status)
         TextView mTvStatus;
-        @BindView(R2.id.item_eto_tv_name)
         TextView mTvName;
-        @BindView(R2.id.item_eto_tv_keywords)
         TextView mTvKeywords;
-        @BindView(R2.id.item_eto_tv_time_label)
         TextView mTvTimeLabel;
-        @BindView(R2.id.item_eto_tv_time)
         TextView mTvTime;
-        @BindView(R2.id.item_eto_pb)
         ProgressBar mPb;
-        @BindView(R2.id.item_eto_tv_progress)
         TextView mTvProgress;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mIvLogo = itemView.findViewById(R.id.item_eto_iv_logo);
+            mTvStatus = itemView.findViewById(R.id.item_eto_tv_status);
+            mTvName = itemView.findViewById(R.id.item_eto_tv_name);
+            mTvKeywords = itemView.findViewById(R.id.item_eto_tv_keywords);
+            mTvTimeLabel = itemView.findViewById(R.id.item_eto_tv_time_label);
+            mTvTime = itemView.findViewById(R.id.item_eto_tv_time);
+            mPb = itemView.findViewById(R.id.item_eto_pb);
+            mTvProgress = itemView.findViewById(R.id.item_eto_tv_progress);
         }
     }
 

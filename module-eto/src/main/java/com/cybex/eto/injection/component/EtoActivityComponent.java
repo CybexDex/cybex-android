@@ -2,7 +2,7 @@ package com.cybex.eto.injection.component;
 
 import com.cybex.basemodule.injection.annotation.PerActivity;
 import com.cybex.basemodule.injection.component.BaseActivityComponent;
-import com.cybex.basemodule.injection.module.BaseActivityModule;
+import com.cybex.eto.activity.attendETO.AttendETOActivity;
 import com.cybex.eto.activity.details.EtoDetailsActivity;
 import com.cybex.eto.activity.record.EtoRecordActivity;
 import com.cybex.eto.fragment.EtoFragment;
@@ -18,4 +18,5 @@ public interface EtoActivityComponent {
     void inject(EtoDetailsActivity etoDetailsActivity);
     void inject(EtoRecordActivity etoRecordActivity);
 
+    void inject(AttendETOActivity attendETOActivity);
 }

@@ -49,10 +49,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_NAME;
-import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 /**
  * A login screen that offers login via email/password.

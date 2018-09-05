@@ -34,7 +34,7 @@ import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class GatewayActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, DepositItemFragment.OnListFragmentInteractionListener {
 

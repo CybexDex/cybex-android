@@ -20,10 +20,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOAD_MODE;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOAD_MODE;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 
 public class FrequencyModeDialog extends DialogFragment {
 

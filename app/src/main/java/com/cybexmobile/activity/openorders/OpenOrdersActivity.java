@@ -53,8 +53,8 @@ import java.util.List;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
 import static com.cybex.provider.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
-import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, OpenOrderRecyclerViewAdapter.OnItemClickListener {
 

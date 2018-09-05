@@ -192,6 +192,7 @@
                 android:orientation="vertical"
                 android:background="@drawable/bg_item"
                 android:layout_marginTop="@dimen/margin_14"
+                android:elevation="@dimen/corner_radius_4"
                 android:padding="@dimen/activity_padding">
                 <TextView
                     style="@style/font_gray_medium"
@@ -223,6 +224,83 @@
                         android:layout_gravity="end" />
 
                 </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/attend_eto_error_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_8"
+                android:paddingStart="@dimen/activity_padding"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/withdraw_error_sign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_error_16px" />
+
+                <TextView
+                    android:id="@+id/withdraw_error_text"
+                    style="@style/font_red_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_6"
+                android:paddingStart="@dimen/activity_padding"
+                android:paddingEnd="@dimen/activity_padding">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/attend_eto_fee"/>
+                <TextView
+                    style="@style/font_white_dark_bold_medium"
+                    android:id="@+id/attend_eto_final_fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="@string/text_empty"/>
+
+            </RelativeLayout>
+
+            <Button
+                style="@style/font_white_large"
+                android:id="@+id/attend_eto_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/attend_eto_join_eto"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
+                android:enabled="false"
+                android:textAllCaps="false"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_padding"
+                android:layout_marginTop="@dimen/margin_18"
+                android:background="@drawable/bg_item">
+
+                <TextView
+                    style="@style/font_gray_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="@dimen/line_spacing_extra_4"
+                    android:text="• You will participate in the ETO by your ETH balance in your CYBEX account, and the process may consume certain fees.
+• The assets of this project will be deposited to your account (test1) after successful subscription.
+• Your final subscription will be subject to the verification by the project holder. You can check through ETO Project History. When circumstances like personal hard cap exceeded or project.Quota oversubscription happens, the unconfirmed excess quota will be refunded to relevant CYBEX accounts when project ETO ends.
+• The final ETO participation result takes time to be confirmed. Please wait patiently. If you have any questions, please contact our community assistant through WeChat account: CybexServiceA.
+"/>
 
             </LinearLayout>
 

@@ -21,7 +21,7 @@ import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.MemoData;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.basemodule.utils.AssetUtil;
-import com.cybexmobile.utils.Constant;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.utils.DateUtils;
 
 import java.util.Iterator;
@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class TransferDetailsActivity extends BaseActivity {
 

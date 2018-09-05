@@ -41,8 +41,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static com.cybexmobile.utils.Constant.BUNDLE_SAVE_WATCHLIST;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
 /**
  * 交易界面所有用户当前交易对委单

@@ -65,13 +65,13 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
-import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
-import static com.cybexmobile.utils.Constant.ASSET_ID_ETH;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
-import static com.cybexmobile.utils.Constant.PREF_LOAD_MODE;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
+import static com.cybex.basemodule.constant.Constant.PREF_LOAD_MODE;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class WebSocketService extends Service {
 

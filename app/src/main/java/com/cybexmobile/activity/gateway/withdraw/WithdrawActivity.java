@@ -92,12 +92,12 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_ID;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_MEMO;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_NAME;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ITEMS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_SELECTED_ITEM;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_ID;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_MEMO;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_NAME;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
 
 public class WithdrawActivity extends BaseActivity {
     private static String EOS = "EOS";

@@ -68,9 +68,9 @@ import static com.cybex.provider.constant.ErrorCode.ERROR_PASSWORD_INVALID;
 import static com.cybex.provider.constant.ErrorCode.ERROR_SERVER_CREATE_ACCOUNT_FAIL;
 import static com.cybex.provider.constant.ErrorCode.ERROR_SERVER_RESPONSE_FAIL;
 import static com.cybex.provider.constant.ErrorCode.ERROR_UNKNOWN;
-import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
-import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_PASSWORD;
 
 public class RegisterActivity extends BaseActivity {
     private static final String TAG = "RegisterActivity";

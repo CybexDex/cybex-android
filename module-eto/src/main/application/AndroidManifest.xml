@@ -43,8 +43,8 @@
         <!-- android:theme="@style/AppTheme"></activity> -->
         <activity
             android:name=".activity.attendETO.AttendETOActivity"
-            android:label="@string/title_activity_attend_eto"
-            android:theme="@style/AppTheme"></activity>
+            android:label=""
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

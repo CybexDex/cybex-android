@@ -42,14 +42,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
-import static com.cybexmobile.utils.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_LOAD_MODE;
-import static com.cybexmobile.utils.Constant.PREF_IS_LOGIN_IN;
-import static com.cybexmobile.utils.Constant.PREF_LOAD_MODE;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
-import static com.cybexmobile.utils.Constant.PREF_PASSWORD;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOAD_MODE;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_LOAD_MODE;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_PASSWORD;
 
 public class SettingActivity extends BaseActivity implements FrequencyModeDialog.OnFrequencyModeSelectedListener {
 

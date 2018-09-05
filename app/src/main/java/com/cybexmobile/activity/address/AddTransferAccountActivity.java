@@ -52,11 +52,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_ID;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_MEMO;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_CRYPTO_NAME;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_ID;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_MEMO;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class AddTransferAccountActivity extends BaseActivity implements SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
     private static String EOS = "EOS";

@@ -1,6 +1,8 @@
 package com.cybex.provider.http.entity;
 
-public class EtoProject {
+import java.io.Serializable;
+
+public class EtoProject implements Serializable {
 
     public static class Status {
         public static final String PRE = "pre";//即将开始

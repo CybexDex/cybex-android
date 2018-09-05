@@ -2,6 +2,7 @@ package com.cybex.provider.http;
 
 import com.cybex.provider.http.entity.EtoBanner;
 import com.cybex.provider.http.entity.EtoProject;
+import com.cybex.provider.http.entity.EtoUserStatus;
 import com.cybex.provider.http.entity.EtoRecordPage;
 import com.cybex.provider.http.response.EtoBaseResponse;
 
@@ -25,4 +26,11 @@ public interface EtoHttpApi {
     Observable<EtoBaseResponse<EtoRecordPage>> getEtoRecords(@Query("cybex_name") String account,
                                                              @Query("page") int page,
                                                              @Query("limit") int limit);
+
+    @GET("cybex/project/detail")
+    Observable<EtoBaseResponse<EtoProject>> getEtoProjectDetails(@Query("project") String id);
+
+    @GET("cybex/user/check_status")
+    Observable<EtoBaseResponse<EtoUserStatus>> getEtoUserStatus(@Query("cybex_name") String name,
+                                                                @Query("project") String id);
 }

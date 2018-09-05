@@ -48,4 +48,6 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.7'
     //picasso
     api 'com.squareup.picasso:picasso:2.71828'
+    //expandableTextView
+    api 'com.ms-square:expandableTextView:0.1.4'
 }

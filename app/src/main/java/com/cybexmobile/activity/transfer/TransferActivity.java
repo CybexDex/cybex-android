@@ -74,13 +74,13 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
-import static com.cybexmobile.utils.Constant.ASSET_ID_CYB;
-import static com.cybexmobile.utils.Constant.ASSET_SYMBOL_CYB;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ADDRESS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ITEMS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_SELECTED_ITEM;
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class TransferActivity extends BaseActivity implements
         CommonSelectDialog.OnAssetSelectedListener<AccountBalanceObjectItem>,

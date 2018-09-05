@@ -35,7 +35,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class TransferAccountManagerActivity extends BaseActivity implements
         TransferAccountManagerRecyclerViewAdapter.OnItemClickListener,

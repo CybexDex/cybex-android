@@ -24,8 +24,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_ITEMS;
-import static com.cybexmobile.utils.Constant.INTENT_PARAM_SELECTED_ITEM;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
 
 public class CommonSelectDialog<T> extends DialogFragment implements CommonSelectRecyclerViewAdapter.OnItemClickListener<T> {
 

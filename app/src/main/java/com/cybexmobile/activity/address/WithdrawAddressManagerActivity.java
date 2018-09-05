@@ -37,7 +37,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
-import static com.cybexmobile.utils.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class WithdrawAddressManagerActivity extends BaseActivity {
     private static final String TAG = WithdrawAddressManagerActivity.class.getName();
