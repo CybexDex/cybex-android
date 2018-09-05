@@ -283,4 +283,10 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Switch">
+        <item name="colorControlActivated">@color/primary_color_orange</item>
+        <item name="colorSwitchThumbNormal">@color/primary_color_grey</item>
+        <item name="android:colorForeground">@color/primary_color_grey</item>
+    </style>
+
 </resources>

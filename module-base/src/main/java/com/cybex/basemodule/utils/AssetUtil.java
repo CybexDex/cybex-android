@@ -1,4 +1,4 @@
-package com.cybexmobile.utils;
+package com.cybex.basemodule.utils;
 
 import java.math.RoundingMode;
 import java.text.NumberFormat;

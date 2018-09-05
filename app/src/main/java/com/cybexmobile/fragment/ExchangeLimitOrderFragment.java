@@ -24,7 +24,7 @@ import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.Price;
 import com.cybex.provider.market.Order;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

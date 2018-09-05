@@ -14,7 +14,7 @@ import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybexmobile.utils.DateUtils;
+import com.cybex.basemodule.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.cybexmobile.utils.DateUtils.PATTERN_MM_dd_HH_mm_ss;
+import static com.cybex.basemodule.utils.DateUtils.PATTERN_MM_dd_HH_mm_ss;
 
 public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

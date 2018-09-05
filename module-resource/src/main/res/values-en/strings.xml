@@ -85,6 +85,9 @@
     <string name="setting_language_english">English</string>
     <string name="setting_language_chinese">简体中文</string>
     <string name="setting_theme">Theme</string>
+    <string name="setting_switch_server">Switch Server</string>
+    <string name="setting_official_server">Official Server</string>
+    <string name="setting_test_server">Test Server</string>
     <string name="setting_version">Version</string>
     <string name="setting_frequency">Frequency</string>
     <string name="setting_theme_dark">Dark</string>
@@ -390,6 +393,14 @@
 
     <!-- Eto -->
     <string name="text_popular_etos">Popular Etos</string>
+    <string name="text_coming">Coming</string>
+    <string name="text_in_progress">In progress</string>
+    <string name="text_ended">Ended</string>
+    <string name="text_end_of_distance">Left:</string>
+    <string name="text_start_of_distance">In:</string>
+    <string name="text_finish_of_distance">Ended:</string>
+    <string name="text_no_eto">No ETO</string>
+    <string name="text_no_record">No Record</string>
 
     <!-- ETO Details Activity -->
     <string name="ETO_details_title">Project Details</string>
@@ -419,4 +430,14 @@
     <string name="attend_eto_quantity">Quantity</string>
     <string name="attend_eto_fee">Fee</string>
     <string name="attend_eto_join_eto">Join in ETO</string>
+
+    <!-- EtoRecordActivity -->
+    <string name="text_title_eto_records">ETO Records</string>
+    <string name="text_join_eto">Join ETO</string>
+    <string name="text_receive_token">Receive Token</string>
+    <string name="text_refund">Refund</string>
+    <string name="text_invalid_subscription">Invalid Subscription</string>
+    <string name="text_subscription_partly_invalid">Subscription partly invalid</string>
+    <string name="text_received_success">Received</string>
+
 </resources>

@@ -20,7 +20,7 @@ import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.MarketTrade;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.greenrobot.eventbus.EventBus;

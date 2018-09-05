@@ -10,10 +10,9 @@ import android.widget.TextView;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.MarketTrade;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the

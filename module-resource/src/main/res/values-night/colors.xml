@@ -44,6 +44,6 @@
     <color name="account_action_bg">#1c78819a</color>
 
     <!-- Progress bar color -->
-    <color name="progress_bar_background_color">#8C78819a</color>
+    <color name="progress_bar_background_color">#f0f0f2</color>
 
 </resources>

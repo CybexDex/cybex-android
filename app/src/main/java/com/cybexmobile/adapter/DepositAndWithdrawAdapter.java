@@ -19,7 +19,7 @@ import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.utils.MyUtils;
 import com.squareup.picasso.Picasso;
 

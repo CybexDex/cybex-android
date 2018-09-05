@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.cybexmobile.R;
 import com.cybex.provider.market.Order;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import java.util.List;
 

@@ -48,7 +48,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybexmobile.toast.message.ToastMessage;
 import com.cybexmobile.utils.AntiMultiClick;
-import com.cybexmobile.utils.DateUtils;
+import com.cybex.basemodule.utils.DateUtils;
 import com.cybexmobile.utils.QRCode;
 
 import java.util.Locale;

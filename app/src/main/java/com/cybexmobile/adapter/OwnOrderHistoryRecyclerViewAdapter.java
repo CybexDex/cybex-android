@@ -12,7 +12,7 @@ import com.cybexmobile.activity.orderhistory.OwnOrderHistoryActivity;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.BlockHeader;
-import com.cybexmobile.utils.DateUtils;
+import com.cybex.basemodule.utils.DateUtils;
 
 import java.util.List;
 import java.util.Locale;

@@ -13,7 +13,7 @@ import com.cybexmobile.activity.lockassets.LockAssetsActivity;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.LockUpAssetObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
-import com.cybexmobile.utils.DateUtils;
+import com.cybex.basemodule.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

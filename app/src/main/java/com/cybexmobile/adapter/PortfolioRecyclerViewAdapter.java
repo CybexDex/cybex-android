@@ -16,7 +16,7 @@ import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

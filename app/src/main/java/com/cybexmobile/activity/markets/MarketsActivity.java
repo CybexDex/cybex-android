@@ -39,7 +39,7 @@ import com.cybexmobile.mychart.MyCombinedChart;
 import com.cybexmobile.mychart.MyHMarkerView;
 import com.cybexmobile.mychart.MyLeftMarkerView;
 import com.cybexmobile.R;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.utils.MyUtils;
 import com.cybexmobile.utils.VolFormatter;
 import com.github.mikephil.charting.charts.Chart;

@@ -124,7 +124,7 @@ dependencies {
 
     implementation project(':MPChartLib')
     implementation project(':ui-smart-refresh')
-    if(isModule.toBoolean()){
+    if(isModule == "true"){
         implementation project(':module-eto')
     } else {
         implementation project(':module-base')

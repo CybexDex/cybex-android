@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;

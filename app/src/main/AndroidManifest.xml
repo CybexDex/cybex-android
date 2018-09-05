@@ -138,6 +138,10 @@
             android:label=""
             android:screenOrientation="portrait"/>
 
+        <activity android:name="com.cybex.eto.activity.record.EtoRecordActivity"
+            android:label=""
+            android:screenOrientation="portrait"/>
+
         <service android:name=".service.WebSocketService" />
 
 

@@ -40,7 +40,7 @@ import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.market.OpenOrder;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -16,7 +16,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.cybexmobile.utils;
+package com.cybex.basemodule.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +37,29 @@ public class DateUtils {
         try {
             Date parsedDate = dateFormat.parse(timestamp);
             return parsedDate.getTime() + mOffset;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static long timeDistance(String startTime, String finishTime){
+        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_yyyy_MM_dd_HH_mm_ss, Locale.getDefault());
+        try {
+            long startMilliSeconds = sdf.parse(startTime).getTime();
+            long finishMilliSeconds = sdf.parse(finishTime).getTime();
+            return finishMilliSeconds - startMilliSeconds;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static long timeDistance(long startMilliSeconds, String finishTime){
+        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_yyyy_MM_dd_HH_mm_ss, Locale.getDefault());
+        try {
+            long finishMilliSeconds = sdf.parse(finishTime).getTime();
+            return finishMilliSeconds - startMilliSeconds;
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -165,6 +165,56 @@
 
         </android.support.v7.widget.CardView>
 
+        <android.support.v7.widget.CardView
+            android:id="@+id/setting_cv_switch_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/itemBackground"
+            app:cardCornerRadius="@dimen/corner_radius_4"
+            app:cardUseCompatPadding="true"
+            android:layout_marginTop="@dimen/activity_margin">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_padding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_white_dark_large"
+                    android:text="@string/setting_switch_server"
+                    android:layout_centerVertical="true" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/setting_tv_server"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/padding_3"
+                        style="@style/font_grey_medium"
+                        android:text="@string/setting_official_server"/>
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/setting_sc_switch_server"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:layout_marginStart="@dimen/margin_6"
+                        android:theme="@style/Switch" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
         <Button
             android:id="@+id/log_out"
             android:layout_width="match_parent"

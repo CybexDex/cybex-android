@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/itemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_padding">
+
+    <TextView
+        android:id="@+id/item_eto_records_tv_eto_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/font_white_dark_bold_large"
+        android:text="@string/text_empty"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3">
+
+        <TextView
+            android:id="@+id/item_eto_records_tv_eto_operate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_gray_small"
+            android:text="@string/text_empty"/>
+
+        <TextView
+            android:id="@+id/item_eto_records_tv_eto_asset_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_gray_small"
+            android:layout_gravity="end"
+            android:text="@string/text_empty"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3">
+
+        <TextView
+            android:id="@+id/item_eto_records_tv_eto_operate_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_gray_small"
+            android:text="@string/text_empty"/>
+
+        <TextView
+            android:id="@+id/item_eto_records_tv_eto_operate_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            style="@style/font_gray_small"
+            android:text="@string/text_empty"/>
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -49,7 +49,7 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybexmobile.service.WebSocketService;
 import com.cybexmobile.toast.message.ToastMessage;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybexmobile.utils.SoftKeyBoardListener;
 
 import org.greenrobot.eventbus.EventBus;

@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.activity.markets.MarketsActivity;
@@ -53,6 +54,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private WatchlistFragment mWatchListFragment;
     private AccountFragment mAccountFragment;
     private ExchangeFragment mExchangeFragment;
+    private EtoFragment mEtoFragment;
     private Context mContext;
 
     private String mAction;
@@ -109,6 +111,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (mExchangeFragment != null && mExchangeFragment.isAdded()) {
             fm.putFragment(outState, ExchangeFragment.class.getSimpleName(), mExchangeFragment);
         }
+        if (mEtoFragment != null && mEtoFragment.isAdded()) {
+            fm.putFragment(outState, EtoFragment.class.getSimpleName(), mEtoFragment);
+        }
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
         }
@@ -141,6 +146,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (savedInstanceState != null) {
             mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState, WatchlistFragment.class.getSimpleName());
             mExchangeFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
+            mEtoFragment = (EtoFragment) fragmentManager.getFragment(savedInstanceState, EtoFragment.class.getSimpleName());
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
             selectedId = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
         }
@@ -160,6 +166,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         }
         if (mExchangeFragment != null && mExchangeFragment.isAdded()) {
             transaction.hide(mExchangeFragment);
+        }
+        if (mEtoFragment != null && mEtoFragment.isAdded()) {
+            transaction.hide(mEtoFragment);
         }
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             transaction.hide(mAccountFragment);
@@ -183,6 +192,16 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                     transaction.show(mExchangeFragment);
                 } else {
                     transaction.add(R.id.frame_container, mExchangeFragment, ExchangeFragment.class.getSimpleName());
+                }
+                break;
+            case R.id.navigation_eto:
+                if (mEtoFragment == null) {
+                    mEtoFragment = EtoFragment.getInstance();
+                }
+                if (mEtoFragment.isAdded()) {
+                    transaction.show(mEtoFragment);
+                } else {
+                    transaction.add(R.id.frame_container, mEtoFragment, EtoFragment.class.getSimpleName());
                 }
                 break;
             case R.id.navigation_account:

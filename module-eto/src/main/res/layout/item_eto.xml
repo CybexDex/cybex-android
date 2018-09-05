@@ -9,13 +9,11 @@
     android:layout_marginStart="@dimen/activity_margin"
     android:layout_marginEnd="@dimen/activity_margin"
     android:layout_marginBottom="@dimen/activity_margin"
-    android:clickable="true"
-    android:focusable="true">
+    app:cardBackgroundColor="@color/itemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_item"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="@dimen/activity_padding">
@@ -23,20 +21,22 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_8"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/item_eto_iv_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/width_56"
+                android:layout_height="@dimen/height_56"
                 android:src="@mipmap/ic_launcher_round"/>
 
             <TextView
                 android:id="@+id/item_eto_tv_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/font_orange_small"
+                android:layout_marginTop="@dimen/activity_margin"
+                style="@style/font_orange_bold_small"
                 android:text="@string/text_empty"/>
 
         </LinearLayout>
@@ -45,13 +45,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginStart="@dimen/activity_margin">
+            android:layout_marginStart="@dimen/margin_20">
 
             <TextView
                 android:id="@+id/item_eto_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/font_white_dark_large"
+                style="@style/font_white_dark_bold_large"
                 android:singleLine="true"
                 android:text="@string/text_empty"/>
 
@@ -59,23 +59,67 @@
                 android:id="@+id/item_eto_tv_keywords"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_3"
                 style="@style/font_gray_small"
                 android:text="@string/text_empty"/>
 
-            <ProgressBar
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:max="100"
-                android:progressDrawable="@drawable/bg_progress_bar" />
+                android:layout_marginTop="@dimen/margin_6">
 
-        </LinearLayout>
+                <ProgressBar
+                    android:id="@+id/item_eto_pb"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_5"
+                    android:layout_centerVertical="true"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_toStartOf="@+id/item_eto_tv_progress"
+                    android:max="100"
+                    android:progress="50"
+                    android:progressDrawable="@drawable/bg_progress_bar" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/item_eto_tv_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/margin_6"
+                    style="@style/font_orange_small"
+                    android:text="@string/text_empty"/>
 
+            </RelativeLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_3"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_progress"/>
+
+                <TextView
+                    android:id="@+id/item_eto_tv_time_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_6"
+                    style="@style/font_gray_small"
+                    android:text="@string/text_empty"/>
+
+                <TextView
+                    android:id="@+id/item_eto_tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_6"
+                    style="@style/font_gray_small"
+                    android:text="@string/text_empty"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

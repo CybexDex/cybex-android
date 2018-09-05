@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import java.util.List;
 import java.util.Locale;

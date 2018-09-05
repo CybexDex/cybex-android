@@ -14,7 +14,7 @@ import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
 import com.cybex.provider.market.Order;
 import com.cybex.provider.market.OrderBook;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import java.util.List;
 

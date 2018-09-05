@@ -11,7 +11,7 @@ import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
-import com.cybexmobile.utils.AssetUtil;
+import com.cybex.basemodule.utils.AssetUtil;
 
 import java.util.List;
 

@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Observer;
@@ -62,6 +65,10 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     Toolbar mToolbar;
     @BindView(R.id.log_out)
     Button mLogOutButton;
+    @BindView(R.id.setting_tv_server)
+    TextView mTvServer;
+    @BindView(R.id.setting_cv_switch_server)
+    CardView mCvSwitchServer;
 
     private SharedPreferences mSharedPreference;
     private Unbinder mUnbinder;
@@ -81,6 +88,8 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         displayTheme();
         displayVersionNumber();
         displayLogOutButton();
+        mCvSwitchServer.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+
     }
 
     @Override
@@ -148,6 +157,12 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         dialog.setArguments(bundle);
         dialog.show(getSupportFragmentManager(), FrequencyModeDialog.class.getSimpleName());
         dialog.setOnFrequencyModeSelectedListener(this);
+    }
+
+    @OnCheckedChanged(R.id.setting_sc_switch_server)
+    public void onChangeServerClick(CompoundButton button, boolean isChecked){
+        mTvServer.setText(getResources().getString(isChecked ?
+                R.string.setting_official_server : R.string.setting_test_server));
     }
 
     private void displayLanguage() {

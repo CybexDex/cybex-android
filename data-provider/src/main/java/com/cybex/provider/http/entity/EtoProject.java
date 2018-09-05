@@ -2,6 +2,13 @@ package com.cybex.provider.http.entity;
 
 public class EtoProject {
 
+    public static class Status {
+        public static final String PRE = "pre";//即将开始
+        public static final String OK = "ok";//进行中
+        public static final String FINISH = "finish";//已结束
+        public static final String FAIL = "fail";//失败
+    }
+
     //项目ID
     private String id;
     //项目名字
@@ -81,7 +88,7 @@ public class EtoProject {
     //结束区块
     private String t_finish_block;
     //结束花费时间
-    private String t_totle_time;
+    private String t_total_time;
     //关键词
     private String adds_keyword;
     private String adds_keyword__lang_en;
@@ -116,7 +123,7 @@ public class EtoProject {
                       int current_user_count, String type, int deleted, String created_at, String update_at,
                       String receive_address, int score, String control, int banner, boolean is_user_in,
                       String _id, String account, String project, String timestamp, int __v, int parent,
-                      String t_finish_block, String t_totle_time, String adds_keyword,
+                      String t_finish_block, String t_total_time, String adds_keyword,
                       String adds_keyword__lang_en, String adds_advantage, String adds_advantage__lang_en,
                       String adds_website, String adds_website__lane_en, String adds_banner,
                       String adds_banner__lang_en, String adds_logo, String adds_logo__lang_en,
@@ -161,7 +168,7 @@ public class EtoProject {
         this.__v = __v;
         this.parent = parent;
         this.t_finish_block = t_finish_block;
-        this.t_totle_time = t_totle_time;
+        this.t_total_time = t_total_time;
         this.adds_keyword = adds_keyword;
         this.adds_keyword__lang_en = adds_keyword__lang_en;
         this.adds_advantage = adds_advantage;
@@ -492,12 +499,12 @@ public class EtoProject {
         this.t_finish_block = t_finish_block;
     }
 
-    public String getT_totle_time() {
-        return t_totle_time;
+    public String getT_total_time() {
+        return t_total_time;
     }
 
-    public void setT_totle_time(String t_totle_time) {
-        this.t_totle_time = t_totle_time;
+    public void setT_total_time(String t_total_time) {
+        this.t_total_time = t_total_time;
     }
 
     public String getAdds_keyword() {
