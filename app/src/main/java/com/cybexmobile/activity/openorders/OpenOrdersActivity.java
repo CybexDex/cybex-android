@@ -166,7 +166,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         }
         mGetTickerCount = 0;
         for (OpenOrderItem item : mOpenOrderItems) {
-            if (item.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals("1.3.0")) {
+            if (item.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
                 mGetTickerCount++;
                 if (item.isSell) {
                     mSellOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
@@ -177,7 +177,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 }
             } else {
                 try {
-                    BitsharesWalletWraper.getInstance().get_ticker("1.3.0", item.openOrder.getLimitOrder().sell_price.base.asset_id.toString(), onTickerCallback);
+                    BitsharesWalletWraper.getInstance().get_ticker(ASSET_ID_CYB, item.openOrder.getLimitOrder().sell_price.base.asset_id.toString(), onTickerCallback);
                 } catch (NetworkStatusException e) {
                     e.printStackTrace();
                 }

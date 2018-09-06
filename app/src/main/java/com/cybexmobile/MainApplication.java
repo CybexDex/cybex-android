@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.help.StoreLanguageHelper;
 import com.cybex.provider.apollo.ApolloClientApi;
 import com.cybex.provider.graphene.chain.FullNodeServerSelect;
@@ -18,8 +19,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
-import static com.cybexmobile.utils.Constant.PREF_SERVER;
-import static com.cybexmobile.utils.Constant.SERVER_OFFICIAL;
+import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 
 public class MainApplication extends Application {
 
@@ -30,6 +31,7 @@ public class MainApplication extends Application {
         RetrofitFactory.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
         ApolloClientApi.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
         FullNodeServerSelect.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
+        Constant.initAssetId(server.equals(SERVER_OFFICIAL));
         if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("night_mode", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {

@@ -56,6 +56,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 
@@ -236,9 +237,9 @@ public class AccountBalanceActivity extends BaseActivity {
             AccountBalanceObjectItem item = mAccountBalanceObjectItems.get(i);
             if (assetObject.id.toString().equals(item.accountBalanceObject.asset_type.toString())) {
                 item.assetObject = assetObject;
-                if (item.marketTicker != null || item.assetObject.id.toString().equals("1.3.0")) {
+                if (item.marketTicker != null || item.assetObject.id.toString().equals(ASSET_ID_CYB)) {
                     calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
-                            item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
+                            item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_CYB) ? 1 : item.marketTicker.latest);
                 }
                 mBalanceRecyclerAdapter.notifyItemChanged(i);
                 break;
@@ -300,20 +301,20 @@ public class AccountBalanceActivity extends BaseActivity {
                 item.assetObject = mWebSocketService.getAssetObject(balance.asset_type.toString());
                 AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
                 item.cybPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-                if (item.assetObject != null && balance.asset_type.toString().equals("1.3.0")) {
+                if (item.assetObject != null && balance.asset_type.toString().equals(ASSET_ID_CYB)) {
                     mTickerCount ++;
                     calculateTotalCyb(balance.balance, item.assetObject.precision, 1);
                 }
                 mAccountBalanceObjectItems.add(item);
-                if (!balance.asset_type.toString().equals("1.3.0")) {
+                if (!balance.asset_type.toString().equals(ASSET_ID_CYB)) {
                     try {
-                        BitsharesWalletWraper.getInstance().get_ticker("1.3.0", balance.asset_type.toString(), onTickerCallback);
+                        BitsharesWalletWraper.getInstance().get_ticker(ASSET_ID_CYB, balance.asset_type.toString(), onTickerCallback);
                     } catch (NetworkStatusException e) {
                         e.printStackTrace();
                     }
                 } else {
                     for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
-                        if (limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0")) {
+                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
                             mTickerCount ++;
                             mTotalBalanceCyb += limitOrderObject.for_sale / Math.pow(10, 5);
                             item.frozenAmount += limitOrderObject.for_sale / Math.pow(10, 5);
@@ -365,10 +366,11 @@ public class AccountBalanceActivity extends BaseActivity {
                     if (item.assetObject != null) {
                         mTickerCount ++;
                         calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
-                                item.accountBalanceObject.asset_type.toString().equals("1.3.0") ? 1 : item.marketTicker.latest);
+                                item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_CYB) ? 1 : item.marketTicker.latest);
                     }
                     for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
-                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString()) && !limitOrderObject.sell_price.base.asset_id.toString().equals("1.3.0")) {
+                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString()) &&
+                                !limitOrderObject.sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
                             mTickerCount ++;
                             mTotalBalanceCyb += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
                             item.frozenAmount += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision));

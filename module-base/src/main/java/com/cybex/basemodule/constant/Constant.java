@@ -63,10 +63,17 @@ public class Constant {
     /**
      *  币ID
      */
-    public static final String ASSET_ID_ETH = "1.3.2";
-    public static final String ASSET_ID_CYB = "1.3.0";
-    public static final String ASSET_ID_USDT = "1.3.27";
-    public static final String ASSET_ID_BTC = "1.3.3";
+    public static String ASSET_ID_ETH = "1.3.2";
+    public static String ASSET_ID_CYB = "1.3.0";
+    public static String ASSET_ID_USDT = "1.3.27";
+    public static String ASSET_ID_BTC = "1.3.3";
+
+    public static void initAssetId(boolean isOfficialServer){
+        ASSET_ID_ETH = isOfficialServer ? "1.3.2" : "1.3.18";
+        ASSET_ID_CYB = isOfficialServer ? "1.3.0" : "1.3.0";
+        ASSET_ID_USDT = isOfficialServer ? "1.3.27" : "1.3.967";
+        ASSET_ID_BTC = isOfficialServer ? "1.3.3" : "1.3.25";
+    }
 
     /**
      * 币symbol

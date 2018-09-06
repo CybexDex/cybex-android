@@ -63,6 +63,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Function5;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
@@ -297,8 +299,8 @@ public class WebSocketService extends Service {
     }
 
     private void loadAllAssetsPairData(){
-        Observable.zip(loadToppingAssetsPair(), loadAssetsPairData("1.3.2"), loadAssetsPairData("1.3.0"),
-                loadAssetsPairData("1.3.27"), loadAssetsPairData("1.3.3"),
+        Observable.zip(loadToppingAssetsPair(), loadAssetsPairData(ASSET_ID_ETH), loadAssetsPairData(ASSET_ID_CYB),
+                loadAssetsPairData(ASSET_ID_USDT), loadAssetsPairData(ASSET_ID_BTC),
                 new Function5<List<AssetsPairToppingResponse>, Map<String,List<AssetsPair>>,
                         Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>,
                         Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>>() {

@@ -184,8 +184,13 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     }
 
     public void restartApp() {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        manager.restartPackage("com.cybexmobile");
+//        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//        manager.restartPackage("com.cybexmobile");
+        Intent intent = new Intent(getBaseContext(), SplashActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getBaseContext().startActivity(intent);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 
     private void displayLanguage() {

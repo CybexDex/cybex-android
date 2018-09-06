@@ -34,6 +34,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -216,19 +225,19 @@ public class WatchlistFragment extends BaseFragment {
     }
 
     private String getAssetId(String assetName) {
-        String result = "1.3.2";
+        String result = ASSET_ID_ETH;
         switch (assetName) {
-            case "CYB":
-                result = "1.3.0";
+            case ASSET_SYMBOL_CYB:
+                result = ASSET_ID_CYB;
                 break;
-            case "ETH":
-                result = "1.3.2";
+            case ASSET_SYMBOL_ETH:
+                result = ASSET_ID_ETH;
                 break;
-            case "USDT":
-                result = "1.3.27";
+            case ASSET_SYMBOL_USDT:
+                result = ASSET_ID_USDT;
                 break;
-            case "BTC":
-                result = "1.3.3";
+            case ASSET_SYMBOL_BTC:
+                result = ASSET_ID_BTC;
                 break;
         }
         return result;

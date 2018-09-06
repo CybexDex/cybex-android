@@ -226,23 +226,18 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         if(baseAsset == null){
             return;
         }
-        switch (baseAsset.id.toString()){
-            case Constant.ASSET_ID_ETH:
-                mRbEth.setChecked(true);
-                mCurrentBaseAssetId = Constant.ASSET_ID_ETH;
-                break;
-            case Constant.ASSET_ID_CYB:
-                mRbCyb.setChecked(true);
-                mCurrentBaseAssetId = Constant.ASSET_ID_CYB;
-                break;
-            case Constant.ASSET_ID_USDT:
-                mRbUsdt.setChecked(true);
-                mCurrentBaseAssetId = Constant.ASSET_ID_USDT;
-                break;
-            case Constant.ASSET_ID_BTC:
-                mRbBtc.setChecked(true);
-                mCurrentBaseAssetId = Constant.ASSET_ID_BTC;
-                break;
+        if(baseAsset.id.toString().equals(Constant.ASSET_ID_ETH)){
+            mRbEth.setChecked(true);
+            mCurrentBaseAssetId = Constant.ASSET_ID_ETH;
+        } else if(baseAsset.id.toString().equals(Constant.ASSET_ID_CYB)) {
+            mRbCyb.setChecked(true);
+            mCurrentBaseAssetId = Constant.ASSET_ID_CYB;
+        } else if(baseAsset.id.toString().equals(Constant.ASSET_ID_USDT)) {
+            mRbUsdt.setChecked(true);
+            mCurrentBaseAssetId = Constant.ASSET_ID_USDT;
+        } else if(baseAsset.id.toString().equals(Constant.ASSET_ID_BTC)) {
+            mRbBtc.setChecked(true);
+            mCurrentBaseAssetId = Constant.ASSET_ID_BTC;
         }
     }
 

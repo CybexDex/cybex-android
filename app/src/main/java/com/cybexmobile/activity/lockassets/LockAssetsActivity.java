@@ -53,6 +53,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 
 public class LockAssetsActivity extends BaseActivity {
@@ -259,9 +260,9 @@ public class LockAssetsActivity extends BaseActivity {
                     AssetRmbPrice rmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
                     item.cybRmbPrice = rmbPrice == null ? 0 : rmbPrice.getValue();
                     mLockUpAssetItems.add(item);
-                    if (!lockUpAssetObject.balance.asset_id.toString().equals("1.3.0")) {
+                    if (!lockUpAssetObject.balance.asset_id.toString().equals(ASSET_ID_CYB)) {
                         try {
-                            BitsharesWalletWraper.getInstance().get_ticker("1.3.0", lockUpAssetObject.balance.asset_id.toString(), onTickerCallback);
+                            BitsharesWalletWraper.getInstance().get_ticker(ASSET_ID_CYB, lockUpAssetObject.balance.asset_id.toString(), onTickerCallback);
                         } catch (NetworkStatusException e) {
                             e.printStackTrace();
                         }

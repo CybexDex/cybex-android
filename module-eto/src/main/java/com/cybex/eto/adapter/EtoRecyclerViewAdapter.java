@@ -73,6 +73,7 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         viewHolder.mTvName.setText(etoProject.getName());
         if(Locale.getDefault().getLanguage().equals("zh")){
             viewHolder.mTvKeywords.setText(etoProject.getAdds_keyword());
+
             Picasso.get().load(etoProject.getAdds_logo()).into(viewHolder.mIvLogo);
         } else {
             viewHolder.mTvKeywords.setText(etoProject.getAdds_keyword__lang_en());

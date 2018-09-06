@@ -91,6 +91,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_ID;
@@ -522,10 +523,10 @@ public class WithdrawActivity extends BaseActivity {
         }
         String memo = getMemo(address, mAssetName, eosMemo);
         Log.e("memo", memo);
-        Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, "1.3.0", 0);
-        double cybBalance = getBalance(mFullAccountObject, "1.3.0");
+        Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, ASSET_ID_CYB, 0);
+        double cybBalance = getBalance(mFullAccountObject, ASSET_ID_CYB);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees("1.3.0", ID_TRANSER_OPERATION, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(ASSET_ID_CYB, ID_TRANSER_OPERATION, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
                     if (mHandler == null) {
@@ -583,7 +584,7 @@ public class WithdrawActivity extends BaseActivity {
         double amount = Double.parseDouble(mWithdrawAmountEditText.getText().toString());
         double fee = (feeAmountObject.amount / Math.pow(10, mAssetObject.precision));
         double receiveAmount = 0;
-        if (feeAmountObject.asset_id.equals("1.3.0")) {
+        if (feeAmountObject.asset_id.equals(ASSET_ID_CYB)) {
             receiveAmount = amount - mGatewayFee;
         } else {
             if (amount + fee > mAvailableAmount) {
