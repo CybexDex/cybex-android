@@ -12,21 +12,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitFactory {
 
-    public static final String baseUrl = "https://app.cybex.io/";
-    public static final String url_pin_code = "https://faucet.cybex.io/captcha";
-    public static final String url_register = "https://faucet.cybex.io/register";
-    public static final String url_deposit_withdraw_log_in = "https://gateway-query.cybex.io/login";
-    public static final String url_deposit_withdraw_records = "https://gateway-query.cybex.io/records";
-
-    //Eto测试服务器
-    public static final String baseUrlEto_test = "https://ieo-apitest.cybex.io/api/";
+    //cybex正式服务器
+    public static final String cybex_base_url = "https://app.cybex.io/";
+    //cybex测试服务器
+    public static final String cybex_base_url_test = "http://47.91.242.71:3039/";
+    //faucet正式服务器
+    public static final String faucet_base_url = "https://faucet.cybex.io/";
+    //faucet测试服务器
+    public static final String faucet_base_url_test = "https://faucet.51nebula.com/";
+    //网关测试正式服务器
+    public static final String gateway_base_url = "https://gateway-query.cybex.io/";
+    //网关测试测试服务器 暂无
+    public static final String gateway_base_url_test = "https://gateway-query.cybex.io/";
     //Eto正式服务器
-    public static final String baseUrlEto = "https://eto.cybex.io/api/";
+    public static final String eto_base_url = "https://eto.cybex.io/api/";
+    //Eto测试服务器
+    public static final String eto_base_url_test = "https://ieo-apitest.cybex.io/api/";
 
     private OkHttpClient okHttpClient;
 
     private CybexHttpApi cybexHttpApi;
+    private FaucetHttpApi faucetHttpApi;
+    private GatewayHttpApi gatewayHttpApi;
     private EtoHttpApi etoHttpApi;
+
+    //是否是正式服务器环境
+    public boolean isOfficialServer = true;
 
     private RetrofitFactory(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -52,9 +63,12 @@ public class RetrofitFactory {
     }
 
     public CybexHttpApi api(){
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before api");
+        }
         if(cybexHttpApi == null){
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
+                    .baseUrl(isOfficialServer ? cybex_base_url : cybex_base_url_test)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -64,10 +78,45 @@ public class RetrofitFactory {
         return cybexHttpApi;
     }
 
+    public GatewayHttpApi apiGateway(){
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before apiGateway");
+        }
+        if(gatewayHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(isOfficialServer ? gateway_base_url : gateway_base_url_test)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            gatewayHttpApi = retrofit.create(GatewayHttpApi.class);
+        }
+        return gatewayHttpApi;
+    }
+
+    public FaucetHttpApi apiFaucet(){
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before apiFaucet");
+        }
+        if(faucetHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(isOfficialServer ? faucet_base_url : faucet_base_url_test)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            faucetHttpApi = retrofit.create(FaucetHttpApi.class);
+        }
+        return faucetHttpApi;
+    }
+
     public EtoHttpApi apiEto() {
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before apiEto");
+        }
         if(etoHttpApi == null){
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrlEto_test)
+                    .baseUrl(isOfficialServer ? eto_base_url : eto_base_url_test)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -77,5 +126,7 @@ public class RetrofitFactory {
         return etoHttpApi;
     }
 
-
+    public void setOfficialServer(boolean officialServer) {
+        isOfficialServer = officialServer;
+    }
 }

@@ -205,7 +205,6 @@
                         android:id="@+id/setting_sc_switch_server"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true"
                         android:layout_marginStart="@dimen/margin_6"
                         android:theme="@style/Switch" />
 

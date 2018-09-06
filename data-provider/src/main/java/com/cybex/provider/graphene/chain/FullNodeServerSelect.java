@@ -13,6 +13,24 @@ import okhttp3.WebSocketListener;
 
 public class FullNodeServerSelect {
 
+    //是否是正式服务器环境
+    private boolean isOfficialServer = true;
+
+//    private List<String> mListNode = Arrays.asList(
+//            "wss://bitshares.openledger.info/ws",
+//            "wss://eu.openledger.info/ws",
+//            "wss://bit.btsabc.org/ws",
+//            "wss://bts.transwiser.com/ws",
+//            "wss://bitshares.dacplay.org/ws",
+//            "wss://bitshares-api.wancloud.io/ws",
+//            "wss://openledger.hk/ws",
+//            "wss://secure.freedomledger.com/ws",
+//            "wss://dexnode.net/ws",
+//            "wss://altcap.io/ws",
+//            "wss://bitshares.crypto.fans/ws"
+//    );
+
+    //正式节点
     private List<String> mListNode = Arrays.asList(
             "wss://shanghai.51nebula.com/",
             "wss://singapore-01.cybex.io/",
@@ -20,18 +38,34 @@ public class FullNodeServerSelect {
             "wss://korea-01.cybex.io/",
             "wss://hongkong.cybex.io/"
     );
+    //测试节点
+    private List<String> mListNode_test = Arrays.asList(
+        "wss://hangzhou.51nebula.com/",
+        "wss://shenzhen.51nebula.com/"
+    );
 
-    public String getServer() {
-        return getAutoSelectServer();
+    private FullNodeServerSelect () {
+
     }
 
-    private String getAutoSelectServer() {
+    public static FullNodeServerSelect getInstance() {
+        return FullNodeServerSelectProvider.factory;
+    }
+
+    private static class FullNodeServerSelectProvider{
+        private static final FullNodeServerSelect factory = new FullNodeServerSelect();
+    }
+
+    public String getServer() {
+        return getAutoSelectServer(isOfficialServer ? mListNode : mListNode_test);
+    }
+
+    private String getAutoSelectServer(List<String> nodes) {
         List<WebSocket> listWebsocket = new ArrayList<>();
         final Object objectSync = new Object();
-
-        final int nTotalCount = mListNode.size();
+        final int nTotalCount = nodes.size();
         final List<String> listSelectedServer = new ArrayList<>();
-        for (final String strServer : mListNode) {
+        for (final String strServer : nodes) {
             Request request = new Request.Builder().url(strServer).build();
             OkHttpClient okHttpClient = new OkHttpClient();
             WebSocket webSocket = okHttpClient.newWebSocket(request, new WebSocketListener() {
@@ -93,5 +127,9 @@ public class FullNodeServerSelect {
         }
 
         return strResultServer;
+    }
+
+    public void setOfficialServer(boolean officialServer) {
+        isOfficialServer = officialServer;
     }
 }

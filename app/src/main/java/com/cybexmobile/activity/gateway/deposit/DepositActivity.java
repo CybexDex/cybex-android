@@ -66,7 +66,6 @@ public class DepositActivity extends BaseActivity {
     private static String EOS_NAME = "EOS";
 
     private Unbinder mUnbinder;
-    private ApolloClient mApolloClient;
     private Handler mHandler = new Handler();
     private Context mContext;
     private AssetObject mAssetObject;
@@ -120,7 +119,6 @@ public class DepositActivity extends BaseActivity {
         setContentView(R.layout.activity_deposit);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        mApolloClient = ApolloClientApi.getApolloClient();
         mContext = this;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mUserName = sharedPreferences.getString("name", "");
@@ -234,7 +232,7 @@ public class DepositActivity extends BaseActivity {
 
     private void getAddress(String userName, String assetName) {
         showLoadDialog(true);
-        mApolloClient.query(GetDepositAddress
+        ApolloClientApi.getInstance().client().query(GetDepositAddress
                 .builder()
                 .accountName(userName)
                 .asset(assetName)
@@ -290,7 +288,7 @@ public class DepositActivity extends BaseActivity {
     }
 
     private void mutateNewAddress(String userName, String asset) {
-        mApolloClient.mutate(NewDepositAddress
+        ApolloClientApi.getInstance().client().mutate(NewDepositAddress
                 .builder()
                 .accountName(userName)
                 .asset(asset)

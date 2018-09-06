@@ -77,20 +77,6 @@ public class WebSocketClient extends WebSocketListener {
     private AtomicInteger mCallId = new AtomicInteger(1);
     private ConcurrentHashMap<Integer, ReplyProcessImpl> mHashMapIdToProcess = new ConcurrentHashMap<>();
     private List<DelayCall> delayCalls = null;
-    //websocket node
-    private List<String> mListNode = Arrays.asList(
-            "wss://bitshares.openledger.info/ws",
-            "wss://eu.openledger.info/ws",
-            "wss://bit.btsabc.org/ws",
-            "wss://bts.transwiser.com/ws",
-            "wss://bitshares.dacplay.org/ws",
-            "wss://bitshares-api.wancloud.io/ws",
-            "wss://openledger.hk/ws",
-            "wss://secure.freedomledger.com/ws",
-            "wss://dexnode.net/ws",
-            "wss://altcap.io/ws",
-            "wss://bitshares.crypto.fans/ws"
-    );
 
     public AtomicInteger getCallId() {
         return mCallId;
@@ -214,8 +200,7 @@ public class WebSocketClient extends WebSocketListener {
                 || mConnectStatus == WEBSOCKET_CONNECT_OK){
             return;
         }
-        FullNodeServerSelect fullNodeServerSelect = new FullNodeServerSelect();
-        String strServer = fullNodeServerSelect.getServer();
+        String strServer = FullNodeServerSelect.getInstance().getServer();
         Log.v(TAG, strServer);
         if (TextUtils.isEmpty(strServer)) {
             mConnectStatus = ErrorCode.ERROR_CONNECT_SERVER_INVALID;

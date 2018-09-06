@@ -33,21 +33,9 @@ public interface CybexHttpApi {
     @GET("/json/deposit.json")
     Observable<ResponseBody> getDepositList();
 
-    @GET
-    Observable<ResponseBody> getPinCode(@Url String url);
-
-    @POST
-    Observable<CreateAccountResponse> register(@Url String url, @Body RequestBody body);
-
     @GET("market_list")
     Observable<AssetsPairResponse> getAssetsPair(@Query("base") String base);
 
     @GET("json/marketlists.json")
     Observable<List<AssetsPairToppingResponse>> getAssetsPairTopping();
-
-    @POST
-    Observable<ResponseBody> gatewayLogIn(@Url String url, @Body RequestBody body);
-
-    @POST
-    Observable<GateWayRecordsResponse> gatewayRecords(@Url String url, @Body RequestBody body);
 }

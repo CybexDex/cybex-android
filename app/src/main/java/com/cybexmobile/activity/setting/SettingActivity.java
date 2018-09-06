@@ -1,5 +1,7 @@
 package com.cybexmobile.activity.setting;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,7 +10,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -17,12 +21,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.MainApplication;
 import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AppVersion;
+import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.dialog.FrequencyModeDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.help.StoreLanguageHelper;
@@ -50,6 +56,9 @@ import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_LOAD_MODE;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.basemodule.constant.Constant.PREF_PASSWORD;
+import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
+import static com.cybex.basemodule.constant.Constant.SERVER_TEST;
 
 public class SettingActivity extends BaseActivity implements FrequencyModeDialog.OnFrequencyModeSelectedListener {
 
@@ -69,6 +78,8 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     TextView mTvServer;
     @BindView(R.id.setting_cv_switch_server)
     CardView mCvSwitchServer;
+    @BindView(R.id.setting_sc_switch_server)
+    SwitchCompat mScSwitchServer;
 
     private SharedPreferences mSharedPreference;
     private Unbinder mUnbinder;
@@ -88,8 +99,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         displayTheme();
         displayVersionNumber();
         displayLogOutButton();
-        mCvSwitchServer.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
-
+        displayServer();
     }
 
     @Override
@@ -161,8 +171,21 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
 
     @OnCheckedChanged(R.id.setting_sc_switch_server)
     public void onChangeServerClick(CompoundButton button, boolean isChecked){
+        if(!button.isPressed()){
+            return;
+        }
         mTvServer.setText(getResources().getString(isChecked ?
                 R.string.setting_official_server : R.string.setting_test_server));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit().putString(PREF_SERVER, isChecked ? SERVER_OFFICIAL : SERVER_TEST).apply();
+        onLoginOutClick();
+        //重启app
+        restartApp();
+    }
+
+    public void restartApp() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        manager.restartPackage("com.cybexmobile");
     }
 
     private void displayLanguage() {
@@ -204,6 +227,13 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
 
     private void displayLogOutButton() {
         mLogOutButton.setVisibility(mSharedPreference.getBoolean(PREF_IS_LOGIN_IN, false) ? View.VISIBLE : View.GONE);
+    }
+
+    private void displayServer() {
+        String server = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_SERVER, SERVER_OFFICIAL);
+        mCvSwitchServer.setVisibility(BuildConfig.DEBUG ? View.VISIBLE : View.GONE);
+        mScSwitchServer.setChecked(server.equals(SERVER_OFFICIAL));
+        mTvServer.setText(getResources().getString(server.equals(SERVER_OFFICIAL) ? R.string.setting_official_server : R.string.setting_test_server));
     }
 
     private void checkVersion() {

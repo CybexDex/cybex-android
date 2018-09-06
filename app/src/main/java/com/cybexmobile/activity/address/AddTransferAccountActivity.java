@@ -87,7 +87,6 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
     private String mUserName;
     private Unbinder mUnbinder;
     private Disposable mAddTransferAccountDisposable;
-    private ApolloClient mApolloClient;
 
     private boolean mIsAccountValid;
     private boolean mIsAccountExist;
@@ -102,7 +101,6 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         setSupportActionBar(mToolbar);
         EventBus.getDefault().register(this);
         SoftKeyBoardListener.setListener(this, this);
-        mApolloClient = ApolloClientApi.getApolloClient();
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         String address = getIntent().getStringExtra(INTENT_PARAM_ADDRESS);
         String eosMemo = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_MEMO);
@@ -248,7 +246,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
             return;
         }
         if (mTokenName != null) {
-            mApolloClient.query(VerifyAddress
+            ApolloClientApi.getInstance().client().query(VerifyAddress
                     .builder()
                     .address(accountName)
                     .asset(mTokenName)

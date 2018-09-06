@@ -119,7 +119,6 @@ public class WithdrawActivity extends BaseActivity {
     private AccountObject mAccountObject;
     private FullAccountObject mFullAccountObject;
     private AssetObject mAssetObject;
-    private ApolloClient mApolloClient;
     private Handler mHandler = new Handler();
     private WebSocketService mWebSocketService;
     private Operations.transfer_operation mTransferOperation;
@@ -183,7 +182,6 @@ public class WithdrawActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         Intent serviceIntent = new Intent(this, WebSocketService.class);
         bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
-        mApolloClient = ApolloClientApi.getApolloClient();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mUserName = sharedPreferences.getString("name", null);
         Intent intent = getIntent();
@@ -665,7 +663,7 @@ public class WithdrawActivity extends BaseActivity {
         if (TextUtils.isEmpty(address)) {
             return;
         }
-        mApolloClient.query(VerifyAddress
+        ApolloClientApi.getInstance().client().query(VerifyAddress
                 .builder()
                 .address(address)
                 .asset(mAssetName)
@@ -731,7 +729,7 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void setMinWithdrawAmountAndGateWayFee() {
-        mApolloClient.query(GetWithdrawInfo
+        ApolloClientApi.getInstance().client().query(GetWithdrawInfo
                 .builder()
                 .type(mAssetName)
                 .build())

@@ -52,6 +52,13 @@ public class Constant {
     public static final String PREF_NAME = "name";
     public static final String PREF_PASSWORD = "password";
     public static final String PREF_LOAD_MODE = "load_mode";
+    public static final String PREF_SERVER = "pref_server";
+
+    /**
+     *
+     */
+    public static final String SERVER_OFFICIAL = "server_official";
+    public static final String SERVER_TEST = "server_test";
 
     /**
      *  币ID

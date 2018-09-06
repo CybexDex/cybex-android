@@ -8,17 +8,27 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.cybex.basemodule.help.StoreLanguageHelper;
+import com.cybex.provider.apollo.ApolloClientApi;
+import com.cybex.provider.graphene.chain.FullNodeServerSelect;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.utils.PicassoUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
+import static com.cybexmobile.utils.Constant.PREF_SERVER;
+import static com.cybexmobile.utils.Constant.SERVER_OFFICIAL;
+
 public class MainApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+        String server = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_SERVER, SERVER_OFFICIAL);
+        RetrofitFactory.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
+        ApolloClientApi.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
+        FullNodeServerSelect.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
         if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("night_mode", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {

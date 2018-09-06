@@ -260,9 +260,8 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                 Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
                 Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
                 return RetrofitFactory.getInstance()
-                        .api()
-                        .gatewayLogIn(RetrofitFactory.url_deposit_withdraw_log_in,
-                                RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
+                        .apiGateway()
+                        .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
             }
         })
         .concatMap(new Function<ResponseBody, ObservableSource<GateWayRecordsResponse>>() {
@@ -283,9 +282,8 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                 String request = gson.toJson(createLogInRequest(operation, mSignature));
                 Log.v("gatewayRequestBody", request);
                 return RetrofitFactory.getInstance()
-                        .api()
-                        .gatewayRecords(RetrofitFactory.url_deposit_withdraw_records,
-                                RequestBody.create(MediaType.parse("application/json"), request));
+                        .apiGateway()
+                        .gatewayRecords(RequestBody.create(MediaType.parse("application/json"), request));
             }
         })
         .map(new Function<GateWayRecordsResponse, List<GatewayDepositWithdrawRecordsItem>>() {

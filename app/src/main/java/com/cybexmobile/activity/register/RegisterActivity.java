@@ -298,8 +298,8 @@ public class RegisterActivity extends BaseActivity {
 
     private void requestForPinCode() {
         RetrofitFactory.getInstance()
-                .api()
-                .getPinCode(RetrofitFactory.url_pin_code)
+                .apiFaucet()
+                .getPinCode()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
@@ -420,8 +420,8 @@ public class RegisterActivity extends BaseActivity {
         }
         showLoadDialog();
         RetrofitFactory.getInstance()
-                .api()
-                .register(RetrofitFactory.url_register, RequestBody.create(MediaType.parse("application/json"), parseAccount(strAccount, strPassword, pinCode, capId)))
+                .apiFaucet()
+                .register(RequestBody.create(MediaType.parse("application/json"), parseAccount(strAccount, strPassword, pinCode, capId)))
                 .map(new Function<CreateAccountResponse, CreateAccountResponse>() {
                     @Override
                     public CreateAccountResponse apply(CreateAccountResponse createAccountResponse) {
