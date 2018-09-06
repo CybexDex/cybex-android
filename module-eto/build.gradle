@@ -20,6 +20,12 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+
     }
     buildTypes {
         release {
@@ -67,4 +73,5 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.7'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     api project(':module-base')
+    annotationProcessor 'com.alibaba:arouter-compiler:1.2.1'
 }

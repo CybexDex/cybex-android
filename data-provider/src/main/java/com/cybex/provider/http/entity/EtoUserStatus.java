@@ -2,6 +2,19 @@ package com.cybex.provider.http.entity;
 
 public class EtoUserStatus {
 
+    public static class KycStatus {
+        public static final String OK = "ok";
+        public static final String NOT_STARTED = "not_start";
+    }
+
+    public static class Status {
+        public static final String OK = "ok";
+        public static final String UNSTART = "unstart";
+        public static final String WAITING = "waiting";
+        public static final String REJECT = "reject";
+        public static final String PENDING = "pending";
+    }
+
     //用户kyc状态
     private String kyc_status;
 

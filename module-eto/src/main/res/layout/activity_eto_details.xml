@@ -110,13 +110,20 @@
                             android:src="@drawable/progress_pie" />
 
                         <TextView
+                            style="@style/font_gray_small"
+                            android:id="@+id/eto_details_time_label_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_10"/>
+
+                        <TextView
                             android:id="@+id/eto_details_project_time"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="@dimen/activity_margin"
-                            android:text="In：0D 21H 5M 22S" />
+                            android:text="0D 21H 5M 22S" />
 
                     </LinearLayout>
 

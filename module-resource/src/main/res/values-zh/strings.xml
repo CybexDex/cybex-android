@@ -428,6 +428,7 @@
     <string name="ETO_details_project_official_website">官网:</string>
     <string name="ETO_details_project_whitepaper">白皮书:</string>
     <string name="ETO_details_project_details">项目详情:</string>
+    <string name="text_token_releasing_immediately">实时</string>
 
     <!-- Attend Eto Activity -->
     <string name="attend_eto_personal_cap">单帐号限额</string>

@@ -1,5 +1,6 @@
 package com.cybex.eto.activity.details;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,16 +14,27 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.launcher.ARouter;
+import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
 import com.cybex.eto.activity.attendETO.AttendETOActivity;
 import com.cybex.eto.base.EtoBaseActivity;
 import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoProjectUserDetails;
+import com.cybex.provider.http.entity.EtoUserStatus;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
+import com.squareup.picasso.Picasso;
+
+import java.util.Locale;
 
 import javax.inject.Inject;
 
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_PROJECT_DETAILS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
+
 public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsView {
+
+    private static final int REQUEST_CODE_LOGIN = 1;
 
     @Inject
     EtoDetailsPresenter<EtoDetailsView> mEtoDetailsPresenter;
@@ -33,6 +45,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     TextView mProjectTitleTv;
     ProgressBar mProjectPb;
     TextView mProgressPercentTv;
+    TextView mProjectTimeLabelTv;
     TextView mProjectTimeTv;
     RelativeLayout mProjectAppointmentRl;
     LinearLayout mProjectAgreementLl;
@@ -66,10 +79,13 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         initViews();
         setSupportActionBar(mToolbar);
         setOnclickListener();
+        EtoProject etoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_PROJECT_DETAILS);
         if (mEtoDetailsPresenter.isLogIn(this)) {
-            mEtoDetailsPresenter.loadDetailsData();
+            String userName = mEtoDetailsPresenter.getUserName(this);
+            mEtoDetailsPresenter.loadDetailsWithUserStatus(etoProject, userName);
         } else {
-            mEtoDetailsPresenter.loadDetailsDataWithoutLogin("1053");
+            showAgreementStatus(etoProject, null, false);
+            showDetails(etoProject);
         }
 
     }
@@ -86,6 +102,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectTitleTv = findViewById(R.id.eto_details_project_name_title);
         mProjectPb = findViewById(R.id.eto_details_progress_bar);
         mProgressPercentTv = findViewById(R.id.eto_details_progress_percentage);
+        mProjectTimeLabelTv = findViewById(R.id.eto_details_time_label_tv);
         mProjectTimeTv = findViewById(R.id.eto_details_project_time);
         mProjectAppointmentRl = findViewById(R.id.eto_details_project_appointment_status_layout);
         mProjectAgreementLl = findViewById(R.id.eto_agreement_layout);
@@ -131,7 +148,6 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 }
             }
         });
-        mProjectIntroductionExpandTv.setText("Herdius is a forward-looking cross-chain interaction solution. Herdius USES a private key to get through all the blockchain. All it needs is a Herdius account and a matching Herdius wallet. Without specific tokens, users can use all kinds of blockchain. Centralize the application, touch each kind of ecosystem.Herdius is a forward-looking cross-chain interaction solution. Herdius USES a private key to get through all the blockchain. All it needs is a Herdius account and a matching Herdius wallet. Without specific tokens, users can use all kinds of blockchain. Centralize the application, touch each kind of ecosystem.Herdius is a forward-looking cross-chain interaction solution. ");
     }
 
     @Override
@@ -149,6 +165,16 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_LOGIN && resultCode == Activity.RESULT_OK) {
+            if (data.getBooleanExtra(INTENT_PARAM_LOGIN_IN, false)) {
+
+            }
+        }
+    }
+
+    @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
@@ -163,8 +189,19 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     @Override
+    public void onLoadProjectDetailsAndUserStatus(EtoProject etoProject, EtoUserStatus etoUserStatus) {
+        showAgreementStatus(etoProject, etoUserStatus, true);
+    }
+
+    @Override
     public void onError() {
 
+    }
+
+    private void showDetails(EtoProject etoProject) {
+        showProjectStatusIcon(etoProject.getStatus());
+        showProjectProfileIcon(etoProject);
+        showProjectDetailsIntroductionAndWebsite(etoProject);
     }
 
     private void showProjectStatusIcon(String status) {
@@ -178,6 +215,110 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             case "finish":
                 mStatusIv.setImageResource(R.drawable.img_finished_light);
 
+        }
+    }
+
+    private void showProjectProfileIcon(EtoProject etoProject) {
+        if (Locale.getDefault().getLanguage().equals("zh")) {
+            Picasso.get().load(etoProject.getAdds_logo()).into(mProjectIconIv);
+        } else {
+            Picasso.get().load(etoProject.getAdds_logo__lang_en()).into(mProjectIconIv);
+        }
+    }
+
+    private void showProjectDetailsIntroductionAndWebsite(EtoProject etoProject) {
+        mProjectTitleTv.setText(etoProject.getName());
+        if (etoProject.getCurrent_percent() == 1f) {
+            mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
+        }
+        mProjectPb.setProgress((int) (etoProject.getCurrent_percent() * 100));
+        mProgressPercentTv.setText(String.format("%s%%", etoProject.getCurrent_percent() * 100));
+        showProjectTime(etoProject);
+        mProjectNameTv.setText(etoProject.getName());
+        mProjectTokenNameTv.setText(etoProject.getToken_name());
+        mProjectEtoTimeTv.setText(etoProject.getStart_at());
+        mProjectEndAtTv.setText(etoProject.getEnd_at());
+        mProjectCybexStartTv.setText(etoProject.getEnd_at());
+        if (etoProject.getOffer_at() != null) {
+            mProjectTokenReleasingTimeTv.setText(etoProject.getOffer_at());
+        } else {
+            mProjectTokenReleasingTimeTv.setText(getResources().getString(R.string.ETO_details_text_token_releasing_immediately));
+        }
+        mProjectCurrencyTv.setText(etoProject.getBase_token_name());
+        mProjectExchangeRatioTv.setText(String.format(getResources().getString(R.string.ETO_details_text_currency_ratio), etoProject.getBase_token_name(), etoProject.getRate(), etoProject.getToken_name()));
+        if (Locale.getDefault().getLanguage().equals("zh")) {
+            mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage());
+            mProjectOfficialWebsiteTv.setText(etoProject.getAdds_website());
+            mProjectWhitepaperTv.setText(etoProject.getAdds_whitepaper());
+        } else {
+            mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage__lang_en());
+            mProjectOfficialWebsiteTv.setText(etoProject.getAdds_website__lane_en());
+            mProjectWhitepaperTv.setText(etoProject.getAdds_whitepaper__lane_en());
+        }
+    }
+
+
+    private void showProjectTime(EtoProject etoProject) {
+        String status = etoProject.getStatus();
+        if(status.equals(EtoProject.Status.PRE)){
+            mProjectTimeLabelTv.setText(getResources().getString(R.string.text_start_of_distance));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getStart_at())/1000)));
+        } else if(status.equals(EtoProject.Status.OK)){
+            mProjectTimeLabelTv.setText(getResources().getString(R.string.text_end_of_distance));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getEnd_at())/1000)));
+        } else if(status.equals(EtoProject.Status.FINISH)){
+            mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000)));
+        } else {
+            mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000)));
+        }
+    }
+
+    private String parseTime(int time){
+        if(time <= 0){
+            return "";
+        }
+        StringBuffer sb = new StringBuffer();
+        int day = time / DateUtils.DAY_IN_SECOND;
+        if(day > 0){
+            sb.append(day).append(getResources().getString(R.string.text_day));
+        }
+        int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
+        if(hours > 0){
+            sb.append(hours).append(getResources().getString(R.string.text_hours));
+        }
+        int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
+        if(minutes > 0){
+            sb.append(minutes).append(getResources().getString(R.string.text_minutes));
+        }
+        int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
+        if(seconds > 0){
+            sb.append(seconds).append(getResources().getString(R.string.text_seconds));
+        }
+        return sb.toString();
+    }
+
+    private void showAgreementStatus(EtoProject etoProject, EtoUserStatus etoUserStatus, boolean isLogin) {
+        if (isLogin) {
+            String userKycStatus = etoUserStatus.getKyc_status();
+            if (userKycStatus.equals(EtoUserStatus.KycStatus.NOT_STARTED)) {
+                mProjectAgreementLl.setVisibility(View.GONE);
+            }
+
+        } else {
+            if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+                mProjectAppointmentRl.setVisibility(View.GONE);
+            } else {
+                mProjectAgreementLl.setVisibility(View.GONE);
+                mAppointmentButton.setText(getResources().getString(R.string.action_sign_in));
+                mAppointmentButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ARouter.getInstance().build("/login/loginActivity").navigation(EtoDetailsActivity.this, REQUEST_CODE_LOGIN);
+                    }
+                });
+            }
         }
     }
 }

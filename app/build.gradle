@@ -50,6 +50,12 @@ android {
         versionCode 2
         versionName "1.4.0"
         multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -133,4 +139,7 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+
+    //Arouter
+    annotationProcessor 'com.alibaba:arouter-compiler:1.2.1'
 }

@@ -19,6 +19,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 
 public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter<V> {
@@ -32,6 +33,10 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
 
     public boolean isLogIn(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_IS_LOGIN_IN, false);
+    }
+
+    public String getUserName(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, "");
     }
 
     public void loadDetailsData() {
@@ -94,6 +99,31 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
                                 getMvpView().onError();
                             }
                         }));
+    }
+
+    public void loadDetailsWithUserStatus(final EtoProject etoProject, String userName) {
+        mCompositeDisposable.add(RetrofitFactory.getInstance()
+                            .apiEto()
+                            .getEtoUserStatus(userName, etoProject.getId())
+                            .map(new Function<EtoBaseResponse<EtoUserStatus>, EtoUserStatus>() {
+                                @Override
+                                public EtoUserStatus apply(EtoBaseResponse<EtoUserStatus> etoUserStatusEtoBaseResponse) throws Exception {
+                                    return etoUserStatusEtoBaseResponse.getResult();
+                                }
+                            })
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<EtoUserStatus>() {
+                                @Override
+                                public void accept(EtoUserStatus etoUserStatus) throws Exception {
+                                    getMvpView().onLoadProjectDetailsAndUserStatus(etoProject, etoUserStatus);
+                                }
+                            }, new Consumer<Throwable>() {
+                                @Override
+                                public void accept(Throwable throwable) throws Exception {
+                                    getMvpView().onError();
+                                }
+                            }));
     }
 
 

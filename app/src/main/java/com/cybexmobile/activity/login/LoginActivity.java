@@ -35,6 +35,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.cybexmobile.activity.register.RegisterActivity;
 import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -57,6 +58,7 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 /**
  * A login screen that offers login via email/password.
  */
+@Route(path = "/login/loginActivity")
 public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
     /**

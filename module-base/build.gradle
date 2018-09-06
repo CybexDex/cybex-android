@@ -50,4 +50,7 @@ dependencies {
     api 'com.squareup.picasso:picasso:2.71828'
     //expandableTextView
     api 'com.ms-square:expandableTextView:0.1.4'
+    //Arouter
+    api 'com.alibaba:arouter-api:1.4.0'
+
 }

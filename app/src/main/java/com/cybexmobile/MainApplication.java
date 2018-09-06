@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.cybex.basemodule.help.StoreLanguageHelper;
 import com.cybex.provider.apollo.ApolloClientApi;
 import com.cybex.provider.graphene.chain.FullNodeServerSelect;
@@ -39,6 +40,7 @@ public class MainApplication extends Application {
         if(!LeakCanary.isInAnalyzerProcess(this)){
             LeakCanary.install(this);
         }
+        ARouter.init(this);
     }
 
     @Override
