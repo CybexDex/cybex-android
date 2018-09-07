@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.MainApplication;
+import com.cybexmobile.activity.setting.help.HelpActivity;
 import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -147,7 +148,8 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
 
     @OnClick(R.id.setting_layout_help_feedback)
     public void onHelpFeedback(View view) {
-        
+        Intent intent = new Intent(this, HelpActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.log_out)

@@ -155,6 +155,10 @@
             android:name="com.cybex.eto.activity.attendETO.AttendETOActivity"
             android:label=""
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.setting.help.HelpActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
+
 
         <service android:name=".service.WebSocketService" />
 
