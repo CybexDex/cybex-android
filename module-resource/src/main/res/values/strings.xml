@@ -89,6 +89,7 @@
     <string name="setting_test_server">Test Server</string>
     <string name="setting_version">Version</string>
     <string name="setting_frequency">Frequency</string>
+    <string name="setting_help_feedback">Help&amp;Feedback</string>
     <string name="setting_theme_dark">Dark</string>
     <string name="setting_theme_light">Light</string>
     <string name="setting_version_is_the_latest">The current version is the latest one</string>

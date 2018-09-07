@@ -1,6 +1,7 @@
 package com.cybex.provider.http;
 
 import com.cybex.provider.http.entity.AppVersion;
+import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.http.response.AssetsPairResponse;
 import com.cybex.provider.http.response.AssetsPairToppingResponse;
 import com.cybex.provider.http.response.GateWayRecordsResponse;
@@ -38,4 +39,8 @@ public interface CybexHttpApi {
 
     @GET("json/marketlists.json")
     Observable<List<AssetsPairToppingResponse>> getAssetsPairTopping();
+
+    @GET("json/settings.json")
+    Observable<AppConfigResponse> getSettingConfig();
+
 }

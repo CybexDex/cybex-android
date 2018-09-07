@@ -145,6 +145,11 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         startActivity(intent);
     }
 
+    @OnClick(R.id.setting_layout_help_feedback)
+    public void onHelpFeedback(View view) {
+        
+    }
+
     @OnClick(R.id.log_out)
     public void onLoginOutClick(){
         mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();

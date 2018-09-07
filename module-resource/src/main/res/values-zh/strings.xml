@@ -93,6 +93,7 @@
     <string name="setting_test_server">测试服务器</string>
     <string name="setting_version">版本</string>
     <string name="setting_frequency">行情刷新频率</string>
+    <string name="setting_help_feedback">帮助与反馈</string>
     <string name="setting_theme_dark">黑色</string>
     <string name="setting_theme_light">白色</string>
     <string name="action_log_out">退出登录</string>

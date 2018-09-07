@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
+import com.cybex.basemodule.transform.CircleTransform;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
 import com.cybex.provider.http.entity.EtoProject;
@@ -73,11 +74,10 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         viewHolder.mTvName.setText(etoProject.getName());
         if(Locale.getDefault().getLanguage().equals("zh")){
             viewHolder.mTvKeywords.setText(etoProject.getAdds_keyword());
-
-            Picasso.get().load(etoProject.getAdds_logo()).into(viewHolder.mIvLogo);
+            Picasso.get().load(etoProject.getAdds_logo()).transform(new CircleTransform()).into(viewHolder.mIvLogo);
         } else {
             viewHolder.mTvKeywords.setText(etoProject.getAdds_keyword__lang_en());
-            Picasso.get().load(etoProject.getAdds_logo__lang_en()).into(viewHolder.mIvLogo);
+            Picasso.get().load(etoProject.getAdds_logo__lang_en()).transform(new CircleTransform()).into(viewHolder.mIvLogo);
         }
         String status = etoProject.getStatus();
         if(status.equals(EtoProject.Status.PRE)){

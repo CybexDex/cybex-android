@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface EtoRecordMvpView extends IMvpView {
 
-    void onLoadEtoRecords(List<EtoRecord> etoRecords);
+    void onLoadEtoRecords(int mode, List<EtoRecord> etoRecords);
 }

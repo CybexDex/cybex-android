@@ -18,12 +18,15 @@ import io.reactivex.schedulers.Schedulers;
 
 public class EtoRecordPresenter<V extends EtoRecordMvpView> extends BasePresenter<V> {
 
+    public static final int LOAD_REFRESH = 1;
+    public static final int LOAD_MORE = 2;
+
     @Inject
     public EtoRecordPresenter(){
 
     }
 
-    public void loadEtoRecords(String account, int page, int limit){
+    public void loadEtoRecords(final int mode, String account, int page, int limit){
         mCompositeDisposable.add(RetrofitFactory.getInstance()
                 .apiEto()
                 .getEtoRecords(account, page, limit)
@@ -38,7 +41,7 @@ public class EtoRecordPresenter<V extends EtoRecordMvpView> extends BasePresente
                 .subscribe(new Consumer<List<EtoRecord>>() {
                     @Override
                     public void accept(List<EtoRecord> etoRecords) throws Exception {
-                        getMvpView().onLoadEtoRecords(etoRecords);
+                        getMvpView().onLoadEtoRecords(mode, etoRecords);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

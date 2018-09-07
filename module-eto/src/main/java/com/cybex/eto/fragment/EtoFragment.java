@@ -21,6 +21,7 @@ import com.cybex.eto.adapter.EtoRecyclerViewAdapter;
 import com.cybex.eto.base.EtoBaseFragment;
 import com.cybex.provider.http.entity.EtoBanner;
 import com.cybex.provider.http.entity.EtoProject;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.squareup.picasso.Picasso;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;

@@ -12,9 +12,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.cybex.eto.fragment.EtoFragment;
+import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.activity.markets.MarketsActivity;
@@ -39,6 +41,7 @@ import java.util.Locale;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
@@ -84,6 +87,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         mBottomNavigationView.setItemIconTintList(null);
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         initFragment(savedInstanceState);
+        loadAppConfig();
         checkVersion();
     }
 
@@ -256,6 +260,27 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         intent.putExtra(INTENT_PARAM_WATCHLIST, item);
         intent.putExtra("id", position);
         startActivityForResult(intent, REQUEST_CODE_BACK);
+    }
+
+    private void loadAppConfig(){
+        Disposable disposable = RetrofitFactory.getInstance()
+                .api()
+                .getSettingConfig()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<AppConfigResponse>() {
+                    @Override
+                    public void accept(AppConfigResponse appConfigResponse) throws Exception {
+                        if(!appConfigResponse.isETOEnabled()){
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_eto);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mBottomNavigationView.getMenu().removeItem(R.id.navigation_eto);
+                    }
+                });
     }
 
     private void checkVersion() {

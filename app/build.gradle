@@ -3,8 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     def keystoreAlias = ''
     def keystoreAliasPassword = ''
@@ -45,10 +45,10 @@ android {
 
     defaultConfig {
         applicationId "com.cybexmobile"
-        minSdkVersion 17
-        targetSdkVersion 27
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode 2
-        versionName "1.4.0"
+        versionName "1.5.0"
         multiDexEnabled true
 
         javaCompileOptions {
@@ -129,7 +129,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     implementation project(':MPChartLib')
-    implementation project(':ui-smart-refresh')
     if(isModule == "true"){
         implementation project(':module-eto')
     } else {

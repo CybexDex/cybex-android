@@ -1,0 +1,17 @@
+ext {
+
+    //sdk and tools
+    android = [
+        compileSdkVersion : 27,
+        buildToolsVersion : '28.0.2',
+        minSdkVersion : 17,
+        targetSdkVersion : 27,
+    ]
+
+    // app dependencies
+    dependencies = [
+
+    ]
+
+
+}

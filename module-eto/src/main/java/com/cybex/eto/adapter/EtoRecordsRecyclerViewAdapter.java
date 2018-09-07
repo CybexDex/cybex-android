@@ -37,7 +37,7 @@ public class EtoRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
     public EtoRecordsRecyclerViewAdapter(Context context, List<EtoRecord> etoRecords){
         mContext = context;
-        mEtoRecords = mEtoRecords;
+        mEtoRecords = etoRecords;
     }
 
     public void setData(List<EtoRecord> etoRecords){
