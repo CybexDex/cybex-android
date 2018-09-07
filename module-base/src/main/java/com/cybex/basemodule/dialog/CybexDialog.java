@@ -1,18 +1,20 @@
-package com.cybexmobile.dialog;
+package com.cybex.basemodule.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.basemodule.R;
 import com.cybex.provider.db.entity.Address;
-import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.AccountObject;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
@@ -28,7 +30,14 @@ public class CybexDialog {
         void onCancel(Dialog dialog);
     }
 
-    public static void showRegisterDialog(Context context, String message, View.OnClickListener listener) {
+    public interface ConfirmationDialogClickWithButtonTimerListener {
+        void onClick(Dialog dialog, Button button, EditText editText, TextView textView, LinearLayout linearLayout);
+    }
+
+    private static int mTime;
+    private static Runnable mRunnable;
+
+    public static void showRegisterDialog(Context context, String message, final View.OnClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -53,7 +62,7 @@ public class CybexDialog {
         showBalanceDialog(context, null);
     }
 
-    public static void showBalanceDialog(Context context, View.OnClickListener listener) {
+    public static void showBalanceDialog(Context context, final View.OnClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -71,7 +80,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showConfirmationDialog(Context context, ConfirmationDialogClickListener listener, String withdrawAddress, String withdrawAmount,
+    public static void showConfirmationDialog(Context context, final ConfirmationDialogClickListener listener, String withdrawAddress, String withdrawAmount,
                                               String transferFee, String gatewayFee, String receiveAmount, String memo) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_withdraw_confirmation);
@@ -117,7 +126,7 @@ public class CybexDialog {
     }
 
     public static void showLimitOrderCreateConfirmationDialog(Context context, boolean isBuy, String price, String amount,
-                                                              String total, ConfirmationDialogClickListener listener){
+                                                              String total, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         /**
          * fix bug:CYM-503
@@ -155,7 +164,7 @@ public class CybexDialog {
     }
 
     public static void showLimitOrderCancelConfirmationDialog(Context context, boolean isBuy, String price, String amount,
-                                                              String total, String fee, ConfirmationDialogClickListener listener){
+                                                              String total, String fee, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         /**
          * fix bug:CYM-503
@@ -195,7 +204,7 @@ public class CybexDialog {
     }
 
     public static void showTransferConfirmationDialog(Context context, String account, String quantity,
-                                                      String fee, String memo, ConfirmationDialogClickListener listener){
+                                                      String fee, String memo, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         /**
          * fix bug:CYM-503
@@ -239,7 +248,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showVersionUpdateDialog(Context context, String updateMessage, ConfirmationDialogClickListener listener) {
+    public static void showVersionUpdateDialog(Context context, String updateMessage, final ConfirmationDialogClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_update_version_dialog);
@@ -267,7 +276,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showVersionUpdateDialogForced(Context context, String updateMessage, ConfirmationDialogClickListener listener) {
+    public static void showVersionUpdateDialogForced(Context context, String updateMessage, final ConfirmationDialogClickListener listener) {
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_update_version_forced);
@@ -299,8 +308,8 @@ public class CybexDialog {
     }
 
     public static void showAddAddressDialog(Context context, String message, String subMessage,
-                                            ConfirmationDialogClickListener confirmListener,
-                                            ConfirmationDialogCancelListener cancelListener){
+                                            final ConfirmationDialogClickListener confirmListener,
+                                            final ConfirmationDialogCancelListener cancelListener){
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_add_address);
@@ -332,8 +341,8 @@ public class CybexDialog {
     }
 
     public static void showDeleteConfirmDialog(Context context, String title, String message, Address address,
-                                            ConfirmationDialogClickListener confirmListener,
-                                            ConfirmationDialogCancelListener cancelListener){
+                                            final ConfirmationDialogClickListener confirmListener,
+                                            final ConfirmationDialogCancelListener cancelListener){
         final Dialog dialog = new Dialog(context);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_delete_address);
@@ -375,6 +384,56 @@ public class CybexDialog {
                 if (cancelListener != null) {
                     cancelListener.onCancel(dialog);
                 }
+            }
+        });
+        dialog.show();
+    }
+
+    public static void showVerifyPinCodeETODialog(final Dialog dialog, String title, final ConfirmationDialogClickWithButtonTimerListener confirmationDialogClickWithButtonTimerListener,
+                                                  final ConfirmationDialogCancelListener confirmationDialogCancelListener, final Handler handler, Runnable runnable) {
+
+        if (runnable == null) {
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.dialog_eto_pin_code);
+            TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+            tvTitle.setText(title);
+            final EditText editText = dialog.findViewById(R.id.dialog_confirm_et_eto_pin_code);
+            final TextView errorCode = dialog.findViewById(R.id.dialog_confirm_layout_eto_pin_code_error_tv);
+            final LinearLayout errorLayout = dialog.findViewById(R.id.dialog_confirm_layout_eto_pin_code_error);
+            Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+            final Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (confirmationDialogClickWithButtonTimerListener != null) {
+                        confirmationDialogClickWithButtonTimerListener.onClick(dialog, confirmButton, editText, errorCode, errorLayout);
+                    }
+                }
+            });
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.hide();
+                    if (confirmationDialogCancelListener != null) {
+                        confirmationDialogCancelListener.onCancel(dialog);
+                    }
+                }
+            });
+        }
+        dialog.show();
+    }
+
+    public static void showETOReserveSucessDialog(Context context, String message) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_eto_reservation_sucess);
+        TextView textView = dialog.findViewById(R.id.dialog_eto_success_tv);
+        textView.setText(message);
+        Button okButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
         });
         dialog.show();

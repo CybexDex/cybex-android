@@ -32,7 +32,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.cache.BalanceCache;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
-import com.cybexmobile.dialog.CybexDialog;
+import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;

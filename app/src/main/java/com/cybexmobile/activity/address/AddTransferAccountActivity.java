@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apollographql.apollo.ApolloCall;
-import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.VerifyAddress;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
@@ -32,7 +31,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
-import com.cybexmobile.toast.message.ToastMessage;
+import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybexmobile.utils.SoftKeyBoardListener;
 
 import org.greenrobot.eventbus.EventBus;

@@ -426,6 +426,18 @@
     <string name="ETO_details_project_details">Project Details:</string>
     <string name="ETO_details_text_token_releasing_immediately">Immediately</string>
     <string name="ETO_details_text_currency_ratio">1 %1$s= %2$f %3$s </string>
+    <string name="ETO_details_kyc_verification">KYC Verification</string>
+    <string name="ETO_details_reserve_now">Reserve Now</string>
+    <string name="ETO_details_verifying">verifying</string>
+    <string name="ETO_details_stop_reserve">Stop Reserve</string>
+    <string name="ETO_details_waiting_for_ETO">Waiting for ETO</string>
+    <string name="ETO_details_join_eto_now">Join ETO now</string>
+    <string name="ETO_details_rejected">Rejected</string>
+    <string name="ETO_details_toast_message">Please check 《User Agreement》first.</string>
+    <string name="ETO_details_dialog_invitation_code">Invitation code</string>
+    <string name="ETO_details_dialog_no_invitation_code_error">Invitation Code is required</string>
+    <string name="ETO_details_dialog_message_success">Successful appointment, please wait for the audit result patiently</string>
+    <string name="ETO_details_dialog_success">OK</string>
 
     <!-- Attend Eto Activity -->
     <string name="attend_eto_personal_cap">Personal Cap</string>

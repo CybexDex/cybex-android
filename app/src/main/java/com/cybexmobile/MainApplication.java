@@ -24,6 +24,7 @@ import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 
 public class MainApplication extends Application {
 
+
     @Override
     public void onCreate() {
         super.onCreate();

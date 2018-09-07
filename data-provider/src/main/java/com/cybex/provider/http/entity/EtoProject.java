@@ -74,7 +74,7 @@ public class EtoProject implements Serializable {
     //banner大的在banner栏中靠前
     private int banner;
     //0不准预约，1可以预约
-    private boolean is_user_in;
+    private String is_user_in;
     //
     private String _id;
     //
@@ -123,7 +123,7 @@ public class EtoProject implements Serializable {
                       String base_token_name, int base_accuracy, float base_max_quote, float base_min_quote,
                       String base_soft_cap, float base_token_count, float current_base_token_count,
                       int current_user_count, String type, int deleted, String created_at, String update_at,
-                      String receive_address, int score, String control, int banner, boolean is_user_in,
+                      String receive_address, int score, String control, int banner, String is_user_in,
                       String _id, String account, String project, String timestamp, int __v, int parent,
                       String t_finish_block, String t_total_time, String adds_keyword,
                       String adds_keyword__lang_en, String adds_advantage, String adds_advantage__lang_en,
@@ -437,11 +437,11 @@ public class EtoProject implements Serializable {
         this.banner = banner;
     }
 
-    public boolean isIs_user_in() {
+    public String isIs_user_in() {
         return is_user_in;
     }
 
-    public void setIs_user_in(boolean is_user_in) {
+    public void setIs_user_in(String is_user_in) {
         this.is_user_in = is_user_in;
     }
 

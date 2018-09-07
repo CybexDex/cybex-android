@@ -1,15 +1,20 @@
 package com.cybex.provider.http;
 
 import com.cybex.provider.http.entity.EtoBanner;
+import com.cybex.provider.http.entity.EtoErrorMsgResponse;
 import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoUserStatus;
 import com.cybex.provider.http.entity.EtoRecordPage;
+import com.cybex.provider.http.response.CreateAccountResponse;
 import com.cybex.provider.http.response.EtoBaseResponse;
 
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface EtoHttpApi {
@@ -33,4 +38,7 @@ public interface EtoHttpApi {
     @GET("cybex/user/check_status")
     Observable<EtoBaseResponse<EtoUserStatus>> getEtoUserStatus(@Query("cybex_name") String name,
                                                                 @Query("project") String id);
+
+    @POST("cybex/user/create")
+    Observable<EtoBaseResponse<EtoErrorMsgResponse>> createETO(@Body RequestBody body);
 }

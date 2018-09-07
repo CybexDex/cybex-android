@@ -23,7 +23,7 @@ import com.cybexmobile.activity.markets.MarketsActivity;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AppVersion;
-import com.cybexmobile.dialog.CybexDialog;
+import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.ExchangeFragment;

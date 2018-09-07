@@ -34,7 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apollographql.apollo.ApolloCall;
-import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.GetDepositAddress;
 import com.apollographql.apollo.NewDepositAddress;
 import com.apollographql.apollo.api.Response;
@@ -46,7 +45,7 @@ import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybex.provider.apollo.ApolloClientApi;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybexmobile.toast.message.ToastMessage;
+import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybexmobile.utils.AntiMultiClick;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybexmobile.utils.QRCode;

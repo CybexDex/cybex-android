@@ -30,7 +30,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.apollographql.apollo.ApolloCall;
-import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.GetWithdrawInfo;
 import com.apollographql.apollo.VerifyAddress;
 import com.apollographql.apollo.api.Response;
@@ -47,8 +46,8 @@ import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.dialog.CommonSelectDialog;
-import com.cybexmobile.dialog.CybexDialog;
-import com.cybexmobile.dialog.UnlockDialog;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
@@ -64,7 +63,7 @@ import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybexmobile.service.WebSocketService;
-import com.cybexmobile.toast.message.ToastMessage;
+import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybexmobile.utils.DecimalDigitsInputFilter;
 import com.cybexmobile.utils.SoftKeyBoardListener;
 

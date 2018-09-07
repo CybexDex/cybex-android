@@ -1,13 +1,18 @@
 package com.cybex.eto.activity.details;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -15,12 +20,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
 import com.cybex.eto.activity.attendETO.AttendETOActivity;
 import com.cybex.eto.base.EtoBaseActivity;
 import com.cybex.provider.http.entity.EtoProject;
-import com.cybex.provider.http.entity.EtoProjectUserDetails;
 import com.cybex.provider.http.entity.EtoUserStatus;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
@@ -31,6 +37,7 @@ import javax.inject.Inject;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_PROJECT_DETAILS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 
 public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsView {
 
@@ -38,6 +45,11 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     @Inject
     EtoDetailsPresenter<EtoDetailsView> mEtoDetailsPresenter;
+    EtoProject mEtoProject;
+    private String mUserName;
+    private Handler mHandler = new Handler();
+    private Runnable mRunnable;
+    int mTime = 30;
 
     Toolbar mToolbar;
     ImageView mStatusIv;
@@ -49,7 +61,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     TextView mProjectTimeTv;
     RelativeLayout mProjectAppointmentRl;
     LinearLayout mProjectAgreementLl;
-    ImageView mAgreementSelectionIv;
+    CheckBox mAgreementSelectionCheckbox;
     TextView mAppointmentStatusTv;
     Button mAppointmentButton;
     RelativeLayout mProjectWhiteListRl;
@@ -79,13 +91,13 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         initViews();
         setSupportActionBar(mToolbar);
         setOnclickListener();
-        EtoProject etoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_PROJECT_DETAILS);
+         mEtoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_PROJECT_DETAILS);
+         mUserName = mEtoDetailsPresenter.getUserName(this);
         if (mEtoDetailsPresenter.isLogIn(this)) {
-            String userName = mEtoDetailsPresenter.getUserName(this);
-            mEtoDetailsPresenter.loadDetailsWithUserStatus(etoProject, userName);
+            mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
         } else {
-            showAgreementStatus(etoProject, null, false);
-            showDetails(etoProject);
+            showAgreementStatus(mEtoProject, null, false);
+            showDetails(mEtoProject);
         }
 
     }
@@ -93,6 +105,8 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mHandler.removeCallbacks(mRunnable);
+        mHandler = null;
     }
 
     private void initViews() {
@@ -106,7 +120,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectTimeTv = findViewById(R.id.eto_details_project_time);
         mProjectAppointmentRl = findViewById(R.id.eto_details_project_appointment_status_layout);
         mProjectAgreementLl = findViewById(R.id.eto_agreement_layout);
-        mAgreementSelectionIv = findViewById(R.id.eto_select_agreement_image_view);
+        mAgreementSelectionCheckbox = findViewById(R.id.eto_select_agreement_check_box);
         mAppointmentStatusTv = findViewById(R.id.eto_details_project_appointment_status_tv);
         mAppointmentButton = findViewById(R.id.eto_details_project_appointment_button);
         mProjectWhiteListRl = findViewById(R.id.eto_details_white_list_layout);
@@ -128,14 +142,6 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     private void setOnclickListener() {
-        mAppointmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(EtoDetailsActivity.this, AttendETOActivity.class);
-                startActivity(intent);
-            }
-        });
-
         mProjectDetailsExpandArrowIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,7 +175,10 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_LOGIN && resultCode == Activity.RESULT_OK) {
             if (data.getBooleanExtra(INTENT_PARAM_LOGIN_IN, false)) {
-
+                String userName = data.getStringExtra(INTENT_PARAM_NAME);
+                mAppointmentButton.setVisibility(View.INVISIBLE);
+                mProjectAgreementLl.setVisibility(View.VISIBLE);
+                mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, userName);
             }
         }
     }
@@ -180,17 +189,45 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     @Override
-    public void onLoadProjectDetails(EtoProjectUserDetails etoProjectUserDetails) {
-    }
-
-    @Override
-    public void onLoadProjectDetailsWithoutLogin(EtoProject etoProject) {
-        showProjectStatusIcon(etoProject.getStatus());
-    }
-
-    @Override
     public void onLoadProjectDetailsAndUserStatus(EtoProject etoProject, EtoUserStatus etoUserStatus) {
         showAgreementStatus(etoProject, etoUserStatus, true);
+        showDetails(etoProject);
+    }
+
+    @Override
+    public void onRegisterSuccess(Dialog dialog) {
+        dialog.dismiss();
+        CybexDialog.showETOReserveSucessDialog(this, getResources().getString(R.string.ETO_details_dialog_message_success));
+        mAppointmentButton.setVisibility(View.INVISIBLE);
+        mProjectAgreementLl.setVisibility(View.VISIBLE);
+        mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
+    }
+
+    @Override
+    public void onRegisterError(String message, LinearLayout layout, TextView textView, final Button button, final Dialog dialog) {
+        layout.setVisibility(View.VISIBLE);
+        textView.setText(message);
+        if (mRunnable == null) {
+            mRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    int time = mTime;
+                    mTime--;
+                    if (time <= 0) {
+                        mHandler.removeCallbacks(this);
+                        button.setText(time + "s");
+                        mTime = 30;
+                        mRunnable = null;
+                        dialog.dismiss();
+                    } else {
+                        button.setText(time + "s");
+                        button.setEnabled(false);
+                        mHandler.postDelayed(this, 1000);
+                    }
+                }
+            };
+            mHandler.postDelayed(mRunnable, 1000);
+        }
     }
 
     @Override
@@ -302,8 +339,67 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     private void showAgreementStatus(EtoProject etoProject, EtoUserStatus etoUserStatus, boolean isLogin) {
         if (isLogin) {
             String userKycStatus = etoUserStatus.getKyc_status();
+            String userStatus = etoUserStatus.getStatus();
+            //判断是否通过kyc
             if (userKycStatus.equals(EtoUserStatus.KycStatus.NOT_STARTED)) {
                 mProjectAgreementLl.setVisibility(View.GONE);
+                mAppointmentButton.setVisibility(View.VISIBLE);
+                mAppointmentButton.setText(getResources().getString(R.string.ETO_details_kyc_verification));
+                mAppointmentButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://icoape.com"));
+                        startActivity(browserIntent);
+                    }
+                });
+            } else {
+                //用户是否预约
+                if (userStatus.equals(EtoUserStatus.Status.UNSTART)) {
+                    //项目是否可预约
+                    if (etoProject.isIs_user_in().equals("1")) {
+                        showStatusUserNotMakeAppointment(etoProject);
+                    } else {
+                        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+                            mProjectAppointmentRl.setVisibility(View.GONE);
+                        } else {
+                            mAgreementSelectionCheckbox.setChecked(true);
+                            mAgreementSelectionCheckbox.setEnabled(false);
+                            mAppointmentButton.setVisibility(View.VISIBLE);
+                            mAppointmentButton.setText(getResources().getString(R.string.ETO_details_stop_reserve));
+                            mAppointmentButton.setEnabled(false);
+                        }
+                    }
+                } else {
+                    if (userStatus.equals(EtoUserStatus.Status.OK)) {
+                        if (etoProject.isIs_user_in().equals("1")) {
+                            showStatusUserPassVerifying(etoProject);
+                        }
+                    } else if (userStatus.equals(EtoUserStatus.Status.WAITING)) {
+                        if (etoProject.isIs_user_in().equals("1")) {
+                            if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+                                mProjectAppointmentRl.setVisibility(View.GONE);
+                            } else {
+                                mAgreementSelectionCheckbox.setChecked(true);
+                                mAgreementSelectionCheckbox.setEnabled(false);
+                                mAppointmentStatusTv.setVisibility(View.VISIBLE);
+                                mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_verifying));
+                                mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
+                            }
+                        }
+                    } else if (userStatus.equals(EtoUserStatus.Status.REJECT)) {
+                        if (etoProject.isIs_user_in().equals("1")) {
+                            if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+                                mProjectAppointmentRl.setVisibility(View.GONE);
+                            } else {
+                                mAgreementSelectionCheckbox.setChecked(true);
+                                mAgreementSelectionCheckbox.setEnabled(false);
+                                mAppointmentStatusTv.setVisibility(View.VISIBLE);
+                                mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_rejected));
+                                mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board_grey));
+                            }
+                        }
+                    }
+                }
             }
 
         } else {
@@ -311,6 +407,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 mProjectAppointmentRl.setVisibility(View.GONE);
             } else {
                 mProjectAgreementLl.setVisibility(View.GONE);
+                mAppointmentButton.setVisibility(View.VISIBLE);
                 mAppointmentButton.setText(getResources().getString(R.string.action_sign_in));
                 mAppointmentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -319,6 +416,67 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                     }
                 });
             }
+        }
+    }
+
+    private void showStatusUserNotMakeAppointment(final EtoProject etoProject) {
+        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+            mProjectAppointmentRl.setVisibility(View.GONE);
+        } else {
+            final Dialog dialog = new Dialog(EtoDetailsActivity.this);
+            mAppointmentButton.setVisibility(View.VISIBLE);
+            mAppointmentButton.setText(getResources().getString(R.string.ETO_details_reserve_now));
+            mAppointmentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mAgreementSelectionCheckbox.isChecked()) {
+                        ToastMessage.showNotEnableDepositToastMessage(EtoDetailsActivity.this, getResources().getString(R.string.ETO_details_toast_message) , R.drawable.ic_error_16px);
+                    } else {
+                        CybexDialog.showVerifyPinCodeETODialog(dialog, getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
+                            @Override
+                            public void onClick(final Dialog dialog, final Button button, EditText editText, TextView textView, LinearLayout linearLayout) {
+                                String inputCode = editText.getText().toString().trim();
+                                if (inputCode.isEmpty()) {
+                                    linearLayout.setVisibility(View.VISIBLE);
+                                    textView.setText(getResources().getString(R.string.ETO_details_dialog_no_invitation_code_error));
+                                } else {
+                                    linearLayout.setVisibility(View.GONE);
+                                    mEtoDetailsPresenter.registerETO(mUserName, etoProject.getId(), inputCode, linearLayout, textView, button, dialog);
+                                }
+                            }
+                        }, new CybexDialog.ConfirmationDialogCancelListener() {
+                            @Override
+                            public void onCancel(Dialog dialog) {
+
+                            }
+                        }, mHandler, mRunnable);
+                    }
+                }
+            });
+        }
+    }
+
+    private void showStatusUserPassVerifying(EtoProject etoProject) {
+        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+            mProjectAppointmentRl.setVisibility(View.GONE);
+        } else if (etoProject.getStatus().equals(EtoProject.Status.PRE)) {
+            mAgreementSelectionCheckbox.setChecked(true);
+            mAgreementSelectionCheckbox.setEnabled(false);
+            mAppointmentStatusTv.setVisibility(View.VISIBLE);
+            mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_waiting_for_ETO));
+            mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
+        } else if (etoProject.getStatus().equals(EtoProject.Status.OK)) {
+            mAgreementSelectionCheckbox.setChecked(true);
+            mAgreementSelectionCheckbox.setEnabled(false);
+            mAppointmentButton.setVisibility(View.VISIBLE);
+            mAppointmentButton.setText(getResources().getString(R.string.ETO_details_join_eto_now));
+            mAppointmentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(EtoDetailsActivity.this, AttendETOActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
     }
 }

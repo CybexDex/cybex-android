@@ -21,8 +21,8 @@ import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferAccountManagerRecyclerViewAdapter;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.dialog.AddressOperationSelectDialog;
-import com.cybexmobile.dialog.CybexDialog;
-import com.cybexmobile.toast.message.ToastMessage;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.toastmessage.ToastMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;

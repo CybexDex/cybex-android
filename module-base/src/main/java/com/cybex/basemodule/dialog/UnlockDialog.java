@@ -1,4 +1,4 @@
-package com.cybexmobile.dialog;
+package com.cybex.basemodule.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,7 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cybexmobile.R;
+import com.cybex.basemodule.R;
+import com.cybex.basemodule.R2;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.graphene.chain.AccountObject;
 
@@ -38,17 +39,17 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_AC
 
 public class UnlockDialog extends DialogFragment{
 
-    @BindView(R.id.dialog_confirm_tv_title)
+    @BindView(R2.id.dialog_confirm_tv_title)
     TextView mTvTitle;
-    @BindView(R.id.dialog_confirm_et_password)
+    @BindView(R2.id.dialog_confirm_et_password)
     EditText mEtPassword;
-    @BindView(R.id.dialog_confirm_layout_unlock_error)
+    @BindView(R2.id.dialog_confirm_layout_unlock_error)
     LinearLayout mLayoutUnlockError;
-    @BindView(R.id.dialog_confirm_btn_cancel)
+    @BindView(R2.id.dialog_confirm_btn_cancel)
     Button mBtnCancel;
-    @BindView(R.id.dialog_confirm_btn_confirm)
+    @BindView(R2.id.dialog_confirm_btn_confirm)
     Button mBtnConfirm;
-    @BindView(R.id.dialog_confirm_pb_loading)
+    @BindView(R2.id.dialog_confirm_pb_loading)
     ProgressBar mPbLoading;
 
     private Unbinder mUnbinder;
@@ -96,12 +97,12 @@ public class UnlockDialog extends DialogFragment{
         }
     }
 
-    @OnClick(R.id.dialog_confirm_btn_cancel)
+    @OnClick(R2.id.dialog_confirm_btn_cancel)
     public void onDialogCancel(View view){
         this.dismiss();
     }
 
-    @OnClick(R.id.dialog_confirm_btn_confirm)
+    @OnClick(R2.id.dialog_confirm_btn_confirm)
     public void onDialogConfirm(View view){
         String password = mEtPassword.getText().toString().trim();
         if (mUnLockListener != null && !TextUtils.isEmpty(password)) {
@@ -111,7 +112,7 @@ public class UnlockDialog extends DialogFragment{
         }
     }
 
-    private void verifyPassword(AccountObject accountObject, String username, String password){
+    private void verifyPassword(final AccountObject accountObject, final String username, final String password){
         mDisposable = Observable.create(new ObservableOnSubscribe<Integer>() {
 
             @Override
@@ -149,7 +150,7 @@ public class UnlockDialog extends DialogFragment{
         });
     }
 
-    @OnEditorAction(R.id.dialog_confirm_et_password)
+    @OnEditorAction(R2.id.dialog_confirm_et_password)
     public boolean onUnlockEditorAction(TextView textView, int actionId, KeyEvent event){
         if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
             mBtnConfirm.performClick();
