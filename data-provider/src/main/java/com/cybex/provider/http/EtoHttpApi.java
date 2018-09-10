@@ -3,10 +3,10 @@ package com.cybex.provider.http;
 import com.cybex.provider.http.entity.EtoBanner;
 import com.cybex.provider.http.entity.EtoErrorMsgResponse;
 import com.cybex.provider.http.entity.EtoProject;
+import com.cybex.provider.http.entity.EtoUserCurrentStatus;
 import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.cybex.provider.http.entity.EtoUserStatus;
 import com.cybex.provider.http.entity.EtoRecordPage;
-import com.cybex.provider.http.response.CreateAccountResponse;
 import com.cybex.provider.http.response.EtoBaseResponse;
 
 import java.util.List;
@@ -41,6 +41,9 @@ public interface EtoHttpApi {
     Observable<EtoBaseResponse<EtoUserStatus>> getEtoUserStatus(@Query("cybex_name") String name,
                                                                 @Query("project") String id);
 
+    @GET("cybex/user/current")
+    Flowable<EtoBaseResponse<EtoUserCurrentStatus>> getUserCurrent(@Query("cybex_name") String name,
+                                                                   @Query("project") String id);
     @POST("cybex/user/create")
     Observable<EtoBaseResponse<EtoErrorMsgResponse>> createETO(@Body RequestBody body);
 

@@ -27,7 +27,7 @@ import com.cybexmobile.adapter.WatchlistSelectRecyclerViewAdapter;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.constant.Constant;
 
 import org.greenrobot.eventbus.EventBus;

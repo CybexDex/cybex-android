@@ -24,7 +24,7 @@ import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.basemodule.event.Event;
 import com.cybexmobile.R;
 
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

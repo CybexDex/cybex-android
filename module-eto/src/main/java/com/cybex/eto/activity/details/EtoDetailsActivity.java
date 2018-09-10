@@ -20,16 +20,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.basemodule.transform.CircleTransform;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
 import com.cybex.eto.activity.attendETO.AttendETOActivity;
 import com.cybex.eto.base.EtoBaseActivity;
 import com.cybex.provider.http.entity.EtoProject;
+import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.cybex.provider.http.entity.EtoUserStatus;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 
@@ -88,11 +96,12 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         setContentView(R.layout.activity_eto_details);
         etoActivityComponent().inject(this);
         mEtoDetailsPresenter.attachView(this);
+        EventBus.getDefault().register(this);
         initViews();
         setSupportActionBar(mToolbar);
         setOnclickListener();
-         mEtoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_PROJECT_DETAILS);
-         mUserName = mEtoDetailsPresenter.getUserName(this);
+        mEtoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_PROJECT_DETAILS);
+        mUserName = mEtoDetailsPresenter.getUserName(this);
         if (mEtoDetailsPresenter.isLogIn(this)) {
             mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
         } else {
@@ -107,6 +116,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         super.onDestroy();
         mHandler.removeCallbacks(mRunnable);
         mHandler = null;
+        EventBus.getDefault().unregister(this);
     }
 
     private void initViews() {
@@ -235,6 +245,20 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshProjectStatus(Event.OnRefreshEtoProject refreshEtoProject) {
+        EtoProjectStatus etoProjectStatus = refreshEtoProject.getEtoProjectStatus();
+        if (!etoProjectStatus.getId().equals(mEtoProject.get_id())) {
+            return;
+        }
+        mEtoProject.setCurrent_percent(etoProjectStatus.getCurrent_percent());
+        mEtoProject.setCurrent_base_token_count(etoProjectStatus.getCurrent_base_token_count());
+        mEtoProject.setFinish_at(etoProjectStatus.getFinish_at());
+        mEtoProject.setStatus(etoProjectStatus.getStatus());
+        mProjectPb.setProgress((int) (mEtoProject.getCurrent_percent() * 100));
+        showProjectTime(mEtoProject);
+    }
+
     private void showDetails(EtoProject etoProject) {
         showProjectStatusIcon(etoProject.getStatus());
         showProjectProfileIcon(etoProject);
@@ -257,9 +281,9 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     private void showProjectProfileIcon(EtoProject etoProject) {
         if (Locale.getDefault().getLanguage().equals("zh")) {
-            Picasso.get().load(etoProject.getAdds_logo()).into(mProjectIconIv);
+            Picasso.get().load(etoProject.getAdds_logo()).transform(new CircleTransform()).into(mProjectIconIv);
         } else {
-            Picasso.get().load(etoProject.getAdds_logo__lang_en()).into(mProjectIconIv);
+            Picasso.get().load(etoProject.getAdds_logo__lang_en()).transform(new CircleTransform()).into(mProjectIconIv);
         }
     }
 
@@ -297,41 +321,47 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     private void showProjectTime(EtoProject etoProject) {
         String status = etoProject.getStatus();
-        if(status.equals(EtoProject.Status.PRE)){
+        if (status.equals(EtoProject.Status.PRE)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_start_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getStart_at())/1000)));
-        } else if(status.equals(EtoProject.Status.OK)){
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getStart_at()) / 1000), false));
+        } else if (status.equals(EtoProject.Status.OK)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_end_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getEnd_at())/1000)));
-        } else if(status.equals(EtoProject.Status.FINISH)){
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getEnd_at()) / 1000), false));
+        } else if (status.equals(EtoProject.Status.FINISH)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000)));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000), true));
         } else {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000)));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000), true));
         }
     }
 
-    private String parseTime(int time){
-        if(time <= 0){
+    private String parseTime(int time, boolean isFinish) {
+        if (time <= 0) {
             return "";
         }
         StringBuffer sb = new StringBuffer();
         int day = time / DateUtils.DAY_IN_SECOND;
-        if(day > 0){
+        if (day > 0) {
             sb.append(day).append(getResources().getString(R.string.text_day));
         }
         int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
-        if(hours > 0){
+        if (hours > 0) {
             sb.append(hours).append(getResources().getString(R.string.text_hours));
         }
         int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
-        if(minutes > 0){
+        if (minutes > 0) {
             sb.append(minutes).append(getResources().getString(R.string.text_minutes));
         }
-        int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
-        if(seconds > 0){
-            sb.append(seconds).append(getResources().getString(R.string.text_seconds));
+        if (isFinish) {
+            int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
+            if (seconds > 0) {
+                sb.append(seconds).append(getResources().getString(R.string.text_seconds));
+            }
+        } else {
+            if (time < DateUtils.MINUTE_IN_SECOND) {
+                sb.append(getResources().getString(R.string.text_less_than_minute));
+            }
         }
         return sb.toString();
     }
@@ -430,7 +460,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 @Override
                 public void onClick(View v) {
                     if (!mAgreementSelectionCheckbox.isChecked()) {
-                        ToastMessage.showNotEnableDepositToastMessage(EtoDetailsActivity.this, getResources().getString(R.string.ETO_details_toast_message) , R.drawable.ic_error_16px);
+                        ToastMessage.showNotEnableDepositToastMessage(EtoDetailsActivity.this, getResources().getString(R.string.ETO_details_toast_message), R.drawable.ic_error_16px);
                     } else {
                         CybexDialog.showVerifyPinCodeETODialog(dialog, getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
                             @Override
@@ -456,7 +486,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         }
     }
 
-    private void showStatusUserPassVerifying(EtoProject etoProject) {
+    private void showStatusUserPassVerifying(final EtoProject etoProject) {
         if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
             mProjectAppointmentRl.setVisibility(View.GONE);
         } else if (etoProject.getStatus().equals(EtoProject.Status.PRE)) {
@@ -474,6 +504,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(EtoDetailsActivity.this, AttendETOActivity.class);
+                    intent.putExtra(Constant.INTENT_PARAM_ETO_ATTEND_ETO, etoProject);
                     startActivity(intent);
                 }
             });

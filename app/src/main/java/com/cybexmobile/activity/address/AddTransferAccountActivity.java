@@ -32,7 +32,7 @@ import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.basemodule.toastmessage.ToastMessage;
-import com.cybexmobile.utils.SoftKeyBoardListener;
+import com.cybex.basemodule.utils.SoftKeyBoardListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -161,7 +161,7 @@
             android:screenOrientation="portrait" />
 
 
-        <service android:name=".service.WebSocketService" />
+        <service android:name="com.cybex.basemodule.service.WebSocketService" />
 
 
     </application>

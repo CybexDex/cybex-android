@@ -37,7 +37,7 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.provider.market.OpenOrder;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 

@@ -1,4 +1,4 @@
-package com.cybexmobile.utils;
+package com.cybex.basemodule.utils;
 
 import android.app.Activity;
 import android.graphics.Rect;

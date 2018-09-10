@@ -3,19 +3,26 @@ package com.cybex.basemodule.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybex.basemodule.R;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.graphene.chain.AccountObject;
+
+import java.util.Locale;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
@@ -33,9 +40,6 @@ public class CybexDialog {
     public interface ConfirmationDialogClickWithButtonTimerListener {
         void onClick(Dialog dialog, Button button, EditText editText, TextView textView, LinearLayout linearLayout);
     }
-
-    private static int mTime;
-    private static Runnable mRunnable;
 
     public static void showRegisterDialog(Context context, String message, final View.OnClickListener listener) {
         final Dialog dialog = new Dialog(context);
@@ -206,6 +210,7 @@ public class CybexDialog {
     public static void showTransferConfirmationDialog(Context context, String account, String quantity,
                                                       String fee, String memo, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
+
         /**
          * fix bug:CYM-503
          * 点击空白地方dialog不能消失
@@ -436,6 +441,64 @@ public class CybexDialog {
                 dialog.dismiss();
             }
         });
+        dialog.show();
+    }
+
+    public static void showAttendETOConfirmDialog(Context context, String title, String message, String quantity, String fee, final ConfirmationDialogClickListener listener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_eto_transfer_confirmation);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(title);
+        TextView joinEtoTv = dialog.findViewById(R.id.dialog_eto_confirm_message);
+        joinEtoTv.setText(message);
+        TextView quantityTv = dialog.findViewById(R.id.dialog_eto_confirm_quantity_tv);
+        quantityTv.setText(quantity);
+        TextView feeTv = dialog.findViewById(R.id.dialog_eto_confirm_fee_tv);
+        feeTv.setText(fee);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public static void showAttendEtoLoadingDialog(final Context context, final ConfirmationDialogClickListener listener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_eto_transfer_sucess_countdown_time);
+        final ImageView imageView = dialog.findViewById(R.id.attend_eto_loading_iv);
+        final Button button = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.img_rotate_anim);
+        LinearInterpolator lin = new LinearInterpolator();
+        animation.setInterpolator(lin);
+        imageView.startAnimation(animation);
+        new CountDownTimer(5000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                button.setText(String.format(Locale.US, "%d%s", millisUntilFinished / 1000, context.getResources().getString(R.string.text_seconds)));
+            }
+
+            @Override
+            public void onFinish() {
+                imageView.clearAnimation();
+                dialog.dismiss();
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+            }
+        }.start();
         dialog.show();
     }
 

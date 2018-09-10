@@ -23,7 +23,7 @@ import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 
 import java.util.ArrayList;
 import java.util.List;

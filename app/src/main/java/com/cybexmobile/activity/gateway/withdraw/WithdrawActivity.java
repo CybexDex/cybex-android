@@ -62,10 +62,10 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybexmobile.utils.DecimalDigitsInputFilter;
-import com.cybexmobile.utils.SoftKeyBoardListener;
+import com.cybex.basemodule.utils.SoftKeyBoardListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -235,7 +235,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:src="@drawable/ic_up_arrow_24_px" />
+                            android:src="@drawable/ic_down_24_px" />
                     </RelativeLayout>
 
                     <LinearLayout
@@ -254,7 +254,8 @@
                             android:id="@+id/eto_details_project_name_tv"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_3"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -273,7 +274,8 @@
                             android:id="@+id/eto_details_token_name_tv"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_3"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -292,14 +294,16 @@
                             android:id="@+id/eto_details_eto_time_tv"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/margin_3"/>
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/eto_details_project_details_expand_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -317,7 +321,8 @@
                                 android:id="@+id/eto_details_end_at_tv"
                                 style="@style/font_gray_small"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/margin_3"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -336,7 +341,8 @@
                                 android:id="@+id/eto_details_circulation_on_cybex_tv"
                                 style="@style/font_gray_small"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/margin_3"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -355,7 +361,8 @@
                                 android:id="@+id/eto_details_token_releasing_time_tv"
                                 style="@style/font_gray_small"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/margin_3"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -374,7 +381,8 @@
                                 android:id="@+id/eto_details_currency_tv"
                                 style="@style/font_gray_small"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/margin_3"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -393,7 +401,8 @@
                                 android:id="@+id/eto_details_exchange_ratio_tv"
                                 style="@style/font_gray_small"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/margin_3"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -493,7 +502,9 @@
                             android:id="@+id/eto_details_official_website_tv"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:autoLink="web"
+                            android:layout_marginStart="@dimen/margin_3"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -512,7 +523,9 @@
                             android:id="@+id/eto_details_white_paper_tv"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:autoLink="web"
+                            android:layout_marginStart="@dimen/margin_3"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -531,7 +544,9 @@
                             android:id="@+id/eto_details_project_details_tv"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:autoLink="web"
+                            android:layout_marginStart="@dimen/margin_3"/>
                     </LinearLayout>
 
 

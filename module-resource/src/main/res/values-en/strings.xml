@@ -422,7 +422,8 @@
     <string name="ETO_details_project_official_website">Official Website:</string>
     <string name="ETO_details_project_whitepaper">Whitepaper:</string>
     <string name="ETO_details_project_details">Project Details:</string>
-    <string name="text_token_releasing_immediately">Immediately</string>
+    <string name="ETO_details_text_token_releasing_immediately">Immediately</string>
+    <string name="ETO_details_text_currency_ratio">1 %1$s = %2$s %3$s </string>
     <string name="ETO_details_kyc_verification">KYC Verification</string>
     <string name="ETO_details_reserve_now">Reserve Now</string>
     <string name="ETO_details_verifying">verifying</string>
@@ -445,6 +446,15 @@
     <string name="attend_eto_quantity">Quantity</string>
     <string name="attend_eto_fee">Fee</string>
     <string name="attend_eto_join_eto">Join in ETO</string>
+    <string name="attend_eto_insufficient_balances">insufficient balances</string>
+    <string name="attend_eto_beyond_personal_cap">beyond personal hard cap</string>
+    <string name="attend_eto_insufficient_remaining_quota">insufficient remaining quote</string>
+    <string name="attend_eto_must_beyond_minimum_purchasing_unit">must beyond minimum purchasing unit</string>
+    <string name="attend_eto_must_purchase_an_integer_multiple">must purchase an integer multiple of minimum purchasing unit</string>
+    <string name="attend_eto_dialog_title">ETO Confirm</string>
+    <string name="attend_eto_dialog_message">You will join in ETO of %s</string>
+    <string name="attend_eto_dialog_loading_verifying">Verifying</string>
+    <string name="attend_eto_dialog_loading_repeat">Do not repeat transfers</string>
 
     <!-- EtoRecordActivity -->
     <string name="text_title_eto_records">ETO Records</string>

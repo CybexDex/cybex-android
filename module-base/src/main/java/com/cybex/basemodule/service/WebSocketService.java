@@ -1,4 +1,4 @@
-package com.cybexmobile.service;
+package com.cybex.basemodule.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybex.provider.utils.PriceUtil;
@@ -21,7 +22,6 @@ import com.cybex.provider.http.response.AssetsPairResponse;
 import com.cybex.provider.http.response.AssetsPairToppingResponse;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
-import com.cybexmobile.faucet.AssetsPair;
 import com.cybex.provider.http.response.CnyResponse;
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AccountObject;
@@ -174,7 +174,7 @@ public class WebSocketService extends Service {
 
     public void loadLimitOrderCreateFee(String assetId, int operationId, Operations.base_operation operation){
         if(mLimitOrderCreateFees == null){
-            mLimitOrderCreateFees = Collections.synchronizedList(new ArrayList<>());
+            mLimitOrderCreateFees = Collections.synchronizedList(new ArrayList<FeeAmountObject>());
         }
         if(mLimitOrderCreateFees.size() > 0){
             for(FeeAmountObject fee : mLimitOrderCreateFees){
@@ -194,7 +194,7 @@ public class WebSocketService extends Service {
 
     public void loadLimitOrderCancelFee(String assetId, int operationId, Operations.base_operation operation){
         if(mLimitOrderCancelFees == null){
-            mLimitOrderCancelFees = Collections.synchronizedList(new ArrayList<>());
+            mLimitOrderCancelFees = Collections.synchronizedList(new ArrayList<FeeAmountObject>());
         }
         if(mLimitOrderCancelFees.size() > 0){
             for(FeeAmountObject fee : mLimitOrderCancelFees){
@@ -356,7 +356,7 @@ public class WebSocketService extends Service {
     }
 
     //加载交易对数据
-    private Observable<Map<String, List<AssetsPair>>> loadAssetsPairData(String baseAsset) {
+    private Observable<Map<String, List<AssetsPair>>> loadAssetsPairData(final String baseAsset) {
         return RetrofitFactory.getInstance()
                 .api()
                 .getAssetsPair(baseAsset)
@@ -887,7 +887,7 @@ public class WebSocketService extends Service {
                 .map(new Function<CnyResponse, List<AssetRmbPrice>>() {
                     @Override
                     public List<AssetRmbPrice> apply(CnyResponse cnyResponse) {
-                        return cnyResponse.getPrices() != null ? cnyResponse.getPrices() : new ArrayList<>();
+                        return cnyResponse.getPrices() != null ? cnyResponse.getPrices() : new ArrayList<AssetRmbPrice>();
                     }
                 })
                 .retry()
@@ -940,6 +940,18 @@ public class WebSocketService extends Service {
         loadAssetObjectData(assetId);
         return null;
     }
+
+    public AssetObject getAssetObjectBySymbol(String assetSymbol) {
+        for (AssetObject assetObject : mAssetObjects) {
+            if (assetObject.symbol.equals(assetSymbol)) {
+                return assetObject;
+            }
+        }
+        loadAssetObjectData(assetSymbol);
+        return null;
+    }
+
+
 
     public List<AssetObject> getAssetObjects(String baseAssetId, String quoteAssetId) {
         List<AssetObject> assetObjects = new ArrayList<>();

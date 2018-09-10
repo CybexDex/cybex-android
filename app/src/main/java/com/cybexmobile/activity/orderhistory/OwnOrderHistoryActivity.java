@@ -18,13 +18,13 @@ import com.cybexmobile.adapter.OwnOrderHistoryRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
-import com.cybexmobile.faucet.AssetsPair;
+import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;

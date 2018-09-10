@@ -26,7 +26,7 @@ import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.Operations;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.constant.Constant;
 import com.google.gson.Gson;
 

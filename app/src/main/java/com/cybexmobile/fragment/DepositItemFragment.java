@@ -20,7 +20,7 @@ import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

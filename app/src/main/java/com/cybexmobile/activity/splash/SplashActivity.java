@@ -12,7 +12,7 @@ import android.provider.Settings;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.activity.main.BottomNavigationActivity;
 import com.cybexmobile.R;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 

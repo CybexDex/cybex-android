@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.cybex.basemodule.event.Event;
 import com.cybex.eto.R;
 import com.cybex.eto.activity.details.EtoDetailsActivity;
 import com.cybex.eto.activity.record.EtoRecordActivity;
@@ -22,11 +23,12 @@ import com.cybex.eto.base.EtoBaseFragment;
 import com.cybex.provider.http.entity.EtoBanner;
 import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoProjectStatus;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.squareup.picasso.Picasso;
 import com.youth.banner.Banner;
 import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +156,7 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
     @Override
     public void onRefreshEtoProjectStatus(EtoProjectStatus etoProjectStatus) {
         mEtoRecyclerViewAdapter.setProjectStatus(etoProjectStatus);
+        EventBus.getDefault().post(new Event.OnRefreshEtoProject(etoProjectStatus));
     }
 
     @Override

@@ -430,7 +430,8 @@
     <string name="ETO_details_project_official_website">官网:</string>
     <string name="ETO_details_project_whitepaper">白皮书:</string>
     <string name="ETO_details_project_details">项目详情:</string>
-    <string name="text_token_releasing_immediately">实时</string>
+    <string name="ETO_details_text_token_releasing_immediately">实时</string>
+    <string name="ETO_details_text_currency_ratio">1 %1$s = %2$s %3$s </string>
     <string name="ETO_details_kyc_verification">进行KYC</string>
     <string name="ETO_details_reserve_now">立即预约</string>
     <string name="ETO_details_verifying">审核中</string>
@@ -453,6 +454,15 @@
     <string name="attend_eto_quantity">金额</string>
     <string name="attend_eto_fee">手续费</string>
     <string name="attend_eto_join_eto">参与ETO</string>
+    <string name="attend_eto_insufficient_balances">余额不足</string>
+    <string name="attend_eto_beyond_personal_cap">超出单账号限额</string>
+    <string name="attend_eto_insufficient_remaining_quota">剩余可认购额度不足</string>
+    <string name="attend_eto_must_beyond_minimum_purchasing_unit">不可低于单笔最低限额</string>
+    <string name="attend_eto_must_purchase_an_integer_multiple">认购金额为最小认购单位整数倍</string>
+    <string name="attend_eto_dialog_title">ETO 确认</string>
+    <string name="attend_eto_dialog_message">您将参与 %s 的ETO</string>
+    <string name="attend_eto_dialog_loading_verifying">转账待确认中</string>
+    <string name="attend_eto_dialog_loading_repeat">请勿重复转账</string>
 
     <!-- EtoRecordActivity -->
     <string name="text_title_eto_records">ETO 记录</string>

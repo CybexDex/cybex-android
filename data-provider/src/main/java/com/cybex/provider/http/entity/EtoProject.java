@@ -46,9 +46,9 @@ public class EtoProject implements Serializable {
     //精度（接受最小单位）
     private int base_accuracy;
     //个人最大总额度
-    private float base_max_quote;
+    private float base_max_quota;
     //个人单次最小额度
-    private float base_min_quote;
+    private float base_min_quota;
     //项目软顶
     private String base_soft_cap;
     //项目base总额度
@@ -148,8 +148,8 @@ public class EtoProject implements Serializable {
         this.base_token = base_token;
         this.base_token_name = base_token_name;
         this.base_accuracy = base_accuracy;
-        this.base_max_quote = base_max_quote;
-        this.base_min_quote = base_min_quote;
+        this.base_max_quota = base_max_quote;
+        this.base_min_quota = base_min_quote;
         this.base_soft_cap = base_soft_cap;
         this.base_token_count = base_token_count;
         this.current_base_token_count = current_base_token_count;
@@ -326,19 +326,19 @@ public class EtoProject implements Serializable {
     }
 
     public float getBase_max_quote() {
-        return base_max_quote;
+        return base_max_quota;
     }
 
     public void setBase_max_quote(float base_max_quote) {
-        this.base_max_quote = base_max_quote;
+        this.base_max_quota = base_max_quote;
     }
 
     public float getBase_min_quote() {
-        return base_min_quote;
+        return base_min_quota;
     }
 
     public void setBase_min_quote(float base_min_quote) {
-        this.base_min_quote = base_min_quote;
+        this.base_min_quota = base_min_quote;
     }
 
     public String getBase_soft_cap() {

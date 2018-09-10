@@ -43,8 +43,6 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter<V> {
 
-    private EtoProjectUserDetails mEtoProjectUserDetails;
-
     @Inject
     public EtoDetailsPresenter() {
 

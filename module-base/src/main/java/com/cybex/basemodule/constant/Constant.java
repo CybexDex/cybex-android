@@ -30,6 +30,7 @@ public class Constant {
     public static final String INTENT_PARAM_LOAD_MODE = "intent_param_load_mode";
     public static final String INTENT_PARAM_ACCOUNT_BALANCE_ITEMS = "intent_param_account_balance_items";
     public static final String INTENT_PARAM_ETO_PROJECT_DETAILS = "intent_param_eto_project_details";
+    public static final String INTENT_PARAM_ETO_ATTEND_ETO = "intent_param_eto_attend_eto";
 
     public static final String INTENT_PARAM_ITEMS = "intent_param_items";
     public static final String INTENT_PARAM_SELECTED_ITEM = "intent_param_selected_item";

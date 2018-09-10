@@ -244,7 +244,7 @@
                     android:src="@drawable/ic_error_16px" />
 
                 <TextView
-                    android:id="@+id/withdraw_error_text"
+                    android:id="@+id/attend_eto_error_tv"
                     style="@style/font_red_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

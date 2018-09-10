@@ -18,7 +18,7 @@ import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
-import com.cybexmobile.service.WebSocketService;
+import com.cybex.basemodule.service.WebSocketService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
