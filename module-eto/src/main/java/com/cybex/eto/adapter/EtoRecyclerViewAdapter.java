@@ -19,6 +19,7 @@ import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.squareup.picasso.Picasso;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -117,8 +118,10 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
             viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
         }
-        viewHolder.mPb.setProgress((int)(etoProject.getCurrent_percent() * 100));
-        viewHolder.mTvProgress.setText(String.format("%s%%", etoProject.getCurrent_percent() * 100));
+        float progress = new BigDecimal(String.valueOf(etoProject.getCurrent_percent()))
+                .multiply(new BigDecimal(String.valueOf(100))).floatValue();
+        viewHolder.mPb.setProgress((int) progress);
+        viewHolder.mTvProgress.setText(String.format("%s%%", progress));
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
