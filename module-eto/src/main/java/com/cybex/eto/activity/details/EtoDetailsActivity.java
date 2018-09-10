@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -255,8 +256,16 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mEtoProject.setCurrent_base_token_count(etoProjectStatus.getCurrent_base_token_count());
         mEtoProject.setFinish_at(etoProjectStatus.getFinish_at());
         mEtoProject.setStatus(etoProjectStatus.getStatus());
-        mProjectPb.setProgress((int) (mEtoProject.getCurrent_percent() * 100));
+        setProgress();
         showProjectTime(mEtoProject);
+    }
+
+    private void setProgress() {
+        float progress = new BigDecimal(String.valueOf(mEtoProject.getCurrent_percent()))
+                .multiply(new BigDecimal(String.valueOf(100))).floatValue();
+
+        mProjectPb.setProgress((int) (progress));
+        mProgressPercentTv.setText(String.format("%s%%", progress));
     }
 
     private void showDetails(EtoProject etoProject) {
@@ -292,8 +301,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         if (etoProject.getCurrent_percent() == 1f) {
             mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
         }
-        mProjectPb.setProgress((int) (etoProject.getCurrent_percent() * 100));
-        mProgressPercentTv.setText(String.format("%s%%", etoProject.getCurrent_percent() * 100));
+        setProgress();
         showProjectTime(etoProject);
         mProjectNameTv.setText(etoProject.getName());
         mProjectTokenNameTv.setText(etoProject.getToken_name());
