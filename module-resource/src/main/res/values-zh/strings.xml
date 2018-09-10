@@ -410,6 +410,7 @@
     <string name="text_finish_of_distance">完成时间:</string>
     <string name="text_no_eto">暂无项目</string>
     <string name="text_no_record">暂无记录</string>
+    <string name="text_less_than_minute">少于1分钟</string>
 
     <!-- ETO Details Activity -->
     <string name="ETO_details_title">项目详情</string>

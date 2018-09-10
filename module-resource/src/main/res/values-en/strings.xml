@@ -402,6 +402,7 @@
     <string name="text_finish_of_distance">Ended:</string>
     <string name="text_no_eto">No ETO</string>
     <string name="text_no_record">No Record</string>
+    <string name="text_less_than_minute">Less than 1 minute</string>
 
     <!-- ETO Details Activity -->
     <string name="ETO_details_title">Project Details</string>

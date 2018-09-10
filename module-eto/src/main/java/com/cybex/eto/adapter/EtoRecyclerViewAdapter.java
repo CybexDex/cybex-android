@@ -16,6 +16,7 @@ import com.cybex.basemodule.transform.CircleTransform;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
 import com.cybex.provider.http.entity.EtoProject;
+import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -44,6 +45,25 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void setData(List<EtoProject> etoProjects){
         mEtoProjects = etoProjects;
         notifyDataSetChanged();
+    }
+
+    public List<EtoProject> getData(){
+        return mEtoProjects;
+    }
+
+    public void setProjectStatus(EtoProjectStatus etoProjectStatus){
+        for(int i=0; i<mEtoProjects.size(); i++){
+            EtoProject etoProject = mEtoProjects.get(i);
+            if(etoProject.getId().equals(etoProjectStatus.getId())){
+                etoProject.setCurrent_percent(etoProjectStatus.getCurrent_percent());
+                etoProject.setCurrent_base_token_count(etoProjectStatus.getCurrent_base_token_count());
+                etoProject.setCurrent_user_count(etoProjectStatus.getCurrent_user_count());
+                etoProject.setStatus(etoProjectStatus.getStatus());
+                etoProject.setFinish_at(etoProjectStatus.getFinish_at());
+                notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -83,19 +103,19 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if(status.equals(EtoProject.Status.PRE)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_coming));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_start_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getStart_at())/1000)));
+            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getStart_at())/1000), false));
         } else if(status.equals(EtoProject.Status.OK)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_in_progress));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_end_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getEnd_at())/1000)));
+            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getEnd_at())/1000), false));
         } else if(status.equals(EtoProject.Status.FINISH)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000)));
+            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
         } else {
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000)));
+            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
         }
         viewHolder.mPb.setProgress((int)(etoProject.getCurrent_percent() * 100));
         viewHolder.mTvProgress.setText(String.format("%s%%", etoProject.getCurrent_percent() * 100));
@@ -148,7 +168,13 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         void onItemClick(EtoProject etoProject);
     }
 
-    private String parseTime(int time){
+    /**
+     * 结束精确到秒
+     * @param time
+     * @param isFinish
+     * @return
+     */
+    private String parseTime(int time, boolean isFinish){
         if(time <= 0){
             return "";
         }
@@ -165,9 +191,15 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if(minutes > 0){
             sb.append(minutes).append(mContext.getResources().getString(R.string.text_minutes));
         }
-        int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
-        if(seconds > 0){
-            sb.append(seconds).append(mContext.getResources().getString(R.string.text_seconds));
+        if(isFinish){
+            int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
+            if(seconds > 0){
+                sb.append(seconds).append(mContext.getResources().getString(R.string.text_seconds));
+            }
+        } else {
+            if(time < DateUtils.MINUTE_IN_SECOND){
+                sb.append(mContext.getResources().getString(R.string.text_less_than_minute));
+            }
         }
         return sb.toString();
     }

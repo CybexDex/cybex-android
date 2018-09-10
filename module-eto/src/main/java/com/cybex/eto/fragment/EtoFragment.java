@@ -21,9 +21,11 @@ import com.cybex.eto.adapter.EtoRecyclerViewAdapter;
 import com.cybex.eto.base.EtoBaseFragment;
 import com.cybex.provider.http.entity.EtoBanner;
 import com.cybex.provider.http.entity.EtoProject;
+import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.squareup.picasso.Picasso;
 import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
 import java.util.ArrayList;
@@ -38,7 +40,8 @@ import butterknife.Unbinder;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_PROJECT_DETAILS;
 
 public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
-        Toolbar.OnMenuItemClickListener, EtoRecyclerViewAdapter.OnItemClickListener {
+        Toolbar.OnMenuItemClickListener,
+        EtoRecyclerViewAdapter.OnItemClickListener {
 
     @Inject
     EtoPresenter<EtoMvpView> mEtoPresenter;
@@ -48,6 +51,7 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
     private Toolbar mToolbar;
 
     private EtoRecyclerViewAdapter mEtoRecyclerViewAdapter;
+    private List<EtoBanner> mEtoBanners;
 
     private Unbinder mUnbinder;
 
@@ -71,10 +75,24 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         mUnbinder = ButterKnife.bind(this, view);
         mToolbar.inflateMenu(R.menu.menu_eto_record);
         mToolbar.setOnMenuItemClickListener(this);
-        mEtoRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), new ArrayList<EtoProject>());
         mEtoRecyclerViewAdapter.setOnItemClickListener(this);
         mEtoRv.setAdapter(mEtoRecyclerViewAdapter);
+        mBanner.setOnBannerListener(new OnBannerListener() {
+            @Override
+            public void OnBannerClick(int position) {
+                if(mEtoRecyclerViewAdapter == null){
+                    return;
+                }
+                EtoBanner etoBanner = mEtoBanners.get(position);
+                for(EtoProject etoProject : mEtoRecyclerViewAdapter.getData()){
+                    if(etoProject.getId().equals(etoBanner.getId())){
+                        onItemClick(etoProject);
+                        break;
+                    }
+                }
+            }
+        });
         mBanner.setImageLoader(new PicassoImageLoader());
         return view;
     }
@@ -83,6 +101,9 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         mEtoRv = view.findViewById(R.id.eto_rv);
         mBanner = view.findViewById(R.id.eto_banner);
         mToolbar = view.findViewById(R.id.toolbar);
+        mEtoRv.getItemAnimator().setChangeDuration(0);
+        mEtoRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBanner.setDelayTime(3000);
     }
 
     @Override
@@ -111,6 +132,11 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
 
     @Override
     public void onLoadEtoProjects(List<EtoProject> etoProjects) {
+        for(EtoProject etoProject : etoProjects){
+            if(etoProject.getStatus().equals(EtoProject.Status.OK)){
+                mEtoPresenter.refreshProjectStatus(etoProject.getId());
+            }
+        }
         mEtoRecyclerViewAdapter.setData(etoProjects);
     }
 
@@ -119,8 +145,15 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         if(etoBanners == null || etoBanners.size() == 0){
             return;
         }
-        mBanner.setImages(etoBanners);
+        mEtoBanners = etoBanners;
+        mBanner.setImages(mEtoBanners);
         mBanner.start();
+
+    }
+
+    @Override
+    public void onRefreshEtoProjectStatus(EtoProjectStatus etoProjectStatus) {
+        mEtoRecyclerViewAdapter.setProjectStatus(etoProjectStatus);
     }
 
     @Override
