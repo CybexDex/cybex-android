@@ -235,14 +235,18 @@ public class RegisterActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 String strPassword = mPassWordTextView.getText().toString();
                 String strPasswordConfirm = s.toString();
-                if (strPassword.compareTo(strPasswordConfirm) == 0) {
-                    mPasswordConfirmChecker.setVisibility(View.VISIBLE);
-                    mRegisterErrorText.setText("");
-                    mRegisterErrorSign.setVisibility(View.GONE);
-                } else {
+                if (!strPassword.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
+                    mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
+                    mPasswordChecker.setVisibility(View.GONE);
+                    mRegisterErrorSign.setVisibility(View.VISIBLE);
+                } else if (strPassword.compareTo(strPasswordConfirm) != 0) {
                     mPasswordConfirmChecker.setVisibility(View.INVISIBLE);
                     mRegisterErrorText.setText(R.string.create_account_password_confirm_error);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
+                } else {
+                    mPasswordConfirmChecker.setVisibility(View.VISIBLE);
+                    mRegisterErrorText.setText("");
+                    mRegisterErrorSign.setVisibility(View.GONE);
                 }
                 setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
                         mPasswordChecker.getVisibility() == View.VISIBLE &&
