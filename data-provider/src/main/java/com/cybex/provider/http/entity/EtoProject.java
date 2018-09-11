@@ -102,7 +102,7 @@ public class EtoProject implements Serializable {
     private String adds_advantage__lang_en;
     //项目官网
     private String adds_website;
-    private String adds_website__lane_en;
+    private String adds_website__lang_en;
     //项目banner
     private String adds_banner;
     private String adds_banner__lang_en;
@@ -111,7 +111,7 @@ public class EtoProject implements Serializable {
     private String adds_logo__lang_en;
     //白皮书地址
     private String adds_whitepaper;
-    private String adds_whitepaper__lane_en;
+    private String adds_whitepaper__lang_en;
     //项目详情地址
     private String adds_detail;
     private String adds_detail__lang_en;
@@ -130,9 +130,9 @@ public class EtoProject implements Serializable {
                       String _id, String account, String project, String timestamp, int __v, int parent,
                       String t_finish_block, String t_total_time, String adds_whitelist, String adds_whitelist__lang_en,
                       String adds_keyword, String adds_keyword__lang_en, String adds_advantage, String adds_advantage__lang_en,
-                      String adds_website, String adds_website__lane_en, String adds_banner,
+                      String adds_website, String adds_website__lang_en, String adds_banner,
                       String adds_banner__lang_en, String adds_logo, String adds_logo__lang_en,
-                      String adds_whitepaper, String adds_whitepaper__lane_en, String adds_detail,
+                      String adds_whitepaper, String adds_whitepaper__lang_en, String adds_detail,
                       String adds_detail__lang_en, float current_percent, int index) {
         this.id = id;
         this.name = name;
@@ -181,13 +181,13 @@ public class EtoProject implements Serializable {
         this.adds_advantage = adds_advantage;
         this.adds_advantage__lang_en = adds_advantage__lang_en;
         this.adds_website = adds_website;
-        this.adds_website__lane_en = adds_website__lane_en;
+        this.adds_website__lang_en = adds_website__lang_en;
         this.adds_banner = adds_banner;
         this.adds_banner__lang_en = adds_banner__lang_en;
         this.adds_logo = adds_logo;
         this.adds_logo__lang_en = adds_logo__lang_en;
         this.adds_whitepaper = adds_whitepaper;
-        this.adds_whitepaper__lane_en = adds_whitepaper__lane_en;
+        this.adds_whitepaper__lang_en = adds_whitepaper__lang_en;
         this.adds_detail = adds_detail;
         this.adds_detail__lang_en = adds_detail__lang_en;
         this.current_percent = current_percent;
@@ -570,12 +570,12 @@ public class EtoProject implements Serializable {
         this.adds_website = adds_website;
     }
 
-    public String getAdds_website__lane_en() {
-        return adds_website__lane_en;
+    public String getAdds_website__lang_en() {
+        return adds_website__lang_en;
     }
 
-    public void setAdds_website__lane_en(String adds_website__lane_en) {
-        this.adds_website__lane_en = adds_website__lane_en;
+    public void setAdds_website__lane_en(String adds_website__lang_en) {
+        this.adds_website__lang_en = adds_website__lang_en;
     }
 
     public String getAdds_banner() {
@@ -618,12 +618,12 @@ public class EtoProject implements Serializable {
         this.adds_whitepaper = adds_whitepaper;
     }
 
-    public String getAdds_whitepaper__lane_en() {
-        return adds_whitepaper__lane_en;
+    public String getAdds_whitepaper__lang_en() {
+        return adds_whitepaper__lang_en;
     }
 
-    public void setAdds_whitepaper__lane_en(String adds_whitepaper__lane_en) {
-        this.adds_whitepaper__lane_en = adds_whitepaper__lane_en;
+    public void setAdds_whitepaper__lane_en(String adds_whitepaper__lang_en) {
+        this.adds_whitepaper__lang_en = adds_whitepaper__lang_en;
     }
 
     public String getAdds_detail() {

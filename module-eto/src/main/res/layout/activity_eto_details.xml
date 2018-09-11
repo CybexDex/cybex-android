@@ -529,6 +529,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/eto_details_project_details_linear_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_10"

@@ -425,7 +425,7 @@
     <string name="ETO_details_project_official_website">Official Website:</string>
     <string name="ETO_details_project_whitepaper">Whitepaper:</string>
     <string name="ETO_details_project_details">Project Details:</string>
-    <string name="ETO_details_text_token_releasing_immediately">Immediately</string>
+    <string name="ETO_details_text_token_releasing_immediately">Immediate</string>
     <string name="ETO_details_text_currency_ratio">1 %1$s = %2$s %3$s </string>
     <string name="ETO_details_kyc_verification">KYC Verification</string>
     <string name="ETO_details_reserve_now">Reserve Now</string>

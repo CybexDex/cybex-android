@@ -90,6 +90,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     ImageView mProjectWebsiteExpandArrowIv;
     TextView mProjectOfficialWebsiteTv;
     TextView mProjectWhitepaperTv;
+    LinearLayout mProjectDetailsTvLinearLayout;
     TextView mProjectProjectDetailsTv;
 
 
@@ -151,6 +152,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectWebsiteExpandArrowIv = findViewById(R.id.eto_details_project_website_expand_arrow_iv);
         mProjectOfficialWebsiteTv = findViewById(R.id.eto_details_official_website_tv);
         mProjectWhitepaperTv = findViewById(R.id.eto_details_white_paper_tv);
+        mProjectDetailsTvLinearLayout = findViewById(R.id.eto_details_project_details_linear_layout);
         mProjectProjectDetailsTv = findViewById(R.id.eto_details_project_details_tv);
     }
 
@@ -358,10 +360,20 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage());
             mProjectOfficialWebsiteTv.setText(etoProject.getAdds_website());
             mProjectWhitepaperTv.setText(etoProject.getAdds_whitepaper());
+            if (etoProject.getAdds_detail() != null) {
+                mProjectProjectDetailsTv.setText(etoProject.getAdds_detail());
+            } else {
+                mProjectDetailsTvLinearLayout.setVisibility(View.GONE);
+            }
         } else {
             mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage__lang_en());
-            mProjectOfficialWebsiteTv.setText(etoProject.getAdds_website__lane_en());
-            mProjectWhitepaperTv.setText(etoProject.getAdds_whitepaper__lane_en());
+            mProjectOfficialWebsiteTv.setText(etoProject.getAdds_website__lang_en());
+            mProjectWhitepaperTv.setText(etoProject.getAdds_whitepaper__lang_en());
+            if (etoProject.getAdds_detail() != null) {
+                mProjectProjectDetailsTv.setText(etoProject.getAdds_detail__lang_en());
+            } else {
+                mProjectDetailsTvLinearLayout.setVisibility(View.GONE);
+            }
         }
     }
 
