@@ -167,6 +167,14 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 }
             }
         });
+
+        mProjectWhiteListRl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Locale.getDefault().getLanguage().equals("zh") ? mEtoProject.getAdds_whitelist() : mEtoProject.getAdds_whitelist__lang_en()));
+                startActivity(browserIntent);
+            }
+        });
     }
 
     @Override
