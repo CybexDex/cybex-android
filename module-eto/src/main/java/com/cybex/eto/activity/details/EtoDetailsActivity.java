@@ -464,7 +464,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                                 mAgreementSelectionCheckbox.setEnabled(false);
                                 mAppointmentStatusTv.setVisibility(View.VISIBLE);
                                 mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_rejected));
-                                mAppointmentStatusTv.setTextColor(getResources().getColor(R.color.primary_color_grey));
+                                mAppointmentStatusTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
                                 mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board_grey));
                             }
                         }
