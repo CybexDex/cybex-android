@@ -12,6 +12,7 @@
     </style>
 
     <style name="AppTheme.FullScreen">
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 
