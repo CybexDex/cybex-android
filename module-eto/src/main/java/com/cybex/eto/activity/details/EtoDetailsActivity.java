@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -277,14 +278,43 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     private void showProjectStatusIcon(String status) {
         switch (status) {
-            case "pre":
-                mStatusIv.setImageResource(R.drawable.img_coming_light);
+            case EtoProject.Status.PRE:
+                if (Locale.getDefault().getLanguage().equals("zh")) {
+                    if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("night_mode", false)) {
+                        mStatusIv.setImageResource(R.drawable.img_coming_light_zh);
+                    } else {
+                        mStatusIv.setImageResource(R.drawable.img_coming_dark_zh);
+                    }
+                } else {
+                    if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("night_mode", false)) {
+                        mStatusIv.setImageResource(R.drawable.img_coming_light);
+                    } else {
+                        mStatusIv.setImageResource(R.drawable.img_coming_dark);
+                    }
+                }
                 break;
-            case "ok":
-                mStatusIv.setImageResource(R.drawable.img_inpprogress);
+            case EtoProject.Status.OK:
+                if (Locale.getDefault().getLanguage().equals("zh")) {
+                    mStatusIv.setImageResource(R.drawable.img_inprogress_zh);
+                } else {
+                    mStatusIv.setImageResource(R.drawable.img_inpprogress);
+                }
                 break;
-            case "finish":
-                mStatusIv.setImageResource(R.drawable.img_finished_light);
+            case EtoProject.Status.FINISH:
+                if (Locale.getDefault().getLanguage().equals("zh")) {
+                    if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("night_mode", false)) {
+                        mStatusIv.setImageResource(R.drawable.img_finish_light_zh);
+                    } else {
+                        mStatusIv.setImageResource(R.drawable.img_finish_dark_zh);
+                    }
+                } else {
+                    if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("night_mode", false)) {
+                        mStatusIv.setImageResource(R.drawable.img_finish_light);
+                    } else {
+                        mStatusIv.setImageResource(R.drawable.img_finish_dark);
+                    }
+                }
+                break;
 
         }
     }
