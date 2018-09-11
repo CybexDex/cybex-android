@@ -43,6 +43,20 @@ public class DateUtils {
         return 0;
     }
 
+    public static long formatToMillsETO(String timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN_yyyy_MM_dd_HH_mm_ss, Locale.getDefault());
+        Calendar calendar = new GregorianCalendar();
+        TimeZone mTimeZone = calendar.getTimeZone();
+        int mOffset = mTimeZone.getRawOffset();
+        try {
+            Date parsedDate = dateFormat.parse(timestamp);
+            return parsedDate.getTime() + mOffset;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static long timeDistance(String startTime, String finishTime){
         SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_yyyy_MM_dd_HH_mm_ss, Locale.getDefault());
         try {

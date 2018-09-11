@@ -47,6 +47,7 @@ import javax.inject.Inject;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_PROJECT_DETAILS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.utils.DateUtils.PATTERN_yyyy_MM_dd_HH_mm_ss;
 
 public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsView {
 
@@ -305,9 +306,9 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         showProjectTime(etoProject);
         mProjectNameTv.setText(etoProject.getName());
         mProjectTokenNameTv.setText(etoProject.getToken_name());
-        mProjectEtoTimeTv.setText(etoProject.getStart_at());
-        mProjectEndAtTv.setText(etoProject.getEnd_at());
-        mProjectCybexStartTv.setText(etoProject.getEnd_at());
+        mProjectEtoTimeTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getStart_at())));
+        mProjectEndAtTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getEnd_at())));
+        mProjectCybexStartTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getLock_at())));
         if (etoProject.getOffer_at() != null) {
             mProjectTokenReleasingTimeTv.setText(etoProject.getOffer_at());
         } else {
