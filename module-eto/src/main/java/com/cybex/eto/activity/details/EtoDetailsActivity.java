@@ -332,10 +332,10 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         String status = etoProject.getStatus();
         if (status.equals(EtoProject.Status.PRE)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_start_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getStart_at()) / 1000), false));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at())) / 1000), false));
         } else if (status.equals(EtoProject.Status.OK)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_end_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getEnd_at()) / 1000), false));
+            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getEnd_at())) / 1000), false));
         } else if (status.equals(EtoProject.Status.FINISH)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
             mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000), true));

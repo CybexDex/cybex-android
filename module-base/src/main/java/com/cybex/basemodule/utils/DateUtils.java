@@ -69,15 +69,8 @@ public class DateUtils {
         return 0;
     }
 
-    public static long timeDistance(long startMilliSeconds, String finishTime){
-        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_yyyy_MM_dd_HH_mm_ss, Locale.getDefault());
-        try {
-            long finishMilliSeconds = sdf.parse(finishTime).getTime();
-            return finishMilliSeconds - startMilliSeconds;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
+    public static long timeDistance(long startMilliSeconds, long finishMilliSeconds){
+        return finishMilliSeconds - startMilliSeconds;
     }
 
 }

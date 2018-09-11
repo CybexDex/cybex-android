@@ -104,11 +104,11 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if(status.equals(EtoProject.Status.PRE)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_coming));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_start_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getStart_at())/1000), false));
+            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at()))/1000), false));
         } else if(status.equals(EtoProject.Status.OK)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_in_progress));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_end_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), etoProject.getEnd_at())/1000), false));
+            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getEnd_at()))/1000), false));
         } else if(status.equals(EtoProject.Status.FINISH)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));

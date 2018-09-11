@@ -403,8 +403,8 @@
     <!-- Eto -->
     <string name="text_popular_etos">热门项目</string>
     <string name="text_coming">即将开始</string>
-    <string name="text_in_progress">进行中</string>
-    <string name="text_ended">已结束</string>
+    <string name="text_in_progress">正在进行</string>
+    <string name="text_ended">已经结束</string>
     <string name="text_end_of_distance">距离结束:</string>
     <string name="text_start_of_distance">距离开始:</string>
     <string name="text_finish_of_distance">完成时间:</string>
