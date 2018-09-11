@@ -431,8 +431,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                         if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
                             mProjectAppointmentRl.setVisibility(View.GONE);
                         } else {
-                            mAgreementSelectionCheckbox.setChecked(true);
-                            mAgreementSelectionCheckbox.setEnabled(false);
+                            mProjectAgreementLl.setVisibility(View.GONE);
                             mAppointmentButton.setVisibility(View.VISIBLE);
                             mAppointmentButton.setText(getResources().getString(R.string.ETO_details_stop_reserve));
                             mAppointmentButton.setEnabled(false);
@@ -448,6 +447,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                             if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
                                 mProjectAppointmentRl.setVisibility(View.GONE);
                             } else {
+                                mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
                                 mAgreementSelectionCheckbox.setChecked(true);
                                 mAgreementSelectionCheckbox.setEnabled(false);
                                 mAppointmentStatusTv.setVisibility(View.VISIBLE);
@@ -460,6 +460,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                             if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
                                 mProjectAppointmentRl.setVisibility(View.GONE);
                             } else {
+                                mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
                                 mAgreementSelectionCheckbox.setChecked(true);
                                 mAgreementSelectionCheckbox.setEnabled(false);
                                 mAppointmentStatusTv.setVisibility(View.VISIBLE);
@@ -530,12 +531,14 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
             mProjectAppointmentRl.setVisibility(View.GONE);
         } else if (etoProject.getStatus().equals(EtoProject.Status.PRE)) {
+            mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
             mAgreementSelectionCheckbox.setChecked(true);
             mAgreementSelectionCheckbox.setEnabled(false);
             mAppointmentStatusTv.setVisibility(View.VISIBLE);
             mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_waiting_for_ETO));
             mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
         } else if (etoProject.getStatus().equals(EtoProject.Status.OK)) {
+            mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
             mAgreementSelectionCheckbox.setChecked(true);
             mAgreementSelectionCheckbox.setEnabled(false);
             mAppointmentButton.setVisibility(View.VISIBLE);
