@@ -111,6 +111,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     TextView mErrorTv;
     TextView mFeeTv;
     Button mJoinETOButton;
+    TextView mEtoTransferDescriptionTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,6 +264,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         mErrorTv = findViewById(R.id.attend_eto_error_tv);
         mFeeTv = findViewById(R.id.attend_eto_final_fee);
         mJoinETOButton = findViewById(R.id.attend_eto_button);
+        mEtoTransferDescriptionTv = findViewById(R.id.attend_eto_transfer_description_tv);
     }
 
     private void setListener() {
@@ -297,6 +299,11 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         mPersonalCapTv.setText(String.format(Locale.US, "%s %s", etoProject.getBase_max_quote(), etoProject.getBase_token_name()));
         mSubscribeUnitTv.setText(String.format("%." + etoProject.getBase_accuracy() + "f %s", 1 / Math.pow(10, etoProject.getBase_accuracy()), etoProject.getBase_token_name()));
         mMinSubscriptionTv.setText(String.format(Locale.US, "%s %s", etoProject.getBase_min_quote(), etoProject.getBase_token_name()));
+        if (Locale.getDefault().getLanguage().equals("zh")) {
+            mEtoTransferDescriptionTv.setText(etoProject.getAdds_buy_desc());
+        } else {
+            mEtoTransferDescriptionTv.setText(etoProject.getAdds_buy_desc__lang_en());
+        }
     }
 
     private void showSubscribedAmount(EtoUserCurrentStatus etoUserCurrentStatus) {

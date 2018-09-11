@@ -121,6 +121,9 @@ public class EtoProject implements Serializable {
     //项目详情地址
     private String adds_detail;
     private String adds_detail__lang_en;
+    //项目转账说明
+    private String adds_buy_desc;
+    private String adds_buy_desc__lang_en;
     //项目进度
     private float current_percent;
     //
@@ -136,11 +139,12 @@ public class EtoProject implements Serializable {
                       String _id, String account, String project, String timestamp, int __v, int parent,
                       String t_finish_block, String t_total_time, String adds_whitelist, String adds_whitelist__lang_en,
                       String adds_keyword, String adds_keyword__lang_en, String adds_advantage, String adds_advantage__lang_en,
+                      String adds_banner_mobile, String adds_banner_mobile__lang_en,
                       String adds_website, String adds_website__lang_en, String adds_banner,
-                      String adds_banner__lang_en, String adds_banner_mobile, String adds_banner_mobile__lang_en,
-                      String adds_logo, String adds_logo__lang_en, String adds_logo_mobile,
-                      String adds_logo_mobile__lang_en, String adds_whitepaper, String adds_whitepaper__lang_en,
-                      String adds_detail, String adds_detail__lang_en, float current_percent, int index) {
+                      String adds_banner__lang_en, String adds_logo, String adds_logo__lang_en,
+                      String adds_logo_mobile, String adds_logo_mobile__lang_en,
+                      String adds_whitepaper, String adds_whitepaper__lang_en, String adds_detail,
+                      String adds_detail__lang_en,String adds_buy_desc, String adds_buy_desc__lang_en, float current_percent, int index) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -201,6 +205,8 @@ public class EtoProject implements Serializable {
         this.adds_whitepaper__lang_en = adds_whitepaper__lang_en;
         this.adds_detail = adds_detail;
         this.adds_detail__lang_en = adds_detail__lang_en;
+        this.adds_buy_desc = adds_buy_desc;
+        this.adds_buy_desc__lang_en = adds_buy_desc__lang_en;
         this.current_percent = current_percent;
         this.index = index;
     }
@@ -683,6 +689,22 @@ public class EtoProject implements Serializable {
 
     public void setAdds_detail__lang_en(String adds_detail__lang_en) {
         this.adds_detail__lang_en = adds_detail__lang_en;
+    }
+
+    public String getAdds_buy_desc() {
+        return adds_buy_desc;
+    }
+
+    public void setAdds_buy_desc(String adds_buy_desc) {
+        this.adds_buy_desc = adds_buy_desc;
+    }
+
+    public String getAdds_buy_desc__lang_en() {
+        return adds_buy_desc__lang_en;
+    }
+
+    public void setAdds_buy_desc__lang_en(String adds_buy_desc__lang_en) {
+        this.adds_buy_desc__lang_en = adds_buy_desc__lang_en;
     }
 
     public float getCurrent_percent() {

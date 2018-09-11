@@ -432,7 +432,7 @@
     <string name="ETO_details_verifying">verifying</string>
     <string name="ETO_details_stop_reserve">Stop Reserve</string>
     <string name="ETO_details_waiting_for_ETO">Waiting for ETO</string>
-    <string name="ETO_details_join_eto_now">Join ETO now</string>
+    <string name="ETO_details_join_eto_now">Join in ETO</string>
     <string name="ETO_details_rejected">Rejected</string>
     <string name="ETO_details_toast_message">Please check 《User Agreement》first.</string>
     <string name="ETO_details_dialog_invitation_code">Invitation code</string>
