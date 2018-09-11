@@ -95,10 +95,10 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         viewHolder.mTvName.setText(etoProject.getName());
         if(Locale.getDefault().getLanguage().equals("zh")){
             viewHolder.mTvKeywords.setText(etoProject.getAdds_keyword());
-            Picasso.get().load(etoProject.getAdds_logo()).transform(new CircleTransform()).into(viewHolder.mIvLogo);
+            Picasso.get().load(etoProject.getAdds_logo_mobile()).transform(new CircleTransform()).into(viewHolder.mIvLogo);
         } else {
             viewHolder.mTvKeywords.setText(etoProject.getAdds_keyword__lang_en());
-            Picasso.get().load(etoProject.getAdds_logo__lang_en()).transform(new CircleTransform()).into(viewHolder.mIvLogo);
+            Picasso.get().load(etoProject.getAdds_logo_mobile__lang_en()).transform(new CircleTransform()).into(viewHolder.mIvLogo);
         }
         String status = etoProject.getStatus();
         if(status.equals(EtoProject.Status.PRE)){
@@ -113,15 +113,19 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
             viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
+            viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
+            viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_full));
         } else {
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
             viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
+            viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
+            viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_full));
         }
         float progress = new BigDecimal(String.valueOf(etoProject.getCurrent_percent()))
                 .multiply(new BigDecimal(String.valueOf(100))).floatValue();
         viewHolder.mPb.setProgress((int) progress);
-        viewHolder.mTvProgress.setText(String.format("%s%%", progress));
+        viewHolder.mTvProgress.setText(String.format(Locale.US, "%.2f%%", progress));
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

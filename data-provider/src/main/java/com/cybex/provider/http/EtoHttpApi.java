@@ -27,7 +27,7 @@ public interface EtoHttpApi {
                                                      @Query("type") String type);
 
     @GET("cybex/projects/banner")
-    Observable<EtoBaseResponse<List<EtoBanner>>> getEtoBanner();
+    Observable<EtoBaseResponse<List<EtoBanner>>> getEtoBanner(@Query("client") String client);
 
     @GET("cybex/trade/list")
     Observable<EtoBaseResponse<EtoRecordPage>> getEtoRecords(@Query("cybex_name") String account,

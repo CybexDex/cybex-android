@@ -186,9 +186,9 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         public void displayImage(Context context, Object path, ImageView imageView) {
             EtoBanner etoBanner = (EtoBanner) path;
             if(Locale.getDefault().getLanguage().equals("zh")){
-                Picasso.get().load(etoBanner.getAdds_banner()).into(imageView);
+                Picasso.get().load(etoBanner.getAdds_banner_mobile()).into(imageView);
             } else {
-                Picasso.get().load(etoBanner.getAdds_banner__lang_en()).into(imageView);
+                Picasso.get().load(etoBanner.getAdds_banner_mobile__lang_en()).into(imageView);
             }
         }
     }

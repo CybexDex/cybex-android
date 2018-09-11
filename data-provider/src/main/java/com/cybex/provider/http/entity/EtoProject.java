@@ -106,9 +106,15 @@ public class EtoProject implements Serializable {
     //项目banner
     private String adds_banner;
     private String adds_banner__lang_en;
+    //项目banner 移动端
+    private String adds_banner_mobile;
+    private String adds_banner_mobile__lang_en;
     //项目logo
     private String adds_logo;
     private String adds_logo__lang_en;
+    //项目logo 移动端
+    private String adds_logo_mobile;
+    private String adds_logo_mobile__lang_en;
     //白皮书地址
     private String adds_whitepaper;
     private String adds_whitepaper__lang_en;
@@ -123,7 +129,7 @@ public class EtoProject implements Serializable {
     public EtoProject(String id, String name, String status, String control_status, String start_at,
                       String end_at, String finish_at, String close_at, String offer_at, String lock_at,
                       float rate, int token_count, String token, String token_name, String base_token,
-                      String base_token_name, int base_accuracy, float base_max_quote, float base_min_quote,
+                      String base_token_name, int base_accuracy, float base_max_quota, float base_min_quota,
                       String base_soft_cap, float base_token_count, float current_base_token_count,
                       int current_user_count, String type, int deleted, String created_at, String update_at,
                       String receive_address, int score, String control, int banner, String is_user_in,
@@ -131,9 +137,10 @@ public class EtoProject implements Serializable {
                       String t_finish_block, String t_total_time, String adds_whitelist, String adds_whitelist__lang_en,
                       String adds_keyword, String adds_keyword__lang_en, String adds_advantage, String adds_advantage__lang_en,
                       String adds_website, String adds_website__lang_en, String adds_banner,
-                      String adds_banner__lang_en, String adds_logo, String adds_logo__lang_en,
-                      String adds_whitepaper, String adds_whitepaper__lang_en, String adds_detail,
-                      String adds_detail__lang_en, float current_percent, int index) {
+                      String adds_banner__lang_en, String adds_banner_mobile, String adds_banner_mobile__lang_en,
+                      String adds_logo, String adds_logo__lang_en, String adds_logo_mobile,
+                      String adds_logo_mobile__lang_en, String adds_whitepaper, String adds_whitepaper__lang_en,
+                      String adds_detail, String adds_detail__lang_en, float current_percent, int index) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -151,8 +158,8 @@ public class EtoProject implements Serializable {
         this.base_token = base_token;
         this.base_token_name = base_token_name;
         this.base_accuracy = base_accuracy;
-        this.base_max_quota = base_max_quote;
-        this.base_min_quota = base_min_quote;
+        this.base_max_quota = base_max_quota;
+        this.base_min_quota = base_min_quota;
         this.base_soft_cap = base_soft_cap;
         this.base_token_count = base_token_count;
         this.current_base_token_count = current_base_token_count;
@@ -184,8 +191,12 @@ public class EtoProject implements Serializable {
         this.adds_website__lang_en = adds_website__lang_en;
         this.adds_banner = adds_banner;
         this.adds_banner__lang_en = adds_banner__lang_en;
+        this.adds_banner_mobile = adds_banner_mobile;
+        this.adds_banner_mobile__lang_en = adds_banner_mobile__lang_en;
         this.adds_logo = adds_logo;
         this.adds_logo__lang_en = adds_logo__lang_en;
+        this.adds_logo_mobile = adds_logo_mobile;
+        this.adds_logo_mobile__lang_en = adds_logo_mobile__lang_en;
         this.adds_whitepaper = adds_whitepaper;
         this.adds_whitepaper__lang_en = adds_whitepaper__lang_en;
         this.adds_detail = adds_detail;
@@ -574,7 +585,7 @@ public class EtoProject implements Serializable {
         return adds_website__lang_en;
     }
 
-    public void setAdds_website__lane_en(String adds_website__lang_en) {
+    public void setAdds_website__lang_en(String adds_website__lang_en) {
         this.adds_website__lang_en = adds_website__lang_en;
     }
 
@@ -610,6 +621,38 @@ public class EtoProject implements Serializable {
         this.adds_logo__lang_en = adds_logo__lang_en;
     }
 
+    public String getAdds_banner_mobile() {
+        return adds_banner_mobile;
+    }
+
+    public void setAdds_banner_mobile(String adds_banner_mobile) {
+        this.adds_banner_mobile = adds_banner_mobile;
+    }
+
+    public String getAdds_banner_mobile__lang_en() {
+        return adds_banner_mobile__lang_en;
+    }
+
+    public void setAdds_banner_mobile__lang_en(String adds_banner_mobile__lang_en) {
+        this.adds_banner_mobile__lang_en = adds_banner_mobile__lang_en;
+    }
+
+    public String getAdds_logo_mobile() {
+        return adds_logo_mobile;
+    }
+
+    public void setAdds_logo_mobile(String adds_logo_mobile) {
+        this.adds_logo_mobile = adds_logo_mobile;
+    }
+
+    public String getAdds_logo_mobile__lang_en() {
+        return adds_logo_mobile__lang_en;
+    }
+
+    public void setAdds_logo_mobile__lang_en(String adds_logo_mobile__lang_en) {
+        this.adds_logo_mobile__lang_en = adds_logo_mobile__lang_en;
+    }
+
     public String getAdds_whitepaper() {
         return adds_whitepaper;
     }
@@ -622,7 +665,7 @@ public class EtoProject implements Serializable {
         return adds_whitepaper__lang_en;
     }
 
-    public void setAdds_whitepaper__lane_en(String adds_whitepaper__lang_en) {
+    public void setAdds_whitepaper__lang_en(String adds_whitepaper__lang_en) {
         this.adds_whitepaper__lang_en = adds_whitepaper__lang_en;
     }
 

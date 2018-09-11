@@ -90,7 +90,7 @@ public class EtoPresenter<V extends EtoMvpView> extends BasePresenter<V> {
     public void loadEtoBanner(){
         mCompositeDisposable.add(RetrofitFactory.getInstance()
                 .apiEto()
-                .getEtoBanner()
+                .getEtoBanner("mobile")
                 .map(new Function<EtoBaseResponse<List<EtoBanner>>, List<EtoBanner>>() {
                     @Override
                     public List<EtoBanner> apply(EtoBaseResponse<List<EtoBanner>> etoBaseResponse) {

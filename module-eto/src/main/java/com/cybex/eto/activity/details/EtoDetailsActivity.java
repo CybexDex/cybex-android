@@ -277,7 +277,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 .multiply(new BigDecimal(String.valueOf(100))).floatValue();
 
         mProjectPb.setProgress((int) (progress));
-        mProgressPercentTv.setText(String.format("%s%%", progress));
+        mProgressPercentTv.setText(String.format(Locale.US, "%.2f%%", progress));
     }
 
     private void showDetails(EtoProject etoProject) {
@@ -331,17 +331,14 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     private void showProjectProfileIcon(EtoProject etoProject) {
         if (Locale.getDefault().getLanguage().equals("zh")) {
-            Picasso.get().load(etoProject.getAdds_logo()).transform(new CircleTransform()).into(mProjectIconIv);
+            Picasso.get().load(etoProject.getAdds_logo_mobile()).transform(new CircleTransform()).into(mProjectIconIv);
         } else {
-            Picasso.get().load(etoProject.getAdds_logo__lang_en()).transform(new CircleTransform()).into(mProjectIconIv);
+            Picasso.get().load(etoProject.getAdds_logo_mobile__lang_en()).transform(new CircleTransform()).into(mProjectIconIv);
         }
     }
 
     private void showProjectDetailsIntroductionAndWebsite(EtoProject etoProject) {
         mProjectTitleTv.setText(etoProject.getName());
-        if (etoProject.getCurrent_percent() == 1f) {
-            mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
-        }
         setProgress();
         showProjectTime(etoProject);
         mProjectNameTv.setText(etoProject.getName());
@@ -389,9 +386,13 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         } else if (status.equals(EtoProject.Status.FINISH)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
             mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000), true));
+            mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
+            mProgressPercentTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
         } else {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
             mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000), true));
+            mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
+            mProgressPercentTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
         }
     }
 
