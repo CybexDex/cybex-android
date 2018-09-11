@@ -182,27 +182,19 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             return "";
         }
         StringBuffer sb = new StringBuffer();
-        int day = time / DateUtils.DAY_IN_SECOND;
-        if(day > 0){
+        if(isFinish || time >= DateUtils.MINUTE_IN_SECOND){
+            int day = time / DateUtils.DAY_IN_SECOND;
             sb.append(day).append(mContext.getResources().getString(R.string.text_day));
-        }
-        int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
-        if(hours > 0){
+            int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
             sb.append(hours).append(mContext.getResources().getString(R.string.text_hours));
-        }
-        int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
-        if(minutes > 0){
+            int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
             sb.append(minutes).append(mContext.getResources().getString(R.string.text_minutes));
-        }
-        if(isFinish){
-            int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
-            if(seconds > 0){
+            if(isFinish){
+                int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
                 sb.append(seconds).append(mContext.getResources().getString(R.string.text_seconds));
             }
         } else {
-            if(time < DateUtils.MINUTE_IN_SECOND){
-                sb.append(mContext.getResources().getString(R.string.text_less_than_minute));
-            }
+            sb.append(mContext.getResources().getString(R.string.text_less_than_minute));
         }
         return sb.toString();
     }

@@ -345,32 +345,24 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         }
     }
 
-    private String parseTime(int time, boolean isFinish) {
-        if (time <= 0) {
+    private String parseTime(int time, boolean isFinish){
+        if(time <= 0){
             return "";
         }
         StringBuffer sb = new StringBuffer();
-        int day = time / DateUtils.DAY_IN_SECOND;
-        if (day > 0) {
+        if(isFinish || time >= DateUtils.MINUTE_IN_SECOND){
+            int day = time / DateUtils.DAY_IN_SECOND;
             sb.append(day).append(getResources().getString(R.string.text_day));
-        }
-        int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
-        if (hours > 0) {
+            int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
             sb.append(hours).append(getResources().getString(R.string.text_hours));
-        }
-        int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
-        if (minutes > 0) {
+            int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
             sb.append(minutes).append(getResources().getString(R.string.text_minutes));
-        }
-        if (isFinish) {
-            int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
-            if (seconds > 0) {
+            if(isFinish){
+                int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
                 sb.append(seconds).append(getResources().getString(R.string.text_seconds));
             }
         } else {
-            if (time < DateUtils.MINUTE_IN_SECOND) {
-                sb.append(getResources().getString(R.string.text_less_than_minute));
-            }
+            sb.append(getResources().getString(R.string.text_less_than_minute));
         }
         return sb.toString();
     }
