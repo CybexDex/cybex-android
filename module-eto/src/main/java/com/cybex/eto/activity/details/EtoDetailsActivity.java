@@ -82,6 +82,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     TextView mProjectTokenNameTv;
     TextView mProjectEtoTimeTv;
     TextView mProjectEndAtTv;
+    LinearLayout mProjectCybexStartLinerLayout;
     TextView mProjectCybexStartTv;
     TextView mProjectTokenReleasingTimeTv;
     TextView mProjectCurrencyTv;
@@ -145,6 +146,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectEtoTimeTv = findViewById(R.id.eto_details_eto_time_tv);
         mProjectEndAtTv = findViewById(R.id.eto_details_end_at_tv);
         mProjectCybexStartTv = findViewById(R.id.eto_details_circulation_on_cybex_tv);
+        mProjectCybexStartLinerLayout = findViewById(R.id.eto_details_circulation_on_cybex_linear_layout);
         mProjectTokenReleasingTimeTv = findViewById(R.id.eto_details_token_releasing_time_tv);
         mProjectCurrencyTv = findViewById(R.id.eto_details_currency_tv);
         mProjectExchangeRatioTv = findViewById(R.id.eto_details_exchange_ratio_tv);
@@ -261,7 +263,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshProjectStatus(Event.OnRefreshEtoProject refreshEtoProject) {
         EtoProjectStatus etoProjectStatus = refreshEtoProject.getEtoProjectStatus();
-        if (!etoProjectStatus.getId().equals(mEtoProject.get_id())) {
+        if (!etoProjectStatus.getId().equals(mEtoProject.getId())) {
             return;
         }
         mEtoProject.setCurrent_percent(etoProjectStatus.getCurrent_percent());
@@ -345,7 +347,11 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectTokenNameTv.setText(etoProject.getToken_name());
         mProjectEtoTimeTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getStart_at())));
         mProjectEndAtTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getEnd_at())));
-        mProjectCybexStartTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getLock_at())));
+        if (etoProject.getLock_at() != null) {
+            mProjectCybexStartTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getLock_at())));
+        } else {
+            mProjectCybexStartLinerLayout.setVisibility(View.GONE);
+        }
         if (etoProject.getOffer_at() != null) {
             mProjectTokenReleasingTimeTv.setText(etoProject.getOffer_at());
         } else {
