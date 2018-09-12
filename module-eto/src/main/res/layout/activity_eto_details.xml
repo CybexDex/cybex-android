@@ -160,15 +160,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
-                    <TextView
+                    <Button
                         android:id="@+id/eto_details_project_appointment_status_tv"
                         style="@style/font_orange_large"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/height_40"
                         android:layout_alignParentEnd="true"
                         android:background="@drawable/rect_board"
-                        android:gravity="center"
-                        android:padding="@dimen/margin_8"
+                        android:paddingStart="@dimen/activity_padding"
+                        android:paddingEnd="@dimen/activity_padding"
+                        android:textAllCaps="false"
                         android:visibility="invisible" />
 
                     <Button
@@ -329,6 +330,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/eto_details_circulation_on_cybex_linear_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin_3"
@@ -427,7 +429,8 @@
                         android:layout_height="wrap_content"
                         app:maxCollapsedLines="3"
                         app:expandDrawable="@drawable/ic_down_24_px"
-                        app:collapseDrawable="@drawable/ic_up_arrow_24_px">
+                        app:collapseDrawable="@drawable/ic_up_arrow_24_px"
+                        android:orientation="vertical">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -486,7 +489,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:src="@drawable/ic_up_arrow_24_px" />
+                            android:src="@drawable/ic_down_24_px" />
                     </RelativeLayout>
 
                     <LinearLayout
@@ -513,7 +516,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_10"
+                        android:layout_marginTop="@dimen/margin_3"
                         android:orientation="horizontal">
 
                         <TextView
@@ -535,7 +538,7 @@
                         android:id="@+id/eto_details_project_details_linear_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_10"
+                        android:layout_marginTop="@dimen/margin_3"
                         android:orientation="horizontal">
 
                         <TextView

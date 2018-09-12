@@ -73,7 +73,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     RelativeLayout mProjectAppointmentRl;
     LinearLayout mProjectAgreementLl;
     CheckBox mAgreementSelectionCheckbox;
-    TextView mAppointmentStatusTv;
+    Button mAppointmentStatusTv;
     Button mAppointmentButton;
     RelativeLayout mProjectWhiteListRl;
     ImageView mProjectDetailsExpandArrowIv;
