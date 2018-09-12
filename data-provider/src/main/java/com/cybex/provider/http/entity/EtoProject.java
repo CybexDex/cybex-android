@@ -91,6 +91,9 @@ public class EtoProject implements Serializable {
     private String t_finish_block;
     //结束花费时间
     private String t_total_time;
+    //项目代币总数
+    private String adds_token_total;
+    private String adds_token_total__lang_en;
     //白名单
     private String adds_whitelist;
     private String adds_whitelist__lang_en;
@@ -137,7 +140,7 @@ public class EtoProject implements Serializable {
                       int current_user_count, String type, int deleted, String created_at, String update_at,
                       String receive_address, int score, String control, int banner, String is_user_in,
                       String _id, String account, String project, String timestamp, int __v, int parent,
-                      String t_finish_block, String t_total_time, String adds_whitelist, String adds_whitelist__lang_en,
+                      String t_finish_block, String t_total_time, String adds_token_total, String adds_token_total__lang_en, String adds_whitelist, String adds_whitelist__lang_en,
                       String adds_keyword, String adds_keyword__lang_en, String adds_advantage, String adds_advantage__lang_en,
                       String adds_banner_mobile, String adds_banner_mobile__lang_en,
                       String adds_website, String adds_website__lang_en, String adds_banner,
@@ -185,6 +188,8 @@ public class EtoProject implements Serializable {
         this.parent = parent;
         this.t_finish_block = t_finish_block;
         this.t_total_time = t_total_time;
+        this.adds_token_total = adds_token_total;
+        this.adds_token_total__lang_en = adds_token_total__lang_en;
         this.adds_whitelist = adds_whitelist;
         this.adds_whitelist__lang_en = adds_whitelist__lang_en;
         this.adds_keyword = adds_keyword;
@@ -529,6 +534,22 @@ public class EtoProject implements Serializable {
 
     public void setT_total_time(String t_total_time) {
         this.t_total_time = t_total_time;
+    }
+
+    public String getAdds_token_total() {
+        return adds_token_total;
+    }
+
+    public void setAdds_token_total(String adds_token_total) {
+        this.adds_token_total = adds_token_total;
+    }
+
+    public String getAdds_token_total__lang_en() {
+        return adds_token_total__lang_en;
+    }
+
+    public void setAdds_token_total__lang_en(String adds_token_total__lang_en) {
+        this.adds_token_total__lang_en = adds_token_total__lang_en;
     }
 
     public String getAdds_whitelist() {

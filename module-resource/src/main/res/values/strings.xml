@@ -414,6 +414,7 @@
     <string name="ETO_details_eto_details">ETO Details</string>
     <string name="ETO_details_project_name">Project Name:</string>
     <string name="ETO_details_token_name">Token Name:</string>
+    <string name="ETO_details_total_token_supply">Total Token Supply:</string>
     <string name="ETO_details_ETO_time">ETO Time:</string>
     <string name="ETO_details_end_at">End at:</string>
     <string name="ETO_details_circulation_on_cybex_start">Circulation on Cybex Starts at:</string>

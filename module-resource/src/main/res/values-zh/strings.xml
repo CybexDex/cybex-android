@@ -418,6 +418,7 @@
     <string name="ETO_details_get_white_list">获取白名单</string>
     <string name="ETO_details_eto_details">ETO 详情</string>
     <string name="ETO_details_project_name">项目名称:</string>
+    <string name="ETO_details_total_token_supply">代币总量:</string>
     <string name="ETO_details_token_name">代币名称:</string>
     <string name="ETO_details_ETO_time">ETO时间:</string>
     <string name="ETO_details_end_at">结束时间:</string>
