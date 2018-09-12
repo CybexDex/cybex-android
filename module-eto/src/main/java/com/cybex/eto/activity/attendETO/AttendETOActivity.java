@@ -143,6 +143,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
+        mAttendETOPresenter.detachView();
         EventBus.getDefault().unregister(this);
     }
 

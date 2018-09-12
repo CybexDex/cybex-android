@@ -124,6 +124,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         super.onDestroy();
         mHandler.removeCallbacks(mRunnable);
         mHandler = null;
+        mEtoDetailsPresenter.detachView();
         EventBus.getDefault().unregister(this);
     }
 
@@ -469,9 +470,8 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                     }
                 } else {
                     if (userStatus.equals(EtoUserStatus.Status.OK)) {
-                        if (etoProject.isIs_user_in().equals("1")) {
-                            showStatusUserPassVerifying(etoProject);
-                        }
+                        showStatusUserPassVerifying(etoProject);
+
                     } else if (userStatus.equals(EtoUserStatus.Status.WAITING)) {
                         if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
                             mProjectAppointmentRl.setVisibility(View.GONE);
