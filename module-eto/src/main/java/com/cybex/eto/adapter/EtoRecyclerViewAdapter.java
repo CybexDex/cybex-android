@@ -29,8 +29,6 @@ import butterknife.ButterKnife;
 
 public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final SimpleDateFormat mDateFormat = new SimpleDateFormat("");
-
     private final static int TYPE_EMPTY = 0;
     private final static int TYPE_CONTENT = 1;
 

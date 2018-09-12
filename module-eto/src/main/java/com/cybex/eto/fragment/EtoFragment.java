@@ -77,9 +77,6 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         mUnbinder = ButterKnife.bind(this, view);
         mToolbar.inflateMenu(R.menu.menu_eto_record);
         mToolbar.setOnMenuItemClickListener(this);
-        mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), new ArrayList<EtoProject>());
-        mEtoRecyclerViewAdapter.setOnItemClickListener(this);
-        mEtoRv.setAdapter(mEtoRecyclerViewAdapter);
         mBanner.setOnBannerListener(new OnBannerListener() {
             @Override
             public void OnBannerClick(int position) {
@@ -140,7 +137,13 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
                 mEtoPresenter.refreshProjectStatusOk(etoProject);
             }
         }
-        mEtoRecyclerViewAdapter.setData(etoProjects);
+        if(mEtoRecyclerViewAdapter == null){
+            mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), etoProjects);
+            mEtoRecyclerViewAdapter.setOnItemClickListener(this);
+            mEtoRv.setAdapter(mEtoRecyclerViewAdapter);
+        } else {
+            mEtoRecyclerViewAdapter.setData(etoProjects);
+        }
     }
 
     @Override
