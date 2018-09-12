@@ -108,6 +108,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mEtoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_PROJECT_DETAILS);
         mUserName = mEtoDetailsPresenter.getUserName(this);
         if (mEtoDetailsPresenter.isLogIn(this)) {
+            showDetails(mEtoProject);
             mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
         } else {
             showAgreementStatus(mEtoProject, null, false);
@@ -216,7 +217,6 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     @Override
     public void onLoadProjectDetailsAndUserStatus(EtoProject etoProject, EtoUserStatus etoUserStatus) {
         showAgreementStatus(etoProject, etoUserStatus, true);
-        showDetails(etoProject);
     }
 
     @Override
@@ -269,6 +269,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mEtoProject = etoProject;
         setProgress();
         showProjectTime(mEtoProject);
+        showProjectStatusIcon(mEtoProject.getStatus());
     }
 
     private void setProgress() {

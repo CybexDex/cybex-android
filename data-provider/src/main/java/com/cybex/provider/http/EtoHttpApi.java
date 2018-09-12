@@ -38,7 +38,7 @@ public interface EtoHttpApi {
     Observable<EtoBaseResponse<EtoProject>> getEtoProjectDetails(@Query("project") String id);
 
     @GET("cybex/user/check_status")
-    Observable<EtoBaseResponse<EtoUserStatus>> getEtoUserStatus(@Query("cybex_name") String name,
+    Flowable<EtoBaseResponse<EtoUserStatus>> getEtoUserStatus(@Query("cybex_name") String name,
                                                                 @Query("project") String id);
 
     @GET("cybex/user/current")

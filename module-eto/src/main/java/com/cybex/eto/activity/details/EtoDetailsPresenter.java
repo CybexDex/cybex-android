@@ -15,18 +15,22 @@ import com.cybex.provider.http.entity.EtoErrorMsgResponse;
 import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoProjectUserDetails;
 import com.cybex.provider.http.entity.EtoRegisterProjectRequest;
+import com.cybex.provider.http.entity.EtoUserCurrentStatus;
 import com.cybex.provider.http.entity.EtoUserStatus;
 import com.cybex.provider.http.response.EtoBaseResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
+import org.reactivestreams.Publisher;
 
 import java.lang.reflect.Type;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -56,16 +60,21 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, "");
     }
 
-    public void loadDetailsWithUserStatus(final EtoProject etoProject, String userName) {
-        mCompositeDisposable.add(RetrofitFactory.getInstance()
-                .apiEto()
-                .getEtoUserStatus(userName, etoProject.getId())
-                .map(new Function<EtoBaseResponse<EtoUserStatus>, EtoUserStatus>() {
+    public void loadDetailsWithUserStatus(final EtoProject etoProject, final String userName) {
+        mCompositeDisposable.add( Flowable.interval(0, 3, TimeUnit.SECONDS)
+                .flatMap(new Function<Long, Publisher<EtoBaseResponse<EtoUserStatus>>>() {
                     @Override
-                    public EtoUserStatus apply(EtoBaseResponse<EtoUserStatus> etoUserStatusEtoBaseResponse) throws Exception {
-                        return etoUserStatusEtoBaseResponse.getResult();
+                    public Publisher<EtoBaseResponse<EtoUserStatus>> apply(Long aLong) throws Exception {
+                        return RetrofitFactory.getInstance().apiEto().getEtoUserStatus(userName, etoProject.getId());
                     }
                 })
+                .map(new Function<EtoBaseResponse<EtoUserStatus>, EtoUserStatus>() {
+                    @Override
+                    public EtoUserStatus apply(EtoBaseResponse<EtoUserStatus> etoUserCurrentStatusEtoBaseResponse) throws Exception {
+                        return etoUserCurrentStatusEtoBaseResponse.getResult();
+                    }
+                })
+                .retry()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<EtoUserStatus>() {
