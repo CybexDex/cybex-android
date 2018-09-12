@@ -140,6 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
+                    android:visibility="invisible"
                     android:orientation="horizontal">
 
                     <CheckBox
@@ -283,6 +284,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/eto_details_total_token_supply_linear_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_3"
@@ -292,10 +294,10 @@
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/ETO_details_ETO_time" />
+                            android:text="@string/ETO_details_total_token_supply" />
 
                         <TextView
-                            android:id="@+id/eto_details_eto_time_tv"
+                            android:id="@+id/eto_details_total_token_supply_tv"
                             style="@style/font_gray_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -308,6 +310,26 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_3"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/font_gray_small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ETO_details_ETO_time" />
+
+                            <TextView
+                                android:id="@+id/eto_details_eto_time_tv"
+                                style="@style/font_gray_small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/margin_3"/>
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
