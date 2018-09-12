@@ -238,10 +238,10 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                     mTime--;
                     if (time <= 0) {
                         mHandler.removeCallbacks(this);
-                        button.setText(time + "s");
+                        button.setText(getResources().getString(R.string.dialog_text_confirm));
+                        button.setEnabled(true);
                         mTime = 30;
                         mRunnable = null;
-                        dialog.dismiss();
                     } else {
                         button.setText(time + "s");
                         button.setEnabled(false);
