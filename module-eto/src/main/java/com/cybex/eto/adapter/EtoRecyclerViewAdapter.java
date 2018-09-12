@@ -52,15 +52,14 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return mEtoProjects;
     }
 
-    public void setProjectStatus(EtoProjectStatus etoProjectStatus){
+    public void notifyProjectItem(EtoProject etoProject){
+        notifyItemChanged(mEtoProjects.indexOf(etoProject), etoProject);
+    }
+
+    public void notifyProjectItem(String projectId){
         for(int i=0; i<mEtoProjects.size(); i++){
             EtoProject etoProject = mEtoProjects.get(i);
-            if(etoProject.getId().equals(etoProjectStatus.getId())){
-                etoProject.setCurrent_percent(etoProjectStatus.getCurrent_percent());
-                etoProject.setCurrent_base_token_count(etoProjectStatus.getCurrent_base_token_count());
-                etoProject.setCurrent_user_count(etoProjectStatus.getCurrent_user_count());
-                etoProject.setStatus(etoProjectStatus.getStatus());
-                etoProject.setFinish_at(etoProjectStatus.getFinish_at());
+            if(etoProject.getId().equals(projectId)){
                 notifyItemChanged(i);
                 break;
             }

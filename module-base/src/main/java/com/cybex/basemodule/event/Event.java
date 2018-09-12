@@ -7,6 +7,7 @@ import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.cybex.provider.market.HistoryPrice;
 import com.cybex.provider.graphene.chain.MarketTrade;
@@ -531,13 +532,13 @@ public class Event {
      * ETO项目刷新
      */
     public static class OnRefreshEtoProject {
-        private EtoProjectStatus etoProjectStatus;
-        public OnRefreshEtoProject(EtoProjectStatus etoProjectStatus) {
-            this.etoProjectStatus = etoProjectStatus;
+        private EtoProject etoProject;
+        public OnRefreshEtoProject(EtoProject etoProject) {
+            this.etoProject = etoProject;
         }
 
-        public EtoProjectStatus getEtoProjectStatus() {
-            return etoProjectStatus;
+        public EtoProject getEtoProject() {
+            return etoProject;
         }
     }
 }

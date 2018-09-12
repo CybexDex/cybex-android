@@ -13,5 +13,6 @@ public interface EtoMvpView extends IMvpView {
 
     void onLoadEtoBanners(List<EtoBanner> etoBanners);
 
-    void onRefreshEtoProjectStatus(EtoProjectStatus etoProjectStatus);
+    void onRefreshEtoProjectStatus(EtoProject etoProject);
+
 }

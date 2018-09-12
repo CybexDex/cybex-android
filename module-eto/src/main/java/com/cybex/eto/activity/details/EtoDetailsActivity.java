@@ -262,14 +262,11 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshProjectStatus(Event.OnRefreshEtoProject refreshEtoProject) {
-        EtoProjectStatus etoProjectStatus = refreshEtoProject.getEtoProjectStatus();
-        if (!etoProjectStatus.getId().equals(mEtoProject.getId())) {
+        EtoProject etoProject = refreshEtoProject.getEtoProject();
+        if (!etoProject.getId().equals(mEtoProject.getId())) {
             return;
         }
-        mEtoProject.setCurrent_percent(etoProjectStatus.getCurrent_percent());
-        mEtoProject.setCurrent_base_token_count(etoProjectStatus.getCurrent_base_token_count());
-        mEtoProject.setFinish_at(etoProjectStatus.getFinish_at());
-        mEtoProject.setStatus(etoProjectStatus.getStatus());
+        mEtoProject = etoProject;
         setProgress();
         showProjectTime(mEtoProject);
     }

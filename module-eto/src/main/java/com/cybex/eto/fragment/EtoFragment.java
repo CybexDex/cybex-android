@@ -135,8 +135,9 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
     @Override
     public void onLoadEtoProjects(List<EtoProject> etoProjects) {
         for(EtoProject etoProject : etoProjects){
-            if(etoProject.getStatus().equals(EtoProject.Status.OK)){
-                mEtoPresenter.refreshProjectStatus(etoProject.getId());
+            if(etoProject.getStatus().equals(EtoProject.Status.OK) ||
+                    etoProject.getStatus().equals(EtoProject.Status.PRE)){
+                mEtoPresenter.refreshProjectStatusOk(etoProject);
             }
         }
         mEtoRecyclerViewAdapter.setData(etoProjects);
@@ -154,9 +155,9 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
     }
 
     @Override
-    public void onRefreshEtoProjectStatus(EtoProjectStatus etoProjectStatus) {
-        mEtoRecyclerViewAdapter.setProjectStatus(etoProjectStatus);
-        EventBus.getDefault().post(new Event.OnRefreshEtoProject(etoProjectStatus));
+    public void onRefreshEtoProjectStatus(EtoProject etoProject) {
+        mEtoRecyclerViewAdapter.notifyProjectItem(etoProject);
+        EventBus.getDefault().post(new Event.OnRefreshEtoProject(etoProject));
     }
 
     @Override
