@@ -61,7 +61,7 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
     }
 
     public void loadDetailsWithUserStatus(final EtoProject etoProject, final String userName) {
-        mCompositeDisposable.add( Flowable.interval(0, 3, TimeUnit.SECONDS)
+        mCompositeDisposable.add( Flowable.interval(0, 1, TimeUnit.SECONDS)
                 .flatMap(new Function<Long, Publisher<EtoBaseResponse<EtoUserStatus>>>() {
                     @Override
                     public Publisher<EtoBaseResponse<EtoUserStatus>> apply(Long aLong) throws Exception {
