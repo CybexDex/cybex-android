@@ -21,20 +21,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.youth.banner.Banner
-        android:id="@+id/eto_banner"
-        android:layout_width="match_parent"
-        android:layout_height="190dp">
-
-    </com.youth.banner.Banner>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        style="@style/font_gray_small"
-        android:padding="@dimen/activity_padding"
-        android:text="@string/text_popular_etos"/>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/eto_rv"
         android:layout_width="match_parent"

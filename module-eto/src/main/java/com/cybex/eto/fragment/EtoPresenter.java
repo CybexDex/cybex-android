@@ -1,5 +1,7 @@
 package com.cybex.eto.fragment;
 
+import android.util.Log;
+
 import com.cybex.basemodule.base.BasePresenter;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.provider.http.RetrofitFactory;
@@ -65,8 +67,12 @@ public class EtoPresenter<V extends EtoMvpView> extends BasePresenter<V> {
                 .flatMap(new Function<Long, Publisher<EtoBaseResponse<EtoProjectStatus>>>() {
                     @Override
                     public Publisher<EtoBaseResponse<EtoProjectStatus>> apply(Long aLong) {
+                        if(etoProject.getStatus().equals(EtoProject.Status.PRE)){
+                            Log.v("project status change", DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at())) + "");
+                        }
                         if(etoProject.getStatus().equals(EtoProject.Status.PRE) &&
-                                DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at())) > 0){
+                                DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at())) >= 3000){
+                            Log.v("project status change", "refresh project time~~~~~" + etoProject.getId());
                             return Flowable.create(new FlowableOnSubscribe<EtoBaseResponse<EtoProjectStatus>>() {
                                 @Override
                                 public void subscribe(FlowableEmitter<EtoBaseResponse<EtoProjectStatus>> e) throws Exception {
@@ -75,12 +81,16 @@ public class EtoPresenter<V extends EtoMvpView> extends BasePresenter<V> {
                                 }
                             }, BackpressureStrategy.DROP);
                         }
+                        if(etoProject.getStatus().equals(EtoProject.Status.PRE)){
+                            Log.v("project status change", "refresh project status-----" + etoProject.getId());
+                        }
                         return RetrofitFactory.getInstance().apiEto().refreshProjectStatus(etoProject.getId());
                     }
                 })
                 .map(new Function<EtoBaseResponse<EtoProjectStatus>, EtoProject>() {
                     @Override
                     public EtoProject apply(EtoBaseResponse<EtoProjectStatus> etoBaseResponse) {
+                        Log.v("project status change", "refresh project status-----" + etoProject.getId());
                         EtoProjectStatus etoProjectStatus = etoBaseResponse.getResult();
                         if(etoProjectStatus != null){
                             etoProject.setCurrent_percent(etoProjectStatus.getCurrent_percent());

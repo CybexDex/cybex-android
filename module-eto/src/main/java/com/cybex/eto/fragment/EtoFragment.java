@@ -1,6 +1,5 @@
 package com.cybex.eto.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.cybex.basemodule.event.Event;
 import com.cybex.eto.R;
@@ -49,11 +47,9 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
     EtoPresenter<EtoMvpView> mEtoPresenter;
 
     private RecyclerView mEtoRv;
-    private Banner mBanner;
     private Toolbar mToolbar;
 
     private EtoRecyclerViewAdapter mEtoRecyclerViewAdapter;
-    private List<EtoBanner> mEtoBanners;
 
     private Unbinder mUnbinder;
 
@@ -77,37 +73,20 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         mUnbinder = ButterKnife.bind(this, view);
         mToolbar.inflateMenu(R.menu.menu_eto_record);
         mToolbar.setOnMenuItemClickListener(this);
-        mBanner.setOnBannerListener(new OnBannerListener() {
-            @Override
-            public void OnBannerClick(int position) {
-                if(mEtoRecyclerViewAdapter == null){
-                    return;
-                }
-                EtoBanner etoBanner = mEtoBanners.get(position);
-                for(EtoProject etoProject : mEtoRecyclerViewAdapter.getData()){
-                    if(etoProject.getId().equals(etoBanner.getId())){
-                        onItemClick(etoProject);
-                        break;
-                    }
-                }
-            }
-        });
-        mBanner.setImageLoader(new PicassoImageLoader());
         return view;
     }
 
     private void initView(View view){
         mEtoRv = view.findViewById(R.id.eto_rv);
-        mBanner = view.findViewById(R.id.eto_banner);
         mToolbar = view.findViewById(R.id.toolbar);
         mEtoRv.getItemAnimator().setChangeDuration(0);
         mEtoRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        mBanner.setDelayTime(3000);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        showLoadDialog();
         mEtoPresenter.loadEtoProjects();
         mEtoPresenter.loadEtoBanner();
     }
@@ -137,8 +116,9 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
                 mEtoPresenter.refreshProjectStatusOk(etoProject);
             }
         }
+        hideLoadDialog();
         if(mEtoRecyclerViewAdapter == null){
-            mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), etoProjects);
+            mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), etoProjects, null);
             mEtoRecyclerViewAdapter.setOnItemClickListener(this);
             mEtoRv.setAdapter(mEtoRecyclerViewAdapter);
         } else {
@@ -151,10 +131,14 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         if(etoBanners == null || etoBanners.size() == 0){
             return;
         }
-        mEtoBanners = etoBanners;
-        mBanner.setImages(mEtoBanners);
-        mBanner.start();
-
+        hideLoadDialog();
+        if(mEtoRecyclerViewAdapter == null){
+            mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), null, etoBanners);
+            mEtoRecyclerViewAdapter.setOnItemClickListener(this);
+            mEtoRv.setAdapter(mEtoRecyclerViewAdapter);
+        } else {
+            mEtoRecyclerViewAdapter.setHeaderData(etoBanners);
+        }
     }
 
     @Override
@@ -184,16 +168,4 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
         startActivity(intent);
     }
 
-    private class PicassoImageLoader extends ImageLoader {
-
-        @Override
-        public void displayImage(Context context, Object path, ImageView imageView) {
-            EtoBanner etoBanner = (EtoBanner) path;
-            if(Locale.getDefault().getLanguage().equals("zh")){
-                Picasso.get().load(etoBanner.getAdds_banner_mobile()).into(imageView);
-            } else {
-                Picasso.get().load(etoBanner.getAdds_banner_mobile__lang_en()).into(imageView);
-            }
-        }
-    }
 }

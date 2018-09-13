@@ -15,30 +15,34 @@ import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybex.basemodule.transform.CircleTransform;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
+import com.cybex.eto.utils.PicassoImageLoader;
+import com.cybex.provider.http.entity.EtoBanner;
 import com.cybex.provider.http.entity.EtoProject;
-import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.squareup.picasso.Picasso;
+import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerListener;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final static int TYPE_LOADING = -1;
     private final static int TYPE_EMPTY = 0;
-    private final static int TYPE_CONTENT = 1;
+    private final static int TYPE_DEFAULT = 1;
+    private final static int TYPE_HEADER = 2;
+    private final static int TYPE_FOOTER = 3;
 
     private Context mContext;
     private List<EtoProject> mEtoProjects;
+    private List<EtoBanner> mEtoBanners;
     private OnItemClickListener mOnItemClickListener;
 
-    public EtoRecyclerViewAdapter(Context context, List<EtoProject> etoProjects){
+    public EtoRecyclerViewAdapter(Context context, List<EtoProject> etoProjects, List<EtoBanner> etoBanners){
         mContext = context;
         mEtoProjects = etoProjects;
+        mEtoBanners = etoBanners;
     }
 
     public void setData(List<EtoProject> etoProjects){
@@ -46,22 +50,17 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         notifyDataSetChanged();
     }
 
+    public void setHeaderData(List<EtoBanner> etoBanners){
+        mEtoBanners = etoBanners;
+        notifyItemChanged(0);
+    }
+
     public List<EtoProject> getData(){
         return mEtoProjects;
     }
 
     public void notifyProjectItem(EtoProject etoProject){
-        notifyItemChanged(mEtoProjects.indexOf(etoProject), etoProject);
-    }
-
-    public void notifyProjectItem(String projectId){
-        for(int i=0; i<mEtoProjects.size(); i++){
-            EtoProject etoProject = mEtoProjects.get(i);
-            if(etoProject.getId().equals(projectId)){
-                notifyItemChanged(i);
-                break;
-            }
-        }
+        notifyItemChanged(mEtoProjects.indexOf(etoProject) + 1, etoProject);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -72,6 +71,10 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
+        if(viewType == TYPE_HEADER){
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_eto_header, parent, false);
+            return new HeaderViewHolder(view);
+        }
         if(viewType == TYPE_EMPTY){
             view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
             return new EmptyViewHolder(view);
@@ -87,8 +90,32 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_eto));
             return;
         }
+        if(holder instanceof HeaderViewHolder){
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+            if(mEtoBanners != null && mEtoBanners.size() > 0){
+                headerViewHolder.mBanner.setImages(mEtoBanners);
+                headerViewHolder.mBanner.start();
+                headerViewHolder.mBanner.setOnBannerListener(new OnBannerListener() {
+                    @Override
+                    public void OnBannerClick(int position) {
+                        EtoBanner etoBanner = mEtoBanners.get(position);
+                        for(EtoProject etoProject : mEtoProjects){
+                            if(etoProject.getId().equals(etoBanner.getId())){
+                                //onItemClick(etoProject);
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+            return;
+        }
+        if(holder instanceof FooterViewHolder){
+            FooterViewHolder footerViewHolder = (FooterViewHolder) holder;
+            return;
+        }
         ViewHolder viewHolder = (ViewHolder) holder;
-        EtoProject etoProject = mEtoProjects.get(position);
+        EtoProject etoProject = mEtoProjects.get(position - 1);
         viewHolder.mTvName.setText(etoProject.getName());
         if(Locale.getDefault().getLanguage().equals("zh")){
             viewHolder.mTvKeywords.setText(etoProject.getAdds_keyword());
@@ -135,12 +162,15 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        return mEtoProjects == null || mEtoProjects.size() == 0 ? 1 : mEtoProjects.size();
+        return mEtoProjects == null || mEtoProjects.size() == 0 ? 2 : mEtoProjects.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return mEtoProjects == null || mEtoProjects.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
+        if (position == 0){
+            return TYPE_HEADER;
+        }
+        return mEtoProjects == null || mEtoProjects.size() == 0 ? TYPE_EMPTY : TYPE_DEFAULT;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -156,7 +186,6 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
             mIvLogo = itemView.findViewById(R.id.item_eto_iv_logo);
             mTvStatus = itemView.findViewById(R.id.item_eto_tv_status);
             mTvName = itemView.findViewById(R.id.item_eto_tv_name);
@@ -165,6 +194,25 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             mTvTime = itemView.findViewById(R.id.item_eto_tv_time);
             mPb = itemView.findViewById(R.id.item_eto_pb);
             mTvProgress = itemView.findViewById(R.id.item_eto_tv_progress);
+        }
+    }
+
+    class HeaderViewHolder extends RecyclerView.ViewHolder {
+
+        private Banner mBanner;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+            mBanner = itemView.findViewById(R.id.eto_banner);
+            mBanner.setDelayTime(3000);
+            mBanner.setImageLoader(new PicassoImageLoader());
+        }
+    }
+
+    class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewHolder(View itemView) {
+            super(itemView);
         }
     }
 
