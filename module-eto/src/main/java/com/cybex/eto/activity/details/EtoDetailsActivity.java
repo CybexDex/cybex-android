@@ -185,6 +185,13 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 startActivity(browserIntent);
             }
         });
+
+        mProjectWebsiteExpandArrowIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override
@@ -221,7 +228,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     @Override
     public void onLoadProjectDetailsAndUserStatus(EtoProject etoProject, EtoUserStatus etoUserStatus) {
-        showAgreementStatus(etoProject, etoUserStatus, true);
+        showAgreementStatus(mEtoProject, etoUserStatus, true);
     }
 
     @Override
@@ -343,6 +350,11 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     private void showProjectDetailsIntroductionAndWebsite(EtoProject etoProject) {
+        if (etoProject.getAdds_whitelist() != null || etoProject.getAdds_whitelist__lang_en() != null) {
+            mProjectWhiteListRl.setVisibility(View.VISIBLE);
+        } else {
+            mProjectWhiteListRl.setVisibility(View.GONE);
+        }
         mProjectTitleTv.setText(etoProject.getName());
         setProgress();
         showProjectTime(etoProject);
@@ -443,6 +455,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             //判断是否通过kyc
             if (userKycStatus.equals(EtoUserStatus.KycStatus.NOT_STARTED)) {
                 mProjectAgreementLl.setVisibility(View.GONE);
+                mAppointmentStatusTv.setVisibility(View.INVISIBLE);
                 mAppointmentButton.setVisibility(View.VISIBLE);
                 mAppointmentButton.setText(getResources().getString(R.string.ETO_details_kyc_verification));
                 mAppointmentButton.setOnClickListener(new View.OnClickListener() {
@@ -463,6 +476,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                             mProjectAppointmentRl.setVisibility(View.GONE);
                         } else {
                             mProjectAgreementLl.setVisibility(View.GONE);
+                            mAppointmentStatusTv.setVisibility(View.INVISIBLE);
                             mAppointmentButton.setVisibility(View.VISIBLE);
                             mAppointmentButton.setText(getResources().getString(R.string.ETO_details_stop_reserve));
                             mAppointmentButton.setEnabled(false);
@@ -480,6 +494,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                             mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
                             mAgreementSelectionCheckbox.setChecked(true);
                             mAgreementSelectionCheckbox.setEnabled(false);
+                            mAppointmentButton.setVisibility(View.INVISIBLE);
                             mAppointmentStatusTv.setVisibility(View.VISIBLE);
                             mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_verifying));
                             mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
@@ -493,6 +508,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                                 mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
                                 mAgreementSelectionCheckbox.setChecked(true);
                                 mAgreementSelectionCheckbox.setEnabled(false);
+                                mAppointmentButton.setVisibility(View.INVISIBLE);
                                 mAppointmentStatusTv.setVisibility(View.VISIBLE);
                                 mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_rejected));
                                 mAppointmentStatusTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
@@ -508,6 +524,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 mProjectAppointmentRl.setVisibility(View.GONE);
             } else {
                 mProjectAgreementLl.setVisibility(View.GONE);
+                mAppointmentStatusTv.setVisibility(View.INVISIBLE);
                 mAppointmentButton.setVisibility(View.VISIBLE);
                 mAppointmentButton.setText(getResources().getString(R.string.action_sign_in));
                 mAppointmentButton.setOnClickListener(new View.OnClickListener() {
@@ -526,6 +543,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         } else {
             final Dialog dialog = new Dialog(EtoDetailsActivity.this);
             mProjectAgreementLl.setVisibility(View.VISIBLE);
+            mAppointmentStatusTv.setVisibility(View.INVISIBLE);
             mAppointmentButton.setVisibility(View.VISIBLE);
             mAppointmentButton.setText(getResources().getString(R.string.ETO_details_reserve_now));
             mAppointmentButton.setOnClickListener(new View.OnClickListener() {
@@ -566,6 +584,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
             mAgreementSelectionCheckbox.setChecked(true);
             mAgreementSelectionCheckbox.setEnabled(false);
+            mAppointmentButton.setVisibility(View.INVISIBLE);
             mAppointmentStatusTv.setVisibility(View.VISIBLE);
             mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_waiting_for_ETO));
             mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
@@ -574,6 +593,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
             mAgreementSelectionCheckbox.setChecked(true);
             mAgreementSelectionCheckbox.setEnabled(false);
+            mAppointmentStatusTv.setVisibility(View.INVISIBLE);
             mAppointmentButton.setVisibility(View.VISIBLE);
             mAppointmentButton.setText(getResources().getString(R.string.ETO_details_join_eto_now));
             mAppointmentButton.setOnClickListener(new View.OnClickListener() {
