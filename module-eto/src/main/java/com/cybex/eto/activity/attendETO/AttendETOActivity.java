@@ -296,7 +296,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     }
 
     private void showDataFromEtoProject(EtoProject etoProject) {
-        mToolbarTitleTv.setText(String.format("%s %s", etoProject.getName(), etoProject.getBase_token_name()));
+        mToolbarTitleTv.setText(String.format("%s %s", etoProject.getName(), "ETO"));
         mPersonalCapTv.setText(String.format(Locale.US, "%s %s", etoProject.getBase_max_quote(), etoProject.getBase_token_name()));
         mSubscribeUnitTv.setText(String.format("%." + etoProject.getBase_accuracy() + "f %s", 1 / Math.pow(10, etoProject.getBase_accuracy()), etoProject.getBase_token_name()));
         mMinSubscriptionTv.setText(String.format(Locale.US, "%s %s", etoProject.getBase_min_quote(), etoProject.getBase_token_name()));

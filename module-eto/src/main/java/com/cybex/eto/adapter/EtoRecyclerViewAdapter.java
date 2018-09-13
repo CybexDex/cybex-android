@@ -145,12 +145,14 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
             viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
             viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_full));
+            viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
         } else {
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
             viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
             viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
             viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_full));
+            viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
         }
         float progress = new BigDecimal(String.valueOf(etoProject.getCurrent_percent()))
                 .multiply(new BigDecimal(String.valueOf(100))).floatValue();
@@ -233,20 +235,26 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
      * @return
      */
     private String parseTime(int time, boolean isFinish){
-        if(time <= 0){
-            return "";
-        }
         StringBuffer sb = new StringBuffer();
+        if(time <= 0){
+            sb.append(0).append(mContext.getResources().getString(R.string.text_day)).append(" ");
+            sb.append(0).append(mContext.getResources().getString(R.string.text_hours)).append(" ");
+            sb.append(0).append(mContext.getResources().getString(R.string.text_minutes)).append(" ");
+            if(isFinish){
+                sb.append(0).append(mContext.getResources().getString(R.string.text_seconds)).append(" ");
+            }
+            return sb.toString();
+        }
         if(isFinish || time >= DateUtils.MINUTE_IN_SECOND){
             int day = time / DateUtils.DAY_IN_SECOND;
-            sb.append(day).append(mContext.getResources().getString(R.string.text_day));
+            sb.append(day).append(mContext.getResources().getString(R.string.text_day)).append(" ");
             int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
-            sb.append(hours).append(mContext.getResources().getString(R.string.text_hours));
+            sb.append(hours).append(mContext.getResources().getString(R.string.text_hours)).append(" ");
             int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
-            sb.append(minutes).append(mContext.getResources().getString(R.string.text_minutes));
+            sb.append(minutes).append(mContext.getResources().getString(R.string.text_minutes)).append(" ");
             if(isFinish){
                 int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
-                sb.append(seconds).append(mContext.getResources().getString(R.string.text_seconds));
+                sb.append(seconds).append(mContext.getResources().getString(R.string.text_seconds)).append(" ");
             }
         } else {
             sb.append(mContext.getResources().getString(R.string.text_less_than_minute));

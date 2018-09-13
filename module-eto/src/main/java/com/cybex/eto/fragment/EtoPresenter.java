@@ -71,7 +71,7 @@ public class EtoPresenter<V extends EtoMvpView> extends BasePresenter<V> {
                             Log.v("project status change", DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at())) + "");
                         }
                         if(etoProject.getStatus().equals(EtoProject.Status.PRE) &&
-                                DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at())) >= 3000){
+                                DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at())) > 3000){
                             Log.v("project status change", "refresh project time~~~~~" + etoProject.getId());
                             return Flowable.create(new FlowableOnSubscribe<EtoBaseResponse<EtoProjectStatus>>() {
                                 @Override

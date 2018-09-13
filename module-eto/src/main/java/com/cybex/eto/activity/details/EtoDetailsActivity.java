@@ -412,20 +412,26 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     private String parseTime(int time, boolean isFinish) {
-        if (time <= 0) {
-            return "";
-        }
         StringBuffer sb = new StringBuffer();
+        if (time <= 0) {
+            sb.append(0).append(getResources().getString(R.string.text_day)).append(" ");
+            sb.append(0).append(getResources().getString(R.string.text_hours)).append(" ");
+            sb.append(0).append(getResources().getString(R.string.text_minutes)).append(" ");
+            if(isFinish){
+                sb.append(0).append(getResources().getString(R.string.text_seconds)).append(" ");
+            }
+            return sb.toString();
+        }
         if (isFinish || time >= DateUtils.MINUTE_IN_SECOND) {
             int day = time / DateUtils.DAY_IN_SECOND;
-            sb.append(day).append(getResources().getString(R.string.text_day));
+            sb.append(day).append(getResources().getString(R.string.text_day)).append(" ");
             int hours = (time % DateUtils.DAY_IN_SECOND) / DateUtils.HOUR_IN_SECOND;
-            sb.append(hours).append(getResources().getString(R.string.text_hours));
+            sb.append(hours).append(getResources().getString(R.string.text_hours)).append(" ");
             int minutes = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) / DateUtils.MINUTE_IN_SECOND;
-            sb.append(minutes).append(getResources().getString(R.string.text_minutes));
+            sb.append(minutes).append(getResources().getString(R.string.text_minutes)).append(" ");
             if (isFinish) {
                 int seconds = ((time % DateUtils.DAY_IN_SECOND) % DateUtils.HOUR_IN_SECOND) % DateUtils.MINUTE_IN_SECOND;
-                sb.append(seconds).append(getResources().getString(R.string.text_seconds));
+                sb.append(seconds).append(getResources().getString(R.string.text_seconds)).append(" ");
             }
         } else {
             sb.append(getResources().getString(R.string.text_less_than_minute));

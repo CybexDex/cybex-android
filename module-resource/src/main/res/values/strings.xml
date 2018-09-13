@@ -343,10 +343,10 @@
     <string name="text_time">Time</string>
     <string name="text_none">none</string>
     <string name="text_click_to_view">Click to view</string>
-    <string name="text_day">d</string>
-    <string name="text_hours">h</string>
-    <string name="text_minutes">m</string>
-    <string name="text_seconds">s</string>
+    <string name="text_day">D</string>
+    <string name="text_hours">H</string>
+    <string name="text_minutes">M</string>
+    <string name="text_seconds">S</string>
     <string name="text_in">In</string>
     <string name="text_out">Out</string>
 
@@ -396,7 +396,7 @@
     <string name="withdraw_address_memo">Memo</string>
 
     <!-- Eto -->
-    <string name="text_popular_etos">Popular Etos</string>
+    <string name="text_popular_etos">Popular ETOs</string>
     <string name="text_coming">Coming</string>
     <string name="text_in_progress">In progress</string>
     <string name="text_ended">Ended</string>
@@ -466,7 +466,7 @@
     <string name="text_receive_token">Receive Token</string>
     <string name="text_refund">Refund</string>
     <string name="text_invalid_subscription">Invalid Subscription</string>
-    <string name="text_subscription_partly_invalid">Subscription partly invalid</string>
+    <string name="text_subscription_partly_valid">Subscription partly valid</string>
     <string name="text_received_success">Received</string>
 
 </resources>

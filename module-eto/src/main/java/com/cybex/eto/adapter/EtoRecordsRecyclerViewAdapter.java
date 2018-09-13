@@ -27,6 +27,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.cybex.basemodule.utils.DateUtils.PATTERN_yyyy_MM_dd_HH_mm_ss;
+
 public class EtoRecordsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final static int TYPE_EMPTY = 0;
@@ -68,7 +70,7 @@ public class EtoRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         EtoRecord etoRecord = mEtoRecords.get(position);
         viewHolder.mTvEtoName.setText(etoRecord.getProject_name());
         viewHolder.mTvEtoAssetCount.setText(String.format("%s%s", etoRecord.getToken_count(), AssetUtil.parseSymbol(etoRecord.getToken())));
-        viewHolder.mTvEtoOperateTime.setText(etoRecord.getCreated_at());
+        viewHolder.mTvEtoOperateTime.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoRecord.getCreated_at())));
         switch (etoRecord.getIeo_type()) {
             case EtoRecord.Type.RECEIVE:
                 viewHolder.mTvEtoOperate.setText(mContext.getResources().getString(R.string.text_join_eto));
@@ -99,7 +101,7 @@ public class EtoRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
                 case EtoRecord.Reason.REASON_12:
                 case EtoRecord.Reason.REASON_13:
                 case EtoRecord.Reason.REASON_14:
-                    viewHolder.mTvEtoOperateResult.setText(mContext.getResources().getString(R.string.text_subscription_partly_invalid));
+                    viewHolder.mTvEtoOperateResult.setText(mContext.getResources().getString(R.string.text_subscription_partly_valid));
                     viewHolder.mTvEtoOperateResult.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
                     break;
                 case EtoRecord.Reason.REASON_101:

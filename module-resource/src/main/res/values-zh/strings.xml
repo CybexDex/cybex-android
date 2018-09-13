@@ -196,7 +196,7 @@
     <string name="text_percentage_50">50%</string>
     <string name="text_percentage_75">75%</string>
     <string name="text_percentage_100">100%</string>
-    <string name="text_available">余额</string>
+    <string name="text_available">可用余额</string>
     <string name="text_free">手续费</string>
     <string name="text_total">成交额</string>
     <string name="text_buy">买入</string>
@@ -471,7 +471,7 @@
     <string name="text_receive_token">收到Token</string>
     <string name="text_refund">退款</string>
     <string name="text_invalid_subscription">无效认购</string>
-    <string name="text_subscription_partly_invalid">部分无效</string>
+    <string name="text_subscription_partly_valid">部分有效</string>
     <string name="text_received_success">到账成功</string>
 
 </resources>
