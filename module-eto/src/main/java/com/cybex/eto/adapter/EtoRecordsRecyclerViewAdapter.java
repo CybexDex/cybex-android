@@ -97,6 +97,7 @@ public class EtoRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
                 case EtoRecord.Reason.REASON_11:
                 case EtoRecord.Reason.REASON_15:
                     viewHolder.mTvEtoOperateResult.setText(mContext.getResources().getString(R.string.text_invalid_subscription));
+                    viewHolder.mTvEtoOperateResult.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
                     break;
                 case EtoRecord.Reason.REASON_12:
                 case EtoRecord.Reason.REASON_13:
@@ -106,6 +107,7 @@ public class EtoRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
                     break;
                 case EtoRecord.Reason.REASON_101:
                     viewHolder.mTvEtoOperateResult.setText(mContext.getResources().getString(R.string.text_refund));
+                    viewHolder.mTvEtoOperateResult.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
                     break;
             }
         }
