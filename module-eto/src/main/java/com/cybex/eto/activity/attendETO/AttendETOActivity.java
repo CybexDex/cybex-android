@@ -224,10 +224,6 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     public void onTransfer(Event.Transfer event) {
         hideLoadDialog();
         if (event.isSuccess()) {
-            ToastMessage.showNotEnableDepositToastMessage(
-                    AttendETOActivity.this,
-                    getResources().getString(R.string.toast_message_transfer_success),
-                    R.drawable.ic_check_circle_green);
             /**
              * fix bug:CYM-505
              * 转账成功和失败清除数据
