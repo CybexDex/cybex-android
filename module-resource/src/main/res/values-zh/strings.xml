@@ -454,7 +454,7 @@
     <string name="attend_eto_subscribed">已认购额度</string>
     <string name="attend_eto_quantity">金额</string>
     <string name="attend_eto_fee">手续费</string>
-    <string name="attend_eto_join_eto">参与ETO</string>
+    <string name="attend_eto_join_eto">立即ETO</string>
     <string name="attend_eto_insufficient_balances">余额不足</string>
     <string name="attend_eto_beyond_personal_cap">超出单账号限额</string>
     <string name="attend_eto_insufficient_remaining_quota">剩余可认购额度不足</string>
