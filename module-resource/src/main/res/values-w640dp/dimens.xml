@@ -45,6 +45,7 @@
     <dimen name="height_155">229.62dp</dimen>
     <dimen name="height_162">240dp</dimen>
     <dimen name="height_180">266.66dp</dimen>
+    <dimen name="height_190">281.48dp</dimen>
     <dimen name="height_200">296.29dp</dimen>
 
     <!-- margin -->
@@ -55,6 +56,7 @@
     <dimen name="margin_14">20.74dp</dimen>
     <dimen name="margin_16">23.7dp</dimen>
     <dimen name="margin_18">26.66dp</dimen>
+    <dimen name="margin_20">29.62dp</dimen>
     <dimen name="margin_22">32.59dp</dimen>
     <dimen name="margin_30">44.44dp</dimen>
     <dimen name="margin_40">59.25dp</dimen>

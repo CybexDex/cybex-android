@@ -20,6 +20,8 @@ import com.cybex.provider.http.entity.EtoBanner;
 import com.cybex.provider.http.entity.EtoProject;
 import com.squareup.picasso.Picasso;
 import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerListener;
 
 import java.math.BigDecimal;
@@ -212,8 +214,10 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public HeaderViewHolder(View itemView) {
             super(itemView);
             mBanner = itemView.findViewById(R.id.eto_banner);
+            mBanner.isAutoPlay(true);
             mBanner.setDelayTime(3000);
             mBanner.setImageLoader(new PicassoImageLoader());
+            mBanner.setIndicatorGravity(BannerConfig.CENTER);
         }
     }
 
