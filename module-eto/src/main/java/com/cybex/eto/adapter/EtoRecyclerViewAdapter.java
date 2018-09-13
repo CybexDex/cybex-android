@@ -99,9 +99,15 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     @Override
                     public void OnBannerClick(int position) {
                         EtoBanner etoBanner = mEtoBanners.get(position);
+                        if(mEtoProjects == null || mEtoProjects.size() == 0){
+                            return;
+                        }
                         for(EtoProject etoProject : mEtoProjects){
-                            if(etoProject.getId().equals(etoBanner.getId())){
-                                //onItemClick(etoProject);
+                            if(!etoProject.getId().equals(etoBanner.getId())){
+                                continue;
+                            }
+                            if(mOnItemClickListener != null){
+                                mOnItemClickListener.onItemClick(etoProject);
                                 break;
                             }
                         }
@@ -154,7 +160,7 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             @Override
             public void onClick(View v) {
                 if(mOnItemClickListener != null){
-                    mOnItemClickListener.onItemClick(mEtoProjects.get(position));
+                    mOnItemClickListener.onItemClick(mEtoProjects.get(position - 1));
                 }
             }
         });
