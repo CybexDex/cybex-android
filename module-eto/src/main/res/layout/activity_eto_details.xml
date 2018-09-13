@@ -495,89 +495,82 @@
                     android:orientation="vertical"
                     android:padding="@dimen/activity_padding">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            style="@style/font_white_dark_medium"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="@string/ETO_details_project_website" />
-
-                        <ImageView
-                            android:id="@+id/eto_details_project_website_expand_arrow_iv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:src="@drawable/ic_down_24_px" />
-                    </RelativeLayout>
-
-                    <LinearLayout
+                    <com.ms.square.android.expandabletextview.ExpandableTextView
+                        android:id="@+id/eto_website_expand_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_10"
-                        android:orientation="horizontal">
+                        app:maxCollapsedLines="3"
+                        app:expandDrawable="@drawable/ic_down_24_px"
+                        app:collapseDrawable="@drawable/ic_up_arrow_24_px"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                style="@style/font_white_dark_medium"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/ETO_details_project_website" />
+
+                            <ImageButton
+                                android:id="@id/expand_collapse"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:background="@android:color/transparent"/>
+                        </RelativeLayout>
 
                         <TextView
+                            android:id="@id/expandable_text"
                             style="@style/font_gray_small"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/ETO_details_project_official_website" />
+                            android:layout_marginTop="@dimen/margin_10"
+                            android:lineSpacingExtra="4dp"/>
+                    </com.ms.square.android.expandabletextview.ExpandableTextView>
 
-                        <TextView
-                            android:id="@+id/eto_details_official_website_tv"
-                            style="@style/font_gray_small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:autoLink="web"
-                            android:layout_marginStart="@dimen/margin_3"/>
-                    </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_3"
-                        android:orientation="horizontal">
+                    <!--<RelativeLayout-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content">-->
 
-                        <TextView
-                            style="@style/font_gray_small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/ETO_details_project_whitepaper" />
+                        <!--<TextView-->
+                            <!--style="@style/font_white_dark_medium"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_centerVertical="true"-->
+                            <!--android:text="@string/ETO_details_project_website" />-->
 
-                        <TextView
-                            android:id="@+id/eto_details_white_paper_tv"
-                            style="@style/font_gray_small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:autoLink="web"
-                            android:layout_marginStart="@dimen/margin_3"/>
-                    </LinearLayout>
+                        <!--<ImageView-->
+                            <!--android:id="@+id/eto_details_project_website_expand_arrow_iv"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_alignParentEnd="true"-->
+                            <!--android:src="@drawable/ic_down_24_px" />-->
+                    <!--</RelativeLayout>-->
 
-                    <LinearLayout
-                        android:id="@+id/eto_details_project_details_linear_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_3"
-                        android:orientation="horizontal">
+                    <!--<LinearLayout-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="@dimen/margin_10"-->
+                        <!--android:orientation="horizontal">-->
 
-                        <TextView
-                            style="@style/font_gray_small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/ETO_details_project_details" />
+                        <!--<TextView-->
+                            <!--style="@style/font_gray_small"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="@string/ETO_details_project_official_website" />-->
 
-                        <TextView
-                            android:id="@+id/eto_details_project_details_tv"
-                            style="@style/font_gray_small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:autoLink="web"
-                            android:layout_marginStart="@dimen/margin_3"/>
-                    </LinearLayout>
-
+                        <!--<TextView-->
+                            <!--android:id="@+id/eto_details_official_website_tv"-->
+                            <!--style="@style/font_gray_small"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:lineSpacingExtra="@dimen/line_spacing_extra_4"/>-->
+                    <!--</LinearLayout>-->
 
                 </LinearLayout>
 

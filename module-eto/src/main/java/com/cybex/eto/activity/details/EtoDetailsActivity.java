@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -90,11 +92,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     TextView mProjectCurrencyTv;
     TextView mProjectExchangeRatioTv;
     ExpandableTextView mProjectIntroductionExpandTv;
-    ImageView mProjectWebsiteExpandArrowIv;
-    TextView mProjectOfficialWebsiteTv;
-    TextView mProjectWhitepaperTv;
-    LinearLayout mProjectDetailsTvLinearLayout;
-    TextView mProjectProjectDetailsTv;
+    ExpandableTextView mProjectWebsiteExpandTv;
 
 
     @Override
@@ -157,11 +155,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectCurrencyTv = findViewById(R.id.eto_details_currency_tv);
         mProjectExchangeRatioTv = findViewById(R.id.eto_details_exchange_ratio_tv);
         mProjectIntroductionExpandTv = findViewById(R.id.eto_details_expand_tv);
-        mProjectWebsiteExpandArrowIv = findViewById(R.id.eto_details_project_website_expand_arrow_iv);
-        mProjectOfficialWebsiteTv = findViewById(R.id.eto_details_official_website_tv);
-        mProjectWhitepaperTv = findViewById(R.id.eto_details_white_paper_tv);
-        mProjectDetailsTvLinearLayout = findViewById(R.id.eto_details_project_details_linear_layout);
-        mProjectProjectDetailsTv = findViewById(R.id.eto_details_project_details_tv);
+        mProjectWebsiteExpandTv = findViewById(R.id.eto_website_expand_tv);
     }
 
     private void setOnclickListener() {
@@ -186,12 +180,6 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             }
         });
 
-        mProjectWebsiteExpandArrowIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
     @Override
@@ -385,22 +373,19 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectExchangeRatioTv.setText(String.format(getResources().getString(R.string.ETO_details_text_currency_ratio), etoProject.getBase_token_name(), etoProject.getRate(), etoProject.getToken_name()));
         if (Locale.getDefault().getLanguage().equals("zh")) {
             mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage());
-            mProjectOfficialWebsiteTv.setText(etoProject.getAdds_website());
-            mProjectWhitepaperTv.setText(etoProject.getAdds_whitepaper());
-            if (etoProject.getAdds_detail() != null) {
-                mProjectProjectDetailsTv.setText(etoProject.getAdds_detail());
-            } else {
-                mProjectDetailsTvLinearLayout.setVisibility(View.GONE);
-            }
+            String text = getResources().getString(R.string.ETO_details_project_official_website) + " <a href=\'" + etoProject.getAdds_website() + "\'>" + etoProject.getAdds_website() + "</a>"
+                    + "<br>" + getResources().getString(R.string.ETO_details_project_whitepaper) + " <a href=\'" + etoProject.getAdds_whitepaper() + "\'>" + etoProject.getAdds_whitepaper() + "</a>"
+                    + "<br>" + (etoProject.getAdds_detail() != null ? getResources().getString(R.string.ETO_details_project_details) + etoProject.getAdds_detail()  : "");
+            mProjectWebsiteExpandTv.setText(Html.fromHtml(text));
+            TextView textView = mProjectWebsiteExpandTv.findViewById(R.id.expandable_text);
+            textView.setMovementMethod(LinkMovementMethod.getInstance());
+
         } else {
             mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage__lang_en());
-            mProjectOfficialWebsiteTv.setText(etoProject.getAdds_website__lang_en());
-            mProjectWhitepaperTv.setText(etoProject.getAdds_whitepaper__lang_en());
-            if (etoProject.getAdds_detail() != null) {
-                mProjectProjectDetailsTv.setText(etoProject.getAdds_detail__lang_en());
-            } else {
-                mProjectDetailsTvLinearLayout.setVisibility(View.GONE);
-            }
+            String text = getResources().getString(R.string.ETO_details_project_official_website) + " <a href=\'" + etoProject.getAdds_website__lang_en() + "\'>" + etoProject.getAdds_website__lang_en() + "</a>"
+                    + "<br>" + getResources().getString(R.string.ETO_details_project_whitepaper) + " <a href=\'" + etoProject.getAdds_whitepaper__lang_en() + "\'>" + etoProject.getAdds_whitepaper__lang_en() + "</a>"
+                    + "<br>" + (etoProject.getAdds_detail__lang_en() != null ? getResources().getString(R.string.ETO_details_project_details) + etoProject.getAdds_detail__lang_en() : "");
+            mProjectWebsiteExpandTv.setText(Html.fromHtml(text));
         }
     }
 
