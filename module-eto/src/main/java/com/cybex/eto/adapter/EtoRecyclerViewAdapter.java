@@ -3,6 +3,7 @@ package com.cybex.eto.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,14 +145,16 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         } else if(status.equals(EtoProject.Status.FINISH)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
+            viewHolder.mTvTime.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
+                    (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000) : Integer.parseInt(etoProject.getT_total_time()), true));
             viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
             viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_full));
             viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
         } else {
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
-            viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000), true));
+            viewHolder.mTvTime.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
+                    (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000) : Integer.parseInt(etoProject.getT_total_time()), true));
             viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
             viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_full));
             viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
