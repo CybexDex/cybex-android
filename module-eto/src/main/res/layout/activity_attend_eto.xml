@@ -39,7 +39,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_item"
-                android:elevation="@dimen/corner_radius_4"
                 android:orientation="vertical"
                 android:padding="@dimen/activity_padding">
 
@@ -192,7 +191,6 @@
                 android:orientation="vertical"
                 android:background="@drawable/bg_item"
                 android:layout_marginTop="@dimen/margin_14"
-                android:elevation="@dimen/corner_radius_4"
                 android:padding="@dimen/activity_padding">
                 <TextView
                     style="@style/font_gray_medium"

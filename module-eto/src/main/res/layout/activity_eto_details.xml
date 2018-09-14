@@ -40,8 +40,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_item"
-                android:elevation="@dimen/corner_radius_4">
+                android:background="@drawable/bg_item">
 
                 <ImageView
                     android:id="@+id/eto_details_project_detail_status_image"
