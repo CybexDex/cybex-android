@@ -205,6 +205,7 @@ public class RegisterActivity extends BaseActivity {
                 if (!strPassword.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
                     mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
                     mPasswordChecker.setVisibility(View.GONE);
+                    mPasswordConfirmChecker.setVisibility(View.GONE);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                 } else {
                     mRegisterErrorText.setText("");
@@ -238,6 +239,7 @@ public class RegisterActivity extends BaseActivity {
                 if (!strPassword.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
                     mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
                     mPasswordChecker.setVisibility(View.GONE);
+                    mPasswordConfirmChecker.setVisibility(View.GONE);
                     mRegisterErrorSign.setVisibility(View.VISIBLE);
                 } else if (strPassword.compareTo(strPasswordConfirm) != 0) {
                     mPasswordConfirmChecker.setVisibility(View.INVISIBLE);
