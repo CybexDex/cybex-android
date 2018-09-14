@@ -228,6 +228,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
              * fix bug:CYM-505
              * 转账成功和失败清除数据
              */
+            CybexDialog.showAttendEtoLoadingDialog(this, null);
             clearTransferData();
         } else {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
@@ -398,12 +399,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
-                        CybexDialog.showAttendEtoLoadingDialog(AttendETOActivity.this, new CybexDialog.ConfirmationDialogClickListener() {
-                            @Override
-                            public void onClick(Dialog dialog) {
-                                toTransfer();
-                            }
-                        });
+                        toTransfer();
                     }
                 });
     }
@@ -490,8 +486,6 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     private void clearTransferData() {
         mIsCybEnough = false;
         mIsBalanceEnough = false;
-        mTransferOperationFee = null;
-        mToAccountObject = null;
         mQuantityEt.setText("");
         /**
          * fix bug:CYM-555
