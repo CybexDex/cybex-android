@@ -154,6 +154,7 @@
                         style="@style/font_gray_bold_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_3"
                         android:text="@string/ETO_details_user_agreement" />
                 </LinearLayout>
 

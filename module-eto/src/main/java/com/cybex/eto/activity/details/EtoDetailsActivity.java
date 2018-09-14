@@ -60,6 +60,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     @Inject
     EtoDetailsPresenter<EtoDetailsView> mEtoDetailsPresenter;
     EtoProject mEtoProject;
+    Dialog mDialog;
     private String mUserName;
     private Handler mHandler = new Handler();
     private Runnable mRunnable;
@@ -540,7 +541,10 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
             mProjectAppointmentRl.setVisibility(View.GONE);
         } else {
-            final Dialog dialog = new Dialog(EtoDetailsActivity.this);
+            if (mDialog == null) {
+               mDialog = new Dialog(EtoDetailsActivity.this);
+            }
+
             mProjectAgreementLl.setVisibility(View.VISIBLE);
             mAppointmentStatusTv.setVisibility(View.INVISIBLE);
             mAppointmentButton.setVisibility(View.VISIBLE);
@@ -551,7 +555,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                     if (!mAgreementSelectionCheckbox.isChecked()) {
                         ToastMessage.showNotEnableDepositToastMessage(EtoDetailsActivity.this, getResources().getString(R.string.ETO_details_toast_message), R.drawable.ic_error_16px);
                     } else {
-                        CybexDialog.showVerifyPinCodeETODialog(dialog, getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
+                        CybexDialog.showVerifyPinCodeETODialog(mDialog, getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
                             @Override
                             public void onClick(final Dialog dialog, final Button button, EditText editText, TextView textView, LinearLayout linearLayout) {
                                 String inputCode = editText.getText().toString().trim();
