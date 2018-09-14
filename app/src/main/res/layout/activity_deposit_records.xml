@@ -34,7 +34,9 @@
         <com.scwang.smartrefresh.layout.header.ClassicsHeader
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:srlClassicsSpinnerStyle="Translate">
+            app:srlClassicsSpinnerStyle="Translate"
+            app:srlTextSizeTitle="@dimen/font_medium"
+            app:srlTextSizeTime="@dimen/font_small">
 
         </com.scwang.smartrefresh.layout.header.ClassicsHeader>
 
@@ -50,7 +52,8 @@
         <com.scwang.smartrefresh.layout.footer.ClassicsFooter
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:srlClassicsSpinnerStyle="Translate" />
+            app:srlClassicsSpinnerStyle="Translate"
+            app:srlTextSizeTitle="@dimen/font_medium"/>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 </LinearLayout>

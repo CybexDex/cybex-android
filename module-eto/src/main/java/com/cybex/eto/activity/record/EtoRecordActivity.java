@@ -130,6 +130,8 @@ public class EtoRecordActivity extends EtoBaseActivity implements EtoRecordMvpVi
     private void refreshEtoRecords(){
         if(TextUtils.isEmpty(mUserName)){
             mRefreshLayout.finishRefresh();
+            mEtoRecordsAdapter = new EtoRecordsRecyclerViewAdapter(this, mEtoRecords);
+            mRvEtoRecords.setAdapter(mEtoRecordsAdapter);
             return;
         }
         int limit = mEtoRecords == null || mEtoRecords.size() <= LOAD_COUNT ?
