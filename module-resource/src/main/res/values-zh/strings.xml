@@ -474,4 +474,7 @@
     <string name="text_subscription_partly_valid">部分有效</string>
     <string name="text_received_success">到账成功</string>
 
+    <!-- Terms and Conditions -->
+    <string name="text_tool_bar_title_terms">服务条款与协议</string>
+
 </resources>

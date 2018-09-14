@@ -326,6 +326,11 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
                 break;
             }
         }
+        if (mAvailableTv.getText().toString().isEmpty()) {
+            mAvailableTv.setText(String.format("%s %s %s", getResources().getString(R.string.text_available),
+                    0,
+                    AssetUtil.parseSymbol(mEtoProject.getBase_token_name())));
+        }
 
     }
 

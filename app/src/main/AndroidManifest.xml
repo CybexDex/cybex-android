@@ -159,7 +159,9 @@
         <activity android:name=".activity.setting.help.HelpActivity"
             android:label=""
             android:screenOrientation="portrait" />
-
+        <activity android:name="com.cybex.eto.activity.TermsAndConditionsActivity"
+            android:label=""
+            android:screenOrientation="portrait"/>
 
         <service android:name="com.cybex.basemodule.service.WebSocketService" />
 

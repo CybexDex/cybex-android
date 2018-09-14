@@ -30,6 +30,7 @@ import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.transform.CircleTransform;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
+import com.cybex.eto.activity.TermsAndConditionsActivity;
 import com.cybex.eto.activity.attendETO.AttendETOActivity;
 import com.cybex.eto.base.EtoBaseActivity;
 import com.cybex.provider.http.entity.EtoProject;
@@ -159,6 +160,13 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     private void setOnclickListener() {
+        mProjectAgreementLl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EtoDetailsActivity.this, TermsAndConditionsActivity.class);
+                startActivity(intent);
+            }
+        });
         mProjectDetailsExpandArrowIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

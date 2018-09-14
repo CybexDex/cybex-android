@@ -466,4 +466,6 @@
     <string name="text_subscription_partly_valid">Subscription partly valid</string>
     <string name="text_received_success">Received</string>
 
+    <!-- Terms and Conditions -->
+    <string name="text_tool_bar_title_terms">Terms and Conditions</string>
 </resources>

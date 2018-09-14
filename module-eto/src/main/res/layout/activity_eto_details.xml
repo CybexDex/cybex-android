@@ -144,9 +144,10 @@
 
                     <CheckBox
                         android:id="@+id/eto_select_agreement_check_box"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/width_16"
+                        android:layout_height="@dimen/width_16"
                         android:button="@null"
+                        android:layout_gravity="center_vertical"
                         android:background="@drawable/ic_agreement_check"/>
 
                     <TextView
