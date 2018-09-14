@@ -43,8 +43,8 @@ public class UnlockDialog extends DialogFragment{
     TextView mTvTitle;
     @BindView(R2.id.dialog_confirm_et_password)
     EditText mEtPassword;
-    @BindView(R2.id.dialog_confirm_layout_unlock_error)
-    LinearLayout mLayoutUnlockError;
+    @BindView(R2.id.dialog_confirm_tv_error)
+    TextView mTvUnlockError;
     @BindView(R2.id.dialog_confirm_btn_cancel)
     Button mBtnCancel;
     @BindView(R2.id.dialog_confirm_btn_confirm)
@@ -130,12 +130,12 @@ public class UnlockDialog extends DialogFragment{
             @Override
             public void accept(Integer integer) throws Exception {
                 if(integer == 0){
-                    mLayoutUnlockError.setVisibility(View.GONE);
+                    mTvUnlockError.setVisibility(View.GONE);
                     mPbLoading.setVisibility(View.GONE);
                     mUnLockListener.onUnLocked(password);
                     dismiss();
                 } else {
-                    mLayoutUnlockError.setVisibility(View.VISIBLE);
+                    mTvUnlockError.setVisibility(View.VISIBLE);
                     mPbLoading.setVisibility(View.GONE);
                     mBtnConfirm.setEnabled(true);
                 }
@@ -143,7 +143,7 @@ public class UnlockDialog extends DialogFragment{
         }, new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
-                mLayoutUnlockError.setVisibility(View.VISIBLE);
+                mTvUnlockError.setVisibility(View.VISIBLE);
                 mPbLoading.setVisibility(View.GONE);
                 mBtnConfirm.setEnabled(true);
             }

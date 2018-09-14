@@ -32,26 +32,16 @@
 
         </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/dialog_confirm_layout_eto_pin_code_error"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/dialog_confirm_layout_eto_pin_code_error_tv"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:drawableStart="@drawable/ic_error_16px"
+            android:gravity="center_vertical"
+            style="@style/font_red_small"
             android:layout_marginTop="@dimen/margin_6"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_error_16px" />
-
-            <TextView
-                android:id="@+id/dialog_confirm_layout_eto_pin_code_error_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/font_red_small"
-                android:text="@string/import_activity_password_invalid"/>
-        </LinearLayout>
+            android:visibility="gone"
+            android:text="@string/import_activity_password_invalid"/>
 
     </LinearLayout>
 

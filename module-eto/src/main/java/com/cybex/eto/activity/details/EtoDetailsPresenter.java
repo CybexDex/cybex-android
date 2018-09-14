@@ -90,7 +90,7 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
                 }));
     }
 
-    public void registerETO(String userName, String projectId, String code, final LinearLayout errorLayout, final TextView errorTextView, final Button button, final Dialog dialog) {
+    public void registerETO(String userName, String projectId, String code, final TextView errorTextView, final Button button, final Dialog dialog) {
         mCompositeDisposable.add(RetrofitFactory.getInstance()
                 .apiEto()
                 .createETO(RequestBody.create(MediaType.parse("application/json"), getRegisterETORequest(userName, projectId, code)))
@@ -117,7 +117,7 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
                             } else {
                                 message = etoErrorMsgResponse.getResult().getEn();
                             }
-                            getMvpView().onRegisterError(message, errorLayout, errorTextView, button, dialog);
+                            getMvpView().onRegisterError(message, errorTextView, button, dialog);
 
                         }
                     }

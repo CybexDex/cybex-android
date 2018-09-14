@@ -238,8 +238,8 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     }
 
     @Override
-    public void onRegisterError(String message, LinearLayout layout, TextView textView, final Button button, final Dialog dialog) {
-        layout.setVisibility(View.VISIBLE);
+    public void onRegisterError(String message, TextView textView, final Button button, final Dialog dialog) {
+        textView.setVisibility(View.VISIBLE);
         textView.setText(message);
         if (mRunnable == null) {
             mRunnable = new Runnable() {
@@ -557,14 +557,14 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                     } else {
                         CybexDialog.showVerifyPinCodeETODialog(mDialog, getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
                             @Override
-                            public void onClick(final Dialog dialog, final Button button, EditText editText, TextView textView, LinearLayout linearLayout) {
+                            public void onClick(final Dialog dialog, final Button button, EditText editText, TextView textView) {
                                 String inputCode = editText.getText().toString().trim();
                                 if (inputCode.isEmpty()) {
-                                    linearLayout.setVisibility(View.VISIBLE);
+                                    textView.setVisibility(View.VISIBLE);
                                     textView.setText(getResources().getString(R.string.ETO_details_dialog_no_invitation_code_error));
                                 } else {
-                                    linearLayout.setVisibility(View.GONE);
-                                    mEtoDetailsPresenter.registerETO(mUserName, etoProject.getId(), inputCode, linearLayout, textView, button, dialog);
+                                    textView.setVisibility(View.GONE);
+                                    mEtoDetailsPresenter.registerETO(mUserName, etoProject.getId(), inputCode, textView, button, dialog);
                                 }
                             }
                         }, new CybexDialog.ConfirmationDialogCancelListener() {

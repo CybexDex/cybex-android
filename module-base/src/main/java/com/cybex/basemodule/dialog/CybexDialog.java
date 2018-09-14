@@ -38,7 +38,7 @@ public class CybexDialog {
     }
 
     public interface ConfirmationDialogClickWithButtonTimerListener {
-        void onClick(Dialog dialog, Button button, EditText editText, TextView textView, LinearLayout linearLayout);
+        void onClick(Dialog dialog, Button button, EditText editText, TextView textView);
     }
 
     public static void showRegisterDialog(Context context, String message, final View.OnClickListener listener) {
@@ -404,14 +404,13 @@ public class CybexDialog {
             tvTitle.setText(title);
             final EditText editText = dialog.findViewById(R.id.dialog_confirm_et_eto_pin_code);
             final TextView errorCode = dialog.findViewById(R.id.dialog_confirm_layout_eto_pin_code_error_tv);
-            final LinearLayout errorLayout = dialog.findViewById(R.id.dialog_confirm_layout_eto_pin_code_error);
             Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
             final Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
             confirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (confirmationDialogClickWithButtonTimerListener != null) {
-                        confirmationDialogClickWithButtonTimerListener.onClick(dialog, confirmButton, editText, errorCode, errorLayout);
+                        confirmationDialogClickWithButtonTimerListener.onClick(dialog, confirmButton, editText, errorCode);
                     }
                 }
             });
