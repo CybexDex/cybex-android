@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,7 +96,6 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     TextView mProjectExchangeRatioTv;
     ExpandableTextView mProjectIntroductionExpandTv;
     ExpandableTextView mProjectWebsiteExpandTv;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -409,12 +409,14 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getEnd_at())) / 1000), false));
         } else if (status.equals(EtoProject.Status.FINISH)) {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000), true));
+            mProjectTimeTv.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
+                    (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000) : Integer.parseInt(etoProject.getT_total_time()), true));
             mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
             mProgressPercentTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
         } else {
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
-            mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000), true));
+            mProjectTimeTv.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
+                    (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000) : Integer.parseInt(etoProject.getT_total_time()), true));
             mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
             mProgressPercentTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
         }
