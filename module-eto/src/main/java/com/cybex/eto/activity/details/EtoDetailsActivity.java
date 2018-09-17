@@ -374,7 +374,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mProjectCybexStartLinerLayout.setVisibility(View.GONE);
         }
         if (etoProject.getOffer_at() != null) {
-            mProjectTokenReleasingTimeTv.setText(etoProject.getOffer_at());
+            mProjectTokenReleasingTimeTv.setText(DateUtils.formatToDate(PATTERN_yyyy_MM_dd_HH_mm_ss, DateUtils.formatToMillsETO(etoProject.getOffer_at())));
         } else {
             mProjectTokenReleasingTimeTv.setText(getResources().getString(R.string.ETO_details_text_token_releasing_immediately));
         }
