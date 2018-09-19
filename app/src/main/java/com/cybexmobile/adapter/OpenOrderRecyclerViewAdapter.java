@@ -111,8 +111,8 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                      */
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
-                    amount = data.sell_price.quote.amount / Math.pow(10, quote.precision);
-                    price = (data.sell_price.base.amount / Math.pow(10, base.precision)) / amount;
+                    amount = data.sell_price.quote.amount / Math.pow(10, quote.precision) * ((double) data.for_sale / data.sell_price.base.amount);
+                    price = data.sell_price.base.amount / Math.pow(10, base.precision) / ((double)data.sell_price.quote.amount / Math.pow(10, quote.precision));
                     viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, base.precision), baseSymbol));
                     viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, quote.precision), quoteSymbol));
                     viewHolder.mTvQuoteSymbol.setText(quoteSymbol);

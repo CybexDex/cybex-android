@@ -249,8 +249,8 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
             amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), AssetUtil.parseSymbol(base.symbol));
             totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(quote.symbol));
         } else {
-            double amount = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision);
-            double price = (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision)) / amount;
+            double amount = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision) * ((double) limitOrderObject.for_sale / limitOrderObject.sell_price.base.amount);
+            double price = (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision)) / ((double) limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision));
             double total = limitOrderObject.for_sale / Math.pow(10, base.precision);
             priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(base.symbol));
             amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), AssetUtil.parseSymbol(quote.symbol));
