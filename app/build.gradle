@@ -129,7 +129,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     implementation project(':MPChartLib')
-    if(isModule == "true"){
+    if (isModule == "true") {
         implementation project(':module-eto')
     } else {
         implementation project(':module-base')
@@ -141,4 +141,7 @@ dependencies {
 
     //Arouter
     annotationProcessor 'com.alibaba:arouter-compiler:1.2.1'
+
+    //Dagger
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.7'
 }
