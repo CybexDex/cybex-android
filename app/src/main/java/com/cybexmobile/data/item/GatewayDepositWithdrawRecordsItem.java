@@ -7,6 +7,7 @@ public class GatewayDepositWithdrawRecordsItem {
     private AssetObject itemAsset;
     private Record record;
     private String note;
+    private String explorerLink;
 
     public AssetObject getItemAsset() {
         return itemAsset;
@@ -30,5 +31,13 @@ public class GatewayDepositWithdrawRecordsItem {
 
     public String getNote() {
         return note;
+    }
+
+    public String getExplorerLink() {
+        return explorerLink;
+    }
+
+    public void setExplorerLink(String explorerLink) {
+        this.explorerLink = explorerLink;
     }
 }

@@ -1,0 +1,269 @@
+package com.cybexmobile.activity.gateway.records;
+
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.View;
+
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.dialog.UnlockDialog;
+import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.eto.activity.details.EtoDetailsPresenter;
+import com.cybex.eto.activity.details.EtoDetailsView;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybexmobile.R;
+import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
+import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
+import com.cybexmobile.injection.base.AppBaseActivity;
+import com.cybexmobile.injection.component.AppActivityComponent;
+import com.jaredrummler.materialspinner.MaterialSpinner;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybexmobile.activity.gateway.records.DepositAndWithdrawTotalPresenter.LOAD_MORE;
+import static com.cybexmobile.activity.gateway.records.DepositAndWithdrawTotalPresenter.LOAD_REFRESH;
+
+public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements DepositAndWithdrawTotalView, OnRefreshListener, OnLoadMoreListener {
+    public static String TAG = DepositAndWithdrawTotalActivity.class.getSimpleName();
+    private static final int LOAD_COUNT = 20;
+
+    @Inject
+    DepositAndWithdrawTotalPresenter<DepositAndWithdrawTotalView> mDepositAndWithdrawTotalPresenter;
+
+    private Unbinder mUnbinder;
+    private WebSocketService mWebSocketService;
+    private AccountObject mAccountObject;
+    private List<GatewayDepositWithdrawRecordsItem> mRecordsItems = new ArrayList<>();
+    private DepositWithdrawRecordAdapter mDepositWithdrawRecordAdapter;
+
+    private String mUserName;
+    private String mCurrentFundType;
+    private String mCurrentCurrency;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.deposit_and_withdraw_records_refresh_layout)
+    SmartRefreshLayout mRefreshLayout;
+    @BindView(R.id.deposit_and_withdraw_records_rv_deposit_records)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.deposit_and_withdraw_records_currency_spinner)
+    MaterialSpinner mCurrencySpinner;
+    @BindView(R.id.deposit_and_withdraw_records_types_spinner)
+    MaterialSpinner mTypesSpinner;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
+            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mUserName);
+            if (fullAccountObject != null) {
+                mAccountObject = fullAccountObject.account;
+                mRefreshLayout.autoRefresh();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_deposit_and_withdraw_total);
+        mUnbinder = ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+        appActivityComponent().inject(this);
+        mDepositAndWithdrawTotalPresenter.attachView(this);
+        mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        mRefreshLayout.autoRefresh();
+        mRefreshLayout.setOnRefreshListener(this);
+        mRefreshLayout.setOnLoadMoreListener(this);
+        mTypesSpinner.setItems(Constant.Types);
+        Intent intent = new Intent(this, WebSocketService.class);
+        bindService(intent, mConnection, BIND_AUTO_CREATE);
+        mTypesSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                showLoadDialog(true);
+                if (!item.equals("ALL")) {
+                    mCurrentFundType = item;
+                } else {
+                    mCurrentFundType = null;
+                }
+                view.setTextColor(getResources().getColor(R.color.btn_orange_end));
+                view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
+                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                        mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUnbinder.unbind();
+        mDepositAndWithdrawTotalPresenter.detachView();
+        unbindService(mConnection);
+    }
+
+    @Override
+    public void onNetWorkStateChanged(boolean isAvailable) {
+
+    }
+
+    @Override
+    public void onLoadAsset(List<String> assetList) {
+        mCurrencySpinner.setItems(assetList);
+        mCurrencySpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                showLoadDialog(true);
+                view.setTextColor(getResources().getColor(R.color.btn_orange_end));
+                view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
+                if (!item.equals("ALL")) {
+                    mCurrentCurrency = "JADE." + item;
+                } else {
+                    mCurrentCurrency = null;
+                }
+                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                        mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+
+            }
+        });
+    }
+
+    @Override
+    public void onLoadRecordsData(int loadMode, List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) {
+        hideLoadDialog();
+        if (loadMode == LOAD_REFRESH) {
+            mRecordsItems = gatewayDepositWithdrawRecordsItems;
+            mRefreshLayout.finishRefresh();
+        } else {
+            mRecordsItems.addAll(gatewayDepositWithdrawRecordsItems);
+            mRefreshLayout.finishLoadMore();
+        }
+
+        if (mDepositWithdrawRecordAdapter == null) {
+            mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(this, mRecordsItems);
+            mRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
+        } else {
+            mDepositWithdrawRecordAdapter.setData(mRecordsItems);
+        }
+
+    }
+
+    @Override
+    public void onError() {
+
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        if (mAccountObject == null) {
+            return;
+        }
+
+        if (BitsharesWalletWraper.getInstance().is_locked()) {
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
+                @Override
+                public void onUnLocked(String password) {
+                    refreshRecords();
+                }
+            });
+        } else {
+            refreshRecords();
+        }
+    }
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+        loadMoreData();
+    }
+
+    private void refreshRecords() {
+        if (TextUtils.isEmpty(mUserName)) {
+            mRefreshLayout.finishRefresh();
+            mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(this , mRecordsItems);
+            mRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
+            return;
+        }
+        int size = mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT;
+        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, this, mWebSocketService, mAccountObject, mUserName,
+                size, 0, mCurrentCurrency, mCurrentFundType, false, false);
+    }
+
+    private void loadMoreData() {
+        if (TextUtils.isEmpty(mUserName)) {
+            mRefreshLayout.finishLoadMore();
+            return;
+        }
+
+        if (mRecordsItems== null || mRecordsItems.size() == 0 || mRecordsItems.size() % LOAD_COUNT != 0) {
+            mRefreshLayout.finishLoadMore();
+            mRefreshLayout.setNoMoreData(true);
+            return;
+        }
+
+        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_MORE, this, mWebSocketService, mAccountObject, mUserName,
+                LOAD_COUNT, mRecordsItems.size(), mCurrentCurrency, mCurrentFundType, false, false);
+
+    }
+
+
+}

@@ -1,6 +1,8 @@
 package com.cybexmobile.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cybex.basemodule.constant.Constant;
 import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
@@ -19,6 +22,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +43,8 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         ImageView mAssetIcon;
         @BindView(R.id.item_deposit_withdraw_asset_symbol)
         TextView mAssetSymbol;
+        @BindView(R.id.item_deposit_withdraw_in_out_symbol)
+        ImageView mInOutSymbol;
         @BindView(R.id.item_deposit_withdraw_asset_amount)
         TextView mAssetAmount;
         @BindView(R.id.item_deposit_withdraw_update_time)
@@ -59,6 +65,11 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
     public DepositWithdrawRecordAdapter(Context context, List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
         mContext = context;
         mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
+    }
+
+    public void setData(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList){
+        mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -106,6 +117,20 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
             viewHolder.mAssetNote.setVisibility(View.VISIBLE);
             viewHolder.mAssetNote.setText(item.getNote());
         }
+
+        if (item.getRecord().getFundType().equals(Constant.WITHDRAW)) {
+            viewHolder.mInOutSymbol.setImageResource(R.drawable.ic_sent_40_px);
+        } else {
+            viewHolder.mInOutSymbol.setImageResource(R.drawable.ic_income_40_px);
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getExplorerLink()));
+                mContext.startActivity(browserIntent);
+            }
+        });
     }
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {

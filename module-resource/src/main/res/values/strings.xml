@@ -13,6 +13,7 @@
     <string name="title_transfer_details">Transfer Details</string>
     <string name="title_deposit_records">Deposit Records</string>
     <string name="title_withdraw_records">Withdraw Records</string>
+    <string name="title_withdraw_deposit_records">Deposit&amp;Withdraw records</string>
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>
@@ -271,6 +272,8 @@
     <string name="deposit_withdraw_state_init">Init</string>
     <string name="deposit_withdraw_state_pending">Pending</string>
     <string name="deposit_withdraw_state_failed">Failed</string>
+    <string name="deposit_withdraw_total_currency">Currency</string>
+    <string name="deposit_withdraw_total_types">Types</string>
 
     <!-- Snack Bar Text -->
     <string name="snack_bar_saved">Saved</string>

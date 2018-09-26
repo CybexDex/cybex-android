@@ -102,4 +102,11 @@ public class Constant {
     public static final String BUNDLE_SAVE_CYB_FEE = "bundle_save_cyb_fee";
     public static final String BUNDLE_SAVE_CYB_ASSET_OBJECT = "bundle_save_cyb_asset_object";
     public static final String BUNDLE_SAVE_FULL_ACCOUNT_OBJECT = "bundle_save_full_account_object";
+
+    /**
+     * withdraw deposit fundType
+     */
+    public static final String WITHDRAW = "WITHDRAW";
+    public static final String DEPOSIT = "DEPOSIT";
+    public static final String[] Types = {"ALL", "WITHDRAW", "DEPOSIT"};
 }

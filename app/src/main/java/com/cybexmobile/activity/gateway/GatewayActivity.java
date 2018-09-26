@@ -11,12 +11,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybexmobile.activity.gateway.records.DepositAndWithdrawTotalActivity;
+import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
@@ -150,6 +154,23 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_deposit_withdraw_total_records, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_records:
+                Intent intent = new Intent(this, DepositAndWithdrawTotalActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {

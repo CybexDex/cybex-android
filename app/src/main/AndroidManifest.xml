@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <application
         android:name=".MainApplication"
@@ -143,7 +143,6 @@
             android:name=".activity.address.WithdrawAddressManageListActivity"
             android:label=""
             android:screenOrientation="portrait" />
-
         <activity
             android:name="com.cybex.eto.activity.record.EtoRecordActivity"
             android:label=""
@@ -151,21 +150,26 @@
         <activity
             android:name="com.cybex.eto.activity.details.EtoDetailsActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.cybex.eto.activity.attendETO.AttendETOActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.setting.help.HelpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.setting.help.HelpActivity"
             android:label=""
             android:screenOrientation="portrait" />
-        <activity android:name="com.cybex.eto.activity.TermsAndConditionsActivity"
+        <activity
+            android:name="com.cybex.eto.activity.TermsAndConditionsActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <service android:name="com.cybex.basemodule.service.WebSocketService" />
 
-
+        <activity
+            android:name=".activity.gateway.records.DepositAndWithdrawTotalActivity"
+            android:label=""
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

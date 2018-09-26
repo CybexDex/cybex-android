@@ -1,5 +1,9 @@
 package com.cybex.provider.http.entity;
 
+import java.util.List;
+
+import okhttp3.ResponseBody;
+
 public class Record {
     private String accountName;
     private String address;
@@ -8,7 +12,21 @@ public class Record {
     private String coinType;
     private String fundType;
     private String state;
+    private String fee;
     private String updateAt;
+    private List<Details> details;
+
+    public class Details {
+        String hash;
+
+        public String getHash() {
+            return hash;
+        }
+
+        public void setHash(String hash) {
+            this.hash = hash;
+        }
+    }
 
     public long getAmount() {
         return amount;
@@ -72,5 +90,21 @@ public class Record {
 
     public void setUpdateAt(String updateAt) {
         this.updateAt = updateAt;
+    }
+
+    public List<Details> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<Details> details) {
+        this.details = details;
+    }
+
+    public String getFee() {
+        return fee;
+    }
+
+    public void setFee(String fee) {
+        this.fee = fee;
     }
 }

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:navigationIcon="@drawable/ic_back_24_px"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey">
+
+        <TextView
+            style="@style/font_white_dark_bold_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/title_withdraw_deposit_records" />
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="@dimen/margin_16">
+
+            <TextView
+                style="@style/font_gray_bold_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deposit_withdraw_total_currency"
+                android:layout_gravity="center_vertical"/>
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/deposit_and_withdraw_records_currency_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_medium"
+                android:layout_marginStart="@dimen/margin_8"
+                app:ms_text_color="@color/material_spinner_text_color"
+                app:ms_background_selector="@drawable/material_spinner_selector"
+                app:ms_arrow_tint="@color/colorAccent"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_alignParentEnd="true">
+
+            <TextView
+                style="@style/font_gray_bold_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deposit_withdraw_total_types"
+                android:layout_gravity="center_vertical"/>
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/deposit_and_withdraw_records_types_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_8"
+                android:textSize="@dimen/font_medium"
+                app:ms_text_color="@color/material_spinner_text_color"
+                app:ms_background_selector="@drawable/material_spinner_selector"
+                app:ms_arrow_tint="@color/colorAccent"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/deposit_and_withdraw_records_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_8"
+        app:srlEnableFooterFollowWhenLoadFinished="true"
+        app:srlEnableScrollContentWhenLoaded="true">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlClassicsSpinnerStyle="Translate"
+            app:srlTextSizeTime="@dimen/font_small"
+            app:srlTextSizeTitle="@dimen/font_medium">
+
+        </com.scwang.smartrefresh.layout.header.ClassicsHeader>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/deposit_and_withdraw_records_rv_deposit_records"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlClassicsSpinnerStyle="Translate"
+            app:srlTextSizeTitle="@dimen/font_medium" />
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</LinearLayout>

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.http.entity.BlockerExplorer;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -43,6 +44,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -84,6 +86,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     private DepositWithdrawRecordAdapter mDepositWithdrawRecordAdapter;
     private List<GatewayDepositWithdrawRecordsItem> mRecordsItems = new ArrayList<>();
     private List<Address> mAddressList = new ArrayList<>();
+    private List<BlockerExplorer> mBlockerExplorerList = new ArrayList<>();
 
     @BindView(R.id.deposit_records_rv_deposit_records)
     RecyclerView mDepositRecordsRecyclerView;
@@ -105,7 +108,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mAccountName);
-            if(fullAccountObject != null){
+            if (fullAccountObject != null) {
                 mAccountObject = fullAccountObject.account;
                 mRefreshLayout.autoRefresh();
             }
@@ -126,9 +129,9 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mAssetObject = (AssetObject) getIntent().getSerializableExtra("assetObject");
         mFundType = getIntent().getStringExtra("fundType");
-        if(mFundType.equals("DEPOSIT")){
+        if (mFundType.equals("DEPOSIT")) {
             mTvTitle.setText(getResources().getString(R.string.title_deposit_records));
-        } else if(mFundType.equals("WITHDRAW")){
+        } else if (mFundType.equals("WITHDRAW")) {
             mTvTitle.setText(getResources().getString(R.string.title_withdraw_records));
         }
         mDepositRecordsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -154,20 +157,20 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateFullAccount(Event.UpdateFullAccount event){
-        if(mAccountObject == null){
+    public void onUpdateFullAccount(Event.UpdateFullAccount event) {
+        if (mAccountObject == null) {
             mAccountObject = event.getFullAccount().account;
             checkIfLocked(true);
         }
     }
 
     private void checkIfLocked(boolean isRefresh) {
-        if(mAccountObject == null){
+        if (mAccountObject == null) {
             return;
         }
         mIsRefresh = isRefresh;
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mAccountName, new UnlockDialog.UnLockDialogClickListener(){
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mAccountName, new UnlockDialog.UnLockDialogClickListener() {
 
                 @Override
                 public void onUnLocked(String password) {
@@ -193,10 +196,10 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
          * fix bug:CYM-586
          * 退出页面取消网络请求
          */
-        if(mRequestRecordsDisposable != null && !mRequestRecordsDisposable.isDisposed()){
+        if (mRequestRecordsDisposable != null && !mRequestRecordsDisposable.isDisposed()) {
             mRequestRecordsDisposable.dispose();
         }
-        if(mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()){
+        if (mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()) {
             mLoadAddressDisposable.dispose();
         }
         if (mUnbinder != null) {
@@ -220,120 +223,168 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         if (TextUtils.isEmpty(mAccountName)) {
             return;
         }
-        mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mAccountName, mAssetObject.id.toString(), Address.TYPE_WITHDRAW)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Address>>() {
-                    @Override
-                    public void accept(List<Address> addresses) throws Exception {
-                        mAddressList.addAll(addresses);
-                        createWithdrawDepositSignature();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+        mLoadAddressDisposable =
+                RetrofitFactory.getInstance()
+                        .api()
+                        .getBlockExplorerLink()
+                        .concatMap(new Function<ResponseBody, ObservableSource<List<Address>>>() {
+                            @Override
+                            public ObservableSource<List<Address>> apply(ResponseBody responseBody) throws Exception {
+                                mBlockerExplorerList.clear();
+                                JSONArray jsonArray = new JSONArray(responseBody.string());
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    BlockerExplorer blockerExplorer = new BlockerExplorer();
+                                    blockerExplorer.setAsset(jsonObject.getString("asset"));
+                                    blockerExplorer.setExpolorerLink(jsonObject.getString("explorer"));
+                                    mBlockerExplorerList.add(blockerExplorer);
+                                }
+                                return DBManager.getDbProvider(DepositWithdrawRecordsActivity.this)
+                                        .getAddress(mAccountName, mAssetObject.id.toString(), Address.TYPE_WITHDRAW);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<List<Address>>() {
+                            @Override
+                            public void accept(List<Address> addresses) throws Exception {
+                                mAddressList.addAll(addresses);
+                                createWithdrawDepositSignature();
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
 
-                    }
-                });
+                            }
+                        });
     }
 
     /**
      * 创建signature -> 网管login -> 获取充值提现记录
      */
-    private void createWithdrawDepositSignature(){
+    private void createWithdrawDepositSignature() {
         mRequestRecordsDisposable = Observable.create(new ObservableOnSubscribe<Operations.withdraw_deposit_history_operation>() {
             @Override
             public void subscribe(ObservableEmitter<Operations.withdraw_deposit_history_operation> emitter) throws Exception {
                 Date expiration = getExpiration();
                 Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(mAccountName, 0, 0, null, null, expiration);
                 mSignature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
-                if(!emitter.isDisposed()){
+                if (!emitter.isDisposed()) {
                     emitter.onNext(operation);
                     emitter.onComplete();
                 }
             }
         })
-        .concatMap(new Function<Operations.withdraw_deposit_history_operation, ObservableSource<ResponseBody>>() {
-            @Override
-            public ObservableSource<ResponseBody> apply(Operations.withdraw_deposit_history_operation operation) throws Exception {
-                GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(operation, mSignature);
-                Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
-                return RetrofitFactory.getInstance()
-                        .apiGateway()
-                        .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
-            }
-        })
-        .concatMap(new Function<ResponseBody, ObservableSource<GateWayRecordsResponse>>() {
-            @Override
-            public ObservableSource<GateWayRecordsResponse> apply(ResponseBody responseBody) throws Exception {
-                JSONObject jsonObject = new JSONObject(responseBody.string());
-                if (jsonObject.getInt("code") != 200) {
-                    return Observable.error(new Exception(jsonObject.getString("error")));
-                }
-                Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(
-                        mAccountName,
-                        mIsRefresh ? 0 : mRecordsItems.size(),
-                        mIsRefresh && mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT,
-                        mFundType,
-                        mAssetObject.symbol ,
-                        new Date());
-                Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                String request = gson.toJson(createLogInRequest(operation, mSignature));
-                Log.v("gatewayRequestBody", request);
-                return RetrofitFactory.getInstance()
-                        .apiGateway()
-                        .gatewayRecords(RequestBody.create(MediaType.parse("application/json"), request));
-            }
-        })
-        .map(new Function<GateWayRecordsResponse, List<GatewayDepositWithdrawRecordsItem>>() {
-            @Override
-            public List<GatewayDepositWithdrawRecordsItem> apply(GateWayRecordsResponse gateWayRecordsResponse) throws Exception {
-                Log.e(TAG, String.valueOf(gateWayRecordsResponse.getData().getTotal()));
-                mTotalItemAmount = gateWayRecordsResponse.getData().getTotal();
-                List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList = new ArrayList<>();
-                for (Record record : gateWayRecordsResponse.getData().getRecords()) {
-                    GatewayDepositWithdrawRecordsItem gatewayDepositWithdrawRecordsItem = new GatewayDepositWithdrawRecordsItem();
-                    gatewayDepositWithdrawRecordsItem.setItemAsset(mAssetObject);
-                    gatewayDepositWithdrawRecordsItem.setRecord(record);
-                    for (Address address : mAddressList) {
-                        if (address.getAddress().equals(record.getAddress())) {
-                            gatewayDepositWithdrawRecordsItem.setNote(address.getNote());
-                            break;
+                .concatMap(new Function<Operations.withdraw_deposit_history_operation, ObservableSource<ResponseBody>>() {
+                    @Override
+                    public ObservableSource<ResponseBody> apply(Operations.withdraw_deposit_history_operation operation) throws Exception {
+                        GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(operation, mSignature);
+                        Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
+                        Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
+                        return RetrofitFactory.getInstance()
+                                .apiGateway()
+                                .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
+                    }
+                })
+                .concatMap(new Function<ResponseBody, ObservableSource<GateWayRecordsResponse>>() {
+                    @Override
+                    public ObservableSource<GateWayRecordsResponse> apply(ResponseBody responseBody) throws Exception {
+                        JSONObject jsonObject = new JSONObject(responseBody.string());
+                        if (jsonObject.getInt("code") != 200) {
+                            return Observable.error(new Exception(jsonObject.getString("error")));
+                        }
+//                        Operations.withdraw_deposit_history_operation operation = BitsharesWalletWraper.getInstance().getWithdrawDepositOperation(
+//                                mAccountName,
+//                                mIsRefresh ? 0 : mRecordsItems.size(),
+//                                mIsRefresh && mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT,
+//                                mFundType,
+//                                mAssetObject.symbol,
+//                                new Date());
+//                        Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
+//                        String request = gson.toJson(createLogInRequest(operation, mSignature));
+//                        Log.v("gatewayRequestBody", request);
+                        return RetrofitFactory.getInstance()
+                                .apiGateway()
+                                .getDepositWithdrawRecords(
+                                        "application/json",
+                                        "bearer " + mSignature,
+                                        mAccountName,
+                                        mIsRefresh && mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT,
+                                        mIsRefresh ? 0 : mRecordsItems.size(),
+                                        mAssetObject.symbol,
+                                        mFundType,
+                                        false,
+                                        false
+                                );
+                    }
+                })
+                .map(new Function<GateWayRecordsResponse, List<GatewayDepositWithdrawRecordsItem>>() {
+                    @Override
+                    public List<GatewayDepositWithdrawRecordsItem> apply(GateWayRecordsResponse gateWayRecordsResponse) throws Exception {
+                        Log.e(TAG, String.valueOf(gateWayRecordsResponse.getData().getTotal()));
+                        mTotalItemAmount = gateWayRecordsResponse.getData().getTotal();
+                        List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList = new ArrayList<>();
+                        for (Record record : gateWayRecordsResponse.getData().getRecords()) {
+                            GatewayDepositWithdrawRecordsItem gatewayDepositWithdrawRecordsItem = new GatewayDepositWithdrawRecordsItem();
+                            gatewayDepositWithdrawRecordsItem.setItemAsset(mAssetObject);
+                            gatewayDepositWithdrawRecordsItem.setRecord(record);
+                            for (Record.Details details : record.getDetails()) {
+                                if (!TextUtils.isEmpty(details.getHash())) {
+                                    for (BlockerExplorer blockerExplorer : mBlockerExplorerList) {
+                                        if (blockerExplorer.getAsset().equals(record.getCoinType())) {
+                                            gatewayDepositWithdrawRecordsItem.setExplorerLink(blockerExplorer.getExpolorerLink() + details.getHash());
+                                            break;
+                                        }
+                                    }
+                                    if (gatewayDepositWithdrawRecordsItem.getExplorerLink() == null) {
+                                        gatewayDepositWithdrawRecordsItem.setExplorerLink("https://etherscan.io/tx/" + details.getHash());
+                                    }
+                                    break;
+                                }
+                            }
+
+                            if (gatewayDepositWithdrawRecordsItem.getExplorerLink() == null) {
+                                gatewayDepositWithdrawRecordsItem.setExplorerLink("No Link");
+                            }
+
+                            for (Address address : mAddressList) {
+                                if (address.getAddress().equals(record.getAddress())) {
+                                    gatewayDepositWithdrawRecordsItem.setNote(address.getNote());
+                                    break;
+                                }
+                            }
+                            gatewayDepositWithdrawRecordsItemList.add(gatewayDepositWithdrawRecordsItem);
+                        }
+                        return gatewayDepositWithdrawRecordsItemList;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<GatewayDepositWithdrawRecordsItem>>() {
+                    @Override
+                    public void accept(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) {
+                        mRefreshLayout.finishRefresh();
+                        mRefreshLayout.finishLoadMore();
+                        if (mIsRefresh) {
+                            mRecordsItems.clear();
+                            mRecordsItems.addAll(gatewayDepositWithdrawRecordsItems);
+                        } else {
+                            mRecordsItems.addAll(gatewayDepositWithdrawRecordsItems);
+                        }
+                        if (mDepositWithdrawRecordAdapter == null) {
+                            mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(DepositWithdrawRecordsActivity.this, mRecordsItems);
+                            mDepositRecordsRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
+                        } else {
+                            mDepositWithdrawRecordAdapter.notifyDataSetChanged();
                         }
                     }
-                    gatewayDepositWithdrawRecordsItemList.add(gatewayDepositWithdrawRecordsItem);
-                }
-                return gatewayDepositWithdrawRecordsItemList;
-            }
-        })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<List<GatewayDepositWithdrawRecordsItem>>() {
-            @Override
-            public void accept(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) {
-                mRefreshLayout.finishRefresh();
-                mRefreshLayout.finishLoadMore();
-                if (mIsRefresh) {
-                    mRecordsItems.clear();
-                    mRecordsItems.addAll(gatewayDepositWithdrawRecordsItems);
-                } else {
-                    mRecordsItems.addAll(gatewayDepositWithdrawRecordsItems);
-                }
-                if(mDepositWithdrawRecordAdapter == null){
-                    mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(DepositWithdrawRecordsActivity.this, mRecordsItems);
-                    mDepositRecordsRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
-                } else {
-                    mDepositWithdrawRecordAdapter.notifyDataSetChanged();
-                }
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                mRefreshLayout.finishRefresh();
-                mRefreshLayout.finishLoadMore();
-            }
-        });
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mRefreshLayout.finishRefresh();
+                        mRefreshLayout.finishLoadMore();
+                    }
+                });
     }
 
     private GatewayLogInRecordRequest createLogInRequest(Operations.withdraw_deposit_history_operation operation, String signature) {

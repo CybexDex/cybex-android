@@ -43,4 +43,7 @@ public interface CybexHttpApi {
     @GET("json/settings.json")
     Observable<AppConfigResponse> getSettingConfig();
 
+    @GET("json/blockexplorer.json")
+    Observable<ResponseBody> getBlockExplorerLink();
+
 }

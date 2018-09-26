@@ -18,7 +18,7 @@
     <color name="itemBackground">#1B2230</color>
     <color name="itemBackground_translucent">#801B2230</color>
     <color name="horizontalItemBackground">#1B2230</color>
-
+    <color name="material_spinner_selector_background">#801b2230</color>
     <!-- Font color -->
     <color name="font_color_white_dark">#FFFFFF</color>
     <color name="font_color_dark_white">#1B2230</color>
@@ -82,5 +82,8 @@
 
     <!-- Progress bar color -->
     <color name="progress_bar_background_color">#171d2a</color>
+
+    <!-- Material Spinner text color -->
+    <color name="material_spinner_text_color">#8f9ab9</color>
 
 </resources>
