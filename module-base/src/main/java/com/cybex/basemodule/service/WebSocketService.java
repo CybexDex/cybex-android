@@ -11,6 +11,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.cybex.provider.graphene.chain.AssetsPair;
+import com.cybex.provider.http.entity.HotAssetPair;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybex.provider.utils.PriceUtil;
@@ -97,6 +98,7 @@ public class WebSocketService extends Service {
     private ConcurrentHashMap<String, AccountObject> mAccountHashMap = new ConcurrentHashMap<>();
     private List<FeeAmountObject> mLimitOrderCreateFees = null;
     private List<FeeAmountObject> mLimitOrderCancelFees = null;
+    private List<HotAssetPair> mHotAssetPair = null;
     //当前行情tab页
     private volatile String mCurrentBaseAssetId;
 
@@ -129,6 +131,7 @@ public class WebSocketService extends Service {
         //连接websocket
         BitsharesWalletWraper.getInstance().build_connect();
         loadAssetsRmbPrice();
+        startFullAccountWorkerSchedule();
         return START_NOT_STICKY;
     }
 
@@ -164,12 +167,47 @@ public class WebSocketService extends Service {
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
         if (watchlistDatas != null) {
             EventBus.getDefault().post(new Event.UpdateWatchlists(baseAssetId, watchlistDatas));
-            //开启周期性任务刷新行情
-            startWatchlistWorkerSchedule();
             return;
         }
-        loadToppingAssetsPair();
         loadAllAssetsPairData();
+    }
+
+    /**
+     * 加载热点行情数据
+     * @param hotAssetPairs
+     */
+    public void loadHotWatchlistData(List<HotAssetPair> hotAssetPairs){
+        if(hotAssetPairs == null || hotAssetPairs.size() == 0 || mNetworkState == TYPE_NOT_CONNECTED){
+            return;
+        }
+        mHotAssetPair = hotAssetPairs;
+        List<WatchlistData> watchlistDatas = getHotWatchlistData(hotAssetPairs);
+        if(watchlistDatas != null){
+            EventBus.getDefault().post(new Event.UpdateHotWatchlists(watchlistDatas));
+            return;
+        }
+        loadAllAssetsPairData();
+    }
+
+    private List<WatchlistData> getHotWatchlistData(List<HotAssetPair> hotAssetPairs){
+        if(hotAssetPairs == null || hotAssetPairs.size() == 0 || mWatchlistHashMap.isEmpty()){
+            return null;
+        }
+        List<WatchlistData> watchlistDatas = new ArrayList<>();
+        for(Map.Entry<String, List<WatchlistData>> entry : mWatchlistHashMap.entrySet()){
+            for(HotAssetPair hotAssetPair : hotAssetPairs){
+                if(!entry.getKey().equals(hotAssetPair.getBase())){
+                    continue;
+                }
+                for(WatchlistData watchlistData : entry.getValue()){
+                    if(!watchlistData.getQuoteId().equals(hotAssetPair.getQuote())){
+                        continue;
+                    }
+                    watchlistDatas.add(watchlistData);
+                }
+            }
+        }
+        return watchlistDatas;
     }
 
     public void loadLimitOrderCreateFee(String assetId, int operationId, Operations.base_operation operation){
@@ -317,6 +355,9 @@ public class WebSocketService extends Service {
                             for(AssetsPairToppingResponse toppingResponse : assetsPairToppingResponses){
                                 List<String> quotes = toppingResponse.getQuotes();
                                 List<AssetsPair> assetsPairs = assetsPairs1.get(toppingResponse.getBase());
+                                if(assetsPairs == null){
+                                    continue;
+                                }
                                 for(int i=0; i<quotes.size(); i++){
                                     for(AssetsPair assetsPair : assetsPairs){
                                         if(quotes.get(i).equals(assetsPair.getQuote())){
@@ -421,7 +462,7 @@ public class WebSocketService extends Service {
         }
     }
 
-    //加载价格和交易历史
+    //加载指定交易对的价格和交易历史
     private void loadHistoryPriceAndMarketTicker(List<AssetsPair> assetsPairs) {
         for (AssetsPair assetsPair : assetsPairs) {
             if (assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null) {
@@ -429,6 +470,20 @@ public class WebSocketService extends Service {
                 Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
                 Date endDate = new Date(System.currentTimeMillis());
                 loadHistoryPrice(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset(), startDate, endDate);
+            }
+        }
+    }
+
+    //加载所有交易对的价格和交易历史
+    private void loadHistoryPriceAndMarketTicker() {
+        for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+            for (AssetsPair assetsPair : entry.getValue()) {
+                if (assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null) {
+                    loadMarketTicker(assetsPair.getBase(), assetsPair.getQuote());
+                    Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
+                    Date endDate = new Date(System.currentTimeMillis());
+                    loadHistoryPrice(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset(), startDate, endDate);
+                }
             }
         }
     }
@@ -788,10 +843,15 @@ public class WebSocketService extends Service {
                 }
                 mWatchlistHashMap.put(entry.getKey(), watchlistData);
             }
-            //更新行情
-            List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
-            EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
-            //开启周期性任务加载当前Tab下的所有交易对数据
+            if(!TextUtils.isEmpty(mCurrentBaseAssetId)){
+                //更新行情
+                List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
+                EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
+            }
+            //更新热点行情
+            List<WatchlistData> hotWatchlistData = getHotWatchlistData(mHotAssetPair);
+            EventBus.getDefault().post(new Event.UpdateHotWatchlists(hotWatchlistData));
+            //开启周期性任务加载所有Tab下的所有交易对数据
             startWatchlistWorkerSchedule();
         }
 
@@ -1015,7 +1075,8 @@ public class WebSocketService extends Service {
 
         @Override
         public void run() {
-            loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(mCurrentBaseAssetId));
+            //loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(mCurrentBaseAssetId));
+            loadHistoryPriceAndMarketTicker();
         }
     }
 

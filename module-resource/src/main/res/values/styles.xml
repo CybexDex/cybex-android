@@ -179,8 +179,16 @@
         <item name="android:textSize">@dimen/font_xxlarge</item>
     </style>
 
+    <style name="font_green_bold_medium" parent="font_green_medium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="font_green_bold_small" parent="font_green_small">
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_green_medium" parent="font_green">
+        <item name="android:textSize">@dimen/font_medium</item>
     </style>
 
     <style name="font_green_small" parent="font_green">

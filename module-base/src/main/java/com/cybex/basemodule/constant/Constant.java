@@ -31,6 +31,7 @@ public class Constant {
     public static final String INTENT_PARAM_ACCOUNT_BALANCE_ITEMS = "intent_param_account_balance_items";
     public static final String INTENT_PARAM_ETO_PROJECT_DETAILS = "intent_param_eto_project_details";
     public static final String INTENT_PARAM_ETO_ATTEND_ETO = "intent_param_eto_attend_eto";
+    public static final String INTENT_PARAM_ETO_PROJECT_ID = "intent_param_eto_project_id";
 
     public static final String INTENT_PARAM_ITEMS = "intent_param_items";
     public static final String INTENT_PARAM_SELECTED_ITEM = "intent_param_selected_item";
@@ -41,6 +42,7 @@ public class Constant {
 
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";
+    public static final String INTENT_PARAM_URL = "intent_param_url";
 
     public static final int FREQUENCY_MODE_ORDINARY_MARKET = 1;
     public static final int FREQUENCY_MODE_REAL_TIME_MARKET = 2;
@@ -64,17 +66,10 @@ public class Constant {
     /**
      *  币ID
      */
-    public static String ASSET_ID_ETH = "1.3.2";
-    public static String ASSET_ID_CYB = "1.3.0";
-    public static String ASSET_ID_USDT = "1.3.27";
-    public static String ASSET_ID_BTC = "1.3.3";
-
-    public static void initAssetId(boolean isOfficialServer){
-        ASSET_ID_ETH = isOfficialServer ? "1.3.2" : "1.3.18";
-        ASSET_ID_CYB = isOfficialServer ? "1.3.0" : "1.3.0";
-        ASSET_ID_USDT = isOfficialServer ? "1.3.27" : "1.3.967";
-        ASSET_ID_BTC = isOfficialServer ? "1.3.3" : "1.3.25";
-    }
+    public static final String ASSET_ID_ETH = "1.3.2";
+    public static final String ASSET_ID_CYB = "1.3.0";
+    public static final String ASSET_ID_USDT = "1.3.27";
+    public static final String ASSET_ID_BTC = "1.3.3";
 
     /**
      * 币symbol

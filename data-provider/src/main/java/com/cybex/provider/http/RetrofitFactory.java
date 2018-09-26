@@ -32,6 +32,7 @@ public class RetrofitFactory {
     private OkHttpClient okHttpClient;
 
     private CybexHttpApi cybexHttpApi;
+    private MainHttpApi mainHttpApi;
     private FaucetHttpApi faucetHttpApi;
     private GatewayHttpApi gatewayHttpApi;
     private EtoHttpApi etoHttpApi;
@@ -76,6 +77,22 @@ public class RetrofitFactory {
             cybexHttpApi = retrofit.create(CybexHttpApi.class);
         }
         return cybexHttpApi;
+    }
+
+    public MainHttpApi apiMain(){
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before api");
+        }
+        if(mainHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(cybex_base_url_test)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            mainHttpApi = retrofit.create(MainHttpApi.class);
+        }
+        return mainHttpApi;
     }
 
     public GatewayHttpApi apiGateway(){

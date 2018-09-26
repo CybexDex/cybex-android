@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:id="@+id/coin_pair_item_card_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/corner_radius_4"
+    app:cardElevation="@dimen/elevation_3"
+    app:cardBackgroundColor="@color/itemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/activity_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/item_sub_link_iv_icon"
+            android:layout_marginEnd="@dimen/activity_margin"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/item_sub_link_tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_white_dark_bold_medium"
+                android:maxLines="1"
+                android:text="@string/text_empty"/>
+
+            <TextView
+                android:id="@+id/item_sub_link_tv_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_small"
+                android:maxLines="2"
+                android:layout_marginTop="@dimen/margin_3"
+                android:text="@string/text_empty"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/item_sub_link_iv_icon"
+            android:layout_width="@dimen/width_40"
+            android:layout_height="@dimen/height_40"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:src="@mipmap/ic_launcher_round"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

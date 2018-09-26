@@ -2,6 +2,7 @@
 <resources>
 
     <!-- Bottom Navigation Title -->
+    <string name="title_main">首页</string>
     <string name="title_watchlist">行情</string>
     <string name="title_explorer">探索</string>
     <string name="title_setting">设置</string>
@@ -479,5 +480,12 @@
 
     <!-- Terms and Conditions -->
     <string name="text_tool_bar_title_terms">服务条款与协议</string>
+
+    <!-- Cybex Main Fragment -->
+    <string name="text_block_chain">区块信息</string>
+    <string name="text_current_block">当前区块</string>
+    <string name="text_last_block">上一个区块</string>
+    <string name="text_average_confirmation_time">平均交易确认时间</string>
+    <string name="text_trx_block">每秒交易数</string>
 
 </resources>

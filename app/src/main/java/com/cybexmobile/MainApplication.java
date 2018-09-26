@@ -32,7 +32,6 @@ public class MainApplication extends Application {
         RetrofitFactory.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
         ApolloClientApi.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
         FullNodeServerSelect.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
-        Constant.initAssetId(server.equals(SERVER_OFFICIAL));
         if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("night_mode", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {

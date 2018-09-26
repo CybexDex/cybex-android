@@ -35,6 +35,7 @@
     <dimen name="height_26">21.66dp</dimen>
     <dimen name="height_30">25dp</dimen>
     <dimen name="height_32">26.66dp</dimen>
+    <dimen name="height_36">30dp</dimen>
     <dimen name="height_40">33.33dp</dimen>
     <dimen name="height_48">40dp</dimen>
     <dimen name="height_50">41.66dp</dimen>
@@ -94,6 +95,7 @@
     <!-- corner radius -->
     <dimen name="corner_radius_4">3.33dp</dimen>
     <dimen name="corner_radius_2">1.66dp</dimen>
+    <dimen name="corner_radius_18">15dp</dimen>
 
     <!-- elevation -->
     <dimen name="elevation_3">2.5dp</dimen>

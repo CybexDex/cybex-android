@@ -92,6 +92,22 @@ public class Event {
         }
     }
 
+    /**
+     * 更新热门交易对
+     */
+    public static class UpdateHotWatchlists {
+        private List<WatchlistData> data;
+
+        public UpdateHotWatchlists(List<WatchlistData> data) {
+            this.data = data;
+        }
+
+        public List<WatchlistData> getData() {
+            return data;
+        }
+
+    }
+
     //更新单条行情数据
     public static class UpdateWatchlist {
         private WatchlistData data;

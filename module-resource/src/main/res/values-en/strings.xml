@@ -1,6 +1,7 @@
 <resources>
 
     <!-- Bottom Navigation Title -->
+    <string name="title_main">Main</string>
     <string name="title_watchlist">Watchlist</string>
     <string name="title_explorer">Explorer</string>
     <string name="title_setting">Settings</string>
@@ -476,4 +477,11 @@
 
     <!-- Terms and Conditions -->
     <string name="text_tool_bar_title_terms">Terms and Conditions</string>
+
+    <!-- Cybex Main Fragment -->
+    <string name="text_block_chain">Blockchain</string>
+    <string name="text_current_block">Current Block</string>
+    <string name="text_last_block">Last Block</string>
+    <string name="text_average_confirmation_time">Average Confirmation Time</string>
+    <string name="text_trx_block">TRX/Block</string>
 </resources>

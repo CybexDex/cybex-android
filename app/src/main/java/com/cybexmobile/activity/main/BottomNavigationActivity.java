@@ -28,6 +28,7 @@ import com.cybex.basemodule.event.Event;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.ExchangeFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
+import com.cybexmobile.fragment.main.CybexMainFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.R;
 
@@ -58,6 +59,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private AccountFragment mAccountFragment;
     private ExchangeFragment mExchangeFragment;
     private EtoFragment mEtoFragment;
+    private CybexMainFragment mCybexMainFragment;
     private Context mContext;
 
     private String mAction;
@@ -121,6 +123,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
         }
+        if(mCybexMainFragment != null && mCybexMainFragment.isAdded()){
+            fm.putFragment(outState, CybexMainFragment.class.getSimpleName(), mCybexMainFragment);
+        }
     }
 
     @Override
@@ -146,12 +151,13 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     private void initFragment(Bundle savedInstanceState) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        int selectedId = R.id.navigation_watchlist;
+        int selectedId = R.id.navigation_main;
         if (savedInstanceState != null) {
             mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState, WatchlistFragment.class.getSimpleName());
             mExchangeFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
             mEtoFragment = (EtoFragment) fragmentManager.getFragment(savedInstanceState, EtoFragment.class.getSimpleName());
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
+            mCybexMainFragment = (CybexMainFragment) fragmentManager.getFragment(savedInstanceState, CybexMainFragment.class.getSimpleName());
             selectedId = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
         }
         showFragment(selectedId);
@@ -176,6 +182,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         }
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             transaction.hide(mAccountFragment);
+        }
+        if (mCybexMainFragment != null && mCybexMainFragment.isAdded()) {
+            transaction.hide(mCybexMainFragment);
         }
         switch (resId) {
             case R.id.navigation_watchlist:
@@ -216,6 +225,16 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                     transaction.show(mAccountFragment);
                 } else {
                     transaction.add(R.id.frame_container, mAccountFragment, AccountFragment.class.getSimpleName());
+                }
+                break;
+            case R.id.navigation_main:
+                if(mCybexMainFragment == null){
+                    mCybexMainFragment = new CybexMainFragment();
+                }
+                if(mCybexMainFragment.isAdded()){
+                    transaction.show(mCybexMainFragment);
+                } else {
+                    transaction.add(R.id.frame_container, mCybexMainFragment, CybexMainFragment.class.getSimpleName());
                 }
                 break;
         }

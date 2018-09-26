@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/item_hot_pair_tv_asset_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/font_white_dark_bold_large"
+        android:text="@string/text_empty"/>
+
+    <TextView
+        android:id="@+id/item_hot_pair_tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/font_green_bold_medium"
+        android:text="@string/text_empty"/>
+
+    <TextView
+        android:id="@+id/item_hot_pair_tv_rmb_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/font_gray_small"
+        android:text="@string/text_empty"/>
+
+    <TextView
+        android:id="@+id/item_hot_pair_tv_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/font_green_bold_medium"
+        android:layout_marginTop="@dimen/margin_6"
+        android:text="@string/text_empty"/>
+
+</LinearLayout>

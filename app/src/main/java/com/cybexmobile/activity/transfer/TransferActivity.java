@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -58,6 +59,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -81,6 +83,7 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class TransferActivity extends BaseActivity implements
         CommonSelectDialog.OnAssetSelectedListener<AccountBalanceObjectItem>,
@@ -143,12 +146,14 @@ public class TransferActivity extends BaseActivity implements
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, null);
         mEtQuantity.setFilters(new InputFilter[]{mQuantityFilter});
         mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
-        mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
-        /**
-         * fix bug:CYM-551
-         * 去除资产为0的币种
-         */
-        removeZeroBalance(mAccountBalanceObjectItems);
+        if(mAccountBalanceObjectItems != null){
+            mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
+            /**
+             * fix bug:CYM-551
+             * 去除资产为0的币种
+             */
+            removeZeroBalance(mAccountBalanceObjectItems);
+        }
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
         loadAddress();
@@ -589,6 +594,7 @@ public class TransferActivity extends BaseActivity implements
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mUserName);
+            loadAccountBalanceObjectItems(fullAccountObject);
             mFromAccountObject = fullAccountObject == null ? null : fullAccountObject.account;
             checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
         }
@@ -598,6 +604,28 @@ public class TransferActivity extends BaseActivity implements
             mWebSocketService = null;
         }
     };
+
+    private void loadAccountBalanceObjectItems(FullAccountObject fullAccountObject) {
+        if (mAccountBalanceObjectItems != null && fullAccountObject == null) {
+            return;
+        }
+        if (NetworkUtils.getConnectivityStatus(this) == TYPE_NOT_CONNECTED) {
+            return;
+        }
+        List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
+        if (accountBalanceObjects != null && accountBalanceObjects.size() > 0) {
+            mAccountBalanceObjectItems = new ArrayList<>();
+            for (AccountBalanceObject balance : accountBalanceObjects) {
+                if (balance.balance == 0) {
+                    continue;
+                }
+                AccountBalanceObjectItem item = new AccountBalanceObjectItem();
+                item.accountBalanceObject = balance;
+                item.assetObject = mWebSocketService.getAssetObject(balance.asset_type.toString());
+                mAccountBalanceObjectItems.add(item);
+            }
+        }
+    }
 
     private void loadAddress(){
         if(TextUtils.isEmpty(mUserName)){
