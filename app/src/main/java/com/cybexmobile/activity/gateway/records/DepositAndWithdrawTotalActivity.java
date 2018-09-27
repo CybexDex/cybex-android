@@ -108,7 +108,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 showLoadDialog(true);
                 if (!item.equals(getResources().getString(R.string.withdraw_all))) {
-                    mCurrentFundType = mapFundTypes(item);
+                    mCurrentFundType = mapFundTypes(item).toUpperCase();
                 } else {
                     mCurrentFundType = null;
                 }
