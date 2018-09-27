@@ -108,6 +108,7 @@ public class DepositItemFragment extends Fragment {
         RetrofitFactory.getInstance()
                 .api()
                 .getDepositList()
+                .retry()
                 .map(new Function<ResponseBody, List<DepositAndWithdrawObject>>() {
                     @Override
                     public List<DepositAndWithdrawObject> apply(ResponseBody responseBody) throws Exception {

@@ -97,11 +97,9 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
         mDepositAndWithdrawTotalPresenter.attachView(this);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mRefreshLayout.autoRefresh();
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setOnLoadMoreListener(this);
         String[] Types = {getResources().getString(R.string.withdraw_all).toUpperCase(), getResources().getString(R.string.gate_way_withdraw).toUpperCase(), getResources().getString(R.string.gate_way_deposit).toUpperCase()};
-
         mTypesSpinner.setItems(Types);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);

@@ -68,7 +68,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
     }
 
-    public void setData(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList){
+    public void setData(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
         mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
         notifyDataSetChanged();
     }
@@ -77,7 +77,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
-        if(viewType == TYPE_EMPTY){
+        if (viewType == TYPE_EMPTY) {
             view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
             return new EmptyViewHolder(view);
         }
@@ -97,7 +97,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof EmptyViewHolder){
+        if (holder instanceof EmptyViewHolder) {
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
             emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.deposit_withdraw_records_no_record));
             emptyViewHolder.mIvImage.setImageResource(R.drawable.ic_no_records);
@@ -153,7 +153,8 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_init);
             case "new":
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_new);
+            default:
+                return mContext.getResources().getString(R.string.deposit_withdraw_state_init);
         }
-        return null;
     }
 }

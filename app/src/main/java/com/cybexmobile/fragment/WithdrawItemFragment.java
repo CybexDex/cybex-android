@@ -97,6 +97,7 @@ public class WithdrawItemFragment extends Fragment {
         RetrofitFactory.getInstance()
                 .api()
                 .getWithdrawList()
+                .retry()
                 .map(new Function<ResponseBody, List<DepositAndWithdrawObject>>() {
                     @Override
                     public List<DepositAndWithdrawObject> apply(ResponseBody responseBody) throws Exception {
