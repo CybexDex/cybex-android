@@ -19,6 +19,7 @@ import com.cybex.provider.http.entity.Record;
 import com.cybex.provider.http.response.GateWayAssetInRecordsResponse;
 import com.cybex.provider.http.response.GateWayRecordsResponse;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybexmobile.R;
 import com.cybexmobile.data.GatewayLogInRecordRequest;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
 import com.google.gson.Gson;
@@ -60,7 +61,7 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
     DepositAndWithdrawTotalPresenter() {
     }
 
-    public void loadAssetList(String userName) {
+    public void loadAssetList(Context context, String userName) {
         mCompositeDisposable.add(
                 RetrofitFactory.getInstance()
                         .apiGateway()
@@ -85,7 +86,7 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
                         .subscribe(new Consumer<List<String>>() {
                             @Override
                             public void accept(List<String> strings) throws Exception {
-                                strings.add(0, "ALL");
+                                strings.add(0, context.getResources().getString(R.string.withdraw_all).toUpperCase());
                                 getMvpView().onLoadAsset(strings);
                             }
                         }, new Consumer<Throwable>() {
@@ -216,7 +217,7 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
                             public void accept(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) throws Exception {
                                 getMvpView().onLoadRecordsData(loadMode, gatewayDepositWithdrawRecordsItems);
                                 if (mAssetList.isEmpty()) {
-                                    loadAssetList(userName);
+                                    loadAssetList( context, userName);
                                 }
                             }
                         }, new Consumer<Throwable>() {

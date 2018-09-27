@@ -7,22 +7,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.View;
 
-import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.service.WebSocketService;
-import com.cybex.eto.activity.details.EtoDetailsPresenter;
-import com.cybex.eto.activity.details.EtoDetailsView;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -30,7 +22,6 @@ import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
 import com.cybexmobile.injection.base.AppBaseActivity;
-import com.cybexmobile.injection.component.AppActivityComponent;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -109,22 +100,41 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
         mRefreshLayout.autoRefresh();
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setOnLoadMoreListener(this);
-        mTypesSpinner.setItems(Constant.Types);
+        String[] Types = {getResources().getString(R.string.withdraw_all).toUpperCase(), getResources().getString(R.string.gate_way_withdraw).toUpperCase(), getResources().getString(R.string.gate_way_deposit).toUpperCase()};
+
+        mTypesSpinner.setItems(Types);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
         mTypesSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 showLoadDialog(true);
-                if (!item.equals("ALL")) {
-                    mCurrentFundType = item;
+                if (!item.equals(getResources().getString(R.string.withdraw_all).toUpperCase())) {
+                    mCurrentFundType = mapFundTypes(item);
                 } else {
                     mCurrentFundType = null;
                 }
                 view.setTextColor(getResources().getColor(R.color.btn_orange_end));
                 view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
-                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                        mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+
+                if (mAccountObject == null) {
+                    return;
+                }
+
+                if (BitsharesWalletWraper.getInstance().is_locked()) {
+                    CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
+                        @Override
+                        public void onUnLocked(String password) {
+                            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                    mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+
+                        }
+                    });
+                } else {
+                    mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                            mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+
+                }
             }
         });
     }
@@ -176,14 +186,30 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                 showLoadDialog(true);
                 view.setTextColor(getResources().getColor(R.color.btn_orange_end));
                 view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
-                if (!item.equals("ALL")) {
+                if (!item.equals(getResources().getString(R.string.withdraw_all).toUpperCase())) {
                     mCurrentCurrency = "JADE." + item;
                 } else {
                     mCurrentCurrency = null;
                 }
-                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                        mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
 
+                if (mAccountObject == null) {
+                    return;
+                }
+
+                if (BitsharesWalletWraper.getInstance().is_locked()) {
+                    CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
+                        @Override
+                        public void onUnLocked(String password) {
+                            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                    mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+
+                        }
+                    });
+                } else {
+                    mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                            mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+
+                }
             }
         });
     }
@@ -233,13 +259,26 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-        loadMoreData();
+        if (mAccountObject == null) {
+            return;
+        }
+
+        if (BitsharesWalletWraper.getInstance().is_locked()) {
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
+                @Override
+                public void onUnLocked(String password) {
+                    loadMoreData();
+                }
+            });
+        } else {
+            loadMoreData();
+        }
     }
 
     private void refreshRecords() {
         if (TextUtils.isEmpty(mUserName)) {
             mRefreshLayout.finishRefresh();
-            mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(this , mRecordsItems);
+            mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(this, mRecordsItems);
             mRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
             return;
         }
@@ -254,7 +293,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
             return;
         }
 
-        if (mRecordsItems== null || mRecordsItems.size() == 0 || mRecordsItems.size() % LOAD_COUNT != 0) {
+        if (mRecordsItems == null || mRecordsItems.size() == 0 || mRecordsItems.size() % LOAD_COUNT != 0) {
             mRefreshLayout.finishLoadMore();
             mRefreshLayout.setNoMoreData(true);
             return;
@@ -263,6 +302,19 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
         mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_MORE, this, mWebSocketService, mAccountObject, mUserName,
                 LOAD_COUNT, mRecordsItems.size(), mCurrentCurrency, mCurrentFundType, false, false);
 
+    }
+
+    private String mapFundTypes(String fundType) {
+        switch (fundType) {
+            case "全部":
+                return "All";
+            case "充值":
+                return "DEPOSIT";
+            case "提现":
+                return "WITHDRAW";
+            default:
+                return fundType;
+        }
     }
 
 

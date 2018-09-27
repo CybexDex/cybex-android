@@ -10,7 +10,7 @@ ext {
 
     // app dependencies
     dependencies = [
-
+        support_version : '27.1.1'
     ]
 
 
