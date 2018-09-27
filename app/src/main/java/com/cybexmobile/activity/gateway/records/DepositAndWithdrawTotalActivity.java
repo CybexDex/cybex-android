@@ -99,7 +99,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setOnLoadMoreListener(this);
-        String[] Types = {getResources().getString(R.string.withdraw_all).toUpperCase(), getResources().getString(R.string.gate_way_withdraw).toUpperCase(), getResources().getString(R.string.gate_way_deposit).toUpperCase()};
+        String[] Types = {getResources().getString(R.string.withdraw_all), getResources().getString(R.string.gate_way_withdraw), getResources().getString(R.string.gate_way_deposit)};
         mTypesSpinner.setItems(Types);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
@@ -107,7 +107,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 showLoadDialog(true);
-                if (!item.equals(getResources().getString(R.string.withdraw_all).toUpperCase())) {
+                if (!item.equals(getResources().getString(R.string.withdraw_all))) {
                     mCurrentFundType = mapFundTypes(item);
                 } else {
                     mCurrentFundType = null;
@@ -184,7 +184,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                 showLoadDialog(true);
                 view.setTextColor(getResources().getColor(R.color.btn_orange_end));
                 view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
-                if (!item.equals(getResources().getString(R.string.withdraw_all).toUpperCase())) {
+                if (!item.equals(getResources().getString(R.string.withdraw_all))) {
                     mCurrentCurrency = "JADE." + item;
                 } else {
                     mCurrentCurrency = null;

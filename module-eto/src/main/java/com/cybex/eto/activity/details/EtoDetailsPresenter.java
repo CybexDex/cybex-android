@@ -60,6 +60,33 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, "");
     }
 
+    public void loadEtoProject(String projectId){
+        mCompositeDisposable.add(RetrofitFactory
+                .getInstance()
+                .apiEto()
+                .getEtoProjectDetails(projectId)
+                .map(new Function<EtoBaseResponse<EtoProject>, EtoProject>() {
+                    @Override
+                    public EtoProject apply(EtoBaseResponse<EtoProject> etoBaseResponse) throws Exception {
+                        return etoBaseResponse.getResult();
+                    }
+                })
+                .retry()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<EtoProject>() {
+                    @Override
+                    public void accept(EtoProject etoProject) throws Exception {
+                        getMvpView().onLoadEtoProject(etoProject);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+    }
+
     public void loadDetailsWithUserStatus(final EtoProject etoProject, final String userName) {
         mCompositeDisposable.add( Flowable.interval(0, 1, TimeUnit.SECONDS)
                 .flatMap(new Function<Long, Publisher<EtoBaseResponse<EtoUserStatus>>>() {

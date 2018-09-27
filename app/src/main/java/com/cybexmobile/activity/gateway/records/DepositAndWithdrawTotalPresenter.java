@@ -86,7 +86,7 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
                         .subscribe(new Consumer<List<String>>() {
                             @Override
                             public void accept(List<String> strings) throws Exception {
-                                strings.add(0, context.getResources().getString(R.string.withdraw_all).toUpperCase());
+                                strings.add(0, context.getResources().getString(R.string.withdraw_all));
                                 getMvpView().onLoadAsset(strings);
                             }
                         }, new Consumer<Throwable>() {

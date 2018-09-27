@@ -207,7 +207,6 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
     @Override
     public void onLoadBanners(List<CybexBanner> banners) {
         mCybexBanners = banners;
-        mCybexBanners.addAll(banners);
         mBanner.setImages(mCybexBanners);
         mBanner.start();
     }

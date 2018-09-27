@@ -2,6 +2,7 @@ package com.cybexmobile.intent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.cybex.eto.activity.details.EtoDetailsActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
@@ -37,6 +38,10 @@ public class IntentFactory {
     }
 
     public IntentFactory action(String url){
+        if(TextUtils.isEmpty(url)){
+            action = ACTION_INVALID;
+            return this;
+        }
         this.url = url;
         if(url.startsWith(PREFIX_HTTP) || url.startsWith(PREFIX_HTTPS)){
             action = ACTION_HTTP;
@@ -145,7 +150,7 @@ public class IntentFactory {
         if(urlSplit.length == 2){
             throw new Exception("------------------url mapping failed------------------");
         }
-        if(urlCache.length() == 3 && urlCache.contains("eto/project")){
+        if(urlSplit.length == 3 && urlCache.contains("eto/project")){
             isNeedLogin = false;
             param.put(INTENT_PARAM_ETO_PROJECT_ID, urlSplit[2]);
             return EtoDetailsActivity.class;

@@ -50,6 +50,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_PROJECT_DETAILS;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_PROJECT_ID;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.utils.DateUtils.PATTERN_yyyy_MM_dd_HH_mm_ss;
@@ -109,14 +110,17 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         setOnclickListener();
         mEtoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_PROJECT_DETAILS);
         mUserName = mEtoDetailsPresenter.getUserName(this);
-        if (mEtoDetailsPresenter.isLogIn(this)) {
-            showDetails(mEtoProject);
-            mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
+        if(mEtoProject != null){
+            if (mEtoDetailsPresenter.isLogIn(this)) {
+                showDetails(mEtoProject);
+                mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
+            } else {
+                showAgreementStatus(mEtoProject, null, false);
+                showDetails(mEtoProject);
+            }
         } else {
-            showAgreementStatus(mEtoProject, null, false);
-            showDetails(mEtoProject);
+            mEtoDetailsPresenter.loadEtoProject(getIntent().getStringExtra(INTENT_PARAM_ETO_PROJECT_ID));
         }
-
     }
 
     @Override
@@ -235,6 +239,21 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mAppointmentButton.setVisibility(View.INVISIBLE);
         mProjectAgreementLl.setVisibility(View.VISIBLE);
         mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
+    }
+
+    @Override
+    public void onLoadEtoProject(EtoProject etoProject) {
+        mEtoProject = etoProject;
+        if(mEtoProject == null){
+            return;
+        }
+        if (mEtoDetailsPresenter.isLogIn(this)) {
+            showDetails(mEtoProject);
+            mEtoDetailsPresenter.loadDetailsWithUserStatus(mEtoProject, mUserName);
+        } else {
+            showAgreementStatus(mEtoProject, null, false);
+            showDetails(mEtoProject);
+        }
     }
 
     @Override
