@@ -290,6 +290,11 @@ public class WithdrawActivity extends BaseActivity {
                     return;
                 }
                 mWithdrawAddress.setText(address.getAddress());
+                if (address.getToken().equals("1.3.4")) {
+                    if (!address.getMemo().isEmpty()) {
+                        mWithdrawMemoEosEditText.setText(address.getMemo());
+                    }
+                }
                 if (!mWithdrawAddress.isFocused()) {
                     onWithdrawAddressFocusChanged(mWithdrawAddress, false);
                 }
