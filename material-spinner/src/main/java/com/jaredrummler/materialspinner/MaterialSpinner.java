@@ -32,6 +32,7 @@ import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -43,7 +44,6 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +51,7 @@ import java.util.List;
 /**
  * A spinner that shows a {@link PopupWindow} under the view when clicked.
  */
-public class MaterialSpinner extends TextView {
+public class MaterialSpinner extends AppCompatTextView {
 
   private OnNothingSelectedListener onNothingSelectedListener;
   private OnItemSelectedListener onItemSelectedListener;
