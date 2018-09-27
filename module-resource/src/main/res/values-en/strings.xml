@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Bottom Navigation Title -->
-    <string name="title_main">Main</string>
+    <string name="title_main">Home</string>
     <string name="title_watchlist">Watchlist</string>
     <string name="title_explorer">Explorer</string>
     <string name="title_setting">Settings</string>

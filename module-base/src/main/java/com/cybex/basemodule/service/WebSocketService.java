@@ -194,8 +194,8 @@ public class WebSocketService extends Service {
             return null;
         }
         List<WatchlistData> watchlistDatas = new ArrayList<>();
-        for(Map.Entry<String, List<WatchlistData>> entry : mWatchlistHashMap.entrySet()){
-            for(HotAssetPair hotAssetPair : hotAssetPairs){
+        for(HotAssetPair hotAssetPair : hotAssetPairs){
+            for(Map.Entry<String, List<WatchlistData>> entry : mWatchlistHashMap.entrySet()){
                 if(!entry.getKey().equals(hotAssetPair.getBase())){
                     continue;
                 }

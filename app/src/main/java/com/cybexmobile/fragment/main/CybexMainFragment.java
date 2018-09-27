@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -183,6 +184,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
             textView.setSingleLine();
             textView.setTextColor(getResources().getColor(R.color.font_color_white_dark));
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.font_small));
+            textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setTag(announce);
             textView.setOnClickListener(this);
             mVfNotice.addView(textView);

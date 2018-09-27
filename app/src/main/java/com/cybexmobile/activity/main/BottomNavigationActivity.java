@@ -290,14 +290,19 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 .subscribe(new Consumer<AppConfigResponse>() {
                     @Override
                     public void accept(AppConfigResponse appConfigResponse) throws Exception {
-                        if(!appConfigResponse.isETOEnabled()){
-                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_eto);
+                        if(appConfigResponse.isETOEnabled()){
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_main);
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_watchlist);
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_exchange);
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_account);
+                            mBottomNavigationView.inflateMenu(R.menu.navigation_eto);
+                            BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
                         }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        mBottomNavigationView.getMenu().removeItem(R.id.navigation_eto);
+
                     }
                 });
     }

@@ -67,12 +67,15 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
         if (change > 0.f) {
             holder.mTvChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
             holder.mTvChangeRate.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
+            holder.mTvCurrPrice.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
         } else if (change < 0.f) {
             holder.mTvChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change * 100))));
             holder.mTvChangeRate.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
+            holder.mTvCurrPrice.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
         } else {
             holder.mTvChangeRate.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : "0.00%");
             holder.mTvChangeRate.setTextColor(mContext.getResources().getColor(R.color.no_change_color));
+            holder.mTvCurrPrice.setTextColor(mContext.getResources().getColor(R.color.no_change_color));
         }
         holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
                 String.format(Locale.US, "≈¥ %.2f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));

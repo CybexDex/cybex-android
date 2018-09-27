@@ -16,6 +16,9 @@
     <dimen name="width_24">21.33dp</dimen>
     <dimen name="width_80">71.11dp</dimen>
     <dimen name="width_40">35.55dp</dimen>
+    <dimen name="width_45">40dp</dimen>
+    <dimen name="width_48">42.66dp</dimen>
+    <dimen name="width_50">44.44dp</dimen>
     <dimen name="width_56">49.77dp</dimen>
     <dimen name="width_60">53.33dp</dimen>
     <dimen name="width_65">57.77dp</dimen>
@@ -37,6 +40,7 @@
     <dimen name="height_32">28.44dp</dimen>
     <dimen name="height_36">32dp</dimen>
     <dimen name="height_40">35.55dp</dimen>
+    <dimen name="height_45">40dp</dimen>
     <dimen name="height_48">42.66dp</dimen>
     <dimen name="height_50">44.44dp</dimen>
     <dimen name="height_54">48dp</dimen>

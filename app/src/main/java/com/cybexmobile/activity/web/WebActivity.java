@@ -96,6 +96,10 @@ public class WebActivity extends BaseActivity{
         //隐藏原生的缩放控件
         webSettings.setDisplayZoomControls(false);
 
+//        webSettings.setUseWideViewPort(true);
+//        webSettings.setLoadWithOverviewMode(true);
+//        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+
         mWebView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {

@@ -14,6 +14,10 @@
         android:icon="@drawable/ic_exchange_selector"
         android:title="@string/title_exchange" />
     <item
+        android:id="@+id/navigation_eto"
+        android:icon="@drawable/ic_eto_selector"
+        android:title="@string/title_eto"/>
+    <item
         android:id="@+id/navigation_account"
         android:icon="@drawable/ic_account_selector"
         android:title="@string/title_account"/>

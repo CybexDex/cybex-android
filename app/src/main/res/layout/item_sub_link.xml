@@ -44,8 +44,8 @@
 
         <ImageView
             android:id="@+id/item_sub_link_iv_icon"
-            android:layout_width="@dimen/width_40"
-            android:layout_height="@dimen/height_40"
+            android:layout_width="@dimen/width_45"
+            android:layout_height="@dimen/height_45"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:src="@mipmap/ic_launcher_round"/>
