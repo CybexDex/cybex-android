@@ -33,7 +33,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingStart="@dimen/activity_padding"
-            android:paddingEnd="@dimen/activity_padding">
+            android:paddingEnd="@dimen/activity_padding_double">
 
             <TextView
                 style="@style/font_gray_bold_small"
@@ -60,7 +60,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingStart="@dimen/activity_padding"
-            android:paddingEnd="@dimen/activity_padding">
+            android:paddingEnd="@dimen/activity_padding_double">
 
             <TextView
                 style="@style/font_gray_bold_small"

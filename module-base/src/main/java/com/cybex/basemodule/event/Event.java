@@ -96,14 +96,20 @@ public class Event {
      * 更新热门交易对
      */
     public static class UpdateHotWatchlists {
-        private List<WatchlistData> data;
+        private List<WatchlistData> allWatchlists;
+        private List<WatchlistData> hotWatchlists;
 
-        public UpdateHotWatchlists(List<WatchlistData> data) {
-            this.data = data;
+        public UpdateHotWatchlists(List<WatchlistData> hotWatchlists, List<WatchlistData> allWatchlists) {
+            this.allWatchlists = allWatchlists;
+            this.hotWatchlists = hotWatchlists;
         }
 
-        public List<WatchlistData> getData() {
-            return data;
+        public List<WatchlistData> getAllWatchlists() {
+            return allWatchlists;
+        }
+
+        public List<WatchlistData> getHotWatchlists() {
+            return hotWatchlists;
         }
 
     }

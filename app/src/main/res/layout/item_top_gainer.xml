@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/activity_padding"
+    android:background="@color/itemBackground">
+
+    <LinearLayout
+        android:id="@+id/item_top_gainer_layout_asset_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/item_top_gainer_tv_sort"
+            android:layout_width="@dimen/width_14"
+            android:layout_height="@dimen/height_14"
+            style="@style/font_dark_white_small"
+            android:textStyle="italic|bold"
+            android:gravity="center"
+            android:background="@drawable/bg_increasing"
+            android:text="@string/text_empty"/>
+
+        <TextView
+            android:id="@+id/item_top_gainer_tv_quote"
+            style="@style/font_white_dark_bold_large"
+            android:layout_marginStart="@dimen/margin_10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_empty" />
+
+        <TextView
+            android:id="@+id/item_top_gainer_tv_base"
+            style="@style/font_gray_bold_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/--" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/item_top_gainer_tv_current_price"
+        style="@style/font_white_dark_bold_large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/item_top_gainer_layout_asset_symbol"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/margin_111"
+        android:maxLines="1"
+        android:text="@string/text_empty" />
+
+    <LinearLayout
+        android:id="@+id/item_top_gainer_layout_volume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/item_top_gainer_layout_asset_symbol"
+        android:layout_below="@id/item_top_gainer_layout_asset_symbol"
+        android:layout_marginTop="@dimen/margin_6"
+        android:layout_marginStart="@dimen/margin_24"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/font_gray_bold_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/market_page_volume_short" />
+
+        <TextView
+            android:id="@+id/item_top_gainer_tv_volume"
+            style="@style/font_gray_bold_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_3"
+            android:text="@string/text_empty" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/item_top_gainer_tv_rmb_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/font_gray_bold_small"
+        android:lineSpacingMultiplier="1.67"
+        android:text="@string/text_empty"
+        android:layout_alignBottom="@+id/item_top_gainer_layout_volume"
+        android:layout_alignEnd="@id/item_top_gainer_tv_current_price" />
+
+    <TextView
+        android:id="@+id/item_top_gainer_tv_change_rate"
+        style="@style/font_white_bold_large"
+        android:layout_width="@dimen/width_80"
+        android:layout_height="@dimen/height_32"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/bg_no_change"
+        android:gravity="center"
+        android:text="@string/text_empty" />
+
+</RelativeLayout>

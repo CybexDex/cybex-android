@@ -12,6 +12,7 @@
 
     <!-- width -->
     <dimen name="width_1">1.48dp</dimen>
+    <dimen name="width_14">20.74dp</dimen>
     <dimen name="width_16">23.7dp</dimen>
     <dimen name="width_24">35.55dp</dimen>
     <dimen name="width_80">118.51dp</dimen>
@@ -33,6 +34,7 @@
     <dimen name="height_1">1.48dp</dimen>
     <dimen name="height_2">2.96dp</dimen>
     <dimen name="height_5">7.4dp</dimen>
+    <dimen name="height_14">20.74dp</dimen>
     <dimen name="height_16">23.7dp</dimen>
     <dimen name="height_24">35.55dp</dimen>
     <dimen name="height_26">38.51dp</dimen>
@@ -65,6 +67,7 @@
     <dimen name="margin_18">26.66dp</dimen>
     <dimen name="margin_20">29.62dp</dimen>
     <dimen name="margin_22">32.59dp</dimen>
+    <dimen name="margin_24">35.55dp</dimen>
     <dimen name="margin_30">44.44dp</dimen>
     <dimen name="margin_40">59.25dp</dimen>
     <dimen name="margin_50">74.07dp</dimen>

@@ -64,13 +64,13 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
                 mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
             holder.mChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
-            holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.increasing_color));
+            holder.mChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_increasing));
         } else if (change < 0.f) {
             holder.mChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change * 100))));
-            holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.decreasing_color));
+            holder.mChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_decreasing));
         } else {
             holder.mChangeRate.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : "0.00%");
-            holder.mChangeRate.setBackgroundColor(mContext.getResources().getColor(R.color.no_change_color));
+            holder.mChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_no_change));
         }
         loadImage(watchlistData.getQuoteId(), holder.mSymboleView);
         /**
@@ -86,7 +86,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(watchlistData, mValues, position);
+                    mListener.onListFragmentInteraction(watchlistData);
                 }
             }
         });
@@ -94,7 +94,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mValues == null ? 0 : mValues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -484,4 +484,5 @@
     <string name="text_last_block">Last Block</string>
     <string name="text_average_confirmation_time">Average Confirmation Time</string>
     <string name="text_trx_block">TRX/Block</string>
+    <string name="text_top_gainers">Top Gainers</string>
 </resources>

@@ -6,14 +6,12 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.basemodule.utils.AssetUtil;
-import com.cybex.provider.http.entity.SubLink;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
-import com.squareup.picasso.Picasso;
+import com.cybexmobile.fragment.WatchlistFragment;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -27,15 +25,13 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
 
     private Context mContext;
     private List<WatchlistData> mWatchlistData;
-    private OnItemClickListener mListener;
     private NumberFormat formatter = new DecimalFormat("0.00");
+    private WatchlistFragment.OnListFragmentInteractionListener mListener;
 
-    public HotAssetPairRecyclerViewAdapter(Context context, List<WatchlistData> watchlistData) {
+    public HotAssetPairRecyclerViewAdapter(Context context, List<WatchlistData> watchlistData,
+                                           WatchlistFragment.OnListFragmentInteractionListener listener) {
         mContext = context;
         mWatchlistData = watchlistData;
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }
 
@@ -79,6 +75,14 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
         }
         holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
                 String.format(Locale.US, "≈¥ %.2f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onListFragmentInteraction(watchlistData);
+                }
+            }
+        });
     }
 
     @Override
@@ -107,7 +111,4 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
         }
     }
 
-    public interface OnItemClickListener{
-        void onItemClick(WatchlistData watchlistData);
-    }
 }

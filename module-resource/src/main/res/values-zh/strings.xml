@@ -487,5 +487,6 @@
     <string name="text_last_block">上一个区块</string>
     <string name="text_average_confirmation_time">平均交易确认时间</string>
     <string name="text_trx_block">每秒交易数</string>
+    <string name="text_top_gainers">涨幅榜</string>
 
 </resources>

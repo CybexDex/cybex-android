@@ -278,7 +278,7 @@ public class WatchlistFragment extends BaseFragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(WatchlistData item, List<WatchlistData> dataList, int position);
+        void onListFragmentInteraction(WatchlistData item);
     }
 
 

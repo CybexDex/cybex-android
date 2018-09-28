@@ -11,7 +11,9 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,6 +42,8 @@ import com.cybex.basemodule.base.BaseFragment;
 import com.cybexmobile.activity.web.WebActivity;
 import com.cybexmobile.adapter.HotAssetPairRecyclerViewAdapter;
 import com.cybexmobile.adapter.SubLinkRecyclerViewAdapter;
+import com.cybexmobile.adapter.TopGainerRecyclerViewAdapter;
+import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.helper.GridSpacingItemDecoration;
 import com.cybexmobile.injection.base.AppBaseFragment;
 import com.cybexmobile.intent.IntentFactory;
@@ -53,6 +57,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -90,19 +96,25 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
     TextView mTvAverageConfirmationTime;
     @BindView(R.id.fragment_cybex_main_tv_trx_block)
     TextView mTvTrxBlock;
+    @BindView(R.id.fragment_cybex_main_rv_top_gainers)
+    RecyclerView mRvTopGainers;
 
     private Unbinder mUnbinder;
 
     private List<CybexBanner> mCybexBanners;
     private List<SubLink> mSubLinks;
     private List<WatchlistData> mHotWatchlistData;
+    private List<WatchlistData> mAllWatchlistData;
     private boolean mIsLoginIn;
     private String mName;
 
     private SubLinkRecyclerViewAdapter mSubLinkRecyclerViewAdapter;
     private HotAssetPairRecyclerViewAdapter mHotAssetPairRecyclerViewAdapter;
+    private TopGainerRecyclerViewAdapter mTopGainerRecyclerViewAdapter;
 
     private WebSocketService mWebSocketService;
+
+    private WatchlistFragment.OnListFragmentInteractionListener mListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,6 +139,8 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         mRvHotPair.setLayoutManager(layoutManager_hotPair);
         mRvSubLink.setLayoutManager(layoutManager_subLink);
         mRvSubLink.addItemDecoration(new GridSpacingItemDecoration(2, getResources().getDimensionPixelSize(R.dimen.margin_8), false));
+        mRvTopGainers.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRvTopGainers.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mBanner.isAutoPlay(true);
         mBanner.setDelayTime(3000);
         mBanner.setOnBannerListener(this);
@@ -160,6 +174,23 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         super.onDestroy();
         mPresenter.detachView();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof WatchlistFragment.OnListFragmentInteractionListener) {
+            mListener = (WatchlistFragment.OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -240,27 +271,64 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateHotWatchlistDate(Event.UpdateHotWatchlists event){
-        mHotWatchlistData = event.getData();
-        mHotAssetPairRecyclerViewAdapter = new HotAssetPairRecyclerViewAdapter(getContext(), mHotWatchlistData);
+        mAllWatchlistData = event.getAllWatchlists();
+        mHotWatchlistData = event.getHotWatchlists();
+        mHotAssetPairRecyclerViewAdapter = new HotAssetPairRecyclerViewAdapter(getContext(), mHotWatchlistData, mListener);
         mRvHotPair.setAdapter(mHotAssetPairRecyclerViewAdapter);
+        Collections.sort(mAllWatchlistData, new Comparator<WatchlistData>() {
+            @Override
+            public int compare(WatchlistData o1, WatchlistData o2) {
+                if(o1.getChange() == null){
+                    return 1;
+                }
+                if(o2.getChange() == null){
+                    return -1;
+                }
+                return Double.parseDouble(o1.getChange()) > Double.parseDouble(o2.getChange()) ? -1 : 1;
+            }
+        });
+        mTopGainerRecyclerViewAdapter = new TopGainerRecyclerViewAdapter(getContext(), mAllWatchlistData, mListener);
+        mRvTopGainers.setAdapter(mTopGainerRecyclerViewAdapter);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateRmbPrice(Event.UpdateRmbPrice event) {
         List<AssetRmbPrice> assetRmbPrices = event.getData();
-        if (assetRmbPrices == null || assetRmbPrices.size() == 0 ||
-                mHotWatchlistData == null || mHotWatchlistData.size() == 0) {
+        if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
             return;
         }
-        for(WatchlistData watchlistData : mHotWatchlistData){
-            for (AssetRmbPrice rmbPrice : assetRmbPrices) {
-                if (!rmbPrice.getName().equals(AssetUtil.parseSymbol(watchlistData.getBaseSymbol()))) {
-                    continue;
+        for (AssetRmbPrice rmbPrice : assetRmbPrices) {
+            if(mAllWatchlistData != null && mAllWatchlistData.size() > 0){
+                for(WatchlistData watchlistData : mAllWatchlistData){
+                    if (!rmbPrice.getName().equals(AssetUtil.parseSymbol(watchlistData.getBaseSymbol()))) {
+                        continue;
+                    }
+                    watchlistData.setRmbPrice(rmbPrice.getValue());
                 }
-                watchlistData.setRmbPrice(rmbPrice.getValue());
+            }
+            if(mHotWatchlistData != null && mHotWatchlistData.size() > 0){
+                for(WatchlistData watchlistData : mHotWatchlistData){
+                    if (!rmbPrice.getName().equals(AssetUtil.parseSymbol(watchlistData.getBaseSymbol()))) {
+                        continue;
+                    }
+                    watchlistData.setRmbPrice(rmbPrice.getValue());
+                }
             }
         }
         mHotAssetPairRecyclerViewAdapter.notifyDataSetChanged();
+        Collections.sort(mAllWatchlistData, new Comparator<WatchlistData>() {
+            @Override
+            public int compare(WatchlistData o1, WatchlistData o2) {
+                if(o1.getChange() == null){
+                    return 1;
+                }
+                if(o2.getChange() == null){
+                    return -1;
+                }
+                return Double.parseDouble(o1.getChange()) > Double.parseDouble(o2.getChange()) ? -1 : 1;
+            }
+        });
+        mTopGainerRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -287,4 +355,5 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
             mWebSocketService = null;
         }
     };
+
 }

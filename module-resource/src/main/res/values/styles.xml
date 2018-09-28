@@ -113,7 +113,6 @@
         <item name="android:textSize">@dimen/font_large</item>
     </style>
 
-
     <style name="font_white_dark_bold_medium" parent="font_white_dark_medium">
         <item name="android:textStyle">bold</item>
     </style>
@@ -133,6 +132,15 @@
     <style name="font_white_dark">
         <item name="android:fontFamily">Roboto Condensed</item>
         <item name="android:textColor">@color/font_color_white_dark</item>
+    </style>
+
+    <style name="font_dark_white_small" parent="font_dark_white">
+        <item name="android:textSize">@dimen/font_small</item>
+    </style>
+
+    <style name="font_dark_white">
+        <item name="android:fontFamily">Roboto Condensed</item>
+        <item name="android:textColor">@color/font_color_dark_white</item>
     </style>
 
     <!-- font gray -->

@@ -181,31 +181,40 @@ public class WebSocketService extends Service {
             return;
         }
         mHotAssetPair = hotAssetPairs;
-        List<WatchlistData> watchlistDatas = getHotWatchlistData(hotAssetPairs);
-        if(watchlistDatas != null){
-            EventBus.getDefault().post(new Event.UpdateHotWatchlists(watchlistDatas));
+        List<WatchlistData> allWatchlistDatas = getAllWatchlistData();
+        if(allWatchlistDatas != null){
+            List<WatchlistData> hotWatchlistDatas = getHotWatchlistData(hotAssetPairs, allWatchlistDatas);
+            EventBus.getDefault().post(new Event.UpdateHotWatchlists(hotWatchlistDatas, allWatchlistDatas));
             return;
         }
         loadAllAssetsPairData();
     }
 
-    private List<WatchlistData> getHotWatchlistData(List<HotAssetPair> hotAssetPairs){
-        if(hotAssetPairs == null || hotAssetPairs.size() == 0 || mWatchlistHashMap.isEmpty()){
+    private List<WatchlistData> getHotWatchlistData(List<HotAssetPair> hotAssetPairs, List<WatchlistData> allWatchlistDatas){
+        if(hotAssetPairs == null || hotAssetPairs.size() == 0 ||
+                allWatchlistDatas == null || allWatchlistDatas.size() == 0){
             return null;
         }
         List<WatchlistData> watchlistDatas = new ArrayList<>();
         for(HotAssetPair hotAssetPair : hotAssetPairs){
-            for(Map.Entry<String, List<WatchlistData>> entry : mWatchlistHashMap.entrySet()){
-                if(!entry.getKey().equals(hotAssetPair.getBase())){
+            for(WatchlistData watchlistData : allWatchlistDatas){
+                if(!watchlistData.getQuoteId().equals(hotAssetPair.getQuote()) ||
+                        !watchlistData.getBaseId().equals(hotAssetPair.getBase())){
                     continue;
                 }
-                for(WatchlistData watchlistData : entry.getValue()){
-                    if(!watchlistData.getQuoteId().equals(hotAssetPair.getQuote())){
-                        continue;
-                    }
-                    watchlistDatas.add(watchlistData);
-                }
+                watchlistDatas.add(watchlistData);
             }
+        }
+        return watchlistDatas;
+    }
+
+    private List<WatchlistData> getAllWatchlistData(){
+        if(mWatchlistHashMap.isEmpty()){
+            return null;
+        }
+        List<WatchlistData> watchlistDatas = new ArrayList<>();
+        for(Map.Entry<String, List<WatchlistData>> entry : mWatchlistHashMap.entrySet()){
+            watchlistDatas.addAll(entry.getValue());
         }
         return watchlistDatas;
     }
@@ -849,8 +858,9 @@ public class WebSocketService extends Service {
                 EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
             }
             //更新热点行情
-            List<WatchlistData> hotWatchlistData = getHotWatchlistData(mHotAssetPair);
-            EventBus.getDefault().post(new Event.UpdateHotWatchlists(hotWatchlistData));
+            List<WatchlistData> allWatchlistDatas = getAllWatchlistData();
+            List<WatchlistData> hotWatchlistDatas = getHotWatchlistData(mHotAssetPair, allWatchlistDatas);
+            EventBus.getDefault().post(new Event.UpdateHotWatchlists(hotWatchlistDatas, allWatchlistDatas));
             //开启周期性任务加载所有Tab下的所有交易对数据
             startWatchlistWorkerSchedule();
         }

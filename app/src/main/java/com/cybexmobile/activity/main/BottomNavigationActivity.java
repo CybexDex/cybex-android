@@ -274,10 +274,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     }
 
     @Override
-    public void onListFragmentInteraction(WatchlistData item, List<WatchlistData> dataList, int position) {
+    public void onListFragmentInteraction(WatchlistData item) {
         Intent intent = new Intent(BottomNavigationActivity.this, MarketsActivity.class);
         intent.putExtra(INTENT_PARAM_WATCHLIST, item);
-        intent.putExtra("id", position);
         startActivityForResult(intent, REQUEST_CODE_BACK);
     }
 
