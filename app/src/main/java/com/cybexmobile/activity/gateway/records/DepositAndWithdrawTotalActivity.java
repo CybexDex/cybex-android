@@ -29,6 +29,7 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -99,8 +100,6 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setOnLoadMoreListener(this);
-        String[] Types = {getResources().getString(R.string.withdraw_all), getResources().getString(R.string.gate_way_withdraw), getResources().getString(R.string.gate_way_deposit)};
-        mTypesSpinner.setItems(Types);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
         mTypesSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
@@ -177,7 +176,10 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
 
     @Override
     public void onLoadAsset(List<String> assetList) {
+        String[] Types = {getResources().getString(R.string.withdraw_all), getResources().getString(R.string.gate_way_withdraw), getResources().getString(R.string.gate_way_deposit)};
+        mTypesSpinner.setItems(Types);
         mCurrencySpinner.setItems(assetList);
+        mCurrencySpinner.setDropdownMaxHeight(getResources().getDimensionPixelSize(R.dimen.height_200));
         mCurrencySpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
