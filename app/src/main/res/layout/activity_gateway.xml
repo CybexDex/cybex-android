@@ -31,7 +31,7 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:sc_border_width="@dimen/width_1"
-        app:sc_checked_text_color="@color/font_color_white_dark"
+        app:sc_checked_text_color="@color/font_color_white"
         app:sc_corner_radius="@dimen/corner_radius_4"
         app:sc_tint_color="@color/primary_color_grey">
 
