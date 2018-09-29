@@ -23,6 +23,8 @@ public class PicassoImageLoader extends ImageLoader {
             }
         } else if(path instanceof CybexBanner){
             CybexBanner cybexBanner = (CybexBanner) path;
+//            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//            imageView.setAdjustViewBounds(true);
             Picasso.get().load(cybexBanner.getImage()).into(imageView);
         }
 

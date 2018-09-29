@@ -22,6 +22,13 @@
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_2"
+        android:visibility="gone" />
+
     <WebView
         android:id="@+id/help_wv"
         android:layout_width="match_parent"

@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.R;
@@ -24,6 +27,8 @@ public class HelpActivity extends BaseActivity{
     WebView mWebView;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
 
     private Unbinder mUnbinder;
 
@@ -87,17 +92,16 @@ public class HelpActivity extends BaseActivity{
         webSettings.setBuiltInZoomControls(true);
         //隐藏原生的缩放控件
         webSettings.setDisplayZoomControls(false);
-        mWebView.setWebViewClient(new WebViewClient(){
+        mWebView.setWebChromeClient(new WebChromeClient(){
             @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                showLoadDialog();
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                hideLoadDialog();
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                if(newProgress == 100){
+                    mProgressBar.setVisibility(View.GONE);
+                } else {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.setProgress(newProgress);
+                }
             }
         });
     }

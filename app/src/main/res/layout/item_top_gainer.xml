@@ -16,8 +16,9 @@
             android:layout_width="@dimen/width_14"
             android:layout_height="@dimen/height_14"
             style="@style/font_dark_white_small"
-            android:textStyle="italic|bold"
+            android:textStyle="bold"
             android:gravity="center"
+            android:includeFontPadding="false"
             android:background="@drawable/bg_increasing"
             android:text="@string/text_empty"/>
 
