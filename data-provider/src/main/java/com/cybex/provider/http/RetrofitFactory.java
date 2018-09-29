@@ -85,7 +85,7 @@ public class RetrofitFactory {
         }
         if(mainHttpApi == null){
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(cybex_base_url_test)
+                    .baseUrl(isOfficialServer ? cybex_base_url : cybex_base_url_test)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

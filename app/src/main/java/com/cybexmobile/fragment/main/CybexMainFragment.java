@@ -144,7 +144,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         mBanner.isAutoPlay(true);
         mBanner.setDelayTime(3000);
         mBanner.setOnBannerListener(this);
-        mBanner.setBannerAnimation(Transformer.Accordion);
+        mBanner.setBannerAnimation(Transformer.ZoomOutSlide);
         mBanner.setImageLoader(new PicassoImageLoader());
         mBanner.setIndicatorGravity(BannerConfig.CENTER);
         mVfNotice.setInAnimation(getContext(), R.anim.in_from_bottom);
