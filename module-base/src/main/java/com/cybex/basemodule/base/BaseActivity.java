@@ -60,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final String TAG = BaseActivity.class.getSimpleName();
 
     private static final String PARAM_NETWORK_AVAILABLE = "param_network_available";
-    private static final int REQUEST_CODE_WRITE_SETTING = 1;
+    private static final int REQUEST_CODE_WRITE_SETTING = 100;
 
     public static boolean isActive;
 
