@@ -20,13 +20,10 @@ public class SplashActivity extends BaseActivity {
         Intent intentService = new Intent(SplashActivity.this, WebSocketService.class);
         startService(intentService);
         setContentView(R.layout.activity_splash);
-        if(canWriteSetting()){
-            gotoMain();
-        }
     }
 
-    private void gotoMain(){
-            new Handler().postDelayed(new Runnable() {
+    private void gotoMain() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(SplashActivity.this, BottomNavigationActivity.class);
@@ -44,11 +41,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean canWriteSetting() {
-        return Settings.System.canWrite(this);
     }
 
     @Override

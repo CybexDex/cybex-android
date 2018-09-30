@@ -104,6 +104,9 @@ public class WebActivity extends BaseActivity{
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
+                if(mProgressBar == null){
+                    return;
+                }
                 if(newProgress == 100){
                     mProgressBar.setVisibility(View.GONE);
                 } else {

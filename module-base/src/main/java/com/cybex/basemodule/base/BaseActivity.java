@@ -88,10 +88,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                  */
                 requestPermissions();
             } else {
-                registerNetWorkCallback();
+                onLazyLoad();
             }
         } else {
             registerNetWorkReceiver();
+            onLazyLoad();
         }
     }
 
