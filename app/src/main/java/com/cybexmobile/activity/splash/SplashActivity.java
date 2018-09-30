@@ -20,12 +20,9 @@ public class SplashActivity extends BaseActivity {
         Intent intentService = new Intent(SplashActivity.this, WebSocketService.class);
         startService(intentService);
         setContentView(R.layout.activity_splash);
-        gotoMain();
-        /**
-         * fix bug
-         * Android6.0 注册广播无法动态申请CHANGE_NETWORK_STATE权限，跳转至系统界面手动开启WRITE_SETTINGS权限
-         */
-
+        if(canWriteSetting()){
+            gotoMain();
+        }
     }
 
     private void gotoMain(){
@@ -49,9 +46,19 @@ public class SplashActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean canWriteSetting() {
+        return Settings.System.canWrite(this);
+    }
+
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
 
+    @Override
+    public void onLazyLoad() {
+        super.onLazyLoad();
+        gotoMain();
+    }
 }

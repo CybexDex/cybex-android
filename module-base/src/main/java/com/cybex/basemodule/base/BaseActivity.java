@@ -82,6 +82,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                /**
+                 * fix bug
+                 * Android6.0 注册广播无法动态申请CHANGE_NETWORK_STATE权限，跳转至系统界面手动开启WRITE_SETTINGS权限
+                 */
                 requestPermissions();
             } else {
                 registerNetWorkCallback();
@@ -228,6 +232,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                             Intent intentSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                             intentSetting.setData(Uri.parse("package:" + getPackageName()));
                             startActivityForResult(intentSetting, REQUEST_CODE_WRITE_SETTING);
+                        } else {
+                            onLazyLoad();
                         }
                     }
 
@@ -254,6 +260,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_WRITE_SETTING) {
             if (!canWriteSetting()) {
                 finish();
+            } else {
+                this.onLazyLoad();
             }
         }
     }
@@ -375,5 +383,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    public void onLazyLoad(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            registerNetWorkCallback();
+        }
     }
 }

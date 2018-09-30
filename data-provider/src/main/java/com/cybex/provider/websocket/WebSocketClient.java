@@ -214,9 +214,11 @@ public class WebSocketClient extends WebSocketListener {
 
     //关闭WebSocket
     public void close() {
-        mWebSocket.close(1000, "Close");
+        if(mWebSocket != null){
+            mWebSocket.close(1000, "Close");
+            mWebSocket = null;
+        }
         mOkHttpClient = null;
-        mWebSocket = null;
         mConnectStatus = WEBSOCKET_CONNECT_MANUALLY_CLOSED;
         _nDatabaseId = -1;
         _nBroadcastId = -1;
