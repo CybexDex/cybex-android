@@ -110,7 +110,7 @@ public class IntentFactory {
                 continue;
             }
         }
-        context.getApplicationContext().startActivity(intent);
+        context.startActivity(intent);
     }
 
     private Class<?> mappingClass() throws Exception{

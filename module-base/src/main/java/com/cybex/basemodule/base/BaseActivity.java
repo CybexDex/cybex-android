@@ -1,5 +1,7 @@
 package com.cybex.basemodule.base;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +10,10 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkRequest;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
@@ -30,6 +34,8 @@ import com.cybex.basemodule.injection.module.BaseActivityModule;
 import com.cybex.basemodule.receiver.NetWorkBroadcastReceiver;
 import com.cybex.basemodule.receiver.NetworkChangedCallback;
 import com.cybex.provider.utils.NetworkUtils;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,11 +45,22 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 import java.util.Locale;
 
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+
+
 public abstract class BaseActivity extends AppCompatActivity {
 
     private final String TAG = BaseActivity.class.getSimpleName();
 
     private static final String PARAM_NETWORK_AVAILABLE = "param_network_available";
+    private static final int REQUEST_CODE_WRITE_SETTING = 1;
 
     public static boolean isActive;
 
@@ -63,8 +80,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            registerNetWorkCallback();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions();
+            } else {
+                registerNetWorkCallback();
+            }
         } else {
             registerNetWorkReceiver();
         }
@@ -134,7 +155,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             unregisterNetWorkCallback();
         } else {
             unregisterNetWorkReceiver();
@@ -159,7 +180,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             finish();
             return true;
         }
@@ -168,7 +189,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
@@ -183,7 +204,7 @@ public abstract class BaseActivity extends AppCompatActivity {
          * app字体大小不跟随系统改变
          */
         Resources resources = super.getResources();
-        if(resources.getConfiguration().fontScale != 1){
+        if (resources.getConfiguration().fontScale != 1) {
             Configuration newConf = new Configuration();
             newConf.setToDefaults();
             resources.updateConfiguration(newConf, resources.getDisplayMetrics());
@@ -191,16 +212,62 @@ public abstract class BaseActivity extends AppCompatActivity {
         return resources;
     }
 
+    private void requestPermissions() {
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.requestEach(Manifest.permission.CHANGE_NETWORK_STATE)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Permission>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Permission permission) {
+                        if (!permission.granted && !canWriteSetting()) {
+                            Intent intentSetting = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                            intentSetting.setData(Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intentSetting, REQUEST_CODE_WRITE_SETTING);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        finish();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean canWriteSetting() {
+        return Settings.System.canWrite(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_WRITE_SETTING) {
+            if (!canWriteSetting()) {
+                finish();
+            }
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void registerNetWorkCallback(){
+    private void registerNetWorkCallback() {
         ConnectivityManager conn = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         mNetworkChangedCallback = new NetworkChangedCallback(this);
         conn.requestNetwork(new NetworkRequest.Builder().build(), mNetworkChangedCallback);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void unregisterNetWorkCallback(){
-        if(mNetworkChangedCallback != null){
+    private void unregisterNetWorkCallback() {
+        if (mNetworkChangedCallback != null) {
             ConnectivityManager conn = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             conn.unregisterNetworkCallback(mNetworkChangedCallback);
         }
@@ -209,7 +276,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 注册广播
      */
-    private void registerNetWorkReceiver(){
+    private void registerNetWorkReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         mNetWorkBroadcastReceiver = new NetWorkBroadcastReceiver();
@@ -219,37 +286,37 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 注销广播
      */
-    private void unregisterNetWorkReceiver(){
-        if(mNetWorkBroadcastReceiver != null){
+    private void unregisterNetWorkReceiver() {
+        if (mNetWorkBroadcastReceiver != null) {
             unregisterReceiver(mNetWorkBroadcastReceiver);
             mNetWorkBroadcastReceiver = null;
         }
     }
 
-    protected final void showHintDialog(@StringRes int messageId){
-        if(mHintDialog == null){
+    protected final void showHintDialog(@StringRes int messageId) {
+        if (mHintDialog == null) {
             mHintDialog = new AlertDialog.Builder(this, R.style.LoadDialog)
-                .setMessage(messageId)
-                .create();
+                    .setMessage(messageId)
+                    .create();
         }
         mHintDialog.setMessage(getString(messageId));
         mHintDialog.show();
     }
 
-    protected final void hideHintDialog(){
-        if(mHintDialog != null && mHintDialog.isShowing()){
+    protected final void hideHintDialog() {
+        if (mHintDialog != null && mHintDialog.isShowing()) {
             mHintDialog.dismiss();
         }
     }
 
     //show load dialog
-    protected final void showLoadDialog(){
+    protected final void showLoadDialog() {
         this.showLoadDialog(false);
 
     }
 
-    protected final void showLoadDialog(boolean isCancelable){
-        if(mLoadDialog == null){
+    protected final void showLoadDialog(boolean isCancelable) {
+        if (mLoadDialog == null) {
             mLoadDialog = new LoadDialog(this, R.style.LoadDialog);
         }
         mLoadDialog.setCancelable(isCancelable);
@@ -257,8 +324,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     //hide load dialog
-    protected final void hideLoadDialog(){
-        if(mLoadDialog != null && mLoadDialog.isShowing()){
+    protected final void hideLoadDialog() {
+        if (mLoadDialog != null && mLoadDialog.isShowing()) {
             mLoadDialog.dismiss();
         }
     }
@@ -285,7 +352,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
+    public void onNetWorkStateChanged(Event.NetWorkStateChanged event) {
         onNetWorkStateChanged(event.getState() != NetworkUtils.TYPE_NOT_CONNECTED);
     }
 
