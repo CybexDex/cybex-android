@@ -64,6 +64,15 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    productFlavors {
+        googlestore {
+            applicationIdSuffix ".google"
+        }
+        online {
+            applicationIdSuffix ".online"
+        }
+    }
     lintOptions {
         abortOnError false
     }

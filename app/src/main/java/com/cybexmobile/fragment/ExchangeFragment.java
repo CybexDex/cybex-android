@@ -352,10 +352,10 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void notifyWatchlistDataChange(WatchlistData watchlistData){
-        if(mBuyFragment != null){
+        if(mBuyFragment != null && mAction.equals(ACTION_BUY)){
             mBuyFragment.changeWatchlist(watchlistData);
         }
-        if(mSellFragment != null){
+        if(mSellFragment != null && mAction.equals(ACTION_SELL)){
             mSellFragment.changeWatchlist(watchlistData);
         }
         if(mOpenOrdersFragment != null){
@@ -427,6 +427,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
+                    if (mSellFragment != null && mSellFragment.isVisible()) {
+                        mBuyFragment.changeWatchlist(mWatchlistData);
+                    }
                 } else {
                     transaction.add(R.id.layout_container, mBuyFragment, BuySellFragment.class.getSimpleName() + TAG_BUY);
                 }
@@ -437,6 +440,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);
+                    if (mBuyFragment != null && mBuyFragment.isVisible()) {
+                        mSellFragment.changeWatchlist(mWatchlistData);
+                    }
                 } else {
                     transaction.add(R.id.layout_container, mSellFragment, BuySellFragment.class.getSimpleName() + TAG_SELL);
                 }

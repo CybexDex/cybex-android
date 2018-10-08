@@ -104,4 +104,9 @@ public class Constant {
     public static final String WITHDRAW = "WITHDRAW";
     public static final String DEPOSIT = "DEPOSIT";
     public static final String[] Types = {"ALL", "WITHDRAW", "DEPOSIT"};
+
+    /**
+     * google play store application id
+     */
+    public static final String APPLICATION_ID = "com.cybexmobile.google";
 }

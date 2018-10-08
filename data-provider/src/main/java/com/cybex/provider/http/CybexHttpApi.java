@@ -33,6 +33,9 @@ public interface CybexHttpApi {
     @GET("Android_update.json")
     Observable<AppVersion> checkAppUpdate();
 
+    @GET("Android_store_update.json")
+    Observable<AppVersion> checkAppUpdateGoogleStore();
+
     @GET("/json/withdraw.json")
     Observable<ResponseBody> getWithdrawList();
 

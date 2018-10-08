@@ -45,7 +45,12 @@
             android:configChanges="uiMode"
             android:label=""
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.markets.MarketsActivity"
             android:label=""
@@ -163,16 +168,17 @@
             android:name="com.cybex.eto.activity.TermsAndConditionsActivity"
             android:label=""
             android:screenOrientation="portrait" />
-        <activity android:name="com.cybexmobile.activity.web.WebActivity"
+        <activity
+            android:name="com.cybexmobile.activity.web.WebActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <service android:name="com.cybex.basemodule.service.WebSocketService" />
 
         <activity
             android:name=".activity.gateway.records.DepositAndWithdrawTotalActivity"
             android:label=""
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

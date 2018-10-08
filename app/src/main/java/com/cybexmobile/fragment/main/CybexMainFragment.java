@@ -174,6 +174,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         super.onDestroy();
         mPresenter.detachView();
         EventBus.getDefault().unregister(this);
+        getContext().unbindService(mConnection);
     }
 
     @Override
@@ -315,7 +316,9 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
                 }
             }
         }
-        mHotAssetPairRecyclerViewAdapter.notifyDataSetChanged();
+        if (mHotAssetPairRecyclerViewAdapter != null) {
+            mHotAssetPairRecyclerViewAdapter.notifyDataSetChanged();
+        }
         Collections.sort(mAllWatchlistData, new Comparator<WatchlistData>() {
             @Override
             public int compare(WatchlistData o1, WatchlistData o2) {

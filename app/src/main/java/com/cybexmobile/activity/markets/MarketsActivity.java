@@ -299,7 +299,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 intent.putExtra(INTENT_PARAM_ACTION, ACTION_BUY);
                 intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchListData);
                 setResult(RESULT_CODE_BACK, intent);
-                EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_BUY, mWatchListData));
                 finish();
             }
         });
@@ -309,7 +308,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 Intent intent = new Intent();
                 intent.putExtra(INTENT_PARAM_ACTION, ACTION_SELL);
                 intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchListData);
-                EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_SELL, mWatchListData));
                 setResult(RESULT_CODE_BACK, intent);
                 finish();
             }

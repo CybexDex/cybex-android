@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
@@ -45,6 +46,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
+import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
@@ -90,7 +93,11 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         initFragment(savedInstanceState);
         loadAppConfig();
-        checkVersion();
+        if (BuildConfig.APPLICATION_ID.equals(Constant.APPLICATION_ID)) {
+            checkVersionGoogleStore();
+        } else {
+            checkVersion();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -123,7 +130,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
         }
-        if(mCybexMainFragment != null && mCybexMainFragment.isAdded()){
+        if (mCybexMainFragment != null && mCybexMainFragment.isAdded()) {
             fm.putFragment(outState, CybexMainFragment.class.getSimpleName(), mCybexMainFragment);
         }
     }
@@ -137,7 +144,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
-        if(!isAvailable){
+        if (!isAvailable) {
             Toast.makeText(this, getResources().getString(R.string.network_connection_is_not_available), Toast.LENGTH_SHORT).show();
         }
     }
@@ -228,10 +235,10 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 }
                 break;
             case R.id.navigation_main:
-                if(mCybexMainFragment == null){
+                if (mCybexMainFragment == null) {
                     mCybexMainFragment = new CybexMainFragment();
                 }
-                if(mCybexMainFragment.isAdded()){
+                if (mCybexMainFragment.isAdded()) {
                     transaction.show(mCybexMainFragment);
                 } else {
                     transaction.add(R.id.frame_container, mCybexMainFragment, CybexMainFragment.class.getSimpleName());
@@ -268,6 +275,11 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             if (data != null) {
                 mAction = data.getStringExtra(INTENT_PARAM_ACTION);
                 mWatchlistData = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
+                if (mAction.equals(ACTION_BUY)) {
+                    EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_BUY, mWatchlistData));
+                } else {
+                    EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_SELL, mWatchlistData));
+                }
             }
             mBottomNavigationView.setSelectedItemId(R.id.navigation_exchange);
         }
@@ -280,7 +292,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         startActivityForResult(intent, REQUEST_CODE_BACK);
     }
 
-    private void loadAppConfig(){
+    private void loadAppConfig() {
         Disposable disposable = RetrofitFactory.getInstance()
                 .api()
                 .getSettingConfig()
@@ -289,7 +301,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 .subscribe(new Consumer<AppConfigResponse>() {
                     @Override
                     public void accept(AppConfigResponse appConfigResponse) throws Exception {
-                        if(appConfigResponse.isETOEnabled()){
+                        if (appConfigResponse.isETOEnabled()) {
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_main);
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_watchlist);
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_exchange);
@@ -310,6 +322,72 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         RetrofitFactory.getInstance()
                 .api()
                 .checkAppUpdate()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AppVersion>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(AppVersion appVersion) {
+                        if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
+                            if (appVersion.isForceUpdate(BuildConfig.VERSION_NAME)) {
+                                if (Locale.getDefault().getLanguage().equals("zh")) {
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
+                                        }
+                                    });
+                                } else {
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
+
+                                        }
+                                    });
+                                }
+                            } else {
+                                if (Locale.getDefault().getLanguage().equals("zh")) {
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
+
+                                        }
+                                    });
+                                } else {
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            goToUpdate(appVersion.getUrl());
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void checkVersionGoogleStore() {
+        RetrofitFactory.getInstance()
+                .api()
+                .checkAppUpdateGoogleStore()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<AppVersion>() {

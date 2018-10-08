@@ -143,7 +143,9 @@ public class OwnOrderHistoryActivity extends BaseActivity {
                 //加载区块信息
                 item.callId = BitsharesWalletWraper.getInstance().get_call_id().getAndIncrement();
                 mWebSocketService.loadBlock(item.callId, item.accountHistoryObject.block_num);
-                mOrderHistoryItems.add(item);
+                if (item.baseAsset != null && item.quoteAsset != null) {
+                    mOrderHistoryItems.add(item);
+                }
             } else {
                 it.remove();
             }

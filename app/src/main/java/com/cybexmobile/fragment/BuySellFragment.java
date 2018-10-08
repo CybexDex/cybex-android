@@ -293,13 +293,18 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
                 }
             }
-            return;
         }
+    }
+
+    @OnTouch({R.id.buysell_et_asset_amount, R.id.buysell_et_asset_price})
+    public boolean onTouchEditText(View view, MotionEvent motionEvent) {
         //未登录时 获取焦点自动跳转到登录界面
-        if(!mIsLoginIn){
-            view.clearFocus();
-            toLogin();
+        if (MotionEvent.ACTION_DOWN == motionEvent.getAction()) {
+            if (!mIsLoginIn) {
+                toLogin();
+            }
         }
+        return false;
     }
 
     @OnCheckedChanged(R.id.buysell_checkbox_market_trades)
