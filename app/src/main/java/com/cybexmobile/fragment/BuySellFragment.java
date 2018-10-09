@@ -148,6 +148,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     //交易资产是否足够
     private boolean mIsExchangeBalanceEnough;
 
+    private boolean mIsViewCreated;
+
     public static BuySellFragment getInstance(String action, WatchlistData watchlistData,
                                               FullAccountObject fullAccountObject, boolean isLoginIn, String name,
                                               FeeAmountObject fee, AssetObject cybAssetObject){
@@ -205,6 +207,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mIsViewCreated = true;
         initFragment(savedInstanceState);
         initOrResetViewData();
         initOrResetButtonData();
@@ -515,7 +518,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     }
 
     private void initOrResetViewData(){
-        if(mWatchlistData == null){
+        if(mWatchlistData == null || !mIsViewCreated){
             return;
         }
         String baseSymbol = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());

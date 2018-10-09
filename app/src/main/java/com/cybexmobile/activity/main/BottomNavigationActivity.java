@@ -275,11 +275,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             if (data != null) {
                 mAction = data.getStringExtra(INTENT_PARAM_ACTION);
                 mWatchlistData = (WatchlistData) data.getSerializableExtra(INTENT_PARAM_WATCHLIST);
-                if (mAction.equals(ACTION_BUY)) {
-                    EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_BUY, mWatchlistData));
-                } else {
-                    EventBus.getDefault().post(new Event.MarketIntentToExchange(ACTION_SELL, mWatchlistData));
-                }
+                EventBus.getDefault().post(new Event.MarketIntentToExchange(mAction, mWatchlistData));
             }
             mBottomNavigationView.setSelectedItemId(R.id.navigation_exchange);
         }

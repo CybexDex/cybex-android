@@ -14,6 +14,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -188,8 +189,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         mWatchlistData = event.getWatchlist();
         mAction = event.getAction();
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
-        notifyWatchlistDataChange(event.getWatchlist());
         setTitleData();
+        notifyWatchlistDataChange(event.getWatchlist());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -352,10 +353,10 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void notifyWatchlistDataChange(WatchlistData watchlistData){
-        if(mBuyFragment != null && mAction.equals(ACTION_BUY)){
+        if(mBuyFragment != null){
             mBuyFragment.changeWatchlist(watchlistData);
         }
-        if(mSellFragment != null && mAction.equals(ACTION_SELL)){
+        if(mSellFragment != null){
             mSellFragment.changeWatchlist(watchlistData);
         }
         if(mOpenOrdersFragment != null){
@@ -395,6 +396,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         if(mWatchlistData == null){
             return;
         }
+        Log.v("dzm", mWatchlistData.getQuoteSymbol() + "/" + mWatchlistData.getBaseSymbol());
         mCbTitle.setText(String.format("%s/%s", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
     }
 
@@ -427,9 +429,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
-                    if (mSellFragment != null && mSellFragment.isVisible()) {
-                        mBuyFragment.changeWatchlist(mWatchlistData);
-                    }
+//                    if (mSellFragment != null && mSellFragment.isVisible()) {
+//                        mBuyFragment.changeWatchlist(mWatchlistData);
+//                    }
                 } else {
                     transaction.add(R.id.layout_container, mBuyFragment, BuySellFragment.class.getSimpleName() + TAG_BUY);
                 }
@@ -440,9 +442,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);
-                    if (mBuyFragment != null && mBuyFragment.isVisible()) {
-                        mSellFragment.changeWatchlist(mWatchlistData);
-                    }
+//                    if (mBuyFragment != null && mBuyFragment.isVisible()) {
+//                        mSellFragment.changeWatchlist(mWatchlistData);
+//                    }
                 } else {
                     transaction.add(R.id.layout_container, mSellFragment, BuySellFragment.class.getSimpleName() + TAG_SELL);
                 }
