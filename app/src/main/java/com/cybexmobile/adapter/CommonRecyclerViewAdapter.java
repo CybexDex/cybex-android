@@ -67,8 +67,9 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             long currentTimeStamp = System.currentTimeMillis();
             long duration = lockUpAssetObject.vesting_policy.vesting_duration_seconds;
             long time = (currentTimeStamp - timeStamp) / 1000;
-            holder.mProgressbar.setProgress((int) (100 * time / duration));
-            holder.mProgressText.setText(String.format("%s%%", String.valueOf((100 * time / duration))));
+            int progress = (int) (100 * time / duration);
+            holder.mProgressbar.setProgress(progress);
+            holder.mProgressText.setText(String.format("%s%%", progress >= 100 ? 100 : progress));
             holder.mExpirationDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_yyyy_MM_dd, timeStamp + duration * 1000));
         }
         AssetObject assetObject = item.assetObject;
