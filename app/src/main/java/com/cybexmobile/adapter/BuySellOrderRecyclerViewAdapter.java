@@ -133,7 +133,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                 divider += orderList.get(i).quoteAmount;
             } else {
                 if(i > 0){
-                    divider += orderList.get(i -1).baseAmount;
+                    divider += orderList.get(i - 1).quoteAmount;
                 }
             }
         }
@@ -144,7 +144,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
         double sum = 0;
         if (orderList != null && orderList.size() != 0) {
             for (int i = 0; i < orderList.size(); i++) {
-                sum += mType == TYPE_BUY ? orderList.get(i).quoteAmount : orderList.get(i).baseAmount;
+                sum += mType == TYPE_BUY ? orderList.get(i).quoteAmount : orderList.get(i).quoteAmount;
             }
         }
         return sum;
