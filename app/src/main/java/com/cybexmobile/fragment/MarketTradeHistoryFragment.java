@@ -200,9 +200,18 @@ public class MarketTradeHistoryFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateMarketTrade(Event.UpdateMarketTrade event) {
-        mMarketTradeList.clear();
-        mMarketTradeList.addAll(event.getData());
-        mTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
+        List<MarketTrade> marketTrades = event.getData();
+        if(marketTrades == null || marketTrades.size() == 0){
+            mMarketTradeList.clear();
+            mTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
+            return;
+        }
+        if(marketTrades.get(0).base.equals(mWatchlistData.getBaseSymbol()) &&
+                marketTrades.get(0).quote.equals(mWatchlistData.getQuoteSymbol())){
+            mMarketTradeList.clear();
+            mMarketTradeList.addAll(event.getData());
+            mTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
