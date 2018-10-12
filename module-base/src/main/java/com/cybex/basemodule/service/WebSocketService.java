@@ -471,27 +471,21 @@ public class WebSocketService extends Service {
         }
     }
 
-    //加载指定交易对的价格和交易历史
-    private void loadHistoryPriceAndMarketTicker(List<AssetsPair> assetsPairs) {
+    //加载指定交易对的价格
+    private void loadMarketTicker(List<AssetsPair> assetsPairs) {
         for (AssetsPair assetsPair : assetsPairs) {
             if (assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null) {
                 loadMarketTicker(assetsPair.getBase(), assetsPair.getQuote());
-                Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
-                Date endDate = new Date(System.currentTimeMillis());
-                loadHistoryPrice(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset(), startDate, endDate);
             }
         }
     }
 
-    //加载所有交易对的价格和交易历史
-    private void loadHistoryPriceAndMarketTicker() {
+    //加载所有交易对的价格
+    private void loadMarketTickers() {
         for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
             for (AssetsPair assetsPair : entry.getValue()) {
                 if (assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null) {
                     loadMarketTicker(assetsPair.getBase(), assetsPair.getQuote());
-                    Date startDate = new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS);
-                    Date endDate = new Date(System.currentTimeMillis());
-                    loadHistoryPrice(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset(), startDate, endDate);
                 }
             }
         }
@@ -557,25 +551,9 @@ public class WebSocketService extends Service {
         mFullAccountFuture.cancel(true);
     }
 
-    private void loadHistoryPrice(AssetObject baseAsset, AssetObject quoteAsset, Date startDate, Date endDate) {
-        try {
-            BitsharesWalletWraper.getInstance().get_market_history(baseAsset.id, quoteAsset.id, 3600, startDate, endDate, mHistoryPriceCallback);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void loadMarketTicker(String base, String quote) {
         try {
             BitsharesWalletWraper.getInstance().get_ticker(base, quote, mMarketTickerCallback);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadPreHistoryPrice(ObjectId<AssetObject> baseAssetId, ObjectId<AssetObject> quoteAssetId, Date startDate, Date endDate) {
-        try {
-            BitsharesWalletWraper.getInstance().get_market_history(baseAssetId, quoteAssetId, 3600, startDate, endDate, mPreHistoryPriceCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -675,28 +653,6 @@ public class WebSocketService extends Service {
         }
     };
 
-    private WebSocketClient.MessageCallback mPreHistoryPriceCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>>() {
-
-        @Override
-        public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
-            List<BucketObject> buckets = reply.result;
-            if (buckets == null || buckets.size() == 0) {
-                return;
-            }
-            BucketObject bucket = buckets.get(buckets.size() - 1);
-            WatchlistData watchlistData = getWatchlist(mWatchlistHashMap, buckets.get(0));
-            if (watchlistData != null) {
-                watchlistData.addHistoryPrice(0, PriceUtil.priceFromBucket(watchlistData.getBaseAsset(), watchlistData.getQuoteAsset(), bucket));
-            }
-            EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
     //get market ticker callback
     private WebSocketClient.MessageCallback mMarketTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
 
@@ -716,38 +672,6 @@ public class WebSocketService extends Service {
             if (watchlistData != null) {
                 watchlistData.setMarketTicker(marketTicker);
                 //EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
-            }
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
-    //get history price callback
-    private WebSocketClient.MessageCallback mHistoryPriceCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>>() {
-
-        @Override
-        public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
-            List<BucketObject> buckets = reply.result;
-            if (buckets == null || buckets.size() == 0) {
-                return;
-            }
-            WatchlistData watchlistData = getWatchlist(mWatchlistHashMap, buckets.get(0));
-            if (watchlistData != null) {
-                List<HistoryPrice> historyPrices = new ArrayList<>();
-                for (BucketObject bucket : buckets) {
-                    historyPrices.add(PriceUtil.priceFromBucket(watchlistData.getBaseAsset(), watchlistData.getQuoteAsset(), bucket));
-                }
-                watchlistData.setHistoryPrices(historyPrices);
-            }
-            if (buckets.get(0).key.open.getTime() > (System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS)) {
-                loadPreHistoryPrice(buckets.get(0).key.base, buckets.get(0).key.quote,
-                        new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS - DateUtils.DAY_IN_MILLIS),
-                        new Date(System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS));
-            } else {
-                EventBus.getDefault().post(new Event.UpdateWatchlist(watchlistData));
             }
         }
 
@@ -1085,8 +1009,7 @@ public class WebSocketService extends Service {
 
         @Override
         public void run() {
-            //loadHistoryPriceAndMarketTicker(mAssetsPairHashMap.get(mCurrentBaseAssetId));
-            loadHistoryPriceAndMarketTicker();
+            loadMarketTickers();
         }
     }
 

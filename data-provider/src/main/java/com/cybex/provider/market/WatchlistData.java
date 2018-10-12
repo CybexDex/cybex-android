@@ -14,7 +14,6 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
 
     private AssetObject baseAsset;
     private AssetObject quoteAsset;
-    private List<HistoryPrice> historyPrices;
     private MarketTicker marketTicker;
 
     //最高价
@@ -63,11 +62,6 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
     public WatchlistData(MarketTicker marketTicker) {
         this.marketTicker = marketTicker;
         parseMarketTicker(marketTicker);
-    }
-
-    public WatchlistData(List<HistoryPrice> historyPrices) {
-        this.historyPrices = historyPrices;
-        parseHistoryPrice(historyPrices);
     }
 
     public WatchlistData(long time, double high, double low, double baseVol, double quoteVol, double currentPrice, String baseSymbol, String quoteSymbol, String change, String baseId, String quoteId, int subscribeId, double rmbPrice, int basePrecision, int quotePrecision) {
@@ -234,20 +228,6 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         parseQuoteAsset(quoteAsset);
     }
 
-    public List<HistoryPrice> getHistoryPrices() {
-        return historyPrices;
-    }
-
-    public void setHistoryPrices(List<HistoryPrice> historyPrices) {
-        this.historyPrices = historyPrices;
-        parseHistoryPrice(historyPrices);
-    }
-
-    public void addHistoryPrice(int index, HistoryPrice historyPrice) {
-        this.historyPrices.add(index, historyPrice);
-        parseHistoryPrice(historyPrices);
-    }
-
     public MarketTicker getMarketTicker() {
         return marketTicker;
     }
@@ -286,21 +266,11 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         }
         this.baseVol = marketTicker.base_volume;
         this.quoteVol = marketTicker.quote_volume;
-//        this.change = String.valueOf(Double.parseDouble(marketTicker.percent_change) / 100);
+        this.high = marketTicker.highest_bid;
+        this.low = marketTicker.lowest_ask;
+        this.currentPrice = marketTicker.latest;
+        this.change = String.valueOf(marketTicker.percent_change / 100);
     }
-
-    private void parseHistoryPrice(List<HistoryPrice> historyPrices) {
-        if (historyPrices == null || historyPrices.size() == 0) {
-            return;
-        }
-        this.high = PriceUtil.getHighPrice(historyPrices);
-        this.low = PriceUtil.getLowPrice(historyPrices);
-        this.currentPrice = PriceUtil.getCurrentPrice(historyPrices);
-        this.change = PriceUtil.getChange(historyPrices);
-//        this.baseVol = PriceUtil.getVolFromPriceList(historyPrices);
-//        this.quoteVol = PriceUtil.getQuoteVolFromPriceList(historyPrices);
-    }
-
 
     @Override
     public int compareTo(@NonNull WatchlistData o) {
