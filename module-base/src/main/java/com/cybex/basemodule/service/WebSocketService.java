@@ -39,6 +39,7 @@ import com.cybex.provider.graphene.chain.MarketTicker;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
 import org.reactivestreams.Publisher;
 
 import java.util.ArrayList;
@@ -57,12 +58,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Function5;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
@@ -91,6 +95,7 @@ public class WebSocketService extends Service {
     private int mNetworkState;
 
     private volatile List<AssetObject> mAssetObjects = new ArrayList<>();
+    private List<String> mAssetWhiteList = new ArrayList<>();
 
     private ConcurrentHashMap<String, List<AssetsPair>> mAssetsPairHashMap = new ConcurrentHashMap<>();
 
@@ -130,6 +135,7 @@ public class WebSocketService extends Service {
         Log.v("WebSocketClient", "WebSocketService");
         //连接websocket
         BitsharesWalletWraper.getInstance().build_connect();
+        loadAssetWhiteList();
         loadAssetsRmbPrice();
         startFullAccountWorkerSchedule();
         return START_NOT_STICKY;
@@ -447,6 +453,11 @@ public class WebSocketService extends Service {
                     assetsIds.add(assetsPair.getBase());
                 }
                 assetsIds.add(assetsPair.getQuote());
+            }
+        }
+        for (String assetId : mAssetWhiteList) {
+            if (!assetsIds.contains(assetId)) {
+                assetsIds.add(assetId);
             }
         }
         try {
@@ -856,6 +867,51 @@ public class WebSocketService extends Service {
         }
     }
 
+    public void loadAssetWhiteList() {
+        if (mNetworkState == TYPE_NOT_CONNECTED) {
+            return;
+        }
+
+        RetrofitFactory.getInstance()
+                .api()
+                .getAssetWhiteList()
+                .map(new Function<ResponseBody, List<String>>() {
+                    @Override
+                    public List<String> apply(ResponseBody responseBody) throws Exception {
+                        List<String> assetWhiteList = new ArrayList<>();
+                        JSONArray jsonArray = null;
+                        jsonArray = new JSONArray(responseBody.string());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            assetWhiteList.add(jsonArray.getString(i));
+                        }
+                        return assetWhiteList;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<String>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<String> strings) {
+                        mAssetWhiteList.addAll(strings);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public void loadAssetsRmbPrice() {
         if(mNetworkState == TYPE_NOT_CONNECTED){
             return;
@@ -907,6 +963,10 @@ public class WebSocketService extends Service {
                         loadAssetsRmbPrice();
                     }
                 });
+    }
+
+    public List<String> getAssetWhiteList() {
+        return mAssetWhiteList;
     }
 
     public List<AssetRmbPrice> getAssetRmbPrices() {

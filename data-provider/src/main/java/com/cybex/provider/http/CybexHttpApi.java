@@ -54,6 +54,9 @@ public interface CybexHttpApi {
     @GET("json/blockexplorer.json")
     Observable<ResponseBody> getBlockExplorerLink();
 
+    @GET("json/assets.json")
+    Observable<ResponseBody> getAssetWhiteList();
+
 //    @GET("v1/api/announce")
 //    Observable<CybexBaseResponse<List<Announce>>> getAnnounces(@Query("lang") String lang);
 //

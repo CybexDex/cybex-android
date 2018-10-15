@@ -77,6 +77,7 @@ public class AccountBalanceActivity extends BaseActivity {
     private int mNetworkState;
     private boolean mIsLoginIn;
     private volatile int mTickerCount;
+    private List<String> mAssetWhiteList;
 
 
     private Unbinder mUnbinder;
@@ -110,6 +111,7 @@ public class AccountBalanceActivity extends BaseActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            mAssetWhiteList = mWebSocketService.getAssetWhiteList();
             if (!(mNetworkState == TYPE_NOT_CONNECTED)) {
                 loadData(mWebSocketService.getFullAccount(mAccountName));
             }
@@ -277,6 +279,10 @@ public class AccountBalanceActivity extends BaseActivity {
         List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
         if (accountBalanceObjects != null && accountBalanceObjects.size() > 0) {
             for (AccountBalanceObject balance : accountBalanceObjects) {
+                if (!mAssetWhiteList.contains(balance.asset_type.toString())) {
+                    mTickerCount ++;
+                    continue;
+                }
                 /**
                  * fix bug
                  * CYM-241

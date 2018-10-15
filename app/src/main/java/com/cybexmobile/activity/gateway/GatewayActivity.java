@@ -16,18 +16,17 @@ import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
-import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.activity.gateway.records.DepositAndWithdrawTotalActivity;
-import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
-import com.cybex.provider.graphene.chain.AccountBalanceObject;
-import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybex.basemodule.service.WebSocketService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +36,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
-import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class GatewayActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, DepositItemFragment.OnListFragmentInteractionListener {
 
