@@ -25,6 +25,7 @@ import com.cybex.basemodule.event.Event;
 import com.cybexmobile.R;
 
 import com.cybex.basemodule.service.WebSocketService;
+import com.cybexmobile.adapter.decoration.VisibleDividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -91,7 +92,7 @@ public class WatchlistFragment extends BaseFragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setNestedScrollingEnabled(false);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        mRecyclerView.addItemDecoration(new VisibleDividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mRecyclerView.getItemAnimator().setChangeDuration(0);
         mRecyclerView.setAdapter(mWatchListRecyclerViewAdapter);
         initTabs(mTabs);
