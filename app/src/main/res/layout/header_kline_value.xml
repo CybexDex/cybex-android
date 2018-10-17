@@ -3,6 +3,7 @@
     android:id="@+id/index_header_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:visibility="gone"
     android:orientation="vertical">
 
@@ -15,92 +16,85 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/index_high"
-                style="@style/font_gray_xsmall" />
-
-            <TextView
-                android:id="@+id/index_high_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_3"
-                android:text="1111"
-                style="@style/font_gray_xsmall"
-                android:textColor="@color/increasing_color" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/index_open"
-                style="@style/font_gray_xsmall" />
+                style="@style/font_white_dark_small" />
 
             <TextView
                 android:id="@+id/index_open_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_3"
-                android:text="1111"
-                style="@style/font_white_dark_xsmall" />
+                android:text="@string/text_empty"
+                style="@style/font_white_dark_small" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/index_high"
+                style="@style/font_white_dark_small" />
+
+            <TextView
+                android:id="@+id/index_high_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_3"
+                android:text="@string/text_empty"
+                style="@style/font_white_dark_small" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/index_low"
-                style="@style/font_gray_xsmall" />
+                style="@style/font_white_dark_small" />
 
             <TextView
                 android:id="@+id/index_low_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_3"
-                android:text="1111"
-                style="@style/font_gray_xsmall"
-                android:textColor="@color/decreasing_color" />
+                android:text="@string/text_empty"
+                style="@style/font_white_dark_small" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/index_close"
-                style="@style/font_gray_xsmall" />
+                style="@style/font_white_dark_small" />
 
             <TextView
                 android:id="@+id/index_close_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_3"
-                android:text="1111"
-                style="@style/font_gray_xsmall"
-                android:textColor="@color/increasing_color" />
+                android:text="@string/text_empty"
+                style="@style/font_white_dark_small" />
         </LinearLayout>
 
     </LinearLayout>
@@ -108,70 +102,71 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_3"
         android:weightSum="4">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/index_vary"
-                style="@style/font_gray_xsmall" />
+                android:text="@string/index_vol"
+                style="@style/font_white_dark_small" />
 
             <TextView
-                android:id="@+id/index_change_tv"
+                android:id="@+id/tv_index_vol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_3"
-                android:text="1111"
-                style="@style/font_gray_xsmall"
-                android:textColor="@color/increasing_color" />
+                android:text="@string/text_empty"
+                style="@style/font_white_dark_small" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/index_price"
-                style="@style/font_gray_xsmall"/>
+                android:text="@string/index_change_price"
+                style="@style/font_white_dark_small" />
 
             <TextView
-                android:id="@+id/index_price_tv"
+                android:id="@+id/tv_index_change_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_3"
-                android:text="1111"
-                style="@style/font_gray_xsmall"
-                android:textColor="@color/font_color_white_dark" />
+                android:text="@string/text_empty"
+                style="@style/font_white_dark_small" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/index_date_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/index_change_ratio"
+                style="@style/font_white_dark_small"/>
+
+            <TextView
+                android:id="@+id/tv_index_change_ratio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_3"
-                android:text="1111"
-                style="@style/font_white_dark_xsmall" />
+                android:text="@string/text_empty"
+                style="@style/font_white_dark_small" />
         </LinearLayout>
-
 
     </LinearLayout>
 

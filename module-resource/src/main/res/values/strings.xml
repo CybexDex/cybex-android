@@ -78,8 +78,9 @@
     <string name="index_low">Low</string>
     <string name="index_open">Open</string>
     <string name="index_close">Close</string>
-    <string name="index_vary">Change</string>
-    <string name="index_price">Price</string>
+    <string name="index_change_price">Chg</string>
+    <string name="index_change_ratio">Chg%</string>
+    <string name="index_vol">Vol</string>
 
     <!-- Setting Strings -->
     <string name="setting_language">Language</string>

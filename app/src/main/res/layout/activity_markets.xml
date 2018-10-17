@@ -23,77 +23,96 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/market_page_layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:padding="@dimen/activity_padding">
+        android:padding="@dimen/activity_padding"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/market_page_current_money"
-            style="@style/font_white_dark_bold_xxlarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="$11,309.109" />
-        <LinearLayout
-            android:id="@+id/market_page_change_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@id/market_page_current_money"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/market_page_change_symbol"
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/market_page_current_money"
+                style="@style/font_white_dark_bold_xxlarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"/>
+                android:text="@string/text_empty" />
+
             <TextView
                 android:id="@+id/market_page_exchange_variation"
                 style="@style/font_green_bold_xxlarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="25.25%" />
-        </LinearLayout>
+                android:layout_gravity="end"
+                android:text="@string/text_empty" />
 
-        <TextView
-            android:id="@+id/market_page_high_price"
-            style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/market_page_current_money"
-            android:layout_below="@id/market_page_current_money"
-            android:layout_marginTop="@dimen/margin_6"
-            android:text="High:$11,984.124" />
+            android:layout_marginTop="@dimen/margin_6">
 
-        <TextView
-            android:id="@+id/market_page_volume_quote"
-            style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/market_page_high_price"
-            android:layout_alignRight="@id/market_page_change_layout"
-            android:text="Vol: 125,980.213 BTC" />
+            <LinearLayout
+                android:id="@+id/markets_layout_base_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/market_page_low_price"
-            style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/market_page_high_price"
-            android:layout_below="@id/market_page_high_price"
-            android:text="Low: $10671.400" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/market_page_volume_base"
-            style="@style/font_gray_bold_small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/market_page_low_price"
-            android:layout_alignEnd="@id/market_page_volume_quote"
-            android:text="$1,005,620,329.539" />
-    </RelativeLayout>
+                    <TextView
+                        android:id="@+id/market_page_high_price"
+                        style="@style/font_gray_bold_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="High: --" />
 
+                    <TextView
+                        android:id="@+id/market_page_volume_quote"
+                        style="@style/font_gray_bold_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="Vol: --" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_3">
+
+                    <TextView
+                        android:id="@+id/market_page_low_price"
+                        style="@style/font_gray_bold_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Low: --" />
+
+                    <TextView
+                        android:id="@+id/market_page_volume_base"
+                        style="@style/font_gray_bold_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="Vol: --" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <include layout="@layout/header_kline_value" />
+
+        </FrameLayout>
+
+    </LinearLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/market_page_scroll_view"
@@ -111,7 +130,6 @@
             android:orientation="vertical">
 
             <include layout="@layout/header_kline_type" />
-            <include layout="@layout/header_kline_value" />
             <include layout="@layout/header_kline_chart_ma" />
 
             <ProgressBar
@@ -124,13 +142,13 @@
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_k"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/height_180"
+                android:layout_height="@dimen/height_200"
                 android:visibility="invisible" />
 
             <com.cybexmobile.mychart.MyCombinedChart
                 android:id="@+id/kline_chart_volume"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/margin_40"
+                android:layout_height="@dimen/margin_50"
                 android:visibility="invisible" />
 
             <com.cybexmobile.mychart.MyCombinedChart
@@ -180,7 +198,7 @@
                 android:id="@+id/market_page_tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_22"
+                android:layout_marginTop="@dimen/activity_margin"
                 android:background="@android:color/transparent"
                 app:tabBackground="@android:color/transparent"
                 app:tabIndicatorColor="@color/primary_color_orange"
@@ -203,6 +221,7 @@
                 android:id="@+id/market_page_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_6"
                 android:background="@android:color/transparent" />
 
         </LinearLayout>

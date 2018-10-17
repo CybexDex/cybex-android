@@ -145,14 +145,7 @@ public class DataParse {
 
     public void parseKlineHistoryData(List<HistoryPrice> historyPriceList, long duration) {
         ArrayList<KLineBean> kLineBeans = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat;
-        if(duration == 300) {
-            simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.US);
-        } else if(duration ==3600) {
-            simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm", Locale.US);
-        } else {
-            simpleDateFormat = new SimpleDateFormat("MM/dd", Locale.US);
-        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         if(historyPriceList != null) {
             int count = historyPriceList.size();
             for(int i = 0; i < count; i++) {

@@ -96,10 +96,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected TextView mMAView, mMACDView, mBOLLView, mEMAView, mRSIView;
     protected TextView mTvKMa5, mTvKMa10, mTvKMa20;
     protected TextView mCurrentPriceView, mHighPriceView, mLowPriceView, mChangeRateView, mVolumeBaseView, mVolumeQuoteView, mDuration5mView, mDuration1hView, mDuration1dView;
-    protected TextView mTvHighIndex, mTvLowIndex, mTvOpenIndex, mTvCloseIndex, mTvChangeIndex, mTvPriceIndex, mTvDateIndex;
+    protected TextView mTvHighIndex, mTvLowIndex, mTvOpenIndex, mTvCloseIndex, mTvChangeRatioIndex, mTvChangePriceIndex, mTvVol;
     protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart, mIndexHeaderLayout;
     private Button mBtnBuy, mBtnSell;
-    private LinearLayout mLayoutFooter;
+    private LinearLayout mLayoutFooter, mLayoutBaseHeader;
     private NestedScrollView mScrollerView;
 
     protected ProgressBar mProgressBar;
@@ -281,12 +281,13 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mTvLowIndex = findViewById(R.id.index_low_tv);
         mTvOpenIndex = findViewById(R.id.index_open_tv);
         mTvCloseIndex = findViewById(R.id.index_close_tv);
-        mTvChangeIndex = findViewById(R.id.index_change_tv);
-        mTvDateIndex = findViewById(R.id.index_date_tv);
-        mTvPriceIndex = findViewById(R.id.index_price_tv);
+        mTvChangeRatioIndex = findViewById(R.id.tv_index_change_ratio);
+        mTvChangePriceIndex = findViewById(R.id.tv_index_change_price);
+        mTvVol = findViewById(R.id.tv_index_vol);
         mBtnBuy = findViewById(R.id.market_page_btn_buy);
         mBtnSell = findViewById(R.id.market_page_btn_sell);
         mLayoutFooter = findViewById(R.id.market_page_layout_footer);
+        mLayoutBaseHeader = findViewById(R.id.markets_layout_base_header);
         mLayoutFooter.setVisibility(mFromWhere == null ? View.VISIBLE : View.GONE);
         setViewListener();
     }
@@ -318,16 +319,16 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         if (mWatchListData == null) {
             return;
         }
-        String trimmedBase = watchListData.getBaseSymbol().contains("JADE") ? watchListData.getBaseSymbol().substring(5, watchListData.getBaseSymbol().length()) : watchListData.getBaseSymbol();
-        String trimmedQuote = watchListData.getQuoteSymbol().contains("JADE") ? watchListData.getQuoteSymbol().substring(5, watchListData.getQuoteSymbol().length()) : watchListData.getQuoteSymbol();
+        String trimmedBase = AssetUtil.parseSymbol(watchListData.getBaseSymbol());
+        String trimmedQuote = AssetUtil.parseSymbol(watchListData.getQuoteSymbol());
         mTvTitle.setText(String.format("%s/%s", trimmedQuote, trimmedBase));
         watchListData.getBasePrecision();
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" :
                 AssetUtil.formatNumberRounding(watchListData.getCurrentPrice(), watchListData.getBasePrecision()));
         mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" :
-                String.format("High :%s", AssetUtil.formatNumberRounding(watchListData.getHigh(), watchListData.getBasePrecision())));
+                String.format("High: %s", AssetUtil.formatNumberRounding(watchListData.getHigh(), watchListData.getBasePrecision())));
         mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" :
-                String.format("Low :%s", AssetUtil.formatNumberRounding(watchListData.getLow(), watchListData.getBasePrecision())));
+                String.format("Low: %s", AssetUtil.formatNumberRounding(watchListData.getLow(), watchListData.getBasePrecision())));
         mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase, AssetUtil.formatAmountToKMB(watchListData.getBaseVol(), 2)));
         double volQuote = 0.f;
         if (watchListData.getCurrentPrice() != 0.f) {
@@ -509,6 +510,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             @Override
             public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
                 mIndexHeaderLayout.setVisibility(View.VISIBLE);
+                mLayoutBaseHeader.setVisibility(View.INVISIBLE);
                 Highlight highlight = new Highlight(h.getXIndex(), h.getValue(), h.getDataIndex(), h.getDataSetIndex());
 
                 float touchY = h.getTouchY() - mChartKline.getHeight();
@@ -543,7 +545,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mChartCharts.highlightValue(null);
                 mIndexHeaderLayout.setVisibility(View.GONE);
                 mHeaderKlineChart.setVisibility(View.GONE);
-
+                mLayoutBaseHeader.setVisibility(View.VISIBLE);
             }
         });
 
@@ -979,19 +981,35 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private void updateText(int index) {
         if (index >= 0 && index < kLineDatas.size()) {
             KLineBean klData = kLineDatas.get(index);
-            double change = ((klData.close -klData.open) / klData.open) *100;
+            if(index == 0){
+                mTvChangeRatioIndex.setText(getResources().getString(R.string.text_empty));
+                mTvChangePriceIndex.setText(getResources().getString(R.string.text_empty));
+                mTvVol.setText(getResources().getString(R.string.text_empty));
+            } else {
+                /**
+                 * 涨跌幅计算规则
+                 * 当前K线的close - 上一个K线的close / 上一个K线的close
+                 */
+                KLineBean klDataPre = kLineDatas.get(index - 1);
+                double changePrice = klData.close - klDataPre.close;
+                double changeRatio = (changePrice / klDataPre.close) *100;
+                if (changeRatio > 0) {
+                    mTvChangeRatioIndex.setTextColor(getResources().getColor(R.color.increasing_color));
+                    mTvChangePriceIndex.setTextColor(getResources().getColor(R.color.increasing_color));
+                    mTvChangeRatioIndex.setText(String.format(Locale.US, "+%.2f%%", changeRatio));
+                    mTvChangePriceIndex.setText(String.format(Locale.US, "+%s", AssetUtil.formatNumberRounding(changePrice, mBasePrecision)));
+                } else {
+                    mTvChangeRatioIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
+                    mTvChangePriceIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
+                    mTvChangeRatioIndex.setText(String.format(Locale.US, "%.2f%%", changeRatio));
+                    mTvChangePriceIndex.setText(AssetUtil.formatNumberRounding(changePrice, mBasePrecision));
+                }
+                mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.vol, 2), AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol())));
+            }
             mTvOpenIndex.setText(AssetUtil.formatNumberRounding(klData.open, mBasePrecision));
             mTvCloseIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
             mTvHighIndex.setText(AssetUtil.formatNumberRounding(klData.high, mBasePrecision));
             mTvLowIndex.setText(AssetUtil.formatNumberRounding(klData.low, mBasePrecision));
-            mTvChangeIndex.setText(String.format(Locale.US, "%.2f%%", change));
-            if (change > 0) {
-                mTvChangeIndex.setTextColor(getResources().getColor(R.color.increasing_color));
-            } else {
-                mTvChangeIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
-            }
-            mTvPriceIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
-            mTvDateIndex.setText(klData.date);
         }
         int newIndex = index;
         if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {
@@ -1171,6 +1189,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_5_MIN;
                 mIndexHeaderLayout.setVisibility(View.GONE);
+                mLayoutBaseHeader.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.VISIBLE);
                 mChartKline.setVisibility(View.INVISIBLE);
                 mChartVolume.setVisibility(View.INVISIBLE);
@@ -1207,6 +1226,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
                 mIndexHeaderLayout.setVisibility(View.GONE);
+                mLayoutBaseHeader.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.VISIBLE);
                 mChartKline.setVisibility(View.INVISIBLE);
                 mChartVolume.setVisibility(View.INVISIBLE);
