@@ -207,6 +207,58 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/deposit_layout_project_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_margin_double"
+                android:layout_marginRight="@dimen/activity_margin_double"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/deposit_project_name" />
+
+                    <TextView
+                        android:id="@+id/deposit_tv_project_name"
+                        style="@style/font_gray_medium"
+                        android:layout_marginStart="@dimen/margin_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_3"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/deposit_protocol_address" />
+
+                    <TextView
+                        android:id="@+id/deposit_tv_protocol_address"
+                        style="@style/font_white_dark_medium"
+                        android:layout_marginStart="@dimen/margin_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/deposit_detail_message"
                 style="@style/font_gray_small"
@@ -214,7 +266,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_margin_double"
                 android:layout_marginRight="@dimen/activity_margin_double"
-                android:layout_marginTop="@dimen/activity_margin_triple"
+                android:layout_marginTop="@dimen/activity_margin_double"
                 android:lineSpacingExtra="@dimen/line_spacing_extra_4" />
 
 

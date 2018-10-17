@@ -245,6 +245,8 @@
     <string name="deposit_eos_deposit_account">EOS充值账户</string>
     <string name="deposit_eos_verification_code">备注验证码</string>
     <string name="deposit_eos_alert_message">(请务必在转账备注中填写并核对正确)</string>
+    <string name="deposit_project_name">项目名称:</string>
+    <string name="deposit_protocol_address">协议地址:</string>
 
     <!-- Withdraw Page Related -->
     <string name="withdraw_available_amount">可用余额</string>

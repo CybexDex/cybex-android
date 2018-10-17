@@ -43,4 +43,12 @@ fragment accountAddressRecord on AccountAddressRecord {
   type
   asset
   createAt
+  projectInfo {
+    projectName
+    logoUrl
+    contractAddress
+    contractExplorerUrl
+    protocol
+  }
+
 }

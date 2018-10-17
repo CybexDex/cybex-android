@@ -242,6 +242,8 @@
     <string name="deposit_eos_verification_code">Verification code</string>
     <string name="deposit_eos_alert_message">(Must transfer your EOS to deposit account with this verification code in memo)</string>
     <string name="deposit_record_button">Deposit Records</string>
+    <string name="deposit_project_name">Project Name:</string>
+    <string name="deposit_protocol_address">Protocol Address:</string>
 
     <!-- Withdraw Page Related -->
     <string name="withdraw_available_amount">Available</string>

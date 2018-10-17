@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -23,6 +24,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +42,14 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.fragment.AccountAddressRecord;
+import com.cybex.basemodule.constant.Constant;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybex.provider.apollo.ApolloClientApi;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybexmobile.activity.web.WebActivity;
 import com.cybexmobile.utils.AntiMultiClick;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybexmobile.utils.QRCode;
@@ -110,7 +114,12 @@ public class DepositActivity extends BaseActivity {
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.deposit_detail_message)
     TextView mTextMessage;
-
+    @BindView(R.id.deposit_tv_project_name)
+    TextView mTvProjectName;
+    @BindView(R.id.deposit_tv_protocol_address)
+    TextView mTvProtocolAddress;
+    @BindView(R.id.deposit_layout_project_info)
+    LinearLayout mLayoutProjectInfo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,6 +139,7 @@ public class DepositActivity extends BaseActivity {
         mCnInfo = intent.getStringExtra("cnInfo");
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_deposit), mAssetName));
+        mTvProtocolAddress.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         if (mIsEnabled) {
             if (mAssetName.equals(EOS_NAME)) {
                 mEosLinearLayout.setVisibility(View.VISIBLE);
@@ -195,6 +205,16 @@ public class DepositActivity extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.deposit_tv_protocol_address)
+    public void onProtocolAddressClick(View view) {
+        String protocolAddress = mTvProtocolAddress.getText().toString();
+        if(TextUtils.isEmpty(protocolAddress)){
+            return;
+        }
+        Intent intent = new Intent(this, WebActivity.class);
+        intent.putExtra(Constant.INTENT_PARAM_URL, protocolAddress);
+        startActivity(intent);
+    }
 
     @OnClick(R.id.deposit_eos_copy_account_name)
     public void onClickCopyEosAccountName(View view) {
@@ -242,30 +262,31 @@ public class DepositActivity extends BaseActivity {
                     public void onResponse(@Nonnull Response<GetDepositAddress.Data> response) {
                         if (response.data() != null) {
                             if (response.data().getDepositAddress() != null) {
-                                String address = response.data().getDepositAddress().fragments().accountAddressRecord().address();
-                                if (assetName.equals(EOS_NAME)) {
-                                    String eosAccountName = address.substring(0, address.indexOf("["));
-                                    String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
+                                AccountAddressRecord accountAddressRecord = response.data().getDepositAddress().fragments().accountAddressRecord();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (assetName.equals(EOS_NAME)) {
+                                            String eosAccountName = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
+                                            String verificationCode = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
                                             mEosAccountNameTv.setText(eosAccountName);
                                             mQRAddressView.setText(verificationCode);
-                                            hideLoadDialog();
-                                        }
-                                    });
-                                } else {
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
+                                        } else {
                                             if (mQRAddressView != null) {
-                                                mQRAddressView.setText(address);
-                                                generateBarCode(address);
-                                                hideLoadDialog();
+                                                mQRAddressView.setText(accountAddressRecord.address());
+                                                generateBarCode(accountAddressRecord.address());
                                             }
                                         }
-                                    });
-                                }
+                                        AccountAddressRecord.ProjectInfo projectInfo = accountAddressRecord.projectInfo();
+                                        if(projectInfo != null){
+                                            mTvProjectName.setText(TextUtils.isEmpty(projectInfo.projectName()) ? "" : projectInfo.projectName());
+                                            mTvProtocolAddress.setText(TextUtils.isEmpty(projectInfo.contractExplorerUrl()) ? "" : projectInfo.contractExplorerUrl());
+                                        } else {
+                                            mLayoutProjectInfo.setVisibility(View.GONE);
+                                        }
+                                        hideLoadDialog();
+                                    }
+                                });
                             } else {
                                 mHandler.post(new Runnable() {
                                     @Override
@@ -281,7 +302,7 @@ public class DepositActivity extends BaseActivity {
 
                     @Override
                     public void onFailure(@Nonnull ApolloException e) {
-
+                        hideLoadDialog();
                     }
                 });
     }
