@@ -207,12 +207,13 @@ public class DepositActivity extends BaseActivity {
 
     @OnClick(R.id.deposit_tv_protocol_address)
     public void onProtocolAddressClick(View view) {
-        String protocolAddress = mTvProtocolAddress.getText().toString();
-        if(TextUtils.isEmpty(protocolAddress)){
+        String contractAddress = mTvProtocolAddress.getText().toString();
+        String contractExplorerUrl = (String) mTvProtocolAddress.getTag();
+        if(TextUtils.isEmpty(contractAddress) || TextUtils.isEmpty(contractExplorerUrl)){
             return;
         }
         Intent intent = new Intent(this, WebActivity.class);
-        intent.putExtra(Constant.INTENT_PARAM_URL, protocolAddress);
+        intent.putExtra(Constant.INTENT_PARAM_URL, contractExplorerUrl);
         startActivity(intent);
     }
 
@@ -280,7 +281,8 @@ public class DepositActivity extends BaseActivity {
                                         AccountAddressRecord.ProjectInfo projectInfo = accountAddressRecord.projectInfo();
                                         if(projectInfo != null){
                                             mTvProjectName.setText(TextUtils.isEmpty(projectInfo.projectName()) ? "" : projectInfo.projectName());
-                                            mTvProtocolAddress.setText(TextUtils.isEmpty(projectInfo.contractExplorerUrl()) ? "" : projectInfo.contractExplorerUrl());
+                                            mTvProtocolAddress.setText(TextUtils.isEmpty(projectInfo.contractAddress()) ? "" : projectInfo.contractAddress());
+                                            mTvProtocolAddress.setTag(TextUtils.isEmpty(projectInfo.contractExplorerUrl()) ? "" : projectInfo.contractExplorerUrl());
                                         } else {
                                             mLayoutProjectInfo.setVisibility(View.GONE);
                                         }

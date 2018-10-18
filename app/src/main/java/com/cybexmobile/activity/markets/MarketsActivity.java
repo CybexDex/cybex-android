@@ -984,7 +984,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             if(index == 0){
                 mTvChangeRatioIndex.setText(getResources().getString(R.string.text_empty));
                 mTvChangePriceIndex.setText(getResources().getString(R.string.text_empty));
-                mTvVol.setText(getResources().getString(R.string.text_empty));
+                mTvChangeRatioIndex.setTextColor(getResources().getColor(R.color.font_color_white_dark));
+                mTvChangePriceIndex.setTextColor(getResources().getColor(R.color.font_color_white_dark));
             } else {
                 /**
                  * 涨跌幅计算规则
@@ -1004,12 +1005,12 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                     mTvChangeRatioIndex.setText(String.format(Locale.US, "%.2f%%", changeRatio));
                     mTvChangePriceIndex.setText(AssetUtil.formatNumberRounding(changePrice, mBasePrecision));
                 }
-                mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.vol, 2), AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol())));
             }
             mTvOpenIndex.setText(AssetUtil.formatNumberRounding(klData.open, mBasePrecision));
             mTvCloseIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
             mTvHighIndex.setText(AssetUtil.formatNumberRounding(klData.high, mBasePrecision));
             mTvLowIndex.setText(AssetUtil.formatNumberRounding(klData.low, mBasePrecision));
+            mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.vol, 2), AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol())));
         }
         int newIndex = index;
         if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {

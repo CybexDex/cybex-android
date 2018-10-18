@@ -82,8 +82,8 @@
     <string name="index_low">低</string>
     <string name="index_open">开</string>
     <string name="index_close">收</string>
-    <string name="index_change_price">涨跌额</string>
-    <string name="index_change_ratio">涨跌幅</string>
+    <string name="index_change_price">额</string>
+    <string name="index_change_ratio">幅</string>
     <string name="index_vol">量</string>
 
     <!-- Setting page -->

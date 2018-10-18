@@ -46,10 +46,17 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnFocusChange;
+import butterknife.OnTextChanged;
+import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
@@ -73,28 +80,75 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.basemodule.constant.Constant.PREF_PASSWORD;
 
 public class RegisterActivity extends BaseActivity {
+
     private static final String TAG = "RegisterActivity";
-    ImageView mCloudWalletIntroductionQuestionMarker, mPinCodeImageView, mUserNameChecker, mPasswordChecker, mPasswordConfirmChecker, mRegisterErrorSign;
-    ImageView mUserNameicon, mPasswordIcon, mPasswordConfirmIcon, mPinCodeIcon;
-    TextView mTvLoginIn, mRegisterErrorText;
-    EditText mPassWordTextView, mConfirmationTextView, mPinCodeTextView, mUserNameTextView;
+    @BindView(R.id.register_cloud_wallet_question_marker)
+    ImageView mCloudWalletIntroductionQuestionMarker;
+    @BindView(R.id.register_pin_code_image)
+    ImageView mPinCodeImageView;
+    @BindView(R.id.user_name_check)
+    ImageView mUserNameChecker;
+    @BindView(R.id.password_check)
+    ImageView mPasswordChecker;
+    @BindView(R.id.password_confirm_check)
+    ImageView mPasswordConfirmChecker;
+    @BindView(R.id.register_error_sign)
+    ImageView mRegisterErrorSign;
+    @BindView(R.id.register_password_icon)
+    ImageView mPasswordIcon;
+    @BindView(R.id.register_password_confirmation_icon)
+    ImageView mPasswordConfirmIcon;
+    @BindView(R.id.register_pin_code_icon)
+    ImageView mPinCodeIcon;
+    @BindView(R.id.register_account_icon)
+    ImageView mUserNameicon;
+    @BindView(R.id.tv_login_in)
+    TextView mTvLoginIn;
+    @BindView(R.id.register_error_text)
+    TextView mRegisterErrorText;
+    @BindView(R.id.register_et_account_name)
+    EditText mEtUserName;
+    @BindView(R.id.register_et_password)
+    EditText mEtPassWord;
+    @BindView(R.id.register_et_password_confirmation)
+    EditText mEtPasswordConfirm;
+    @BindView(R.id.register_et_pin_code)
+    EditText mPinCodeTextView;
+    @BindView(R.id.email_sign_in_button)
     Button mSignInButton;
-    private Toolbar mToolbar;
-    private LinearLayout mLayoutContainer, mLayoutError;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.register_ll_container)
+    LinearLayout mLayoutContainer;
+    @BindView(R.id.register_ll_error)
+    LinearLayout mLayoutError;
+
+    private Disposable mDisposablePinCode;
+
     String mCapId;
     Timer mTimer = new Timer();
     Task mTask = new Task();
     private int mLastScrollHeight;
     private int mVirtualBarHeight = -1;
+    private Unbinder mUnbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        initViews();
+        mUnbinder = ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
         mTimer.schedule(mTask, 0, 90 * 1000);
-        setViews();
         setOnClickListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mDisposablePinCode != null && !mDisposablePinCode.isDisposed()){
+            mDisposablePinCode.dispose();
+        }
+        mUnbinder.unbind();
     }
 
     public class Task extends TimerTask {
@@ -104,219 +158,164 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    private void initViews() {
-        mCloudWalletIntroductionQuestionMarker = findViewById(R.id.register_cloud_wallet_question_marker);
-        mTvLoginIn = findViewById(R.id.tv_login_in);
-        mUserNameTextView = findViewById(R.id.register_et_account_name);
-        mPassWordTextView = findViewById(R.id.register_et_password);
-        mConfirmationTextView = findViewById(R.id.register_et_password_confirmation);
-        mSignInButton = findViewById(R.id.email_sign_in_button);
-        mPinCodeImageView = findViewById(R.id.register_pin_code_image);
-        mPinCodeTextView = findViewById(R.id.register_et_pin_code);
-        mRegisterErrorText = findViewById(R.id.register_error_text);
-        mUserNameChecker = findViewById(R.id.user_name_check);
-        mPasswordChecker = findViewById(R.id.password_check);
-        mPasswordConfirmChecker = findViewById(R.id.password_confirm_check);
-        mRegisterErrorSign = findViewById(R.id.register_error_sign);
-        mToolbar = findViewById(R.id.toolbar);
-        mUserNameicon = findViewById(R.id.register_account_icon);
-        mPasswordIcon = findViewById(R.id.register_password_icon);
-        mPasswordConfirmIcon = findViewById(R.id.register_password_confirmation_icon);
-        mPinCodeIcon = findViewById(R.id.register_pin_code_icon);
-        mLayoutError = findViewById(R.id.register_ll_error);
-        mLayoutContainer = findViewById(R.id.register_ll_container);
-        setSupportActionBar(mToolbar);
-    }
-
-    private void setViews() {
-        mUserNameTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String strAccountName = s.toString();
-                if (strAccountName.isEmpty()) {
-                    return;
-                }
-                if (!Character.isLetter(strAccountName.charAt(0))) {
-                    mRegisterErrorText.setText(R.string.create_account_account_name_error_start_letter);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                    mUserNameChecker.setVisibility(View.GONE);
-                } else if(!strAccountName.matches("^[a-z0-9-]+$")){
-                    mRegisterErrorText.setText(R.string.create_account_account_name_should_only_contain_letter_dash_and_numbers);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                    mUserNameChecker.setVisibility(View.GONE);
-                } else if (strAccountName.length() < 3) {
-                    mRegisterErrorText.setText(R.string.create_account_account_name_too_short);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                    mUserNameChecker.setVisibility(View.GONE);
-                } else if (strAccountName.contains("--")) {
-                    mRegisterErrorText.setText(R.string.create_account_account_name_should_not_contain_continuous_dashes);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                    mUserNameChecker.setVisibility(View.GONE);
-                } else if (strAccountName.endsWith("-")) {
-                    mRegisterErrorText.setText(R.string.create_account_account_name_error_dash_end);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                    mUserNameChecker.setVisibility(View.GONE);
-                } else {
-                    if (strAccountName.matches("^[a-z]+$")) {
-                        mRegisterErrorText.setText(R.string.create_account_account_name_error_full_letter);
-                        mRegisterErrorSign.setVisibility(View.VISIBLE);
-                        mUserNameChecker.setVisibility(View.GONE);
-                    } else {
-                        mRegisterErrorText.setText("");
-                        mRegisterErrorSign.setVisibility(View.GONE);
-                        mUserNameChecker.setVisibility(View.VISIBLE);
-                        processCheckAccount(strAccountName);
-                    }
-                    setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
-                            mPasswordChecker.getVisibility() == View.VISIBLE &&
-                            mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
-                            !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
-                }
-
-            }
-        });
-
-        mUserNameTextView.setOnFocusChangeListener(onFocusChangeListener);
-
-        mPassWordTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String strPassword = s.toString();
-                if (!strPassword.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
-                    mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
-                    mPasswordChecker.setVisibility(View.GONE);
-                    mPasswordConfirmChecker.setVisibility(View.GONE);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                } else {
-                    mRegisterErrorText.setText("");
-                    mPasswordChecker.setVisibility(View.VISIBLE);
-                    mRegisterErrorSign.setVisibility(View.GONE);
-                }
-                setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
-                        mPasswordChecker.getVisibility() == View.VISIBLE &&
-                        mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
-                        !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
-            }
-        });
-
-        mPassWordTextView.setOnFocusChangeListener(onFocusChangeListener);
-
-        mConfirmationTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String strPassword = mPassWordTextView.getText().toString();
-                String strPasswordConfirm = s.toString();
-                if (!strPassword.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
-                    mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
-                    mPasswordChecker.setVisibility(View.GONE);
-                    mPasswordConfirmChecker.setVisibility(View.GONE);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                } else if (strPassword.compareTo(strPasswordConfirm) != 0) {
-                    mPasswordConfirmChecker.setVisibility(View.INVISIBLE);
-                    mRegisterErrorText.setText(R.string.create_account_password_confirm_error);
-                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                } else {
-                    mPasswordConfirmChecker.setVisibility(View.VISIBLE);
-                    mRegisterErrorText.setText("");
-                    mRegisterErrorSign.setVisibility(View.GONE);
-                }
-                setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
-                        mPasswordChecker.getVisibility() == View.VISIBLE &&
-                        mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
-                        !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
-            }
-        });
-
-        mConfirmationTextView.setOnFocusChangeListener(onFocusChangeListener);
-        mPinCodeTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
-                        mPasswordChecker.getVisibility() == View.VISIBLE &&
-                        mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
-                        !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
-            }
-        });
-
-        mPinCodeTextView.setOnFocusChangeListener(onFocusChangeListener);
-
-    }
-
-    private View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            switch (v.getId()) {
-                case R.id.register_et_account_name:
-                    mUserNameicon.setAlpha(hasFocus ? 1f : 0.5f);
-                    break;
-                case R.id.register_et_password:
-                    mPasswordIcon.setAlpha(hasFocus ? 1f : 0.5f);
-                    break;
-                case R.id.register_et_password_confirmation:
-                    mPasswordConfirmIcon.setAlpha(hasFocus ? 1f : 0.5f);
-                    break;
-                case R.id.register_et_pin_code:
-                    mPinCodeIcon.setAlpha(hasFocus ? 1f : 0.5f);
-                    break;
-            }
+    private void checkUserName(String username){
+        if(TextUtils.isEmpty(username)){
+            checkPassword(mEtPassWord.getText().toString());
+        } else if (!Character.isLetter(username.charAt(0))) {
+            mRegisterErrorText.setText(R.string.create_account_account_name_error_start_letter);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+            mUserNameChecker.setVisibility(View.GONE);
+        } else if(!username.matches("^[a-z0-9-]+$")){
+            mRegisterErrorText.setText(R.string.create_account_account_name_should_only_contain_letter_dash_and_numbers);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+            mUserNameChecker.setVisibility(View.GONE);
+        } else if (username.length() < 3) {
+            mRegisterErrorText.setText(R.string.create_account_account_name_too_short);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+            mUserNameChecker.setVisibility(View.GONE);
+        } else if (username.contains("--")) {
+            mRegisterErrorText.setText(R.string.create_account_account_name_should_not_contain_continuous_dashes);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+            mUserNameChecker.setVisibility(View.GONE);
+        } else if (username.endsWith("-")) {
+            mRegisterErrorText.setText(R.string.create_account_account_name_error_dash_end);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+            mUserNameChecker.setVisibility(View.GONE);
+        } else if (username.matches("^[a-z]+$")) {
+            mRegisterErrorText.setText(R.string.create_account_account_name_error_full_letter);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+            mUserNameChecker.setVisibility(View.GONE);
+        } else {
+            processCheckAccount(username);
         }
-    };
+        setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                mPasswordChecker.getVisibility() == View.VISIBLE &&
+                mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
+    }
+
+    private void checkPassword(String password){
+        if(TextUtils.isEmpty(password)){
+            checkPasswordConfirm(mEtPasswordConfirm.getText().toString());
+        } else if (!password.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
+            mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
+            mPasswordChecker.setVisibility(View.GONE);
+            mPasswordConfirmChecker.setVisibility(View.GONE);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+        } else {
+            mRegisterErrorText.setText("");
+            mPasswordChecker.setVisibility(View.VISIBLE);
+            mRegisterErrorSign.setVisibility(View.GONE);
+            checkPasswordConfirm(mEtPasswordConfirm.getText().toString());
+        }
+        setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                mPasswordChecker.getVisibility() == View.VISIBLE &&
+                mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
+    }
+
+    private void checkPasswordConfirm(String passwordConfirm){
+        String strPassword = mEtPassWord.getText().toString();
+        if (!strPassword.equals(passwordConfirm)) {
+            mPasswordConfirmChecker.setVisibility(View.INVISIBLE);
+            mRegisterErrorText.setText(R.string.create_account_password_confirm_error);
+            mRegisterErrorSign.setVisibility(View.VISIBLE);
+        } else {
+            mPasswordConfirmChecker.setVisibility(View.VISIBLE);
+            mRegisterErrorText.setText("");
+            mRegisterErrorSign.setVisibility(View.GONE);
+        }
+        setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                mPasswordChecker.getVisibility() == View.VISIBLE &&
+                mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
+    }
+
+    @OnTextChanged(value = R.id.register_et_account_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onUserNameEditChanged(Editable editable){
+        checkUserName(editable.toString());
+    }
+
+    @OnTextChanged(value = R.id.register_et_password, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onPasswordEditChanged(Editable editable){
+        if(mUserNameChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtUserName.getText().toString())){
+            checkPassword(editable.toString());
+        }
+    }
+
+    @OnTextChanged(value = R.id.register_et_password_confirmation, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onPasswordConfirmationEditChanged(Editable editable){
+        if((mUserNameChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtUserName.getText().toString()))
+                && (mPasswordChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtPassWord.getText().toString()))){
+            checkPasswordConfirm(editable.toString());
+        }
+    }
+
+    @OnTextChanged(value = R.id.register_et_pin_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    public void onPinCodeEditChanged(Editable editable){
+        setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                mPasswordChecker.getVisibility() == View.VISIBLE &&
+                mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
+    }
+
+    @OnFocusChange({R.id.register_et_account_name, R.id.register_et_password,
+            R.id.register_et_password_confirmation, R.id.register_et_pin_code})
+    public void onUserNameTextFocusChanged(View view, boolean hasFocus){
+        switch (view.getId()) {
+            case R.id.register_et_account_name:
+                mUserNameicon.setAlpha(hasFocus ? 1f : 0.5f);
+                break;
+            case R.id.register_et_password:
+                mPasswordIcon.setAlpha(hasFocus ? 1f : 0.5f);
+                break;
+            case R.id.register_et_password_confirmation:
+                mPasswordConfirmIcon.setAlpha(hasFocus ? 1f : 0.5f);
+                break;
+            case R.id.register_et_pin_code:
+                mPinCodeIcon.setAlpha(hasFocus ? 1f : 0.5f);
+                break;
+        }
+    }
+
+    @OnClick(R.id.register_cloud_wallet_question_marker)
+    public void onCloudWalletQuestionMarkerClick(View view){
+        Intent intent = new Intent(RegisterActivity.this, WalletIntroductionActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.email_sign_in_button)
+    public void onSignInClick(View view){
+        String account = mEtUserName.getText().toString().trim();
+        String password = mEtPassWord.getText().toString().trim();
+        String passwordConfirm = mEtPasswordConfirm.getText().toString();
+        String pinCode = mPinCodeTextView.getText().toString().trim();
+        if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password) ||
+                TextUtils.isEmpty(passwordConfirm) || TextUtils.isEmpty(pinCode)) {
+            return;
+        }
+        processCreateAccount(account, password, passwordConfirm, pinCode, mCapId);
+    }
+
+    @OnClick(R.id.tv_login_in)
+    public void onLoginInClick(View view){
+        onBackPressed();
+    }
+
+    @OnClick(R.id.register_pin_code_image)
+    public void onRegisterPinCodeClick(View view){
+        requestForPinCode();
+    }
 
     private void requestForPinCode() {
-        RetrofitFactory.getInstance()
+        mDisposablePinCode = RetrofitFactory.getInstance()
                 .apiFaucet()
                 .getPinCode()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
+                .subscribe(new Consumer<ResponseBody>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.v(TAG, "onSubscribe");
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        Log.v(TAG, "onNext");
+                    public void accept(ResponseBody responseBody) throws Exception {
                         JSONObject jsonObject = null;
                         try {
                             jsonObject = new JSONObject(responseBody.string());
@@ -329,38 +328,15 @@ public class RegisterActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onError(Throwable e) {
-                        Log.v(TAG, "onError");
-                    }
+                    public void accept(Throwable throwable) throws Exception {
 
-                    @Override
-                    public void onComplete() {
-                        Log.v(TAG, "onComplete");
                     }
                 });
     }
 
     private void setOnClickListener() {
-        mCloudWalletIntroductionQuestionMarker.setOnClickListener(v -> {
-            Intent intent = new Intent(RegisterActivity.this, WalletIntroductionActivity.class);
-            startActivity(intent);
-        });
-        mTvLoginIn.setOnClickListener(v -> onBackPressed());
-        mSignInButton.setOnClickListener(v -> {
-            String account = mUserNameTextView.getText().toString().trim();
-            String password = mPassWordTextView.getText().toString().trim();
-            String passwordConfirm = mConfirmationTextView.getText().toString();
-            String pinCode = mPinCodeTextView.getText().toString().trim();
-            if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password) ||
-                    TextUtils.isEmpty(passwordConfirm) || TextUtils.isEmpty(pinCode)) {
-                return;
-            }
-            processCreateAccount(account, password, passwordConfirm, pinCode, mCapId);
-        });
-
-        mPinCodeImageView.setOnClickListener(v -> requestForPinCode());
         mLayoutContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -571,16 +547,20 @@ public class RegisterActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (accountObject == null) {
+                            if (accountObject != null && strAccount.equals(accountObject.name)) {
+                                mRegisterErrorText.setText(R.string.create_account_activity_account_object_exist);
+                                mRegisterErrorSign.setVisibility(View.VISIBLE);
+                                mUserNameChecker.setVisibility(View.GONE);
+                            } else {
+                                mRegisterErrorText.setText("");
                                 mUserNameChecker.setVisibility(View.VISIBLE);
                                 mRegisterErrorSign.setVisibility(View.GONE);
-                            } else {
-                                if (strAccount.compareTo(accountObject.name) == 0) {
-                                    mRegisterErrorText.setText(R.string.create_account_activity_account_object_exist);
-                                    mRegisterErrorSign.setVisibility(View.VISIBLE);
-                                    mUserNameChecker.setVisibility(View.GONE);
-                                }
+                                checkPassword(mEtPassWord.getText().toString());
                             }
+                            setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                                    mPasswordChecker.getVisibility() == View.VISIBLE &&
+                                    mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                                    !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
                         }
                     });
                 }

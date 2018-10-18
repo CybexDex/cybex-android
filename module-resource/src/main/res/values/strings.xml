@@ -74,10 +74,10 @@
     <string name="k_boll">BOLL:</string>
     <string name="k_ema5">EMA(5):</string>
     <string name="k_ema10">EMA(10)</string>
-    <string name="index_high">High</string>
-    <string name="index_low">Low</string>
-    <string name="index_open">Open</string>
-    <string name="index_close">Close</string>
+    <string name="index_high">H</string>
+    <string name="index_low">L</string>
+    <string name="index_open">O</string>
+    <string name="index_close">C</string>
     <string name="index_change_price">Chg</string>
     <string name="index_change_ratio">Chg%</string>
     <string name="index_vol">Vol</string>
