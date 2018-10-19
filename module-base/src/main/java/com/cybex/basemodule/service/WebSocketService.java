@@ -70,6 +70,10 @@ import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
@@ -1063,6 +1067,25 @@ public class WebSocketService extends Service {
      */
     public Map<String, List<AssetsPair>> getAssetPairHashMap(){
         return mAssetsPairHashMap;
+    }
+
+    public void setRMBPriceForQuoteAssetAsBaseInOtherTab(WatchlistData watchlistData) {
+        switch (watchlistData.getQuoteId()) {
+            case ASSET_ID_ETH:
+                watchlistData.setQuoteRmbPrice(getAssetRmbPrice(ASSET_SYMBOL_ETH).getValue());
+                break;
+            case ASSET_ID_BTC:
+                watchlistData.setQuoteRmbPrice(getAssetRmbPrice(ASSET_SYMBOL_BTC).getValue());
+                break;
+            case ASSET_ID_CYB:
+                watchlistData.setQuoteRmbPrice(getAssetRmbPrice(ASSET_SYMBOL_CYB).getValue());
+                break;
+            case ASSET_ID_USDT:
+                watchlistData.setQuoteRmbPrice(getAssetRmbPrice(ASSET_SYMBOL_USDT).getValue());
+                break;
+            default:
+                watchlistData.setQuoteRmbPrice(0);
+        }
     }
 
     private class WatchlistWorker implements Runnable {

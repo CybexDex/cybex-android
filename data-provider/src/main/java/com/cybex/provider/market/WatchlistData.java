@@ -42,6 +42,8 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
     private int subscribeId;
     //人名币价格
     private double rmbPrice;
+    //quote人民币价格
+    private double quoteRmbPrice;
     //base精度
     private int basePrecision;
     //quote精度
@@ -64,7 +66,7 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         parseMarketTicker(marketTicker);
     }
 
-    public WatchlistData(long time, double high, double low, double baseVol, double quoteVol, double currentPrice, String baseSymbol, String quoteSymbol, String change, String baseId, String quoteId, int subscribeId, double rmbPrice, int basePrecision, int quotePrecision) {
+    public WatchlistData(long time, double high, double low, double baseVol, double quoteVol, double currentPrice, String baseSymbol, String quoteSymbol, String change, String baseId, String quoteId, int subscribeId, double rmbPrice, double quoteRmbPrice, int basePrecision, int quotePrecision) {
         this.high = high;
         this.low = low;
         this.baseVol = baseVol;
@@ -78,6 +80,7 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         this.quoteId = quoteId;
         this.subscribeId = subscribeId;
         this.rmbPrice = rmbPrice;
+        this.quoteRmbPrice = quoteRmbPrice;
         this.basePrecision = basePrecision;
         this.quotePrecision = quotePrecision;
     }
@@ -192,6 +195,14 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
 
     public void setRmbPrice(double rmbPrice) {
         this.rmbPrice = rmbPrice;
+    }
+
+    public double getQuoteRmbPrice() {
+        return quoteRmbPrice;
+    }
+
+    public void setQuoteRmbPrice(double quoteRmbPrice) {
+        this.quoteRmbPrice = quoteRmbPrice;
     }
 
     public int getBasePrecision() {

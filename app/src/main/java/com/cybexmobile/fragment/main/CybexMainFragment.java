@@ -304,6 +304,9 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
                     if (!rmbPrice.getName().equals(AssetUtil.parseSymbol(watchlistData.getBaseSymbol()))) {
                         continue;
                     }
+                    if (rmbPrice.getName().equals(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()))) {
+                        watchlistData.setQuoteRmbPrice(rmbPrice.getValue());
+                    }
                     watchlistData.setRmbPrice(rmbPrice.getValue());
                 }
             }
@@ -311,6 +314,9 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
                 for(WatchlistData watchlistData : mHotWatchlistData){
                     if (!rmbPrice.getName().equals(AssetUtil.parseSymbol(watchlistData.getBaseSymbol()))) {
                         continue;
+                    }
+                    if (rmbPrice.getName().equals(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()))) {
+                        watchlistData.setQuoteRmbPrice(rmbPrice.getValue());
                     }
                     watchlistData.setRmbPrice(rmbPrice.getValue());
                 }

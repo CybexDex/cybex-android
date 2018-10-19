@@ -165,6 +165,10 @@ public class WatchlistFragment extends BaseFragment {
         if (assetRmbPrice == null || mWatchlistData == null || mWatchlistData.size() == 0) {
             return;
         }
+
+        for (WatchlistData watchlistData : mWatchlistData) {
+            mWebSocketService.setRMBPriceForQuoteAssetAsBaseInOtherTab(watchlistData);
+        }
         if (assetRmbPrice.getValue() != mWatchlistData.get(0).getRmbPrice()) {
             for (WatchlistData watchlistData : mWatchlistData) {
                 watchlistData.setRmbPrice(assetRmbPrice.getValue());

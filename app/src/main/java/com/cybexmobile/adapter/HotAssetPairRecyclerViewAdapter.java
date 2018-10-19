@@ -73,8 +73,12 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
             holder.mTvChangeRate.setTextColor(mContext.getResources().getColor(R.color.no_change_color));
             holder.mTvCurrPrice.setTextColor(mContext.getResources().getColor(R.color.no_change_color));
         }
-        holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
-                String.format(Locale.US, "≈¥ %.2f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
+        if (watchlistData.getQuoteRmbPrice() != 0) {
+            holder.mTvRmbPrice.setText(String.format(Locale.US, "≈¥ %.2f", watchlistData.getQuoteRmbPrice()));
+        } else {
+            holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
+                    String.format(Locale.US, "≈¥ %.2f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
