@@ -128,6 +128,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_markets);
+        EventBus.getDefault().register(this);
         mToolbar = findViewById(R.id.toolbar);
         mTvTitle = findViewById(R.id.tv_title);
         setSupportActionBar(mToolbar);
@@ -151,7 +152,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         initChartChart();
         setChartListener();
         mProgressBar.setVisibility(View.VISIBLE);
-        EventBus.getDefault().register(this);
         loadMarketHistory();
     }
 
@@ -168,7 +168,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         Date startDate = new Date(System.currentTimeMillis() - mDuration * MAXBUCKETCOUNT * 1000);
         Date endDate = new Date(System.currentTimeMillis());
         try {
-            BitsharesWalletWraper.getInstance().get_market_history(mWatchListData.getBaseAsset().id, mWatchListData.getQuoteAsset().id, (int) mDuration, startDate, endDate, mMarketHistoryCallback);
+            BitsharesWalletWraper.getInstance().get_market_history(mWatchListData.getBaseAsset().id,
+                    mWatchListData.getQuoteAsset().id, (int) mDuration, startDate, endDate, mMarketHistoryCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -193,13 +194,31 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 prices.add(PriceUtil.priceFromBucket(mWatchListData.getBaseAsset(), mWatchListData.getQuoteAsset(), bucket));
             }
             mHistoryPriceList = prices;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mProgressBar.setVisibility(View.GONE);
+                    if(mDuration == MARKET_STAT_INTERVAL_MILLIS_1_DAY){
+                        HistoryPrice lastHistoryPrice = mHistoryPriceList.get(mHistoryPriceList.size() - 1);
+                        mHighPriceView.setText(lastHistoryPrice.high == 0.f ? "-" :
+                                String.format("High: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.high, mWatchListData.getBasePrecision())));
+                        mLowPriceView.setText(lastHistoryPrice.low == 0.f ? "-" :
+                                String.format("Low: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.low, mWatchListData.getBasePrecision())));
+                    }
+                }
+            });
             initChartData(mHistoryPriceList, mDuration);
             EventBus.getDefault().post(new Event.UpdateKLineChar());
         }
 
         @Override
         public void onFailure() {
-
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            });
         }
     };
 
@@ -214,10 +233,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         setOnClickListener();
         mChartKline.setVisibility(View.VISIBLE);
         mChartVolume.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.GONE);
-        if (mData != null) {
-            //setDefaultMALine();
-        }
 
         mChartKline.setAutoScaleMinMaxEnabled(true);
         mChartVolume.setAutoScaleMinMaxEnabled(true);
@@ -325,10 +340,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         watchListData.getBasePrecision();
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" :
                 AssetUtil.formatNumberRounding(watchListData.getCurrentPrice(), watchListData.getBasePrecision()));
-        mHighPriceView.setText(watchListData.getHigh() == 0.f ? "-" :
-                String.format("High: %s", AssetUtil.formatNumberRounding(watchListData.getHigh(), watchListData.getBasePrecision())));
-        mLowPriceView.setText(watchListData.getLow() == 0.f ? "-" :
-                String.format("Low: %s", AssetUtil.formatNumberRounding(watchListData.getLow(), watchListData.getBasePrecision())));
         mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase, AssetUtil.formatAmountToKMB(watchListData.getBaseVol(), 2)));
         double volQuote = 0.f;
         if (watchListData.getCurrentPrice() != 0.f) {
@@ -642,22 +653,14 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initChartData(List<HistoryPrice> historyPriceList, long duration) {
-        getKLineData(historyPriceList, duration);
-        setKLineDatas();
+        mData = new DataParse();
+        mData.parseKlineHistoryData(historyPriceList, duration);
+        kLineDatas = mData.getKLineDatas();
+        mData.initLineDatas(kLineDatas);
 
         setMarkerViewButtom(mData, mChartKline);
         setMarkerView(mData, mChartVolume);
         setMarkerView(mData, mChartCharts);
-    }
-
-    private void getKLineData(List<HistoryPrice> historyPriceList, long duraton) {
-        mData = new DataParse();
-        mData.parseKlineHistoryData(historyPriceList, duraton);
-    }
-
-    private void setKLineDatas() {
-        kLineDatas = mData.getKLineDatas();
-        mData.initLineDatas(kLineDatas);
     }
 
     private void setMarkerViewButtom(DataParse mData, MyCombinedChart combinedChart) {
@@ -1010,7 +1013,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             mTvCloseIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
             mTvHighIndex.setText(AssetUtil.formatNumberRounding(klData.high, mBasePrecision));
             mTvLowIndex.setText(AssetUtil.formatNumberRounding(klData.low, mBasePrecision));
-            mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.vol, 2), AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol())));
+            mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.vol, 2), AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
         }
         int newIndex = index;
         if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {

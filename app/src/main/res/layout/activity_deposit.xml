@@ -208,7 +208,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/deposit_layout_project_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_margin_double"
@@ -217,8 +216,10 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/deposit_layout_project_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <TextView
@@ -237,9 +238,11 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/deposit_layout_protocol_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_3"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <TextView

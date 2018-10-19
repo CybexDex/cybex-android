@@ -118,8 +118,10 @@ public class DepositActivity extends BaseActivity {
     TextView mTvProjectName;
     @BindView(R.id.deposit_tv_protocol_address)
     TextView mTvProtocolAddress;
-    @BindView(R.id.deposit_layout_project_info)
-    LinearLayout mLayoutProjectInfo;
+    @BindView(R.id.deposit_layout_project_name)
+    LinearLayout mLayoutProjectName;
+    @BindView(R.id.deposit_layout_protocol_address)
+    LinearLayout mLayoutProtocolAddress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -283,8 +285,11 @@ public class DepositActivity extends BaseActivity {
                                             mTvProjectName.setText(TextUtils.isEmpty(projectInfo.projectName()) ? "" : projectInfo.projectName());
                                             mTvProtocolAddress.setText(TextUtils.isEmpty(projectInfo.contractAddress()) ? "" : projectInfo.contractAddress());
                                             mTvProtocolAddress.setTag(TextUtils.isEmpty(projectInfo.contractExplorerUrl()) ? "" : projectInfo.contractExplorerUrl());
+                                            mLayoutProjectName.setVisibility(TextUtils.isEmpty(projectInfo.projectName()) ? View.GONE : View.VISIBLE);
+                                            mLayoutProtocolAddress.setVisibility(TextUtils.isEmpty(projectInfo.contractAddress()) ? View.GONE : View.VISIBLE);
                                         } else {
-                                            mLayoutProjectInfo.setVisibility(View.GONE);
+                                            mLayoutProjectName.setVisibility(View.GONE);
+                                            mLayoutProtocolAddress.setVisibility(View.GONE);
                                         }
                                         hideLoadDialog();
                                     }
