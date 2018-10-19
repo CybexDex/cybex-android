@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.GatewayActivity;
@@ -56,7 +57,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 
@@ -66,18 +74,17 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();
 
-    private static final int MESSAGE_WHAT_REFRUSH_TOTAL_CYB = 1;
-    private static final int MESSAGE_WHAT_REFRESH_PORTFOLIO = 2;
+    private static final int MESSAGE_WHAT_REFRESH_PORTFOLIO = 1;
 
 
     private String mAccountName;
-    private double mTotalBalanceCyb;
-    private double mCybRmbPrice;
+    private double mTotalRmbPrice;
+    private double mTotalCybPrice;
     private int mRefreshCount;
     private int mNetworkState;
     private boolean mIsLoginIn;
-    private volatile int mTickerCount;
     private List<String> mAssetWhiteList;
+    private List<WatchlistData> mWatchlistDataList;
 
 
     private Unbinder mUnbinder;
@@ -143,11 +150,11 @@ public class AccountBalanceActivity extends BaseActivity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         if (mIsLoginIn) {
             if (mNetworkState == TYPE_NOT_CONNECTED) {
-                mTotalBalanceCyb =  BalanceCache.getInstance().getmTotalCybBalance();
-                mCybRmbPrice =  BalanceCache.getInstance().getmTotalRmbBalance();
+                mTotalCybPrice = BalanceCache.getInstance().getmTotalCybBalance();
+                mTotalRmbPrice = BalanceCache.getInstance().getmTotalRmbBalance();
                 mAccountBalanceObjectItems.addAll(BalanceCache.getInstance().getmAccountBalanceObjectItemList());
                 mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
-                setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
+                setTotalCybAndRmbTextView(mTotalCybPrice, mTotalRmbPrice);
             }
         }
     }
@@ -155,8 +162,8 @@ public class AccountBalanceActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BalanceCache.getInstance().setmTotalCybBalance(mTotalBalanceCyb);
-        BalanceCache.getInstance().setmTotalRmbBalance(mCybRmbPrice);
+        BalanceCache.getInstance().setmTotalCybBalance(mTotalCybPrice);
+        BalanceCache.getInstance().setmTotalRmbBalance(mTotalRmbPrice);
         BalanceCache.getInstance().setmAccountBalanceObjectItemList(mAccountBalanceObjectItems);
         mUnbinder.unbind();
         unbindService(mConnection);
@@ -210,22 +217,14 @@ public class AccountBalanceActivity extends BaseActivity {
             return;
         }
         for (AssetRmbPrice assetRmbPrice : assetRmbPrices) {
-            if ("CYB".equals(assetRmbPrice.getName())) {
-                mCybRmbPrice = assetRmbPrice.getValue();
-                if (mTickerCount == mFullAccountObject.balances.size() + mFullAccountObject.limit_orders.size()) {
-                    setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
-                }
+            if (ASSET_SYMBOL_CYB.equals(assetRmbPrice.getName())) {
+                double cybRmbPrice = assetRmbPrice.getValue();
+                setTotalCybAndRmbTextView(mTotalRmbPrice / cybRmbPrice,  mTotalRmbPrice);
                 break;
             }
         }
         if (mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0) {
             return;
-        }
-        if (mCybRmbPrice != mAccountBalanceObjectItems.get(0).cybPrice) {
-            for (AccountBalanceObjectItem item : mAccountBalanceObjectItems) {
-                item.cybPrice = mCybRmbPrice;
-            }
-            mBalanceRecyclerAdapter.notifyDataSetChanged();
         }
     }
 
@@ -239,10 +238,8 @@ public class AccountBalanceActivity extends BaseActivity {
             AccountBalanceObjectItem item = mAccountBalanceObjectItems.get(i);
             if (assetObject.id.toString().equals(item.accountBalanceObject.asset_type.toString())) {
                 item.assetObject = assetObject;
-                if (item.marketTicker != null || item.assetObject.id.toString().equals(ASSET_ID_CYB)) {
-                    calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
-                            item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_CYB) ? 1 : item.marketTicker.latest);
-                }
+                calculateTotalRmbPrice(item, mWatchlistDataList);
+                setTotalCybAndRmbTextView(mTotalCybPrice, mTotalRmbPrice);
                 mBalanceRecyclerAdapter.notifyItemChanged(i);
                 break;
             }
@@ -271,16 +268,15 @@ public class AccountBalanceActivity extends BaseActivity {
             return;
         }
         mFullAccountObject = fullAccountObject;
-        mTickerCount = 0;
-        mTotalBalanceCyb = 0;
+        mTotalRmbPrice = 0;
         mLimitOrderObjectList.clear();
         mAccountBalanceObjectItems.clear();
         mLimitOrderObjectList.addAll(fullAccountObject.limit_orders);
         List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
+        mWatchlistDataList = mWebSocketService.getAllWatchlistData();
         if (accountBalanceObjects != null && accountBalanceObjects.size() > 0) {
             for (AccountBalanceObject balance : accountBalanceObjects) {
                 if (!mAssetWhiteList.contains(balance.asset_type.toString())) {
-                    mTickerCount ++;
                     continue;
                 }
                 /**
@@ -297,7 +293,6 @@ public class AccountBalanceActivity extends BaseActivity {
                         }
                     }
                     if (shouldHide) {
-                        mTickerCount ++;
                         continue;
                     }
 
@@ -305,31 +300,45 @@ public class AccountBalanceActivity extends BaseActivity {
                 AccountBalanceObjectItem item = new AccountBalanceObjectItem();
                 item.accountBalanceObject = balance;
                 item.assetObject = mWebSocketService.getAssetObject(balance.asset_type.toString());
-                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
-                item.cybPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-                if (item.assetObject != null && balance.asset_type.toString().equals(ASSET_ID_CYB)) {
-                    mTickerCount ++;
-                    calculateTotalCyb(balance.balance, item.assetObject.precision, 1);
-                }
+                calculateTotalRmbPrice(item, mWatchlistDataList);
                 mAccountBalanceObjectItems.add(item);
-                if (!balance.asset_type.toString().equals(ASSET_ID_CYB)) {
-                    try {
-                        BitsharesWalletWraper.getInstance().get_ticker(ASSET_ID_CYB, balance.asset_type.toString(), onTickerCallback);
-                    } catch (NetworkStatusException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
-                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
-                            mTickerCount ++;
-                            mTotalBalanceCyb += limitOrderObject.for_sale / Math.pow(10, 5);
-                            item.frozenAmount += limitOrderObject.for_sale / Math.pow(10, 5);
+            }
+            mTotalCybPrice = (mTotalRmbPrice / (mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB).getValue()));
+            setTotalCybAndRmbTextView(mTotalCybPrice, mTotalRmbPrice);
+            mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
+        }
+    }
 
-                        }
+    private void calculateTotalRmbPrice(AccountBalanceObjectItem item, List<WatchlistData> watchlistDataList) {
+        if (item.assetObject != null) {
+            if (item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_CYB)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
+                item.balanceItemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_ETH)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_ETH);
+                item.balanceItemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_USDT)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_USDT);
+                item.balanceItemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_BTC)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_BTC);
+                item.balanceItemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else {
+                for (WatchlistData watchlistData : watchlistDataList) {
+                    if (watchlistData.getQuoteId().equals(item.accountBalanceObject.asset_type.toString())) {
+                        item.balanceItemRmbPrice = watchlistData.getRmbPrice() * watchlistData.getCurrentPrice();
+                        break;
                     }
                 }
             }
-            mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
+            mTotalRmbPrice += (item.accountBalanceObject.balance / Math.pow(10, item.assetObject.precision)) * item.balanceItemRmbPrice;
+        }
+
+        for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
+            if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString())) {
+                item.frozenAmount += limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision);
+                mTotalRmbPrice += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.balanceItemRmbPrice;
+            }
         }
     }
 
@@ -338,77 +347,20 @@ public class AccountBalanceActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case MESSAGE_WHAT_REFRUSH_TOTAL_CYB:
-                    AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
-                    mCybRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-                    Log.v(TAG, "mTotalCyb=" + mTotalBalanceCyb + "  mTotalCyb * mCybRmbPrice=" + mTotalBalanceCyb * mCybRmbPrice);
-                    setTotalCybAndRmbTextView(mTotalBalanceCyb, mTotalBalanceCyb * mCybRmbPrice);
-                    break;
                 case MESSAGE_WHAT_REFRESH_PORTFOLIO:
                     if (mAccountBalanceRecyclerView.getVisibility() != View.VISIBLE) {
                         mAccountBalanceRecyclerView.setVisibility(View.VISIBLE);
                     }
-                    if (mTickerCount == mFullAccountObject.balances.size() + mFullAccountObject.limit_orders.size()) {
-                        Log.e("adapterChange", "adapterChange");
-                        mBalanceRecyclerAdapter.notifyDataSetChanged();
-                    }
+                    Log.e("adapterChange", "adapterChange");
+                    mBalanceRecyclerAdapter.notifyDataSetChanged();
 
                     break;
             }
         }
     };
-
-    private WebSocketClient.MessageCallback onTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
-        @Override
-        public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
-            MarketTicker ticker = reply.result;
-            if (ticker == null) {
-                return;
-            }
-            for (int i = 0; i < mAccountBalanceObjectItems.size(); i++) {
-                AccountBalanceObjectItem item = mAccountBalanceObjectItems.get(i);
-                if (ticker.quote.equals(item.accountBalanceObject.asset_type.toString())) {
-                    item.marketTicker = ticker;
-                    if (item.assetObject != null) {
-                        mTickerCount ++;
-                        calculateTotalCyb(item.accountBalanceObject.balance, item.assetObject.precision,
-                                item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_CYB) ? 1 : item.marketTicker.latest);
-                    }
-                    for (LimitOrderObject limitOrderObject : mLimitOrderObjectList) {
-                        if (limitOrderObject.sell_price.base.asset_id.toString().equals(item.accountBalanceObject.asset_type.toString()) &&
-                                !limitOrderObject.sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
-                            mTickerCount ++;
-                            mTotalBalanceCyb += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision)) * item.marketTicker.latest;
-                            item.frozenAmount += (limitOrderObject.for_sale / Math.pow(10, item.assetObject.precision));
-                        }
-                    }
-                    Message message = Message.obtain();
-                    message.what = MESSAGE_WHAT_REFRESH_PORTFOLIO;
-                    message.obj = i;
-                    mHandler.sendMessage(message);
-                    break;
-                }
-            }
-
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
-    private void calculateTotalCyb(long balance, int precision, double priceCyb) {
-        double price = balance / Math.pow(10, precision);
-        mTotalBalanceCyb += (price * priceCyb);
-        if (mTickerCount == mFullAccountObject.balances.size() + mFullAccountObject.limit_orders.size()) {
-            Log.e("Ticker", "total_cyb_get");
-            mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRUSH_TOTAL_CYB);
-        }
-    }
 
     private void setTotalCybAndRmbTextView(double totalCyb, double totalRmb) {
-        mTotalBalanceTv.setText(totalCyb == 0 ? "0.00000" : String.format(Locale.US, "%.5f", mTotalBalanceCyb));
+        mTotalBalanceTv.setText(totalCyb == 0 ? "0.00000" : String.format(Locale.US, "%.5f", totalCyb));
         if (totalCyb == 0) {
             mTotalRmbTv.setText("≈¥0.00");
         } else {
@@ -418,7 +370,7 @@ public class AccountBalanceActivity extends BaseActivity {
 
     private void resetAccountDate() {
         mAccountName = null;
-        mTotalBalanceCyb = 0;
+        mTotalRmbPrice = 0;
         mAccountBalanceObjectItems.clear();
         mLimitOrderObjectList.clear();
         mBalanceRecyclerAdapter.notifyDataSetChanged();

@@ -13,8 +13,7 @@ public class AccountBalanceObjectItem implements Serializable {
 
     public AccountBalanceObject accountBalanceObject;
     public AssetObject assetObject;
-    public MarketTicker marketTicker;
-    public double cybPrice;
+    public double balanceItemRmbPrice;
     public double frozenAmount;
 
 }
