@@ -77,8 +77,8 @@ public final class PriceUtil {
                     bucket.open_quote, quoteAsset);
             price.close = Utils.get_asset_price(bucket.close_base, baseAsset,
                     bucket.close_quote, quoteAsset);
-            price.volume = Utils.get_asset_amount(bucket.base_volume, baseAsset);
-            price.quoteVolume = Utils.get_asset_amount(bucket.quote_volume, baseAsset);
+            price.baseVolume = Utils.get_asset_amount(bucket.base_volume, baseAsset);
+            price.quoteVolume = Utils.get_asset_amount(bucket.quote_volume, quoteAsset);
         } else {
             price.low = Utils.get_asset_price(bucket.high_quote, baseAsset,
                     bucket.high_base, quoteAsset);
@@ -88,8 +88,8 @@ public final class PriceUtil {
                     bucket.open_base, quoteAsset);
             price.close = Utils.get_asset_price(bucket.close_quote, baseAsset,
                     bucket.close_base, quoteAsset);
-            price.volume = Utils.get_asset_amount(bucket.base_volume, quoteAsset);
-            price.quoteVolume = Utils.get_asset_amount(bucket.quote_volume, baseAsset);
+            price.baseVolume = Utils.get_asset_amount(bucket.quote_volume, baseAsset);
+            price.quoteVolume = Utils.get_asset_amount(bucket.base_volume, quoteAsset);
         }
         if (price.low == 0) {
             price.low = MathUtil.min(price.open, price.close);
@@ -115,7 +115,7 @@ public final class PriceUtil {
     public static double getVolFromPriceList(List<HistoryPrice> historyPrices) {
         double vol = 0;
         for (HistoryPrice historyPrice : historyPrices) {
-            vol += historyPrice.volume;
+            vol += historyPrice.baseVolume;
         }
         return vol;
     }

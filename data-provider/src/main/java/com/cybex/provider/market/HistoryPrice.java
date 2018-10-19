@@ -14,7 +14,7 @@ public class HistoryPrice implements Serializable {
     //关盘价
     public double close;
     //base交易量
-    public double volume;
+    public double baseVolume;
     //quote交易量
     public double quoteVolume;
     //日期

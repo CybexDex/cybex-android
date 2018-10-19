@@ -49,7 +49,7 @@ public class VMAEntity {
     private static float getSum(Integer a, Integer b, ArrayList<KLineBean> datas) {
         float sum = 0;
         for (int i = a; i <= b; i++) {
-            sum += datas.get(i).vol;
+            sum += datas.get(i).baseVol;
         }
         return sum;
     }

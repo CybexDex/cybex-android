@@ -132,11 +132,11 @@ public class DataParse {
                 kLineData.close = (float) dayData.optDouble(2);
                 kLineData.high = (float) dayData.optDouble(3);
                 kLineData.low = (float) dayData.optDouble(4);
-                kLineData.vol = (float) dayData.optDouble(5);
+                kLineData.baseVol = (float) dayData.optDouble(5);
 
                 kLineBeans.add(kLineData);
 
-                volmax = Math.max(kLineData.vol, volmax);
+                volmax = Math.max(kLineData.baseVol, volmax);
                 xValuesLabel.put(i, kLineData.date);
             }
         }
@@ -156,11 +156,11 @@ public class DataParse {
                 kLineBean.close = (float) historyPrice.close;
                 kLineBean.high = (float) historyPrice.high;
                 kLineBean.low = (float) historyPrice.low;
-                kLineBean.vol = (float) historyPrice.volume;
+                kLineBean.baseVol = (float) historyPrice.baseVolume;
 
                 kLineBeans.add(kLineBean);
 
-                volmax = Math.max(kLineBean.vol, volmax);
+                volmax = Math.max(kLineBean.baseVol, volmax);
                 xValuesLabel.put(i, kLineBean.date);
             }
         }
@@ -177,7 +177,7 @@ public class DataParse {
         candleEntries = new ArrayList<>();//K线数据
         for (int i = 0, j = 0; i < datas.size(); i++, j++) {
             xVals.add(datas.get(i).date + "");
-            barEntries.add(new BarEntry(i, datas.get(i).high, datas.get(i).low, datas.get(i).open, datas.get(i).close, datas.get(i).vol));
+            barEntries.add(new BarEntry(i, datas.get(i).high, datas.get(i).low, datas.get(i).open, datas.get(i).close, datas.get(i).baseVol));
             candleEntries.add(new CandleEntry(i, datas.get(i).high, datas.get(i).low, datas.get(i).open, datas.get(i).close));
         }
     }

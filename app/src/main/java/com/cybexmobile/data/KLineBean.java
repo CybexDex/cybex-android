@@ -10,5 +10,6 @@ public class KLineBean {
     public float close;
     public float high;
     public float low;
-    public float vol;
+    public float baseVol;
+    public float quoteVol;
 }

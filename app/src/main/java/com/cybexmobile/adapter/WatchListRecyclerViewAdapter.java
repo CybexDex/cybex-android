@@ -78,10 +78,10 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
          * 保留两位小数点
          */
         if (watchlistData.getQuoteRmbPrice() != 0) {
-            holder.mRmbPriceTextView.setText(String.format(Locale.US, "≈¥ %.2f", watchlistData.getQuoteRmbPrice()));
+            holder.mRmbPriceTextView.setText(String.format(Locale.US, "≈¥ %s", AssetUtil.formatNumberRounding(watchlistData.getQuoteRmbPrice(), 2)));
         } else {
             holder.mRmbPriceTextView.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
-                    String.format(Locale.US, "≈¥ %.2f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
+                    String.format(Locale.US, "≈¥ %s", AssetUtil.formatNumberRounding(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice(), 2)));
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

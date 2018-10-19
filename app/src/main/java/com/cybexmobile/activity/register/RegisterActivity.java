@@ -217,13 +217,16 @@ public class RegisterActivity extends BaseActivity {
     private void checkPasswordConfirm(String passwordConfirm){
         String strPassword = mEtPassWord.getText().toString();
         if (!strPassword.equals(passwordConfirm)) {
+            //提示密码不一致
             mPasswordConfirmChecker.setVisibility(View.INVISIBLE);
             mRegisterErrorText.setText(R.string.create_account_password_confirm_error);
             mRegisterErrorSign.setVisibility(View.VISIBLE);
         } else {
-            mPasswordConfirmChecker.setVisibility(View.VISIBLE);
-            mRegisterErrorText.setText("");
-            mRegisterErrorSign.setVisibility(View.GONE);
+            if(!TextUtils.isEmpty(passwordConfirm)){
+                mPasswordConfirmChecker.setVisibility(View.VISIBLE);
+                mRegisterErrorText.setText("");
+                mRegisterErrorSign.setVisibility(View.GONE);
+            }
         }
         setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
                 mPasswordChecker.getVisibility() == View.VISIBLE &&

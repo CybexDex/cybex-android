@@ -1000,12 +1000,12 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 if (changeRatio > 0) {
                     mTvChangeRatioIndex.setTextColor(getResources().getColor(R.color.increasing_color));
                     mTvChangePriceIndex.setTextColor(getResources().getColor(R.color.increasing_color));
-                    mTvChangeRatioIndex.setText(String.format(Locale.US, "+%.2f%%", changeRatio));
+                    mTvChangeRatioIndex.setText(String.format(Locale.US, "+%s", AssetUtil.formatNumberRounding(changeRatio, 2)));
                     mTvChangePriceIndex.setText(String.format(Locale.US, "+%s", AssetUtil.formatNumberRounding(changePrice, mBasePrecision)));
                 } else {
                     mTvChangeRatioIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
                     mTvChangePriceIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
-                    mTvChangeRatioIndex.setText(String.format(Locale.US, "%.2f%%", changeRatio));
+                    mTvChangeRatioIndex.setText(AssetUtil.formatNumberRounding(changeRatio, 2));
                     mTvChangePriceIndex.setText(AssetUtil.formatNumberRounding(changePrice, mBasePrecision));
                 }
             }
@@ -1013,7 +1013,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             mTvCloseIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
             mTvHighIndex.setText(AssetUtil.formatNumberRounding(klData.high, mBasePrecision));
             mTvLowIndex.setText(AssetUtil.formatNumberRounding(klData.low, mBasePrecision));
-            mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.vol, 2), AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
+            mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.baseVol, 2), AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
         }
         int newIndex = index;
         if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {
