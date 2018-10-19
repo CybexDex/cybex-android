@@ -214,12 +214,12 @@ public class WebSocketService extends Service {
         return watchlistDatas;
     }
 
-    private List<WatchlistData> getAllWatchlistData(){
-        if(mWatchlistHashMap.isEmpty()){
+    public List<WatchlistData> getAllWatchlistData() {
+        if (mWatchlistHashMap.isEmpty()) {
             return null;
         }
         List<WatchlistData> watchlistDatas = new ArrayList<>();
-        for(Map.Entry<String, List<WatchlistData>> entry : mWatchlistHashMap.entrySet()){
+        for (Map.Entry<String, List<WatchlistData>> entry : mWatchlistHashMap.entrySet()) {
             watchlistDatas.addAll(entry.getValue());
         }
         return watchlistDatas;

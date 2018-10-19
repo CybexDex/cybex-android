@@ -59,7 +59,6 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         AccountBalanceObjectItem item = mBalanceObjectItems.get(position);
         AccountBalanceObject accountBalanceObject = item.accountBalanceObject;
         AssetObject assetObject = item.assetObject;
-        MarketTicker marketTicker = item.marketTicker;
         loadImage(accountBalanceObject.asset_type.toString(), viewHolder.mAssetImage);
         /**
          * fix bug:CYM-255
@@ -80,17 +79,10 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             } else {
                 viewHolder.mAssetSymbol.setText(assetObject.symbol);
             }
-            double priceCyb = 0;
-            if (assetObject.symbol.equals("CYB")) {
-                priceCyb = 1;
-            } else if (marketTicker != null) {
-                priceCyb = marketTicker.latest;
-            }
             double price = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
             viewHolder.mAssetCybAmount.setText(AssetUtil.formatNumberRounding(price, assetObject.precision));
             viewHolder.mAssetFrozenAmount.setText(item.frozenAmount == 0 ? mContext.getResources().getString(R.string.balance_page_frozen_no_asset) : mContext.getResources().getString(R.string.balance_page_frozen_asset) + AssetUtil.formatNumberRounding(item.frozenAmount, assetObject.precision));
-//            holder.mAssetAmount.setText(price * priceCyb == 0 ? "- CYB" : String.format("%s CYB", AssetUtil.formatNumberRounding(price * priceCyb, 5)));
-            viewHolder.mAssetRmb.setText(price * priceCyb == 0 ? "-" : "≈¥" + AssetUtil.formatNumberRounding(item.cybPrice * price * priceCyb, 2));
+            viewHolder.mAssetRmb.setText(item.balanceItemRmbPrice == 0 ? "-" : "≈¥" + AssetUtil.formatNumberRounding(item.balanceItemRmbPrice * price, 2));
         }
 
     }
