@@ -188,12 +188,34 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 });
                 return;
             }
-            List<HistoryPrice> prices = new ArrayList<>();
+            mHistoryPriceList = new ArrayList<>();
             for (int i = 0; i < bucketObjects.size(); i++) {
                 BucketObject bucket = bucketObjects.get(i);
-                prices.add(PriceUtil.priceFromBucket(mWatchListData.getBaseAsset(), mWatchListData.getQuoteAsset(), bucket));
+                mHistoryPriceList.add(PriceUtil.priceFromBucket(mWatchListData.getBaseAsset(), mWatchListData.getQuoteAsset(), bucket));
             }
-            mHistoryPriceList = prices;
+            /**
+             * fix bug
+             * 添加无成交量的烛状图
+             */
+            HistoryPrice historyPricePre = mHistoryPriceList.get(0);
+            HistoryPrice historyPriceNew = null;
+            for(int i = 1; i < mHistoryPriceList.size(); i++){
+                HistoryPrice historyPriceCurr = mHistoryPriceList.get(i);
+                if(historyPriceCurr.date.getTime() != historyPricePre.date.getTime() + mDuration * 1000){
+                    historyPriceNew = new HistoryPrice();
+                    historyPriceNew.date = new Date(historyPricePre.date.getTime() + mDuration * 1000);
+                    historyPriceNew.baseVolume = 0;
+                    historyPriceNew.quoteVolume = 0;
+                    historyPriceNew.open = historyPricePre.close;
+                    historyPriceNew.high = historyPricePre.close;
+                    historyPriceNew.low = historyPricePre.close;
+                    historyPriceNew.close = historyPricePre.close;
+                    mHistoryPriceList.add(i, historyPriceNew);
+                    historyPricePre = historyPriceNew;
+                } else {
+                    historyPricePre = historyPriceCurr;
+                }
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
