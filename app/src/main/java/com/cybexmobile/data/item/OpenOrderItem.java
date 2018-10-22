@@ -9,4 +9,5 @@ public class OpenOrderItem {
 
     public OpenOrder openOrder;
     public boolean isSell;
+    public double itemRMBPrice;
 }
