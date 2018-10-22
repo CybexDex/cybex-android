@@ -198,10 +198,12 @@ public class RegisterActivity extends BaseActivity {
         if(TextUtils.isEmpty(password)){
             checkPasswordConfirm(mEtPasswordConfirm.getText().toString());
         } else if (!password.matches("(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{12,}")) {
-            mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
+            if(mUserNameChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtUserName.getText().toString())){
+                mRegisterErrorText.setText(getResources().getString(R.string.create_account_password_error));
+                mRegisterErrorSign.setVisibility(View.VISIBLE);
+            }
             mPasswordChecker.setVisibility(View.GONE);
             mPasswordConfirmChecker.setVisibility(View.GONE);
-            mRegisterErrorSign.setVisibility(View.VISIBLE);
         } else {
             mRegisterErrorText.setText("");
             mPasswordChecker.setVisibility(View.VISIBLE);
@@ -218,9 +220,12 @@ public class RegisterActivity extends BaseActivity {
         String strPassword = mEtPassWord.getText().toString();
         if (!strPassword.equals(passwordConfirm)) {
             //提示密码不一致
+            if((mUserNameChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtUserName.getText().toString()))
+                    && (mPasswordChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtPassWord.getText().toString()))){
+                mRegisterErrorText.setText(R.string.create_account_password_confirm_error);
+                mRegisterErrorSign.setVisibility(View.VISIBLE);
+            }
             mPasswordConfirmChecker.setVisibility(View.INVISIBLE);
-            mRegisterErrorText.setText(R.string.create_account_password_confirm_error);
-            mRegisterErrorSign.setVisibility(View.VISIBLE);
         } else {
             if(!TextUtils.isEmpty(passwordConfirm)){
                 mPasswordConfirmChecker.setVisibility(View.VISIBLE);
@@ -241,17 +246,12 @@ public class RegisterActivity extends BaseActivity {
 
     @OnTextChanged(value = R.id.register_et_password, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onPasswordEditChanged(Editable editable){
-        if(mUserNameChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtUserName.getText().toString())){
-            checkPassword(editable.toString());
-        }
+        checkPassword(editable.toString());
     }
 
     @OnTextChanged(value = R.id.register_et_password_confirmation, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onPasswordConfirmationEditChanged(Editable editable){
-        if((mUserNameChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtUserName.getText().toString()))
-                && (mPasswordChecker.getVisibility() == View.VISIBLE || TextUtils.isEmpty(mEtPassWord.getText().toString()))){
-            checkPasswordConfirm(editable.toString());
-        }
+        checkPasswordConfirm(editable.toString());
     }
 
     @OnTextChanged(value = R.id.register_et_pin_code, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
