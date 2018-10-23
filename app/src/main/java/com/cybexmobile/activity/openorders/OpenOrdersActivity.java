@@ -12,19 +12,16 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.cybexmobile.R;
-import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.basemodule.base.BaseActivity;
-import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
@@ -35,11 +32,14 @@ import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
-import com.cybex.provider.graphene.chain.MarketTicker;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.provider.market.OpenOrder;
-import com.cybex.basemodule.service.WebSocketService;
-import com.cybex.basemodule.toastmessage.ToastMessage;
-import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.WebSocketClient;
+import com.cybexmobile.R;
+import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
+import com.cybexmobile.data.item.OpenOrderItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -52,9 +52,16 @@ import java.util.List;
 
 import info.hoang8f.android.segmented.SegmentedGroup;
 
-import static com.cybex.provider.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.provider.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
 
 public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener, OpenOrderRecyclerViewAdapter.OnItemClickListener {
 
@@ -64,9 +71,9 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private static final String TAB_SELL = "Sell";
 
     private String mUserName;
-    private double mTotalOpenOrderBalance;
-    private double mSellOpenOrderBalance;
-    private double mBuyOpenOrderBalance;
+    private double mTotalOpenOrderRMBPrice;
+    private double mSellOpenOrderRMBPrice;
+    private double mBuyOpenOrderRMBPrice;
 
     private SegmentedGroup mSegmentedGroup;
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
@@ -80,10 +87,10 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     private OpenOrderItem mCurrOpenOrderItem;
     private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
+    private List<WatchlistData> mWatchlistDataList = new ArrayList<>();
 
     private DecimalFormat format = new DecimalFormat("0.00");
 
-    private volatile int mGetTickerCount;
     private String mCurrTab = TAB_ALL;
 
     @Override
@@ -164,55 +171,42 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             mOpenOrderTotalValue.setText(String.format("≈¥%s", "0.00"));
             return;
         }
-        mGetTickerCount = 0;
+        mWatchlistDataList = mWebSocketService.getAllWatchlistData();
         for (OpenOrderItem item : mOpenOrderItems) {
-            if (item.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
-                mGetTickerCount++;
-                if (item.isSell) {
-                    mSellOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
-                    mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
-                } else {
-                    mBuyOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
-                    mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision);
-                }
-            } else {
-                try {
-                    BitsharesWalletWraper.getInstance().get_ticker(ASSET_ID_CYB, item.openOrder.getLimitOrder().sell_price.base.asset_id.toString(), onTickerCallback);
-                } catch (NetworkStatusException e) {
-                    e.printStackTrace();
-                }
-            }
+            calculateTotalRmbPrice(mWatchlistDataList, item);
         }
         displayTotalValue();
     }
 
-    private WebSocketClient.MessageCallback onTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
-        @Override
-        public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
-            MarketTicker ticker = reply.result;
-            if (ticker == null) {
-                return;
-            }
-            mGetTickerCount ++;
-            for (OpenOrderItem item : mOpenOrderItems) {
-                if (item.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ticker.quote)) {
-                    if (item.isSell) {
-                        mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
-                        mSellOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
-                    } else {
-                        mTotalOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
-                        mBuyOpenOrderBalance += item.openOrder.getLimitOrder().for_sale / Math.pow(10, item.openOrder.getBaseObject().precision) * ticker.latest;
-                    }
+    private void calculateTotalRmbPrice(List<WatchlistData> watchlistDataList, OpenOrderItem openOrderItem) {
+        if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
+            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_ETH)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_ETH);
+            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_USDT)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_USDT);
+            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_BTC)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_BTC);
+            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else {
+            for (WatchlistData watchlistData : watchlistDataList) {
+                if (watchlistData.getQuoteId().equals(openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString())) {
+                    openOrderItem.itemRMBPrice = watchlistData.getRmbPrice() * watchlistData.getCurrentPrice();
+                    break;
                 }
             }
-            displayTotalValue();
         }
-
-        @Override
-        public void onFailure() {
-
+        if (openOrderItem.isSell) {
+            mSellOpenOrderRMBPrice += (openOrderItem.openOrder.getLimitOrder().for_sale / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) * openOrderItem.itemRMBPrice;
+        } else {
+            mBuyOpenOrderRMBPrice += (openOrderItem.openOrder.getLimitOrder().for_sale / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) * openOrderItem.itemRMBPrice;
         }
-    };
+        mTotalOpenOrderRMBPrice += (openOrderItem.openOrder.getLimitOrder().for_sale / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) * openOrderItem.itemRMBPrice;
+
+    }
 
     private void initViews() {
         mSegmentedGroup = findViewById(R.id.open_orders_segmented_group);
@@ -250,7 +244,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         loadLimitOrderCancelFee(ASSET_ID_CYB);
     }
 
-    public void loadLimitOrderCancelFee(String assetId){
+    public void loadLimitOrderCancelFee(String assetId) {
         mWebSocketService.loadLimitOrderCancelFee(assetId, ID_CANCEL_LMMIT_ORDER_OPERATION,
                 BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
                         ObjectId.create_from_string(ASSET_ID_CYB),
@@ -260,32 +254,26 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     public void displayTotalValue() {
-        if(mGetTickerCount != mOpenOrderItems.size()){
-            return;
-        }
         double total = 0;
-        switch (mSegmentedGroup.getCheckedRadioButtonId()){
+        switch (mSegmentedGroup.getCheckedRadioButtonId()) {
             case R.id.open_orders_segment_all:
-                total = mTotalOpenOrderBalance;
+                total = mTotalOpenOrderRMBPrice;
                 break;
             case R.id.open_orders_segment_buy:
-                total = mBuyOpenOrderBalance;
+                total = mBuyOpenOrderRMBPrice;
                 break;
             case R.id.open_orders_segment_sell:
-                total = mSellOpenOrderBalance;
+                total = mSellOpenOrderRMBPrice;
                 break;
         }
-        double rmbPrice = mWebSocketService.getAssetRmbPrice("CYB") == null ? 0 : mWebSocketService.getAssetRmbPrice("CYB").getValue();
-        Log.v(TAG, "total * rmbPrice=" + total * rmbPrice);
-        Log.v(TAG, "format.format(total * rmbPrice)" + format.format(total * rmbPrice));
-        String cybrmb = format.format(total * rmbPrice);
+        String cybrmb = format.format(total);
         mOpenOrderTotalValue.setText(String.format("≈¥%s", cybrmb));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLimitOrderCancel(Event.LimitOrderCancel event){
+    public void onLimitOrderCancel(Event.LimitOrderCancel event) {
         hideLoadDialog();
-        if(event.isSuccess()){
+        if (event.isSuccess()) {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
                     R.string.toast_message_cancel_order_successfully), R.drawable.ic_check_circle_green);
         } else {
@@ -295,14 +283,14 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadRequiredCancelFee(Event.LoadRequiredCancelFee event){
+    public void onLoadRequiredCancelFee(Event.LoadRequiredCancelFee event) {
         FeeAmountObject feeAmount = event.getFee();
         AccountBalanceObject accountBalance = getBalance(feeAmount.asset_id, mFullAccountObject);
-        if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
-            if(accountBalance.balance >= feeAmount.amount){//cyb足够扣手续费
+        if (feeAmount.asset_id.equals(ASSET_ID_CYB)) {
+            if (accountBalance.balance >= feeAmount.amount) {//cyb足够扣手续费
                 limitOrderCancelConfirm(mUserName, feeAmount);
             } else { //cyb不够扣手续费 扣取委单的base或者quote
-                if(ASSET_ID_CYB.equals(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString())){
+                if (ASSET_ID_CYB.equals(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString())) {
                     hideLoadDialog();
                     ToastMessage.showNotEnableDepositToastMessage(this,
                             getResources().getString(R.string.text_not_enough),
@@ -312,7 +300,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
                 }
             }
         } else {
-            if(accountBalance.balance > feeAmount.amount){
+            if (accountBalance.balance > feeAmount.amount) {
                 limitOrderCancelConfirm(mUserName, feeAmount);
             } else {
                 hideLoadDialog();
@@ -350,9 +338,9 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     public void onUpdateFullAccount(Event.UpdateFullAccount event) {
         mFullAccountObject = event.getFullAccount();
         mOpenOrderItems.clear();
-        mTotalOpenOrderBalance = 0;
-        mSellOpenOrderBalance = 0;
-        mBuyOpenOrderBalance = 0;
+        mTotalOpenOrderRMBPrice = 0;
+        mSellOpenOrderRMBPrice = 0;
+        mBuyOpenOrderRMBPrice = 0;
         List<LimitOrderObject> limitOrderObjects = mFullAccountObject == null ? null : mFullAccountObject.limit_orders;
         if (limitOrderObjects == null || limitOrderObjects.size() == 0) {
             hideLoadDialog();
@@ -413,7 +401,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     }
 
-    private WebSocketClient.MessageCallback mLimitOrderCancelCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>(){
+    private WebSocketClient.MessageCallback mLimitOrderCancelCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
 
         @Override
         public void onMessage(WebSocketClient.Reply<String> reply) {
@@ -426,7 +414,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         }
     };
 
-    private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
+    private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount) {
         hideLoadDialog();
         String priceStr;
         String amountStr;
@@ -439,7 +427,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
          * fix bug:CYM-349
          * 订单部分撮合
          */
-        if(mCurrOpenOrderItem.isSell){
+        if (mCurrOpenOrderItem.isSell) {
             double amount = limitOrderObject.for_sale / Math.pow(10, base.precision);
             double price = (limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision)) / (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision));
             double total = amount * price;
@@ -454,9 +442,9 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), AssetUtil.parseSymbol(quote.symbol));
             totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(base.symbol));
         }
-        if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
+        if (feeAmount.asset_id.equals(ASSET_ID_CYB)) {
             AssetObject cybAsset = mWebSocketService.getAssetObject(ASSET_ID_CYB);
-            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount/Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
+            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
         } else {
             /**
              * fix bug:CYM-419
@@ -475,7 +463,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     private void checkIfLocked(String userName, FeeAmountObject feeAmount) {
-        if(!BitsharesWalletWraper.getInstance().is_locked()){
+        if (!BitsharesWalletWraper.getInstance().is_locked()) {
             toCancelLimitOrder(feeAmount);
             return;
         }
@@ -488,7 +476,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         });
     }
 
-    private void toCancelLimitOrder(FeeAmountObject feeAmount){
+    private void toCancelLimitOrder(FeeAmountObject feeAmount) {
         try {
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
                 @Override
@@ -515,17 +503,17 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         }
     }
 
-    private AccountBalanceObject getBalance(String assetId, FullAccountObject fullAccount){
-        if(assetId == null || fullAccount == null){
+    private AccountBalanceObject getBalance(String assetId, FullAccountObject fullAccount) {
+        if (assetId == null || fullAccount == null) {
             return null;
         }
         List<AccountBalanceObject> accountBalances = fullAccount.balances;
-        if(accountBalances == null || accountBalances.size() == 0){
+        if (accountBalances == null || accountBalances.size() == 0) {
             return null;
         }
         AccountBalanceObject accountBalanceObject = null;
-        for(AccountBalanceObject accountBalance : accountBalances){
-            if(accountBalance.asset_type.toString().equals(assetId)){
+        for (AccountBalanceObject accountBalance : accountBalances) {
+            if (accountBalance.asset_type.toString().equals(assetId)) {
                 accountBalanceObject = accountBalance;
                 break;
             }
