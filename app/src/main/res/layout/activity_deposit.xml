@@ -253,7 +253,7 @@
 
                     <TextView
                         android:id="@+id/deposit_tv_protocol_address"
-                        style="@style/font_white_dark_medium"
+                        style="@style/font_gray_medium"
                         android:layout_marginStart="@dimen/margin_6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
