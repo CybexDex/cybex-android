@@ -3,12 +3,11 @@ package com.cybexmobile.mychart;
 import android.content.Context;
 import android.widget.TextView;
 
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybexmobile.R;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
-
-import java.text.DecimalFormat;
 
 public class MyLeftMarkerView extends MarkerView {
 
@@ -20,21 +19,18 @@ public class MyLeftMarkerView extends MarkerView {
      */
     private TextView markerTv;
     private float num;
-    private DecimalFormat mFormat;
     public MyLeftMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
-        mFormat=new DecimalFormat("#0.00000000");
-        markerTv = (TextView) findViewById(R.id.marker_tv);
+        markerTv = findViewById(R.id.marker_tv);
         markerTv.setTextSize(10);
     }
 
     public void setData(float num){
-
         this.num=num;
     }
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        markerTv.setText(mFormat.format(num));
+        markerTv.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(num)), 8));
     }
 
     @Override

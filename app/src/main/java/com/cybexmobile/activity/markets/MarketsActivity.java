@@ -1031,10 +1031,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                     mTvChangePriceIndex.setText(AssetUtil.formatNumberRounding(changePrice, mBasePrecision));
                 }
             }
-            mTvOpenIndex.setText(AssetUtil.formatNumberRounding(klData.open, mBasePrecision));
-            mTvCloseIndex.setText(AssetUtil.formatNumberRounding(klData.close, mBasePrecision));
-            mTvHighIndex.setText(AssetUtil.formatNumberRounding(klData.high, mBasePrecision));
-            mTvLowIndex.setText(AssetUtil.formatNumberRounding(klData.low, mBasePrecision));
+            mTvOpenIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.open)), mBasePrecision));
+            mTvCloseIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.close)), mBasePrecision));
+            mTvHighIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.high)), mBasePrecision));
+            mTvLowIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.low)), mBasePrecision));
             mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.baseVol, 2), AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
         }
         int newIndex = index;
