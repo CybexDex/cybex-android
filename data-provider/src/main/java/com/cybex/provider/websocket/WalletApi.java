@@ -750,7 +750,7 @@ public class WalletApi {
         Date dateObject = dynamicGlobalPropertyObject.time;
         Calendar calender = Calendar.getInstance();
         calender.setTime(dateObject);
-        calender.add(Calendar.SECOND, 30);
+        calender.add(Calendar.HOUR, 12);
         dateObject = calender.getTime();
 
         signedTransaction.set_expiration(dateObject);

@@ -310,6 +310,9 @@ public class AccountBalanceActivity extends BaseActivity {
     }
 
     private void calculateTotalRmbPrice(AccountBalanceObjectItem item, List<WatchlistData> watchlistDataList) {
+        if(watchlistDataList == null || watchlistDataList.size() == 0){
+            return;
+        }
         if (item.assetObject != null) {
             if (item.accountBalanceObject.asset_type.toString().equals(ASSET_ID_CYB)) {
                 AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);

@@ -60,11 +60,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         AccountBalanceObject accountBalanceObject = item.accountBalanceObject;
         AssetObject assetObject = item.assetObject;
         loadImage(accountBalanceObject.asset_type.toString(), viewHolder.mAssetImage);
-        /**
-         * fix bug:CYM-255
-         * 只显示前缀为CYB和JADE的资产
-         */
-        if (assetObject == null || (!assetObject.symbol.startsWith("CYB") && !assetObject.symbol.startsWith("JADE"))) {
+        if (assetObject == null) {
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
             layoutParams.height = 0;
             layoutParams.width = 0;
