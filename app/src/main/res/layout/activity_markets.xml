@@ -217,10 +217,10 @@
                     android:text="@string/market_page_trade_history" />
             </android.support.design.widget.TabLayout>
 
-            <com.cybexmobile.widget.ViewPagerForScrollView
+            <android.support.v4.view.ViewPager
                 android:id="@+id/market_page_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/height_490"
                 android:layout_marginTop="@dimen/margin_6"
                 android:background="@android:color/transparent" />
 
