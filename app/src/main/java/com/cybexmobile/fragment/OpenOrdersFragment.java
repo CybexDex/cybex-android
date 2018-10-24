@@ -140,6 +140,16 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
+            EventBus.getDefault().unregister(this);
+        } else {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
@@ -148,7 +158,9 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
         getContext().unbindService(mConnection);
     }
 
