@@ -70,6 +70,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     private long mLastExitTime;
 
+    private Disposable mDisposableVersionUpdate;
+    private Disposable mDisposableAppConfig;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -139,7 +142,12 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-
+        if(mDisposableVersionUpdate != null && !mDisposableVersionUpdate.isDisposed()){
+            mDisposableVersionUpdate.dispose();
+        }
+        if(mDisposableAppConfig != null && !mDisposableAppConfig.isDisposed()){
+            mDisposableAppConfig.dispose();
+        }
     }
 
     @Override
@@ -193,12 +201,16 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (mCybexMainFragment != null && mCybexMainFragment.isAdded()) {
             transaction.hide(mCybexMainFragment);
         }
+        /**
+         * fix online crash
+         * java.lang.IllegalStateException: Fragment already added
+         */
         switch (resId) {
             case R.id.navigation_watchlist:
                 if (mWatchListFragment == null) {
                     mWatchListFragment = new WatchlistFragment();
                 }
-                if (mWatchListFragment.isAdded()) {
+                if (mWatchListFragment.isAdded() || fragmentManager.findFragmentByTag(WatchlistFragment.class.getSimpleName()) != null) {
                     transaction.show(mWatchListFragment);
                 } else {
                     transaction.add(R.id.frame_container, mWatchListFragment, WatchlistFragment.class.getSimpleName());
@@ -208,7 +220,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 if (mExchangeFragment == null) {
                     mExchangeFragment = ExchangeFragment.getInstance(mAction, mWatchlistData);
                 }
-                if (mExchangeFragment.isAdded()) {
+                if (mExchangeFragment.isAdded() || fragmentManager.findFragmentByTag(ExchangeFragment.class.getSimpleName()) != null) {
                     transaction.show(mExchangeFragment);
                 } else {
                     transaction.add(R.id.frame_container, mExchangeFragment, ExchangeFragment.class.getSimpleName());
@@ -218,7 +230,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 if (mEtoFragment == null) {
                     mEtoFragment = EtoFragment.getInstance();
                 }
-                if (mEtoFragment.isAdded()) {
+                if (mEtoFragment.isAdded() || fragmentManager.findFragmentByTag(EtoFragment.class.getSimpleName()) != null) {
                     transaction.show(mEtoFragment);
                 } else {
                     transaction.add(R.id.frame_container, mEtoFragment, EtoFragment.class.getSimpleName());
@@ -228,7 +240,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 if (mAccountFragment == null) {
                     mAccountFragment = new AccountFragment();
                 }
-                if (mAccountFragment.isAdded()) {
+                if (mAccountFragment.isAdded() || fragmentManager.findFragmentByTag(AccountFragment.class.getSimpleName()) != null) {
                     transaction.show(mAccountFragment);
                 } else {
                     transaction.add(R.id.frame_container, mAccountFragment, AccountFragment.class.getSimpleName());
@@ -238,7 +250,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 if (mCybexMainFragment == null) {
                     mCybexMainFragment = new CybexMainFragment();
                 }
-                if (mCybexMainFragment.isAdded()) {
+                if (mCybexMainFragment.isAdded() || fragmentManager.findFragmentByTag(CybexMainFragment.class.getSimpleName()) != null) {
                     transaction.show(mCybexMainFragment);
                 } else {
                     transaction.add(R.id.frame_container, mCybexMainFragment, CybexMainFragment.class.getSimpleName());
@@ -289,7 +301,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     }
 
     private void loadAppConfig() {
-        Disposable disposable = RetrofitFactory.getInstance()
+        mDisposableAppConfig = RetrofitFactory.getInstance()
                 .api()
                 .getSettingConfig()
                 .subscribeOn(Schedulers.io())
@@ -315,19 +327,14 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     }
 
     private void checkVersion() {
-        RetrofitFactory.getInstance()
+        mDisposableVersionUpdate = RetrofitFactory.getInstance()
                 .api()
                 .checkAppUpdate()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<AppVersion>() {
+                .subscribe(new Consumer<AppVersion>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(AppVersion appVersion) {
+                    public void accept(AppVersion appVersion) throws Exception {
                         if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
                             if (appVersion.isForceUpdate(BuildConfig.VERSION_NAME)) {
                                 if (Locale.getDefault().getLanguage().equals("zh")) {
@@ -367,33 +374,23 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                             }
                         }
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
+                    public void accept(Throwable throwable) throws Exception {
 
                     }
                 });
     }
 
     private void checkVersionGoogleStore() {
-        RetrofitFactory.getInstance()
+        mDisposableVersionUpdate = RetrofitFactory.getInstance()
                 .api()
                 .checkAppUpdateGoogleStore()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<AppVersion>() {
+                .subscribe(new Consumer<AppVersion>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(AppVersion appVersion) {
+                    public void accept(AppVersion appVersion) throws Exception {
                         if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
                             if (appVersion.isForceUpdate(BuildConfig.VERSION_NAME)) {
                                 if (Locale.getDefault().getLanguage().equals("zh")) {
@@ -430,14 +427,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                             }
                         }
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
+                    public void accept(Throwable throwable) throws Exception {
 
                     }
                 });

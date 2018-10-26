@@ -142,6 +142,14 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     }
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {
+        /**
+         * fix online crash
+         * java.lang.NullPointerException: Attempt to invoke virtual method
+         * 'java.lang.String java.lang.String.replaceAll(java.lang.String, java.lang.String)' on a null object reference
+         */
+        if(quoteId == null) {
+            return;
+        }
         String quoteIdWithUnderLine = quoteId.replaceAll("\\.", "_");
         Picasso.get()
                 .load("https://app.cybex.io/icons/" + quoteIdWithUnderLine + "_grey.png")

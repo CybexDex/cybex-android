@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -41,10 +40,10 @@ import com.pixplicity.sharp.Sharp;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.reactivestreams.Publisher;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +51,7 @@ import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -126,8 +126,6 @@ public class RegisterActivity extends BaseActivity {
     private Disposable mDisposablePinCode;
 
     String mCapId;
-    Timer mTimer = new Timer();
-    Task mTask = new Task();
     private int mLastScrollHeight;
     private int mVirtualBarHeight = -1;
     private Unbinder mUnbinder;
@@ -138,8 +136,8 @@ public class RegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_register);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        mTimer.schedule(mTask, 0, 90 * 1000);
         setOnClickListener();
+        requestForPinCode();
     }
 
     @Override
@@ -149,13 +147,6 @@ public class RegisterActivity extends BaseActivity {
             mDisposablePinCode.dispose();
         }
         mUnbinder.unbind();
-    }
-
-    public class Task extends TimerTask {
-        @Override
-        public void run() {
-            requestForPinCode();
-        }
     }
 
     private void checkUserName(String username){
@@ -310,15 +301,29 @@ public class RegisterActivity extends BaseActivity {
         requestForPinCode();
     }
 
+    /**
+     * fix online crash
+     * java.lang.NullPointerException: Attempt to invoke virtual method
+     * 'void android.view.View.setBackground(android.graphics.drawable.Drawable)' on a null object reference
+     */
     private void requestForPinCode() {
-        mDisposablePinCode = RetrofitFactory.getInstance()
-                .apiFaucet()
-                .getPinCode()
+        if(mDisposablePinCode != null && !mDisposablePinCode.isDisposed()){
+            mDisposablePinCode.dispose();
+        }
+        mDisposablePinCode = Flowable.interval(0, 90, TimeUnit.SECONDS)
+                .flatMap(new Function<Long, Publisher<ResponseBody>>() {
+                    @Override
+                    public Publisher<ResponseBody> apply(Long aLong) throws Exception {
+                        return RetrofitFactory.getInstance().apiFaucet().getPinCode();
+                    }
+                })
+                .retry()
+                .onBackpressureDrop()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<ResponseBody>() {
                     @Override
-                    public void accept(ResponseBody responseBody) throws Exception {
+                    public void accept(ResponseBody responseBody) {
                         JSONObject jsonObject = null;
                         try {
                             jsonObject = new JSONObject(responseBody.string());

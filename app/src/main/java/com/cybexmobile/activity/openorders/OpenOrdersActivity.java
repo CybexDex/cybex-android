@@ -179,6 +179,14 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     private void calculateTotalRmbPrice(List<WatchlistData> watchlistDataList, OpenOrderItem openOrderItem) {
+        /**
+         * fix online crash
+         * java.lang.NullPointerException: Attempt to read from field
+         * 'int com.cybex.provider.graphene.chain.AssetObject.precision' on a null object reference
+         */
+        if(watchlistDataList == null || watchlistDataList.size() == 0){
+            return;
+        }
         if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
             AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
             openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();

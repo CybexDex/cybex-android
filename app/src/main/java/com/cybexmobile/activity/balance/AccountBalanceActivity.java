@@ -303,13 +303,26 @@ public class AccountBalanceActivity extends BaseActivity {
                 calculateTotalRmbPrice(item, mWatchlistDataList);
                 mAccountBalanceObjectItems.add(item);
             }
-            mTotalCybPrice = (mTotalRmbPrice / (mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB).getValue()));
+            /**
+             * fix online crash
+             * java.lang.NullPointerException: Attempt to invoke virtual method
+             * 'double com.cybex.provider.http.entity.AssetRmbPrice.getValue()' on a null object reference
+             */
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
+            if(assetRmbPrice != null){
+                mTotalCybPrice = (mTotalRmbPrice / assetRmbPrice.getValue());
+            }
             setTotalCybAndRmbTextView(mTotalCybPrice, mTotalRmbPrice);
             mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
         }
     }
 
     private void calculateTotalRmbPrice(AccountBalanceObjectItem item, List<WatchlistData> watchlistDataList) {
+        /**
+         * fix online crash
+         * java.lang.NullPointerException: Attempt to read from field
+         * 'int com.cybex.provider.graphene.chain.AssetObject.precision' on a null object reference
+         */
         if(watchlistDataList == null || watchlistDataList.size() == 0){
             return;
         }

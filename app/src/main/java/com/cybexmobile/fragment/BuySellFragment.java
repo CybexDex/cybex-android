@@ -259,10 +259,15 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     @Override
     public void keyBoardHide(int height) {
         Log.v(TAG, String.format("%s: %s", "keyBoardHide", height));
-        if(mEtAssetPrice.isFocused()){
+        /**
+         * fix online crash
+         * java.lang.NullPointerException: Attempt to invoke virtual method
+         * 'boolean android.view.View.isFocused()' on a null object reference
+         */
+        if(mEtAssetPrice != null && mEtAssetPrice.isFocused()){
             mEtAssetPrice.clearFocus();
         }
-        if(mEtAssetAmount.isFocused()){
+        if(mEtAssetAmount != null && mEtAssetAmount.isFocused()){
             mEtAssetAmount.clearFocus();
         }
     }

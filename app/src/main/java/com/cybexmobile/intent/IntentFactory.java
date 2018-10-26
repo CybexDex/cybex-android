@@ -64,7 +64,7 @@ public class IntentFactory {
         }
         Intent intent = null;
         try {
-            intent = new Intent(context.getApplicationContext(), mappingClass());
+            intent = new Intent(context, mappingClass());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,7 +110,18 @@ public class IntentFactory {
                 continue;
             }
         }
-        context.startActivity(intent);
+        /**
+         * fix online crash
+         * android.util.AndroidRuntimeException: Calling startActivity() from outside of an Activity
+         * context requires the FLAG_ACTIVITY_NEW_TASK flag. Is this really what you want?
+         */
+        try {
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
     }
 
     private Class<?> mappingClass() throws Exception{
