@@ -63,7 +63,7 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
         NumberFormat formatter = new DecimalFormat("0.00");
         holder.mTvQuoteSymbol.setText(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()));
         holder.mTvBaseSymbol.setText(String.format("/%s", AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
-        holder.mTvVolume.setText(watchlistData.getQuoteVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getQuoteVol(), 2));
+        holder.mTvVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), 2));
         holder.mTvCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
 
         double change = 0.f;

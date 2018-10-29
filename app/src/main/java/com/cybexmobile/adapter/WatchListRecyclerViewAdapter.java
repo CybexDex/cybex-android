@@ -49,7 +49,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         NumberFormat formatter = new DecimalFormat("0.00");
         holder.mQuoteCurrency.setText(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()));
         holder.mBaseCurrency.setText(String.format("/%s", AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
-        holder.mVolume.setText(watchlistData.getQuoteVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getQuoteVol(), 2));
+        holder.mVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), 2));
         holder.mCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
 
         double change = 0.f;
