@@ -15,7 +15,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -35,13 +34,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.ApolloMutationCall;
+import com.apollographql.apollo.ApolloQueryWatcher;
 import com.apollographql.apollo.GetDepositAddress;
 import com.apollographql.apollo.NewDepositAddress;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
-import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.fragment.AccountAddressRecord;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.cybex.basemodule.constant.Constant;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
@@ -56,12 +56,14 @@ import com.cybexmobile.utils.QRCode;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class DepositActivity extends BaseActivity {
@@ -69,7 +71,6 @@ public class DepositActivity extends BaseActivity {
     private static String EOS_NAME = "EOS";
 
     private Unbinder mUnbinder;
-    private Handler mHandler = new Handler();
     private Context mContext;
     private AssetObject mAssetObject;
 
@@ -122,6 +123,8 @@ public class DepositActivity extends BaseActivity {
     LinearLayout mLayoutProjectName;
     @BindView(R.id.deposit_layout_protocol_address)
     LinearLayout mLayoutProtocolAddress;
+
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,6 +198,9 @@ public class DepositActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        if(!mCompositeDisposable.isDisposed()){
+            mCompositeDisposable.dispose();
+        }
     }
 
     @OnClick(R.id.deposit_copy_address)
@@ -252,116 +258,101 @@ public class DepositActivity extends BaseActivity {
         }
     }
 
+
     private void getAddress(String userName, String assetName) {
         showLoadDialog(true);
-        ApolloClientApi.getInstance().client().query(GetDepositAddress
-                .builder()
-                .accountName(userName)
-                .asset(assetName)
-                .build())
-                .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST)
-                .enqueueAndWatch(new ApolloCall.Callback<GetDepositAddress.Data>() {
+        /**
+         * fix online bug
+         * java.lang.NullPointerException: Attempt to invoke virtual method
+         * 'void android.widget.TextView.setText(java.lang.CharSequence)' on a null object reference
+         */
+        ApolloQueryWatcher<GetDepositAddress.Data> watcher = ApolloClientApi.getInstance().client()
+                .query(GetDepositAddress.builder().accountName(userName).asset(assetName).build())
+                .watcher()
+                .refetchCacheControl(CacheControl.NETWORK_FIRST);
+        mCompositeDisposable.add(Rx2Apollo.from(watcher)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Response<GetDepositAddress.Data>>() {
                     @Override
-                    public void onResponse(@Nonnull Response<GetDepositAddress.Data> response) {
-                        if (response.data() != null) {
-                            if (response.data().getDepositAddress() != null) {
-                                AccountAddressRecord accountAddressRecord = response.data().getDepositAddress().fragments().accountAddressRecord();
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (assetName.equals(EOS_NAME)) {
-                                            String eosAccountName = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
-                                            String verificationCode = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
-                                            mEosAccountNameTv.setText(eosAccountName);
-                                            mQRAddressView.setText(verificationCode);
-                                        } else {
-                                            if (mQRAddressView != null) {
-                                                mQRAddressView.setText(accountAddressRecord.address());
-                                                generateBarCode(accountAddressRecord.address());
-                                            }
-                                        }
-                                        AccountAddressRecord.ProjectInfo projectInfo = accountAddressRecord.projectInfo();
-                                        if(projectInfo != null){
-                                            mTvProjectName.setText(TextUtils.isEmpty(projectInfo.projectName()) ? "" : projectInfo.projectName());
-                                            mTvProtocolAddress.setText(TextUtils.isEmpty(projectInfo.contractAddress()) ? "" : projectInfo.contractAddress());
-                                            mTvProtocolAddress.setTag(TextUtils.isEmpty(projectInfo.contractExplorerUrl()) ? "" : projectInfo.contractExplorerUrl());
-                                            mLayoutProjectName.setVisibility(TextUtils.isEmpty(projectInfo.projectName()) ? View.GONE : View.VISIBLE);
-                                            mLayoutProtocolAddress.setVisibility(TextUtils.isEmpty(projectInfo.contractAddress()) ? View.GONE : View.VISIBLE);
-                                        } else {
-                                            mLayoutProjectName.setVisibility(View.GONE);
-                                            mLayoutProtocolAddress.setVisibility(View.GONE);
-                                        }
-                                        hideLoadDialog();
-                                    }
-                                });
-                            } else {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
-
-                                    }
-                                });
-                                hideLoadDialog();
-                            }
+                    public void accept(Response<GetDepositAddress.Data> response) throws Exception {
+                        GetDepositAddress.Data depositAddressData = response.data();
+                        if(depositAddressData == null){
+                            ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
+                            hideLoadDialog();
+                            return;
                         }
-                    }
-
-                    @Override
-                    public void onFailure(@Nonnull ApolloException e) {
+                        GetDepositAddress.GetDepositAddress1 depositAddress = depositAddressData.getDepositAddress();
+                        if(depositAddress == null){
+                            hideLoadDialog();
+                            return;
+                        }
+                        AccountAddressRecord accountAddressRecord = depositAddress.fragments().accountAddressRecord();
+                        if (assetName.equals(EOS_NAME)) {
+                            String eosAccountName = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
+                            String verificationCode = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
+                            mEosAccountNameTv.setText(eosAccountName);
+                            mQRAddressView.setText(verificationCode);
+                        } else {
+                            mQRAddressView.setText(accountAddressRecord.address());
+                            generateBarCode(accountAddressRecord.address());
+                        }
+                        AccountAddressRecord.ProjectInfo projectInfo = accountAddressRecord.projectInfo();
+                        if(projectInfo != null){
+                            mTvProjectName.setText(TextUtils.isEmpty(projectInfo.projectName()) ? "" : projectInfo.projectName());
+                            mTvProtocolAddress.setText(TextUtils.isEmpty(projectInfo.contractAddress()) ? "" : projectInfo.contractAddress());
+                            mTvProtocolAddress.setTag(TextUtils.isEmpty(projectInfo.contractExplorerUrl()) ? "" : projectInfo.contractExplorerUrl());
+                            mLayoutProjectName.setVisibility(TextUtils.isEmpty(projectInfo.projectName()) ? View.GONE : View.VISIBLE);
+                            mLayoutProtocolAddress.setVisibility(TextUtils.isEmpty(projectInfo.contractAddress()) ? View.GONE : View.VISIBLE);
+                        } else {
+                            mLayoutProjectName.setVisibility(View.GONE);
+                            mLayoutProtocolAddress.setVisibility(View.GONE);
+                        }
                         hideLoadDialog();
                     }
-                });
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        hideLoadDialog();
+                    }
+                }));
     }
 
     private void mutateNewAddress(String userName, String asset) {
-        ApolloClientApi.getInstance().client().mutate(NewDepositAddress
-                .builder()
-                .accountName(userName)
-                .asset(asset)
-                .build())
-                .enqueue(new ApolloCall.Callback<NewDepositAddress.Data>() {
+        ApolloMutationCall<NewDepositAddress.Data> apolloMutationCall = ApolloClientApi.getInstance().client()
+                .mutate(NewDepositAddress.builder().accountName(userName).asset(asset).build());
+        mCompositeDisposable.add(Rx2Apollo.from(apolloMutationCall)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Response<NewDepositAddress.Data>>() {
                     @Override
-                    public void onResponse(@Nonnull Response<NewDepositAddress.Data> response) {
-                        if (response.data() != null) {
-                            AccountAddressRecord accountAddressRecord = response.data().newDepositAddress().fragments().accountAddressRecord();
-                            String address = accountAddressRecord.address();
-                            if (DateUtils.formatToMillis(accountAddressRecord.createAt().toString()) != 0) {
-                                if (mAssetName.equals(EOS_NAME)) {
-                                    String eosAccountName = address.substring(0, address.indexOf("["));
-                                    String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mEosAccountNameTv.setText(eosAccountName);
-                                            mQRAddressView.setText(verificationCode);
-                                        }
-                                    });
-                                } else {
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mQRAddressView.setText(address);
-                                            generateBarCode(address);
-                                        }
-                                    });
-                                }
+                    public void accept(Response<NewDepositAddress.Data> response) throws Exception {
+                        NewDepositAddress.Data newDepositAddressData = response.data();
+                        if(newDepositAddressData == null){
+                            return;
+                        }
+                        AccountAddressRecord accountAddressRecord = newDepositAddressData.newDepositAddress().fragments().accountAddressRecord();
+                        String address = accountAddressRecord.address();
+                        if (DateUtils.formatToMillis(accountAddressRecord.createAt().toString()) != 0) {
+                            if (mAssetName.equals(EOS_NAME)) {
+                                String eosAccountName = address.substring(0, address.indexOf("["));
+                                String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
+                                mEosAccountNameTv.setText(eosAccountName);
+                                mQRAddressView.setText(verificationCode);
                             } else {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
-                                    }
-                                });
+                                mQRAddressView.setText(address);
+                                generateBarCode(address);
                             }
+                        } else {
+                            ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
                         }
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onFailure(@Nonnull ApolloException e) {
-                        Log.d("mutateAddress", e.getLocalizedMessage());
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.d("mutateAddress", throwable.getLocalizedMessage());
                     }
-                });
+                }));
     }
 
     private void generateBarCode(String barcode) {

@@ -197,7 +197,11 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
 
         @OnClick(R.id.item_exchange_open_order_btn_cancel)
         public void onCancelClick(View view){
-            if(mOnItemClickListener != null){
+            /**
+             * fix online bug
+             * java.lang.ArrayIndexOutOfBoundsException: length=10; index=-1
+             */
+            if(mOnItemClickListener != null && getAdapterPosition() != -1){
                 mOnItemClickListener.onItemClick(mOpenOrderItems.get(getAdapterPosition()));
             }
         }

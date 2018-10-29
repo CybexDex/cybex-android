@@ -29,13 +29,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.ApolloQueryCall;
+import com.apollographql.apollo.ApolloQueryWatcher;
 import com.apollographql.apollo.GetWithdrawInfo;
 import com.apollographql.apollo.VerifyAddress;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
-import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.fragment.WithdrawinfoObject;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybexmobile.R;
@@ -76,8 +77,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -86,7 +85,7 @@ import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -124,9 +123,6 @@ public class WithdrawActivity extends BaseActivity {
     private Operations.transfer_operation mTransferOperation;
     private SignedTransaction mSignedTransaction;
     private DynamicGlobalPropertyObject mDynamicGlobalPropertyObject;
-    private Context mContext;
-    private Disposable mLoadAddressDisposable;
-    private Disposable mCheckAddressExistDisposable;
     private List<Address> mAddresses;
 
     //private boolean
@@ -173,6 +169,8 @@ public class WithdrawActivity extends BaseActivity {
     private boolean mIsAddressInvalidate;
     private boolean mIsFeeLoaded;
 
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,7 +192,6 @@ public class WithdrawActivity extends BaseActivity {
         mAvailableAmount = intent.getDoubleExtra("availableAmount", 0);
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_withdraw), mAssetName));
-        mContext = this;
         if (mAssetName.equals(EOS)) {
             mWithdrawAddressTv.setText(getResources().getString(R.string.withdraw_account_eos));
             mWithdrawAddress.setHint(getResources().getString(R.string.withdraw_enter_or_paste_account_hint_eos));
@@ -434,7 +431,7 @@ public class WithdrawActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWithdraw(Event.Withdraw withdrawEvent) {
         if (withdrawEvent.isSuccess()) {
-            mCheckAddressExistDisposable = DBManager.getDbProvider(this).checkWithdrawAddressExist(mUserName,
+            mCompositeDisposable.add(DBManager.getDbProvider(this).checkWithdrawAddressExist(mUserName,
                     mWithdrawAddress.getText().toString().trim(), mAssetObject.id.toString(), Address.TYPE_WITHDRAW)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -465,7 +462,7 @@ public class WithdrawActivity extends BaseActivity {
                                     getResources().getString(R.string.toast_message_withdraw_sent),
                                     R.drawable.ic_check_circle_green);
                         }
-                    });
+                    }));
         }
     }
 
@@ -668,58 +665,45 @@ public class WithdrawActivity extends BaseActivity {
         if (TextUtils.isEmpty(address)) {
             return;
         }
-        ApolloClientApi.getInstance().client().query(VerifyAddress
-                .builder()
-                .address(address)
-                .asset(mAssetName)
-                .accountName(mUserName)
-                .build())
-                .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST)
-                .enqueueAndWatch(new ApolloCall.Callback<VerifyAddress.Data>() {
+        ApolloQueryWatcher<VerifyAddress.Data> apolloQueryWatcher = ApolloClientApi.getInstance().client()
+                .query(VerifyAddress.builder().address(address).asset(mAssetName).accountName(mUserName).build())
+                .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST);
+        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryWatcher)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Response<VerifyAddress.Data>>() {
                     @Override
-                    public void onResponse(@Nonnull Response<VerifyAddress.Data> response) {
-                        if (mHandler == null) {
+                    public void accept(Response<VerifyAddress.Data> response) throws Exception {
+                        VerifyAddress.Data verifyAddressData = response.data();
+                        if(verifyAddressData == null){
                             return;
                         }
-                        if (response.data() != null) {
-                            if (!response.data().verifyAddress().fragments().withdrawAddressInfo().valid()) {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mIsAddressInvalidate = false;
-                                        mPbLoading.setVisibility(View.INVISIBLE);
-                                        mIvAddressCheck.setVisibility(View.VISIBLE);
-                                        mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
-                                        resetWithdrawBtnState();
-                                    }
-                                });
+                        if (!verifyAddressData.verifyAddress().fragments().withdrawAddressInfo().valid()) {
+                            mIsAddressInvalidate = false;
+                            mPbLoading.setVisibility(View.INVISIBLE);
+                            mIvAddressCheck.setVisibility(View.VISIBLE);
+                            mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
+                            resetWithdrawBtnState();
+                        } else {
+                            mIsAddressInvalidate = true;
+                            mPbLoading.setVisibility(View.INVISIBLE);
+                            mIvAddressCheck.setVisibility(View.VISIBLE);
+                            mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
+                            resetWithdrawBtnState();
+                            if (BitsharesWalletWraper.getInstance().is_locked()) {
+                                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
                             } else {
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mIsAddressInvalidate = true;
-                                        mPbLoading.setVisibility(View.INVISIBLE);
-                                        mIvAddressCheck.setVisibility(View.VISIBLE);
-                                        mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
-                                        resetWithdrawBtnState();
-                                        if (BitsharesWalletWraper.getInstance().is_locked()) {
-                                            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
-                                        } else {
-                                            displayFee();
-                                        }
-                                    }
-                                });
+                                displayFee();
                             }
                         }
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onFailure(@Nonnull ApolloException e) {
+                    public void accept(Throwable throwable) throws Exception {
 
                     }
-                });
+                }));
     }
-
 
     private void setAvailableAmount(double availableAmount, String assetName) {
         mAvailableAmountTextView.setText(String.format(Locale.US, "%f %s", availableAmount, assetName));
@@ -734,41 +718,36 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void setMinWithdrawAmountAndGateWayFee() {
-        ApolloClientApi.getInstance().client().query(GetWithdrawInfo
-                .builder()
-                .type(mAssetName)
-                .build())
-                .enqueue(new ApolloCall.Callback<GetWithdrawInfo.Data>() {
+        ApolloQueryCall<GetWithdrawInfo.Data> apolloQueryCall = ApolloClientApi.getInstance().client()
+                .query(GetWithdrawInfo.builder().type(mAssetName).build());
+        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryCall)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Response<GetWithdrawInfo.Data>>() {
                     @Override
-                    public void onResponse(@Nonnull Response<GetWithdrawInfo.Data> response) {
-                        if (mHandler == null) {
+                    public void accept(Response<GetWithdrawInfo.Data> response) throws Exception {
+                        GetWithdrawInfo.Data withdrawInfoData = response.data();
+                        if(withdrawInfoData == null){
                             return;
                         }
-                        if (response.data() != null) {
-                            if (response.data().withdrawInfo().fragments().withdrawinfoObject() != null) {
-                                WithdrawinfoObject withdrawinfoObject = response.data().withdrawInfo().fragments().withdrawinfoObject();
-                                mMinValue = withdrawinfoObject.minValue();
-                                mGatewayFee = withdrawinfoObject.fee();
-                                mToAccountId = withdrawinfoObject.gatewayAccount();
-                                mAssetPrecision = withdrawinfoObject.precision();
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        getToAccountMemoKey(mToAccountId);
-                                        mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
-                                        mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
-                                        mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
-                                    }
-                                });
-                            }
+                        if (withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject() != null) {
+                            WithdrawinfoObject withdrawinfoObject = withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject();
+                            mMinValue = withdrawinfoObject.minValue();
+                            mGatewayFee = withdrawinfoObject.fee();
+                            mToAccountId = withdrawinfoObject.gatewayAccount();
+                            mAssetPrecision = withdrawinfoObject.precision();
+                            getToAccountMemoKey(mToAccountId);
+                            mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
+                            mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
+                            mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
                         }
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onFailure(@Nonnull ApolloException e) {
+                    public void accept(Throwable throwable) throws Exception {
 
                     }
-                });
+                }));
     }
 
     private void getToAccountMemoKey(String accountId) {
@@ -831,7 +810,7 @@ public class WithdrawActivity extends BaseActivity {
         if (TextUtils.isEmpty(mUserName)) {
             return;
         }
-        mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mUserName, mAssetObject.id.toString(), Address.TYPE_WITHDRAW)
+        mCompositeDisposable.add(DBManager.getDbProvider(this).getAddress(mUserName, mAssetObject.id.toString(), Address.TYPE_WITHDRAW)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Address>>() {
@@ -857,7 +836,7 @@ public class WithdrawActivity extends BaseActivity {
                     public void accept(Throwable throwable) throws Exception {
 
                     }
-                });
+                }));
     }
 
     @Override
@@ -887,11 +866,8 @@ public class WithdrawActivity extends BaseActivity {
         mHandler.removeCallbacksAndMessages(null);
         EventBus.getDefault().unregister(this);
         mHandler = null;
-        if (mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()) {
-            mLoadAddressDisposable.dispose();
-        }
-        if (mCheckAddressExistDisposable != null && !mCheckAddressExistDisposable.isDisposed()) {
-            mCheckAddressExistDisposable.dispose();
+        if(!mCompositeDisposable.isDisposed()){
+            mCompositeDisposable.dispose();
         }
     }
 

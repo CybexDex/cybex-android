@@ -49,6 +49,7 @@ dependencies {
     //apollo
     api 'com.apollographql.apollo:apollo-runtime:0.3.2'
     api 'com.apollographql.apollo:apollo-android-support:0.3.2'
+    api "com.apollographql.apollo:apollo-rx2-support:0.3.2"
     implementation 'com.google.code.gson:gson:2.8.2'
     //加密库
     implementation 'com.madgag.spongycastle:core:1.56.0.0'
