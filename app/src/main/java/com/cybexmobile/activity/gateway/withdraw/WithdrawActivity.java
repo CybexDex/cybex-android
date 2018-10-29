@@ -328,7 +328,11 @@ public class WithdrawActivity extends BaseActivity {
             mIsFeeLoaded = false;
             return;
         }
-        displayFee();
+        if (BitsharesWalletWraper.getInstance().is_locked()) {
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
+        } else {
+            displayFee();
+        }
     }
 
     @OnFocusChange(R.id.withdraw_memo_eos_et)
@@ -790,6 +794,7 @@ public class WithdrawActivity extends BaseActivity {
                 !accountObject.active.is_public_key_type_exist(publicOwnerKeyType)) {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
         }
+        displayFee();
 
     }
 
