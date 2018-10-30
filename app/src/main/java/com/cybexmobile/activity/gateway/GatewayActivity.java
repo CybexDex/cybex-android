@@ -3,6 +3,7 @@ package com.cybexmobile.activity.gateway;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -10,13 +11,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
@@ -28,11 +35,15 @@ import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
@@ -54,6 +65,10 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     RadioButton mDepositButton;
     @BindView(R.id.gate_way_segment_withdraw)
     RadioButton mWithdrawButton;
+    @BindView(R.id.gate_way_checkbox)
+    CheckBox mCheckBox;
+    @BindView(R.id.gate_way_search)
+    SearchView mSearchView;
 
     private String mAccountName;
 
@@ -82,6 +97,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gateway);
         mUnbinder = ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         setViews();
         mAccountBalanceObjectItemList = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_ACCOUNT_BALANCE_ITEMS);
@@ -99,6 +115,43 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         } else {
             mViewPager.setCurrentItem(1);
         }
+        setSearchViewStyle();
+        setSearchListener();
+    }
+
+    private void setSearchViewStyle() {
+        EditText searchEditText = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.font_color_white_dark));
+        searchEditText.setTypeface(null, Typeface.BOLD);
+        searchEditText.setHintTextColor(getResources().getColor(R.color.primary_color_grey));
+        searchEditText.setHint(getResources().getString(R.string.gate_way_search));
+    }
+
+    private void setSearchListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                EventBus.getDefault().post(new Event.onSearchBalanceAsset(query));
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                EventBus.getDefault().post(new Event.onSearchBalanceAsset(newText));
+                return false;
+            }
+        });
+    }
+
+    @OnCheckedChanged(R.id.gate_way_checkbox)
+    public void onCheckBoxCheckedChange(CompoundButton button, boolean checked) {
+        EventBus.getDefault().post(new Event.onHideZeroBalanceAssetCheckBox(checked));
+
+    }
+
+    @OnClick(R.id.gate_way_search)
+    public void onSearchViewClicked(View view) {
+        mSearchView.setIconified(false);
     }
 
     private void setViews() {
@@ -145,6 +198,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        EventBus.getDefault().unregister(this);
         if (mWebSocketService != null) {
             unbindService(mConnection);
         }

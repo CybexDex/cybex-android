@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +18,7 @@ import com.cybexmobile.activity.gateway.deposit.DepositActivity;
 import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
 import com.cybexmobile.activity.address.WithdrawAddressManageListActivity;
 import com.cybexmobile.activity.address.WithdrawAddressManagerActivity;
+import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
@@ -23,19 +27,23 @@ import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.utils.MyUtils;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWithdrawAdapter.ViewHolder> {
+public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWithdrawAdapter.ViewHolder> implements Filterable {
 
     private Context mContext;
     private String mName;
     private List<DepositAndWithdrawObject> mDataList;
+    private List<DepositAndWithdrawObject> mOriginDataList;
+    private BalanceFilter mFilter;
 
 
     public DepositAndWithdrawAdapter(Context context, String name, List<DepositAndWithdrawObject> depositAndWithdrawObjectList) {
         mContext = context;
         mName = name;
         mDataList = depositAndWithdrawObjectList;
+        mOriginDataList = depositAndWithdrawObjectList;
     }
 
 
@@ -137,5 +145,44 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
     @Override
     public int getItemCount() {
         return mDataList == null ? 0 : mDataList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (mFilter == null) {
+            mFilter = new BalanceFilter();
+        }
+        return  mFilter;
+    }
+
+    class BalanceFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            String filterStr = constraint.toString();
+            FilterResults results = new FilterResults();
+            if (TextUtils.isEmpty(constraint)) {
+                results.values = mOriginDataList;
+                results.count = mOriginDataList.size();
+                return results;
+            }
+            List<DepositAndWithdrawObject> filterDataList = new ArrayList<>();
+            for (DepositAndWithdrawObject data : mOriginDataList) {
+                if (filterStr.equals("checked") && data.getAccountBalanceObject() != null) {
+                    filterDataList.add(data);
+                }
+                if (AssetUtil.parseSymbol(data.assetObject.symbol.toLowerCase()).contains(filterStr.toLowerCase())) {
+                    filterDataList.add(data);
+                }
+            }
+            results.values = filterDataList;
+            results.count = filterDataList.size();
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mDataList = (List<DepositAndWithdrawObject>)results.values;
+            notifyDataSetChanged();
+        }
     }
 }

@@ -11,7 +11,6 @@
         android:layout_height="?android:actionBarSize"
         app:subtitleTextColor="@color/primary_color_grey"
         app:titleTextColor="@color/primary_color_grey"
-        app:title=""
         app:navigationIcon="@drawable/ic_back_24_px">
 
         <TextView
@@ -24,10 +23,11 @@
 
     <info.hoang8f.android.segmented.SegmentedGroup
         android:id="@+id/gate_way_segmented_group"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/width_232"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/activity_margin"
         android:layout_marginStart="@dimen/activity_margin"
+        android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:sc_border_width="@dimen/width_1"
@@ -59,15 +59,49 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_margin"
         android:layout_marginEnd="@dimen/activity_margin"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/margin_16"
         android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:alpha="0.5"
-            android:text="@string/gate_way_select_coin"
-            style="@style/font_gray_small" />
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/gate_way_checkbox"
+                android:layout_width="@dimen/width_16"
+                android:layout_height="@dimen/width_16"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_agreement_check"
+                android:button="@null" />
+            <TextView
+                style="@style/font_gray_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_10"
+                android:text="@string/gate_way_hide_balance" />
+        </LinearLayout>
     </RelativeLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_36"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/margin_24"
+        app:cardCornerRadius="@dimen/corner_radius_4"
+        app:cardBackgroundColor="@color/bg_watchlist_item_focus_color">
+        <android.support.v7.widget.SearchView
+            android:id="@+id/gate_way_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:searchIcon="@drawable/ic_search_24_px"
+            app:searchHintIcon="@drawable/ic_search_24_dark_px"
+            app:closeIcon="@drawable/ic_cancel_24_px"
+            app:queryHint="@string/gate_way_search"
+            app:defaultQueryHint="@string/gate_way_search"/>
+    </android.support.v7.widget.CardView>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/gate_way_view_pager"

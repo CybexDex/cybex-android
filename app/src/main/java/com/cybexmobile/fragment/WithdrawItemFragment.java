@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cybex.basemodule.event.Event;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybex.provider.http.RetrofitFactory;
@@ -21,6 +22,9 @@ import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybex.basemodule.service.WebSocketService;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -79,6 +83,7 @@ public class WithdrawItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_withdraw_item, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         Context context = view.getContext();
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -91,6 +96,15 @@ public class WithdrawItemFragment extends Fragment {
             requestWithdrawList();
         }
         return view;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onHideZeroCheckBoxChecked(Event.onHideZeroBalanceAssetCheckBox event) {
+        if (event.isChecked()) {
+            mDepositAndWithdrawAdapter.getFilter().filter("checked");
+        } else {
+            mDepositAndWithdrawAdapter.getFilter().filter("");
+        }
     }
 
     private void requestWithdrawList() {
@@ -191,6 +205,7 @@ public class WithdrawItemFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

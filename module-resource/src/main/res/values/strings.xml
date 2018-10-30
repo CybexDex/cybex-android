@@ -231,6 +231,8 @@
     <string name="gate_way_deposit">Deposit</string>
     <string name="gate_way_withdraw">Withdraw</string>
     <string name="gate_way_select_coin">Select Coin</string>
+    <string name="gate_way_hide_balance">Hide 0 balance</string>
+    <string name="gate_way_search">Search</string>
 
     <!-- Deposit Page Related -->
     <string name="deposit_save_qr_code">Save QR Code</string>

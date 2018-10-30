@@ -563,5 +563,34 @@ public class Event {
             return etoProject;
         }
     }
+
+    /**
+     * 充提页面隐藏零余额勾选
+     */
+
+    public static class onHideZeroBalanceAssetCheckBox {
+        private boolean checked;
+        public onHideZeroBalanceAssetCheckBox(boolean checked) {
+            this.checked = checked;
+        }
+
+        public boolean isChecked() {
+            return checked;
+        }
+    }
+
+    /**
+     * 充提页面搜索
+     */
+    public static class onSearchBalanceAsset {
+        private String query;
+        public onSearchBalanceAsset(String query) {
+            this.query = query;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+    }
 }
 

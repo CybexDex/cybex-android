@@ -29,6 +29,7 @@
     <dimen name="width_155">229.62dp</dimen>
     <dimen name="width_200">296.29dp</dimen>
     <dimen name="width_220">325.92dp</dimen>
+    <dimen name="width_232">343.7dp</dimen>
 
     <!-- height -->
     <dimen name="height_1">1.48dp</dimen>

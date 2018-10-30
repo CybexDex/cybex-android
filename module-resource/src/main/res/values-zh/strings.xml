@@ -235,6 +235,8 @@
     <string name="gate_way_deposit">充值</string>
     <string name="gate_way_withdraw">提现</string>
     <string name="gate_way_select_coin">选择币种</string>
+    <string name="gate_way_hide_balance">隐藏资产为0的币种</string>
+    <string name="gate_way_search">搜索币种</string>
 
     <!-- Deposit Page Related -->
     <string name="deposit_save_qr_code">保存二维码</string>
