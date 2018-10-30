@@ -65,6 +65,7 @@ import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Function5;
+import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
@@ -132,6 +133,12 @@ public class WebSocketService extends Service {
         mMode = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_LOAD_MODE, FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI);
         mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mNetworkState = NetworkUtils.getConnectivityStatus(this);
+        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                Log.e(TAG, throwable.getMessage());
+            }
+        });
     }
 
     @Override

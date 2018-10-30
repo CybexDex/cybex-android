@@ -606,7 +606,12 @@ public class TransferActivity extends BaseActivity implements
     };
 
     private void loadAccountBalanceObjectItems(FullAccountObject fullAccountObject) {
-        if (mAccountBalanceObjectItems != null && fullAccountObject == null) {
+        /**
+         * fix online bug
+         * java.lang.NullPointerException: Attempt to read from field
+         * 'java.util.List com.cybex.provider.graphene.chain.FullAccountObject.balances' on a null object reference
+         */
+        if (mAccountBalanceObjectItems != null || fullAccountObject == null) {
             return;
         }
         if (NetworkUtils.getConnectivityStatus(this) == TYPE_NOT_CONNECTED) {

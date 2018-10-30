@@ -136,6 +136,6 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
 
     @Override
     public int getItemCount() {
-        return mDataList.size();
+        return mDataList == null ? 0 : mDataList.size();
     }
 }
