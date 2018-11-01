@@ -20,7 +20,8 @@
 
     <!-- Watch List Page -->
     <string name="popular_title">最热</string>
-    <string name="watch_list_name_vol">名称/成交量</string>
+    <string name="watch_list_name">名称</string>
+    <string name="watch_list_vol">成交量</string>
     <string name="watch_list_new_price_title">最新价格</string>
     <string name="watch_list_vibration_range_title">24h涨跌幅</string>
 

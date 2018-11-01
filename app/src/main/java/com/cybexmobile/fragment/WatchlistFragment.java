@@ -63,6 +63,7 @@ public class WatchlistFragment extends BaseFragment implements MultiStateRadioGr
     private View view;
     private ProgressBar mProgressBar;
     private MultiStateRadioGroup mMultiStateRadioGroup;
+    private MultiStateRadioButton mMultiStateRadioButton_name;
     private MultiStateRadioButton mMultiStateRadioButton_vol;
     private MultiStateRadioButton mMultiStateRadioButton_price;
     private MultiStateRadioButton mMultiStateRadioButton_change;
@@ -97,15 +98,26 @@ public class WatchlistFragment extends BaseFragment implements MultiStateRadioGr
         mRecyclerView = view.findViewById(R.id.list);
         mTabLayout = view.findViewById(R.id.watch_list_coin_tab);
         mProgressBar = view.findViewById(R.id.watch_list_progress_bar);
-        mMultiStateRadioButton_vol = view.findViewById(R.id.watchlist_msrb_name_vol);
+        mMultiStateRadioButton_name = view.findViewById(R.id.watchlist_msrb_name);
+        mMultiStateRadioButton_vol = view.findViewById(R.id.watchlist_msrb_vol);
         mMultiStateRadioButton_price = view.findViewById(R.id.watchlist_msrb_price);
         mMultiStateRadioButton_change = view.findViewById(R.id.watchlist_msrb_change);
-        mSort = mMultiStateRadioButton_change.getState() == MultiStateRadioButton.STATE_UP ?
-                WatchlistComparator.CHANGE_UP : WatchlistComparator.CHANGE_DOWN;
-        mSort = mMultiStateRadioButton_price.getState() == MultiStateRadioButton.STATE_UP ?
-                WatchlistComparator.PRICE_UP : WatchlistComparator.PRICE_DOWN;
-        mSort = mMultiStateRadioButton_vol.getState() == MultiStateRadioButton.STATE_UP ?
-                WatchlistComparator.VOL_UP : WatchlistComparator.VOL_DOWN;
+        if(mMultiStateRadioButton_change.isChecked()) {
+            mSort = mMultiStateRadioButton_change.getState() == MultiStateRadioButton.STATE_UP ?
+                    WatchlistComparator.CHANGE_UP : WatchlistComparator.CHANGE_DOWN;
+        }
+        if(mMultiStateRadioButton_price.isChecked()) {
+            mSort = mMultiStateRadioButton_price.getState() == MultiStateRadioButton.STATE_UP ?
+                    WatchlistComparator.PRICE_UP : WatchlistComparator.PRICE_DOWN;
+        }
+        if(mMultiStateRadioButton_name.isChecked()) {
+            mSort = mMultiStateRadioButton_name.getState() == MultiStateRadioButton.STATE_UP ?
+                    WatchlistComparator.NAME_UP : WatchlistComparator.NAME_DOWN;
+        }
+        if(mMultiStateRadioButton_vol.isChecked()) {
+            mSort = mMultiStateRadioButton_vol.getState() == MultiStateRadioButton.STATE_UP ?
+                    WatchlistComparator.VOL_UP : WatchlistComparator.VOL_DOWN;
+        }
         mMultiStateRadioGroup = view.findViewById(R.id.watchlist_msrg);
         mMultiStateRadioGroup.setOnCheckedChangeListener(this);
         mWatchListRecyclerViewAdapter = new WatchListRecyclerViewAdapter(mWatchlistData, mListener, getContext());
@@ -300,7 +312,14 @@ public class WatchlistFragment extends BaseFragment implements MultiStateRadioGr
     @Override
     public void onCheckedChanged(MultiStateRadioGroup group, int checkedId, int state) {
         switch (checkedId) {
-            case R.id.watchlist_msrb_name_vol:
+            case R.id.watchlist_msrb_name:
+                if(state == MultiStateRadioButton.STATE_UP){
+                    mSort = WatchlistComparator.NAME_UP;
+                } else {
+                    mSort = WatchlistComparator.NAME_DOWN;
+                }
+                break;
+            case R.id.watchlist_msrb_vol:
                 if(state == MultiStateRadioButton.STATE_UP){
                     mSort = WatchlistComparator.VOL_UP;
                 } else {

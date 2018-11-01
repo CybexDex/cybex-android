@@ -18,7 +18,8 @@
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>
-    <string name="watch_list_name_vol">Name/Vol</string>
+    <string name="watch_list_name">Name</string>
+    <string name="watch_list_vol">Vol</string>
     <string name="watch_list_new_price_title">Last Price</string>
     <string name="watch_list_vibration_range_title">24h Chg%</string>
 

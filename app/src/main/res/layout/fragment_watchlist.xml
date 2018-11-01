@@ -45,14 +45,24 @@
         android:padding="@dimen/activity_padding">
 
         <com.cybexmobile.widget.MultiStateRadioButton
-            android:id="@+id/watchlist_msrb_name_vol"
+            android:id="@+id/watchlist_msrb_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:text="@string/watch_list_name_vol"
+            app:text="@string/watch_list_name"
+            app:imageDefault="@drawable/ic_filtrate_nor"
+            app:imageUp="@drawable/ic_filtrate_up"
+            app:imageDown="@drawable/ic_filtrate_down" />
+
+        <com.cybexmobile.widget.MultiStateRadioButton
+            android:id="@+id/watchlist_msrb_vol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_74"
+            app:text="@string/watch_list_vol"
             app:imageDefault="@drawable/ic_filtrate_nor"
             app:imageUp="@drawable/ic_filtrate_up"
             app:imageDown="@drawable/ic_filtrate_down"
-            app:isStateDown="true"/>
+            app:isStateDown="true" />
 
         <com.cybexmobile.widget.MultiStateRadioButton
             android:id="@+id/watchlist_msrb_price"
