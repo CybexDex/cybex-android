@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,7 +123,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         mSearchView.setIconifiedByDefault(false);
         EditText searchEditText = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         ImageView closeButton = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
-        searchEditText.setTextSize(16);
+        searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.font_large));
         searchEditText.setTextColor(getResources().getColor(R.color.font_color_white_dark));
         searchEditText.setHintTextColor(getResources().getColor(R.color.primary_color_grey));
         searchEditText.setHint(getResources().getString(R.string.gate_way_search));
