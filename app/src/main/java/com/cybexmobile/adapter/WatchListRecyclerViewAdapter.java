@@ -105,7 +105,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
             holder.itemView.setVisibility(View.GONE);
         } else {
             layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
-            layoutParams.width = RecyclerView.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = RecyclerView.LayoutParams.MATCH_PARENT;
             holder.itemView.setVisibility(View.VISIBLE);
         }
     }
