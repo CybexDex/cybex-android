@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -115,16 +116,23 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         } else {
             mViewPager.setCurrentItem(1);
         }
-        setSearchViewStyle();
-        setSearchListener();
     }
 
     private void setSearchViewStyle() {
+        mSearchView.setIconifiedByDefault(false);
         EditText searchEditText = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        ImageView closeButton = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
         searchEditText.setTextColor(getResources().getColor(R.color.font_color_white_dark));
         searchEditText.setTypeface(null, Typeface.BOLD);
         searchEditText.setHintTextColor(getResources().getColor(R.color.primary_color_grey));
         searchEditText.setHint(getResources().getString(R.string.gate_way_search));
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchView.setFocusable(false);
+                mSearchView.setQuery("", false);
+            }
+        });
     }
 
     private void setSearchListener() {
@@ -149,13 +157,10 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
 
     }
 
-    @OnClick(R.id.gate_way_search)
-    public void onSearchViewClicked(View view) {
-        mSearchView.setIconified(false);
-    }
-
     private void setViews() {
         mSegmentedGroup.setOnCheckedChangeListener(this);
+        setSearchViewStyle();
+        setSearchListener();
     }
 
     @Override

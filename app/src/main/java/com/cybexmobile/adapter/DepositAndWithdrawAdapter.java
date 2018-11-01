@@ -13,6 +13,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.deposit.DepositActivity;
 import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
@@ -30,8 +31,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWithdrawAdapter.ViewHolder> implements Filterable {
+public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
+    private final static int TYPE_EMPTY = 0;
+    private final static int TYPE_CONTENT = 1;
     private Context mContext;
     private String mName;
     private List<DepositAndWithdrawObject> mDataList;
@@ -44,6 +47,11 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
         mName = name;
         mDataList = depositAndWithdrawObjectList;
         mOriginDataList = depositAndWithdrawObjectList;
+    }
+
+    public void setDepositAndWithdrawItems(List<DepositAndWithdrawObject> depositAndWithdrawItems) {
+        mOriginDataList = depositAndWithdrawItems;
+        mDataList = depositAndWithdrawItems;
     }
 
 
@@ -67,7 +75,14 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        if (viewHolder instanceof EmptyViewHolder) {
+            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) viewHolder;
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.deposit_withdraw_records_no_record));
+            emptyViewHolder.mIvImage.setImageResource(R.drawable.ic_no_records);
+            return;
+        }
+        ViewHolder holder = (ViewHolder) viewHolder;
         AssetObject assetObject = mDataList.get(position).getAssetObject();
         AccountBalanceObject accountBalanceObject = mDataList.get(position).getAccountBalanceObject();
         if (assetObject != null) {
@@ -130,8 +145,13 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_deposit_withdraw, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = null;
+        if (viewType == TYPE_EMPTY) {
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
+            return new EmptyViewHolder(view);
+        }
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_deposit_withdraw, parent, false);
         return new ViewHolder(view);
     }
 
@@ -144,7 +164,12 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
 
     @Override
     public int getItemCount() {
-        return mDataList == null ? 0 : mDataList.size();
+        return mDataList == null || mDataList.size() == 0 ? 1 : mDataList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mDataList == null || mDataList.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
     }
 
     @Override
@@ -152,7 +177,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
         if (mFilter == null) {
             mFilter = new BalanceFilter();
         }
-        return  mFilter;
+        return mFilter;
     }
 
     class BalanceFilter extends Filter {
@@ -167,9 +192,6 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<DepositAndWi
             }
             List<DepositAndWithdrawObject> filterDataList = new ArrayList<>();
             for (DepositAndWithdrawObject data : mOriginDataList) {
-                if (filterStr.equals("checked") && data.getAccountBalanceObject() != null) {
-                    filterDataList.add(data);
-                }
                 if (AssetUtil.parseSymbol(data.assetObject.symbol.toLowerCase()).contains(filterStr.toLowerCase())) {
                     filterDataList.add(data);
                 }

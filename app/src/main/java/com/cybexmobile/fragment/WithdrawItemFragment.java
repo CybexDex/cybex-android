@@ -54,6 +54,7 @@ public class WithdrawItemFragment extends Fragment {
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
+    private String mQuery = "";
 
     @BindView(R.id.withdraw_list)
     RecyclerView mRecyclerView;
@@ -100,11 +101,26 @@ public class WithdrawItemFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHideZeroCheckBoxChecked(Event.onHideZeroBalanceAssetCheckBox event) {
-        if (event.isChecked()) {
-            mDepositAndWithdrawAdapter.getFilter().filter("checked");
-        } else {
-            mDepositAndWithdrawAdapter.getFilter().filter("");
+        if (mWithdrawObjectList != null && mWithdrawObjectList.size() > 0) {
+            if (event.isChecked()) {
+                List<DepositAndWithdrawObject> listAfterCheck = new ArrayList<>();
+                for (DepositAndWithdrawObject depositAndWithdrawObject : mWithdrawObjectList) {
+                    if (depositAndWithdrawObject.getAccountBalanceObject() != null) {
+                        listAfterCheck.add(depositAndWithdrawObject);
+                    }
+                }
+                mDepositAndWithdrawAdapter.setDepositAndWithdrawItems(listAfterCheck);
+            } else {
+                mDepositAndWithdrawAdapter.setDepositAndWithdrawItems(mWithdrawObjectList);
+            }
+            mDepositAndWithdrawAdapter.getFilter().filter(mQuery);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSearch(Event.onSearchBalanceAsset event) {
+        mQuery = event.getQuery();
+        mDepositAndWithdrawAdapter.getFilter().filter(event.getQuery());
     }
 
     private void requestWithdrawList() {

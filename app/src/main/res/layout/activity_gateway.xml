@@ -83,30 +83,38 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <android.support.v7.widget.CardView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_36"
-        android:layout_marginStart="@dimen/activity_margin"
-        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_24"
-        app:cardCornerRadius="@dimen/corner_radius_4"
-        app:cardBackgroundColor="@color/bg_watchlist_item_focus_color">
-        <android.support.v7.widget.SearchView
-            android:id="@+id/gate_way_search"
+        android:paddingBottom="@dimen/activity_padding"
+        android:background="@color/itemBackground">
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:searchIcon="@drawable/ic_search_24_px"
-            app:searchHintIcon="@drawable/ic_search_24_dark_px"
-            app:closeIcon="@drawable/ic_cancel_24_px"
-            app:queryHint="@string/gate_way_search"
-            app:defaultQueryHint="@string/gate_way_search"/>
-    </android.support.v7.widget.CardView>
+            android:layout_height="@dimen/height_36"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:layout_marginEnd="@dimen/activity_margin"
+            android:layout_marginTop="@dimen/margin_8"
+            app:cardCornerRadius="@dimen/corner_radius_4"
+            app:cardBackgroundColor="@color/bg_watchlist_item_focus_color"
+            app:cardElevation="0dp">
+            <android.support.v7.widget.SearchView
+                android:id="@+id/gate_way_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true"
+                android:focusable="false"
+                app:searchIcon="@drawable/ic_search_24_px"
+                app:closeIcon="@drawable/ic_cancel_24_px"
+                app:defaultQueryHint="@string/gate_way_search"/>
+        </android.support.v7.widget.CardView>
+    </FrameLayout>
+
 
 
     <android.support.v4.view.ViewPager
         android:id="@+id/gate_way_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_margin"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

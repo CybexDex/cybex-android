@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,7 @@ public class DepositItemFragment extends Fragment {
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
+    private String mQuery = "";
 
     @BindView(R.id.deposit_list)
     RecyclerView mRecyclerView;
@@ -111,15 +113,25 @@ public class DepositItemFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHideZeroCheckBoxChecked(Event.onHideZeroBalanceAssetCheckBox event) {
-        if (event.isChecked()) {
-            mDepositAndWithdrawAdapter.getFilter().filter("checked");
-        } else {
-            mDepositAndWithdrawAdapter.getFilter().filter("");
+        if (mDepositObjectList != null && mDepositObjectList.size() > 0) {
+            if (event.isChecked()) {
+                List<DepositAndWithdrawObject> listAfterCheck = new ArrayList<>();
+                for (DepositAndWithdrawObject depositAndWithdrawObject : mDepositObjectList) {
+                    if (depositAndWithdrawObject.getAccountBalanceObject() != null) {
+                        listAfterCheck.add(depositAndWithdrawObject);
+                    }
+                }
+                mDepositAndWithdrawAdapter.setDepositAndWithdrawItems(listAfterCheck);
+            } else {
+                mDepositAndWithdrawAdapter.setDepositAndWithdrawItems(mDepositObjectList);
+            }
+            mDepositAndWithdrawAdapter.getFilter().filter(mQuery);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSearch(Event.onSearchBalanceAsset event) {
+        mQuery = event.getQuery();
         mDepositAndWithdrawAdapter.getFilter().filter(event.getQuery());
     }
 
