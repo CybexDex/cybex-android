@@ -337,7 +337,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
             mTvQuotePrice.setTextColor(getResources().getColor(Double.parseDouble(change) > 0 ? R.color.increasing_color : R.color.decreasing_color));
         }
         mTvQuoteRmbPrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) :
-                "≈¥ " + AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice(), 2));
+                "≈¥ " + AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice(), 4));
     }
 
     public void changeWatchlist(WatchlistData watchlist){

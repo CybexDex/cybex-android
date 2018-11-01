@@ -378,9 +378,9 @@ public class AccountBalanceActivity extends BaseActivity {
     private void setTotalCybAndRmbTextView(double totalCyb, double totalRmb) {
         mTotalBalanceTv.setText(totalCyb == 0 ? "0.00000" : String.format(Locale.US, "%.5f", totalCyb));
         if (totalCyb == 0) {
-            mTotalRmbTv.setText("≈¥0.00");
+            mTotalRmbTv.setText("≈¥0.0000");
         } else {
-            mTotalRmbTv.setText(totalRmb == 0 ? "≈¥0.00" : String.format(Locale.US, "≈¥%.2f", totalRmb));
+            mTotalRmbTv.setText(totalRmb == 0 ? "≈¥0.00" : String.format(Locale.US, "≈¥%.4f", totalRmb));
         }
     }
 

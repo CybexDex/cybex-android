@@ -91,10 +91,10 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
          * 保留两位小数点
          */
         if (watchlistData.getQuoteRmbPrice() != 0) {
-            holder.mTvRmbPrice.setText(String.format(Locale.US, "≈¥ %.2f", watchlistData.getQuoteRmbPrice()));
+            holder.mTvRmbPrice.setText(String.format(Locale.US, "≈¥ %.4f", watchlistData.getQuoteRmbPrice()));
         } else {
             holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
-                    String.format(Locale.US, "≈¥ %.2f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
+                    String.format(Locale.US, "≈¥ %.4f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

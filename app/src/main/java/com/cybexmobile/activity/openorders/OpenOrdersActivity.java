@@ -89,7 +89,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private List<OpenOrderItem> mOpenOrderItems = new ArrayList<>();
     private List<WatchlistData> mWatchlistDataList = new ArrayList<>();
 
-    private DecimalFormat format = new DecimalFormat("0.00");
+    private DecimalFormat format = new DecimalFormat("0.0000");
 
     private String mCurrTab = TAB_ALL;
 

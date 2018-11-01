@@ -122,8 +122,8 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         mSearchView.setIconifiedByDefault(false);
         EditText searchEditText = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         ImageView closeButton = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        searchEditText.setTextSize(16);
         searchEditText.setTextColor(getResources().getColor(R.color.font_color_white_dark));
-        searchEditText.setTypeface(null, Typeface.BOLD);
         searchEditText.setHintTextColor(getResources().getColor(R.color.primary_color_grey));
         searchEditText.setHint(getResources().getString(R.string.gate_way_search));
         closeButton.setOnClickListener(new View.OnClickListener() {

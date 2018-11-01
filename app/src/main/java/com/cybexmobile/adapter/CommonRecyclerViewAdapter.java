@@ -82,7 +82,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             } else if (marketTicker != null) {
                 rmbPrice = marketTicker.latest * item.cybRmbPrice * price;
             }
-            holder.mRmbPrice.setText(rmbPrice != 0 ? String.format(Locale.US, "≈¥%.2f", rmbPrice) : "--");
+            holder.mRmbPrice.setText(rmbPrice != 0 ? String.format(Locale.US, "≈¥%.4f", rmbPrice) : "--");
             if (assetObject.symbol.contains("JADE")) {
                 holder.mAssetText.setText(assetObject.symbol.substring(5, assetObject.symbol.length()));
             } else {
