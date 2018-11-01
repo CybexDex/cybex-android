@@ -38,32 +38,44 @@
         android:layout_height="@dimen/height_1"
         android:background="@color/divider_color"/>
 
-    <RelativeLayout
+    <com.cybexmobile.widget.MultiStateRadioGroup
+        android:id="@+id/watchlist_msrg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/activity_padding">
-        <TextView
+
+        <com.cybexmobile.widget.MultiStateRadioButton
+            android:id="@+id/watchlist_msrb_name_vol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            style="@style/font_gray_small"
-            android:text="@string/watch_list_name_vol"/>
-        <TextView
+            app:text="@string/watch_list_name_vol"
+            app:imageDefault="@drawable/ic_filtrate_nor"
+            app:imageUp="@drawable/ic_filtrate_up"
+            app:imageDown="@drawable/ic_filtrate_down"
+            app:isStateDown="true"/>
+
+        <com.cybexmobile.widget.MultiStateRadioButton
+            android:id="@+id/watchlist_msrb_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/watch_list_new_price_title"
-            style="@style/font_gray_small"
-            android:layout_centerVertical="true"
+            app:text="@string/watch_list_new_price_title"
             android:layout_marginEnd="@dimen/margin_111"
-            android:layout_alignParentEnd="true"/>
-        <TextView
+            android:layout_alignParentEnd="true"
+            app:imageDefault="@drawable/ic_filtrate_nor"
+            app:imageUp="@drawable/ic_filtrate_up"
+            app:imageDown="@drawable/ic_filtrate_down"/>
+
+        <com.cybexmobile.widget.MultiStateRadioButton
+            android:id="@+id/watchlist_msrb_change"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            style="@style/font_gray_small"
+            app:text="@string/watch_list_vibration_range_title"
             android:layout_alignParentEnd="true"
-            android:text="@string/watch_list_vibration_range_title"/>
-    </RelativeLayout>
+            app:imageDefault="@drawable/ic_filtrate_nor"
+            app:imageUp="@drawable/ic_filtrate_up"
+            app:imageDown="@drawable/ic_filtrate_down"/>
+
+    </com.cybexmobile.widget.MultiStateRadioGroup>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"

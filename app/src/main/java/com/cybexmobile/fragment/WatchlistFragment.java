@@ -26,6 +26,9 @@ import com.cybexmobile.R;
 
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybexmobile.adapter.decoration.VisibleDividerItemDecoration;
+import com.cybexmobile.utils.WatchlistComparator;
+import com.cybexmobile.widget.MultiStateRadioButton;
+import com.cybexmobile.widget.MultiStateRadioGroup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,6 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
@@ -50,7 +54,7 @@ import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class WatchlistFragment extends BaseFragment {
+public class WatchlistFragment extends BaseFragment implements MultiStateRadioGroup.OnCheckedChangeListener {
 
     private static final String TAG = "WatchListFragment";
     private List<WatchlistData> mWatchlistData = new ArrayList<>();
@@ -58,6 +62,10 @@ public class WatchlistFragment extends BaseFragment {
     private TabLayout mTabLayout;
     private View view;
     private ProgressBar mProgressBar;
+    private MultiStateRadioGroup mMultiStateRadioGroup;
+    private MultiStateRadioButton mMultiStateRadioButton_vol;
+    private MultiStateRadioButton mMultiStateRadioButton_price;
+    private MultiStateRadioButton mMultiStateRadioButton_change;
 
     private String[] mTabs = new String[]{"ETH", "CYB", "USDT", "BTC"};
     private String mCurrentTab;
@@ -67,6 +75,8 @@ public class WatchlistFragment extends BaseFragment {
 
     private WebSocketService mWebSocketService;
     private boolean mIsViewCreated;
+    private WatchlistComparator mWatchlistComparator;
+    private int mSort;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,6 +97,17 @@ public class WatchlistFragment extends BaseFragment {
         mRecyclerView = view.findViewById(R.id.list);
         mTabLayout = view.findViewById(R.id.watch_list_coin_tab);
         mProgressBar = view.findViewById(R.id.watch_list_progress_bar);
+        mMultiStateRadioButton_vol = view.findViewById(R.id.watchlist_msrb_name_vol);
+        mMultiStateRadioButton_price = view.findViewById(R.id.watchlist_msrb_price);
+        mMultiStateRadioButton_change = view.findViewById(R.id.watchlist_msrb_change);
+        mSort = mMultiStateRadioButton_change.getState() == MultiStateRadioButton.STATE_UP ?
+                WatchlistComparator.CHANGE_UP : WatchlistComparator.CHANGE_DOWN;
+        mSort = mMultiStateRadioButton_price.getState() == MultiStateRadioButton.STATE_UP ?
+                WatchlistComparator.PRICE_UP : WatchlistComparator.PRICE_DOWN;
+        mSort = mMultiStateRadioButton_vol.getState() == MultiStateRadioButton.STATE_UP ?
+                WatchlistComparator.VOL_UP : WatchlistComparator.VOL_DOWN;
+        mMultiStateRadioGroup = view.findViewById(R.id.watchlist_msrg);
+        mMultiStateRadioGroup.setOnCheckedChangeListener(this);
         mWatchListRecyclerViewAdapter = new WatchListRecyclerViewAdapter(mWatchlistData, mListener, getContext());
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
         mRecyclerView.setHasFixedSize(true);
@@ -120,8 +141,11 @@ public class WatchlistFragment extends BaseFragment {
         int index = mWatchlistData.indexOf(data);
         if (index != -1) {
             mWatchlistData.set(index, data);
+            if(mWatchlistComparator == null){
+                mWatchlistComparator = new WatchlistComparator(mSort);
+            }
             //交易排序
-            Collections.sort(mWatchlistData);
+            Collections.sort(mWatchlistData, mWatchlistComparator);
             /**
              * fix bug:CYM-444
              * 交易对排序后不刷新单条Item，防止数据错乱
@@ -144,8 +168,11 @@ public class WatchlistFragment extends BaseFragment {
         mRecyclerView.setVisibility(View.VISIBLE);
         mWatchlistData.clear();
         mWatchlistData.addAll(event.getData());
+        if(mWatchlistComparator == null){
+            mWatchlistComparator = new WatchlistComparator(mSort);
+        }
         //交易排序
-        Collections.sort(mWatchlistData);
+        Collections.sort(mWatchlistData, mWatchlistComparator);
         mWatchListRecyclerViewAdapter.notifyDataSetChanged();
     }
 
@@ -270,6 +297,40 @@ public class WatchlistFragment extends BaseFragment {
         mListener = null;
     }
 
+    @Override
+    public void onCheckedChanged(MultiStateRadioGroup group, int checkedId, int state) {
+        switch (checkedId) {
+            case R.id.watchlist_msrb_name_vol:
+                if(state == MultiStateRadioButton.STATE_UP){
+                    mSort = WatchlistComparator.VOL_UP;
+                } else {
+                    mSort = WatchlistComparator.VOL_DOWN;
+                }
+                break;
+            case R.id.watchlist_msrb_price:
+                if(state == MultiStateRadioButton.STATE_UP){
+                    mSort = WatchlistComparator.PRICE_UP;
+                } else {
+                    mSort = WatchlistComparator.PRICE_DOWN;
+                }
+                break;
+            case R.id.watchlist_msrb_change:
+                if(state == MultiStateRadioButton.STATE_UP){
+                    mSort = WatchlistComparator.CHANGE_UP;
+                } else {
+                    mSort = WatchlistComparator.CHANGE_DOWN;
+                }
+                break;
+        }
+        if(mWatchlistComparator == null){
+            mWatchlistComparator = new WatchlistComparator(mSort);
+        } else {
+            mWatchlistComparator.setSort(mSort);
+        }
+        //交易排序
+        Collections.sort(mWatchlistData, mWatchlistComparator);
+        mWatchListRecyclerViewAdapter.notifyDataSetChanged();
+    }
 
     /**
      * This interface must be implemented by activities that contain this

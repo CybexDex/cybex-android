@@ -16,6 +16,8 @@ import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,10 +33,16 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
     private float[] mOpenBuffers = new float[4];
     private float[] mCloseBuffers = new float[4];
 
+    private DecimalFormat mFormat;
+
     public CandleStickChartRenderer(CandleDataProvider chart, ChartAnimator animator,
                                     ViewPortHandler viewPortHandler) {
         super(animator, viewPortHandler);
         mChart = chart;
+        mFormat = new DecimalFormat();
+        mFormat.setMaximumFractionDigits(8);
+        mFormat.setMinimumFractionDigits(8);
+        mFormat.setRoundingMode(RoundingMode.DOWN);
     }
 
     @Override
@@ -490,7 +498,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                 float y = positions[minIndex + 1];
                 if (maxIndex > minIndex){
                     //画右边
-                    String highString = "← " + String.format(Locale.US, "%.6f", minValue);
+                    String highString = "← " + mFormat.format(minValue);
 
                     //计算显示位置
                     //计算文本宽度
@@ -504,7 +512,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                     c.drawText(highString, x + highStringWidth /2, tPosition[1], mValuePaint);
                 }else{
                     //画左边
-                    String highString = String.format(Locale.US, "%.6f", minValue) +" →";
+                    String highString = mFormat.format(minValue) +" →";
 
                     //计算显示位置
                     int highStringWidth = Utils.calcTextWidth(mValuePaint, highString);
@@ -523,7 +531,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                 y = positions[maxIndex + 1];
                 if (maxIndex > minIndex){
                     //画左边
-                    String highString = String.format(Locale.US, "%.6f", maxValue) +" →";
+                    String highString = mFormat.format(maxValue) +" →";
 
                     int highStringWidth = Utils.calcTextWidth(mValuePaint, highString);
                     int highStringHeight = Utils.calcTextHeight(mValuePaint, highString);
@@ -541,7 +549,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                     c.drawText(highString, x - highStringWidth, y-yOffset, mValuePaint);*/
                 }else{
                     //画右边
-                    String highString = "← " + String.format(Locale.US, "%.6f", maxValue);
+                    String highString = "← " + mFormat.format(maxValue);
 
                     //计算显示位置
                     int highStringWidth = Utils.calcTextWidth(mValuePaint, highString);
