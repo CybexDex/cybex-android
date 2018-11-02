@@ -627,11 +627,11 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private void initOrResetRmbTextData(){
         String assetPrice = mEtAssetPrice.getText().toString();
         try {
-            mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ 0.00" :
-                    String.format(Locale.US, "≈¥ %.2f", Double.parseDouble(assetPrice) * mAssetRmbPrice));
+            mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ 0.0000" :
+                    String.format(Locale.US, "≈¥ %.4f", Double.parseDouble(assetPrice) * mAssetRmbPrice));
         } catch (Exception e){
             e.printStackTrace();
-            mTvAssetRmbPrice.setText("≈¥ 0.00");
+            mTvAssetRmbPrice.setText("≈¥ 0.0000");
         }
 
     }
