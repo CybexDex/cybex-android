@@ -1,5 +1,6 @@
 package com.cybexmobile.utils;
 
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.market.WatchlistData;
 
 import java.util.Comparator;
@@ -44,13 +45,13 @@ public class WatchlistComparator implements Comparator<WatchlistData> {
         }
         if(mSort == NAME_DOWN){
             if(o1.getOrder() == 0 && o2.getOrder() == 0){
-                return o1.getQuoteSymbol().compareToIgnoreCase(o2.getQuoteSymbol()) > 0 ? -1 : 1;
+                return AssetUtil.parseSymbol(o1.getQuoteSymbol()).compareToIgnoreCase(AssetUtil.parseSymbol(o2.getQuoteSymbol())) > 0 ? -1 : 1;
             }
             return o1.getOrder() > o2.getOrder() ? -1 : 1;//置顶
         }
         if(mSort == NAME_UP){
             if(o1.getOrder() == 0 && o2.getOrder() == 0){
-                return o1.getQuoteSymbol().compareToIgnoreCase(o2.getQuoteSymbol()) < 0 ? -1 : 1;
+                return AssetUtil.parseSymbol(o1.getQuoteSymbol()).compareToIgnoreCase(AssetUtil.parseSymbol(o2.getQuoteSymbol())) < 0 ? -1 : 1;
             }
             return o1.getOrder() > o2.getOrder() ? -1 : 1;//置顶
         }
