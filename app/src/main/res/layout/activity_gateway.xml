@@ -104,6 +104,7 @@
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
                 android:focusable="false"
+                android:paddingLeft="@dimen/searchview_padding_negative"
                 app:searchIcon="@drawable/ic_search_24_px"
                 app:closeIcon="@drawable/ic_cancel_24_px"
                 app:defaultQueryHint="@string/gate_way_search"/>

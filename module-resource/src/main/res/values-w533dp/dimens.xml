@@ -109,5 +109,8 @@
     <!-- elevation -->
     <dimen name="elevation_3">3.7dp</dimen>
 
+    <!-- negative padding -->
+    <dimen name="searchview_padding_negative">-14.8dp</dimen>
+
 </resources>
 
