@@ -717,6 +717,14 @@ public class TransferActivity extends BaseActivity implements
      * 转账确认
      */
     private void showTransferConfirmationDialog(){
+        /**
+         * fix bug:CYM-800
+         * 修复手续费未获取到转账crash
+         */
+        if(mTransferOperationFee == null || (mCybFeeAmountObject == null && mCurrAssetFeeAmountObject == null)){
+            loadTransferFee(ASSET_ID_CYB, true);
+            return;
+        }
         CybexDialog.showTransferConfirmationDialog(this, mEtAccountName.getText().toString().trim(),
                 String.format("%s %s", mEtQuantity.getText().toString().trim(),
                         AssetUtil.parseSymbol(mSelectedAccountBalanceObjectItem.assetObject.symbol)),
