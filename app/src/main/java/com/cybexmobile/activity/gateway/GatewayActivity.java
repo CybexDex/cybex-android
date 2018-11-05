@@ -38,6 +38,8 @@ import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +118,13 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
             mViewPager.setCurrentItem(0);
         } else {
             mViewPager.setCurrentItem(1);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFinishLoadAssetObjects(Event.LoadAssets event) {
+        if (event.getData() != null && event.getData().size() > 0) {
+            loadData(mWebSocketService.getFullAccount(mAccountName));
         }
     }
 
@@ -273,6 +282,9 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         List<AccountBalanceObject> accountBalanceObjects = fullAccountObject.balances;
         if (accountBalanceObjects != null && accountBalanceObjects.size() > 0) {
             for (AccountBalanceObject balance : accountBalanceObjects) {
+                if (mWebSocketService.getAssetObject(balance.asset_type.toString()) == null) {
+                    return;
+                }
                 if (balance.balance == 0) {
                     continue;
                 }

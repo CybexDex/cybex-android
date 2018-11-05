@@ -980,6 +980,10 @@ public class WebSocketService extends Service {
         return mAssetWhiteList;
     }
 
+    public List<AssetObject> getAssetObjectsList() {
+        return mAssetObjects;
+    }
+
     public List<AssetRmbPrice> getAssetRmbPrices() {
         return mAssetRmbPrices;
     }

@@ -14,8 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
@@ -51,6 +53,7 @@ public class WithdrawItemFragment extends Fragment {
     private List<DepositAndWithdrawObject> mWithdrawObjectList = new ArrayList<>();
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItemList = new ArrayList<>();
     private DepositAndWithdrawAdapter mDepositAndWithdrawAdapter;
+    private BaseActivity mActivity;
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
@@ -88,15 +91,20 @@ public class WithdrawItemFragment extends Fragment {
         Context context = view.getContext();
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        mActivity = (BaseActivity) getActivity();
 
         mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(context, TAG, mWithdrawObjectList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.setAdapter(mDepositAndWithdrawAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
-        if (mWithdrawObjectList.size() == 0) {
+        return view;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFinishLoadAssetObjects(Event.LoadAssets event) {
+        if (event.getData() != null && event.getData().size() > 0) {
             requestWithdrawList();
         }
-        return view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -188,11 +196,17 @@ public class WithdrawItemFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
+                        if (mActivity != null) {
+                            mActivity.hideLoadDialog();
+                        }
 
                     }
 
                     @Override
                     public void onComplete() {
+                        if (mActivity != null) {
+                            mActivity.hideLoadDialog();
+                        }
 
                     }
                 });
@@ -203,6 +217,16 @@ public class WithdrawItemFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            if (mWithdrawObjectList.size() == 0) {
+                if (mWebSocketService != null) {
+                    if (mActivity != null) {
+                        mActivity.showLoadDialog();
+                    }
+                    if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
+                        requestWithdrawList();
+                    }
+                }
+            }
         }
 
         @Override

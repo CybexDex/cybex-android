@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
@@ -60,6 +61,7 @@ public class DepositItemFragment extends Fragment {
     private List<DepositAndWithdrawObject> mDepositObjectList = new ArrayList<>();
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItemList = new ArrayList<>();
     private DepositAndWithdrawAdapter mDepositAndWithdrawAdapter;
+    private BaseActivity mActivity;
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
@@ -99,16 +101,21 @@ public class DepositItemFragment extends Fragment {
         EventBus.getDefault().register(this);
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        mActivity = (BaseActivity) getActivity();
         // Set the adapter
         Context context = view.getContext();
         mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(context, TAG, mDepositObjectList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.setAdapter(mDepositAndWithdrawAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
-        if (mDepositObjectList.size() == 0) {
+        return view;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFinishLoadAssetObjects(Event.LoadAssets event) {
+        if (event.getData() != null && event.getData().size() > 0) {
             requestDepositList();
         }
-        return view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -200,12 +207,16 @@ public class DepositItemFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (mActivity != null) {
+                            mActivity.hideLoadDialog();
+                        }
                     }
 
                     @Override
                     public void onComplete() {
-
+                        if (mActivity != null) {
+                            mActivity.hideLoadDialog();
+                        }
                     }
                 });
     }
@@ -215,6 +226,16 @@ public class DepositItemFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            if (mDepositObjectList.size() == 0) {
+                if (mActivity != null) {
+                    mActivity.showLoadDialog();
+                }
+                if (mWebSocketService != null) {
+                    if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
+                        requestDepositList();
+                    }
+                }
+            }
         }
 
         @Override

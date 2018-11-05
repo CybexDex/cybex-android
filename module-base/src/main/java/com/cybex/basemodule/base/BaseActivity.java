@@ -319,7 +319,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     //show load dialog
-    protected final void showLoadDialog() {
+    public final void showLoadDialog() {
         this.showLoadDialog(false);
 
     }
@@ -333,7 +333,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     //hide load dialog
-    protected final void hideLoadDialog() {
+    public final void hideLoadDialog() {
         if (mLoadDialog != null && mLoadDialog.isShowing()) {
             mLoadDialog.dismiss();
         }
