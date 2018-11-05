@@ -168,7 +168,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     private void calculateTotalValue() {
         if (mOpenOrderItems.size() == 0) {
-            mOpenOrderTotalValue.setText(String.format("≈¥%s", "0.00"));
+            mOpenOrderTotalValue.setText(String.format("≈¥%s", "0.0000"));
             return;
         }
         mWatchlistDataList = mWebSocketService.getAllWatchlistData();
