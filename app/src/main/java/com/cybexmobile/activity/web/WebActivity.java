@@ -1,9 +1,6 @@
 package com.cybexmobile.activity.web;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -17,13 +14,13 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.constant.Constant;
 import com.cybexmobile.R;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class WebActivity extends BaseActivity{
+
+    private static final String TAG = WebActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -96,6 +93,8 @@ public class WebActivity extends BaseActivity{
         //隐藏原生的缩放控件
         webSettings.setDisplayZoomControls(false);
 
+        webSettings.setDomStorageEnabled(true);
+
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
@@ -113,6 +112,18 @@ public class WebActivity extends BaseActivity{
                     mProgressBar.setVisibility(View.VISIBLE);
                     mProgressBar.setProgress(newProgress);
                 }
+            }
+        });
+
+        mWebView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                WebView.HitTestResult hitTestResult = view.getHitTestResult();
+                if(hitTestResult.getType() == WebView.HitTestResult.UNKNOWN_TYPE){
+                    Log.v(TAG, view.getUrl() + "  ---> 重定向 --->  " + url);
+                }
+                //禁止重定向
+                return true;
             }
         });
     }
