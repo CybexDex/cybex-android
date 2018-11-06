@@ -54,7 +54,7 @@ android {
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode 7
-        versionName "1.7.0"
+        versionName "1.6.1"
         multiDexEnabled true
 
         javaCompileOptions {
