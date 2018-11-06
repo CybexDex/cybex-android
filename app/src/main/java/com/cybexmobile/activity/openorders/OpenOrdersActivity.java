@@ -187,6 +187,9 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         if(watchlistDataList == null || watchlistDataList.size() == 0){
             return;
         }
+        if(openOrderItem.openOrder.getBaseObject() == null || openOrderItem.openOrder.getQuoteObject() == null){
+            return;
+        }
         if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
             AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
             openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
