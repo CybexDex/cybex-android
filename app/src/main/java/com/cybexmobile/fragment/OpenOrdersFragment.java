@@ -142,10 +142,14 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(hidden){
-            EventBus.getDefault().unregister(this);
+        if (hidden) {
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
+            }
         } else {
-            EventBus.getDefault().register(this);
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
         }
     }
 
