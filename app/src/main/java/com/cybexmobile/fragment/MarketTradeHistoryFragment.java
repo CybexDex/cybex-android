@@ -150,7 +150,11 @@ public class MarketTradeHistoryFragment extends BaseFragment {
                 LinkedTreeMap op = (LinkedTreeMap) hashMaplist.get(i).get("op");
                 LinkedTreeMap pays = (LinkedTreeMap) op.get("pays");
                 LinkedTreeMap receives = (LinkedTreeMap) op.get("receives");
+                LinkedTreeMap fillPrice = (LinkedTreeMap) op.get("fill_price");
+                LinkedTreeMap base = (LinkedTreeMap) fillPrice.get("base");
+                LinkedTreeMap quote = (LinkedTreeMap) fillPrice.get("quote");
                 String date = (String) hashMaplist.get(i).get("time");
+
                 try {
                     Date converted = simpleDateFormat.parse(date);
                     Calendar cal = Calendar.getInstance();
@@ -164,16 +168,18 @@ public class MarketTradeHistoryFragment extends BaseFragment {
                 marketTrade.quote = mWatchlistData.getQuoteSymbol();
                 String paysAmount = String.format("%s", pays.get("amount"));
                 String receiveAmount = String.format("%s", receives.get("amount"));
+                double baseAmountForPrice = Double.parseDouble(String.format("%s", base.get("amount"))) / Math.pow(10, mWatchlistData.getBasePrecision());
+                double quoteAmountForPrice = Double.parseDouble(String.format("%s", quote.get("amount"))) / Math.pow(10, mWatchlistData.getQuotePrecision());
                 if (pays.get("asset_id").equals(mWatchlistData.getBaseId())) {
                     marketTrade.baseAmount = Double.parseDouble(paysAmount) / Math.pow(10, mWatchlistData.getBasePrecision());
                     marketTrade.quoteAmount = Double.parseDouble(receiveAmount) / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    marketTrade.price = marketTrade.baseAmount / marketTrade.quoteAmount;
+                    marketTrade.price = baseAmountForPrice / quoteAmountForPrice;
                     marketTrade.showRed = "showRed";
                 } else {
                     marketTrade.quoteAmount = Double.parseDouble(paysAmount) / Math.pow(10, mWatchlistData.getQuotePrecision());
                     marketTrade.baseAmount = Double.parseDouble(receiveAmount) / Math.pow(10, mWatchlistData.getBasePrecision());
 
-                    marketTrade.price = marketTrade.baseAmount / marketTrade.quoteAmount;
+                    marketTrade.price = quoteAmountForPrice / baseAmountForPrice;
                     marketTrade.showRed = "showGreen";
                 }
                 marketTrades.add(marketTrade);
