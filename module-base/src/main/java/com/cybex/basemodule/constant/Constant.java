@@ -111,4 +111,17 @@ public class Constant {
      * google play store application id
      */
     public static final String APPLICATION_ID = "com.cybexmobile.google";
+
+    /**
+     * market page spinner
+     */
+    public static final String[] DURATION_SPINNER = {"5m", "1h", "1d"};
+    public static final String[] MA_INDEX_SPINNER = {"MA", "EMA", "MACD", "BOLL"};
+    public static final String DURATION5M = "5m";
+    public static final String DURATION1H = "1h";
+    public static final String DURATION1D = "1D";
+    public static final String INDEXMA = "MA";
+    public static final String INDEXEMA = "EMA";
+    public static final String INDEXMACD = "MACD";
+    public static final String INDEXBOLL = "BOLL";
 }

@@ -71,6 +71,7 @@ public class MaterialSpinner extends AppCompatTextView {
   private int textColor;
   private int hintColor;
   private String hintText;
+  private int drawableLevelValue = 10000;
 
   public MaterialSpinner(Context context) {
     super(context);
@@ -472,8 +473,8 @@ public class MaterialSpinner extends AppCompatTextView {
   }
 
   private void animateArrow(boolean shouldRotateUp) {
-    int start = shouldRotateUp ? 0 : 10000;
-    int end = shouldRotateUp ? 10000 : 0;
+    int start = shouldRotateUp ? 0 : drawableLevelValue;
+    int end = shouldRotateUp ? drawableLevelValue : 0;
     ObjectAnimator animator = ObjectAnimator.ofInt(arrowDrawable, "level", start, end);
     animator.start();
   }
@@ -514,6 +515,10 @@ public class MaterialSpinner extends AppCompatTextView {
       return (int) itemHeight;
     }
     return (int) listViewHeight;
+  }
+
+  public void setDrawableLevelValue(int drawableLevelValue) {
+    this.drawableLevelValue = drawableLevelValue;
   }
 
   /**

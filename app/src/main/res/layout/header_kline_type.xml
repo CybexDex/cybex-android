@@ -1,74 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/margin_6"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/kline_ma"
-        android:layout_width="wrap_content"
+    <com.jaredrummler.materialspinner.MaterialSpinner
+        android:id="@+id/market_page_k_line_duration_spinner"
+        android:layout_width="@dimen/width_80"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_kline_ma"
-        android:text="MA"
-        style="@style/font_gray_small"
-        android:gravity="center"
-        android:textColor="@color/kline_header_selector"
-        android:clickable="true"
-        android:focusable="true"/>
+        android:textSize="@dimen/font_medium"
+        android:layout_marginStart="@dimen/margin_8"
+        app:ms_text_color="@color/material_spinner_text_color"
+        app:ms_background_selector="@drawable/material_spinner_selector"
+        app:ms_arrow_tint="@color/colorAccent"/>
 
-    <TextView
-        android:id="@+id/kline_ema"
-        android:layout_width="wrap_content"
+    <com.jaredrummler.materialspinner.MaterialSpinner
+        android:id="@+id/market_page_k_line_ma_spinner"
+        android:layout_width="@dimen/width_100"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_margin"
-        android:background="@drawable/bg_kline_ma"
-        android:gravity="center"
-        android:text="EMA"
-        style="@style/font_gray_small"
-        android:clickable="true"
-        android:focusable="true"
-        android:textColor="@color/kline_header_selector" />
-
-    <TextView
-        android:id="@+id/kline_macd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_kline_ma"
-        style="@style/font_gray_small"
-        android:gravity="center"
-        android:layout_marginStart="@dimen/activity_margin"
-        android:text="MACD"
-        android:clickable="true"
-        android:focusable="true"
-        android:textColor="@color/kline_header_selector" />
-
-    <TextView
-        android:id="@+id/kline_boll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_kline_ma"
-        android:layout_marginStart="@dimen/activity_margin"
-        android:gravity="center"
-        style="@style/font_gray_small"
-        android:text="BOLL"
-        android:clickable="true"
-        android:focusable="true"
-        android:textColor="@color/kline_header_selector" />
-
-    <TextView
-        android:id="@+id/kline_rsi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_margin"
-        android:background="@drawable/bg_kline_ma"
-        android:gravity="center"
-        style="@style/font_gray_small"
-        android:visibility="gone"
-        android:text="RSI"
-        android:clickable="true"
-        android:focusable="true"
-        android:textColor="@color/kline_header_selector" />
-
+        android:textSize="@dimen/font_medium"
+        android:layout_marginStart="@dimen/margin_16"
+        app:ms_text_color="@color/material_spinner_text_color"
+        app:ms_background_selector="@drawable/material_spinner_selector"
+        app:ms_arrow_tint="@color/colorAccent" />
 </LinearLayout>

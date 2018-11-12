@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.PriceUtil;
 import com.cybexmobile.activity.chat.ChatActivity;
@@ -59,6 +60,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -72,8 +74,9 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
+import butterknife.OnClick;
+
 
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
@@ -87,52 +90,106 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private static final long MARKET_STAT_INTERVAL_MILLIS_5_MIN = TimeUnit.MINUTES.toSeconds(5);
     private static final long MARKET_STAT_INTERVAL_MILLIS_1_HOUR = TimeUnit.HOURS.toSeconds(1);
     private static final long MARKET_STAT_INTERVAL_MILLIS_1_DAY = TimeUnit.DAYS.toSeconds(1);
-
     public static final int RESULT_CODE_BACK = 1;
+    public static final int MAXBUCKETCOUNT = 200;
 
-    protected MyCombinedChart mChartKline;
-    protected MyCombinedChart mChartVolume;
-    protected MyCombinedChart mChartCharts;
+    private Unbinder mUnbinder;
     protected XAxis xAxisKline, xAxisVolume, xAxisCharts;
     protected YAxis axisLeftKline, axisLeftVolume, axisLeftCharts;
     protected YAxis axisRightKline, axisRightVolume, axisRightCharts;
-
-
-    protected TextView mBOLLTv1, mBOLLTv2, mBOLLTv3;
-    protected TextView mEMA5Tv, mEMA10Tv;
-    protected TextView mMAView, mMACDView, mBOLLView, mEMAView, mRSIView;
-    protected TextView mTvKMa5, mTvKMa10, mTvKMa20;
-    protected TextView mCurrentPriceView, mHighPriceView, mLowPriceView, mChangeRateView, mVolumeBaseView, mVolumeQuoteView, mDuration5mView, mDuration1hView, mDuration1dView;
-    protected TextView mTvHighIndex, mTvLowIndex, mTvOpenIndex, mTvCloseIndex, mTvChangeRatioIndex, mTvChangePriceIndex, mTvVol;
-    protected LinearLayout mHeaderKlineChart, mHeaderBOLLChart, mHeaderEMAChart, mIndexHeaderLayout;
-    private Button mBtnBuy, mBtnSell;
-    private LinearLayout mLayoutFooter, mLayoutBaseHeader;
-    private NestedScrollView mScrollerView;
-
-    protected ProgressBar mProgressBar;
-    private ViewPager mViewPager;
-    private TabLayout mTabLayout;
-    private Toolbar mToolbar;
-    private TextView mTvTitle;
     private OrderHistoryFragmentPageAdapter mOrderHistoryFragmentPageAdapter;
     protected List<HistoryPrice> mHistoryPriceList;
     protected WatchlistData mWatchListData;
     private long mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
 
     private DataParse mData;
-    private DataParse mCacheData;
     private CandleData mCandleData;
     int mBasePrecision;
 
     private ArrayList<KLineBean> kLineDatas;
 
-    //
-    private static final int MAXBUCKETCOUNT = 200;
-
     private String mFromWhere;
 
-    private Unbinder mUnbinder;
-
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    @BindView(R.id.market_page_view_pager)
+    ViewPager mViewPager;
+    @BindView(R.id.market_page_tab_layout)
+    TabLayout mTabLayout;
+    @BindView(R.id.header_kline_chart)
+    LinearLayout mHeaderKlineChart;
+    @BindView(R.id.header_kline_boll)
+    LinearLayout mHeaderBOLLChart;
+    @BindView(R.id.k_line_header_ema_layout)
+    LinearLayout mHeaderEMAChart;
+    @BindView(R.id.index_header_layout)
+    LinearLayout mIndexHeaderLayout;
+    @BindView(R.id.market_page_layout_footer)
+    LinearLayout mLayoutFooter;
+    @BindView(R.id.markets_layout_base_header)
+    LinearLayout mLayoutBaseHeader;
+    @BindView(R.id.market_page_scroll_view)
+    NestedScrollView mScrollerView;
+    @BindView(R.id.kline_chart_k)
+    MyCombinedChart mChartKline;
+    @BindView(R.id.kline_chart_volume)
+    MyCombinedChart mChartVolume;
+    @BindView(R.id.kline_chart_chart)
+    MyCombinedChart mChartCharts;
+    @BindView(R.id.market_page_btn_buy)
+    Button mBtnBuy;
+    @BindView(R.id.market_page_btn_sell)
+    Button mBtnSell;
+    @BindView(R.id.market_page_progress_bar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.market_page_k_line_duration_spinner)
+    MaterialSpinner mDurationSpinner;
+    @BindView(R.id.market_page_k_line_ma_spinner)
+    MaterialSpinner mMaSpinner;
+    @BindView(R.id.market_page_current_money)
+    TextView mCurrentPriceView;
+    @BindView(R.id.market_page_high_price)
+    TextView mHighPriceView;
+    @BindView(R.id.market_page_low_price)
+    TextView mLowPriceView;
+    @BindView(R.id.market_page_volume_base)
+    TextView mVolumeBaseView;
+    @BindView(R.id.market_page_volume_quote)
+    TextView mVolumeQuoteView;
+    @BindView(R.id.market_page_exchange_variation)
+    TextView mChangeRateView;
+    @BindView(R.id.view_kline_tv_ma5)
+    TextView mTvKMa5;
+    @BindView(R.id.view_kline_tv_ma10)
+    TextView mTvKMa10;
+    @BindView(R.id.view_kline_tv_ma20)
+    TextView mTvKMa20;
+    @BindView(R.id.view_boll_tv_1)
+    TextView mBOLLTv1;
+    @BindView(R.id.view_boll_tv_2)
+    TextView mBOLLTv2;
+    @BindView(R.id.view_boll_tv_3)
+    TextView mBOLLTv3;
+    @BindView(R.id.view_ema_tv_5)
+    TextView mEMA5Tv;
+    @BindView(R.id.view_ema_tv_10)
+    TextView mEMA10Tv;
+    @BindView(R.id.index_high_tv)
+    TextView mTvHighIndex;
+    @BindView(R.id.index_low_tv)
+    TextView mTvLowIndex;
+    @BindView(R.id.index_open_tv)
+    TextView mTvOpenIndex;
+    @BindView(R.id.index_close_tv)
+    TextView mTvCloseIndex;
+    @BindView(R.id.tv_index_change_ratio)
+    TextView mTvChangeRatioIndex;
+    @BindView(R.id.tv_index_change_price)
+    TextView mTvChangePriceIndex;
+    @BindView(R.id.tv_index_vol)
+    TextView mTvVol;
     @BindView(R.id.tv_comment_count)
     TextView mTvCommentCount;
 
@@ -142,10 +199,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         setContentView(R.layout.activity_markets);
         mUnbinder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        mToolbar = findViewById(R.id.toolbar);
-        mTvTitle = findViewById(R.id.tv_title);
+        mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mWatchListData = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
+        mBasePrecision = mWatchListData.getBasePrecision();
         mFromWhere = getIntent().getStringExtra(INTENT_PARAM_FROM);
         initViews();
         mOrderHistoryFragmentPageAdapter = new OrderHistoryFragmentPageAdapter(getSupportFragmentManager());
@@ -154,12 +211,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mViewPager.setAdapter(mOrderHistoryFragmentPageAdapter);
         mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-
-        //mTabLayout.setupWithViewPager(mViewPager);
+        mDurationSpinner.setItems(Constant.DURATION_SPINNER);
+        mMaSpinner.setItems(Constant.MA_INDEX_SPINNER);
+        setSpinnerOnSelectItemListener();
         addContentToView(mWatchListData);
-        mBasePrecision = mWatchListData.getBasePrecision();
-        mDuration1dView.setSelected(true);
-        mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
         initChartKline();
         initChartVolume();
         initChartChart();
@@ -173,6 +228,120 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         mUnbinder.unbind();
+    }
+
+    public void setSpinnerOnSelectItemListener() {
+        mDurationSpinner.setSelectedIndex(2);
+        mDurationSpinner.setDrawableLevelValue(5000);
+        mDurationSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                view.setTextColor(getResources().getColor(R.color.btn_orange_end));
+                view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
+                mIndexHeaderLayout.setVisibility(View.GONE);
+                mLayoutBaseHeader.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mChartKline.setVisibility(View.INVISIBLE);
+                mChartVolume.setVisibility(View.INVISIBLE);
+                mDuration = getDuration(item);
+                loadMarketHistory();
+            }
+        });
+        mMaSpinner.setDrawableLevelValue(5000);
+        mMaSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                view.setTextColor(getResources().getColor(R.color.btn_orange_end));
+                view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
+                changeIndexLine(item);
+            }
+        });
+    }
+
+    private long getDuration(String item) {
+        switch (item) {
+            case Constant.DURATION5M:
+                return MARKET_STAT_INTERVAL_MILLIS_5_MIN;
+            case Constant.DURATION1H:
+                return MARKET_STAT_INTERVAL_MILLIS_1_HOUR;
+            case Constant.DURATION1D:
+                return MARKET_STAT_INTERVAL_MILLIS_1_DAY;
+            default:
+                return MARKET_STAT_INTERVAL_MILLIS_1_DAY;
+
+        }
+    }
+
+    private void changeIndexLine(String item) {
+        switch (item) {
+            case Constant.INDEXMA:
+                mData.initKLineMA(kLineDatas);
+                ArrayList<ILineDataSet> sets = new ArrayList<>();
+                sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
+                sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
+                sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
+                LineData lineData = new LineData(mData.getXVals(), sets);
+                CombinedData combinedData = new CombinedData(mData.getXVals());
+                combinedData.setData(lineData);
+                combinedData.setData(mCandleData);
+                mChartKline.setData(combinedData);
+                mChartKline.notifyDataSetChanged();
+                mChartKline.invalidate();
+                mChartCharts.setVisibility(View.GONE);
+                mHeaderKlineChart.setVisibility(View.VISIBLE);
+                mHeaderBOLLChart.setVisibility(View.GONE);
+                mHeaderEMAChart.setVisibility(View.GONE);
+                updateText(mData.getMa20DataL().size() - 1);
+                break;
+            case Constant.INDEXEMA:
+                mData.initEXPMA(kLineDatas);
+                ArrayList<ILineDataSet> setEMA = new ArrayList<>();
+                setEMA.add(setKDJMaLine(0, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData5()));
+                setEMA.add(setKDJMaLine(1, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData10()));
+                setEMA.add(setKDJMaLine(2, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData20()));
+                setEMA.add(setKDJMaLine(3, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData60()));
+                LineData lineDataEma = new LineData(mData.getXVals(), setEMA);
+
+                CombinedData combinedDataEMa = new CombinedData(mData.getXVals());
+                combinedDataEMa.setData(lineDataEma);
+                combinedDataEMa.setData(mCandleData);
+                mChartKline.setData(combinedDataEMa);
+                mChartKline.invalidate();
+                mChartCharts.setVisibility(View.GONE);
+                mHeaderKlineChart.setVisibility(View.GONE);
+                mHeaderBOLLChart.setVisibility(View.GONE);
+                mHeaderEMAChart.setVisibility(View.VISIBLE);
+                updateEMA(mData.getExpmaData5().size() - 1);
+                break;
+            case Constant.INDEXBOLL:
+                mData.initBOLL(kLineDatas);
+                ArrayList<ILineDataSet> setsBoll = new ArrayList<>();
+                setsBoll.add(setKDJMaLine(0, mData.getXVals(), (ArrayList<Entry>) mData.getBollDataUP()));
+                setsBoll.add(setKDJMaLine(1, mData.getXVals(), (ArrayList<Entry>) mData.getBollDataMB()));
+                setsBoll.add(setKDJMaLine(2, mData.getXVals(), (ArrayList<Entry>) mData.getBollDataDN()));
+                LineData lineDataBoll = new LineData(mData.getXVals(), setsBoll);
+                CombinedData combinedDataBoll = new CombinedData(mData.getXVals());
+                combinedDataBoll.setData(lineDataBoll);
+                combinedDataBoll.setData(mCandleData);
+                mChartKline.setData(combinedDataBoll);
+                mChartKline.invalidate();
+                mChartCharts.setVisibility(View.GONE);
+                mHeaderKlineChart.setVisibility(View.GONE);
+                mHeaderBOLLChart.setVisibility(View.VISIBLE);
+                mHeaderEMAChart.setVisibility(View.GONE);
+                updateBOLL(mData.getBollDataUP().size() - 1);
+                break;
+            case Constant.INDEXMACD:
+                setMACDByChart(mChartCharts);
+                mChartCharts.setVisibility(View.VISIBLE);
+                mChartCharts.invalidate();
+                mHeaderKlineChart.setVisibility(View.GONE);
+                mHeaderBOLLChart.setVisibility(View.GONE);
+                mHeaderEMAChart.setVisibility(View.GONE);
+                break;
+
+
+        }
     }
 
     @OnClick(R.id.tv_comment_now)
@@ -275,7 +444,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.moveViewToX(kLineDatas.size() - 1);
         mChartVolume.moveViewToX(kLineDatas.size() - 1);
         mChartCharts.moveViewToX(kLineDatas.size() - 1);
-        setOnClickListener();
         mChartKline.setVisibility(View.VISIBLE);
         mChartVolume.setVisibility(View.VISIBLE);
 
@@ -301,53 +469,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initViews() {
-        mScrollerView = findViewById(R.id.market_page_scroll_view);
-        mChartKline = (MyCombinedChart) findViewById(R.id.kline_chart_k);
-        mChartVolume = (MyCombinedChart) findViewById(R.id.kline_chart_volume);
-        mChartCharts = (MyCombinedChart) findViewById(R.id.kline_chart_chart);
-        mMAView = (TextView) findViewById(R.id.kline_ma);
-        mMACDView = (TextView) findViewById(R.id.kline_macd);
-        mBOLLView = (TextView) findViewById(R.id.kline_boll);
-        mEMAView = (TextView) findViewById(R.id.kline_ema);
-        mRSIView = (TextView) findViewById(R.id.kline_rsi);
-        mCurrentPriceView = (TextView) findViewById(R.id.market_page_current_money);
-        mHighPriceView = (TextView) findViewById(R.id.market_page_high_price);
-        mLowPriceView = (TextView) findViewById(R.id.market_page_low_price);
-        mVolumeBaseView = (TextView) findViewById(R.id.market_page_volume_base);
-        mVolumeQuoteView = (TextView) findViewById(R.id.market_page_volume_quote);
-        mChangeRateView = (TextView) findViewById(R.id.market_page_exchange_variation);
-        mProgressBar = (ProgressBar) findViewById(R.id.market_page_progress_bar);
-        mDuration5mView = (TextView) findViewById(R.id.market_page_5_min);
-        mDuration1hView = (TextView) findViewById(R.id.market_page_1_hour);
-        mDuration1dView = (TextView) findViewById(R.id.market_page_1_day);
-        mViewPager = (ViewPager) findViewById(R.id.market_page_view_pager);
-        mTabLayout = (TabLayout) findViewById(R.id.market_page_tab_layout);
-
-        mTvKMa5 = (TextView) findViewById(R.id.view_kline_tv_ma5);
-        mTvKMa10 = (TextView) findViewById(R.id.view_kline_tv_ma10);
-        mTvKMa20 = (TextView) findViewById(R.id.view_kline_tv_ma20);
-
-        mBOLLTv1 = findViewById(R.id.view_boll_tv_1);
-        mBOLLTv2 = findViewById(R.id.view_boll_tv_2);
-        mBOLLTv3 = findViewById(R.id.view_boll_tv_3);
-        mEMA5Tv = findViewById(R.id.view_ema_tv_5);
-        mEMA10Tv = findViewById(R.id.view_ema_tv_10);
-        mHeaderKlineChart = findViewById(R.id.header_kline_chart);
-        mHeaderBOLLChart = findViewById(R.id.header_kline_boll);
-        mHeaderEMAChart = findViewById(R.id.k_line_header_ema_layout);
-
-        mIndexHeaderLayout = findViewById(R.id.index_header_layout);
-        mTvHighIndex = findViewById(R.id.index_high_tv);
-        mTvLowIndex = findViewById(R.id.index_low_tv);
-        mTvOpenIndex = findViewById(R.id.index_open_tv);
-        mTvCloseIndex = findViewById(R.id.index_close_tv);
-        mTvChangeRatioIndex = findViewById(R.id.tv_index_change_ratio);
-        mTvChangePriceIndex = findViewById(R.id.tv_index_change_price);
-        mTvVol = findViewById(R.id.tv_index_vol);
-        mBtnBuy = findViewById(R.id.market_page_btn_buy);
-        mBtnSell = findViewById(R.id.market_page_btn_sell);
-        mLayoutFooter = findViewById(R.id.market_page_layout_footer);
-        mLayoutBaseHeader = findViewById(R.id.markets_layout_base_header);
         mLayoutFooter.setVisibility(mFromWhere == null ? View.VISIBLE : View.GONE);
         setViewListener();
     }
@@ -1102,210 +1223,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             if (index >= 0 && index < mData.getExpmaData10().size())
                 mEMA10Tv.setText(MyUtils.getDecimalFormatVol(mData.getExpmaData10().get(index).getVal()));
         }
-    }
-
-
-    private void setOnClickListener() {
-        mMAView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMAView.setSelected(true);
-                mBOLLView.setSelected(false);
-                mMACDView.setSelected(false);
-                mEMAView.setSelected(false);
-                mData.initKLineMA(kLineDatas);
-                ArrayList<ILineDataSet> sets = new ArrayList<>();
-                /******此处修复如果显示的点的个数达不到MA均线的位置所有的点都从0开始计算最小值的问题******************************/
-                sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
-                sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
-                sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
-
-
-                LineData lineData = new LineData(mData.getXVals(), sets);
-                CombinedData combinedData = new CombinedData(mData.getXVals());
-                combinedData.setData(lineData);
-                combinedData.setData(mCandleData);
-                mChartKline.setData(combinedData);
-                mChartKline.notifyDataSetChanged();
-                mChartKline.invalidate();
-                mChartCharts.setVisibility(View.GONE);
-//                setHandler(mChartKline);
-                mHeaderKlineChart.setVisibility(View.VISIBLE);
-                mHeaderBOLLChart.setVisibility(View.GONE);
-                mHeaderEMAChart.setVisibility(View.GONE);
-                updateText(mData.getMa20DataL().size() - 1);
-
-
-            }
-        });
-
-        mMACDView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMACDView.setSelected(true);
-                mMAView.setSelected(false);
-                mBOLLView.setSelected(false);
-                mEMAView.setSelected(false);
-                setMACDByChart(mChartCharts);
-                mChartCharts.setVisibility(View.VISIBLE);
-                mChartCharts.invalidate();
-                mHeaderKlineChart.setVisibility(View.GONE);
-                mHeaderBOLLChart.setVisibility(View.GONE);
-                mHeaderEMAChart.setVisibility(View.GONE);
-
-            }
-        });
-
-        mBOLLView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                setBOLLByChart(mChartCharts);
-//                mChartCharts.invalidate();
-                mMAView.setSelected(false);
-                mBOLLView.setSelected(true);
-                mEMAView.setSelected(false);
-                mMACDView.setSelected(false);
-                mData.initBOLL(kLineDatas);
-                ArrayList<ILineDataSet> sets = new ArrayList<>();
-                sets.add(setKDJMaLine(0, mData.getXVals(), (ArrayList<Entry>) mData.getBollDataUP()));
-                sets.add(setKDJMaLine(1, mData.getXVals(), (ArrayList<Entry>) mData.getBollDataMB()));
-                sets.add(setKDJMaLine(2, mData.getXVals(), (ArrayList<Entry>) mData.getBollDataDN()));
-                LineData lineData = new LineData(mData.getXVals(), sets);
-                CombinedData combinedData = new CombinedData(mData.getXVals());
-                combinedData.setData(lineData);
-                combinedData.setData(mCandleData);
-                mChartKline.setData(combinedData);
-                mChartKline.invalidate();
-                mChartCharts.setVisibility(View.GONE);
-                mHeaderKlineChart.setVisibility(View.GONE);
-                mHeaderBOLLChart.setVisibility(View.VISIBLE);
-                mHeaderEMAChart.setVisibility(View.GONE);
-                updateBOLL(mData.getBollDataUP().size() - 1);
-
-
-            }
-        });
-
-        mEMAView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMAView.setSelected(false);
-                mBOLLView.setSelected(false);
-                mEMAView.setSelected(true);
-                mMACDView.setSelected(false);
-                mData.initEXPMA(kLineDatas);
-
-                ArrayList<ILineDataSet> sets = new ArrayList<>();
-                sets.add(setKDJMaLine(0, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData5()));
-                sets.add(setKDJMaLine(1, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData10()));
-                sets.add(setKDJMaLine(2, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData20()));
-                sets.add(setKDJMaLine(3, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData60()));
-                LineData lineData = new LineData(mData.getXVals(), sets);
-
-                CombinedData combinedData = new CombinedData(mData.getXVals());
-                combinedData.setData(lineData);
-                combinedData.setData(mCandleData);
-                mChartKline.setData(combinedData);
-                mChartKline.invalidate();
-                mChartCharts.setVisibility(View.GONE);
-                mHeaderKlineChart.setVisibility(View.GONE);
-                mHeaderBOLLChart.setVisibility(View.GONE);
-                mHeaderEMAChart.setVisibility(View.VISIBLE);
-                updateEMA(mData.getExpmaData5().size() - 1);
-
-            }
-        });
-
-        mRSIView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setRSIByChart(mChartCharts);
-                mChartCharts.invalidate();
-            }
-        });
-
-        mDuration5mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mDuration5mView.isSelected()) {
-                    return;
-                }
-                mDuration5mView.setSelected(true);
-                mDuration1hView.setSelected(false);
-                mDuration1dView.setSelected(false);
-                mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
-                mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration = MARKET_STAT_INTERVAL_MILLIS_5_MIN;
-                mIndexHeaderLayout.setVisibility(View.GONE);
-                mLayoutBaseHeader.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.VISIBLE);
-                mChartKline.setVisibility(View.INVISIBLE);
-                mChartVolume.setVisibility(View.INVISIBLE);
-                loadMarketHistory();
-            }
-        });
-
-        mDuration1hView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDuration5mView.setSelected(false);
-                mDuration1hView.setSelected(true);
-                mDuration1dView.setSelected(false);
-                mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
-                mDuration = MARKET_STAT_INTERVAL_MILLIS_1_HOUR;
-                mIndexHeaderLayout.setVisibility(View.GONE);
-                mProgressBar.setVisibility(View.VISIBLE);
-                mChartKline.setVisibility(View.INVISIBLE);
-                mChartVolume.setVisibility(View.INVISIBLE);
-                loadMarketHistory();
-            }
-        });
-
-        mDuration1dView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDuration5mView.setSelected(false);
-                mDuration1hView.setSelected(false);
-                mDuration1dView.setSelected(true);
-                mDuration5mView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration1dView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getResources().getDrawable(R.drawable.market_page_highlight_line));
-                mDuration1hView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
-                mIndexHeaderLayout.setVisibility(View.GONE);
-                mLayoutBaseHeader.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.VISIBLE);
-                mChartKline.setVisibility(View.INVISIBLE);
-                mChartVolume.setVisibility(View.INVISIBLE);
-                loadMarketHistory();
-            }
-        });
-    }
-
-    private void setDefaultMALine() {
-        mMAView.setSelected(true);
-        mBOLLView.setSelected(false);
-        mMACDView.setSelected(false);
-        mEMAView.setSelected(false);
-        mData.initKLineMA(kLineDatas);
-        ArrayList<ILineDataSet> sets = new ArrayList<>();
-        /******此处修复如果显示的点的个数达不到MA均线的位置所有的点都从0开始计算最小值的问题******************************/
-        sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
-        sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
-        sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
-
-
-        LineData lineData = new LineData(mData.getXVals(), sets);
-        CombinedData combinedData = new CombinedData(mData.getXVals());
-        combinedData.setData(lineData);
-        combinedData.setData(mCandleData);
-        mChartKline.setData(combinedData);
-        mChartKline.notifyDataSetChanged();
-        mChartKline.invalidate();
-        mChartCharts.setVisibility(View.GONE);
-        updateText(mData.getMa20DataL().size() - 1);
     }
 
     @Override
