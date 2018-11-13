@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.PriceUtil;
+import com.cybexmobile.activity.chat.ChatActivity;
 import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
@@ -69,9 +70,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CHANNEL;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FROM;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
@@ -124,10 +131,16 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
 
     private String mFromWhere;
 
+    private Unbinder mUnbinder;
+
+    @BindView(R.id.tv_comment_count)
+    TextView mTvCommentCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_markets);
+        mUnbinder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         mToolbar = findViewById(R.id.toolbar);
         mTvTitle = findViewById(R.id.tv_title);
@@ -159,6 +172,16 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        mUnbinder.unbind();
+    }
+
+    @OnClick(R.id.tv_comment_now)
+    public void onCommentNowClick(View view){
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra(INTENT_PARAM_CHANNEL, String.format("%s/%s",
+                AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol()),
+                AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
+        startActivity(intent);
     }
 
     private void loadMarketHistory() {

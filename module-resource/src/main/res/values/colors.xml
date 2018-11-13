@@ -87,4 +87,6 @@
     <!-- Material Spinner text color -->
     <color name="material_spinner_text_color">#8f9ab9</color>
 
+    <color name="color_1c78819a">#1c78819a</color>
+
 </resources>

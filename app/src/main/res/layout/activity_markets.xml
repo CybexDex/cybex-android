@@ -157,6 +157,37 @@
                 android:layout_height="match_parent"
                 android:visibility="gone" />
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_margin"
+            android:paddingStart="@dimen/activity_padding"
+            android:paddingEnd="@dimen/activity_padding"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_comment_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_medium"
+                android:gravity="center_vertical"
+                android:drawableStart="@drawable/ic_comment_24_px"
+                android:drawablePadding="@dimen/padding_3"
+                android:text="@string/text_empty"/>
+
+            <TextView
+                android:id="@+id/tv_comment_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/font_gray_medium"
+                android:alpha="0.5"
+                android:gravity="center_vertical"
+                android:layout_gravity="end"
+                android:drawableEnd="@drawable/ic_arrow_light_24_px"
+                android:text="@string/text_comment_now"/>
+
+        </FrameLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

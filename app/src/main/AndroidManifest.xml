@@ -180,6 +180,11 @@
             android:name=".activity.gateway.records.DepositAndWithdrawTotalActivity"
             android:label=""
             android:screenOrientation="portrait" />
+
+        <activity android:name=".activity.chat.ChatActivity"
+            android:label=""
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

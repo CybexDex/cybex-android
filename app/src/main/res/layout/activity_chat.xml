@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:subtitleTextColor="@color/primary_color_grey"
+        app:titleTextColor="@color/primary_color_grey"
+        app:navigationIcon="@drawable/ic_back_24_px">
+
+        <TextView
+            android:id="@+id/chat_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/font_white_dark_bold_large" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/chat_rv_chat_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/layout_footer"
+            android:scrollbars="none"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_chat_message"
+            tools:itemCount="15">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/chat_tv_new_message_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_orange_medium"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/layout_footer"
+            android:padding="@dimen/padding_6"
+            android:layout_marginBottom="@dimen/margin_6"
+            android:background="@color/bg_watchlist_item_focus_color"
+            android:visibility="gone"/>
+
+        <FrameLayout
+            android:id="@+id/layout_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_56"
+                android:background="@color/bg_watchlist_item_focus_color"
+                android:paddingStart="@dimen/activity_padding"
+                android:paddingEnd="@dimen/activity_padding"
+                android:paddingTop="@dimen/padding_8"
+                android:paddingBottom="@dimen/padding_8"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/chat_tv_message_normal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/font_white_dark_large"
+                    android:layout_marginEnd="@dimen/activity_margin"
+                    android:layout_toStartOf="@+id/chat_tv_send_normal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/padding_6"
+                    android:paddingEnd="@dimen/padding_6"
+                    android:singleLine="true"
+                    android:background="@drawable/bg_edit_chat"
+                    android:hint="@string/text_my_comment"
+                    android:textColorHint="@color/text_hint_color"/>
+
+                <TextView
+                    android:id="@+id/chat_tv_send_normal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_gray_large"
+                    android:textColor="@color/primary_color_orange"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:textAllCaps="false"
+                    android:background="@null"
+                    android:text="@string/text_chat_send" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/chat_layout_input_forced"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/bg_watchlist_item_focus_color"
+                android:paddingStart="@dimen/activity_padding"
+                android:paddingEnd="@dimen/activity_padding"
+                android:paddingTop="@dimen/padding_8"
+                android:paddingBottom="@dimen/padding_8"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/chat_et_message_forced"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/font_white_dark_large"
+                    android:padding="@dimen/padding_6"
+                    android:gravity="start|top"
+                    android:lines="3"
+                    android:maxLength="100"
+                    android:lineSpacingExtra="@dimen/line_spacing_extra_8"
+                    android:imeOptions="actionSend"
+                    android:inputType="textMultiLine"
+                    android:background="@drawable/bg_edit_chat"
+                    android:textCursorDrawable="@null"
+                    android:hint="@string/text_my_comment"
+                    android:textColorHint="@color/text_hint_color"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/padding_6"
+                    android:paddingBottom="@dimen/padding_6">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/chat_cb_anonymously_forced"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/Switch"
+                        style="@style/font_gray_medium"
+                        android:layout_centerVertical="true"
+                        android:text="@string/text_anonymously"/>
+
+                    <TextView
+                        android:id="@+id/chat_tv_message_length"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_gray_small"
+                        android:layout_marginEnd="@dimen/activity_margin"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/chat_tv_send_forced"
+                        android:text="0/100"/>
+
+                    <TextView
+                        android:id="@+id/chat_tv_send_forced"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_gray_large"
+                        android:textColor="@color/primary_color_orange"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:textAllCaps="false"
+                        android:background="@null"
+                        android:text="@string/text_chat_send" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

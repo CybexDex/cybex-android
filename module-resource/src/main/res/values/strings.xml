@@ -82,6 +82,7 @@
     <string name="index_change_price">Chg</string>
     <string name="index_change_ratio">Chg%</string>
     <string name="index_vol">Vol</string>
+    <string name="text_comment_now">Comment now</string>
 
     <!-- Setting Strings -->
     <string name="setting_language">Language</string>
@@ -489,4 +490,11 @@
     <string name="text_average_confirmation_time">Average Confirmation Time</string>
     <string name="text_trx_block">TRX/Block</string>
     <string name="text_top_gainers">Top Gainers</string>
+
+    <!-- ChatActivity -->
+    <string name="text_anonymously">Anonymously</string>
+    <string name="text_real_name">Real Name</string>
+    <string name="text_my_comment">My comment</string>
+    <string name="text_chat_send">Send</string>
+    <string name="text_new_message">%d new message</string>
 </resources>

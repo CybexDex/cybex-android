@@ -44,6 +44,8 @@ public class Constant {
     public static final String INTENT_PARAM_NAME = "name";
     public static final String INTENT_PARAM_URL = "intent_param_url";
 
+    public static final String INTENT_PARAM_CHANNEL = "intent_param_channel";
+
     public static final int FREQUENCY_MODE_ORDINARY_MARKET = 1;
     public static final int FREQUENCY_MODE_REAL_TIME_MARKET = 2;
     public static final int FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI = 3;

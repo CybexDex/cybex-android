@@ -86,6 +86,8 @@
     <string name="index_change_price">额</string>
     <string name="index_change_ratio">幅</string>
     <string name="index_vol">量</string>
+    <string name="text_comment_now">快来评论吧</string>
+
 
     <!-- Setting page -->
     <string name="setting_language">语言</string>
@@ -494,5 +496,12 @@
     <string name="text_average_confirmation_time">平均交易确认时间</string>
     <string name="text_trx_block">每秒交易数</string>
     <string name="text_top_gainers">涨幅榜</string>
+
+    <!-- ChatActivity -->
+    <string name="text_anonymously">匿名</string>
+    <string name="text_real_name">实名</string>
+    <string name="text_my_comment">我来说两句</string>
+    <string name="text_chat_send">发送</string>
+    <string name="text_new_message">有%d条新消息</string>
 
 </resources>
