@@ -272,6 +272,26 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         }
     }
 
+    private void setDefaultAverageAlgorithm() {
+        mData.initKLineMA(kLineDatas);
+        ArrayList<ILineDataSet> sets = new ArrayList<>();
+        sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
+        sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
+        sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
+        LineData lineData = new LineData(mData.getXVals(), sets);
+        CombinedData combinedData = new CombinedData(mData.getXVals());
+        combinedData.setData(lineData);
+        combinedData.setData(mCandleData);
+        mChartKline.setData(combinedData);
+        mChartKline.notifyDataSetChanged();
+        mChartKline.invalidate();
+        mChartCharts.setVisibility(View.GONE);
+        mHeaderKlineChart.setVisibility(View.VISIBLE);
+        mHeaderBOLLChart.setVisibility(View.GONE);
+        mHeaderEMAChart.setVisibility(View.GONE);
+        updateText(mData.getMa20DataL().size() - 1);
+    }
+
     private void changeIndexLine(String item) {
         switch (item) {
             case Constant.INDEXMA:
@@ -458,6 +478,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.invalidate();
         mChartVolume.invalidate();
         mChartCharts.invalidate();
+        setDefaultAverageAlgorithm();
     }
 
     private double getLowFromPriceList(List<HistoryPrice> historyPriceList) {
