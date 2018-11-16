@@ -8,23 +8,23 @@ public class ChatReply {
     public static final int STATUS_SUCCESS = 0;
     public static final int STATUS_FAILED = 1;
 
-    private int Status;// 0-success, 1-failed
-    private long MsgID; // 消息id
+    private int status;// 0-success, 1-failed
+    private long msgID; // 消息id
 
     public int getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(int status) {
-        Status = status;
+        status = status;
     }
 
     public long getMsgID() {
-        return MsgID;
+        return msgID;
     }
 
     public void setMsgID(long msgID) {
-        MsgID = msgID;
+        this.msgID = msgID;
     }
 
 }

@@ -28,6 +28,8 @@ public class RetrofitFactory {
     public static final String eto_base_url = "https://eto.cybex.io/api/";
     //Eto测试服务器
     public static final String eto_base_url_test = "https://ieo-apitest.cybex.io/api/";
+    //Chat正式服务器
+    public static final String chat_base_url = "http://47.91.242.71:9099/";
 
     private OkHttpClient okHttpClient;
 
@@ -36,6 +38,7 @@ public class RetrofitFactory {
     private FaucetHttpApi faucetHttpApi;
     private GatewayHttpApi gatewayHttpApi;
     private EtoHttpApi etoHttpApi;
+    private ChatHttpApi chatHttpApi;
 
     //是否是正式服务器环境
     public boolean isOfficialServer = true;
@@ -141,6 +144,22 @@ public class RetrofitFactory {
             etoHttpApi = retrofit.create(EtoHttpApi.class);
         }
         return etoHttpApi;
+    }
+
+    public ChatHttpApi apiChat() {
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before apiEto");
+        }
+        if(chatHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(isOfficialServer ? chat_base_url : chat_base_url)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            chatHttpApi = retrofit.create(ChatHttpApi.class);
+        }
+        return chatHttpApi;
     }
 
     public void setOfficialServer(boolean officialServer) {

@@ -1,23 +1,17 @@
 package com.cybex.provider.graphene.chat;
 
 /**
- * 聊天发送消息或者登录
- * @param <T>
+ * 聊天推送响应
  */
-public class ChatRequest<T> {
+public class ChatSubscribe<T> {
 
+    public static final int TYPE_REPLY = 0;
     public static final int TYPE_LOGIN = 1;
     public static final int TYPE_MESSAGE = 2;
 
-    private int type;// 1-login, 2-message
-    private T data;// 数据json对象
-
-    public ChatRequest() {}
-
-    public ChatRequest(int type, T data) {
-        this.type = type;
-        this.data = data;
-    }
+    private int type;// 数据类型，0-消息回应，2-消息
+    private int online;// 在线人数
+    private T data;// 数据内容
 
     public int getType() {
         return type;
@@ -27,6 +21,14 @@ public class ChatRequest<T> {
         this.type = type;
     }
 
+    public int getOnline() {
+        return online;
+    }
+
+    public void setOnline(int online) {
+        this.online = online;
+    }
+
     public T getData() {
         return data;
     }
@@ -34,4 +36,5 @@ public class ChatRequest<T> {
     public void setData(T data) {
         this.data = data;
     }
+
 }

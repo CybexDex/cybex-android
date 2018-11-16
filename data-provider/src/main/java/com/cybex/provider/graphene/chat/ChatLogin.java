@@ -5,31 +5,37 @@ package com.cybex.provider.graphene.chat;
  */
 public class ChatLogin {
 
-    private String Channel;// 频道名字，使用币对来表示
-    private String MessageSize;// 第一次批量推送的消息数量
-    private String DeviceID;// 设备id
+    private String channel;// 频道名字，使用币对来表示
+    private String messageSize;// 第一次批量推送的消息数量
+    private String deviceID;// 设备id
+
+    public ChatLogin(String channel, String messageSize, String deviceID) {
+        this.channel = channel;
+        this.messageSize = messageSize;
+        this.deviceID = deviceID;
+    }
 
     public String getChannel() {
-        return Channel;
+        return channel;
     }
 
     public void setChannel(String channel) {
-        Channel = channel;
+        this.channel = channel;
     }
 
     public String getMessageSize() {
-        return MessageSize;
+        return messageSize;
     }
 
     public void setMessageSize(String messageSize) {
-        MessageSize = messageSize;
+        this.messageSize = messageSize;
     }
 
     public String getDeviceID() {
-        return DeviceID;
+        return deviceID;
     }
 
     public void setDeviceID(String deviceID) {
-        DeviceID = deviceID;
+        this.deviceID = deviceID;
     }
 }

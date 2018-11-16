@@ -55,6 +55,6 @@ dependencies {
     //Arouter
     api 'com.alibaba:arouter-api:1.4.0'
     //rxpermissions
-    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
+    api 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
 
 }

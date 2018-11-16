@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.PriceUtil;
 import com.cybexmobile.activity.chat.ChatActivity;
@@ -76,6 +77,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
@@ -109,6 +114,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private ArrayList<KLineBean> kLineDatas;
 
     private String mFromWhere;
+
+    private Disposable mDisposable;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -224,9 +231,18 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        loadLastMsgID();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if(mDisposable != null && !mDisposable.isDisposed()){
+            mDisposable.dispose();
+        }
         mUnbinder.unbind();
     }
 
@@ -371,6 +387,26 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol()),
                 AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
         startActivity(intent);
+    }
+
+    private void loadLastMsgID() {
+        mDisposable = RetrofitFactory.getInstance().apiChat().getLastMsgID(
+                String.format("%s/%s", AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol()),
+                AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        mTvCommentCount.setText(integer.intValue() + "");
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                });
+
     }
 
     private void loadMarketHistory() {

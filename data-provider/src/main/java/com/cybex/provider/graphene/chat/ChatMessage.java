@@ -5,39 +5,63 @@ package com.cybex.provider.graphene.chat;
  */
 public class ChatMessage {
 
-    private String UserName;// 用户名
-    private long MsgID;// 消息id
-    private String Message;// 消息内容
-    private String DeviceID;// 设备id
-    private long Timestamp;// 时间戳
-    private String Sign;// 签名信息，Sign=sign(SHA256({UserName}_{Message}))
+    private String userName;// 用户名
+    private long msgID;// 消息id
+    private String message;// 消息内容
+    private String deviceID;// 设备id
+    private long timestamp;// 时间戳
+    private int signed;//0-未签名验证过的，1-签名验证过的
 
     public ChatMessage(String userName, String message) {
-        UserName = userName;
-        Message = message;
+        this.userName = userName;
+        this.message = message;
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
+        this.userName = userName;
+    }
+
+    public long getMsgID() {
+        return msgID;
+    }
+
+    public void setMsgID(long msgID) {
+        this.msgID = msgID;
     }
 
     public String getMessage() {
-        return Message;
+        return message;
     }
 
     public void setMessage(String message) {
-        Message = message;
+        this.message = message;
     }
 
-    public String getSign() {
-        return Sign;
+    public String getDeviceID() {
+        return deviceID;
     }
 
-    public void setSign(String sign) {
-        Sign = sign;
+    public void setDeviceID(String deviceID) {
+        this.deviceID = deviceID;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getSigned() {
+        return signed;
+    }
+
+    public void setSigned(int signed) {
+        this.signed = signed;
     }
 }

@@ -33,15 +33,19 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     private List<ChatMessage> mChatMessages;
     private int mType;
     private OnItemClickListener mListener;
+    private String mUserName;
+    private String mDeviceId;
 
-    public ChatRecyclerViewAdapter(Context context, List<ChatMessage> chatMessages) {
-        this(context, TYPE_MESSAGE, chatMessages);
+    public ChatRecyclerViewAdapter(Context context, String userName, String deviceId, List<ChatMessage> chatMessages) {
+        this(context, TYPE_MESSAGE, userName, deviceId, chatMessages);
     }
 
-    public ChatRecyclerViewAdapter(Context context, int type, List<ChatMessage> chatMessages) {
+    public ChatRecyclerViewAdapter(Context context, int type, String userName, String deviceId, List<ChatMessage> chatMessages) {
         mContext = context;
         mChatMessages = chatMessages;
         mType = type;
+        mUserName = userName;
+        mDeviceId = deviceId;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -80,6 +84,9 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
             @Override
             public void updateDrawState(@NonNull TextPaint ds) {
                 super.updateDrawState(ds);
+                if(mDeviceId.equals(chatMessage.getDeviceID())) {
+                    ds.setColor(mContext.getResources().getColor(R.color.primary_color_orange));
+                }
                 ds.setUnderlineText(false);
             }
         }, 0, username.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
