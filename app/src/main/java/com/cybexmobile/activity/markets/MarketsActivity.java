@@ -507,6 +507,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartVolume.setAutoScaleMinMaxEnabled(true);
         mChartCharts.setAutoScaleMinMaxEnabled(true);
 
+        mChartKline.setVisibleXRangeMinimum(40);
+
         mChartKline.notifyDataSetChanged();
         mChartVolume.notifyDataSetChanged();
         mChartCharts.notifyDataSetChanged();
@@ -593,7 +595,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initChartKline() {
-        mChartKline.setScaleXEnabled(true);//启用图表缩放事件
+
+        mChartKline.setScaleEnabled(true);//启用图表缩放事件
         mChartKline.setDrawBorders(true);//是否绘制边线
         mChartKline.setBorderWidth(1);//边线宽度，单位dp
         mChartKline.setDragEnabled(true);//启用图表拖拽事件
@@ -642,6 +645,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initChartVolume() {
+        mChartVolume.setScaleEnabled(true);
         mChartVolume.setDrawBorders(true);  //边框是否显示
         mChartVolume.setBorderWidth(1);//边框的宽度，float类型，dp单位
         mChartVolume.setBorderColor(Color.TRANSPARENT);//边框颜色
@@ -917,20 +921,8 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         set.setValueTextColor(getResources().getColor(R.color.font_color_white_dark));
         CandleData candleData = new CandleData(mData.getXVals(), set);
         mCandleData = candleData;
-        combinedChart.getAxisLeft().setAxisMinValue((float) getLowFromPriceList(mHistoryPriceList));
-
-        mData.initKLineMA(kLineDatas);
-        ArrayList<ILineDataSet> sets = new ArrayList<>();
-        /******此处修复如果显示的点的个数达不到MA均线的位置所有的点都从0开始计算最小值的问题******************************/
-        sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
-        sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
-        sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
-
-
-        LineData lineData = new LineData(mData.getXVals(), sets);
 
         CombinedData combinedData = new CombinedData(mData.getXVals());
-//        combinedData.setData(lineData);
         combinedData.setData(candleData);
         combinedChart.setData(combinedData);
 
@@ -1173,9 +1165,13 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private void setHandler(MyCombinedChart combinedChart) {
         final ViewPortHandler viewPortHandlerBar = combinedChart.getViewPortHandler();
         viewPortHandlerBar.setMaximumScaleX(culcMaxscale(mData.getXVals().size()));
+        Log.e("scaleX", String.valueOf(combinedChart.getScaleX()));
+        Log.e("scaleY", String.valueOf(combinedChart.getScaleY()));
         Matrix touchmatrix = viewPortHandlerBar.getMatrixTouch();
-        final float xscale = 3;
-        touchmatrix.postScale(xscale, 1f);
+        if (combinedChart.getScaleX() < 3) {
+            final float xscale = 3;
+            touchmatrix.postScale(xscale, 1f);
+        }
     }
 
     @NonNull
