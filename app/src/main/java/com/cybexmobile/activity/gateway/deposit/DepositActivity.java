@@ -95,18 +95,12 @@ public class DepositActivity extends BaseActivity {
     ImageView mQRCodeView;
     @BindView(R.id.deposit_save_qr_address)
     TextView mSaveQRCodeView;
-    @BindView(R.id.deposit_get_new_address_icon)
-    ImageView mGetNewAddressIcon;
     @BindView(R.id.deposit_qr_address)
     TextView mQRAddressView;
     @BindView(R.id.deposit_copy_address)
     LinearLayout mCopyAddressLayout;
     @BindView(R.id.deposit_copy_address_tv)
     TextView mCopyAddressTv;
-    @BindView(R.id.deposit_get_new_address)
-    LinearLayout mGetNewAddress;
-    @BindView(R.id.deposit_get_new_address_tv)
-    TextView mGetNewAddressTv;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.deposit_toolbar_text_view)
@@ -150,7 +144,6 @@ public class DepositActivity extends BaseActivity {
                 mEosLinearLayout.setVisibility(View.VISIBLE);
                 mNormalLinearLayout.setVisibility(View.GONE);
                 mCopyAddressTv.setText(getResources().getString(R.string.deposit_eos_copy_code));
-                mGetNewAddressTv.setText(getResources().getString(R.string.deposit_eos_get_new_code));
             }
             getAddress(mUserName, mAssetName);
             requestDetailMessage();
@@ -242,14 +235,6 @@ public class DepositActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.deposit_get_new_address)
-    public void onClickGetNewAddress(View view) {
-        if (AntiMultiClick.isFastClick()) {
-            Animation animation = getAnimation();
-            mutateNewAddress(mUserName, mAssetName);
-        }
-    }
-
     private void requestDetailMessage() {
         if (Locale.getDefault().getLanguage().equals("zh")) {
             mTextMessage.setText(mCnInfo);
@@ -318,55 +303,9 @@ public class DepositActivity extends BaseActivity {
                 }));
     }
 
-    private void mutateNewAddress(String userName, String asset) {
-        ApolloMutationCall<NewDepositAddress.Data> apolloMutationCall = ApolloClientApi.getInstance().client()
-                .mutate(NewDepositAddress.builder().accountName(userName).asset(asset).build());
-        mCompositeDisposable.add(Rx2Apollo.from(apolloMutationCall)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Response<NewDepositAddress.Data>>() {
-                    @Override
-                    public void accept(Response<NewDepositAddress.Data> response) throws Exception {
-                        NewDepositAddress.Data newDepositAddressData = response.data();
-                        if(newDepositAddressData == null){
-                            return;
-                        }
-                        AccountAddressRecord accountAddressRecord = newDepositAddressData.newDepositAddress().fragments().accountAddressRecord();
-                        String address = accountAddressRecord.address();
-                        if (DateUtils.formatToMillis(accountAddressRecord.createAt().toString()) != 0) {
-                            if (mAssetName.equals(EOS_NAME)) {
-                                String eosAccountName = address.substring(0, address.indexOf("["));
-                                String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
-                                mEosAccountNameTv.setText(eosAccountName);
-                                mQRAddressView.setText(verificationCode);
-                            } else {
-                                mQRAddressView.setText(address);
-                                generateBarCode(address);
-                            }
-                        } else {
-                            ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.d("mutateAddress", throwable.getLocalizedMessage());
-                    }
-                }));
-    }
-
     private void generateBarCode(String barcode) {
         Bitmap bitmap = QRCode.createQRCodeWithLogo(barcode, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         mQRCodeView.setImageBitmap(bitmap);
-    }
-
-    private Animation getAnimation() {
-        Animation animation = new RotateAnimation(0.0f, 360.0f,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-                0.5f);
-        animation.setRepeatCount(-1);
-        animation.setDuration(2000);
-        return animation;
     }
 
     private void copyAddress(String address) {

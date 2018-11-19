@@ -162,6 +162,7 @@
                         android:id="@+id/deposit_copy_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -177,29 +178,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/line_spacing_extra_8"
                             android:text="@string/deposit_copy_address" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/deposit_get_new_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:layout_alignParentRight="true">
-
-                        <ImageView
-                            android:id="@+id/deposit_get_new_address_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_refresh" />
-
-                        <TextView
-                            android:id="@+id/deposit_get_new_address_tv"
-                            style="@style/font_orange_large"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/line_spacing_extra_8"
-                            android:text="@string/deposit_get_new_address" />
-
                     </LinearLayout>
 
 
