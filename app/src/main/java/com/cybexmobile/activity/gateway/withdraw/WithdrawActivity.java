@@ -90,6 +90,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_TAG;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_ID;
@@ -100,6 +101,7 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
 
 public class WithdrawActivity extends BaseActivity {
     private static String EOS = "EOS";
+    private static String XRP = "XRP";
 
     public Unbinder mUnbinder;
     private String mAssetName;
@@ -147,6 +149,8 @@ public class WithdrawActivity extends BaseActivity {
     EditText mWithdrawAmountEditText;
     @BindView(R.id.withdraw_memo_eos_layout)
     LinearLayout mWithdrawMemoEosLayout;
+    @BindView(R.id.withdraw_eos_xrp_tag_memo_title)
+    TextView mWithdrawEosXrpTagMemoTitleTv;
     @BindView(R.id.withdraw_memo_eos_et)
     EditText mWithdrawMemoEosEditText;
     @BindView(R.id.withdraw_error)
@@ -196,6 +200,10 @@ public class WithdrawActivity extends BaseActivity {
             mWithdrawAddressTv.setText(getResources().getString(R.string.withdraw_account_eos));
             mWithdrawAddress.setHint(getResources().getString(R.string.withdraw_enter_or_paste_account_hint_eos));
             mWithdrawMemoEosLayout.setVisibility(View.VISIBLE);
+            mWithdrawEosXrpTagMemoTitleTv.setText(getResources().getString(R.string.withdraw_memo_eos));
+        } else if (mAssetName.equals(XRP)) {
+            mWithdrawMemoEosLayout.setVisibility(View.VISIBLE);
+            mWithdrawEosXrpTagMemoTitleTv.setText(getResources().getString(R.string.withdraw_xrp_tag));
         }
         setAvailableAmount(mAvailableAmount, mAssetName);
         requestDetailMessage();
@@ -270,6 +278,8 @@ public class WithdrawActivity extends BaseActivity {
             intent.putExtra(INTENT_PARAM_ADDRESS, mWithdrawAddress.getText().toString().trim());
             if (mAssetName.equals(EOS)) {
                 intent.putExtra(INTENT_PARAM_CRYPTO_MEMO, mWithdrawMemoEosEditText.getText().toString().trim());
+            } else if (mAssetName.equals(XRP)) {
+                intent.putExtra(INTENT_PARAM_CRYPTO_TAG, mWithdrawMemoEosEditText.getText().toString().trim());
             }
             startActivity(intent);
             return;
@@ -290,6 +300,12 @@ public class WithdrawActivity extends BaseActivity {
                 if (address.getToken().equals("1.3.4")) {
                     if (!address.getMemo().isEmpty()) {
                         mWithdrawMemoEosEditText.setText(address.getMemo());
+                    }
+                }
+
+                if (address.getToken().equals("1.3.999")) {
+                    if (!address.getTag().isEmpty()) {
+                        mWithdrawMemoEosEditText.setText(address.getTag());
                     }
                 }
                 if (!mWithdrawAddress.isFocused()) {
@@ -483,6 +499,8 @@ public class WithdrawActivity extends BaseActivity {
                         intent.putExtra(INTENT_PARAM_CRYPTO_ID, mAssetObject.id.toString());
                         if (mAssetName.equals(EOS)) {
                             intent.putExtra(INTENT_PARAM_CRYPTO_MEMO, mWithdrawMemoEosEditText.getText().toString().trim());
+                        } else if (mAssetName.equals(XRP)) {
+                            intent.putExtra(INTENT_PARAM_CRYPTO_TAG, mWithdrawMemoEosEditText.getText().toString().trim());
                         }
                         startActivity(intent);
                         finish();
@@ -611,7 +629,7 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private String getMemo(String address, String assetName, String memo) {
-        if (mAssetName.equals(EOS)) {
+        if (mAssetName.equals(EOS) || mAssetName.equals(XRP)) {
             return "withdraw:" + "CybexGateway:" + assetName + ":" + address + "[" + memo + "]";
         }
         return "withdraw:" + "CybexGateway:" + assetName + ":" + address;

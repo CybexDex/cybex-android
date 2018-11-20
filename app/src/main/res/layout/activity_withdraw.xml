@@ -137,10 +137,10 @@
                     android:visibility="gone">
 
                     <TextView
+                        android:id="@+id/withdraw_eos_xrp_tag_memo_title"
                         style="@style/font_gray_medium"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/withdraw_memo_eos" />
+                        android:layout_height="wrap_content" />
 
                     <EditText
                         android:id="@+id/withdraw_memo_eos_et"

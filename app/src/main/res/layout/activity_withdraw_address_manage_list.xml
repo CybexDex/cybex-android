@@ -44,7 +44,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:alpha="0.5"
-            android:text="@string/withdraw_address_memo"
             style="@style/font_gray_small"
             android:visibility="gone"/>
 

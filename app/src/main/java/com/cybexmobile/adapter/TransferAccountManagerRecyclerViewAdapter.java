@@ -81,6 +81,9 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
         if (mTransferAddresses.get(position).getMemo() != null) {
             viewHolder.mTvMemo.setVisibility(View.VISIBLE);
             viewHolder.mTvMemo.setText(mTransferAddresses.get(position).getMemo());
+        } else if (mTransferAddresses.get(position).getTag() != null) {
+            viewHolder.mTvMemo.setVisibility(View.VISIBLE);
+            viewHolder.mTvMemo.setText(mTransferAddresses.get(position).getTag());
         } else {
             viewHolder.mTvMemo.setVisibility(View.GONE);
         }

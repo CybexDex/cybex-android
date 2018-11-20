@@ -30,8 +30,9 @@ public class AddressDao extends AbstractDao<Address, Long> {
         public final static Property Address = new Property(3, String.class, "address", false, "address");
         public final static Property Note = new Property(4, String.class, "note", false, "note");
         public final static Property Memo = new Property(5, String.class, "memo", false, "memo");
-        public final static Property Type = new Property(6, int.class, "type", false, "type");
-        public final static Property CreateTime = new Property(7, long.class, "createTime", false, "createTime");
+        public final static Property Tag = new Property(6, String.class, "tag", false, "tag");
+        public final static Property Type = new Property(7, int.class, "type", false, "type");
+        public final static Property CreateTime = new Property(8, long.class, "createTime", false, "createTime");
     }
 
 
@@ -53,8 +54,9 @@ public class AddressDao extends AbstractDao<Address, Long> {
                 "\"address\" TEXT," + // 3: address
                 "\"note\" TEXT," + // 4: note
                 "\"memo\" TEXT," + // 5: memo
-                "\"type\" INTEGER NOT NULL ," + // 6: type
-                "\"createTime\" INTEGER NOT NULL );"); // 7: createTime
+                "\"tag\" TEXT," + // 6: tag
+                "\"type\" INTEGER NOT NULL ," + // 7: type
+                "\"createTime\" INTEGER NOT NULL );"); // 8: createTime
     }
 
     /** Drops the underlying database table. */
@@ -96,8 +98,13 @@ public class AddressDao extends AbstractDao<Address, Long> {
         if (memo != null) {
             stmt.bindString(6, memo);
         }
-        stmt.bindLong(7, entity.getType());
-        stmt.bindLong(8, entity.getCreateTime());
+ 
+        String tag = entity.getTag();
+        if (tag != null) {
+            stmt.bindString(7, tag);
+        }
+        stmt.bindLong(8, entity.getType());
+        stmt.bindLong(9, entity.getCreateTime());
     }
 
     @Override
@@ -133,8 +140,13 @@ public class AddressDao extends AbstractDao<Address, Long> {
         if (memo != null) {
             stmt.bindString(6, memo);
         }
-        stmt.bindLong(7, entity.getType());
-        stmt.bindLong(8, entity.getCreateTime());
+ 
+        String tag = entity.getTag();
+        if (tag != null) {
+            stmt.bindString(7, tag);
+        }
+        stmt.bindLong(8, entity.getType());
+        stmt.bindLong(9, entity.getCreateTime());
     }
 
     @Override
@@ -151,8 +163,9 @@ public class AddressDao extends AbstractDao<Address, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // address
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // note
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // memo
-            cursor.getInt(offset + 6), // type
-            cursor.getLong(offset + 7) // createTime
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // tag
+            cursor.getInt(offset + 7), // type
+            cursor.getLong(offset + 8) // createTime
         );
         return entity;
     }
@@ -165,8 +178,9 @@ public class AddressDao extends AbstractDao<Address, Long> {
         entity.setAddress(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setNote(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setMemo(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setType(cursor.getInt(offset + 6));
-        entity.setCreateTime(cursor.getLong(offset + 7));
+        entity.setTag(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setType(cursor.getInt(offset + 7));
+        entity.setCreateTime(cursor.getLong(offset + 8));
      }
     
     @Override

@@ -241,13 +241,15 @@
     <string name="deposit_save_qr_code">Save QR Code</string>
     <string name="deposit_copy_address">Copy Address</string>
     <string name="deposit_get_new_address">Get New Address</string>
+    <string name="deposit_xrp_tag_text">XRP deposit Tag</string>
+    <string name="deposit_xrp_tag_warning_message">(Please send your XRP with the tag displayed below. please do not put any other information on Tag)</string>
+    <string name="deposit_xrp_copy_tag">Copy Tag</string>
     <string name="deposit_eos_copy_account_name">Copy Account Name</string>
     <string name="deposit_eos_copy_code">Copy Code</string>
     <string name="deposit_eos_get_new_code">Get New Code</string>
     <string name="deposit_eos_deposit_account">EOS Deposit Account</string>
     <string name="deposit_eos_verification_code">Verification code</string>
     <string name="deposit_eos_alert_message">(Must transfer your EOS to deposit account with this verification code in memo)</string>
-    <string name="deposit_record_button">Deposit Records</string>
     <string name="deposit_project_name">Project Name:</string>
     <string name="deposit_protocol_address">Protocol Address:</string>
 
@@ -257,6 +259,7 @@
     <string name="withdraw_account_eos">Withdrawal Account</string>
     <string name="withdraw_amount">Amount</string>
     <string name="withdraw_memo_eos">Memo</string>
+    <string name="withdraw_xrp_tag">Tag</string>
     <string name="withdraw_minimum_hint">Minimum </string>
     <string name="withdraw_all">All</string>
     <string name="withdraw_transfer_fee">Transfer Fee</string>
@@ -341,6 +344,7 @@
     <string name="text_crypto">Crypto</string>
     <string name="text_quantity">Quantity</string>
     <string name="text_memo">Memo</string>
+    <string name="text_tag">Tag</string>
     <string name="text_no_transfer_records">No transfer records</string>
     <string name="text_sent">Sent</string>
     <string name="text_received">Received</string>

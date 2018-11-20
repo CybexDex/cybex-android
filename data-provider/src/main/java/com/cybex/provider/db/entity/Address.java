@@ -37,6 +37,9 @@ public class Address implements Comparable<Address>{
     @Property(nameInDb = "memo")
     private String memo;//memo
 
+    @Property(nameInDb = "tag")
+    private String tag;
+
     @Property(nameInDb = "type")
     private int type;//类型
 
@@ -44,15 +47,16 @@ public class Address implements Comparable<Address>{
     private long createTime;//创建时间
 
 
-    @Generated(hash = 1619031669)
+    @Generated(hash = 1641525187)
     public Address(Long id, String account, String token, String address, String note, String memo,
-            int type, long createTime) {
+            String tag, int type, long createTime) {
         this.id = id;
         this.account = account;
         this.token = token;
         this.address = address;
         this.note = note;
         this.memo = memo;
+        this.tag = tag;
         this.type = type;
         this.createTime = createTime;
     }
@@ -99,6 +103,14 @@ public class Address implements Comparable<Address>{
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getMemo() {

@@ -150,11 +150,11 @@
                     android:background="@color/colorPrimary" />
 
                 <TextView
+                    android:id="@+id/add_transfer_account_memo_tag_title"
                     style="@style/font_grey_medium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_margin"
-                    android:text="@string/text_memo" />
+                    android:layout_marginTop="@dimen/activity_margin" />
 
                 <EditText
                     android:id="@+id/add_transfer_account_et_memo"

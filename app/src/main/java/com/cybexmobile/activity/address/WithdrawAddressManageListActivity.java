@@ -43,6 +43,7 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 public class WithdrawAddressManageListActivity extends BaseActivity implements TransferAccountManagerRecyclerViewAdapter.OnItemClickListener,
         AddressOperationSelectDialog.OnAddressOperationSelectedListener {
     private static String EOS = "EOS";
+    private static String XRP = "XRP";
 
     private Unbinder mUnbinder;
     private TransferAccountManagerRecyclerViewAdapter mWithdrawAddressManagerAdapter;
@@ -77,8 +78,14 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
         mTokenId = getIntent().getStringExtra("assetId");
         if (mTokenName.equals(EOS)) {
             mTvSubtitleMemo.setVisibility(View.VISIBLE);
+            mTvSubtitleMemo.setText(getResources().getString(R.string.withdraw_memo_eos));
             mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_account_title)));
             mTvNoteAddressAccount.setText(getResources().getString(R.string.withdraw_address_note_account));
+        } else if (mTokenName.equals(XRP)) {
+            mTvSubtitleMemo.setVisibility(View.VISIBLE);
+            mTvSubtitleMemo.setText(getResources().getString(R.string.withdraw_xrp_tag));
+            mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_address_title)));
+            mTvNoteAddressAccount.setText(getResources().getString(R.string.withdraw_address_note_address));
         } else {
             mTvSubtitleMemo.setVisibility(View.GONE);
             mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_address_title)));
@@ -221,7 +228,15 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
 
     private void copyAddress() {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("address", mCurrAddress.getAddress() + (TextUtils.isEmpty(mCurrAddress.getMemo()) ? "" : mCurrAddress.getMemo()));
+        ClipData clip;
+        if (!TextUtils.isEmpty(mCurrAddress.getMemo())) {
+            clip = ClipData.newPlainText("address", mCurrAddress.getAddress() + mCurrAddress.getMemo());
+        } else if (!TextUtils.isEmpty(mCurrAddress.getTag())) {
+            clip = ClipData.newPlainText("address", mCurrAddress.getAddress() + mCurrAddress.getTag());
+        } else {
+            clip = ClipData.newPlainText("address", mCurrAddress.getAddress());
+        }
+
         clipboard.setPrimaryClip(clip);
         ToastMessage.showNotEnableDepositToastMessage(WithdrawAddressManageListActivity.this,
                 getResources().getString(R.string.text_copied),

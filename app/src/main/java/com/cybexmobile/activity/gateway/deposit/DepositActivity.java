@@ -56,6 +56,7 @@ import com.cybexmobile.utils.QRCode;
 
 import java.util.Locale;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -69,6 +70,7 @@ import io.reactivex.schedulers.Schedulers;
 public class DepositActivity extends BaseActivity {
     private static int REQUEST_PERMISSION = 1;
     private static String EOS_NAME = "EOS";
+    private static String XRP_NAME = "XRP";
 
     private Unbinder mUnbinder;
     private Context mContext;
@@ -85,8 +87,20 @@ public class DepositActivity extends BaseActivity {
 
     @BindView(R.id.deposit_linear_layout)
     LinearLayout mNormalLinearLayout;
+    @BindView(R.id.deposit_xrp_copy_address_linear_layout)
+    LinearLayout mXrpCopyAddressLinearLayout;
+    @BindView(R.id.deposit_xrp_qr_address)
+    TextView mXrpAddressTv;
+    @BindView(R.id.deposit_xrp_copy_address_button_linear_layout)
+    LinearLayout mXrpCopyAddressClickButtonLinearLayout;
     @BindView(R.id.deposit_eos_linear_layout)
     LinearLayout mEosLinearLayout;
+    @BindView(R.id.eos_xrp_verification_code_linear_layout)
+    LinearLayout mEosXrpTextLayout;
+    @BindView(R.id.eos_xrp_verification_tag_tv)
+    TextView mEosXrpVerificationCodeTagTv;
+    @BindView(R.id.eos_xrp_verification_warning_red_tv)
+    TextView mEosXrpWarningRedTv;
     @BindView(R.id.deposit_eos_account)
     TextView mEosAccountNameTv;
     @BindView(R.id.deposit_eos_copy_account_name)
@@ -142,8 +156,17 @@ public class DepositActivity extends BaseActivity {
         if (mIsEnabled) {
             if (mAssetName.equals(EOS_NAME)) {
                 mEosLinearLayout.setVisibility(View.VISIBLE);
+                mEosXrpTextLayout.setVisibility(View.VISIBLE);
                 mNormalLinearLayout.setVisibility(View.GONE);
+                mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_eos_verification_code));
+                mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_eos_alert_message));
                 mCopyAddressTv.setText(getResources().getString(R.string.deposit_eos_copy_code));
+            } else if (mAssetName.equals(XRP_NAME)) {
+                mXrpCopyAddressLinearLayout.setVisibility(View.VISIBLE);
+                mEosXrpTextLayout.setVisibility(View.VISIBLE);
+                mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_xrp_tag_text));
+                mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_xrp_tag_warning_message));
+                mCopyAddressTv.setText(getResources().getString(R.string.deposit_xrp_copy_tag));
             }
             getAddress(mUserName, mAssetName);
             requestDetailMessage();
@@ -228,6 +251,16 @@ public class DepositActivity extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.deposit_xrp_copy_address_button_linear_layout)
+    public void onClickXrpCopyAddress(View view) {
+        if (AntiMultiClick.isFastClick()) {
+            if (mXrpAddressTv.getText() != null) {
+                copyAddress(mXrpAddressTv.getText().toString());
+            }
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_copied), R.drawable.ic_check_circle_green);
+        }
+    }
+
     @OnClick(R.id.deposit_save_qr_address)
     public void onClickSaveAddress(View view) {
         if (AntiMultiClick.isFastClick()) {
@@ -278,6 +311,12 @@ public class DepositActivity extends BaseActivity {
                             String verificationCode = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
                             mEosAccountNameTv.setText(eosAccountName);
                             mQRAddressView.setText(verificationCode);
+                        } else if (assetName.equals(XRP_NAME)) {
+                            String xrpAddress = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
+                            String xrpTag = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
+                            mXrpAddressTv.setText(xrpAddress);
+                            mQRAddressView.setText(xrpTag);
+                            generateBarCode(xrpAddress);
                         } else {
                             mQRAddressView.setText(accountAddressRecord.address());
                             generateBarCode(accountAddressRecord.address());
