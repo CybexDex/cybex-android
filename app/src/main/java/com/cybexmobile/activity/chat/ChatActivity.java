@@ -1,8 +1,13 @@
 package com.cybexmobile.activity.chat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
@@ -24,19 +29,27 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.dialog.UnlockDialog;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chat.ChatLogin;
 import com.cybex.provider.graphene.chat.ChatMessage;
 import com.cybex.provider.graphene.chat.ChatMessageRequest;
 import com.cybex.provider.graphene.chat.ChatMessages;
 import com.cybex.provider.graphene.chat.ChatReply;
 import com.cybex.provider.graphene.chat.ChatRequest;
+import com.cybex.provider.graphene.chat.ChatSocketClosed;
 import com.cybex.provider.graphene.chat.ChatSocketFailure;
 import com.cybex.provider.graphene.chat.ChatSocketMessage;
 import com.cybex.provider.graphene.chat.ChatSocketOpen;
 import com.cybex.provider.graphene.chat.ChatSubscribe;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.chat.RxChatWebSocket;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.login.LoginActivity;
 import com.cybexmobile.adapter.ChatRecyclerViewAdapter;
 import com.cybexmobile.adapter.decoration.VisibleDividerItemDecoration;
 import com.cybexmobile.utils.DeviceUtils;
@@ -51,6 +64,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,13 +72,17 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 import butterknife.Unbinder;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
+
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CHANNEL;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.OnSoftKeyBoardChangeListener,
@@ -111,9 +129,12 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     private RxChatWebSocket mRxChatWebSocket;
     private String mAccountName;
     private String mChannel;//频道
+    private boolean mIsLogin;
 
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private Unbinder mUnbinder;
+    private WebSocketService mWebSocketService;
+    private FullAccountObject mFullAccountObject;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -123,9 +144,13 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         setSupportActionBar(mToolbar);
         SoftKeyBoardListener.setListener(this, this);
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+        mIsLogin = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_IS_LOGIN_IN, false);
         mChannel = getIntent().getStringExtra(INTENT_PARAM_CHANNEL);
         mTvTitle.setText(mChannel);
-        initRecyclerView();
+        if(!mIsLogin){
+            mTvSendNormal.setText(getResources().getString(R.string.action_sign_in));
+            mTvSendForced.setText(getResources().getString(R.string.action_sign_in));
+        }
         //申请必要权限
         mCompositeDisposable.add(new RxPermissions(this)
                 .request(Manifest.permission.READ_PHONE_STATE)
@@ -136,6 +161,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                         if(granted){
                             initRecyclerView();
                             initChatWebSocket();
+                            bindService();
                         } else {
                             finish();
                         }
@@ -148,11 +174,16 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                 }));
     }
 
+    private void bindService() {
+        Intent intent = new Intent(this, WebSocketService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
     private void initRecyclerView() {
         mChatOnScrollListener = new ChatOnScrollListener();
         mRvChatMessage.addOnScrollListener(mChatOnScrollListener);
         mRvChatMessage.addItemDecoration(new VisibleDividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mChatRecyclerViewAdapter = new ChatRecyclerViewAdapter(this, mAccountName, DeviceUtils.getDeviceID(this), mChatMessages);
+        mChatRecyclerViewAdapter = new ChatRecyclerViewAdapter(this, mAccountName, mChatMessages);
         mChatRecyclerViewAdapter.setOnItemClickListener(this);
         mRvChatMessage.setAdapter(mChatRecyclerViewAdapter);
     }
@@ -218,6 +249,20 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
 
                     }
                 }));
+        mCompositeDisposable.add(mRxChatWebSocket.onClosed()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<ChatSocketClosed>() {
+                    @Override
+                    public void accept(ChatSocketClosed chatSocketClosed) throws Exception {
+                        mCompositeDisposable.dispose();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
         mRxChatWebSocket.connect();
     }
 
@@ -269,7 +314,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         super.onDestroy();
         mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
         mUnbinder.unbind();
-        Disposable disposable = mRxChatWebSocket.close(1000, "close")
+        mCompositeDisposable.add(mRxChatWebSocket.close(1000, "close")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Boolean>() {
@@ -282,8 +327,20 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                     public void accept(Throwable throwable) throws Exception {
 
                     }
-                });
-        //mCompositeDisposable.dispose();
+                }));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1 && resultCode == Activity.RESULT_OK){
+            mAccountName = data.getStringExtra(INTENT_PARAM_NAME);
+            mIsLogin = data.getBooleanExtra(INTENT_PARAM_LOGIN_IN, false);
+            mTvSendNormal.setText(getResources().getString(R.string.text_chat_send));
+            mTvSendForced.setText(getResources().getString(R.string.text_chat_send));
+            mChatRecyclerViewAdapter.setUsername(mAccountName);
+            mChatRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -328,6 +385,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     @OnTextChanged(value = R.id.chat_et_message_forced, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void onMessageTextChanged(Editable editable){
         mTvMessageNormal.setText(editable.toString());
+        mTvMessageLength.setTextColor(getResources().getColor(editable.toString().length() < 100 ? R.color.primary_color_grey : R.color.btn_red_end));
         mTvMessageLength.setText(String.format("%s/100", editable.length()));
     }
 
@@ -339,27 +397,90 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
 
     @OnClick({R.id.chat_tv_send_normal, R.id.chat_tv_send_forced})
     public void onSendClick(View view){
+        if(!mIsLogin){ //未登录
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, 1);
+            return;
+        }
         String message = mEtMessageForced.getText().toString();
         if(TextUtils.isEmpty(message)){
             return;
         }
-        ChatMessageRequest chatMessageRequest = new ChatMessageRequest();
-        chatMessageRequest.setMessage(message);
-        chatMessageRequest.setUserName(mAccountName);
-        chatMessageRequest.setSign("");
-        ChatRequest<ChatMessageRequest> chatRequest = new ChatRequest<>(ChatRequest.TYPE_MESSAGE, chatMessageRequest);
-        sendMessage(chatRequest);
-        if(view.getId() == R.id.chat_tv_send_forced){
+        if(view.getId() == R.id.chat_tv_send_forced && (!mSwitchAnonymouslyForced.isChecked() || !BitsharesWalletWraper.getInstance().is_locked())){
             hideSoftInput(mEtMessageForced);
         }
-        mTvMessageNormal.setText("");
-        mEtMessageForced.setText("");
+        checkWalletLockedAndSendMessage(message);
     }
 
     @OnClick(R.id.chat_tv_new_message_count)
     public void onNewMessageClick(View view) {
         mIsScrollToBottom = true;
         scrollToLastPosition();
+    }
+
+    /**
+     * 验证钱包是否锁定 解锁成功发送消息
+     * @param message
+     */
+    private void checkWalletLockedAndSendMessage(String message) {
+        if(!mSwitchAnonymouslyForced.isChecked() || !BitsharesWalletWraper.getInstance().is_locked()){
+            toSendMessage(message);
+            return;
+        }
+        if(mFullAccountObject == null) {
+            mFullAccountObject = mWebSocketService.getFullAccount(mAccountName);
+        }
+        CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFullAccountObject.account, mAccountName,
+                new UnlockDialog.UnLockDialogClickListener() {
+                    @Override
+                    public void onUnLocked(String password) {
+                        toSendMessage(message);
+                    }
+                }, new UnlockDialog.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        hideSoftInput(mEtMessageForced);
+                    }
+                });
+    }
+
+    /**
+     * 签名并发送消息
+     * @param message
+     */
+    private void toSendMessage(String message) {
+        if(mFullAccountObject == null) {
+            mFullAccountObject = mWebSocketService.getFullAccount(mAccountName);
+        }
+        mCompositeDisposable.add(Single.fromCallable(new Callable<ChatRequest<ChatMessageRequest>>() {
+                    @Override
+                    public ChatRequest<ChatMessageRequest> call() {
+                        ChatMessageRequest chatMessageRequest = new ChatMessageRequest();
+                        chatMessageRequest.setMessage(message);
+                        chatMessageRequest.setUserName(mAccountName);
+                        chatMessageRequest.setSign("");
+                        //判断是否实名
+                        if(mSwitchAnonymouslyForced.isChecked() && mFullAccountObject != null){
+                            chatMessageRequest.setSign(BitsharesWalletWraper.getInstance().getChatMessageSignature(
+                                    mFullAccountObject.account, String.format("%s_%s", mAccountName, message)));
+                        }
+                        return new ChatRequest<>(ChatRequest.TYPE_MESSAGE, chatMessageRequest);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<ChatRequest<ChatMessageRequest>>() {
+                    @Override
+                    public void accept(ChatRequest<ChatMessageRequest> chatRequest) throws Exception {
+                        sendMessage(chatRequest);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+
     }
 
     /**
@@ -466,6 +587,10 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
+                        if(aBoolean){
+                            mTvMessageNormal.setText("");
+                            mEtMessageForced.setText("");
+                        }
                         Log.d(RxChatWebSocket.TAG, aBoolean ? "ChatWebSocket消息发送成功" : "ChatWebSocket消息发送失败");
                     }
                 }, new Consumer<Throwable>() {
@@ -504,5 +629,21 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
 
         }
     }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
+            if(mIsLogin){
+                mFullAccountObject = mWebSocketService.getFullAccount(mAccountName);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
 
 }

@@ -1,5 +1,6 @@
 package com.cybex.basemodule.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,10 +10,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -57,6 +58,7 @@ public class UnlockDialog extends DialogFragment{
     private AccountObject mAccountObject;
     private String mUserName;
     private UnLockDialogClickListener mUnLockListener;
+    private OnDismissListener mOnDismissListener;
 
     private Disposable mDisposable;
 
@@ -74,6 +76,8 @@ public class UnlockDialog extends DialogFragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_unclock_wallet, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+        mEtPassword.requestFocus();
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return view;
     }
 
@@ -94,6 +98,14 @@ public class UnlockDialog extends DialogFragment{
         super.onDestroy();
         if(mDisposable != null && !mDisposable.isDisposed()){
             mDisposable.dispose();
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if(mOnDismissListener != null){
+            mOnDismissListener.onDismiss();
         }
     }
 
@@ -132,7 +144,9 @@ public class UnlockDialog extends DialogFragment{
                 if(integer == 0){
                     mTvUnlockError.setVisibility(View.GONE);
                     mPbLoading.setVisibility(View.GONE);
-                    mUnLockListener.onUnLocked(password);
+                    if(mUnLockListener != null){
+                        mUnLockListener.onUnLocked(password);
+                    }
                     dismiss();
                 } else {
                     mTvUnlockError.setVisibility(View.VISIBLE);
@@ -163,8 +177,16 @@ public class UnlockDialog extends DialogFragment{
         mUnLockListener = lockListener;
     }
 
+    public void setOnDismissListener(OnDismissListener onDismissListener) {
+        mOnDismissListener = onDismissListener;
+    }
+
     public interface UnLockDialogClickListener {
         void onUnLocked(String password);
+    }
+
+    public interface OnDismissListener {
+        void onDismiss();
     }
 
 }

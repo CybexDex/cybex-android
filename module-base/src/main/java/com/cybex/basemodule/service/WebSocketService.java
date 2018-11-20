@@ -319,6 +319,7 @@ public class WebSocketService extends Service {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(Event.LoginIn event){
         mName = event.getName();
+        startFullAccountWorkerSchedule();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

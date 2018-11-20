@@ -379,6 +379,10 @@ public class BitsharesWalletWraper {
         return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
     }
 
+    public String getChatMessageSignature(AccountObject accountObject, String message){
+        return mWalletApi.getChatMessageSignature(accountObject, message);
+    }
+
     public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
         return mWalletApi.getWithdrawDepositSignature(accountObject, operation);
     }

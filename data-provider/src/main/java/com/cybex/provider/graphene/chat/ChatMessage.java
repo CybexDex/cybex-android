@@ -5,6 +5,9 @@ package com.cybex.provider.graphene.chat;
  */
 public class ChatMessage {
 
+    public static final int SIGNED_FAILED = 0;
+    public static final int SIGNED_SUCCESS = 1;
+
     private String userName;// 用户名
     private long msgID;// 消息id
     private String message;// 消息内容

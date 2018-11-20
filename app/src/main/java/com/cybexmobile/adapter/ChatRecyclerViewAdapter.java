@@ -34,22 +34,24 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     private int mType;
     private OnItemClickListener mListener;
     private String mUserName;
-    private String mDeviceId;
 
-    public ChatRecyclerViewAdapter(Context context, String userName, String deviceId, List<ChatMessage> chatMessages) {
-        this(context, TYPE_MESSAGE, userName, deviceId, chatMessages);
+    public ChatRecyclerViewAdapter(Context context, String userName, List<ChatMessage> chatMessages) {
+        this(context, TYPE_MESSAGE, userName, chatMessages);
     }
 
-    public ChatRecyclerViewAdapter(Context context, int type, String userName, String deviceId, List<ChatMessage> chatMessages) {
+    public ChatRecyclerViewAdapter(Context context, int type, String userName, List<ChatMessage> chatMessages) {
         mContext = context;
         mChatMessages = chatMessages;
         mType = type;
         mUserName = userName;
-        mDeviceId = deviceId;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
+    }
+
+    public void setUsername(String username) {
+        mUserName = username;
     }
 
     @Override
@@ -65,7 +67,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
         if(chatMessage == null){
             return;
         }
-        String username = parseUsername(chatMessage.getUserName());
+        String username = parseUsername(chatMessage.getUserName(), chatMessage.getSigned());
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(username);
         ssb.append(TEXT_SPLIT);
@@ -84,7 +86,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
             @Override
             public void updateDrawState(@NonNull TextPaint ds) {
                 super.updateDrawState(ds);
-                if(mDeviceId.equals(chatMessage.getDeviceID())) {
+                if(!TextUtils.isEmpty(mUserName) && mUserName.equals(chatMessage.getUserName())) {
                     ds.setColor(mContext.getResources().getColor(R.color.primary_color_orange));
                 }
                 ds.setUnderlineText(false);
@@ -135,8 +137,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
      * @param username
      * @return
      */
-    private String parseUsername(String username){
-        if(TextUtils.isEmpty(username)){
+    private String parseUsername(String username, int signed){
+        if(signed == ChatMessage.SIGNED_FAILED){
             return "游客";
         }
         if(username.length() > 15){

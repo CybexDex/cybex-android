@@ -19,6 +19,7 @@ import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
+import com.cybex.provider.graphene.chain.CompactSignature;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
@@ -32,6 +33,7 @@ import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.graphene.chain.MarketTicker;
+import com.cybex.provider.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -50,6 +52,7 @@ import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -759,6 +762,17 @@ public class WalletApi {
         signedTransaction.sign(privateKey, mWalletObject.chain_id);
 
         return signedTransaction;
+    }
+
+    public String getChatMessageSignature(AccountObject accountObject, String message) {
+        Sha256Object.encoder encoder = new Sha256Object.encoder();
+        if(message != null){
+            byte[] assetByte = message.getBytes();
+            encoder.write(assetByte);
+        }
+        Types.private_key_type privateKey = mHashMapPub2Priv.get(accountObject.active.get_keys().get(0));
+        CompactSignature signature = privateKey.getPrivateKey().sign_compact(encoder.result(), true);
+        return MyUtils.bytesToHex(signature.data);
     }
 
     public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {

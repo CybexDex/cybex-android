@@ -103,7 +103,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     protected YAxis axisLeftKline, axisLeftVolume, axisLeftCharts;
     protected YAxis axisRightKline, axisRightVolume, axisRightCharts;
     private OrderHistoryFragmentPageAdapter mOrderHistoryFragmentPageAdapter;
-    protected List<HistoryPrice> mHistoryPriceList;
+    protected List<HistoryPrice> mHistoryPriceList = new ArrayList<>();
     protected WatchlistData mWatchListData;
     private long mDuration = MARKET_STAT_INTERVAL_MILLIS_1_DAY;
 
@@ -436,7 +436,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 });
                 return;
             }
-            mHistoryPriceList = new ArrayList<>();
+            mHistoryPriceList.clear();
             for (int i = 0; i < bucketObjects.size(); i++) {
                 BucketObject bucket = bucketObjects.get(i);
                 mHistoryPriceList.add(PriceUtil.priceFromBucket(mWatchListData.getBaseAsset(), mWatchListData.getQuoteAsset(), bucket));
@@ -595,7 +595,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     }
 
     private void initChartKline() {
-
         mChartKline.setScaleEnabled(true);//启用图表缩放事件
         mChartKline.setDrawBorders(true);//是否绘制边线
         mChartKline.setBorderWidth(1);//边线宽度，单位dp
@@ -1165,8 +1164,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
     private void setHandler(MyCombinedChart combinedChart) {
         final ViewPortHandler viewPortHandlerBar = combinedChart.getViewPortHandler();
         viewPortHandlerBar.setMaximumScaleX(culcMaxscale(mData.getXVals().size()));
-        Log.e("scaleX", String.valueOf(combinedChart.getScaleX()));
-        Log.e("scaleY", String.valueOf(combinedChart.getScaleY()));
         Matrix touchmatrix = viewPortHandlerBar.getMatrixTouch();
         if (combinedChart.getScaleX() < 3) {
             final float xscale = 3;

@@ -301,8 +301,11 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showUnlockWalletDialog(FragmentManager fragmentManager, AccountObject accountObject,
-                                       String username,UnlockDialog.UnLockDialogClickListener unLockListener){
+    public static void showUnlockWalletDialog(FragmentManager fragmentManager,
+                                              AccountObject accountObject,
+                                              String username,
+                                              UnlockDialog.UnLockDialogClickListener unLockListener,
+                                              UnlockDialog.OnDismissListener onDismissListener){
         UnlockDialog dialog = new UnlockDialog();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT, accountObject);
@@ -310,6 +313,14 @@ public class CybexDialog {
         dialog.setArguments(bundle);
         dialog.show(fragmentManager, UnlockDialog.class.getSimpleName());
         dialog.setUnLockListener(unLockListener);
+        dialog.setOnDismissListener(onDismissListener);
+    }
+
+    public static void showUnlockWalletDialog(FragmentManager fragmentManager,
+                                              AccountObject accountObject,
+                                              String username,
+                                              UnlockDialog.UnLockDialogClickListener unLockListener){
+        showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
     }
 
     public static void showAddAddressDialog(Context context, String message, String subMessage,
