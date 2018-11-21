@@ -376,6 +376,7 @@
     <string name="text_account">Account</string>
     <string name="text_account_dot">Account:</string>
     <string name="text_memo_dot">Memo:</string>
+    <string name="text_tag_dot">Tag:</string>
     <string name="text_address_dot">Address:</string>
     <string name="text_address">Address</string>
     <string name="text_note">Note</string>

@@ -74,10 +74,10 @@
             android:visibility="gone">
 
             <TextView
+                android:id="@+id/dialog_delete_address_layout_memo_title_tv"
                 style="@style/font_gray_medium"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_memo_dot" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/dialog_delete_address_tv_memo"

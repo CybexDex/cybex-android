@@ -372,6 +372,7 @@ public class CybexDialog {
         tvAccount.setText(address.getAddress());
         TextView tvAccountLabel = dialog.findViewById(R.id.dialog_delete_address_tv_account_label);
         LinearLayout layoutMemo = dialog.findViewById(R.id.dialog_delete_address_layout_memo);
+        TextView memoTitle = dialog.findViewById(R.id.dialog_delete_address_layout_memo_title_tv);
         TextView tvMemo = dialog.findViewById(R.id.dialog_delete_address_tv_memo);
         if (TextUtils.isEmpty(address.getToken()) || address.getToken().equals("1.3.4")) {
             tvAccountLabel.setText(context.getResources().getString(R.string.text_account_dot));
@@ -380,7 +381,14 @@ public class CybexDialog {
         }
         if (!TextUtils.isEmpty(address.getMemo())) {
             layoutMemo.setVisibility(View.VISIBLE);
+            memoTitle.setText(context.getResources().getString(R.string.text_memo_dot));
             tvMemo.setText(address.getMemo());
+        }
+
+        if (!TextUtils.isEmpty(address.getTag())) {
+            layoutMemo.setVisibility(View.VISIBLE);
+            memoTitle.setText(context.getResources().getString(R.string.text_tag_dot));
+            tvMemo.setText(address.getTag());
         }
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
