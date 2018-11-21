@@ -34,7 +34,7 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
         mListener = listener;
     }
 
-    public void setWatchlistData(List<WatchlistData> watchlistData){
+    public void setWatchlistData(List<WatchlistData> watchlistData) {
         mValues = watchlistData;
     }
 
@@ -47,17 +47,17 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        if(position > 2){
+        if (position > 2) {
             holder.mTvSort.setBackground(mContext.getResources().getDrawable(R.drawable.bg_no_change));
         } else {
             holder.mTvSort.setBackground(mContext.getResources().getDrawable(R.drawable.bg_increasing));
         }
         holder.mTvSort.setText(String.valueOf(position + 1));
-        if(mValues == null || mValues.size() == 0 || mValues.size() - 1 < position){
+        if (mValues == null || mValues.size() == 0 || mValues.size() - 1 < position) {
             return;
         }
         final WatchlistData watchlistData = mValues.get(position);
-        if(watchlistData == null || watchlistData.getChange() == null || Double.parseDouble(watchlistData.getChange()) < 0.f){
+        if (watchlistData == null || watchlistData.getChange() == null || Double.parseDouble(watchlistData.getChange()) < 0.f) {
             return;
         }
         NumberFormat formatter = new DecimalFormat("0.00");
@@ -90,17 +90,15 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
          * fix bug: CYM-250
          * 保留两位小数点
          */
-        if (watchlistData.getQuoteRmbPrice() != 0) {
-            holder.mTvRmbPrice.setText(String.format(Locale.US, "≈¥ %.4f", watchlistData.getQuoteRmbPrice()));
-        } else {
-            holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
-                    String.format(Locale.US, "≈¥ %.4f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
-        }
+
+        holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
+                String.format(Locale.US, "≈¥ %.4f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mListener != null){
+                if (mListener != null) {
                     mListener.onListFragmentInteraction(watchlistData);
                 }
             }
