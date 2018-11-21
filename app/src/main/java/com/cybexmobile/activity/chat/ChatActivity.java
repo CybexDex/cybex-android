@@ -6,10 +6,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -255,7 +257,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                 .subscribe(new Consumer<ChatSocketClosed>() {
                     @Override
                     public void accept(ChatSocketClosed chatSocketClosed) throws Exception {
-                        mCompositeDisposable.dispose();
+                        if(chatSocketClosed.getCode() == 1000){
+                            mCompositeDisposable.dispose();
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -312,22 +316,24 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
+            mCompositeDisposable.add(mRxChatWebSocket.close(1000, "close")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean aBoolean) throws Exception {
+
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+
+                        }
+                    }));
+        }
         mUnbinder.unbind();
-        mCompositeDisposable.add(mRxChatWebSocket.close(1000, "close")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                }));
     }
 
     @Override
