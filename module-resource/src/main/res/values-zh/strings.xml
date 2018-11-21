@@ -509,5 +509,6 @@
     <string name="text_my_comment">我来说两句</string>
     <string name="text_chat_send">发送</string>
     <string name="text_new_message">有%d条新消息</string>
+    <string name="text_guest">游客</string>
 
 </resources>

@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/layout_footer"
-            android:scrollbars="none"
+            android:scrollbars="vertical"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             tools:listitem="@layout/item_chat_message"
             tools:itemCount="15">
@@ -87,11 +87,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/font_gray_large"
-                    android:textColor="@color/primary_color_orange"
+                    android:textColor="@color/text_send_enabled"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:textAllCaps="false"
                     android:background="@null"
+                    android:enabled="false"
                     android:text="@string/text_chat_send" />
 
             </RelativeLayout>
@@ -138,7 +139,7 @@
                         android:theme="@style/Switch"
                         style="@style/font_gray_medium"
                         android:layout_centerVertical="true"
-                        android:text="@string/text_anonymously"/>
+                        android:text="@string/text_real_name"/>
 
                     <TextView
                         android:id="@+id/chat_tv_message_length"
@@ -155,11 +156,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/font_gray_large"
-                        android:textColor="@color/primary_color_orange"
+                        android:textColor="@color/text_send_enabled"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:textAllCaps="false"
                         android:background="@null"
+                        android:enabled="false"
                         android:text="@string/text_chat_send" />
 
                 </RelativeLayout>

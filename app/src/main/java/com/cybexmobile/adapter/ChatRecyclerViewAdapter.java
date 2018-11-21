@@ -75,7 +75,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                if(TextUtils.isEmpty(chatMessage.getUserName())){
+                if(TextUtils.isEmpty(chatMessage.getUserName()) || chatMessage.getUserName().length() <= 15){
                     return;
                 }
                 if(mListener != null){
@@ -138,8 +138,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
      * @return
      */
     private String parseUsername(String username, int signed){
-        if(signed == ChatMessage.SIGNED_FAILED){
-            return "游客";
+        if(TextUtils.isEmpty(username) || signed == ChatMessage.SIGNED_FAILED){
+            return mContext.getResources().getString(R.string.text_guest);
         }
         if(username.length() > 15){
             return username.substring(0, 15).concat("...");

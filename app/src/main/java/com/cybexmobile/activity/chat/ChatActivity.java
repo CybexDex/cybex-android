@@ -280,7 +280,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
             for(ChatSubscribe<ChatMessages> subscribeMessage : subscribeMessages){
                 mChatMessages.addAll(subscribeMessage.getData().getMessages());
             }
-            mChatRecyclerViewAdapter.notifyDataSetChanged();
+            //插入动画效果
+            mChatRecyclerViewAdapter.notifyItemInserted(mChatMessages.size());
             if(mIsScrollToBottom){
                 hidePopup();
                 scrollToLastPosition();
@@ -393,6 +394,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         mTvMessageNormal.setText(editable.toString());
         mTvMessageLength.setTextColor(getResources().getColor(editable.toString().length() < 100 ? R.color.primary_color_grey : R.color.btn_red_end));
         mTvMessageLength.setText(String.format("%s/100", editable.length()));
+        mTvSendForced.setEnabled(!TextUtils.isEmpty(editable.toString()));
+        mTvSendNormal.setEnabled(!TextUtils.isEmpty(editable.toString()));
     }
 
     @OnClick(R.id.chat_tv_message_normal)
