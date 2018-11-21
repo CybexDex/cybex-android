@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     style="@style/font_gray_medium"
     android:lineSpacingExtra="@dimen/line_spacing_extra_8"
+    android:gravity="center_vertical"
     android:padding="@dimen/activity_padding"
     android:background="@color/itemBackground">
 
