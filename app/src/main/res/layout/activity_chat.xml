@@ -38,7 +38,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 tools:itemCount="15"
                 tools:listitem="@layout/item_chat_message">
 

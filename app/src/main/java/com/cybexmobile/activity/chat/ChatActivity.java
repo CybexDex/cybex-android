@@ -184,6 +184,10 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     private void initRecyclerView() {
         mChatOnScrollListener = new ChatOnScrollListener();
         mRvChatMessage.addOnScrollListener(mChatOnScrollListener);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+        linearLayoutManager.setSmoothScrollbarEnabled(true);
+        mRvChatMessage.setLayoutManager(linearLayoutManager);
         mRvChatMessage.addItemDecoration(new VisibleDividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mChatRecyclerViewAdapter = new ChatRecyclerViewAdapter(this, mAccountName, mChatMessages);
         mChatRecyclerViewAdapter.setOnItemClickListener(this);
@@ -281,7 +285,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                 mChatMessages.addAll(subscribeMessage.getData().getMessages());
             }
             //插入动画效果
-            mChatRecyclerViewAdapter.notifyItemInserted(mChatMessages.size());
+            mChatRecyclerViewAdapter.notifyItemInserted(mChatMessages.size() - 1);
             if(mIsScrollToBottom){
                 hidePopup();
                 scrollToLastPosition();
@@ -318,6 +322,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     protected void onDestroy() {
         super.onDestroy();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            unbindService(mConnection);
             mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
             mCompositeDisposable.add(mRxChatWebSocket.close(1000, "close")
                     .subscribeOn(Schedulers.io())
@@ -518,7 +523,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
      */
     private void scrollToLastPosition() {
         hideHintNewMessageView();
-        mRvChatMessage.scrollToPosition(mChatMessages.size() - 1);
+        mRvChatMessage.smoothScrollToPosition(mChatMessages.size() - 1);
     }
 
     /**

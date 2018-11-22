@@ -75,7 +75,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                if(TextUtils.isEmpty(chatMessage.getUserName()) || chatMessage.getUserName().length() <= 15){
+                if(TextUtils.isEmpty(chatMessage.getUserName()) || chatMessage.getUserName().length() <= 15 || chatMessage.getSigned() == ChatMessage.SIGNED_FAILED){
                     return;
                 }
                 if(mListener != null){
@@ -91,7 +91,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
                 }
                 ds.setUnderlineText(false);
             }
-        }, 0, username.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }, 0, username.length() + TEXT_SPLIT.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
