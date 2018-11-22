@@ -339,7 +339,9 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
                 }
             });
         }
-        mTopGainerRecyclerViewAdapter.notifyDataSetChanged();
+        if (mTopGainerRecyclerViewAdapter != null) {
+            mTopGainerRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

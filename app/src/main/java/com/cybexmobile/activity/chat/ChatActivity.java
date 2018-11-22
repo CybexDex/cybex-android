@@ -523,7 +523,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
      */
     private void scrollToLastPosition() {
         hideHintNewMessageView();
-        mRvChatMessage.smoothScrollToPosition(mChatMessages.size() - 1);
+        if(mChatMessages.size() > 0){
+            mRvChatMessage.smoothScrollToPosition(mChatMessages.size() - 1);
+        }
     }
 
     /**
