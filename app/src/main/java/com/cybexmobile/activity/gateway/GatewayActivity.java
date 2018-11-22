@@ -283,7 +283,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         if (accountBalanceObjects != null && accountBalanceObjects.size() > 0) {
             for (AccountBalanceObject balance : accountBalanceObjects) {
                 if (mWebSocketService.getAssetObject(balance.asset_type.toString()) == null) {
-                    return;
+                    continue;
                 }
                 if (balance.balance == 0) {
                     continue;
