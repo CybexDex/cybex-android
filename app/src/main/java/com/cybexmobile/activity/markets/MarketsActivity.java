@@ -503,11 +503,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.setVisibility(View.VISIBLE);
         mChartVolume.setVisibility(View.VISIBLE);
 
-        mChartKline.setAutoScaleMinMaxEnabled(true);
-        mChartVolume.setAutoScaleMinMaxEnabled(true);
-        mChartCharts.setAutoScaleMinMaxEnabled(true);
-
-        mChartKline.setVisibleXRangeMinimum(40);
+        mChartKline.setVisibleXRangeMinimum(30);
 
         mChartKline.notifyDataSetChanged();
         mChartVolume.notifyDataSetChanged();
