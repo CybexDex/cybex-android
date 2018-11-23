@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.dialog.CybexDialog;
@@ -417,7 +418,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
             return;
         }
         String message = mEtMessageForced.getText().toString();
-        if(TextUtils.isEmpty(message)){
+        //过滤空白字符
+        if(message.matches("[\\s]*")){
+            Toast.makeText(this, getResources().getString(R.string.text_toast_unable_to_send_blank_message), Toast.LENGTH_SHORT).show();
             return;
         }
         if(view.getId() == R.id.chat_tv_send_forced && (!mSwitchAnonymouslyForced.isChecked() || !BitsharesWalletWraper.getInstance().is_locked())){

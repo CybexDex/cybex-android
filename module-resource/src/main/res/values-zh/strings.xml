@@ -510,5 +510,6 @@
     <string name="text_chat_send">发送</string>
     <string name="text_new_message">有%d条新消息</string>
     <string name="text_guest">游客</string>
+    <string name="text_toast_unable_to_send_blank_message">不能发空白消息</string>
 
 </resources>

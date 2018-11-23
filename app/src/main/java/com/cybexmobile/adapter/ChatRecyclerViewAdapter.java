@@ -68,10 +68,11 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
             return;
         }
         String username = parseUsername(chatMessage.getUserName(), chatMessage.getSigned());
+        String message = chatMessage.getMessage() == null ? "" : chatMessage.getMessage();
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         ssb.append(username);
         ssb.append(TEXT_SPLIT);
-        ssb.append(chatMessage.getMessage());
+        ssb.append(message);
         ssb.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
@@ -107,7 +108,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
                 ds.setUnderlineText(false);
             }
         }, username.length() + TEXT_SPLIT.length(),
-                username.length() + TEXT_SPLIT.length() + chatMessage.getMessage().length(),
+                username.length() + TEXT_SPLIT.length() + message.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.mTvMessage.setText(ssb);
         holder.mTvMessage.setMovementMethod(LinkMovementMethod.getInstance());
