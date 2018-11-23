@@ -494,6 +494,10 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateKLineChar(Event.UpdateKLineChar event) {
+        Matrix matrix = new Matrix();
+        mChartKline.getViewPortHandler().refresh(matrix, mChartKline, true);
+        mChartVolume.getViewPortHandler().refresh(matrix, mChartVolume, true);
+        mChartCharts.getViewPortHandler().refresh(matrix, mChartCharts, true);
         setKlineByChart(mChartKline);
         setVolumeByChart(mChartVolume);
         setMACDByChart(mChartCharts);
@@ -503,7 +507,13 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mChartKline.setVisibility(View.VISIBLE);
         mChartVolume.setVisibility(View.VISIBLE);
 
+        mChartKline.setAutoScaleMinMaxEnabled(true);
+        mChartVolume.setAutoScaleMinMaxEnabled(true);
+        mChartCharts.setAutoScaleMinMaxEnabled(true);
+
         mChartKline.setVisibleXRangeMinimum(30);
+        mChartVolume.setVisibleXRangeMinimum(30);
+        mChartCharts.setVisibleXRangeMinimum(30);
 
         mChartKline.notifyDataSetChanged();
         mChartVolume.notifyDataSetChanged();
