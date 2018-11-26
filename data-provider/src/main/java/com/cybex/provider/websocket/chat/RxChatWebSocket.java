@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import org.reactivestreams.Publisher;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -66,9 +67,7 @@ public class RxChatWebSocket {
                 .doOnNext(new Consumer<ChatSocketOpen>() {
                     @Override
                     public void accept(ChatSocketOpen chatSocketOpen) throws Exception {
-                        if(webSocket == null){
-                            webSocket = chatSocketOpen.getWebSocket();
-                        }
+                        webSocket = chatSocketOpen.getWebSocket();
                     }
                 })
                 .doOnEach(new RxWebSocketLogger<ChatSocketOpen>("onOpen"));
@@ -211,6 +210,34 @@ public class RxChatWebSocket {
                 });
         compositeDisposable.add(connectionDisposable);
         compositeDisposable.add(closeDisposable);
+    }
+
+    /**
+     * 重连
+     */
+    public synchronized void reconnect(long delay, TimeUnit unit) {
+        Disposable reconnectionDisposable = Flowable.timer(delay, unit)
+                .concatMap(new Function<Long, Publisher<ChatSocketBase>>() {
+                    @Override
+                    public Publisher<ChatSocketBase> apply(Long aLong) throws Exception {
+                        return Flowable.create(chatSocketOnSubscribe, BackpressureStrategy.BUFFER);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .subscribe(new Consumer<ChatSocketBase>() {
+                    @Override
+                    public void accept(ChatSocketBase chatSocketBase) throws Exception {
+                        publishProcessor.onNext(chatSocketBase);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getMessage());
+                        throwable.printStackTrace();
+                    }
+                });
+        compositeDisposable.add(reconnectionDisposable);
     }
 
     public synchronized Single<Boolean> close(final int code, @Nullable final String reason) {

@@ -63,11 +63,14 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -144,6 +147,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mUnbinder = ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         SoftKeyBoardListener.setListener(this, this);
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
@@ -153,6 +157,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         if(!mIsLogin){
             mTvSendNormal.setText(getResources().getString(R.string.action_sign_in));
             mTvSendForced.setText(getResources().getString(R.string.action_sign_in));
+            mTvSendNormal.setEnabled(true);
+            mTvSendForced.setEnabled(true);
         }
         //申请必要权限
         mCompositeDisposable.add(new RxPermissions(this)
@@ -218,7 +224,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                     public void accept(ChatSocketFailure chatSocketFailure) throws Exception {
                         Log.d(RxChatWebSocket.TAG, "正在重新建立连接...");
                         //重连
-                        mRxChatWebSocket.connect();
+                        mRxChatWebSocket.reconnect(3, TimeUnit.SECONDS);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -322,6 +328,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             unbindService(mConnection);
             mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
@@ -351,6 +358,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
             mIsLogin = data.getBooleanExtra(INTENT_PARAM_LOGIN_IN, false);
             mTvSendNormal.setText(getResources().getString(R.string.text_chat_send));
             mTvSendForced.setText(getResources().getString(R.string.text_chat_send));
+            mTvSendNormal.setEnabled(!TextUtils.isEmpty(mTvMessageNormal.getText().toString()));
+            mTvSendForced.setEnabled(!TextUtils.isEmpty(mTvMessageNormal.getText().toString()));
             mChatRecyclerViewAdapter.setUsername(mAccountName);
             mChatRecyclerViewAdapter.notifyDataSetChanged();
         }
