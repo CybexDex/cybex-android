@@ -294,6 +294,9 @@
     <!-- Snack Bar Text -->
     <string name="snack_bar_saved">已保存二维码</string>
     <string name="snack_bar_copied">已复制地址</string>
+    <string name="snack_bar_account_name_copied">已复制账户</string>
+    <string name="snack_bar_eos_code_copied">已复制验证码</string>
+    <string name="snack_bar_xrp_tag_copied">已复制Tag</string>
     <string name="snack_bar_please_retry">请在5分钟后重新生成</string>
 
     <!-- Toast Message -->

@@ -288,7 +288,10 @@
 
     <!-- Snack Bar Text -->
     <string name="snack_bar_saved">Saved</string>
-    <string name="snack_bar_copied">Copied</string>
+    <string name="snack_bar_copied">Address Copied</string>
+    <string name="snack_bar_account_name_copied">Account Name Copied</string>
+    <string name="snack_bar_eos_code_copied">Code Copied</string>
+    <string name="snack_bar_xrp_tag_copied">Tag Copied</string>
     <string name="snack_bar_please_retry">Please retry 5 minutes later</string>
 
     <!-- Toast Message -->

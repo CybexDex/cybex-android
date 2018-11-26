@@ -225,7 +225,13 @@ public class DepositActivity extends BaseActivity {
             if (mQRAddressView.getText() != null) {
                 copyAddress(mQRAddressView.getText().toString());
             }
-            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_copied), R.drawable.ic_check_circle_green);
+            if (mAssetName.equals(EOS_NAME)) {
+                ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_eos_code_copied), R.drawable.ic_check_circle_green);
+            } else if (mAssetName.equals(XRP_NAME)) {
+                ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_xrp_tag_copied), R.drawable.ic_check_circle_green);
+            } else {
+                ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_copied), R.drawable.ic_check_circle_green);
+            }
         }
     }
 
@@ -247,7 +253,7 @@ public class DepositActivity extends BaseActivity {
             if (mEosAccountNameTv.getText() != null) {
                 copyAddress(mEosAccountNameTv.getText().toString());
             }
-            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_copied), R.drawable.ic_check_circle_green);
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_account_name_copied), R.drawable.ic_check_circle_green);
         }
     }
 
