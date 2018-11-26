@@ -94,9 +94,11 @@ public class WithdrawItemFragment extends Fragment {
         mActivity = (BaseActivity) getActivity();
 
         mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(context, TAG, mWithdrawObjectList);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.deposit_withdraw_divider));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.setAdapter(mDepositAndWithdrawAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+        mRecyclerView.addItemDecoration(itemDecoration);
         return view;
     }
 

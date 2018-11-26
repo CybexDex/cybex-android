@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/withdraw_list"
-    android:name="com.cybexmobile.fragment.DepositItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="@dimen/activity_margin"
-    android:layout_marginRight="@dimen/activity_margin" />
+    android:layout_marginRight="@dimen/activity_margin"
+    tools:itemCount="6"
+    tools:listitem="@layout/item_deposit_withdraw" />

@@ -103,11 +103,13 @@ public class DepositItemFragment extends Fragment {
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mActivity = (BaseActivity) getActivity();
         // Set the adapter
-        Context context = view.getContext();
+        Context context = getContext();
         mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(context, TAG, mDepositObjectList);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.deposit_withdraw_divider));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        mRecyclerView.addItemDecoration(itemDecoration);
         mRecyclerView.setAdapter(mDepositAndWithdrawAdapter);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
         return view;
     }
 
