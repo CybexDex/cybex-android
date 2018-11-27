@@ -487,6 +487,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
      * @param message
      */
     private void toSendMessage(String message) {
+        //签名加密耗时之前把输入框清空 以防点击发送按钮卡顿
+        mTvMessageNormal.setText("");
+        mEtMessageForced.setText("");
         if(mFullAccountObject == null) {
             mFullAccountObject = mWebSocketService.getFullAccount(mAccountName);
         }
@@ -628,8 +631,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if(aBoolean){
-                            mTvMessageNormal.setText("");
-                            mEtMessageForced.setText("");
+
                         }
                         Log.d(RxChatWebSocket.TAG, aBoolean ? "ChatWebSocket消息发送成功" : "ChatWebSocket消息发送失败");
                     }
