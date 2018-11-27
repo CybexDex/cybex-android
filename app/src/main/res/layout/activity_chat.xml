@@ -21,6 +21,15 @@
             android:layout_gravity="center"
             style="@style/font_white_dark_bold_large" />
 
+        <ProgressBar
+            android:id="@+id/chat_pb_loading"
+            android:layout_width="@dimen/width_16"
+            android:layout_height="@dimen/height_16"
+            style="?android:attr/progressBarStyleSmall"
+            android:indeterminateTint="@color/font_color_white_dark"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout

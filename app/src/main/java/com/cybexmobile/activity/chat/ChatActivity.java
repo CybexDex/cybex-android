@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -118,6 +119,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     TextView mTvMessageLength;
     @BindView(R.id.chat_tv_new_message_count)
     TextView mTvNewMessageCount;
+    @BindView(R.id.chat_pb_loading)
+    ProgressBar mPbChatLoading;
 
     private ChatRecyclerViewAdapter mChatRecyclerViewAdapter;
     private List<ChatMessage> mChatMessages = new ArrayList<>();
@@ -202,7 +205,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     }
 
     private void initChatWebSocket() {
-        mRxChatWebSocket = new RxChatWebSocket("ws://47.91.242.71:9099/ws");
+        mRxChatWebSocket = new RxChatWebSocket(RxChatWebSocket.CHAT_URL);
         mCompositeDisposable.add(mRxChatWebSocket.onOpen()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -254,6 +257,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                                 subscribeReplies.add(gson.fromJson(message, new TypeToken<ChatSubscribe<ChatReply>>(){}.getType()));
                             }
                         }
+                        mPbChatLoading.setVisibility(View.GONE);
                         notifyUI(subscribeReplies, subscribeMessages);
                     }
                 }, new Consumer<Throwable>() {
@@ -279,6 +283,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                     }
                 }));
         mRxChatWebSocket.connect();
+        mPbChatLoading.setVisibility(View.VISIBLE);
     }
 
     private void notifyUI(LinkedList<ChatSubscribe<ChatReply>> subscribeReplies,

@@ -29,7 +29,9 @@ public class RetrofitFactory {
     //Eto测试服务器
     public static final String eto_base_url_test = "https://ieo-apitest.cybex.io/api/";
     //Chat正式服务器
-    public static final String chat_base_url = "http://47.91.242.71:9099/";
+    public static final String chat_base_url = "https://chat.cybex.io/";
+    //Chat测式服务器
+    public static final String chat_base_url_test = "http://47.91.242.71:9099/";
 
     private OkHttpClient okHttpClient;
 
@@ -152,7 +154,7 @@ public class RetrofitFactory {
         }
         if(chatHttpApi == null){
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(isOfficialServer ? chat_base_url : chat_base_url)
+                    .baseUrl(isOfficialServer ? chat_base_url : chat_base_url_test)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
