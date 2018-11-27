@@ -6,7 +6,9 @@ package com.cybex.provider.graphene.chat;
  */
 public class ChatRequest<T> {
 
+    //登录发送
     public static final int TYPE_LOGIN = 1;
+    //消息发送
     public static final int TYPE_MESSAGE = 2;
 
     private int type;// 1-login, 2-message

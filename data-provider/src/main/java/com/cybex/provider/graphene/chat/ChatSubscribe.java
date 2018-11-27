@@ -5,11 +5,14 @@ package com.cybex.provider.graphene.chat;
  */
 public class ChatSubscribe<T> {
 
-    public static final int TYPE_REPLY = 0;
-    public static final int TYPE_LOGIN = 1;
+    //登录回应
+    public static final int TYPE_LOGIN_REPLY = 101;
+    //消息回应
+    public static final int TYPE_MESSAGE_REPLY = 102;
+    //消息推送
     public static final int TYPE_MESSAGE = 2;
 
-    private int type;// 数据类型，0-消息回应，2-消息
+    private int type;// 数据类型
     private int online;// 在线人数
     private T data;// 数据内容
 

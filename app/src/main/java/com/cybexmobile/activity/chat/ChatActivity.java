@@ -253,7 +253,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                             JsonObject jsonObject = new JsonParser().parse(message).getAsJsonObject();
                             if(jsonObject.get("type").getAsInt() == ChatSubscribe.TYPE_MESSAGE){
                                 subscribeMessages.add(gson.fromJson(message, new TypeToken<ChatSubscribe<ChatMessages>>(){}.getType()));
-                            } else if(jsonObject.get("type").getAsInt() == ChatSubscribe.TYPE_REPLY){
+                            } else {
                                 subscribeReplies.add(gson.fromJson(message, new TypeToken<ChatSubscribe<ChatReply>>(){}.getType()));
                             }
                         }
@@ -289,6 +289,11 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     private void notifyUI(LinkedList<ChatSubscribe<ChatReply>> subscribeReplies,
                           LinkedList<ChatSubscribe<ChatMessages>> subscribeMessages) {
         if(subscribeReplies != null && subscribeReplies.size() > 0){
+            //登录回应时 清空所有消息以防重连消息重复显示
+            if(subscribeReplies.getFirst().getType() == ChatSubscribe.TYPE_LOGIN_REPLY){
+                mChatMessages.clear();
+                mChatRecyclerViewAdapter.notifyDataSetChanged();
+            }
             mTvTitle.setText(String.format(Locale.ENGLISH, "%s(%d)", mChannel, subscribeReplies.getLast().getOnline()));
         }
         if(subscribeMessages != null && subscribeMessages.size() > 0){

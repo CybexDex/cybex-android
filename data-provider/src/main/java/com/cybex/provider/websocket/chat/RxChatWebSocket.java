@@ -32,7 +32,9 @@ import okio.ByteString;
 public class RxChatWebSocket {
 
     public static final String TAG = RxChatWebSocket.class.getSimpleName();
+    //聊天正式服务器
     public static final String CHAT_URL = "wss://chat.cybex.io/ws";
+    //聊天测试服务器
     public static final String CHAT_UTL_TEST = "ws://47.91.242.71:9099/ws";
 
     //事件分发
