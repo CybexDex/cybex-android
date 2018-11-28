@@ -31,7 +31,7 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
     //quote名称
     private String quoteSymbol;
     //涨跌幅
-    private String change;
+    private double change;
     //时间
     private long time;
     //base编号
@@ -66,7 +66,7 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         parseMarketTicker(marketTicker);
     }
 
-    public WatchlistData(long time, double high, double low, double baseVol, double quoteVol, double currentPrice, String baseSymbol, String quoteSymbol, String change, String baseId, String quoteId, int subscribeId, double rmbPrice, double quoteRmbPrice, int basePrecision, int quotePrecision) {
+    public WatchlistData(long time, double high, double low, double baseVol, double quoteVol, double currentPrice, String baseSymbol, String quoteSymbol, double change, String baseId, String quoteId, int subscribeId, double rmbPrice, double quoteRmbPrice, int basePrecision, int quotePrecision) {
         this.high = high;
         this.low = low;
         this.baseVol = baseVol;
@@ -133,11 +133,11 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         this.currentPrice = currentPrice;
     }
 
-    public String getChange() {
+    public double getChange() {
         return this.change;
     }
 
-    public void setChange(String change) {
+    public void setChange(double change) {
         this.change = change;
     }
 
@@ -280,7 +280,7 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         this.high = marketTicker.highest_bid;
         this.low = marketTicker.lowest_ask;
         this.currentPrice = marketTicker.latest;
-        this.change = String.valueOf(marketTicker.percent_change / 100);
+        this.change = marketTicker.percent_change;
     }
 
     @Override

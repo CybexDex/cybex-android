@@ -279,13 +279,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         Collections.sort(mAllWatchlistData, new Comparator<WatchlistData>() {
             @Override
             public int compare(WatchlistData o1, WatchlistData o2) {
-                if(o1.getChange() == null){
-                    return 1;
-                }
-                if(o2.getChange() == null){
-                    return -1;
-                }
-                return Double.parseDouble(o1.getChange()) > Double.parseDouble(o2.getChange()) ? -1 : 1;
+                return o1.getChange() > o2.getChange() ? -1 : 1;
             }
         });
         mTopGainerRecyclerViewAdapter = new TopGainerRecyclerViewAdapter(getContext(), mAllWatchlistData, mListener);
@@ -329,13 +323,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
             Collections.sort(mAllWatchlistData, new Comparator<WatchlistData>() {
                 @Override
                 public int compare(WatchlistData o1, WatchlistData o2) {
-                    if(o1.getChange() == null){
-                        return 1;
-                    }
-                    if(o2.getChange() == null){
-                        return -1;
-                    }
-                    return Double.parseDouble(o1.getChange()) > Double.parseDouble(o2.getChange()) ? -1 : 1;
+                    return o1.getChange() > o2.getChange() ? -1 : 1;
                 }
             });
         }

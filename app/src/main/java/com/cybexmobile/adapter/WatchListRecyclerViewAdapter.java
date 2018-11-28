@@ -52,21 +52,14 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         holder.mVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), 2));
         holder.mCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
 
-        double change = 0.f;
-        if (watchlistData.getChange() != null) {
-            try {
-                change = Double.parseDouble(watchlistData.getChange());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        double change = watchlistData.getChange();
         holder.mChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
-            holder.mChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
+            holder.mChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change))));
             holder.mChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_increasing));
         } else if (change < 0.f) {
-            holder.mChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change * 100))));
+            holder.mChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change))));
             holder.mChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_decreasing));
         } else {
             holder.mChangeRate.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : "0.00%");

@@ -57,7 +57,7 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
             return;
         }
         final WatchlistData watchlistData = mValues.get(position);
-        if (watchlistData == null || watchlistData.getChange() == null || Double.parseDouble(watchlistData.getChange()) < 0.f) {
+        if (watchlistData == null || watchlistData.getChange() < 0.f) {
             return;
         }
         NumberFormat formatter = new DecimalFormat("0.00");
@@ -66,21 +66,14 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
         holder.mTvVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), 2));
         holder.mTvCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
 
-        double change = 0.f;
-        if (watchlistData.getChange() != null) {
-            try {
-                change = Double.parseDouble(watchlistData.getChange());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        double change = watchlistData.getChange();
         holder.mTvChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
-            holder.mTvChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
+            holder.mTvChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change))));
             holder.mTvChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_increasing));
         } else if (change < 0.f) {
-            holder.mTvChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change * 100))));
+            holder.mTvChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change))));
             holder.mTvChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_decreasing));
         } else {
             holder.mTvChangeRate.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : "0.00%");

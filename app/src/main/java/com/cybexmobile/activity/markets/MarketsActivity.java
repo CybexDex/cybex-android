@@ -578,21 +578,14 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         }
         mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s: %2$s", trimmedQuote,
                 AssetUtil.formatAmountToKMB(watchListData.getQuoteVol(), 2)));
-        double change = 0.f;
-        if (watchListData.getChange() != null) {
-            try {
-                change = Double.parseDouble(watchListData.getChange());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        double change = watchListData.getChange();
         if (change > 0.f) {
-            mChangeRateView.setText(String.format(Locale.US, "+%.2f%%", change * 100));
+            mChangeRateView.setText(String.format(Locale.US, "+%.2f%%", change));
             mChangeRateView.setTextColor(getResources().getColor(R.color.increasing_color));
             mChangeRateView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_drop_up_24px, 0, 0, 0);
         } else if (change < 0.f) {
             mChangeRateView.setTextColor(getResources().getColor(R.color.decreasing_color));
-            mChangeRateView.setText(String.format(Locale.US, "%.2f%%", change * 100));
+            mChangeRateView.setText(String.format(Locale.US, "%.2f%%", change));
             mChangeRateView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_drop_down_24px, 0, 0, 0);
         } else {
             mChangeRateView.setText(volQuote == 0.f ? "--" : "0.00%");

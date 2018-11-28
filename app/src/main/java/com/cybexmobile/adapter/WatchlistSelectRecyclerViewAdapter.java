@@ -65,13 +65,13 @@ public class WatchlistSelectRecyclerViewAdapter extends RecyclerView.Adapter<Wat
             holder.mTvSymbol.setSelected(false);
         }
         holder.mTvSymbol.setText(String.format("%s/%s", AssetUtil.parseSymbol(watchlist.getQuoteSymbol()), AssetUtil.parseSymbol(watchlist.getBaseSymbol())));
-        double change = watchlist.getChange() == null ? 0.0 : Double.parseDouble(watchlist.getChange());
+        double change = watchlist.getChange();
         if(change > 0.f){
             holder.mTvChange.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
-            holder.mTvChange.setText(String.format(Locale.US, "+%.2f%%", change * 100));
+            holder.mTvChange.setText(String.format(Locale.US, "+%.2f%%", change));
         }  else if (change < 0.f) {
             holder.mTvChange.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
-            holder.mTvChange.setText(String.format(Locale.US, "%.2f%%", change * 100));
+            holder.mTvChange.setText(String.format(Locale.US, "%.2f%%", change));
         }else {
             holder.mTvChange.setText(watchlist.getCurrentPrice() == 0.f ? "-" : "0.00%");
             holder.mTvChange.setTextColor(mContext.getResources().getColor(R.color.no_change_color));

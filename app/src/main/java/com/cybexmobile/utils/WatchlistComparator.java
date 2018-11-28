@@ -69,13 +69,13 @@ public class WatchlistComparator implements Comparator<WatchlistData> {
         }
         if(mSort == CHANGE_DOWN){
             if(o1.getOrder() == 0 && o2.getOrder() == 0){
-                return Double.parseDouble(o1.getChange()) > Double.parseDouble(o2.getChange()) ? -1 : 1;
+                return o1.getChange() > o2.getChange() ? -1 : 1;
             }
             return o1.getOrder() > o2.getOrder() ? -1 : 1;
         }
         if(mSort == CHANGE_UP){
             if(o1.getOrder() == 0 && o2.getOrder() == 0){
-                return Double.parseDouble(o1.getChange()) < Double.parseDouble(o2.getChange()) ? -1 : 1;
+                return o1.getChange() < o2.getChange() ? -1 : 1;
             }
             return o1.getOrder() > o2.getOrder() ? -1 : 1;
         }

@@ -50,22 +50,15 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
         }
         holder.mTvAssetSymbol.setText(String.format("%s/%s", AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()), AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
         holder.mTvCurrPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
-        double change = 0.f;
-        if (watchlistData.getChange() != null) {
-            try {
-                change = Double.parseDouble(watchlistData.getChange());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        double change = watchlistData.getChange();
         holder.mTvChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
-            holder.mTvChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change * 100))));
+            holder.mTvChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change))));
             holder.mTvChangeRate.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
             holder.mTvCurrPrice.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
         } else if (change < 0.f) {
-            holder.mTvChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change * 100))));
+            holder.mTvChangeRate.setText(String.format("%s%%", String.valueOf(formatter.format(change))));
             holder.mTvChangeRate.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
             holder.mTvCurrPrice.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
         } else {

@@ -339,9 +339,13 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            unbindService(mConnection);
+        if(mChatOnScrollListener != null){
             mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
+        }
+        if(mWebSocketService != null){
+            unbindService(mConnection);
+        }
+        if(mRxChatWebSocket != null){
             mCompositeDisposable.add(mRxChatWebSocket.close(1000, "close")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
