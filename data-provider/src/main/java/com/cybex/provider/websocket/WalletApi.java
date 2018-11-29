@@ -25,7 +25,7 @@ import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
-import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MemoData;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
@@ -39,8 +39,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import org.spongycastle.asn1.cms.TimeStampAndCRL;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -52,7 +50,6 @@ import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -1220,7 +1217,7 @@ public class WalletApi {
         mWebSocketClient.get_limit_orders(base, quote, limit, callback);
     }
 
-    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockUpAssetObject>>> callback) throws NetworkStatusException {
+    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockAssetObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_balance_objects(addresses, callback);
     }
 

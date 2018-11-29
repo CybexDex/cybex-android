@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.lockassets.LockAssetsActivity;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.basemodule.utils.DateUtils;
 import com.squareup.picasso.Picasso;
@@ -21,7 +21,7 @@ import java.util.Locale;
 
 public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecyclerViewAdapter.ViewHolder> {
 
-    private List<LockAssetsActivity.LockUpAssetItem> mDatas;
+    private List<LockAssetsActivity.LockAssetItem> mDatas;
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mAssetSymbol;
@@ -45,7 +45,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     }
 
 
-    public CommonRecyclerViewAdapter(List<LockAssetsActivity.LockUpAssetItem> datas) {
+    public CommonRecyclerViewAdapter(List<LockAssetsActivity.LockAssetItem> datas) {
         mDatas = datas;
     }
 
@@ -57,15 +57,14 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        LockAssetsActivity.LockUpAssetItem item = mDatas.get(position);
-        LockUpAssetObject lockUpAssetObject = item.lockUpAssetobject;
-        MarketTicker marketTicker = item.ticker;
+        LockAssetsActivity.LockAssetItem item = mDatas.get(position);
+        LockAssetObject lockAssetObject = item.lockAssetobject;
         double rmbPrice = 0;
-        if(lockUpAssetObject != null){
-            loadImage(lockUpAssetObject.balance.asset_id.toString(), holder.mAssetSymbol);
-            long timeStamp = DateUtils.formatToMillis(lockUpAssetObject.vesting_policy.begin_timestamp);
+        if (lockAssetObject != null) {
+            loadImage(lockAssetObject.balance.asset_id.toString(), holder.mAssetSymbol);
+            long timeStamp = DateUtils.formatToMillis(lockAssetObject.vesting_policy.begin_timestamp);
             long currentTimeStamp = System.currentTimeMillis();
-            long duration = lockUpAssetObject.vesting_policy.vesting_duration_seconds;
+            long duration = lockAssetObject.vesting_policy.vesting_duration_seconds;
             long time = (currentTimeStamp - timeStamp) / 1000;
             int progress = (int) (100 * time / duration);
             holder.mProgressbar.setProgress(progress);
@@ -73,16 +72,12 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             holder.mExpirationDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_yyyy_MM_dd, timeStamp + duration * 1000));
         }
         AssetObject assetObject = item.assetObject;
-        if(assetObject != null){
-            String precisionFormmatter ="%." + assetObject.precision + "f";
-            double price = (lockUpAssetObject.balance.amount) / Math.pow(10, assetObject.precision);
+        if (assetObject != null) {
+            String precisionFormmatter = "%." + assetObject.precision + "f";
+            double price = (lockAssetObject.balance.amount) / Math.pow(10, assetObject.precision);
             holder.mAssetPrice.setText(String.format(Locale.US, precisionFormmatter, price));
-            if (assetObject.symbol.equals("CYB")) {
-                rmbPrice = price * item.cybRmbPrice;
-            } else if (marketTicker != null) {
-                rmbPrice = marketTicker.latest * item.cybRmbPrice * price;
-            }
-            holder.mRmbPrice.setText(rmbPrice != 0 ? String.format(Locale.US, "≈¥%.4f", rmbPrice) : "--");
+
+            holder.mRmbPrice.setText(item.itemRmbPrice != 0 ? String.format(Locale.US, "≈¥%.4f", item.itemRmbPrice * price) : "--");
             if (assetObject.symbol.contains("JADE")) {
                 holder.mAssetText.setText(assetObject.symbol.substring(5, assetObject.symbol.length()));
             } else {
@@ -101,7 +96,6 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     public int getItemViewType(int position) {
         return super.getItemViewType(position);
     }
-
 
 
     private void loadImage(String quoteId, ImageView mCoinSymbol) {

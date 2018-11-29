@@ -1,7 +1,7 @@
 package com.cybex.provider.graphene.chain;
 
-public class LockUpAssetObject {
-    public ObjectId<LockUpAssetObject> id;
+public class LockAssetObject {
+    public ObjectId<LockAssetObject> id;
     public String owner;
     public balance balance;
     public String last_claim_date;

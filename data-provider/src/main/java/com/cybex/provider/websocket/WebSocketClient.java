@@ -19,7 +19,7 @@ import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.FullNodeServerSelect;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
-import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybex.provider.graphene.chain.ObjectId;
@@ -30,7 +30,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -575,7 +574,7 @@ public class WebSocketClient extends WebSocketListener {
          sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
     }
 
-    public void get_balance_objects(List<String> addresses, MessageCallback<Reply<List<LockUpAssetObject>>> callback) throws NetworkStatusException {
+    public void get_balance_objects(List<String> addresses, MessageCallback<Reply<List<LockAssetObject>>> callback) throws NetworkStatusException {
         Call callObject = new Call();
         callObject.id = mCallId.getAndIncrement();
         callObject.method = "call";
@@ -587,8 +586,8 @@ public class WebSocketClient extends WebSocketListener {
         listParams.add(addresses);
         callObject.params.add(listParams);
 
-        ReplyProcessImpl<Reply<List<LockUpAssetObject>>> replyObjectProcess =
-                new ReplyProcessImpl<>(new TypeToken<Reply<List<LockUpAssetObject>>>() {
+        ReplyProcessImpl<Reply<List<LockAssetObject>>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<LockAssetObject>>>() {
                 }.getType(), callback);
         sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
     }

@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -27,7 +28,7 @@ import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.basemodule.service.WebSocketService;
 
@@ -53,7 +54,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 
 public class LockAssetsActivity extends BaseActivity {
@@ -69,7 +77,8 @@ public class LockAssetsActivity extends BaseActivity {
     RecyclerView mRecyclerView;
     CommonRecyclerViewAdapter mAdapter;
     private List<String> mAddresses = new ArrayList<>();
-    private List<LockUpAssetItem> mLockUpAssetItems = new ArrayList<>();
+    private List<LockAssetItem> mLockAssetItems = new ArrayList<>();
+    private List<WatchlistData> mWatchlistDataList = new ArrayList<>();
 
     private WebSocketService mWebSocketService;
     private AccountObject mAccountObject;
@@ -105,14 +114,15 @@ public class LockAssetsActivity extends BaseActivity {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
+            mWatchlistDataList = mWebSocketService.getAllWatchlistData();
             if (fullAccountObject != null) {
                 mAccountObject = fullAccountObject.account;
                 checkIfLocked(mName);
             }
-            if (mLockUpAssetItems != null && mLockUpAssetItems.size() > 0) {
-                for (LockUpAssetItem item : mLockUpAssetItems) {
-                    item.assetObject = mWebSocketService == null ? null : mWebSocketService.getAssetObject(item.lockUpAssetobject.balance.asset_id.toString());
-                    item.cybRmbPrice = mWebSocketService == null ? 0 : mWebSocketService.getAssetRmbPrice("CYB").getValue();
+            if (mLockAssetItems != null && mLockAssetItems.size() > 0) {
+                for (LockAssetItem item : mLockAssetItems) {
+                    item.assetObject = mWebSocketService == null ? null : mWebSocketService.getAssetObject(item.lockAssetobject.balance.asset_id.toString());
+                    calculateItemRmbPrice(item, item.lockAssetobject, mWatchlistDataList);
                 }
                 mHandler.sendEmptyMessage(MESSAGE_WHAT_NOTIFY_DATA);
             }
@@ -123,6 +133,7 @@ public class LockAssetsActivity extends BaseActivity {
             mWebSocketService = null;
         }
     };
+
 
     private void checkIfLocked(String userName) {
         if (mAccountObject == null) {
@@ -190,7 +201,7 @@ public class LockAssetsActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new CommonRecyclerViewAdapter(mLockUpAssetItems);
+        mAdapter = new CommonRecyclerViewAdapter(mLockAssetItems);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -227,16 +238,16 @@ public class LockAssetsActivity extends BaseActivity {
         }
     };
 
-    private WebSocketClient.MessageCallback mLockupAssetCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockUpAssetObject>>>() {
+    private WebSocketClient.MessageCallback mLockupAssetCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockAssetObject>>>() {
 
         @Override
-        public void onMessage(WebSocketClient.Reply<List<LockUpAssetObject>> reply) {
-            List<LockUpAssetObject> lockUpAssetObjects = reply.result;
-            if (lockUpAssetObjects == null || lockUpAssetObjects.size() == 0) {
+        public void onMessage(WebSocketClient.Reply<List<LockAssetObject>> reply) {
+            List<LockAssetObject> lockAssetObjects = reply.result;
+            if (lockAssetObjects == null || lockAssetObjects.size() == 0) {
                 mHandler.sendEmptyMessage(MESSAGE_WHAT_NO_DATA);
                 return;
             }
-            EventBus.getDefault().post(new Event.ThreadScheduler<>(lockUpAssetObjects));
+            EventBus.getDefault().post(new Event.ThreadScheduler<>(lockAssetObjects));
         }
 
         @Override
@@ -246,28 +257,19 @@ public class LockAssetsActivity extends BaseActivity {
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onThreadScheduler(Event.ThreadScheduler<List<LockUpAssetObject>> event) {
-        List<LockUpAssetObject> lockUpAssetObjects = event.getData();
-        for (LockUpAssetObject lockUpAssetObject : lockUpAssetObjects) {
-            long timeStamp = getTimeStamp(lockUpAssetObject.vesting_policy.begin_timestamp);
+    public void onThreadScheduler(Event.ThreadScheduler<List<LockAssetObject>> event) {
+        List<LockAssetObject> lockAssetObjects = event.getData();
+        for (LockAssetObject lockAssetObject : lockAssetObjects) {
+            long timeStamp = getTimeStamp(lockAssetObject.vesting_policy.begin_timestamp);
             long currentTimeStamp = System.currentTimeMillis();
-            long duration = lockUpAssetObject.vesting_policy.vesting_duration_seconds;
+            long duration = lockAssetObject.vesting_policy.vesting_duration_seconds;
             if (timeStamp + duration * 1000 > currentTimeStamp) {
-                LockUpAssetItem item = new LockUpAssetItem();
-                item.lockUpAssetobject = lockUpAssetObject;
+                LockAssetItem item = new LockAssetItem();
+                item.lockAssetobject = lockAssetObject;
                 if (mWebSocketService != null) {
-                    item.assetObject = mWebSocketService.getAssetObject(lockUpAssetObject.balance.asset_id.toString());
-                    AssetRmbPrice rmbPrice = mWebSocketService.getAssetRmbPrice("CYB");
-                    item.cybRmbPrice = rmbPrice == null ? 0 : rmbPrice.getValue();
-                    mLockUpAssetItems.add(item);
-                    if (!lockUpAssetObject.balance.asset_id.toString().equals(ASSET_ID_CYB)) {
-                        try {
-                            BitsharesWalletWraper.getInstance().get_ticker(ASSET_ID_CYB, lockUpAssetObject.balance.asset_id.toString(), onTickerCallback);
-                        } catch (NetworkStatusException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
+                    item.assetObject = mWebSocketService.getAssetObject(lockAssetObject.balance.asset_id.toString());
+                    calculateItemRmbPrice(item, item.lockAssetobject, mWatchlistDataList);
+                    mLockAssetItems.add(item);
                 }
             }
         }
@@ -276,44 +278,15 @@ public class LockAssetsActivity extends BaseActivity {
         }
     }
 
-    private WebSocketClient.MessageCallback onTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
-        @Override
-        public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
-            MarketTicker ticker = reply.result;
-            if (ticker == null) {
-                return;
-            }
-            for (int i = 0; i < mLockUpAssetItems.size(); i++) {
-                LockUpAssetItem item = mLockUpAssetItems.get(i);
-                if (ticker.quote.equals(item.lockUpAssetobject.balance.asset_id.toString()) && item.ticker == null) {
-                    item.ticker = ticker;
-
-                    Message message = Message.obtain();
-                    message.what = MESSAGE_WHAT_NOTIFY_DATA;
-                    message.obj = i;
-                    mHandler.sendMessage(message);
-                    break;
-                }
-            }
-
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadAsset(Event.LoadAsset event) {
         AssetObject assetObject = event.getData();
         if (assetObject == null) {
             return;
         }
-        for (int i = 0; i < mLockUpAssetItems.size(); i++) {
-            LockUpAssetItem item = mLockUpAssetItems.get(i);
-            if (item.lockUpAssetobject.balance.asset_id.toString().equals(assetObject.id.toString()) && item.assetObject == null) {
+        for (int i = 0; i < mLockAssetItems.size(); i++) {
+            LockAssetItem item = mLockAssetItems.get(i);
+            if (item.lockAssetobject.balance.asset_id.toString().equals(assetObject.id.toString()) && item.assetObject == null) {
                 item.assetObject = assetObject;
                 mAdapter.notifyItemChanged(i);
                 break;
@@ -327,15 +300,38 @@ public class LockAssetsActivity extends BaseActivity {
         if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
             return;
         }
-        for (AssetRmbPrice assetRmbPrice : assetRmbPrices) {
-            if (assetRmbPrice.getName().equals("CYB")) {
-                for (LockUpAssetItem item : mLockUpAssetItems) {
-                    item.cybRmbPrice = assetRmbPrice.getValue();
-                }
-                break;
+        if (mLockAssetItems != null && mLockAssetItems.size() > 0) {
+            for (LockAssetItem item : mLockAssetItems) {
+                calculateItemRmbPrice(item, item.lockAssetobject, mWatchlistDataList);
             }
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void calculateItemRmbPrice(LockAssetItem lockAssetItem, LockAssetObject lockAssetObject, List<WatchlistData> watchlistDataList) {
+        if (watchlistDataList == null || watchlistDataList.size() == 0) {
+            return;
+        }
+        if (lockAssetObject.balance.asset_id.toString().equals(ASSET_ID_CYB)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
+            lockAssetItem.itemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else if (lockAssetObject.balance.asset_id.toString().equals(ASSET_ID_ETH)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_ETH);
+            lockAssetItem.itemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else if (lockAssetObject.balance.asset_id.toString().equals(ASSET_ID_USDT)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_USDT);
+            lockAssetItem.itemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else if (lockAssetObject.balance.asset_id.toString().equals(ASSET_ID_BTC)) {
+            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_BTC);
+            lockAssetItem.itemRmbPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+        } else {
+            for (WatchlistData watchlistData : watchlistDataList) {
+                if (watchlistData.getQuoteId().equals(lockAssetObject.balance.asset_id.toString())) {
+                    lockAssetItem.itemRmbPrice = watchlistData.getRmbPrice() * watchlistData.getCurrentPrice();
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -371,10 +367,9 @@ public class LockAssetsActivity extends BaseActivity {
         mHandler.removeCallbacksAndMessages(null);
     }
 
-    public class LockUpAssetItem {
-        public LockUpAssetObject lockUpAssetobject;
+    public class LockAssetItem {
+        public LockAssetObject lockAssetobject;
         public AssetObject assetObject;
-        public double cybRmbPrice;
-        public MarketTicker ticker;
+        public double itemRmbPrice;
     }
 }

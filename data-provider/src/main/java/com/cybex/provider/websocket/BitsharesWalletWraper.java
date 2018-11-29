@@ -13,7 +13,7 @@ import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
-import com.cybex.provider.graphene.chain.LockUpAssetObject;
+import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MemoData;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
@@ -558,7 +558,7 @@ public class BitsharesWalletWraper {
         mWalletApi.get_limit_orders(base, quote, limit, callback);
     }
 
-    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockUpAssetObject>>> callback) throws NetworkStatusException {
+    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockAssetObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_balance_objects(addresses, callback);
     }
 
