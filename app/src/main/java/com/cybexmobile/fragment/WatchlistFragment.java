@@ -153,16 +153,6 @@ public class WatchlistFragment extends BaseFragment implements MultiStateRadioGr
         int index = mWatchlistData.indexOf(data);
         if (index != -1) {
             mWatchlistData.set(index, data);
-            if(mWatchlistComparator == null){
-                mWatchlistComparator = new WatchlistComparator(mSort);
-            }
-            //交易排序
-            Collections.sort(mWatchlistData, mWatchlistComparator);
-            /**
-             * fix bug:CYM-444
-             * 交易对排序后不刷新单条Item，防止数据错乱
-             */
-            //mWatchListRecyclerViewAdapter.notifyItemChanged(index);
         }
 
     }
@@ -213,6 +203,11 @@ public class WatchlistFragment extends BaseFragment implements MultiStateRadioGr
                 watchlistData.setRmbPrice(assetRmbPrice.getValue());
             }
         }
+        if(mWatchlistComparator == null){
+            mWatchlistComparator = new WatchlistComparator(mSort);
+        }
+        //交易排序
+        Collections.sort(mWatchlistData, mWatchlistComparator);
         mWatchListRecyclerViewAdapter.notifyDataSetChanged();
     }
 

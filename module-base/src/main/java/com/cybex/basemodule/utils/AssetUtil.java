@@ -1,5 +1,6 @@
 package com.cybex.basemodule.utils;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
@@ -31,16 +32,11 @@ public class AssetUtil {
      * @return
      */
     public static String formatNumberRounding(double number, int scale, RoundingMode mode){
-        NumberFormat format = NumberFormat.getInstance();
-        format.setMinimumFractionDigits(scale);
-        format.setMaximumFractionDigits(scale);
-        /**
-         * fix bug:CYM-584
-         * 取消千分位
-         */
-        format.setGroupingUsed(false);
-        format.setRoundingMode(mode);
-        return format.format(number);
+        BigDecimal bigDecimal = new BigDecimal(String.valueOf(number));
+        bigDecimal = bigDecimal.setScale(scale, mode);
+        String result = bigDecimal.toString();
+        bigDecimal = null;
+        return result;
     }
 
     /**

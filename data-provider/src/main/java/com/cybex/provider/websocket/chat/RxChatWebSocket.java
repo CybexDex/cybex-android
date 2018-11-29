@@ -41,6 +41,7 @@ public class RxChatWebSocket {
     private PublishProcessor<ChatSocketBase> publishProcessor = PublishProcessor.create();
     private ChatSocketOnSubscribe chatSocketOnSubscribe;
     private WebSocket webSocket;
+    private SocketStatus status;
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -71,6 +72,7 @@ public class RxChatWebSocket {
                 .doOnNext(new Consumer<ChatSocketOpen>() {
                     @Override
                     public void accept(ChatSocketOpen chatSocketOpen) throws Exception {
+                        status = SocketStatus.OPEN;
                         webSocket = chatSocketOpen.getWebSocket();
                     }
                 })
@@ -84,6 +86,12 @@ public class RxChatWebSocket {
     public Flowable<ChatSocketMessage> onSubscribe() {
         return getErrorHandler()
                 .ofType(ChatSocketMessage.class)
+                .doOnNext(new Consumer<ChatSocketMessage>() {
+                    @Override
+                    public void accept(ChatSocketMessage chatSocketMessage) throws Exception {
+                        status = SocketStatus.LOGIN;
+                    }
+                })
                 .doOnEach(new RxWebSocketLogger<ChatSocketMessage>("onSubscribe"));
 
     }
@@ -95,6 +103,12 @@ public class RxChatWebSocket {
     public Flowable<ChatSocketClosing> onClosing() {
         return getErrorHandler()
                 .ofType(ChatSocketClosing.class)
+                .doOnNext(new Consumer<ChatSocketClosing>() {
+                    @Override
+                    public void accept(ChatSocketClosing chatSocketClosing) throws Exception {
+                        status = SocketStatus.CLOSING;
+                    }
+                })
                 .doOnEach(new RxWebSocketLogger<ChatSocketClosing>("onClosing"));
     }
 
@@ -105,6 +119,12 @@ public class RxChatWebSocket {
     public Flowable<ChatSocketClosed> onClosed() {
         return getErrorHandler()
                 .ofType(ChatSocketClosed.class)
+                .doOnNext(new Consumer<ChatSocketClosed>() {
+                    @Override
+                    public void accept(ChatSocketClosed chatSocketClosed) throws Exception {
+                        status = SocketStatus.CLOSED;
+                    }
+                })
                 .doOnEach(new RxWebSocketLogger<ChatSocketClosed>("onClosed"));
     }
 
@@ -115,6 +135,12 @@ public class RxChatWebSocket {
     public Flowable<ChatSocketFailure> onFailure() {
         return getErrorHandler()
                 .ofType(ChatSocketFailure.class)
+                .doOnNext(new Consumer<ChatSocketFailure>() {
+                    @Override
+                    public void accept(ChatSocketFailure chatSocketFailure) throws Exception {
+                        status = SocketStatus.FAILURE;
+                    }
+                })
                 .doOnEach(new RxWebSocketLogger<ChatSocketFailure>("onFailure"));
     }
 
@@ -255,6 +281,10 @@ public class RxChatWebSocket {
                 }
             }
         });
+    }
+
+    public boolean isConnected() {
+        return status != null && status == SocketStatus.LOGIN;
     }
 
 }

@@ -68,7 +68,7 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
 
         double change = watchlistData.getChange();
         holder.mTvChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
+                mContext.getResources().getDimension(change >= 100 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
             holder.mTvChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change))));
             holder.mTvChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_increasing));

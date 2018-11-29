@@ -206,7 +206,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         setContentView(R.layout.activity_markets);
         mUnbinder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mWatchListData = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
         mBasePrecision = mWatchListData.getBasePrecision();
@@ -467,13 +466,15 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mProgressBar.setVisibility(View.GONE);
-                    if(mDuration == MARKET_STAT_INTERVAL_MILLIS_1_DAY){
-                        HistoryPrice lastHistoryPrice = mHistoryPriceList.get(mHistoryPriceList.size() - 1);
-                        mHighPriceView.setText(lastHistoryPrice.high == 0.f ? "-" :
-                                String.format("High: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.high, mWatchListData.getBasePrecision())));
-                        mLowPriceView.setText(lastHistoryPrice.low == 0.f ? "-" :
-                                String.format("Low: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.low, mWatchListData.getBasePrecision())));
+                    if(mProgressBar != null){
+                        mProgressBar.setVisibility(View.GONE);
+                        if(mDuration == MARKET_STAT_INTERVAL_MILLIS_1_DAY){
+                            HistoryPrice lastHistoryPrice = mHistoryPriceList.get(mHistoryPriceList.size() - 1);
+                            mHighPriceView.setText(lastHistoryPrice.high == 0.f ? "-" :
+                                    String.format("High: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.high, mWatchListData.getBasePrecision())));
+                            mLowPriceView.setText(lastHistoryPrice.low == 0.f ? "-" :
+                                    String.format("Low: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.low, mWatchListData.getBasePrecision())));
+                        }
                     }
                 }
             });

@@ -226,6 +226,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                     @Override
                     public void accept(ChatSocketFailure chatSocketFailure) throws Exception {
                         Log.d(RxChatWebSocket.TAG, "正在重新建立连接...");
+                        mPbChatLoading.setVisibility(View.VISIBLE);
                         //重连
                         mRxChatWebSocket.reconnect(3, TimeUnit.SECONDS);
                     }
@@ -257,7 +258,6 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                                 subscribeReplies.add(gson.fromJson(message, new TypeToken<ChatSubscribe<ChatReply>>(){}.getType()));
                             }
                         }
-                        mPbChatLoading.setVisibility(View.GONE);
                         notifyUI(subscribeReplies, subscribeMessages);
                     }
                 }, new Consumer<Throwable>() {
@@ -291,6 +291,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         if(subscribeReplies != null && subscribeReplies.size() > 0){
             //登录回应时 清空所有消息以防重连消息重复显示
             if(subscribeReplies.getFirst().getType() == ChatSubscribe.TYPE_LOGIN_REPLY){
+                mPbChatLoading.setVisibility(View.GONE);
                 mChatMessages.clear();
                 mChatRecyclerViewAdapter.notifyDataSetChanged();
             }
@@ -440,6 +441,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         if(!mIsLogin){ //未登录
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 1);
+            return;
+        }
+        if(mRxChatWebSocket == null || !mRxChatWebSocket.isConnected()){
             return;
         }
         String message = mEtMessageForced.getText().toString();

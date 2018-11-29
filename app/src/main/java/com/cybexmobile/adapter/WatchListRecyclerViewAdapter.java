@@ -54,7 +54,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
 
         double change = watchlistData.getChange();
         holder.mChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
+                mContext.getResources().getDimension(change >= 100 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
             holder.mChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change))));
             holder.mChangeRate.setBackground(mContext.getResources().getDrawable(R.drawable.bg_increasing));
