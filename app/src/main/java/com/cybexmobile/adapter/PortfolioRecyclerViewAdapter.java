@@ -76,7 +76,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 viewHolder.mAssetSymbol.setText(assetObject.symbol);
             }
             double price = accountBalanceObject.balance / Math.pow(10, assetObject.precision);
-            viewHolder.mAssetCybAmount.setText(AssetUtil.formatNumberRounding(price, assetObject.precision));
+            viewHolder.mAssetCybAmount.setText(String.format("%." + assetObject.precision + "f", price));
             viewHolder.mAssetFrozenAmount.setText(item.frozenAmount == 0 ? mContext.getResources().getString(R.string.balance_page_frozen_no_asset) : mContext.getResources().getString(R.string.balance_page_frozen_asset) + AssetUtil.formatNumberRounding(item.frozenAmount, assetObject.precision));
             viewHolder.mAssetRmb.setText(item.balanceItemRmbPrice == 0 ? "-" : "≈¥" + AssetUtil.formatNumberRounding(item.balanceItemRmbPrice * price, 4));
         }
