@@ -103,12 +103,12 @@ public final class PriceUtil {
         if (price.open == Double.POSITIVE_INFINITY || price.open == 0) {
             price.open = price.close;
         }
-        if (price.high > 1.3 * ((price.open + price.close) / 2)) {
-            price.high = MathUtil.max(price.open, price.close);
-        }
-        if (price.low < 0.7 * ((price.open + price.close) / 2)) {
-            price.low = MathUtil.min(price.open, price.close);
-        }
+//        if (price.high > 1.3 * ((price.open + price.close) / 2)) {
+//            price.high = MathUtil.max(price.open, price.close);
+//        }
+//        if (price.low < 0.7 * ((price.open + price.close) / 2)) {
+//            price.low = MathUtil.min(price.open, price.close);
+//        }
         return price;
     }
 
