@@ -148,14 +148,19 @@ public class AccountBalanceActivity extends BaseActivity {
         mAccountBalanceRecyclerView.setAdapter(mBalanceRecyclerAdapter);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        if (mIsLoginIn) {
-            if (mNetworkState == TYPE_NOT_CONNECTED) {
-                mTotalCybPrice = BalanceCache.getInstance().getmTotalCybBalance();
-                mTotalRmbPrice = BalanceCache.getInstance().getmTotalRmbBalance();
-                mAccountBalanceObjectItems.addAll(BalanceCache.getInstance().getmAccountBalanceObjectItemList());
-                mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
-                setTotalCybAndRmbTextView(mTotalCybPrice, mTotalRmbPrice);
+        if (mIsLoginIn && mNetworkState == TYPE_NOT_CONNECTED) {
+            mTotalCybPrice = BalanceCache.getInstance().getmTotalCybBalance();
+            mTotalRmbPrice = BalanceCache.getInstance().getmTotalRmbBalance();
+            /**
+             * 解决线上bug
+             * 设备无网络打开APP进入我的资产界面获取缓存数据为空导致程序crash
+             */
+            List<AccountBalanceObjectItem> balanceCache = BalanceCache.getInstance().getmAccountBalanceObjectItemList();
+            if(balanceCache != null){
+                mAccountBalanceObjectItems.addAll(balanceCache);
             }
+            mHandler.sendEmptyMessage(MESSAGE_WHAT_REFRESH_PORTFOLIO);
+            setTotalCybAndRmbTextView(mTotalCybPrice, mTotalRmbPrice);
         }
     }
 

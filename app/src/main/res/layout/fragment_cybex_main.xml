@@ -13,7 +13,7 @@
         <com.youth.banner.Banner
             android:id="@+id/fragment_cybex_main_banner"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_200"
+            android:layout_height="@dimen/height_237"
             app:indicator_drawable_selected="@android:color/white"
             app:indicator_drawable_unselected="@color/primary_color_grey">
 
