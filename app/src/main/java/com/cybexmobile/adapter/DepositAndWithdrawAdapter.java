@@ -115,7 +115,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
                     @Override
                     public void onClick(View v) {
                         if (mName.equals(DepositItemFragment.class.getName())) {
-                            if (!mDataList.get(position).isEnable()) {
+                            if (mDataList.get(position).isEnable()) {
                                 Intent intent = new Intent(mContext, DepositActivity.class);
                                 intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
                                 intent.putExtra("isEnabled", mDataList.get(position).isEnable());
