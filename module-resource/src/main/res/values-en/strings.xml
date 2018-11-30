@@ -238,6 +238,7 @@
     <string name="gate_way_select_coin">Select Coin</string>
     <string name="gate_way_hide_balance">Hide 0 balance</string>
     <string name="gate_way_search">Search</string>
+    <string name="gate_way_suspended">Suspend</string>
 
     <!-- Deposit Page Related -->
     <string name="deposit_save_qr_code">Save QR Code</string>

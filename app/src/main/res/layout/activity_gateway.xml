@@ -60,7 +60,8 @@
         android:layout_marginStart="@dimen/activity_margin"
         android:layout_marginTop="@dimen/margin_16"
         android:layout_marginEnd="@dimen/activity_margin"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
 
         <CheckBox

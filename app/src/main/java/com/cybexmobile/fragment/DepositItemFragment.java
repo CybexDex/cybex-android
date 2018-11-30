@@ -1,5 +1,6 @@
 package com.cybexmobile.fragment;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -104,7 +105,7 @@ public class DepositItemFragment extends Fragment {
         mActivity = (BaseActivity) getActivity();
         // Set the adapter
         Context context = getContext();
-        mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(context, TAG, mDepositObjectList);
+        mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(mActivity, TAG, mDepositObjectList);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.deposit_withdraw_divider));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));

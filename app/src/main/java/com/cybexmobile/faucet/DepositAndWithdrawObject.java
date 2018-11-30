@@ -4,13 +4,13 @@ import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 
 public class DepositAndWithdrawObject {
-    public String id;
-    public boolean enable;
-    public String enMsg;
-    public String cnMsg;
-    String enInfo;
-    String cnInfo;
-    long count;
+    private String id;
+    private boolean enable;
+    private String enMsg;
+    private String cnMsg;
+    private String enInfo;
+    private String cnInfo;
+    private long count;
     public AssetObject assetObject;
     private AccountBalanceObject accountBalanceObject;
 
