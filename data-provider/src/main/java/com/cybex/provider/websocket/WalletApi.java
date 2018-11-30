@@ -731,6 +731,22 @@ public class WalletApi {
         return operation;
     }
 
+    public Operations.balance_claim_operation getBalanceClaimOperation(long fee,
+                                                                       ObjectId<AssetObject> feeAssetId,
+                                                                       ObjectId<AccountObject> depositToAccount,
+                                                                       ObjectId<LockAssetObject> balanceToClaim,
+                                                                       Types.public_key_type balanceOwnerKey,
+                                                                       long totalClaimedAmount,
+                                                                       ObjectId<AssetObject> totalClaimedAmountId) {
+        Operations.balance_claim_operation operation = new Operations.balance_claim_operation();
+        operation.fee = new Asset(fee, feeAssetId);
+        operation.deposit_to_account = depositToAccount;
+        operation.balance_to_claim = balanceToClaim;
+        operation.balance_owner_key = balanceOwnerKey;
+        operation.total_claimed = new Asset(totalClaimedAmount, totalClaimedAmountId);
+        return operation;
+    }
+
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
         SignedTransaction signedTransaction = new SignedTransaction();
         Operations.operation_type operationType = new Operations.operation_type();

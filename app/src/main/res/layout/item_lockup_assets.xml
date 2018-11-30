@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView android:id="@+id/coin_pair_item_card_view"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coin_pair_item_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/corner_radius_4"
-    app:cardElevation="@dimen/elevation_3"
     android:layout_marginStart="@dimen/activity_margin"
     android:layout_marginEnd="@dimen/activity_margin"
     android:layout_marginBottom="@dimen/activity_margin"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/corner_radius_4"
+    app:cardElevation="@dimen/elevation_3">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,26 +19,54 @@
         android:orientation="vertical"
         android:padding="@dimen/activity_padding">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/lock_up_asset_image"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/lock_up_asset_image"
+                    android:layout_width="@dimen/width_24"
+                    android:layout_height="@dimen/height_24"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/lock_up_asset_symbol"
+                    style="@style/font_white_dark_bold_large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_8"
+                    android:text="@string/text_empty" />
+            </LinearLayout>
 
             <TextView
+                android:id="@+id/lock_up_asset_locked_tv"
                 style="@style/font_white_dark_bold_large"
-                android:id="@+id/lock_up_asset_symbol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_8"
-                android:text="@string/text_empty" />
+                android:layout_alignParentEnd="true"
+                android:text="@string/locked_assets_tv"
+                android:visibility="visible"/>
 
-        </LinearLayout>
+            <Button
+                android:id="@+id/lock_up_asset_claim_button"
+                style="@style/font_white_large"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_30"
+                android:layout_alignParentEnd="true"
+                android:paddingStart="@dimen/activity_padding"
+                android:paddingEnd="@dimen/activity_padding"
+                android:background="@drawable/bg_btn_orange_gradient_enabled"
+                android:textAllCaps="false"
+                android:text="@string/locked_assets_claim_tv"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -47,36 +75,12 @@
             android:paddingBottom="@dimen/padding_6">
 
             <TextView
-                style="@style/font_white_dark_bold_large"
                 android:id="@+id/lock_up_asset_price"
+                style="@style/font_gray_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/layout_progress_bar"
                 android:text="@string/text_empty" />
 
-            <LinearLayout
-                android:id="@+id/layout_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:gravity="end"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/lock_up_asset_progress_text"
-                    style="@style/font_gray_bold_small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_empty" />
-
-                <ProgressBar
-                    android:id="@+id/lock_up_asset_progress_bar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="@dimen/width_60"
-                    android:layout_height="@dimen/height_5"
-                    android:max="100"
-                    android:progressDrawable="@drawable/bg_progress_bar" />
-            </LinearLayout>
 
         </RelativeLayout>
 

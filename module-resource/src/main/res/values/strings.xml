@@ -176,6 +176,8 @@
     <string name="assets_amount">Assets/Amount</string>
     <string name="progress_expire_date">Progress/Expiration Time</string>
     <string name="locked_assets">Lockup Assets</string>
+    <string name="locked_assets_tv">Locked</string>
+    <string name="locked_assets_claim_tv">Claim</string>
 
 
     <string name="network_connection_is_not_available">network connection is not available</string>
@@ -307,6 +309,8 @@
     <string name="toast_message_transfer_failed">Transfer failed</string>
     <string name="toast_message_add_this_account_to_list">Add this account to list?</string>
     <string name="toast_message_add_to_transfer_account_list">Add to transfer account list?</string>
+    <string name="toast_message_balance_claim_succeeded">Claim succeeded</string>
+    <string name="toast_message_balance_claim_failed">Claim failed</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
@@ -337,6 +341,9 @@
     <string name="dialog_text_fee">Fee:</string>
     <string name="dialog_text_quantity">Quantity:</string>
     <string name="dialog_text_memo">Memo:</string>
+
+    <!-- Dialog Balance Claim Confirmation -->
+    <string name="dialog_balance_claim_title">CONFIRMATION</string>
 
     <!--Dialog Version Update -->
     <string name="dialog_version_update">Version Update</string>

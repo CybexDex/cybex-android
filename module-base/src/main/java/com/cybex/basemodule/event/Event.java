@@ -480,6 +480,20 @@ public class Event {
     }
 
     /**
+     * 申领
+     */
+    public static class BalanceClaim {
+        private boolean isSuccess;
+
+        public BalanceClaim(boolean isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        public boolean isSuccess() {
+            return isSuccess;
+        }
+    }
+    /**
      * 提现
      */
     public static class Withdraw {

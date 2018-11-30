@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybex.basemodule.R;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.graphene.chain.AccountObject;
 
@@ -233,6 +234,37 @@ public class CybexDialog {
             layoutMemo.setVisibility(View.VISIBLE);
             tvMemo.setText(memo);
         }
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public static void showBalanceClaimDialog(Context context, String quantity, String account, final ConfirmationDialogClickListener listener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_balance_claim_confirmation);
+        TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        tvTitle.setText(context.getResources().getString(R.string.dialog_balance_claim_title));
+        TextView tvQuantity = dialog.findViewById(R.id.dialog_balance_claim_tv_quantity);
+        TextView tvAccount = dialog.findViewById(R.id.dialog_balance_claim_tv_account);
+        tvQuantity.setText(quantity);
+        tvAccount.setText(account);
+
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {

@@ -16,6 +16,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import org.bitcoinj.wallet.Wallet;
+
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
@@ -35,6 +37,7 @@ public class Operations {
     public static final int ID_FILL_LMMIT_ORDER_OPERATION = 4;
     public static final int ID_CREATE_ACCOUNT_OPERATION = 5;
     public static final int ID_WITHDRAW_DEPOSIT_OPERATION = 6;
+    public static final int ID_BALANCE_CLAIM_OPERATION = 37;
 
     public static operation_id_map operations_map = new operation_id_map();
 
@@ -51,6 +54,7 @@ public class Operations {
             mHashId2Operation.put(ID_FILL_LMMIT_ORDER_OPERATION, fill_order_operation.class);
             mHashId2Operation.put(ID_CREATE_ACCOUNT_OPERATION, account_create_operation.class);
             mHashId2Operation.put(ID_WITHDRAW_DEPOSIT_OPERATION, withdraw_deposit_history_operation.class);
+            mHashId2Operation.put(ID_BALANCE_CLAIM_OPERATION, balance_claim_operation.class);
 
             mHashId2OperationFee.put(ID_TRANSER_OPERATION, transfer_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_CREATE_LIMIT_ORDER_OPERATION, limit_order_create_operation.fee_parameters_type.class);
@@ -735,6 +739,66 @@ public class Operations {
             this.write_to_encoder(enc);
             byte[] signature = privateKey.getPrivateKey().sign_compact(enc.result(), true).data;
             Log.e("signWithdraw", MyUtils.bytesToHex(signature));
+        }
+    }
+
+    public static class balance_claim_operation implements base_operation {
+        public Asset fee;
+        public ObjectId<AccountObject> deposit_to_account;
+        public ObjectId<LockAssetObject> balance_to_claim;
+        public Types.public_key_type balance_owner_key;
+        public Asset total_claimed;
+
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawObject = new RawType();
+            baseEncoder.write(rawObject.get_byte_array(fee.amount));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(fee.asset_id.get_instance()));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(deposit_to_account.get_instance()));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(balance_to_claim.get_instance()));
+            baseEncoder.write(balance_owner_key.key_data);
+            baseEncoder.write(rawObject.get_byte_array(total_claimed.amount));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(total_claimed.asset_id.get_instance()));
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
         }
     }
 }

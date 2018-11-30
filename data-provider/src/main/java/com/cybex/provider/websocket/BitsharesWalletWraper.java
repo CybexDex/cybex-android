@@ -41,6 +41,7 @@ public class BitsharesWalletWraper {
     private Map<ObjectId<AccountObject>, AccountObject> mMapAccountId2Object = new ConcurrentHashMap<>();
     private Map<ObjectId<AccountObject>, List<Asset>> mMapAccountId2Asset = new ConcurrentHashMap<>();
     private Map<ObjectId<AssetObject>, AssetObject> mMapAssetId2Object = new ConcurrentHashMap<>();
+    private Map<String, Types.public_key_type > mMapAddress2PublicKey = new ConcurrentHashMap<>();
     private String mstrWalletFilePath;
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
@@ -374,6 +375,16 @@ public class BitsharesWalletWraper {
         return mWalletApi.getWithdrawDepositOperation(accountName, offset, size, fundType, asset, expiration);
     }
 
+    public Operations.balance_claim_operation getBalanceClaimOperation(long fee,
+                                                                       ObjectId<AssetObject> feeAssetId,
+                                                                       ObjectId<AccountObject> depositToAccount,
+                                                                       ObjectId<LockAssetObject> balanceToClaim,
+                                                                       Types.public_key_type balanceOwnerKey,
+                                                                       long totalClaimedAmount,
+                                                                       ObjectId<AssetObject> totalClaimedAmountId) {
+        return mWalletApi.getBalanceClaimOperation(fee, feeAssetId, depositToAccount, balanceToClaim, balanceOwnerKey, totalClaimedAmount, totalClaimedAmountId);
+    }
+
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
 
         return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
@@ -671,29 +682,38 @@ public class BitsharesWalletWraper {
 
         String address = publicActiveKeyType.getAddress();
         addressList.add(address);
+        mMapAddress2PublicKey.put(address, publicActiveKeyType);
         String ownerAddress = publicOwnerKeyType.getAddress();
         addressList.add(ownerAddress);
+        mMapAddress2PublicKey.put(ownerAddress, publicOwnerKeyType);
         String memoAddress = publicMemoKeyType.getAddress();
         addressList.add(memoAddress);
+        mMapAddress2PublicKey.put(memoAddress, publicMemoKeyType);
         String PTSAddress = publicActiveKeyType.getPTSAddress(publicActiveKeyType.key_data);
         addressList.add(PTSAddress);
-        String owerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
-        addressList.add(owerPtsAddress);
+        mMapAddress2PublicKey.put(PTSAddress, publicActiveKeyType);
+        String ownerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
+        addressList.add(ownerPtsAddress);
+        mMapAddress2PublicKey.put(ownerPtsAddress, publicOwnerKeyType);
         String memoPtsAddress = publicMemoKeyType.getPTSAddress(publicMemoKeyType.key_data);
         addressList.add(memoPtsAddress);
-        String uncompresedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
-        addressList.add(uncompresedPts);
+        mMapAddress2PublicKey.put(memoPtsAddress, publicMemoKeyType);
+        String unCompressedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
+        addressList.add(unCompressedPts);
+        mMapAddress2PublicKey.put(unCompressedPts, publicActiveKeyType);
         String unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
         addressList.add(unCompressedOwnerKey);
+        mMapAddress2PublicKey.put(unCompressedOwnerKey, publicOwnerKeyType);
         String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
         addressList.add(unCompressedMemo);
+        mMapAddress2PublicKey.put(unCompressedMemo, publicMemoKeyType);
         Log.e("Address", address);
         Log.e("OwnerAddress", ownerAddress);
         Log.e("ActivePTSAddress", PTSAddress);
-        Log.e("OwnerPtsAddress", owerPtsAddress);
+        Log.e("OwnerPtsAddress", ownerPtsAddress);
         Log.e("MemoAddress", memoAddress);
         Log.e("MemoPTSAddress", memoPtsAddress);
-        Log.e("uncompressedActive", uncompresedPts);
+        Log.e("uncompressedActive", unCompressedPts);
         Log.e("uncompressedOwner", unCompressedOwnerKey);
         Log.e("uncompressedMemo", unCompressedMemo);
         return addressList;
@@ -707,6 +727,16 @@ public class BitsharesWalletWraper {
         }
     }
 
+    public Types.public_key_type getPublicKeyFromAddress(String address) {
+        if (!mMapAddress2PublicKey.isEmpty()) {
+            for (Map.Entry<String, Types.public_key_type> entry : mMapAddress2PublicKey.entrySet() ) {
+                if (entry.getKey().equals(address)) {
+                    return entry.getValue();
+                }
+            }
+        }
+        return null;
+    }
     public String getPassword() {
         return password;
     }

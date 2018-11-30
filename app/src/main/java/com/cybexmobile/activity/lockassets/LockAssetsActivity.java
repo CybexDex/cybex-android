@@ -1,5 +1,6 @@
 package com.cybexmobile.activity.lockassets;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -15,8 +16,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
+import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.graphene.chain.FeeAmountObject;
+import com.cybex.provider.graphene.chain.ObjectId;
+import com.cybex.provider.graphene.chain.Operations;
+import com.cybex.provider.graphene.chain.Types;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
@@ -36,6 +46,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,8 +74,9 @@ import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.provider.graphene.chain.Operations.ID_BALANCE_CLAIM_OPERATION;
 
-public class LockAssetsActivity extends BaseActivity {
+public class LockAssetsActivity extends BaseActivity implements CommonRecyclerViewAdapter.OnClickLockAssetItemListener {
 
     private static final String TAG = "LockAssetsActivity";
 
@@ -134,7 +146,6 @@ public class LockAssetsActivity extends BaseActivity {
         }
     };
 
-
     private void checkIfLocked(String userName) {
         if (mAccountObject == null) {
             return;
@@ -142,18 +153,19 @@ public class LockAssetsActivity extends BaseActivity {
         if (BitsharesWalletWraper.getInstance().is_locked()) {
             CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject,
                     userName, new UnlockDialog.UnLockDialogClickListener() {
-                @Override
-                public void onUnLocked(String password) {
-                    loadData(userName, password);
-                }
-            });
+                        @Override
+                        public void onUnLocked(String password) {
+                            showLoadDialog(true);
+                            loadData(userName, password);
+                        }
+                    });
         } else {
+            showLoadDialog(true);
             loadData(userName, BitsharesWalletWraper.getInstance().getPassword());
         }
     }
 
     private void loadData(String name, String password) {
-        showLoadDialog(true);
         Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(ObservableEmitter<List<String>> e) {
@@ -173,7 +185,10 @@ public class LockAssetsActivity extends BaseActivity {
                     @Override
                     public void onNext(List<String> strings) {
                         Log.v(TAG, "onNext");
+
+                        mAddresses.clear();
                         mAddresses.addAll(strings);
+
                         try {
                             BitsharesWalletWraper.getInstance().get_balance_objects(mAddresses, mLockupAssetCallback);
                         } catch (NetworkStatusException e) {
@@ -201,7 +216,7 @@ public class LockAssetsActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new CommonRecyclerViewAdapter(mLockAssetItems);
+        mAdapter = new CommonRecyclerViewAdapter(mLockAssetItems, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -263,7 +278,6 @@ public class LockAssetsActivity extends BaseActivity {
             long timeStamp = getTimeStamp(lockAssetObject.vesting_policy.begin_timestamp);
             long currentTimeStamp = System.currentTimeMillis();
             long duration = lockAssetObject.vesting_policy.vesting_duration_seconds;
-            if (timeStamp + duration * 1000 > currentTimeStamp) {
                 LockAssetItem item = new LockAssetItem();
                 item.lockAssetobject = lockAssetObject;
                 if (mWebSocketService != null) {
@@ -271,7 +285,6 @@ public class LockAssetsActivity extends BaseActivity {
                     calculateItemRmbPrice(item, item.lockAssetobject, mWatchlistDataList);
                     mLockAssetItems.add(item);
                 }
-            }
         }
         if (mWebSocketService != null) {
             mHandler.sendEmptyMessage(MESSAGE_WHAT_NOTIFY_DATA);
@@ -331,6 +344,100 @@ public class LockAssetsActivity extends BaseActivity {
                     break;
                 }
             }
+        }
+    }
+
+    @Override
+    public void onClick(LockAssetItem lockAssetItem) {
+        CybexDialog.showBalanceClaimDialog(this, String.format("%s %s", AssetUtil.formatNumberRounding(lockAssetItem.lockAssetobject.balance.amount / Math.pow(10, lockAssetItem.assetObject.precision), lockAssetItem.assetObject.precision),
+                AssetUtil.parseSymbol(lockAssetItem.assetObject.symbol)), mAccountObject.name, new CybexDialog.ConfirmationDialogClickListener() {
+            @Override
+            public void onClick(Dialog dialog) {
+                if (mAccountObject == null) {
+                    return;
+                }
+                if (BitsharesWalletWraper.getInstance().is_locked()) {
+                    CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mName
+                            , new UnlockDialog.UnLockDialogClickListener() {
+                                @Override
+                                public void onUnLocked(String password) {
+                                    broadcastOperation(lockAssetItem);
+                                }
+                            });
+                } else {
+                    broadcastOperation(lockAssetItem);
+                }
+            }
+        });
+
+    }
+
+    private void broadcastOperation(LockAssetItem lockAssetItem) {
+        Types.public_key_type public_key_type = BitsharesWalletWraper.getInstance().getPublicKeyFromAddress(lockAssetItem.lockAssetobject.owner);
+        try {
+            Operations.balance_claim_operation operation = BitsharesWalletWraper.getInstance().getBalanceClaimOperation(
+                    0,
+                    ObjectId.create_from_string("1.3.0"),
+                    mAccountObject.id,
+                    lockAssetItem.lockAssetobject.id,
+                    public_key_type,
+                    (long)lockAssetItem.lockAssetobject.balance.amount,
+                    lockAssetItem.lockAssetobject.balance.asset_id
+            );
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+                @Override
+                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                            mAccountObject,
+                            operation,
+                            ID_BALANCE_CLAIM_OPERATION,
+                            reply.result
+                    );
+                    try {
+                        BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mBalanceClaimCallBack);
+                    } catch (NetworkStatusException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    WebSocketClient.MessageCallback mBalanceClaimCallBack = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+        @Override
+        public void onMessage(WebSocketClient.Reply<String> reply) {
+            EventBus.getDefault().post(new Event.BalanceClaim(reply.result == null && reply.error == null));
+        }
+
+        @Override
+        public void onFailure() {
+            EventBus.getDefault().post(new Event.BalanceClaim(false));
+
+        }
+    };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBalanceClaim(Event.BalanceClaim balanceClaim) {
+        if (balanceClaim.isSuccess()) {
+            ToastMessage.showNotEnableDepositToastMessage(
+                    LockAssetsActivity.this,
+                    getResources().getString(R.string.toast_message_balance_claim_succeeded),
+                    R.drawable.ic_check_circle_green);
+            if (mLockAssetItems != null && mLockAssetItems.size() > 0) {
+                mLockAssetItems.clear();
+                loadData(mName, BitsharesWalletWraper.getInstance().getPassword());
+            }
+        } else {
+            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
+                    R.string.toast_message_balance_claim_failed), R.drawable.ic_error_16px);
         }
     }
 

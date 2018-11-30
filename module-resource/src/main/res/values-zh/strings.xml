@@ -179,6 +179,8 @@
     <string name="assets_amount">资产/数量</string>
     <string name="progress_expire_date">进度/到期时间</string>
     <string name="locked_assets">锁定期资产</string>
+    <string name="locked_assets_tv">未到期</string>
+    <string name="locked_assets_claim_tv">申领</string>
 
     <!-- Activity Register -->
     <string name="have_account_login">已注册?</string>
@@ -312,6 +314,8 @@
     <string name="toast_message_transfer_failed">转账失败</string>
     <string name="toast_message_add_this_account_to_list">是否将该地址储存到提现地址列表?</string>
     <string name="toast_message_add_to_transfer_account_list">是否将该账户储存到转账账户列表?</string>
+    <string name="toast_message_balance_claim_succeeded">申领成功</string>
+    <string name="toast_message_balance_claim_failed">申领失败</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">解锁钱包</string>
@@ -345,6 +349,7 @@
     <string name="dialog_text_quantity">数量:</string>
     <string name="dialog_text_memo">备注:</string>
 
+    <string name="dialog_balance_claim_title">申领确认</string>
     <!--Dialog Version Update -->
     <string name="dialog_version_update">版本更新</string>
 
