@@ -71,6 +71,12 @@ public class DeviceUtils {
         return deviceId;
     }
 
+    public static String getAndroidId(Context context) {
+        String androidId = android.provider.Settings.Secure.getString(context.getContentResolver(),
+                android.provider.Settings.Secure.ANDROID_ID);
+        return androidId == null ? "" : androidId;
+    }
+
     private static String generateUUID(Context context) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             return null;
