@@ -168,18 +168,19 @@ public class MarketTradeHistoryFragment extends BaseFragment {
                 marketTrade.quote = mWatchlistData.getQuoteSymbol();
                 String paysAmount = String.format("%s", pays.get("amount"));
                 String receiveAmount = String.format("%s", receives.get("amount"));
-                double baseAmountForPrice = Double.parseDouble(String.format("%s", base.get("amount"))) / Math.pow(10, mWatchlistData.getBasePrecision());
-                double quoteAmountForPrice = Double.parseDouble(String.format("%s", quote.get("amount"))) / Math.pow(10, mWatchlistData.getQuotePrecision());
                 if (pays.get("asset_id").equals(mWatchlistData.getBaseId())) {
+                    double baseAmountForPrice = Double.parseDouble(String.format("%s", base.get("amount"))) / Math.pow(10, mWatchlistData.getBasePrecision());
+                    double quoteAmountForPrice = Double.parseDouble(String.format("%s", quote.get("amount"))) / Math.pow(10, mWatchlistData.getQuotePrecision());
                     marketTrade.baseAmount = Double.parseDouble(paysAmount) / Math.pow(10, mWatchlistData.getBasePrecision());
                     marketTrade.quoteAmount = Double.parseDouble(receiveAmount) / Math.pow(10, mWatchlistData.getQuotePrecision());
                     marketTrade.price = baseAmountForPrice / quoteAmountForPrice;
                     marketTrade.showRed = "showRed";
                 } else {
+                    double baseAmountForPrice = Double.parseDouble(String.format("%s", quote.get("amount"))) / Math.pow(10, mWatchlistData.getBasePrecision());
+                    double quoteAmountForPrice = Double.parseDouble(String.format("%s", base.get("amount"))) / Math.pow(10, mWatchlistData.getQuotePrecision());
                     marketTrade.quoteAmount = Double.parseDouble(paysAmount) / Math.pow(10, mWatchlistData.getQuotePrecision());
                     marketTrade.baseAmount = Double.parseDouble(receiveAmount) / Math.pow(10, mWatchlistData.getBasePrecision());
-
-                    marketTrade.price = quoteAmountForPrice / baseAmountForPrice;
+                    marketTrade.price = baseAmountForPrice / quoteAmountForPrice;
                     marketTrade.showRed = "showGreen";
                 }
                 marketTrades.add(marketTrade);
