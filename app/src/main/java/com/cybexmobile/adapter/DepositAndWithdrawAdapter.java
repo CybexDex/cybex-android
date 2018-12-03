@@ -118,6 +118,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
                             if (mDataList.get(position).isEnable()) {
                                 Intent intent = new Intent(mContext, DepositActivity.class);
                                 intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
+                                intent.putExtra("assetId", mDataList.get(position).getId());
                                 intent.putExtra("isEnabled", mDataList.get(position).isEnable());
                                 intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
                                 intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
@@ -138,6 +139,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
                             if (mDataList.get(position).isEnable()) {
                                 Intent intent = new Intent(mContext, WithdrawActivity.class);
                                 intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
+                                intent.putExtra("assetId", mDataList.get(position).getId());
                                 intent.putExtra("isEnabled", mDataList.get(position).isEnable());
                                 intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
                                 intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());

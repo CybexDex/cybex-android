@@ -39,6 +39,7 @@ import com.apollographql.apollo.fragment.WithdrawinfoObject;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
@@ -71,6 +72,8 @@ import com.cybex.basemodule.utils.SoftKeyBoardListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -88,6 +91,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_TAG;
@@ -105,6 +109,7 @@ public class WithdrawActivity extends BaseActivity {
 
     public Unbinder mUnbinder;
     private String mAssetName;
+    private String mAssetId;
     private boolean mIsEnabled;
     private String mEnMsg;
     private String mCnMsg;
@@ -188,6 +193,7 @@ public class WithdrawActivity extends BaseActivity {
         mUserName = sharedPreferences.getString("name", null);
         Intent intent = getIntent();
         mAssetName = intent.getStringExtra("assetName");
+        mAssetId = intent.getStringExtra("assetId");
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
         mEnMsg = intent.getStringExtra("enMsg");
         mCnMsg = intent.getStringExtra("cnMsg");
@@ -732,11 +738,45 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void requestDetailMessage() {
-        if (Locale.getDefault().getLanguage().equals("zh")) {
-            mWithdrawMessage.setText(mCnInfo);
-        } else {
-            mWithdrawMessage.setText(mEnInfo);
-        }
+        mCompositeDisposable.add(RetrofitFactory.getInstance()
+                .api()
+                .getWithdrawDetails(mAssetId + ".json")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<ResponseBody>() {
+                    @Override
+                    public void accept(ResponseBody responseBody) throws Exception {
+                        JSONObject jsonObject = new JSONObject(responseBody.string());
+                        if (Locale.getDefault().getLanguage().equals("zh")) {
+                            JSONArray asset_notice = jsonObject.getJSONObject("notice_cn").getJSONArray("adds");
+                            StringBuilder builder = new StringBuilder();
+                            if (asset_notice != null && asset_notice.length() > 0) {
+                                for (int i = 0; i < asset_notice.length(); i++) {
+                                    builder.append(asset_notice.getJSONObject(i).getString("text"));
+                                    builder.append("\n");
+                                }
+                                mWithdrawMessage.setText(builder.toString());
+                            }
+                        } else {
+                            JSONArray asset_notice = jsonObject.getJSONObject("notice_en").getJSONArray("adds");
+                            StringBuilder builder = new StringBuilder();
+                            if (asset_notice != null && asset_notice.length() > 0) {
+                                for (int i = 0; i < asset_notice.length(); i++) {
+                                    builder.append(asset_notice.getJSONObject(i).getString("text"));
+                                    builder.append("\n");
+                                }
+                                mWithdrawMessage.setText(builder.toString());
+                            }
+                        }
+
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                }));
     }
 
     private void setMinWithdrawAmountAndGateWayFee() {

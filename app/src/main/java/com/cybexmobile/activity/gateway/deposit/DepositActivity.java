@@ -43,6 +43,7 @@ import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.fragment.AccountAddressRecord;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybex.provider.apollo.ApolloClientApi;
@@ -53,6 +54,11 @@ import com.cybexmobile.activity.web.WebActivity;
 import com.cybexmobile.utils.AntiMultiClick;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybexmobile.utils.QRCode;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.Locale;
 
@@ -61,10 +67,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 
 public class DepositActivity extends BaseActivity {
@@ -78,6 +86,7 @@ public class DepositActivity extends BaseActivity {
 
     private String mUserName;
     private String mAssetName;
+    private String mAssetId;
     private String mEnMsg;
     private String mCnMsg;
     private String mEnInfo;
@@ -145,6 +154,7 @@ public class DepositActivity extends BaseActivity {
         mUserName = sharedPreferences.getString("name", "");
         Intent intent = getIntent();
         mAssetName = intent.getStringExtra("assetName");
+        mAssetId = intent.getStringExtra("assetId");
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
         mEnMsg = intent.getStringExtra("enMsg");
         mCnMsg = intent.getStringExtra("cnMsg");
@@ -275,11 +285,69 @@ public class DepositActivity extends BaseActivity {
     }
 
     private void requestDetailMessage() {
-        if (Locale.getDefault().getLanguage().equals("zh")) {
-            mTextMessage.setText(mCnInfo);
-        } else {
-            mTextMessage.setText(mEnInfo);
-        }
+        mCompositeDisposable.add(RetrofitFactory.getInstance()
+                .api()
+                .getDepositDetails(mAssetId + ".json")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<ResponseBody>() {
+                    @Override
+                    public void accept(ResponseBody responseBody) throws Exception {
+                        JSONObject jsonObject = new JSONObject(responseBody.string());
+                        if (Locale.getDefault().getLanguage().equals("zh")) {
+                            JSONArray project_msg = jsonObject.getJSONArray("msg_cn");
+                            JSONArray asset_notice = jsonObject.getJSONObject("notice_cn").getJSONArray("adds");
+                            StringBuilder builder = new StringBuilder();
+                            if (project_msg != null && project_msg.length() > 0) {
+                                mTvProjectName.setText(TextUtils.isEmpty(project_msg.getJSONObject(0).getString("value")) ? "" : project_msg.getJSONObject(0).getString("value"));
+                                mTvProtocolAddress.setText(TextUtils.isEmpty(project_msg.getJSONObject(1).getString("value")) ? "" : project_msg.getJSONObject(1).getString("value"));
+                                mTvProtocolAddress.setTag(TextUtils.isEmpty(project_msg.getJSONObject(1).getString("link")) ? "" : project_msg.getJSONObject(1).getString("link"));
+                                mLayoutProjectName.setVisibility(TextUtils.isEmpty(project_msg.getJSONObject(0).getString("value")) ? View.GONE : View.VISIBLE);
+                                mLayoutProtocolAddress.setVisibility(TextUtils.isEmpty(project_msg.getJSONObject(1).getString("value")) ? View.GONE : View.VISIBLE);
+                            } else {
+                                mLayoutProjectName.setVisibility(View.GONE);
+                                mLayoutProtocolAddress.setVisibility(View.GONE);
+                            }
+
+                            if (asset_notice != null && asset_notice.length() > 0) {
+                                for (int i = 0; i < asset_notice.length(); i++) {
+                                    builder.append(asset_notice.getJSONObject(i).getString("text"));
+                                    builder.append("\n");
+                                }
+                                mTextMessage.setText(builder.toString());
+                            }
+                        } else {
+                            JSONArray project_msg = jsonObject.getJSONArray("msg_en");
+                            JSONArray asset_notice = jsonObject.getJSONObject("notice_en").getJSONArray("adds");
+                            StringBuilder builder = new StringBuilder();
+                            if (project_msg != null && project_msg.length() > 0) {
+                                mTvProjectName.setText(TextUtils.isEmpty(project_msg.getJSONObject(0).getString("value")) ? "" : project_msg.getJSONObject(0).getString("value"));
+                                mTvProtocolAddress.setText(TextUtils.isEmpty(project_msg.getJSONObject(1).getString("value")) ? "" : project_msg.getJSONObject(1).getString("value"));
+                                mTvProtocolAddress.setTag(TextUtils.isEmpty(project_msg.getJSONObject(1).getString("link")) ? "" : project_msg.getJSONObject(1).getString("link"));
+                                mLayoutProjectName.setVisibility(TextUtils.isEmpty(project_msg.getJSONObject(0).getString("value")) ? View.GONE : View.VISIBLE);
+                                mLayoutProtocolAddress.setVisibility(TextUtils.isEmpty(project_msg.getJSONObject(1).getString("value")) ? View.GONE : View.VISIBLE);
+                            } else {
+                                mLayoutProjectName.setVisibility(View.GONE);
+                                mLayoutProtocolAddress.setVisibility(View.GONE);
+                            }
+
+                            if (asset_notice != null && asset_notice.length() > 0) {
+                                for (int i = 0; i < asset_notice.length(); i++) {
+                                    builder.append(asset_notice.getJSONObject(i).getString("text"));
+                                    builder.append("\n");
+                                }
+                                mTextMessage.setText(builder.toString());
+                            }
+                        }
+
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                }));
     }
 
 
@@ -328,16 +396,6 @@ public class DepositActivity extends BaseActivity {
                             generateBarCode(accountAddressRecord.address());
                         }
                         AccountAddressRecord.ProjectInfo projectInfo = accountAddressRecord.projectInfo();
-                        if(projectInfo != null){
-                            mTvProjectName.setText(TextUtils.isEmpty(projectInfo.projectName()) ? "" : projectInfo.projectName());
-                            mTvProtocolAddress.setText(TextUtils.isEmpty(projectInfo.contractAddress()) ? "" : projectInfo.contractAddress());
-                            mTvProtocolAddress.setTag(TextUtils.isEmpty(projectInfo.contractExplorerUrl()) ? "" : projectInfo.contractExplorerUrl());
-                            mLayoutProjectName.setVisibility(TextUtils.isEmpty(projectInfo.projectName()) ? View.GONE : View.VISIBLE);
-                            mLayoutProtocolAddress.setVisibility(TextUtils.isEmpty(projectInfo.contractAddress()) ? View.GONE : View.VISIBLE);
-                        } else {
-                            mLayoutProjectName.setVisibility(View.GONE);
-                            mLayoutProtocolAddress.setVisibility(View.GONE);
-                        }
                         hideLoadDialog();
                     }
                 }, new Consumer<Throwable>() {
