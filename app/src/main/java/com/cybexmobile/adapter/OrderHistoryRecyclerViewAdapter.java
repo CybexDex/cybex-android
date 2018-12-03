@@ -16,6 +16,7 @@ import com.cybex.provider.market.Order;
 import com.cybex.provider.market.OrderBook;
 import com.cybex.basemodule.utils.AssetUtil;
 
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
             holder.mVolume.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.buyOrders.get(position).price)));
         }
         if (position < mValues.sellOrders.size()) {
-            holder.mSellPrice.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).price, AssetUtil.pricePrecision(mValues.sellOrders.get(position).price)));
+            holder.mSellPrice.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).price, AssetUtil.pricePrecision(mValues.sellOrders.get(position).price), RoundingMode.UP));
             holder.mSellVolume.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.sellOrders.get(position).price)));
         }
 

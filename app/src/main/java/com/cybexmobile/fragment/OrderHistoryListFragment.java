@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -180,8 +181,8 @@ public class OrderHistoryListFragment extends BaseFragment {
                         orderBook.buyOrders.add(order);
                     } else {
                         Order lastOrder = orderBook.buyOrders.get(orderBook.buyOrders.size() - 1);
-                        if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)).equals(
-                                AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price)))){
+                        if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price))
+                                .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price)))){
                             lastOrder.quoteAmount += order.quoteAmount;
                             lastOrder.baseAmount += order.baseAmount;
                         } else {
@@ -205,8 +206,8 @@ public class OrderHistoryListFragment extends BaseFragment {
                         orderBook.sellOrders.add(order);
                     } else {
                         Order lastOrder = orderBook.sellOrders.get(orderBook.sellOrders.size() - 1);
-                        if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)).equals(
-                                AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price)))){
+                        if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP)
+                                .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price), RoundingMode.UP))){
                             lastOrder.quoteAmount += order.quoteAmount;
                             lastOrder.baseAmount += order.baseAmount;
                         } else {

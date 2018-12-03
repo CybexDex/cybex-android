@@ -30,6 +30,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -239,9 +240,6 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                     break;
                 }
                 if (limitOrder.sell_price.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
-                    if(buyOrders.size() == 5){
-                        continue;
-                    }
                     /**
                      * 合并深度
                      */
@@ -249,7 +247,12 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                     double amount = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
                             / (double) limitOrder.sell_price.base.amount
                             / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    if(buyOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)).equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
+                    if(buyOrders.size() == 5 && !AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price))
+                            .equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
+                        continue;
+                    }
+                    if(buyOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price))
+                            .equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
                         buyOrders.getLast().quoteAmount += amount;
                     } else {
                         order = new Order();
@@ -259,16 +262,17 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                         buyOrders.add(order);
                     }
                 } else {
-                    if(sellOrders.size() == 5){
-                        continue;
-                    }
                     /**
                      * 合并深度
                      */
                     double price = priceToReal(limitOrder.sell_price);
                     double amount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
-
-                    if(sellOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)).equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price)))) {
+                    if(sellOrders.size() == 5 && !AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price), RoundingMode.UP)
+                            .equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price), RoundingMode.UP))){
+                        continue;
+                    }
+                    if(sellOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price), RoundingMode.UP)
+                            .equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price), RoundingMode.UP))) {
                         sellOrders.getLast().quoteAmount += amount;
                     } else {
                         order = new Order();

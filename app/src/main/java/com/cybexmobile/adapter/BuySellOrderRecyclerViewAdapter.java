@@ -13,6 +13,7 @@ import com.cybexmobile.R;
 import com.cybex.provider.market.Order;
 import com.cybex.basemodule.utils.AssetUtil;
 
+import java.math.RoundingMode;
 import java.util.List;
 
 import butterknife.BindView;
@@ -99,7 +100,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                             }
                         }
                     });
-                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)));
+                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP));
                     holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, AssetUtil.amountPrecision(order.price)));
                     float percentage = (float) getPercentage(mOrders, mOrders.size() - MAX_ITEM + position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
