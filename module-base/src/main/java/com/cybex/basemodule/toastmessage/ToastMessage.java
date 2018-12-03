@@ -26,4 +26,16 @@ public class ToastMessage {
         toast.setView(layout);
         toast.show();
     }
+
+    public static void showDepositWithdrawToastMessage(Activity context, String message) {
+        LayoutInflater inflater = context.getLayoutInflater();
+        View layout = inflater.inflate(R.layout.toast_deposit_withdraw_suspended, null, false);
+        TextView text = layout.findViewById(R.id.toast_center_message_text_view);
+        text.setText(message);
+        Toast toast = new Toast(context.getApplicationContext());
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0 ,0);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
+    }
 }

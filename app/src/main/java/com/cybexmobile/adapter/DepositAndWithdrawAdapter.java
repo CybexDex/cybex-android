@@ -128,9 +128,9 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
                             } else {
                                 if (!mDataList.get(position).getCnMsg().equals("") && !mDataList.get(position).getEnMsg().equals("")) {
                                     if (Locale.getDefault().getLanguage().equals("zh")) {
-                                        ToastMessage.showNotEnableDepositToastMessage(mContext, mDataList.get(position).getCnMsg(), R.drawable.ic_error_16px);
+                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getCnMsg());
                                     } else {
-                                        ToastMessage.showNotEnableDepositToastMessage(mContext, mDataList.get(position).getEnMsg(), R.drawable.ic_error_16px);
+                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getEnMsg());
                                     }
                                 }
                             }
@@ -151,9 +151,9 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
                             } else {
                                 if (!mDataList.get(position).getCnMsg().equals("") && !mDataList.get(position).getEnMsg().equals("")) {
                                     if (Locale.getDefault().getLanguage().equals("zh")) {
-                                        ToastMessage.showNotEnableDepositToastMessage(mContext, mDataList.get(position).getCnMsg(), R.drawable.ic_error_16px);
+                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getCnMsg());
                                     } else {
-                                        ToastMessage.showNotEnableDepositToastMessage(mContext, mDataList.get(position).getEnMsg(), R.drawable.ic_error_16px);
+                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getEnMsg());
                                     }
                                 }
                             }
