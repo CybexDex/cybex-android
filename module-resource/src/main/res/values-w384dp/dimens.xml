@@ -9,6 +9,7 @@
     <dimen name="activity_padding_triple">32dp</dimen>
     <dimen name="dialog_padding">16dp</dimen>
     <dimen name="dialog_margin">16dp</dimen>
+    <dimen name="activity_padding_16">14.22dp</dimen>
 
     <!-- width -->
     <dimen name="width_1">0.88dp</dimen>
@@ -23,6 +24,7 @@
     <dimen name="width_56">49.77dp</dimen>
     <dimen name="width_60">53.33dp</dimen>
     <dimen name="width_65">57.77dp</dimen>
+    <dimen name="width_68">60.44dp</dimen>
     <dimen name="width_94">83.55dp</dimen>
     <dimen name="width_100">88.88dp</dimen>
     <dimen name="width_130">115.55dp</dimen>
