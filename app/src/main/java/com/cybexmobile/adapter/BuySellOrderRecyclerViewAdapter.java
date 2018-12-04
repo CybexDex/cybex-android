@@ -62,7 +62,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                         @Override
                         public void onClick(View v) {
                             if(mListener != null){
-                                mListener.onItemClick(order);
+                                mListener.onItemClick(holder.mOrderPrice.getText().toString());
                             }
                         }
                     });
@@ -96,7 +96,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                         @Override
                         public void onClick(View v) {
                             if(mListener != null){
-                                mListener.onItemClick(order);
+                                mListener.onItemClick(holder.mOrderPrice.getText().toString());
                             }
                         }
                     });
@@ -164,6 +164,6 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
     }
 
     public interface OnItemClickListener{
-        void onItemClick(Order order);
+        void onItemClick(String price);
     }
 }

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -170,10 +172,11 @@ public class OrderHistoryListFragment extends BaseFragment {
                     }
                     order = new Order();
                     order.price = priceToReal(limitOrder.sell_price);
-                    order.quoteAmount = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
-                            / (double) limitOrder.sell_price.base.amount
-                            / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    order.baseAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getBasePrecision());
+                    order.quoteAmount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
+                            AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
+                    order.baseAmount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getBasePrecision()));
+                    //Log.d("OrderHistory", String.format("%s | %s | %s", limitOrder.for_sale, limitOrder.sell_price.quote.amount, limitOrder.sell_price.base.amount));
+                    Log.d("OrderHistory", String.format("%s | %s", order.price, order.quoteAmount));
                     /**
                      * 合并深度
                      */
@@ -183,8 +186,8 @@ public class OrderHistoryListFragment extends BaseFragment {
                         Order lastOrder = orderBook.buyOrders.get(orderBook.buyOrders.size() - 1);
                         if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price))
                                 .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price)))){
-                            lastOrder.quoteAmount += order.quoteAmount;
-                            lastOrder.baseAmount += order.baseAmount;
+                            lastOrder.quoteAmount = AssetUtil.add(lastOrder.quoteAmount, order.quoteAmount);
+                            lastOrder.baseAmount = AssetUtil.add(lastOrder.baseAmount, order.baseAmount);
                         } else {
                             orderBook.buyOrders.add(order);
                         }
@@ -195,10 +198,9 @@ public class OrderHistoryListFragment extends BaseFragment {
                     }
                     order = new Order();
                     order.price = priceToReal(limitOrder.sell_price);
-                    order.quoteAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
-                    order.baseAmount = (double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount
-                            / limitOrder.sell_price.base.amount
-                            / Math.pow(10, mWatchlistData.getBasePrecision());
+                    order.quoteAmount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getQuotePrecision()));
+                    order.baseAmount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
+                            AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getBasePrecision())));
                     /**
                      * 合并深度
                      */
@@ -208,8 +210,8 @@ public class OrderHistoryListFragment extends BaseFragment {
                         Order lastOrder = orderBook.sellOrders.get(orderBook.sellOrders.size() - 1);
                         if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP)
                                 .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price), RoundingMode.UP))){
-                            lastOrder.quoteAmount += order.quoteAmount;
-                            lastOrder.baseAmount += order.baseAmount;
+                            lastOrder.quoteAmount = AssetUtil.add(lastOrder.quoteAmount, order.quoteAmount);
+                            lastOrder.baseAmount = AssetUtil.add(lastOrder.baseAmount, order.baseAmount);
                         } else {
                             orderBook.sellOrders.add(order);
                         }
@@ -237,17 +239,13 @@ public class OrderHistoryListFragment extends BaseFragment {
         }
     };
 
-    private double assetToReal(Asset a, long p) {
-        return (double) a.amount / Math.pow(10, p);
-    }
-
     private double priceToReal(Price p) {
         if (p.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
-            return assetToReal(p.base, mWatchlistData.getBasePrecision())
-                    / assetToReal(p.quote, mWatchlistData.getQuotePrecision());
+            return AssetUtil.divide(AssetUtil.divide(p.base.amount, Math.pow(10, mWatchlistData.getBasePrecision())),
+                    AssetUtil.divide(p.quote.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
         } else {
-            return assetToReal(p.quote, mWatchlistData.getBasePrecision())
-                    / assetToReal(p.base, mWatchlistData.getQuotePrecision());
+            return AssetUtil.divide(AssetUtil.divide(p.quote.amount, Math.pow(10, mWatchlistData.getBasePrecision())),
+                    AssetUtil.divide(p.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
         }
     }
 

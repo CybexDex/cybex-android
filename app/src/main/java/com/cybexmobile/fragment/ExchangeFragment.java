@@ -196,10 +196,10 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLimitOrderClick(Event.LimitOrderClick event){
         if(mBuyFragment != null && mBuyFragment.isVisible()){
-            mBuyFragment.changeBuyOrSellPrice(event.getPrice(), event.getQuoteAmount());
+            mBuyFragment.changeBuyOrSellPrice(event.getPrice());
         }
         if(mSellFragment != null && mSellFragment.isVisible()){
-            mSellFragment.changeBuyOrSellPrice(event.getPrice(), event.getQuoteAmount());
+            mSellFragment.changeBuyOrSellPrice(event.getPrice());
         }
     }
 

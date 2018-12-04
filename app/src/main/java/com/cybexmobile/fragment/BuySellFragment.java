@@ -690,11 +690,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
      * 改变买入卖出价
      * @param basePrice
      */
-    public void changeBuyOrSellPrice(double basePrice, double quoteAmount) {
-        mEtAssetPrice.setText(AssetUtil.formatNumberRounding(basePrice, AssetUtil.pricePrecision(basePrice)));
-        if(quoteAmount != 0){
-            //mEtAssetAmount.setText(String.format(AssetUtil.formatAmount(basePrice), quoteAmount));
-        }
+    public void changeBuyOrSellPrice(String basePrice) {
+        mEtAssetPrice.setText(basePrice);
     }
 
     public void changeRmbPrice(double rmbPrice){

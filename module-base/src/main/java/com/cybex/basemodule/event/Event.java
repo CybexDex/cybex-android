@@ -330,24 +330,14 @@ public class Event {
      * 交易界面委单被点击 委单价格设置到EditText
      */
     public static class LimitOrderClick {
-        private double price;
-        private double quoteAmount;
+        private String price;
 
-        public LimitOrderClick(double price) {
+        public LimitOrderClick(String price) {
             this.price = price;
         }
 
-        public LimitOrderClick(double price, double quoteAmount) {
-            this.price = price;
-            this.quoteAmount = quoteAmount;
-        }
-
-        public double getPrice() {
+        public String getPrice() {
             return price;
-        }
-
-        public double getQuoteAmount() {
-            return quoteAmount;
         }
     }
 

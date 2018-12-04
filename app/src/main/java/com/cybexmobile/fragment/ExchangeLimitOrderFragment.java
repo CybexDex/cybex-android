@@ -201,8 +201,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     }
 
     @Override
-    public void onItemClick(Order order) {
-        EventBus.getDefault().post(new Event.LimitOrderClick(order.price, order.quoteAmount));
+    public void onItemClick(String price) {
+        EventBus.getDefault().post(new Event.LimitOrderClick(price));
     }
 
     @OnClick({R.id.buysell_tv_quote_price, R.id.buysell_tv_quote_rmb_price})
@@ -210,7 +210,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(mWatchlistData.getCurrentPrice() == 0){
             return;
         }
-        EventBus.getDefault().post(new Event.LimitOrderClick(mWatchlistData.getCurrentPrice()));
+        EventBus.getDefault().post(new Event.LimitOrderClick(mTvQuotePrice.getText().toString()));
     }
 
     private void loadBuySellOrder(){
@@ -244,21 +244,20 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                      * 合并深度
                      */
                     double price = priceToReal(limitOrder.sell_price);
-                    double amount = ((double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount)
-                            / (double) limitOrder.sell_price.base.amount
-                            / Math.pow(10, mWatchlistData.getQuotePrecision());
+                    double amount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
+                            AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
                     if(buyOrders.size() == 5 && !AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price))
                             .equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
                         continue;
                     }
                     if(buyOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price))
                             .equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
-                        buyOrders.getLast().quoteAmount += amount;
+                        buyOrders.getLast().quoteAmount = AssetUtil.add(buyOrders.getLast().quoteAmount, amount);
                     } else {
                         order = new Order();
                         order.price = price;
                         order.quoteAmount = amount;
-                        order.baseAmount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getBasePrecision());
+                        order.baseAmount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getBasePrecision()));
                         buyOrders.add(order);
                     }
                 } else {
@@ -266,21 +265,20 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                      * 合并深度
                      */
                     double price = priceToReal(limitOrder.sell_price);
-                    double amount = limitOrder.for_sale / Math.pow(10, mWatchlistData.getQuotePrecision());
+                    double amount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getQuotePrecision()));
                     if(sellOrders.size() == 5 && !AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price), RoundingMode.UP)
                             .equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price), RoundingMode.UP))){
                         continue;
                     }
                     if(sellOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price), RoundingMode.UP)
                             .equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price), RoundingMode.UP))) {
-                        sellOrders.getLast().quoteAmount += amount;
+                        sellOrders.getLast().quoteAmount = AssetUtil.add(sellOrders.getLast().quoteAmount, amount);
                     } else {
                         order = new Order();
                         order.price = price;
                         order.quoteAmount = amount;
-                        order.baseAmount = (double) limitOrder.for_sale * (double) limitOrder.sell_price.quote.amount
-                                / limitOrder.sell_price.base.amount
-                                / Math.pow(10, mWatchlistData.getBasePrecision());
+                        order.baseAmount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
+                                AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getBasePrecision())));
                         sellOrders.add(order);
                     }
                 }
@@ -308,16 +306,12 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
 
     private double priceToReal(Price p) {
         if (p.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
-            return assetToReal(p.base, mWatchlistData.getBasePrecision())
-                    / assetToReal(p.quote, mWatchlistData.getQuotePrecision());
+            return AssetUtil.divide(AssetUtil.divide(p.base.amount, Math.pow(10, mWatchlistData.getBasePrecision())),
+                    AssetUtil.divide(p.quote.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
         } else {
-            return assetToReal(p.quote, mWatchlistData.getBasePrecision())
-                    / assetToReal(p.base, mWatchlistData.getQuotePrecision());
+            return AssetUtil.divide(AssetUtil.divide(p.quote.amount, Math.pow(10, mWatchlistData.getBasePrecision())),
+                    AssetUtil.divide(p.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
         }
-    }
-
-    private double assetToReal(Asset a, long p) {
-        return (double) a.amount / Math.pow(10, p);
     }
 
     private void initViewData(){

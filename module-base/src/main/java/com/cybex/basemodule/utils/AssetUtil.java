@@ -115,4 +115,92 @@ public class AssetUtil {
         return format.format(number / Math.pow(10, 9)) + "B";
     }
 
+    /**
+     * 加法精确运算
+     * @param num1
+     * @param num2
+     * @return
+     */
+    public static double add(double num1, double num2) {
+        return add(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double add(long num1, long num2) {
+        return add(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double add(String num1, String num2) {
+        BigDecimal bigDecimal1 = new BigDecimal(num1);
+        BigDecimal bigDecimal2 = new BigDecimal(num2);
+        return bigDecimal1.add(bigDecimal2).doubleValue();
+    }
+
+    /**
+     * 减法精确运算
+     * @param num1
+     * @param num2
+     * @return
+     */
+    public static double subtract(double num1, double num2) {
+        return subtract(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double subtract(long num1, long num2) {
+        return subtract(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double subtract(String num1, String num2) {
+        BigDecimal bigDecimal1 = new BigDecimal(num1);
+        BigDecimal bigDecimal2 = new BigDecimal(num2);
+        return bigDecimal1.subtract(bigDecimal2).doubleValue();
+    }
+
+    /**
+     * 乘法精确运算
+     * @param num1
+     * @param num2
+     * @return
+     */
+    public static double multiply(double num1, double num2) {
+        return multiply(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double multiply(long num1, long num2) {
+        return multiply(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double multiply(long num1, double num2) {
+        return multiply(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double multiply(String num1, String num2) {
+        BigDecimal bigDecimal1 = new BigDecimal(num1);
+        BigDecimal bigDecimal2 = new BigDecimal(num2);
+        return bigDecimal1.multiply(bigDecimal2).doubleValue();
+    }
+
+    /**
+     * 除法精确运算
+     * @param num1
+     * @param num2
+     * @return
+     */
+    public static double divide(double num1, double num2) {
+        return divide(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double divide(long num1, long num2) {
+        return divide(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double divide(long num1, double num2) {
+        return divide(String.valueOf(num1), String.valueOf(num2));
+    }
+
+    public static double divide(String num1, String num2) {
+        BigDecimal bigDecimal1 = new BigDecimal(num1);
+        BigDecimal bigDecimal2 = new BigDecimal(num2);
+        return bigDecimal1.divide(bigDecimal2, 16, RoundingMode.DOWN).doubleValue();
+    }
+
 }
