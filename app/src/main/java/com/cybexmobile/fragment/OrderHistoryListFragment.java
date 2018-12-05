@@ -145,7 +145,7 @@ public class OrderHistoryListFragment extends BaseFragment {
     private void loadOrderBook(){
         if(mWatchlistData != null){
             try {
-                BitsharesWalletWraper.getInstance().get_limit_orders(mWatchlistData.getBaseAsset().id, mWatchlistData.getQuoteAsset().id, 200, mLimitOrderCallback);
+                BitsharesWalletWraper.getInstance().get_limit_orders(mWatchlistData.getBaseAsset().id, mWatchlistData.getQuoteAsset().id, 500, mLimitOrderCallback);
             } catch (NetworkStatusException e) {
                 e.printStackTrace();
             }

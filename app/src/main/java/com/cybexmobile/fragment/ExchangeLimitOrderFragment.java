@@ -216,7 +216,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     private void loadBuySellOrder(){
         if(mWatchlistData != null){
             try {
-                BitsharesWalletWraper.getInstance().get_limit_orders(mWatchlistData.getBaseAsset().id, mWatchlistData.getQuoteAsset().id, 200, mLimitOrderCallback);
+                BitsharesWalletWraper.getInstance().get_limit_orders(mWatchlistData.getBaseAsset().id, mWatchlistData.getQuoteAsset().id, 500, mLimitOrderCallback);
             } catch (NetworkStatusException e) {
                 e.printStackTrace();
             }
