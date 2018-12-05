@@ -175,7 +175,6 @@ public class OrderHistoryListFragment extends BaseFragment {
                     order.quoteAmount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
                             AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
                     order.baseAmount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getBasePrecision()));
-                    //Log.d("OrderHistory", String.format("%s | %s | %s", limitOrder.for_sale, limitOrder.sell_price.quote.amount, limitOrder.sell_price.base.amount));
                     Log.d("OrderHistory", String.format("%s | %s", order.price, order.quoteAmount));
                     /**
                      * 合并深度
@@ -201,6 +200,7 @@ public class OrderHistoryListFragment extends BaseFragment {
                     order.quoteAmount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getQuotePrecision()));
                     order.baseAmount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
                             AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getBasePrecision())));
+                    Log.d("OrderHistory", String.format("%s | %s", order.price, order.quoteAmount));
                     /**
                      * 合并深度
                      */
@@ -218,18 +218,18 @@ public class OrderHistoryListFragment extends BaseFragment {
                     }
                 }
             }
-            Collections.sort(orderBook.buyOrders, new Comparator<Order>() {
-                @Override
-                public int compare(Order o1, Order o2) {
-                    return (o1.price - o2.price) < 0 ? 1 : -1;
-                }
-            });
-            Collections.sort(orderBook.sellOrders, new Comparator<Order>() {
-                @Override
-                public int compare(Order o1, Order o2) {
-                    return (o1.price - o2.price) < 0 ? -1 : 1;
-                }
-            });
+//            Collections.sort(orderBook.buyOrders, new Comparator<Order>() {
+//                @Override
+//                public int compare(Order o1, Order o2) {
+//                    return (o1.price - o2.price) < 0 ? 1 : -1;
+//                }
+//            });
+//            Collections.sort(orderBook.sellOrders, new Comparator<Order>() {
+//                @Override
+//                public int compare(Order o1, Order o2) {
+//                    return (o1.price - o2.price) < 0 ? -1 : 1;
+//                }
+//            });
             EventBus.getDefault().post(new Event.UpdateOrderBook(orderBook));
         }
 

@@ -236,20 +236,16 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
             LinkedList<Order> sellOrders = new LinkedList<>();
             Order order = null;
             for(LimitOrderObject limitOrder : limitOrders){
-                if(buyOrders.size() == 5 && sellOrders.size() == 5){
-                    break;
-                }
                 if (limitOrder.sell_price.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
+                    if(buyOrders.size() > 5){
+                        continue;
+                    }
                     /**
                      * 合并深度
                      */
                     double price = priceToReal(limitOrder.sell_price);
                     double amount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
                             AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
-                    if(buyOrders.size() == 5 && !AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price))
-                            .equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
-                        continue;
-                    }
                     if(buyOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price))
                             .equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
                         buyOrders.getLast().quoteAmount = AssetUtil.add(buyOrders.getLast().quoteAmount, amount);
@@ -261,15 +257,14 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                         buyOrders.add(order);
                     }
                 } else {
+                    if(sellOrders.size() > 5){
+                        continue;
+                    }
                     /**
                      * 合并深度
                      */
                     double price = priceToReal(limitOrder.sell_price);
                     double amount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getQuotePrecision()));
-                    if(sellOrders.size() == 5 && !AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price), RoundingMode.UP)
-                            .equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price), RoundingMode.UP))){
-                        continue;
-                    }
                     if(sellOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price), RoundingMode.UP)
                             .equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price), RoundingMode.UP))) {
                         sellOrders.getLast().quoteAmount = AssetUtil.add(sellOrders.getLast().quoteAmount, amount);
@@ -283,12 +278,14 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                     }
                 }
             }
-            Collections.sort(buyOrders, new Comparator<Order>() {
-                @Override
-                public int compare(Order o1, Order o2) {
-                    return (o1.price - o2.price) < 0 ? 1 : -1;
-                }
-            });
+            if(sellOrders.size() > 5) sellOrders.removeLast();
+            if(buyOrders.size() > 5) buyOrders.removeLast();
+//            Collections.sort(buyOrders, new Comparator<Order>() {
+//                @Override
+//                public int compare(Order o1, Order o2) {
+//                    return (o1.price - o2.price) < 0 ? 1 : -1;
+//                }
+//            });
             Collections.sort(sellOrders, new Comparator<Order>() {
                 @Override
                 public int compare(Order o1, Order o2) {
