@@ -175,7 +175,7 @@ public class OrderHistoryListFragment extends BaseFragment {
                     order.quoteAmount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
                             AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
                     order.baseAmount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getBasePrecision()));
-                    Log.d("OrderHistory", String.format("%s | %s", order.price, order.quoteAmount));
+                    //Log.d("OrderHistory", String.format("%s | %s", order.price, order.quoteAmount));
                     /**
                      * 合并深度
                      */
@@ -184,7 +184,7 @@ public class OrderHistoryListFragment extends BaseFragment {
                     } else {
                         Order lastOrder = orderBook.buyOrders.get(orderBook.buyOrders.size() - 1);
                         if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price))
-                                .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price)))){
+                                .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(order.price)))){
                             lastOrder.quoteAmount = AssetUtil.add(lastOrder.quoteAmount, order.quoteAmount);
                             lastOrder.baseAmount = AssetUtil.add(lastOrder.baseAmount, order.baseAmount);
                         } else {
@@ -209,7 +209,7 @@ public class OrderHistoryListFragment extends BaseFragment {
                     } else {
                         Order lastOrder = orderBook.sellOrders.get(orderBook.sellOrders.size() - 1);
                         if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP)
-                                .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(lastOrder.price), RoundingMode.UP))){
+                                .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP))){
                             lastOrder.quoteAmount = AssetUtil.add(lastOrder.quoteAmount, order.quoteAmount);
                             lastOrder.baseAmount = AssetUtil.add(lastOrder.baseAmount, order.baseAmount);
                         } else {
