@@ -435,7 +435,9 @@ public class WebSocketService extends Service {
                         List<AssetsPair> assetsPairs = new ArrayList<>();
                         if (assetsPairResponse.getData() != null && assetsPairResponse.getData().size() > 0) {
                             for (String quote : assetsPairResponse.getData()) {
-                                assetsPairs.add(new AssetsPair(baseAsset, quote));
+                                if(!TextUtils.isEmpty(quote)){
+                                    assetsPairs.add(new AssetsPair(baseAsset, quote));
+                                }
                             }
                         }
                         assetsPairMap.put(baseAsset, assetsPairs);
