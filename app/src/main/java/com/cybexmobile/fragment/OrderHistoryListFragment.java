@@ -37,6 +37,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -162,12 +163,12 @@ public class OrderHistoryListFragment extends BaseFragment {
             OrderBook orderBook = new OrderBook();
             orderBook.base = mWatchlistData.getBaseSymbol();
             orderBook.quote = mWatchlistData.getQuoteSymbol();
-            orderBook.buyOrders = new ArrayList<>();
-            orderBook.sellOrders = new ArrayList<>();
+            orderBook.buyOrders = new LinkedList<>();
+            orderBook.sellOrders = new LinkedList<>();
             Order order = null;
             for(LimitOrderObject limitOrder : limitOrders){
                 if (limitOrder.sell_price.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
-                    if(orderBook.buyOrders.size() == 20){
+                    if(orderBook.buyOrders.size() > 20){
                         continue;
                     }
                     order = new Order();
@@ -182,7 +183,7 @@ public class OrderHistoryListFragment extends BaseFragment {
                     if(orderBook.buyOrders.size() == 0){
                         orderBook.buyOrders.add(order);
                     } else {
-                        Order lastOrder = orderBook.buyOrders.get(orderBook.buyOrders.size() - 1);
+                        Order lastOrder = orderBook.buyOrders.getLast();
                         if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price))
                                 .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(order.price)))){
                             lastOrder.quoteAmount = AssetUtil.add(lastOrder.quoteAmount, order.quoteAmount);
@@ -192,7 +193,7 @@ public class OrderHistoryListFragment extends BaseFragment {
                         }
                     }
                 } else {
-                    if(orderBook.sellOrders.size() == 20){
+                    if(orderBook.sellOrders.size() > 20){
                         continue;
                     }
                     order = new Order();
@@ -207,7 +208,7 @@ public class OrderHistoryListFragment extends BaseFragment {
                     if(orderBook.sellOrders.size() == 0){
                         orderBook.sellOrders.add(order);
                     } else {
-                        Order lastOrder = orderBook.sellOrders.get(orderBook.sellOrders.size() - 1);
+                        Order lastOrder = orderBook.sellOrders.getLast();
                         if(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP)
                                 .equals(AssetUtil.formatNumberRounding(lastOrder.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP))){
                             lastOrder.quoteAmount = AssetUtil.add(lastOrder.quoteAmount, order.quoteAmount);
@@ -218,6 +219,8 @@ public class OrderHistoryListFragment extends BaseFragment {
                     }
                 }
             }
+            if(orderBook.buyOrders.size() > 20) orderBook.buyOrders.removeLast();
+            if(orderBook.sellOrders.size() > 20) orderBook.sellOrders.removeLast();
 //            Collections.sort(orderBook.buyOrders, new Comparator<Order>() {
 //                @Override
 //                public int compare(Order o1, Order o2) {
