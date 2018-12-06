@@ -26,7 +26,7 @@ public class AssetUtil {
     }
 
     /**
-     * 格式化数据
+     * 格式化数据 取消科学计数法
      * @param number
      * @param mode 数据取舍模式
      * @return
@@ -34,7 +34,7 @@ public class AssetUtil {
     public static String formatNumberRounding(double number, int scale, RoundingMode mode){
         BigDecimal bigDecimal = new BigDecimal(String.valueOf(number));
         bigDecimal = bigDecimal.setScale(scale, mode);
-        String result = bigDecimal.toString();
+        String result = bigDecimal.toPlainString();
         bigDecimal = null;
         return result;
     }
