@@ -172,6 +172,7 @@ public class WebSocketService extends Service {
         cancelWatchlistWorkerSchedule();
         cancelFullAccountWorkerSchedule();
         shutdownSchedule();
+        BitsharesWalletWraper.getInstance().disconnect();
         EventBus.getDefault().unregister(this);
     }
 

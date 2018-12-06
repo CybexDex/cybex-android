@@ -97,6 +97,9 @@ public class BitsharesWalletWraper {
         mWalletApi.initialize();
     }
 
+    public void disconnect() {
+        mWalletApi.disconnect();
+    }
 
     public List<AccountObject> list_my_accounts() {
         return mWalletApi.list_my_accounts();

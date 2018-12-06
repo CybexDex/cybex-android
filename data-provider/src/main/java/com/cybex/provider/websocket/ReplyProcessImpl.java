@@ -3,7 +3,9 @@ package com.cybex.provider.websocket;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
+import java.util.WeakHashMap;
 
 public class ReplyProcessImpl<T> implements IReplyProcess<T> {
     private String strError;
@@ -11,11 +13,11 @@ public class ReplyProcessImpl<T> implements IReplyProcess<T> {
     private Type mType;
     private Throwable exception;
     private String strResponse;
-    private WebSocketClient.MessageCallback<T> mCallback;
+    private WeakReference<WebSocketClient.MessageCallback<T>> mCallbackReference;
 
     public ReplyProcessImpl(Type type, WebSocketClient.MessageCallback<T> callback) {
         mType = type;
-        mCallback = callback;
+        mCallbackReference = new WeakReference<>(callback);
     }
 
     @Override
@@ -57,6 +59,11 @@ public class ReplyProcessImpl<T> implements IReplyProcess<T> {
 
     @Override
     public WebSocketClient.MessageCallback<T> getCallback() {
-        return mCallback;
+        return mCallbackReference.get();
+    }
+
+    @Override
+    public void release() {
+        mCallbackReference.clear();
     }
 }

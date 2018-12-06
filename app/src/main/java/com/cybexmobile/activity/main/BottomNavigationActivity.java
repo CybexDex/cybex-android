@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
@@ -142,6 +143,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        Intent intentService = new Intent(this, WebSocketService.class);
+        stopService(intentService);
         if(mDisposableVersionUpdate != null && !mDisposableVersionUpdate.isDisposed()){
             mDisposableVersionUpdate.dispose();
         }

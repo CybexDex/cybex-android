@@ -1,6 +1,9 @@
 package com.cybex.provider.websocket;
 
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -50,6 +53,8 @@ public class WebSocketClient extends WebSocketListener {
 
     private static final String TAG = "WebSocketClient";
 
+    private static final int WHAT_MESSAGE = 1;
+
     //交易对比例
     private static final String CALL_GET_TICKER = "get_ticker";
 
@@ -76,6 +81,22 @@ public class WebSocketClient extends WebSocketListener {
     private AtomicInteger mCallId = new AtomicInteger(1);
     private ConcurrentHashMap<Integer, ReplyProcessImpl> mHashMapIdToProcess = new ConcurrentHashMap<>();
     private List<DelayCall> delayCalls = null;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg.what != WHAT_MESSAGE){
+                return;
+            }
+            IReplyProcess iReplyProcess = (IReplyProcess) msg.obj;
+            MessageCallback callback = iReplyProcess.getCallback();
+            if(callback != null){
+                callback.onMessage(iReplyProcess.getReply());
+                iReplyProcess.release();
+            }
+        }
+    };
 
     public AtomicInteger getCallId() {
         return mCallId;
@@ -147,16 +168,10 @@ public class WebSocketClient extends WebSocketListener {
         try {
             Gson gson = new Gson();
             ReplyBase replyObjectBase = gson.fromJson(text, ReplyBase.class);
-            IReplyProcess iReplyProcess = null;
-            if (mHashMapIdToProcess.containsKey(replyObjectBase.id)) {
-                iReplyProcess = mHashMapIdToProcess.get(replyObjectBase.id);
-            }
+            IReplyProcess iReplyProcess = mHashMapIdToProcess.remove(replyObjectBase.id);
             if (iReplyProcess != null) {
                 iReplyProcess.processTextToObject(text);
-                MessageCallback callback = iReplyProcess.getCallback();
-                if(callback != null){
-                    callback.onMessage(iReplyProcess.getReply());
-                }
+                mHandler.sendMessage(mHandler.obtainMessage(WHAT_MESSAGE, iReplyProcess));
             }
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
@@ -211,6 +226,11 @@ public class WebSocketClient extends WebSocketListener {
         mConnectStatus = WEBSOCKET_CONNECT_ING;
     }
 
+    public void disconnect() {
+        this.close();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
     //关闭WebSocket
     public void close() {
         if(mWebSocket != null){
@@ -219,6 +239,7 @@ public class WebSocketClient extends WebSocketListener {
         }
         mOkHttpClient = null;
         mConnectStatus = WEBSOCKET_CONNECT_MANUALLY_CLOSED;
+        mHashMapIdToProcess.clear();
         _nDatabaseId = -1;
         _nBroadcastId = -1;
         _nHistoryId = -1;

@@ -191,13 +191,16 @@ public class WalletApi {
         }
     }
 
+    public void disconnect() {
+        mWebSocketClient.disconnect();
+        mWalletObject = null;
+        mCheckSum = null;
+        mbLogin = false;
+        mHashMapPub2Priv.clear();
+    }
+
     public int reset() {
         mWebSocketClient.close();
-//        mWalletObject = null;
-//        mbLogin = false;
-//        mHashMapPub2Priv.clear();
-//        mCheckSum = new Sha512Object();
-
         return 0;
     }
 
@@ -206,7 +209,6 @@ public class WalletApi {
                 mCheckSum.equals(new Sha512Object())) {
             return true;
         }
-
         return false;
     }
 
