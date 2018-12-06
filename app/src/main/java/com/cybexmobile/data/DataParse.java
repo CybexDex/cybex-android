@@ -146,9 +146,9 @@ public class DataParse {
     public void parseKlineHistoryData(List<HistoryPrice> historyPriceList, long duration) {
         ArrayList<KLineBean> kLineBeans = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-        if(historyPriceList != null) {
+        if (historyPriceList != null) {
             int count = historyPriceList.size();
-            for(int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++) {
                 HistoryPrice historyPrice = historyPriceList.get(i);
                 KLineBean kLineBean = new KLineBean();
                 kLineBean.date = String.valueOf(simpleDateFormat.format(historyPrice.date));
@@ -201,14 +201,14 @@ public class DataParse {
         KMAEntity kmaEntity20 = new KMAEntity(datas, 20);
         KMAEntity kmaEntity30 = new KMAEntity(datas, 30);
         for (int i = 0; i < kmaEntity5.getMAs().size(); i++) {
-            if(i>=5)
-                ma5DataL.add(new Entry(kmaEntity5.getMAs().get(i), i));
-            if(i>=10)
-                ma10DataL.add(new Entry(kmaEntity10.getMAs().get(i), i));
-            if(i>=20)
-                ma20DataL.add(new Entry(kmaEntity20.getMAs().get(i), i));
-            if(i>=30)
-                ma30DataL.add(new Entry(kmaEntity30.getMAs().get(i), i));
+
+            ma5DataL.add(new Entry(kmaEntity5.getMAs().get(i), i));
+
+            ma10DataL.add(new Entry(kmaEntity10.getMAs().get(i), i));
+
+            ma20DataL.add(new Entry(kmaEntity20.getMAs().get(i), i));
+
+            ma30DataL.add(new Entry(kmaEntity30.getMAs().get(i), i));
         }
 
     }

@@ -18,32 +18,32 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.market.HistoryPrice;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.utils.MyUtils;
 import com.cybex.provider.utils.PriceUtil;
-import com.cybexmobile.activity.chat.ChatActivity;
-import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
-import com.cybex.basemodule.base.BaseActivity;
+import com.cybexmobile.R;
+import com.cybexmobile.activity.chat.ChatActivity;
+import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
 import com.cybexmobile.data.DataParse;
 import com.cybexmobile.data.KLineBean;
-import com.cybex.basemodule.event.Event;
-import com.cybex.provider.exception.NetworkStatusException;
 import com.cybexmobile.fragment.MarketTradeHistoryFragment;
 import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
-import com.cybex.provider.graphene.chain.BucketObject;
-import com.cybex.provider.market.HistoryPrice;
 import com.cybexmobile.mychart.CoupleChartGestureListener;
 import com.cybexmobile.mychart.MyBottomMarkerView;
 import com.cybexmobile.mychart.MyCombinedChart;
 import com.cybexmobile.mychart.MyHMarkerView;
 import com.cybexmobile.mychart.MyLeftMarkerView;
-import com.cybexmobile.R;
-import com.cybex.basemodule.utils.AssetUtil;
-import com.cybex.provider.utils.MyUtils;
 import com.cybexmobile.utils.VolFormatter;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.components.Legend;
@@ -75,13 +75,12 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-
 
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
@@ -341,6 +340,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 combinedDataEMa.setData(lineDataEma);
                 combinedDataEMa.setData(mCandleData);
                 mChartKline.setData(combinedDataEMa);
+                mChartKline.notifyDataSetChanged();
                 mChartKline.invalidate();
                 mChartCharts.setVisibility(View.GONE);
                 mHeaderKlineChart.setVisibility(View.GONE);
@@ -359,6 +359,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                 combinedDataBoll.setData(lineDataBoll);
                 combinedDataBoll.setData(mCandleData);
                 mChartKline.setData(combinedDataBoll);
+                mChartKline.notifyDataSetChanged();
                 mChartKline.invalidate();
                 mChartCharts.setVisibility(View.GONE);
                 mHeaderKlineChart.setVisibility(View.GONE);
@@ -369,6 +370,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             case Constant.INDEXMACD:
                 setMACDByChart(mChartCharts);
                 mChartCharts.setVisibility(View.VISIBLE);
+                mChartCharts.notifyDataSetChanged();
                 mChartCharts.invalidate();
                 mHeaderKlineChart.setVisibility(View.GONE);
                 mHeaderBOLLChart.setVisibility(View.GONE);
@@ -1234,15 +1236,15 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         int newIndex = index;
         if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa5DataL().size())
-                mTvKMa5.setText(AssetUtil.formatNumberRounding(mData.getMa5DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mTvKMa5.setText(Float.isNaN(mData.getMa5DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa5DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
         if (null != mData.getMa10DataL() && mData.getMa10DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa10DataL().size())
-                mTvKMa10.setText(AssetUtil.formatNumberRounding(mData.getMa10DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mTvKMa10.setText(Float.isNaN(mData.getMa10DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa10DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
         if (null != mData.getMa20DataL() && mData.getMa20DataL().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getMa20DataL().size())
-                mTvKMa20.setText(AssetUtil.formatNumberRounding(mData.getMa20DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mTvKMa20.setText(Float.isNaN(mData.getMa20DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa20DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
     }
 
@@ -1250,16 +1252,16 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         int newIndex = index;
         if (null != mData.getBollDataDN() && mData.getBollDataDN().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataDN().size())
-                mBOLLTv1.setText(AssetUtil.formatNumberRounding(mData.getBollDataDN().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mBOLLTv1.setText(Float.isNaN(mData.getBollDataDN().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getBollDataDN().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
 
         if (null != mData.getBollDataMB() && mData.getBollDataMB().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataMB().size())
-                mBOLLTv2.setText(AssetUtil.formatNumberRounding(mData.getBollDataMB().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mBOLLTv2.setText(Float.isNaN(mData.getBollDataMB().get(newIndex).getVal()) ? "" :AssetUtil.formatNumberRounding(mData.getBollDataMB().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
         if (null != mData.getBollDataUP() && mData.getBollDataUP().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataUP().size())
-                mBOLLTv3.setText(AssetUtil.formatNumberRounding(mData.getBollDataUP().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mBOLLTv3.setText(Float.isNaN(mData.getBollDataUP().get(newIndex).getVal()) ? "" :AssetUtil.formatNumberRounding(mData.getBollDataUP().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
         }
     }
 
