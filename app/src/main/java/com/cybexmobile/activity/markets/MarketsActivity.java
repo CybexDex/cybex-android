@@ -447,10 +447,11 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
              * 添加无成交量的烛状图
              */
             HistoryPrice historyPricePre = mHistoryPriceList.get(0);
+            long size = (System.currentTimeMillis() - historyPricePre.date.getTime()) / (mDuration * 1000);
+            Log.e("size", String.valueOf(size));
             HistoryPrice historyPriceNew = null;
-            for(int i = 1; i < mHistoryPriceList.size(); i++){
-                HistoryPrice historyPriceCurr = mHistoryPriceList.get(i);
-                if(historyPriceCurr.date.getTime() != historyPricePre.date.getTime() + mDuration * 1000){
+            for(int i = 1; i <= size; i++){
+                if (i >= mHistoryPriceList.size()) {
                     historyPriceNew = new HistoryPrice();
                     historyPriceNew.date = new Date(historyPricePre.date.getTime() + mDuration * 1000);
                     historyPriceNew.baseVolume = 0;
@@ -462,7 +463,21 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                     mHistoryPriceList.add(i, historyPriceNew);
                     historyPricePre = historyPriceNew;
                 } else {
-                    historyPricePre = historyPriceCurr;
+                    HistoryPrice historyPriceCurr = mHistoryPriceList.get(i);
+                    if (historyPriceCurr.date.getTime() != historyPricePre.date.getTime() + mDuration * 1000) {
+                        historyPriceNew = new HistoryPrice();
+                        historyPriceNew.date = new Date(historyPricePre.date.getTime() + mDuration * 1000);
+                        historyPriceNew.baseVolume = 0;
+                        historyPriceNew.quoteVolume = 0;
+                        historyPriceNew.open = historyPricePre.close;
+                        historyPriceNew.high = historyPricePre.close;
+                        historyPriceNew.low = historyPricePre.close;
+                        historyPriceNew.close = historyPricePre.close;
+                        mHistoryPriceList.add(i, historyPriceNew);
+                        historyPricePre = historyPriceNew;
+                    } else {
+                        historyPricePre = historyPriceCurr;
+                    }
                 }
             }
             runOnUiThread(new Runnable() {
