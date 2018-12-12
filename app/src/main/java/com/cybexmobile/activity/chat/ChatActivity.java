@@ -1,17 +1,14 @@
 package com.cybexmobile.activity.chat;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +34,6 @@ import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
-import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chat.ChatLogin;
 import com.cybex.provider.graphene.chat.ChatMessage;
@@ -45,10 +41,10 @@ import com.cybex.provider.graphene.chat.ChatMessageRequest;
 import com.cybex.provider.graphene.chat.ChatMessages;
 import com.cybex.provider.graphene.chat.ChatReply;
 import com.cybex.provider.graphene.chat.ChatRequest;
-import com.cybex.provider.graphene.chat.ChatSocketClosed;
-import com.cybex.provider.graphene.chat.ChatSocketFailure;
-import com.cybex.provider.graphene.chat.ChatSocketMessage;
-import com.cybex.provider.graphene.chat.ChatSocketOpen;
+import com.cybex.provider.graphene.websocket.WebSocketClosed;
+import com.cybex.provider.graphene.websocket.WebSocketFailure;
+import com.cybex.provider.graphene.websocket.WebSocketMessage;
+import com.cybex.provider.graphene.websocket.WebSocketOpen;
 import com.cybex.provider.graphene.chat.ChatSubscribe;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.chat.RxChatWebSocket;
@@ -62,7 +58,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -191,9 +186,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         mCompositeDisposable.add(mRxChatWebSocket.onOpen()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ChatSocketOpen>() {
+                .subscribe(new Consumer<WebSocketOpen>() {
                     @Override
-                    public void accept(ChatSocketOpen chatSocketOpen) throws Exception {
+                    public void accept(WebSocketOpen webSocketOpen) throws Exception {
                         chatSocketLogin();
                     }
                 }, new Consumer<Throwable>() {
@@ -204,9 +199,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         mCompositeDisposable.add(mRxChatWebSocket.onFailure()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ChatSocketFailure>() {
+                .subscribe(new Consumer<WebSocketFailure>() {
                     @Override
-                    public void accept(ChatSocketFailure chatSocketFailure) throws Exception {
+                    public void accept(WebSocketFailure webSocketFailure) throws Exception {
                         Log.d(RxChatWebSocket.TAG, "正在重新建立连接...");
                         mPbChatLoading.setVisibility(View.VISIBLE);
                         //重连
@@ -221,9 +216,9 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         mCompositeDisposable.add(mRxChatWebSocket.onSubscribe()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ChatSocketMessage>() {
+                .subscribe(new Consumer<WebSocketMessage>() {
                     @Override
-                    public void accept(ChatSocketMessage chatSocketMessage) throws Exception {
+                    public void accept(WebSocketMessage chatSocketMessage) throws Exception {
                         if (!chatSocketMessage.isText()) {
                             return;
                         }
@@ -251,10 +246,10 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         mCompositeDisposable.add(mRxChatWebSocket.onClosed()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<ChatSocketClosed>() {
+                .subscribe(new Consumer<WebSocketClosed>() {
                     @Override
-                    public void accept(ChatSocketClosed chatSocketClosed) throws Exception {
-                        if(chatSocketClosed.getCode() == 1000){
+                    public void accept(WebSocketClosed webSocketClosed) throws Exception {
+                        if(webSocketClosed.getCode() == 1000){
                             mCompositeDisposable.dispose();
                         }
                     }

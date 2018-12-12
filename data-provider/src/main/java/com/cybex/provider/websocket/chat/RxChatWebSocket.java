@@ -4,12 +4,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.cybex.provider.graphene.chat.ChatSocketBase;
-import com.cybex.provider.graphene.chat.ChatSocketClosed;
-import com.cybex.provider.graphene.chat.ChatSocketClosing;
-import com.cybex.provider.graphene.chat.ChatSocketFailure;
-import com.cybex.provider.graphene.chat.ChatSocketMessage;
-import com.cybex.provider.graphene.chat.ChatSocketOpen;
+import com.cybex.provider.graphene.websocket.WebSocketBase;
+import com.cybex.provider.graphene.websocket.WebSocketClosed;
+import com.cybex.provider.graphene.websocket.WebSocketClosing;
+import com.cybex.provider.graphene.websocket.WebSocketFailure;
+import com.cybex.provider.graphene.websocket.WebSocketMessage;
+import com.cybex.provider.graphene.websocket.WebSocketOpen;
+import com.cybex.provider.websocket.rx.RxWebSocket;
+import com.cybex.provider.websocket.rx.RxWebSocketOnSubscribe;
+import com.cybex.provider.websocket.rx.RxWebSocketLogger;
+import com.cybex.provider.websocket.rx.RxWebSocketStatus;
 import com.google.gson.Gson;
 
 import org.reactivestreams.Publisher;
@@ -29,7 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.WebSocket;
 import okio.ByteString;
 
-public class RxChatWebSocket {
+public class RxChatWebSocket extends RxWebSocket {
 
     public static final String TAG = RxChatWebSocket.class.getSimpleName();
     //聊天正式服务器
@@ -37,254 +41,13 @@ public class RxChatWebSocket {
     //聊天测试服务器
     public static final String CHAT_UTL_TEST = "ws://47.91.242.71:9099/ws";
 
-    //事件分发
-    private PublishProcessor<ChatSocketBase> publishProcessor = PublishProcessor.create();
-    private ChatSocketOnSubscribe chatSocketOnSubscribe;
-    private WebSocket webSocket;
-    private SocketStatus status;
-
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-
     public RxChatWebSocket(@NonNull String url) {
-        this.chatSocketOnSubscribe = new ChatSocketOnSubscribe(url);
+        super(url);
     }
 
-    private Flowable<ChatSocketBase> getErrorHandler() {
-        return publishProcessor.onErrorResumeNext(new Function<Throwable, Publisher<ChatSocketBase>>() {
-            @Override
-            public Publisher<ChatSocketBase> apply(Throwable throwable) throws Exception {
-                Log.e(TAG, "RxChatWebSocket EventSubject internal error occured.");
-                Log.e(TAG, throwable.getMessage());
-                throwable.printStackTrace();
-                publishProcessor = PublishProcessor.create();
-                return publishProcessor;
-            }
-        });
-    }
-
-    /**
-     * onOpen回调
-     * @return
-     */
-    public Flowable<ChatSocketOpen> onOpen() {
-        return getErrorHandler()
-                .ofType(ChatSocketOpen.class)
-                .doOnNext(new Consumer<ChatSocketOpen>() {
-                    @Override
-                    public void accept(ChatSocketOpen chatSocketOpen) throws Exception {
-                        status = SocketStatus.OPEN;
-                        webSocket = chatSocketOpen.getWebSocket();
-                    }
-                })
-                .doOnEach(new RxWebSocketLogger<ChatSocketOpen>("onOpen"));
-    }
-
-    /**
-     * onSubscribe回调
-     * @return
-     */
-    public Flowable<ChatSocketMessage> onSubscribe() {
-        return getErrorHandler()
-                .ofType(ChatSocketMessage.class)
-                .doOnNext(new Consumer<ChatSocketMessage>() {
-                    @Override
-                    public void accept(ChatSocketMessage chatSocketMessage) throws Exception {
-                        status = SocketStatus.LOGIN;
-                    }
-                })
-                .doOnEach(new RxWebSocketLogger<ChatSocketMessage>("onSubscribe"));
-
-    }
-
-    /**
-     * onClosing回调
-     * @return
-     */
-    public Flowable<ChatSocketClosing> onClosing() {
-        return getErrorHandler()
-                .ofType(ChatSocketClosing.class)
-                .doOnNext(new Consumer<ChatSocketClosing>() {
-                    @Override
-                    public void accept(ChatSocketClosing chatSocketClosing) throws Exception {
-                        status = SocketStatus.CLOSING;
-                    }
-                })
-                .doOnEach(new RxWebSocketLogger<ChatSocketClosing>("onClosing"));
-    }
-
-    /**
-     * onClosed回调
-     * @return
-     */
-    public Flowable<ChatSocketClosed> onClosed() {
-        return getErrorHandler()
-                .ofType(ChatSocketClosed.class)
-                .doOnNext(new Consumer<ChatSocketClosed>() {
-                    @Override
-                    public void accept(ChatSocketClosed chatSocketClosed) throws Exception {
-                        status = SocketStatus.CLOSED;
-                    }
-                })
-                .doOnEach(new RxWebSocketLogger<ChatSocketClosed>("onClosed"));
-    }
-
-    /**
-     * onFailure回调
-     * @return
-     */
-    public Flowable<ChatSocketFailure> onFailure() {
-        return getErrorHandler()
-                .ofType(ChatSocketFailure.class)
-                .doOnNext(new Consumer<ChatSocketFailure>() {
-                    @Override
-                    public void accept(ChatSocketFailure chatSocketFailure) throws Exception {
-                        status = SocketStatus.FAILURE;
-                    }
-                })
-                .doOnEach(new RxWebSocketLogger<ChatSocketFailure>("onFailure"));
-    }
-
-    /**
-     * 发送消息
-     * @param payload
-     * @return
-     */
-    public synchronized <T>Single<Boolean> sendMessage(@Nullable final T payload) {
-        return Single.fromCallable(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                if (webSocket != null) {
-                    String jsonBody = new Gson().toJson(payload);
-                    Log.v(TAG, jsonBody);
-                    return webSocket.send(jsonBody);
-                } else {
-                    throw new RuntimeException("WebSocket not connected!");
-                }
-            }
-        });
-    }
-
-    /**
-     * 发送消息
-     * @param content
-     * @return
-     */
-    public synchronized Single<Boolean> sendMessage(@Nullable final String content) {
-        return Single.fromCallable(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                if (webSocket != null) {
-                    Log.v(TAG, content);
-                    return webSocket.send(content);
-                } else {
-                    throw new RuntimeException("WebSocket not connected!");
-                }
-            }
-        });
-    }
-
-    /**
-     * 发送消息
-     * @param bytes
-     * @return
-     */
-    public synchronized Single<Boolean> sendMessage(@NonNull final ByteString bytes) {
-        return Single.fromCallable(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                if (webSocket != null) {
-                    return webSocket.send(bytes);
-                } else {
-                    throw new RuntimeException("WebSocket not connected!");
-                }
-            }
-        });
-    }
-
-    /**
-     * WebSocket连接
-     */
-    public synchronized void connect() {
-        Disposable connectionDisposable = Flowable.create(chatSocketOnSubscribe, BackpressureStrategy.BUFFER)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .subscribe(new Consumer<ChatSocketBase>() {
-                    @Override
-                    public void accept(ChatSocketBase chatSocketBase) throws Exception {
-                        publishProcessor.onNext(chatSocketBase);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage());
-                        throwable.printStackTrace();
-                    }
-                });
-        Disposable closeDisposable = getErrorHandler()
-                .ofType(ChatSocketClosed.class)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .subscribe(new Consumer<ChatSocketClosed>() {
-                    @Override
-                    public void accept(ChatSocketClosed chatSocketClosed) throws Exception {
-                        Log.d(TAG, "----------close----------");
-                        webSocket = null;
-                        compositeDisposable.dispose();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage());
-                        throwable.printStackTrace();
-                    }
-                });
-        compositeDisposable.add(connectionDisposable);
-        compositeDisposable.add(closeDisposable);
-    }
-
-    /**
-     * 重连
-     */
-    public synchronized void reconnect(long delay, TimeUnit unit) {
-        Disposable reconnectionDisposable = Flowable.timer(delay, unit)
-                .concatMap(new Function<Long, Publisher<ChatSocketBase>>() {
-                    @Override
-                    public Publisher<ChatSocketBase> apply(Long aLong) throws Exception {
-                        return Flowable.create(chatSocketOnSubscribe, BackpressureStrategy.BUFFER);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .subscribe(new Consumer<ChatSocketBase>() {
-                    @Override
-                    public void accept(ChatSocketBase chatSocketBase) throws Exception {
-                        publishProcessor.onNext(chatSocketBase);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getMessage());
-                        throwable.printStackTrace();
-                    }
-                });
-        compositeDisposable.add(reconnectionDisposable);
-    }
-
-    public synchronized Single<Boolean> close(final int code, @Nullable final String reason) {
-        return Single.fromCallable(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                if (webSocket != null) {
-                    return webSocket.close(code, reason);
-                } else {
-                    throw new RuntimeException("WebSocket not connected!");
-                }
-            }
-        });
-    }
-
+    @Override
     public boolean isConnected() {
-        return status != null && status == SocketStatus.LOGIN;
+        return status != null && status == RxWebSocketStatus.MESSAGE;
     }
 
 }
