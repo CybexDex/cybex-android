@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import com.cybex.eto.activity.details.EtoDetailsActivity;
+import com.cybexmobile.activity.game.GameActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.activity.login.LoginActivity;
 import com.cybexmobile.activity.transfer.TransferActivity;
@@ -155,6 +156,14 @@ public class IntentFactory {
             isNeedLogin = true;
             if(isLogin){
                 return TransferActivity.class;
+            }
+            return LoginActivity.class;
+        }
+
+        if (urlSplit.length == 1 && urlCache.equals("game")) {
+            isNeedLogin = true;
+            if (isLogin) {
+                return GameActivity.class;
             }
             return LoginActivity.class;
         }

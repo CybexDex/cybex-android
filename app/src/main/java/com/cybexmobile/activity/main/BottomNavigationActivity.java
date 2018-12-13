@@ -11,6 +11,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -54,6 +55,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FROM_BROWSER;
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;

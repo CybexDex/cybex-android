@@ -47,6 +47,8 @@ public class Constant {
 
     public static final String INTENT_PARAM_CHANNEL = "intent_param_channel";
 
+    public static final String INTENT_PARAM_FROM_BROWSER = "intent_param_from_browser";
+
     public static final int FREQUENCY_MODE_ORDINARY_MARKET = 1;
     public static final int FREQUENCY_MODE_REAL_TIME_MARKET = 2;
     public static final int FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI = 3;
@@ -59,6 +61,7 @@ public class Constant {
     public static final String PREF_PASSWORD = "password";
     public static final String PREF_LOAD_MODE = "load_mode";
     public static final String PREF_SERVER = "pref_server";
+    public static final String PREF_GAME_INVITATION = "pref_game_invitation";
 
     /**
      *
@@ -125,4 +128,12 @@ public class Constant {
     public static final String INDEXEMA = "EMA";
     public static final String INDEXMACD = "MACD";
     public static final String INDEXBOLL = "BOLL";
+
+    /**
+     *  game deposit status
+     */
+    public static final String GAME_STATUS_SUCCESS = "0";
+    public static final String GAME_STATUS_FAIL = "1";
+    public static final String GAME_STATUS_NO_ACCOUNT = "2";
+
 }

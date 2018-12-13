@@ -79,6 +79,7 @@ public class WebSocketClient extends WebSocketListener {
 
     private ConcurrentHashMap<Integer, ReplyProcessImpl> mHashMapIdToProcess = new ConcurrentHashMap<>();
     private List<DelayCall> delayCalls = null;
+    private Sha256Object mChainIdObject;
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -111,6 +112,7 @@ public class WebSocketClient extends WebSocketListener {
         mWebSocket = webSocket;
         mConnectStatus = WebSocketStatus.OPENED;
         try {
+            get_chain_id(chainIdCallback);
             //websocke连接成功, send login
             login("", "", loginCallback);
         } catch (NetworkStatusException e) {
@@ -758,6 +760,23 @@ public class WebSocketClient extends WebSocketListener {
                 e.printStackTrace();
             }
         }
+    }
+
+    private MessageCallback<Reply<Sha256Object>> chainIdCallback = new MessageCallback<Reply<Sha256Object>>() {
+        @Override
+        public void onMessage(Reply<Sha256Object> reply) {
+            mChainIdObject = reply.result;
+            Log.e("chainID", mChainIdObject.toString());
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
+    public Sha256Object getmChainIdObject() {
+        return mChainIdObject;
     }
 
     private MessageCallback<Reply<Boolean>> loginCallback = new MessageCallback<Reply<Boolean>>() {

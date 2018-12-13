@@ -156,40 +156,8 @@ public class WalletApi {
 
     public void initialize() {
         mWebSocketClient.connect();
-        try {
-            mWebSocketClient.get_chain_id(new MessageCallback<Reply<Sha256Object>>() {
-                @Override
-                public void onMessage(Reply<Sha256Object> reply) {
-                    Sha256Object sha256Object = reply.result;
-                    if (mWalletObject == null) {
-                        mWalletObject = new wallet_object();
-                        mWalletObject.chain_id = sha256Object;
-                    }
-                }
-
-                @Override
-                public void onFailure() {
-
-                }
-            });
-
-            mWebSocketClient.get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
-                @Override
-                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
-                    DynamicGlobalPropertyObject dynamicGlobalPropertyObject = reply.result;
-                    if (mDynamicGlobalPropertyObject == null) {
-                        mDynamicGlobalPropertyObject = new DynamicGlobalPropertyObject();
-                        mDynamicGlobalPropertyObject = dynamicGlobalPropertyObject;
-                    }
-                }
-
-                @Override
-                public void onFailure() {
-
-                }
-            });
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
+        if (mWalletObject == null) {
+            mWalletObject = new wallet_object();
         }
     }
 
@@ -785,7 +753,7 @@ public class WalletApi {
         signedTransaction.set_expiration(dateObject);
 
         Types.private_key_type privateKey = mHashMapPub2Priv.get(accountObject.active.get_keys().get(0));
-        signedTransaction.sign(privateKey, mWalletObject.chain_id);
+        signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
 
         return signedTransaction;
     }

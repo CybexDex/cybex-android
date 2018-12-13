@@ -1,7 +1,5 @@
 package com.cybexmobile.activity.setting;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +10,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -20,20 +17,19 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.help.StoreLanguageHelper;
+import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.http.entity.AppVersion;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.BuildConfig;
-import com.cybexmobile.MainApplication;
+import com.cybexmobile.R;
 import com.cybexmobile.activity.setting.help.HelpActivity;
 import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.http.RetrofitFactory;
-import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.provider.http.entity.AppVersion;
 import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.dialog.FrequencyModeDialog;
-import com.cybex.basemodule.event.Event;
-import com.cybex.basemodule.help.StoreLanguageHelper;
-import com.cybexmobile.R;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -1,6 +1,7 @@
 package com.cybexmobile.fragment.main;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -21,10 +22,14 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.help.StoreLanguageHelper;
 import com.cybex.basemodule.service.WebSocketService;
@@ -57,6 +62,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -111,6 +117,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
     private SubLinkRecyclerViewAdapter mSubLinkRecyclerViewAdapter;
     private HotAssetPairRecyclerViewAdapter mHotAssetPairRecyclerViewAdapter;
     private TopGainerRecyclerViewAdapter mTopGainerRecyclerViewAdapter;
+    private SharedPreferences mPreferences;
 
     private WebSocketService mWebSocketService;
 
@@ -122,9 +129,9 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         appActivityComponent().inject(this);
         mPresenter.attachView(this);
         EventBus.getDefault().register(this);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mIsLoginIn = preferences.getBoolean(PREF_IS_LOGIN_IN, false);
-        mName = preferences.getString(PREF_NAME, "");
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mIsLoginIn = mPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
+        mName = mPreferences.getString(PREF_NAME, "");
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -264,10 +271,41 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Override
     public void onItemClick(SubLink subLink) {
-        new IntentFactory()
-                .action(subLink.getLink())
-                .checkLogin(mIsLoginIn)
-                .intent(getContext());
+        if ( subLink.getLink().equals("cybexapp://game") && !mPreferences.getBoolean(Constant.PREF_GAME_INVITATION, false)) {
+            CybexDialog.showVerifyPinCodeETODialog(new Dialog(getActivity()), getActivity().getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
+                @Override
+                public void onClick(Dialog dialog, Button button, EditText editText, TextView textView) {
+                    String inputCode = editText.getText().toString().trim();
+                    textView.setVisibility(View.VISIBLE);
+                    if (inputCode.isEmpty()) {
+                        textView.setText(getResources().getString(com.cybex.eto.R.string.ETO_details_dialog_no_invitation_code_error));
+                    } else {
+                        List<String> invitationCodeList = Arrays.asList(getActivity().getResources().getStringArray(R.array.game_invitation_code));
+                        if (invitationCodeList.contains(inputCode)) {
+                            mPreferences.edit().putBoolean(Constant.PREF_GAME_INVITATION, true).apply();
+                            new IntentFactory()
+                                    .action(subLink.getLink())
+                                    .checkLogin(mIsLoginIn)
+                                    .intent(getContext());
+                            dialog.dismiss();
+                        } else {
+                            textView.setText(getResources().getString(R.string.text_invitation_code_wrong));
+                        }
+                    }
+
+                }
+            }, new CybexDialog.ConfirmationDialogCancelListener() {
+                @Override
+                public void onCancel(Dialog dialog) {
+
+                }
+            }, null, null);
+        } else {
+            new IntentFactory()
+                    .action(subLink.getLink())
+                    .checkLogin(mIsLoginIn)
+                    .intent(getContext());
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

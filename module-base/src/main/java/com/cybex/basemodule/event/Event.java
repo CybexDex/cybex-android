@@ -558,5 +558,33 @@ public class Event {
             return query;
         }
     }
+
+    /**
+     * 游戏解锁回调
+     */
+    public static class onGameUnlocked {
+        private String result;
+        public onGameUnlocked(String result) {
+            this.result = result;
+        }
+
+        public String getResult() {
+            return result;
+        }
+    }
+
+    /**
+     * 游戏充值回调
+     */
+    public static class onGameDeposit {
+        private String status;
+        public onGameDeposit(String status) {
+            this.status = status;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+    }
 }
 

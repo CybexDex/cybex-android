@@ -9,6 +9,8 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.main.BottomNavigationActivity;
 
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FROM_BROWSER;
+
 public class SplashActivity extends BaseActivity {
 
     @Override
@@ -24,6 +26,9 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void run() {
                 Intent i = new Intent(SplashActivity.this, BottomNavigationActivity.class);
+                if (getIntent().getData() != null) {
+                    i.putExtra(INTENT_PARAM_FROM_BROWSER, true);
+                }
                 startActivity(i);
                 finish();
             }

@@ -1,0 +1,190 @@
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-size: 20px;
+}
+p {
+  margin: 0;
+}
+ul {
+  margin: 0;
+  padding: 0;
+}
+li {
+  list-style: none;
+}
+a {
+  color: #fff;
+  text-decoration: none;
+}
+.btn {
+  color: #ffffff;
+  border-radius: 4px;
+  transition: opacity 0.3s ease 0s;
+  background: linear-gradient(-131deg, rgb(255, 196, 120), rgb(255, 145, 67));
+  font-size: 0.7rem;
+  height: 2rem;
+  line-height: 2rem;
+  text-align: center;
+  cursor: pointer;
+}
+#game {
+  font-family: 'Microsoft YaHei', 'Avenir', Helvetica, Arial, sans-serif;
+  background: #0d1b3c url('../img/bg.jpg') no-repeat;
+  background-size: 100%;
+  overflow: hidden;
+}
+.game_title_img {
+  width: 100%;
+  margin-top: 3rem;
+}
+.more_game {
+  color: #fff;
+  font-size: 0.6rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-decoration: underline;
+}
+.btn_group {
+  /* width: 86.6%; */
+  width: calc(46% + 3rem);
+  padding: 0 1.5rem;
+  margin: 2.25rem auto;
+  overflow: hidden;
+}
+/* .btn_group p {
+  float: left;
+} */
+.btn_group a {
+  display: block;
+  /* border: #e4ebfe solid 1px;
+  border-radius: 4px;
+  height: 2rem;
+  line-height: 2rem; */
+}
+/* .btn_group p:last-child a {
+  background: #e4ebfe;
+  color: #0e2363;
+} */
+.recharge_withdraw {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 46%;
+  margin: 0 auto;
+  margin-top: 3rem;
+}
+.recharge_withdraw p {
+  text-align: center;
+}
+.recharge_bg {
+  background: linear-gradient(135deg, rgba(59, 36, 233, 0.4), rgba(16, 9, 160, 0.4) 33%, rgba(10, 6, 38, 0.4));
+}
+.withdraw_bg {
+  background: linear-gradient(-45deg, rgba(59, 36, 233, 0.4), rgba(16, 9, 160, 0.4) 33%, rgba(10, 6, 38, 0.4));
+  margin-bottom: 3rem;
+}
+.rewi_title {
+  color: #e4691e;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+.rewi_words {
+  color: #ffffff;
+  margin-bottom: 1.2rem;
+  font-size: 0.7rem;
+}
+.layer_wrap {
+  width: calc(72% - 2rem);
+  left: 14%;
+  top: 0;
+  background: #1b232f;
+  border-radius: 6px;
+  padding: 0 1rem;
+}
+.layer_wrap p {
+  color: #c2c4c7;
+  font-size: 0.7rem;
+  overflow: hidden;
+  padding: 0.5rem 0;
+}
+.layer_wrap input {
+  padding: 0.5rem;
+  outline: none;
+  border: none;
+  background: #212938;
+  color: #fff;
+}
+.layer_input {
+  padding: 0.4rem 0;
+}
+.layer_fee, .layer_balance, .layer_input, .gold_balance {
+  float: right;
+}
+.withdraw, .recharge, .layer_bg, .layer_whitebg, .alert, .loading {
+  display: none;
+  position: fixed;
+}
+.withdraw, .recharge {
+  padding: 0;
+  width: 72%;
+}
+.withdraw p, .recharge p {
+  padding: 0.5rem 1rem;
+}
+.withdraw_amount {
+  width: calc(100% - 100px);
+}
+.loading, .alert {
+  border-radius: 2rem;  
+  background: rgba(0, 0, 0, 0.5);
+}
+.loading {
+  width: 100px; 
+  left: calc(50% - 50px - 1rem);
+}
+.loading span {
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1rem;
+}
+.loading img {
+  width: 1rem;
+  margin-right: 0.5rem;
+}
+.layer_wrap .layer_title {
+  background: #212938;
+  color: #79829b;    
+  font-size: 0.7rem;
+  padding: 0.7rem 0;
+  text-align: center;
+}
+.layer_bg, .layer_whitebg {
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+.layer_bg {
+  background: rgba(0, 0, 0, 0.5);
+}
+.layer_btnwarp {
+  margin-top: 0.5rem;
+  text-align: center;
+  border-top: 2px solid #202736;
+}
+.layer_wrap .layer_btn {
+  float: left;
+  width: calc(50% - 1px);
+  margin: 0;
+  padding: 0.5rem 0;
+  background: #1b232f;
+  font-size: 14px;
+  text-align: center;
+  color: #fff;
+}
+.layer_btn:first-child {
+  border-right: 2px solid #202736;
+  color: #fa9a5c;
+}

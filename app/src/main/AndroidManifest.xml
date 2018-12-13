@@ -38,6 +38,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="game" android:scheme="cybexapp" />
+            </intent-filter>
+
         </activity>
         <!-- DayNight主题下使用WebView activity重绘 uiMode禁止重绘 -->
         <activity
@@ -101,7 +108,7 @@
             android:name=".activity.gateway.GatewayActivity"
             android:label=""
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".activity.gateway.withdraw.WithdrawActivity"
             android:label=""
@@ -181,10 +188,17 @@
             android:label=""
             android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.chat.ChatActivity"
+        <activity
+            android:name=".activity.chat.ChatActivity"
             android:label=""
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
+            android:name=".activity.game.GameActivity"
+            android:label=""
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

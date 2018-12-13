@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- invitation code -->
+    <string-array name="game_invitation_code">
+        <item>CYBEXGAMECENTER</item>
+        <item>GAMECENTERCYBEX</item>
+        <item>CENTERCYBEXGAME</item>
+        <item>GAMECYBEXCENTER</item>
+        <item>CYBEXCENTERGAME</item>
+        <item>CENTERGAMECYBEX</item>
+        <item>AMEERCYBEXGCENT</item>
+        <item>BEXGAMECYCENTER</item>
+        <item>TERCYBEXGAMECEN</item>
+        <item>EXCENTERMECYBGA</item>
+    </string-array>
+</resources>
+
+
+
+
+

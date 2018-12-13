@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link href="./css/game.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="game">
+    <div class="game_title">
+        <img src="./img/title.png" class="game_title_img">
+    </div>
+    <div class="btn_group">
+      <!-- <p><a href="javascript:;" class="btn_style tryout_link" href="">试玩一下</a></p> -->
+      <!-- <p><a href="javascript:;" class="btn_style formal_link"  href="">正式版</a></p> -->
+      <p><a href="javascript:;" class="btn btn_style formal_link"  href="">进入游戏中心</a></p>
+    </div>
+    <div class="recharge_withdraw recharge_bg">
+      <p class="rewi_title">金币充值</p> 
+      <p class="rewi_words recharge_scale">1USDT=金币</p> 
+      <p class="rewi_btnword btn" type="recharge">立即充值</p>
+    </div>
+    <div class="recharge_withdraw withdraw_bg">
+      <p class="rewi_title">金币提现</p> 
+      <p class="rewi_words">每日最高提现10USDT提现后，USDT将在24小时之内转入您的账户</p> 
+      <p class="rewi_btnword btn" type="withdraw">申请提现</p>
+    </div>
+    <p class="more_game">更多游戏coming soon…</p>
+    <div class="layer_bg"></div>
+    <div class="layer_wrap recharge">
+      <p class="layer_title">游戏币充值</p> 
+      <p>账户余额<span class="layer_balance"></span></p> 
+      <p>手续费<span class="layer_fee"></span></p> 
+      <p class="layer_scale"></p> 
+      <p><input class="recharge_amount" type='text'> <span class="layer_input">USDT</span></p>
+      <p>预计到账金额 <span class="layer_forecast">0</span> 金币</p> 
+      <div class="layer_btnwarp">
+        <p class="layer_btn cancel" type="recharge">取消</p> 
+        <p class="layer_btn confirm" type="recharge">确定</p>
+      </div>
+    </div>
+    <div class="layer_wrap withdraw">
+        <p class="layer_title">游戏币提现</p>
+        <p>金币余额<span class="gold_balance"></span></p>
+        <p class="layer_scale"></p> 
+        <p><input class="withdraw_amount" type='text'> <span class="layer_input withdraw_layer_input"></span></p>
+        <div class="layer_btnwarp">
+          <p class="layer_btn cancel" type="withdraw">取消</p> 
+          <p class="layer_btn confirm" type="withdraw">确定</p>
+        </div>
+    </div>
+    <div class="layer_whitebg"></div>
+    <div class="layer_wrap alert">
+      <p class="layer_alert"></p>
+    </div>
+    <div class="layer_wrap loading">
+      <p>
+        <img src="./img/loading.gif">
+        <span>Loading...</span>
+      </p>
+    </div>
+  </div>
+  <script src="./js/axios.min.js"></script>
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/game.js"></script>
+</body>
+
+</html>
