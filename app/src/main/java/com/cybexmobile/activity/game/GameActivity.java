@@ -48,7 +48,7 @@ public class GameActivity extends BaseActivity {
             if (fullAccountObject != null) {
                 mAndroidtoJs.setAccountObject(fullAccountObject);
                 mWebView.addJavascriptInterface(mAndroidtoJs, "Potral");
-                mWebView.loadUrl("file:///android_asset/game/game.html");
+                mWebView.loadUrl("https://gamelive.cybex.io/");
             }
         }
 
