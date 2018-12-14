@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.MarketTrade;
@@ -22,14 +23,12 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
 
     private final List<MarketTrade> mValues;
     private final Context mContext;
-    private int mBasePrecision;
-    private int mQuotePrecision;
+    private WatchlistData mWatchlistData;
 
-    public TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, int basePrecision, int quotePrecision, Context context) {
+    public TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, WatchlistData watchlistData, Context context) {
         mValues = items;
         mContext = context;
-        mBasePrecision = basePrecision;
-        mQuotePrecision = quotePrecision;
+        mWatchlistData = watchlistData;
     }
 
     @Override
@@ -46,9 +45,9 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
          * fix bug:CYM-379
          * 精度不对
          */
-        holder.mPriceView.setText(AssetUtil.formatNumberRounding(mValues.get(position).price, AssetUtil.pricePrecision(mValues.get(position).price)));
-        holder.mBaseView.setText(AssetUtil.formatNumberRounding(mValues.get(position).baseAmount, mBasePrecision));
-        holder.mQuoteView.setText(AssetUtil.formatNumberRounding(mValues.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.get(position).price)));
+        holder.mPriceView.setText(AssetUtil.formatNumberRounding(mValues.get(position).price, mWatchlistData.getPricePrecision()));
+        holder.mBaseView.setText(AssetUtil.formatNumberRounding(mValues.get(position).baseAmount, mWatchlistData.getTotalPrecision()));
+        holder.mQuoteView.setText(AssetUtil.formatNumberRounding(mValues.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
         holder.mDateView.setText(mValues.get(position).date);
         if(mValues.get(position).showRed.equals("showRed")) {
             holder.mPriceView.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));

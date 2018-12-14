@@ -3,6 +3,7 @@ package com.cybex.provider.market;
 import android.support.annotation.NonNull;
 
 import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.provider.utils.PriceUtil;
 
@@ -50,6 +51,16 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
     private int quotePrecision;
     //排序
     private int order;
+    //价格精度
+    private int pricePrecision;
+    //数量精度
+    private int amountPrecision;
+    //成交额精度
+    private int totalPrecision;
+    //人名币精度
+    private int rmbPrecision;
+    //24H成交量精度
+    private int dayAmountPrecision;
 
     public WatchlistData() {
 
@@ -221,6 +232,54 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         this.quotePrecision = quotePrecision;
     }
 
+    public int getPricePrecision() {
+        return pricePrecision;
+    }
+
+    public void setPricePrecision(int pricePrecision) {
+        this.pricePrecision = pricePrecision;
+    }
+
+    public int getAmountPrecision() {
+        return amountPrecision;
+    }
+
+    public void setAmountPrecision(int amountPrecision) {
+        this.amountPrecision = amountPrecision;
+    }
+
+    public int getTotalPrecision() {
+        return totalPrecision;
+    }
+
+    public void setTotalPrecision(int totalPrecision) {
+        this.totalPrecision = totalPrecision;
+    }
+
+    public int getRmbPrecision() {
+        return rmbPrecision;
+    }
+
+    public void setRmbPrecision(int rmbPrecision) {
+        this.rmbPrecision = rmbPrecision;
+    }
+
+    public int getDayAmountPrecision() {
+        return dayAmountPrecision;
+    }
+
+    public void setDayAmountPrecision(int dayAmountPrecision) {
+        this.dayAmountPrecision = dayAmountPrecision;
+    }
+
+    public void setAssetPairConfig(AssetsPair.Config assetPairConfig) {
+        this.rmbPrecision = 4;
+        this.dayAmountPrecision = 2;
+        this.pricePrecision = Integer.parseInt(assetPairConfig.last_price);
+        this.amountPrecision = Integer.parseInt(assetPairConfig.amount);
+        this.totalPrecision = Integer.parseInt(assetPairConfig.total);
+    }
+
     public AssetObject getBaseAsset() {
         return baseAsset;
     }
@@ -290,4 +349,5 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
         }
         return this.getOrder() > o.getOrder() ? -1 : 1;
     }
+
 }

@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cybex.basemodule.cache.AssetPairCache;
+import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.orderhistory.OwnOrderHistoryActivity;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
@@ -62,6 +65,8 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         AssetObject quote = orderHistoryItem.quoteAsset;
         BlockHeader block = orderHistoryItem.block;
         if (base != null && quote != null) {
+            AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(base.id.toString(), quote.id.toString());
+            if(assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
             if ((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE")) ||
                     (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE"))) {
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
@@ -73,8 +78,8 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
                 layoutParams.width = RecyclerView.LayoutParams.WRAP_CONTENT;
                 holder.itemView.setVisibility(View.VISIBLE);
-                String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
-                String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
+                String quoteSymbol = AssetUtil.parseSymbol(quote.symbol);
+                String baseSymbol = AssetUtil.parseSymbol(base.symbol);
                 viewHolder.mTvBuySell.setText(mContext.getResources().getString(orderHistoryItem.isSell ? R.string.open_order_sell : R.string.open_order_buy));
                 viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(orderHistoryItem.isSell ?R.drawable.bg_btn_sell : R.drawable.bg_btn_buy));
                 viewHolder.mTvBaseSymbol.setText(baseSymbol);
@@ -82,19 +87,15 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 double baseAmount;
                 double quoteAmount;
                 if(orderHistoryItem.isSell){
-                    baseAmount = orderHistoryItem.orderHistory.receives.amount / Math.pow(10, base.precision);
-                    quoteAmount = orderHistoryItem.orderHistory.pays.amount / Math.pow(10, quote.precision);
+                    baseAmount = AssetUtil.divide(orderHistoryItem.orderHistory.receives.amount, Math.pow(10, base.precision));
+                    quoteAmount = AssetUtil.divide(orderHistoryItem.orderHistory.pays.amount, Math.pow(10, quote.precision));
                 }else {
-                    baseAmount = orderHistoryItem.orderHistory.pays.amount / Math.pow(10, base.precision);
-                    quoteAmount = orderHistoryItem.orderHistory.receives.amount / Math.pow(10, quote.precision);
+                    baseAmount = AssetUtil.divide(orderHistoryItem.orderHistory.pays.amount, Math.pow(10, base.precision));
+                    quoteAmount = AssetUtil.divide(orderHistoryItem.orderHistory.receives.amount, Math.pow(10, quote.precision));
                 }
-                /**
-                 * fix bug:CYM-371
-                 * 价格保留8位小数
-                 */
-                viewHolder.mTvBasePrice.setText(String.format(Locale.US, "%.8f %s", baseAmount/quoteAmount, baseSymbol));
-                viewHolder.mTvBaseAmount.setText(String.format("%." + base.precision + "f %s", baseAmount, baseSymbol));
-                viewHolder.mTvQuoteAmount.setText(String.format("%." + quote.precision +"f %s", quoteAmount, quoteSymbol));
+                viewHolder.mTvBasePrice.setText(AssetUtil.formatNumberRounding(AssetUtil.divide(baseAmount, quoteAmount), Integer.parseInt(assetPairConfig.last_price)));
+                viewHolder.mTvBaseAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(baseAmount, Integer.parseInt(assetPairConfig.total)), baseSymbol));
+                viewHolder.mTvQuoteAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(quoteAmount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                 if(block != null){
                     viewHolder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(block.timestamp)));
                 }

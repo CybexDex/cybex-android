@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybex.provider.market.Order;
 import com.cybex.basemodule.utils.AssetUtil;
@@ -30,11 +31,17 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
     private List<Order> mOrders;
     private int mType;
     private OnItemClickListener mListener;
+    private WatchlistData mWatchlistData;
 
-    public BuySellOrderRecyclerViewAdapter(Context context, int type, List<Order> orders) {
+    public BuySellOrderRecyclerViewAdapter(Context context, WatchlistData watchlistData, int type, List<Order> orders) {
         mContext = context;
         mOrders = orders;
         mType = type;
+        mWatchlistData = watchlistData;
+    }
+
+    public void setWatchlistData(WatchlistData watchlistData) {
+        mWatchlistData = watchlistData;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -66,8 +73,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                             }
                         }
                     });
-                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price)));
-                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, AssetUtil.amountPrecision(order.price)));
+                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, mWatchlistData.getPricePrecision()));
+                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, mWatchlistData.getAmountPrecision()));
                     float percentage = (float) getPercentage(mOrders, position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
                     LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
@@ -100,8 +107,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                             }
                         }
                     });
-                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, AssetUtil.pricePrecision(order.price), RoundingMode.UP));
-                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, AssetUtil.amountPrecision(order.price)));
+                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, mWatchlistData.getPricePrecision(), RoundingMode.UP));
+                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, mWatchlistData.getAmountPrecision()));
                     float percentage = (float) getPercentage(mOrders, mOrders.size() - MAX_ITEM + position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
                     LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);

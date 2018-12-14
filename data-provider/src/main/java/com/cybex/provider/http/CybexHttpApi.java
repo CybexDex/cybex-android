@@ -12,6 +12,7 @@ import com.cybex.provider.http.response.CybexBaseResponse;
 import com.cybex.provider.http.response.GateWayRecordsResponse;
 import com.cybex.provider.http.response.CnyResponse;
 import com.cybex.provider.http.response.CreateAccountResponse;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -62,17 +63,8 @@ public interface CybexHttpApi {
     Observable<ResponseBody> getBlockExplorerLink();
 
     @GET("json/assets.json")
-    Observable<ResponseBody> getAssetWhiteList();
+    Observable<List<String>> getAssetWhiteList();
 
-//    @GET("v1/api/announce")
-//    Observable<CybexBaseResponse<List<Announce>>> getAnnounces(@Query("lang") String lang);
-//
-//    @GET("v1/api/hotpair")
-//    Observable<CybexBaseResponse<List<HotAssetPair>>> getHotAssetPairs();
-//
-//    @GET("v1/api/app_sublinks")
-//    Observable<CybexBaseResponse<List<SubLink>>> getSubLinks(@Query("lang") String lang);
-//
-//    @GET("v1/api/banners")
-//    Observable<CybexBaseResponse<List<CybexBanner>>> getBanners(@Query("lang") String lang);lang
+    @GET("json/pairs.json")
+    Observable<JsonObject> getAssetPairsConfig();
 }

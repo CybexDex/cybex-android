@@ -8,6 +8,7 @@ public class AssetsPair {
     private int order;
     private AssetObject baseAsset;
     private AssetObject quoteAsset;
+    private Config config;
 
     public AssetsPair(String base, String quote) {
         this.base = base;
@@ -52,5 +53,19 @@ public class AssetsPair {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public class Config {
+        public String last_price;
+        public String amount;
+        public String total;
     }
 }

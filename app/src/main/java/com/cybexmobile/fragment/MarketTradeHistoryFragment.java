@@ -115,7 +115,7 @@ public class MarketTradeHistoryFragment extends BaseFragment {
         mTvBasePrice.setText(getResources().getString(R.string.market_page_trade_history_price).replace("--", trimmedBase));
         mBaseTextView.setText(getResources().getString(R.string.market_page_trade_history_base).replace("--", trimmedBase));
         mQuoteTextView.setText(getResources().getString(R.string.market_page_trade_history_quote).replace("--", trimmedQuote));
-        mTradeHistoryRecyclerViewAdapter = new TradeHistoryRecyclerViewAdapter(mMarketTradeList, mWatchlistData.getBasePrecision(), mWatchlistData.getQuotePrecision(), getContext());
+        mTradeHistoryRecyclerViewAdapter = new TradeHistoryRecyclerViewAdapter(mMarketTradeList, mWatchlistData, getContext());
         mRecyclerView.setAdapter(mTradeHistoryRecyclerViewAdapter);
         loadMarketTradHistory();
     }

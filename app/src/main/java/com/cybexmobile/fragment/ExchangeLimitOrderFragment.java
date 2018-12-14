@@ -107,8 +107,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mUnbinder = ButterKnife.bind(this, view);
         mRvSell.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvBuy.setLayoutManager(new LinearLayoutManager(getContext()));
-        mBuyOrderAdapter = new BuySellOrderRecyclerViewAdapter(getContext(), BuySellOrderRecyclerViewAdapter.TYPE_BUY, mBuyOrders);
-        mSellOrderAdapter = new BuySellOrderRecyclerViewAdapter(getContext(), BuySellOrderRecyclerViewAdapter.TYPE_SELL, mSellOrders);
+        mBuyOrderAdapter = new BuySellOrderRecyclerViewAdapter(getContext(), mWatchlistData, BuySellOrderRecyclerViewAdapter.TYPE_BUY, mBuyOrders);
+        mSellOrderAdapter = new BuySellOrderRecyclerViewAdapter(getContext(), mWatchlistData, BuySellOrderRecyclerViewAdapter.TYPE_SELL, mSellOrders);
         mBuyOrderAdapter.setOnItemClickListener(this);
         mSellOrderAdapter.setOnItemClickListener(this);
         mRvBuy.setAdapter(mBuyOrderAdapter);
@@ -163,7 +163,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         }
         if(data.getBaseId().equals(mWatchlistData.getBaseId()) && data.getQuoteId().equals(mWatchlistData.getQuoteId())){
             mWatchlistData = data;
-            initQuotePriceText();
+            initPriceText();
         }
     }
 
@@ -192,7 +192,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
             return;
         }
         mWatchlistData.setRmbPrice(assetRmbPrice.getValue());
-        initQuotePriceText();
+        initPriceText();
     }
 
     @Override
@@ -315,16 +315,16 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(mWatchlistData == null){
             return;
         }
-        initQuotePriceText();
+        initPriceText();
         String baseSymbol = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());
         String quoteSymbol = AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol());
         mTvOrderPrice.setText(getResources().getString(R.string.text_asset_price).replace("--", baseSymbol));
         mTvOrderAmount.setText(getResources().getString(R.string.text_asset_amount).replace("--", quoteSymbol));
     }
 
-    private void initQuotePriceText(){
+    private void initPriceText(){
         mTvQuotePrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) :
-                AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice(), AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())));
+                AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice(), mWatchlistData.getPricePrecision()));
         double change = mWatchlistData.getChange();
         if(change == 0){
             mTvQuotePrice.setTextColor(getResources().getColor(R.color.no_change_color));
@@ -332,11 +332,13 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
             mTvQuotePrice.setTextColor(getResources().getColor(change > 0 ? R.color.increasing_color : R.color.decreasing_color));
         }
         mTvQuoteRmbPrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) :
-                "≈¥ " + AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice(), 4));
+                "≈¥ " + AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision()));
     }
 
     public void changeWatchlist(WatchlistData watchlist){
         this.mWatchlistData = watchlist;
+        mBuyOrderAdapter.setWatchlistData(mWatchlistData);
+        mSellOrderAdapter.setWatchlistData(mWatchlistData);
         initViewData();
         loadBuySellOrder();
     }

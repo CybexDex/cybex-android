@@ -49,7 +49,7 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
             return;
         }
         holder.mTvAssetSymbol.setText(String.format("%s/%s", AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()), AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
-        holder.mTvCurrPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
+        holder.mTvCurrPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getPricePrecision()));
         double change = watchlistData.getChange();
         holder.mTvChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
@@ -68,7 +68,8 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
         }
 
         holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
-                String.format(Locale.US, "≈¥ %.4f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
+                String.format(Locale.US, "≈¥ %s", AssetUtil.formatNumberRounding(
+                        watchlistData.getRmbPrice() * watchlistData.getCurrentPrice(), watchlistData.getRmbPrecision())));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

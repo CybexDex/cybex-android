@@ -480,21 +480,16 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                     }
                 }
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(mProgressBar != null){
-                        mProgressBar.setVisibility(View.GONE);
-                        if(mDuration == MARKET_STAT_INTERVAL_MILLIS_1_DAY){
-                            HistoryPrice lastHistoryPrice = mHistoryPriceList.get(mHistoryPriceList.size() - 1);
-                            mHighPriceView.setText(lastHistoryPrice.high == 0.f ? "-" :
-                                    String.format("High: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.high, mWatchListData.getBasePrecision())));
-                            mLowPriceView.setText(lastHistoryPrice.low == 0.f ? "-" :
-                                    String.format("Low: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.low, mWatchListData.getBasePrecision())));
-                        }
-                    }
+            if(mProgressBar != null){
+                mProgressBar.setVisibility(View.GONE);
+                if(mDuration == MARKET_STAT_INTERVAL_MILLIS_1_DAY){
+                    HistoryPrice lastHistoryPrice = mHistoryPriceList.get(mHistoryPriceList.size() - 1);
+                    mHighPriceView.setText(lastHistoryPrice.high == 0.f ? "-" :
+                            String.format("High: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.high, mWatchListData.getPricePrecision())));
+                    mLowPriceView.setText(lastHistoryPrice.low == 0.f ? "-" :
+                            String.format("Low: %s", AssetUtil.formatNumberRounding(lastHistoryPrice.low, mWatchListData.getPricePrecision())));
                 }
-            });
+            }
             initChartData(mHistoryPriceList, mDuration);
             EventBus.getDefault().post(new Event.UpdateKLineChar());
         }
@@ -586,16 +581,16 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         String trimmedBase = AssetUtil.parseSymbol(watchListData.getBaseSymbol());
         String trimmedQuote = AssetUtil.parseSymbol(watchListData.getQuoteSymbol());
         mTvTitle.setText(String.format("%s/%s", trimmedQuote, trimmedBase));
-        watchListData.getBasePrecision();
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" :
-                AssetUtil.formatNumberRounding(watchListData.getCurrentPrice(), watchListData.getBasePrecision()));
-        mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase, AssetUtil.formatAmountToKMB(watchListData.getBaseVol(), 2)));
+                AssetUtil.formatNumberRounding(watchListData.getCurrentPrice(), watchListData.getPricePrecision()));
+        mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase,
+                AssetUtil.formatAmountToKMB(watchListData.getBaseVol(), watchListData.getDayAmountPrecision())));
         double volQuote = 0.f;
         if (watchListData.getCurrentPrice() != 0.f) {
-            volQuote = watchListData.getBaseVol() / watchListData.getCurrentPrice();
+            volQuote = AssetUtil.divide(watchListData.getBaseVol(), watchListData.getCurrentPrice());
         }
         mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s: %2$s", trimmedQuote,
-                AssetUtil.formatAmountToKMB(watchListData.getQuoteVol(), 2)));
+                AssetUtil.formatAmountToKMB(watchListData.getQuoteVol(), watchListData.getDayAmountPrecision())));
         double change = watchListData.getChange();
         if (change > 0.f) {
             mChangeRateView.setText(String.format(Locale.US, "+%.2f%%", change));

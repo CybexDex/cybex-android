@@ -26,6 +26,7 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
     private List<WatchlistData> mValues;
     private Context mContext;
     private WatchlistFragment.OnListFragmentInteractionListener mListener;
+    private NumberFormat formatter = new DecimalFormat("0.00");
 
     public TopGainerRecyclerViewAdapter(Context context, List<WatchlistData> items,
                                         WatchlistFragment.OnListFragmentInteractionListener listener) {
@@ -60,11 +61,10 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
         if (watchlistData == null || watchlistData.getChange() < 0.f) {
             return;
         }
-        NumberFormat formatter = new DecimalFormat("0.00");
         holder.mTvQuoteSymbol.setText(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()));
         holder.mTvBaseSymbol.setText(String.format("/%s", AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
-        holder.mTvVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), 2));
-        holder.mTvCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
+        holder.mTvVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), watchlistData.getDayAmountPrecision()));
+        holder.mTvCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getPricePrecision()));
 
         double change = watchlistData.getChange();
         holder.mTvChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -81,13 +81,11 @@ public class TopGainerRecyclerViewAdapter extends RecyclerView.Adapter<TopGainer
         }
         /**
          * fix bug: CYM-250
-         * 保留两位小数点
+         * 保留四位小数点
          */
-
         holder.mTvRmbPrice.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
-                String.format(Locale.US, "≈¥ %.4f", watchlistData.getRmbPrice() * watchlistData.getCurrentPrice()));
-
-
+                String.format(Locale.US, "≈¥ %s", AssetUtil.formatNumberRounding(
+                        watchlistData.getRmbPrice() * watchlistData.getCurrentPrice(), watchlistData.getRmbPrecision())));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

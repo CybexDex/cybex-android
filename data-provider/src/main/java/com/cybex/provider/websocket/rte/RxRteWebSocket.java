@@ -8,7 +8,7 @@ public class RxRteWebSocket extends RxWebSocket {
 
     public static final String TAG = RxRteWebSocket.class.getSimpleName();
     //RTE正式服务器
-    public static final String CHAT_URL = "wss://chat.cybex.io/ws";
+    public static final String CHAT_URL = "ws://mdp.cybex.io/";
     //RTE测试服务器
     public static final String CHAT_UTL_TEST = "ws://47.244.40.252:18888/";
 

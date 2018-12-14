@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.fragment.OrderHistoryListFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
@@ -27,14 +28,14 @@ import java.util.List;
 public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderHistoryRecyclerViewAdapter.ViewHolder> {
 
     private OrderBook mValues;
-    private String mQuoteName;
+    private WatchlistData mWatchlistData;
     private final OnListFragmentInteractionListener mListener;
     private Context mContext;
 
 
-    public OrderHistoryRecyclerViewAdapter(String quoteName, OrderBook orderBook, OnListFragmentInteractionListener listener, Context context) {
+    public OrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, OrderBook orderBook, OnListFragmentInteractionListener listener, Context context) {
         mValues = orderBook;
-        mQuoteName = quoteName;
+        mWatchlistData = watchlistData;
         mListener = listener;
         mContext = context;
     }
@@ -49,12 +50,12 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         if (position < mValues.buyOrders.size()) {
-            holder.mBuyPrice.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).price, AssetUtil.pricePrecision(mValues.buyOrders.get(position).price)));
-            holder.mVolume.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.buyOrders.get(position).price)));
+            holder.mBuyPrice.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).price, mWatchlistData.getPricePrecision()));
+            holder.mVolume.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
         }
         if (position < mValues.sellOrders.size()) {
-            holder.mSellPrice.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).price, AssetUtil.pricePrecision(mValues.sellOrders.get(position).price), RoundingMode.UP));
-            holder.mSellVolume.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).quoteAmount, AssetUtil.amountPrecision(mValues.sellOrders.get(position).price)));
+            holder.mSellPrice.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).price, mWatchlistData.getPricePrecision(), RoundingMode.UP));
+            holder.mSellVolume.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
         }
 
         float percentageBids = 0f;

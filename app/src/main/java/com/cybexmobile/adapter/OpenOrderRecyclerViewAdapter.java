@@ -12,6 +12,9 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
+import com.cybex.basemodule.cache.AssetPairCache;
+import com.cybex.provider.graphene.chain.AssetsPair;
+import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybex.provider.graphene.chain.AssetObject;
@@ -74,6 +77,9 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         AssetObject base = openOrderItem.openOrder.getBaseObject();
         AssetObject quote = openOrderItem.openOrder.getQuoteObject();
         LimitOrderObject data = openOrderItem.openOrder.getLimitOrder();
+        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(openOrderItem.isSell ? quote.id.toString() : base.id.toString(),
+                openOrderItem.isSell ? base.id.toString() : quote.id.toString());
+        if (assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
         double amount;
         double price;
         if (base != null && quote != null) {
@@ -93,17 +99,18 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 if (openOrderItem.isSell) {
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
-                    price = (data.sell_price.quote.amount / Math.pow(10, quote.precision)) / (data.sell_price.base.amount / Math.pow(10, base.precision));
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, quote.precision), quoteSymbol));
+                    price = AssetUtil.divide(AssetUtil.divide(data.sell_price.quote.amount, Math.pow(10, quote.precision)),
+                            AssetUtil.divide(data.sell_price.base.amount, Math.pow(10, base.precision)));
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), quoteSymbol));
                     /**
                      * fix bug:CYM-349
                      * 订单部分撮合
                      */
-                    amount = data.for_sale / Math.pow(10, base.precision);
-                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, base.precision), baseSymbol));
+                    amount = AssetUtil.divide(data.for_sale, Math.pow(10, base.precision));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), baseSymbol));
                     viewHolder.mTvQuoteSymbol.setText(baseSymbol);
                     viewHolder.mTvBaseSymbol.setText(quoteSymbol);
-                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price * amount, quote.precision), quoteSymbol));
+                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price * amount, Integer.parseInt(assetPairConfig.total)), quoteSymbol));
                 } else {
                     /**
                      * fix bug:CYM-412
@@ -111,20 +118,22 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                      */
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
-                    amount = data.sell_price.quote.amount / Math.pow(10, quote.precision) * ((double) data.for_sale / data.sell_price.base.amount);
-                    price = data.sell_price.base.amount / Math.pow(10, base.precision) / ((double)data.sell_price.quote.amount / Math.pow(10, quote.precision));
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, base.precision), baseSymbol));
-                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, quote.precision), quoteSymbol));
+                    amount = AssetUtil.multiply(AssetUtil.divide(data.sell_price.quote.amount, Math.pow(10, quote.precision)),
+                            AssetUtil.divide(data.for_sale, data.sell_price.base.amount));
+                    price = AssetUtil.divide(AssetUtil.divide(data.sell_price.base.amount, Math.pow(10, base.precision)),
+                            AssetUtil.divide(data.sell_price.quote.amount, Math.pow(10, quote.precision)));
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), baseSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                     viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
                     viewHolder.mTvBaseSymbol.setText(baseSymbol);
-                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(data.for_sale / Math.pow(10, base.precision), base.precision), baseSymbol));
+                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(AssetUtil.divide(data.for_sale, Math.pow(10, base.precision)), Integer.parseInt(assetPairConfig.total)), baseSymbol));
                 }
             }
         }else{
-                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
-                layoutParams.height = 0;
-                layoutParams.width = 0;
-                holder.itemView.setVisibility(View.GONE);
+            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+            layoutParams.height = 0;
+            layoutParams.width = 0;
+            holder.itemView.setVisibility(View.GONE);
         }
     }
 

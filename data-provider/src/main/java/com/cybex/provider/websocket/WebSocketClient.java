@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -497,7 +498,7 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
     }
 
-    public void get_objects(List<String> objectIds, MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void get_objects(Set<String> objectIds, MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         Call callObject = new Call();
         callObject.id = mCallId.getAndIncrement();
         callObject.method = "call";

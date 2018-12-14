@@ -7,14 +7,14 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.cybex.basemodule.cache.AssetPairCache;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.http.entity.HotAssetPair;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
-import com.cybex.provider.utils.PriceUtil;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.websocket.WebSocketClient;
@@ -36,6 +36,11 @@ import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.market.HistoryPrice;
 import com.cybex.provider.graphene.chain.MarketTicker;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -46,8 +51,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -65,6 +72,8 @@ import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Function5;
+import io.reactivex.functions.Function6;
+import io.reactivex.functions.Function7;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -109,6 +118,7 @@ public class WebSocketService extends Service {
     private List<FeeAmountObject> mLimitOrderCreateFees = null;
     private List<FeeAmountObject> mLimitOrderCancelFees = null;
     private List<HotAssetPair> mHotAssetPair = null;
+    private JsonObject mAssetPairsConfig;
     //当前行情tab页
     private volatile String mCurrentBaseAssetId;
 
@@ -146,7 +156,6 @@ public class WebSocketService extends Service {
         Log.v("WebSocketClient", "WebSocketService");
         //连接websocket
         BitsharesWalletWraper.getInstance().build_connect();
-        loadAssetWhiteList();
         loadAssetsRmbPrice();
         startFullAccountWorkerSchedule();
         return START_NOT_STICKY;
@@ -364,18 +373,29 @@ public class WebSocketService extends Service {
         }
     }
 
+    /**
+     * 加载置顶交易对
+     * 加载行情交易对
+     * 加载交易对配置信息
+     * 加载币种白名单
+     */
     private void loadAllAssetsPairData(){
         Observable.zip(loadToppingAssetsPair(), loadAssetsPairData(ASSET_ID_ETH), loadAssetsPairData(ASSET_ID_CYB),
-                loadAssetsPairData(ASSET_ID_USDT), loadAssetsPairData(ASSET_ID_BTC),
-                new Function5<List<AssetsPairToppingResponse>, Map<String,List<AssetsPair>>,
-                        Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>,
-                        Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>>() {
+                loadAssetsPairData(ASSET_ID_USDT), loadAssetsPairData(ASSET_ID_BTC), loadPairsConfig(), loadAssetWhiteList(),
+                new Function7<List<AssetsPairToppingResponse>, Map<String,List<AssetsPair>>,
+                                                        Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>,
+                                                        Map<String,List<AssetsPair>>, JsonObject,
+                                                        List<String>, Map<String,List<AssetsPair>>>() {
                     @Override
                     public Map<String,List<AssetsPair>> apply(List<AssetsPairToppingResponse> assetsPairToppingResponses,
                                                               Map<String, List<AssetsPair>> assetsPairs1,
                                                               Map<String, List<AssetsPair>> assetsPairs2,
                                                               Map<String, List<AssetsPair>> assetsPairs3,
-                                                              Map<String, List<AssetsPair>> assetsPairs4) {
+                                                              Map<String, List<AssetsPair>> assetsPairs4,
+                                                              JsonObject assetPairsConfig,
+                                                              List<String> assetWhites) {
+                        mAssetWhiteList.addAll(assetWhites);
+                        mAssetPairsConfig = assetPairsConfig;
                         assetsPairs1.putAll(assetsPairs2);
                         assetsPairs1.putAll(assetsPairs3);
                         assetsPairs1.putAll(assetsPairs4);
@@ -409,7 +429,17 @@ public class WebSocketService extends Service {
                 @Override
                 public void onNext(Map<String,List<AssetsPair>> assetsPairMap) {
                     mAssetsPairHashMap.putAll(assetsPairMap);
-                    loadAllAssetObjectData(mAssetsPairHashMap);
+                    Set<String> assetsIds = new HashSet<>();
+                    for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+                        List<AssetsPair> assetsPairs = entry.getValue();
+                        for(AssetsPair assetsPair : assetsPairs){
+                            assetsIds.add(assetsPair.getBase());
+                            assetsIds.add(assetsPair.getQuote());
+                        }
+                        assetsIds.addAll(mAssetWhiteList);
+                    }
+                    loadAllAssetObjectData(assetsIds);
+
                 }
 
                 @Override
@@ -422,6 +452,49 @@ public class WebSocketService extends Service {
 
                 }
         });
+    }
+
+    private Observable<JsonObject> loadPairsConfig() {
+         return RetrofitFactory.getInstance()
+                .api()
+                .getAssetPairsConfig();
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<JsonObject>() {
+//                    @Override
+//                    public void accept(JsonObject jsonObject) throws Exception {
+//                        List<String> assetsIds = new ArrayList<>();
+//                        Gson gson = new Gson();
+//                        for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+//                            List<AssetsPair> assetsPairs = entry.getValue();
+//                            for(AssetsPair assetsPair : assetsPairs){
+//                                if(!assetsIds.contains(assetsPair.getBase())){
+//                                    assetsIds.add(assetsPair.getBase());
+//                                }
+//                                assetsIds.add(assetsPair.getQuote());
+//
+//                                JsonElement jsonElement = jsonObject.get(assetsPair.getBase());
+//                                if(jsonElement != null) {
+//                                    JsonElement element = jsonElement.getAsJsonObject().get(assetsPair.getQuote());
+//                                    if(element != null) {
+//                                        assetsPair.setConfig(gson.fromJson(element.getAsJsonObject().get("book").getAsJsonObject(), AssetsPair.Config.class));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        for (String assetId : mAssetWhiteList) {
+//                            if (!assetsIds.contains(assetId)) {
+//                                assetsIds.add(assetId);
+//                            }
+//                        }
+//                        loadAllAssetObjectData(assetsIds);
+//                    }
+//                }, new Consumer<Throwable>() {
+//                    @Override
+//                    public void accept(Throwable throwable) throws Exception {
+//
+//                    }
+//                });
     }
 
     //加载交易对数据
@@ -457,24 +530,9 @@ public class WebSocketService extends Service {
     /**
      * 加载币信息
      *
-     * @param assetsPairMap 交易对
+     * @param assetsIds 币种id
      */
-    private void loadAllAssetObjectData(Map<String, List<AssetsPair>> assetsPairMap){
-        List<String> assetsIds = new ArrayList<>();
-        for (Map.Entry<String, List<AssetsPair>> entry : assetsPairMap.entrySet()){
-            List<AssetsPair> assetsPairs = entry.getValue();
-            for(AssetsPair assetsPair : assetsPairs){
-                if(!assetsIds.contains(assetsPair.getBase())){
-                    assetsIds.add(assetsPair.getBase());
-                }
-                assetsIds.add(assetsPair.getQuote());
-            }
-        }
-        for (String assetId : mAssetWhiteList) {
-            if (!assetsIds.contains(assetId)) {
-                assetsIds.add(assetId);
-            }
-        }
+    private void loadAllAssetObjectData(Set<String> assetsIds){
         try {
             BitsharesWalletWraper.getInstance().get_objects(assetsIds, mAssetMultiCallback);
         } catch (NetworkStatusException e) {
@@ -786,6 +844,7 @@ public class WebSocketService extends Service {
                     }
                 }
             }
+            Gson gson = new GsonBuilder().create();
             //创建交易对数据
             for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
                 List<AssetsPair> assetsPairs = entry.getValue();
@@ -794,14 +853,24 @@ public class WebSocketService extends Service {
                 }
                 List<WatchlistData> watchlistData = new ArrayList<>();
                 for (AssetsPair assetsPair : assetsPairs) {
+                    JsonElement jsonElement = mAssetPairsConfig.get(AssetUtil.parseSymbol(assetsPair.getBaseAsset().symbol));
+                    if(jsonElement != null) {
+                        JsonElement element = jsonElement.getAsJsonObject().get(AssetUtil.parseSymbol(assetsPair.getQuoteAsset().symbol));
+                        if(element != null) {
+                            assetsPair.setConfig(gson.fromJson(element.getAsJsonObject().get("book").getAsJsonObject(), AssetsPair.Config.class));
+                        }
+                    }
                     WatchlistData watchlist = new WatchlistData(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset());
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();
                     watchlist.setSubscribeId(id.getAndIncrement());
                     watchlist.setOrder(assetsPair.getOrder());
+                    watchlist.setAssetPairConfig(assetsPair.getConfig());
                     watchlistData.add(watchlist);
                 }
                 mWatchlistHashMap.put(entry.getKey(), watchlistData);
             }
+            //缓存交易对
+            AssetPairCache.getInstance().setAssetPairCache(mAssetsPairHashMap);
             if(!TextUtils.isEmpty(mCurrentBaseAssetId)){
                 //更新行情
                 List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
@@ -882,49 +951,10 @@ public class WebSocketService extends Service {
         }
     }
 
-    public void loadAssetWhiteList() {
-        if (mNetworkState == TYPE_NOT_CONNECTED) {
-            return;
-        }
-
-        RetrofitFactory.getInstance()
+    public Observable<List<String>> loadAssetWhiteList() {
+        return RetrofitFactory.getInstance()
                 .api()
-                .getAssetWhiteList()
-                .map(new Function<ResponseBody, List<String>>() {
-                    @Override
-                    public List<String> apply(ResponseBody responseBody) throws Exception {
-                        List<String> assetWhiteList = new ArrayList<>();
-                        JSONArray jsonArray = null;
-                        jsonArray = new JSONArray(responseBody.string());
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            assetWhiteList.add(jsonArray.getString(i));
-                        }
-                        return assetWhiteList;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<String>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<String> strings) {
-                        mAssetWhiteList.addAll(strings);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+                .getAssetWhiteList();
     }
 
     public void loadAssetsRmbPrice() {

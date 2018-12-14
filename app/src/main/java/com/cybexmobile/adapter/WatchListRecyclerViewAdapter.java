@@ -25,6 +25,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     private List<WatchlistData> mValues;
     private OnListFragmentInteractionListener mListener;
     private Context mContext;
+    private NumberFormat formatter = new DecimalFormat("0.00");
 
     public WatchListRecyclerViewAdapter(List<WatchlistData> items, OnListFragmentInteractionListener listener, Context context) {
         mValues = items;
@@ -46,11 +47,10 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         WatchlistData watchlistData = mValues.get(position);
-        NumberFormat formatter = new DecimalFormat("0.00");
         holder.mQuoteCurrency.setText(AssetUtil.parseSymbol(watchlistData.getQuoteSymbol()));
         holder.mBaseCurrency.setText(String.format("/%s", AssetUtil.parseSymbol(watchlistData.getBaseSymbol())));
-        holder.mVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), 2));
-        holder.mCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getBasePrecision()));
+        holder.mVolume.setText(watchlistData.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlistData.getBaseVol(), watchlistData.getDayAmountPrecision()));
+        holder.mCurrentPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getPricePrecision()));
 
         double change = watchlistData.getChange();
         holder.mChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -68,12 +68,11 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         loadImage(watchlistData.getQuoteId(), holder.mSymboleView);
         /**
          * fix bug: CYM-250
-         * 保留两位小数点
+         * 保留四位小数点
          */
-
         holder.mRmbPriceTextView.setText(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice() == 0 ? "-" :
-                String.format(Locale.US, "≈¥ %s", AssetUtil.formatNumberRounding(watchlistData.getRmbPrice() * watchlistData.getCurrentPrice(), 4)));
-
+                String.format(Locale.US, "≈¥ %s", AssetUtil.formatNumberRounding(
+                        watchlistData.getRmbPrice() * watchlistData.getCurrentPrice(), watchlistData.getRmbPrecision())));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

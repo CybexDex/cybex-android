@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WalletApi {
@@ -411,12 +412,12 @@ public class WalletApi {
     }
 
     public void get_objects(String objectId, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
-        List<String> objectIds = new ArrayList<>();
+        Set<String> objectIds = new HashSet<>();
         objectIds.add(objectId);
         get_objects(objectIds, callback);
     }
 
-    public void get_objects(List<String> objectIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void get_objects(Set<String> objectIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_objects(objectIds, callback);
     }
 
