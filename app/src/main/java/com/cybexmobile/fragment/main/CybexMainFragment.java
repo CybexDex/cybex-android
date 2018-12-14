@@ -165,7 +165,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPresenter.loadAnnounces(StoreLanguageHelper.getLanguageLocal(getContext()));
-        mPresenter.loadSubLinks(StoreLanguageHelper.getLanguageLocal(getContext()));
+        mPresenter.loadSubLinks(StoreLanguageHelper.getLanguageLocal(getContext()), getContext());
         mPresenter.loadHotAssetPairs();
         mPresenter.loadBanners(StoreLanguageHelper.getLanguageLocal(getContext()));
     }
@@ -271,7 +271,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Override
     public void onItemClick(SubLink subLink) {
-        if (!mPreferences.getBoolean(Constant.PREF_GAME_INVITATION, false)) {
+        if (subLink.getLink().equals("cybexapp://game") && !mPreferences.getBoolean(Constant.PREF_GAME_INVITATION, false)) {
             CybexDialog.showVerifyPinCodeETODialog(new Dialog(getActivity()), getActivity().getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
                 @Override
                 public void onClick(Dialog dialog, Button button, EditText editText, TextView textView) {
@@ -284,7 +284,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
                         if (invitationCodeList.contains(inputCode)) {
                             mPreferences.edit().putBoolean(Constant.PREF_GAME_INVITATION, true).apply();
                             new IntentFactory()
-                                    .action("cybexapp://game")
+                                    .action(subLink.getLink())
                                     .checkLogin(mIsLoginIn)
                                     .intent(getContext());
                             dialog.dismiss();
@@ -302,7 +302,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
             }, null, null);
         } else {
             new IntentFactory()
-                    .action("cybexapp://game")
+                    .action(subLink.getLink())
                     .checkLogin(mIsLoginIn)
                     .intent(getContext());
         }

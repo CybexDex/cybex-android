@@ -137,33 +137,61 @@ function timeout (time = 0) {
   serverInterface with 腾海
 */
 let serverInterface = {
-  getScale: async function () {
-    let result = await axios.get(config.baseurl + 'get_scale')
-    if (result.data.code === 0) {
-      config.scale = result.data.data.scale
-    }
-    return result
+  getScale: function () {
+    return new Promise((resolve, reject) => {
+      let result = axios.get(config.baseurl + 'get_scale')
+      if (result) {
+        resolve(result)
+      } else {
+        reject()
+      }
+    })
   },
-  getAsset: async function () {
-    let result = await axios.get(config.baseurl + 'get_asset')
-    return result
+  getAsset: function () {
+    return new Promise((resolve, reject) => {
+      let result = axios.get(config.baseurl + 'get_asset')
+      if (result) {
+        resolve(result)
+      } else {
+        reject()
+      }
+    })
   },
-  login: async function (data) {
-    let result = await axios.post(config.baseurl + 'login', data)
-    return result
+  login: function (data) {
+    return new Promise((resolve, reject) => {
+      let result = axios.post(config.baseurl + 'login', data)
+      if (result) {
+        resolve(result)
+      } else {
+        reject()
+      }
+    })
   },
-  getBalance: async function (data) {
-    let result = await axios.post(config.baseurl + 'get_balance', data)
-    return result
+  getBalance: function (data) {
+    return new Promise((resolve, reject) => {
+      let result = axios.post(config.baseurl + 'get_balance', data)
+      if (result) {
+        resolve(result)
+      } else {
+        reject()
+      }
+    })
   },
-  withdraw: async function (data) {
-    let result = await axios.post(config.baseurl + 'withdraw', data)
-    return result
+  withdraw: function (data) {
+    return new Promise((resolve, reject) => {
+      let result = axios.post(config.baseurl + 'withdraw', data)
+      if (result) {
+        resolve(result)
+      } else {
+        reject()
+      }
+    })
   }
 }
 if (!config.scale) {
   serverInterface.getScale().then((res) => {
     if (res.data.code === 0) {
+      config.scale = res.data.data.scale
       let str = '1' + asset.amount.asset + '= ' + res.data.data.scale + ' ' + asset.coin.asset
       $('.recharge_scale').html(str)
       $('.layer_scale').html(str)
@@ -260,11 +288,8 @@ $('.confirm').click(function () {
   }
 })
 $('.rewi_btnword').click(function () {
-  console.log("rewi_btnword")
   layer.show('loading')
   if (timeout()) {
-     console.log("rewi_btnword-timeout")
-
     let obj = {
       op: config.op,
       signer: config.signer

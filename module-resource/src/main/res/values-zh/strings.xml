@@ -525,4 +525,8 @@
     <string name="text_guest">游客</string>
     <string name="text_toast_unable_to_send_blank_message">不能发空白消息</string>
 
+    <!-- Game Center -->
+    <string name="text_game_name">游戏中心</string>
+    <string name="text_game_details">体验区块链游戏</string>
+
 </resources>

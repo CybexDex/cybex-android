@@ -77,20 +77,20 @@ public class WatchlistSelectRecyclerViewAdapter extends RecyclerView.Adapter<Wat
             holder.mTvChange.setTextColor(mContext.getResources().getColor(R.color.no_change_color));
         }
         holder.mTvVolume.setText(watchlist.getQuoteVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlist.getQuoteVol(), 2));
-//        /**
-//         * add feature
-//         * 交易量为0时隐藏交易对
-//         */
-//        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
-//        if(watchlist.getQuoteVol() == 0.f){
-//            layoutParams.width = 0;
-//            layoutParams.height = 0;
-//            holder.itemView.setVisibility(View.GONE);
-//        } else {
-//            layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
-//            layoutParams.width = RecyclerView.LayoutParams.MATCH_PARENT;
-//            holder.itemView.setVisibility(View.VISIBLE);
-//        }
+        /**
+         * add feature
+         * 交易量为0时隐藏交易对
+         */
+        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+        if(watchlist.getQuoteVol() == 0.f){
+            layoutParams.width = 0;
+            layoutParams.height = 0;
+            holder.itemView.setVisibility(View.GONE);
+        } else {
+            layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = RecyclerView.LayoutParams.MATCH_PARENT;
+            holder.itemView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

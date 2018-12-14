@@ -1,5 +1,7 @@
 package com.cybexmobile.fragment.main;
 
+import android.content.Context;
+
 import com.cybex.basemodule.base.BasePresenter;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.entity.Announce;
@@ -7,6 +9,7 @@ import com.cybex.provider.http.entity.CybexBanner;
 import com.cybex.provider.http.entity.HotAssetPair;
 import com.cybex.provider.http.entity.SubLink;
 import com.cybex.provider.http.response.CybexBaseResponse;
+import com.cybexmobile.R;
 
 import java.util.Iterator;
 import java.util.List;
@@ -84,7 +87,7 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
 
     }
 
-    public void loadSubLinks(String lang){
+    public void loadSubLinks(String lang, Context context){
         mCompositeDisposable.add(RetrofitFactory
                 .getInstance()
                 .apiMain()
@@ -97,7 +100,7 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                         Iterator<SubLink> iterator = subLinks.iterator();
                         while (iterator.hasNext()) {
                             SubLink subLink = iterator.next();
-                            if (subLink.equals(SubLink.Status.OFFLINE)) {
+                            if (subLink.getStatus().equals(SubLink.Status.OFFLINE)) {
                                 iterator.remove();
                             }
                         }
@@ -109,6 +112,14 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                 .subscribe(new Consumer<List<SubLink>>() {
                     @Override
                     public void accept(List<SubLink> subLinks) throws Exception {
+                        for (SubLink subLink : subLinks) {
+                            if (subLink.getTitle().equals("ETO")) {
+                                subLink.setTitle(context.getResources().getString(R.string.text_game_name));
+                                subLink.setDesc(context.getResources().getString(R.string.text_game_details));
+                                subLink.setLink("cybexapp://game");
+                            }
+                            break;
+                        }
                         getMvpView().onLoadSubLinks(subLinks);
                     }
                 }, new Consumer<Throwable>() {
@@ -133,7 +144,7 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                         Iterator<CybexBanner> iterator = banners.iterator();
                         while (iterator.hasNext()) {
                             CybexBanner banner = iterator.next();
-                            if (banner.equals(CybexBanner.Status.OFFLINE)) {
+                            if (banner.getStatus().equals(CybexBanner.Status.OFFLINE)) {
                                 iterator.remove();
                             }
                         }

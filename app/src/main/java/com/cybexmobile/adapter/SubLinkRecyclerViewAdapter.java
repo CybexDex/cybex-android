@@ -44,7 +44,11 @@ public class SubLinkRecyclerViewAdapter extends RecyclerView.Adapter<SubLinkRecy
         SubLink subLink = mSubLinks.get(position);
         holder.mTitle.setText(subLink.getTitle());
         holder.mDescription.setText(subLink.getDesc());
-        Picasso.get().load(subLink.getIcon()).into(holder.mIvIcon);
+        if (subLink.getTitle().equals(mContext.getResources().getString(R.string.text_game_name))) {
+            holder.mIvIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.invalid_name));
+        } else {
+            Picasso.get().load(subLink.getIcon()).into(holder.mIvIcon);
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

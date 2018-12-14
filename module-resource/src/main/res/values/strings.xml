@@ -519,4 +519,8 @@
     <string name="text_new_message">%d new message</string>
     <string name="text_guest">Guest</string>
     <string name="text_toast_unable_to_send_blank_message">Unable to send blank message</string>
+
+    <!-- Game Center -->
+    <string name="text_game_name">GAME CENTER</string>
+    <string name="text_game_details">Blockchain Games</string>
 </resources>
