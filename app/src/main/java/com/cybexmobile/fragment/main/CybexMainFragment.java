@@ -271,7 +271,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Override
     public void onItemClick(SubLink subLink) {
-        if ( subLink.getLink().equals("cybexapp://game") && !mPreferences.getBoolean(Constant.PREF_GAME_INVITATION, false)) {
+        if (!mPreferences.getBoolean(Constant.PREF_GAME_INVITATION, false)) {
             CybexDialog.showVerifyPinCodeETODialog(new Dialog(getActivity()), getActivity().getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
                 @Override
                 public void onClick(Dialog dialog, Button button, EditText editText, TextView textView) {
@@ -284,7 +284,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
                         if (invitationCodeList.contains(inputCode)) {
                             mPreferences.edit().putBoolean(Constant.PREF_GAME_INVITATION, true).apply();
                             new IntentFactory()
-                                    .action(subLink.getLink())
+                                    .action("cybexapp://game")
                                     .checkLogin(mIsLoginIn)
                                     .intent(getContext());
                             dialog.dismiss();
@@ -302,7 +302,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
             }, null, null);
         } else {
             new IntentFactory()
-                    .action(subLink.getLink())
+                    .action("cybexapp://game")
                     .checkLogin(mIsLoginIn)
                     .intent(getContext());
         }
