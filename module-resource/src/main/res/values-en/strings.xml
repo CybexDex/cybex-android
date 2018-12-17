@@ -510,7 +510,7 @@
     <string name="text_average_confirmation_time">Average Confirmation Time</string>
     <string name="text_trx_block">TRX/Block</string>
     <string name="text_top_gainers">Top Gainers</string>
-    <string name="text_invitation_code_wrong">Invitation code not correct </string>
+    <string name="text_invitation_code_wrong">Invitation code is not correct </string>
 
     <!-- ChatActivity -->
     <string name="text_anonymously">Anonymously</string>

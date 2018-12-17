@@ -514,7 +514,7 @@
     <string name="text_average_confirmation_time">平均交易确认时间</string>
     <string name="text_trx_block">每秒交易数</string>
     <string name="text_top_gainers">涨幅榜</string>
-    <string name="text_invitation_code_wrong">验证码不正确 </string>
+    <string name="text_invitation_code_wrong">邀请码不正确 </string>
 
     <!-- ChatActivity -->
     <string name="text_anonymously">匿名</string>
