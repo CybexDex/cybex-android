@@ -105,6 +105,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
                 loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
+                holder.mAssetFullName.setText(String.format(" (%s)", mDataList.get(position).getProjectName()));
 
                 if (mDataList.get(position).isEnable()) {
                     holder.mAssetPrice.setText("");

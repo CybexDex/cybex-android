@@ -10,6 +10,7 @@ public class DepositAndWithdrawObject {
     private String cnMsg;
     private String enInfo;
     private String cnInfo;
+    private String projectName;
     private long count;
     public AssetObject assetObject;
     private AccountBalanceObject accountBalanceObject;
@@ -52,6 +53,14 @@ public class DepositAndWithdrawObject {
 
     public String getCnInfo() {
         return cnInfo;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public void setEnable(boolean enable) {

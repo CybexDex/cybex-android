@@ -171,6 +171,7 @@ public class DepositItemFragment extends Fragment {
                             depositAndWithdrawObject.setCnMsg(jsonObject.getString("cnMsg"));
                             depositAndWithdrawObject.setEnInfo(jsonObject.getString("enInfo"));
                             depositAndWithdrawObject.setCnInfo(jsonObject.getString("cnInfo"));
+                            depositAndWithdrawObject.setProjectName(jsonObject.getString("projectName"));
                             depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(jsonObject.getString("id")));
                             depositAndWithdrawObjectList.add(depositAndWithdrawObject);
 
