@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -69,7 +71,15 @@ public class WebActivity extends BaseActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mWebView.destroy();
+        if (mWebView != null) {
+            ViewParent parent = mWebView.getParent();
+            if (parent != null) {
+                ((ViewGroup) parent).removeView(mWebView);
+            }
+            mWebView.removeAllViews();
+            mWebView.destroy();
+            mWebView = null;
+        }
         mUnbinder.unbind();
     }
 
