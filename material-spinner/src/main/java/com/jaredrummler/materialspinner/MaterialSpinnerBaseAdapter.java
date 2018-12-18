@@ -89,6 +89,8 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
 
   public abstract List<T> getItems();
 
+  public abstract <T> void setItems(List<T> items);
+
   public void setHintEnabled(boolean isHintEnabled) {
     this.isHintEnabled = isHintEnabled;
   }

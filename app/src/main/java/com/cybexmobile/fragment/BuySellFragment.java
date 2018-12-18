@@ -787,6 +787,10 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         mEtAssetPrice.setText("");
     }
 
+    public void notifyLimitOrderDataChanged(List<List<String>> sellOrders, List<List<String>> buyOrders) {
+        mExchangeLimitOrderFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
+    }
+
     private WebSocketClient.MessageCallback mLimitOrderCreateCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>(){
 
         @Override

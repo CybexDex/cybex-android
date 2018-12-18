@@ -23,6 +23,7 @@
     <attr format="color" name="ms_background_color"/>
     <attr format="color" name="ms_text_color"/>
     <attr format="dimension" name="ms_dropdown_max_height"/>
+    <attr format="dimension" name="ms_padding" />
     <attr format="dimension" name="ms_dropdown_height">
       <enum name="fill_parent" value="-1"/>
       <enum name="match_parent" value="-1"/>

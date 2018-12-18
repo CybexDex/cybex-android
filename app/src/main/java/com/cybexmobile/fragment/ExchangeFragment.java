@@ -22,7 +22,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.provider.graphene.rte.RteRequest;
+import com.cybex.provider.graphene.websocket.WebSocketClosed;
+import com.cybex.provider.graphene.websocket.WebSocketFailure;
+import com.cybex.provider.graphene.websocket.WebSocketMessage;
+import com.cybex.provider.graphene.websocket.WebSocketOpen;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.rte.RxRteWebSocket;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.markets.MarketsActivity;
 import com.cybexmobile.activity.orderhistory.OwnOrderHistoryActivity;
@@ -38,17 +44,27 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.constant.Constant;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.provider.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
@@ -95,9 +111,14 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     private AssetObject mCybAssetObject;
 
     private WebSocketService mWebSocketService;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+    private RxRteWebSocket mRxRteWebSocket;
 
     private String mName;
     private boolean mIsLoginIn;
+
+    private final Gson mGson = new Gson();
+    private RteRequest mRteRequest;
 
     public static ExchangeFragment getInstance(String action, WatchlistData watchlist){
         ExchangeFragment fragment = new ExchangeFragment();
@@ -131,6 +152,120 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         mIsLoginIn = sharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        initRTEWebSocket();
+    }
+
+    private void initRTEWebSocket() {
+        mRxRteWebSocket = new RxRteWebSocket(RxRteWebSocket.RTE_URL);
+        mCompositeDisposable.add(mRxRteWebSocket.onOpen()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<WebSocketOpen>() {
+                    @Override
+                    public void accept(WebSocketOpen webSocketOpen) throws Exception {
+                        if(mWatchlistData != null) {
+                            mRteRequest = new RteRequest(RteRequest.TYPE_SUBSCRIBE,
+                                    "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
+                                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + mWatchlistData.getPricePrecision() + ".5");
+                            subscribeOrderBook(mRteRequest);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+        mCompositeDisposable.add(mRxRteWebSocket.onFailure()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<WebSocketFailure>() {
+                    @Override
+                    public void accept(WebSocketFailure webSocketFailure) throws Exception {
+                        mRxRteWebSocket.reconnect(3, TimeUnit.SECONDS);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+        mCompositeDisposable.add(mRxRteWebSocket.onSubscribe()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<WebSocketMessage>() {
+                    @Override
+                    public void accept(WebSocketMessage webSocketMessage) throws Exception {
+                        Log.d("dzm", webSocketMessage.getText());
+                        JsonElement jsonElement = new JsonParser().parse(webSocketMessage.getText());
+                        JsonObject jsonObject = jsonElement.getAsJsonObject();
+                        List<List<String>> sellOrders = mGson.fromJson(jsonObject.get("bids"), new TypeToken<List<List<String>>>(){}.getType());
+                        List<List<String>> buyOrders = mGson.fromJson(jsonObject.get("asks"), new TypeToken<List<List<String>>>(){}.getType());
+
+                        if(mBuyFragment != null && mBuyFragment.isResumed()) {
+                            mBuyFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
+                        }
+                        if(mSellFragment != null && mSellFragment.isResumed()) {
+                            mSellFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+        mCompositeDisposable.add(mRxRteWebSocket.onClosed()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<WebSocketClosed>() {
+                    @Override
+                    public void accept(WebSocketClosed webSocketClosed) throws Exception {
+                        if(webSocketClosed.getCode() == 1000){
+                            mCompositeDisposable.dispose();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+        mRxRteWebSocket.connect();
+    }
+
+    private void subscribeOrderBook(RteRequest request) {
+        mCompositeDisposable.add(mRxRteWebSocket.sendMessage(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+    }
+
+    private void unsubscribeOrderBook(RteRequest request) {
+        mCompositeDisposable.add(mRxRteWebSocket.sendMessage(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
     }
 
     @Nullable
@@ -163,12 +298,26 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             if(mWatchlistData != null && watchlist.getBaseId().equals(mWatchlistData.getBaseId()) && watchlist.getQuoteId().equals(mWatchlistData.getQuoteId())){
                 return;
             }
-            mWatchlistData = watchlist;
+            notifyWatchlistDataChange(watchlist);
             setTitleData();
-            notifyWatchlistDataChange(mWatchlistData);
             notifyFullAccountDataChange(mWebSocketService.getFullAccount(mName));
             //切换交易对 重新加载交易手续费
             loadLimitOrderCreateFee(ASSET_ID_CYB);
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(mRteRequest == null || !mRxRteWebSocket.isConnected()) {
+            return;
+        }
+        if(hidden) {
+            mRteRequest.setType(RteRequest.TYPE_UNSUBSCRIBE);
+            unsubscribeOrderBook(mRteRequest);
+        } else {
+            mRteRequest.setType(RteRequest.TYPE_SUBSCRIBE);
+            subscribeOrderBook(mRteRequest);
         }
     }
 
@@ -186,11 +335,10 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMarketIntentToExchange(Event.MarketIntentToExchange event){
-        mWatchlistData = event.getWatchlist();
+        notifyWatchlistDataChange(event.getWatchlist());
+        setTitleData();
         mAction = event.getAction();
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
-        setTitleData();
-        notifyWatchlistDataChange(event.getWatchlist());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -270,10 +418,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         if(mWatchlistData != null){
             return;
         }
-        mWatchlistData = event.getWatchlist();
-        notifyWatchlistDataChange(mWatchlistData);
-        loadLimitOrderCreateFee(ASSET_ID_CYB);
+        notifyWatchlistDataChange(event.getWatchlist());
         setTitleData();
+        loadLimitOrderCreateFee(ASSET_ID_CYB);
     }
 
     @Override
@@ -327,8 +474,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             mWebSocketService = binder.getService();
             //当WatchlistData为空时，默认取CYB/ETH交易对数据
             if(mWatchlistData == null){
-                mWatchlistData = mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB);
-                notifyWatchlistDataChange(mWatchlistData);
+                notifyWatchlistDataChange(mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB));
                 setTitleData();
             }
             if(mIsLoginIn){
@@ -353,6 +499,19 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void notifyWatchlistDataChange(WatchlistData watchlistData){
+        //取消订阅
+        if(mWatchlistData != null && mRteRequest != null && mRxRteWebSocket.isConnected()) {
+            mRteRequest.setType(RteRequest.TYPE_UNSUBSCRIBE);
+            unsubscribeOrderBook(mRteRequest);
+        }
+        mWatchlistData = watchlistData;
+        //重新订阅
+        if(mRxRteWebSocket.isConnected()) {
+            mRteRequest = new RteRequest(RteRequest.TYPE_SUBSCRIBE,
+                    "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
+                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + mWatchlistData.getPricePrecision() + ".5");
+            subscribeOrderBook(mRteRequest);
+        }
         if(mBuyFragment != null){
             mBuyFragment.changeWatchlist(watchlistData);
         }
@@ -362,6 +521,17 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         if(mOpenOrdersFragment != null){
             mOpenOrdersFragment.changeWatchlist(watchlistData);
         }
+    }
+
+    public void reSubscribeOrderBook(int precision) {
+        if(mRteRequest != null) {
+            mRteRequest.setType(RteRequest.TYPE_UNSUBSCRIBE);
+            unsubscribeOrderBook(mRteRequest);
+        }
+        mRteRequest = new RteRequest(RteRequest.TYPE_SUBSCRIBE,
+                "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
+                        mWatchlistData.getBaseSymbol().replace(".", "_") + "." + precision + ".5");
+        subscribeOrderBook(mRteRequest);
     }
 
     private void notifyExchangeFee(FeeAmountObject fee, AssetObject cybAsset){
@@ -396,7 +566,6 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         if(mWatchlistData == null){
             return;
         }
-        Log.v("dzm", mWatchlistData.getQuoteSymbol() + "/" + mWatchlistData.getBaseSymbol());
         mCbTitle.setText(String.format("%s/%s", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol()), AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
     }
 
@@ -495,6 +664,20 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         super.onDestroy();
         getContext().unbindService(mConnection);
         EventBus.getDefault().unregister(this);
+        mCompositeDisposable.add(mRxRteWebSocket.close(1000, "close")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
     }
 
     @Override

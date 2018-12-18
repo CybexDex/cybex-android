@@ -92,8 +92,9 @@ public class MaterialSpinner extends AppCompatTextView {
     TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.MaterialSpinner);
     int defaultColor = getTextColors().getDefaultColor();
     boolean rtl = Utils.isRtl(context);
-
+    int padding;
     try {
+      padding = ta.getDimensionPixelSize(R.styleable.MaterialSpinner_ms_padding, 0);
       backgroundColor = ta.getColor(R.styleable.MaterialSpinner_ms_background_color, Color.WHITE);
       backgroundSelector = ta.getResourceId(R.styleable.MaterialSpinner_ms_background_selector, 0);
       textColor = ta.getColor(R.styleable.MaterialSpinner_ms_text_color, defaultColor);
@@ -114,13 +115,12 @@ public class MaterialSpinner extends AppCompatTextView {
 
     Resources resources = getResources();
     int left, right, bottom, top;
-    left = right = bottom = top = resources.getDimensionPixelSize(R.dimen.ms__padding_top);
+    left = right = bottom = top = padding;
     if (rtl) {
       right = resources.getDimensionPixelSize(R.dimen.ms__padding_left);
     } else {
       left = resources.getDimensionPixelSize(R.dimen.ms__padding_left);
     }
-
     setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
     setClickable(true);
     setPadding(left, top, right, bottom);
@@ -379,6 +379,17 @@ public class MaterialSpinner extends AppCompatTextView {
     adapter = new MaterialSpinnerAdapter<>(getContext(), items).setBackgroundSelector(backgroundSelector)
         .setTextColor(textColor);
     setAdapterInternal(adapter);
+  }
+
+  public <T> void notifyItems(@NonNull List<T> items) {
+    if(adapter == null) {
+      setItems(items);
+    } else {
+      selectedIndex = 0;
+      setText((String)items.get(selectedIndex));
+      adapter.setItems(items);
+      adapter.notifyDataSetChanged();
+    }
   }
 
   /**

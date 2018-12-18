@@ -54,4 +54,9 @@ final class MaterialSpinnerAdapterWrapper extends MaterialSpinnerBaseAdapter {
     }
     return items;
   }
+
+  @Override
+  public void setItems(List items) {
+
+  }
 }

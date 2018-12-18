@@ -287,24 +287,6 @@ public class Event {
         }
     }
 
-    public static class UpdateBuySellOrders {
-        private List<Order> buyOrders;
-        private List<Order> sellOrders;
-
-        public UpdateBuySellOrders(List<Order> buyOrders, List<Order> sellOrders) {
-            this.buyOrders = buyOrders;
-            this.sellOrders = sellOrders;
-        }
-
-        public List<Order> getBuyOrders() {
-            return buyOrders;
-        }
-
-        public List<Order> getSellOrders() {
-            return sellOrders;
-        }
-    }
-
     /**
      * 通过K线图界面快捷买入卖出
      */

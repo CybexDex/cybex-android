@@ -27,6 +27,7 @@
     <dimen name="width_68">83.89dp</dimen>
     <dimen name="width_94">115.97dp</dimen>
     <dimen name="width_100">123.37dp</dimen>
+    <dimen name="width_110">135.71dp</dimen>
     <dimen name="width_130">160.39dp</dimen>
     <dimen name="width_155">191.23dp</dimen>
     <dimen name="width_200">246.75dp</dimen>

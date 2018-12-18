@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_medium"
                 android:layout_marginStart="@dimen/margin_8"
+                app:ms_padding="@dimen/padding_6"
                 app:ms_text_color="@color/material_spinner_text_color"
                 app:ms_background_selector="@drawable/material_spinner_selector"
                 app:ms_arrow_tint="@color/colorAccent"/>
@@ -75,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_8"
                 android:textSize="@dimen/font_medium"
+                app:ms_padding="@dimen/padding_6"
                 app:ms_text_color="@color/material_spinner_text_color"
                 app:ms_background_selector="@drawable/material_spinner_selector"
                 app:ms_arrow_tint="@color/colorAccent"/>

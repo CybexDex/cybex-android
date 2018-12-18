@@ -218,6 +218,7 @@
     <string name="item_text_open_order_amount">数量:</string>
     <string name="item_text_open_order_cancel">撤单</string>
     <string name="text_no_open_order">暂无委单</string>
+    <string name="text_decimals">位小数</string>
 
     <!-- Order History Activity -->
     <string name="text_asset_and_amount">资产/数量</string>

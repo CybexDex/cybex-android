@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -38,20 +39,25 @@
         tools:itemCount="5">
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/buysell_tv_quote_price"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        style="@style/font_gray_large"
-        android:text="@string/text_empty"/>
-    <TextView
-        android:id="@+id/buysell_tv_quote_rmb_price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        style="@style/font_gray_small"
-        android:text="≈--"/>
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/buysell_tv_quote_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_gray_large"
+            android:text="@string/text_empty"/>
+        <TextView
+            android:id="@+id/buysell_tv_quote_rmb_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/font_gray_small"
+            android:text="≈--"/>
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/buysell_rv_buy"
@@ -61,5 +67,17 @@
         tools:listitem="@layout/item_buy_sell_order"
         tools:itemCount="5">
     </android.support.v7.widget.RecyclerView>
+
+    <com.jaredrummler.materialspinner.MaterialSpinner
+        android:id="@+id/buysell_sp_precision"
+        android:layout_width="@dimen/width_110"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:minWidth="@dimen/width_80"
+        android:textSize="@dimen/font_medium"
+        android:layout_marginTop="@dimen/margin_3"
+        app:ms_text_color="@color/material_spinner_text_color"
+        app:ms_background_selector="@drawable/bg_spinner_selector"
+        app:ms_arrow_tint="@color/colorAccent"/>
 
 </LinearLayout>

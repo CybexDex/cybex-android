@@ -28,12 +28,13 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
     public static final int MAX_ITEM = 5;
 
     private Context mContext;
-    private List<Order> mOrders;
+    private List<List<String>> mOrders;
     private int mType;
     private OnItemClickListener mListener;
     private WatchlistData mWatchlistData;
+    private int mPricePrecision = -1;
 
-    public BuySellOrderRecyclerViewAdapter(Context context, WatchlistData watchlistData, int type, List<Order> orders) {
+    public BuySellOrderRecyclerViewAdapter(Context context, WatchlistData watchlistData, int type, List<List<String>> orders) {
         mContext = context;
         mOrders = orders;
         mType = type;
@@ -46,6 +47,10 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
 
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
+    }
+
+    public void setPricePrecision(int precision) {
+        mPricePrecision = precision;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
         switch (mType){
             case TYPE_BUY:
                 if(mOrders.size() > position){
-                    final Order order = mOrders.get(position);
+                    final List<String> order = mOrders.get(position);
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -73,8 +78,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                             }
                         }
                     });
-                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, mWatchlistData.getPricePrecision()));
-                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, mWatchlistData.getAmountPrecision()));
+                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(Double.parseDouble(order.get(0)), mPricePrecision == -1 ? mWatchlistData.getPricePrecision() : mPricePrecision));
+                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(Double.parseDouble(order.get(1)), mWatchlistData.getAmountPrecision()));
                     float percentage = (float) getPercentage(mOrders, position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
                     LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
@@ -98,7 +103,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                     holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
                     holder.mColorBar.setBackgroundColor(Color.TRANSPARENT);
                 } else {
-                    final Order order = mOrders.get(mOrders.size() - MAX_ITEM + position);
+                    final List<String> order = mOrders.get(MAX_ITEM - position - 1);
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -107,8 +112,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                             }
                         }
                     });
-                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(order.price, mWatchlistData.getPricePrecision(), RoundingMode.UP));
-                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(order.quoteAmount, mWatchlistData.getAmountPrecision()));
+                    holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(Double.parseDouble(order.get(0)), mPricePrecision == -1 ? mWatchlistData.getPricePrecision() : mPricePrecision, RoundingMode.UP));
+                    holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(Double.parseDouble(order.get(1)), mWatchlistData.getAmountPrecision()));
                     float percentage = (float) getPercentage(mOrders, mOrders.size() - MAX_ITEM + position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
                     LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
@@ -133,26 +138,26 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
         return mType;
     }
 
-    private double getPercentage(List<Order> orderList, int position) {
+    private double getPercentage(List<List<String>> orderList, int position) {
         double divider = 0;
         double total = getSum(orderList);
         for (int i = 0; i <= position; i++) {
             if(mType == TYPE_BUY){
-                divider += orderList.get(i).quoteAmount;
+                divider += Double.parseDouble(orderList.get(i).get(1));
             } else {
                 if(i > 0){
-                    divider += orderList.get(i - 1).quoteAmount;
+                    divider += Double.parseDouble(orderList.get(i - 1).get(1));
                 }
             }
         }
         return mType == TYPE_BUY ? divider / total : (total - divider)/total;
     }
 
-    private double getSum(List<Order> orderList) {
+    private double getSum(List<List<String>> orderList) {
         double sum = 0;
         if (orderList != null && orderList.size() != 0) {
             for (int i = 0; i < orderList.size(); i++) {
-                sum += mType == TYPE_BUY ? orderList.get(i).quoteAmount : orderList.get(i).quoteAmount;
+                sum += Double.parseDouble(orderList.get(i).get(1));
             }
         }
         return sum;

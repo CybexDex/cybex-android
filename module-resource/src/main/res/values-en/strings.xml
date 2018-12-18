@@ -213,6 +213,7 @@
     <string name="item_text_open_order_amount">Amount:</string>
     <string name="item_text_open_order_cancel">Cancel</string>
     <string name="text_no_open_order">No open orders</string>
+    <string name="text_decimals">decimals</string>
 
     <!-- Own Order History Activity -->
     <string name="text_asset_and_amount">Asset/Amount</string>

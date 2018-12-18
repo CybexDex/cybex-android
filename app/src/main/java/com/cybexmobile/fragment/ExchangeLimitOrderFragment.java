@@ -15,28 +15,19 @@ import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.BuySellOrderRecyclerViewAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.basemodule.event.Event;
-import com.cybex.provider.exception.NetworkStatusException;
-import com.cybex.provider.graphene.chain.Asset;
-import com.cybex.provider.graphene.chain.LimitOrderObject;
-import com.cybex.provider.graphene.chain.Price;
-import com.cybex.provider.market.Order;
 import com.cybex.basemodule.utils.AssetUtil;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -63,9 +54,13 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     TextView mTvQuotePrice;
     @BindView(R.id.buysell_tv_quote_rmb_price)
     TextView mTvQuoteRmbPrice;
+    @BindView(R.id.buysell_sp_precision)
+    MaterialSpinner mMaterialSpinner;
+    @BindString(R.string.text_decimals)
+    String mTextDecimals;
 
-    private List<Order> mBuyOrders = new ArrayList<>();
-    private List<Order> mSellOrders = new ArrayList<>();
+    private List<List<String>> mBuyOrders = new ArrayList<>();
+    private List<List<String>> mSellOrders = new ArrayList<>();
 
     private BuySellOrderRecyclerViewAdapter mBuyOrderAdapter;
     private BuySellOrderRecyclerViewAdapter mSellOrderAdapter;
@@ -113,6 +108,15 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mSellOrderAdapter.setOnItemClickListener(this);
         mRvBuy.setAdapter(mBuyOrderAdapter);
         mRvSell.setAdapter(mSellOrderAdapter);
+        mMaterialSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                int precision = Integer.parseInt(item.substring(0, 1));
+                mBuyOrderAdapter.setPricePrecision(precision);
+                mSellOrderAdapter.setPricePrecision(precision);
+                ((ExchangeFragment)getParentFragment().getParentFragment()).reSubscribeOrderBook(precision);
+            }
+        });
         return view;
     }
 
@@ -120,7 +124,6 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViewData();
-        loadBuySellOrder();
     }
 
     @Override
@@ -142,20 +145,6 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateBuySellOrders(Event.UpdateBuySellOrders event){
-        mBuyOrders.clear();
-        mSellOrders.clear();
-        if(event.getBuyOrders() != null){
-            mBuyOrders.addAll(event.getBuyOrders());
-        }
-        if(event.getSellOrders() != null){
-            mSellOrders.addAll(event.getSellOrders());
-        }
-        mBuyOrderAdapter.notifyDataSetChanged();
-        mSellOrderAdapter.notifyDataSetChanged();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateWatchlist(Event.UpdateWatchlist event) {
         WatchlistData data = event.getData();
         if(data == null || mWatchlistData == null){
@@ -172,11 +161,6 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(mWatchlistData == null){
             return;
         }
-        /**
-         * rmb价格刷新 重新加载数据
-         */
-        loadBuySellOrder();
-
         List<AssetRmbPrice> assetRmbPrices = event.getData();
         if (assetRmbPrices == null || assetRmbPrices.size() == 0) {
             return;
@@ -213,113 +197,26 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         EventBus.getDefault().post(new Event.LimitOrderClick(mTvQuotePrice.getText().toString()));
     }
 
-    private void loadBuySellOrder(){
-        if(mWatchlistData != null){
-            try {
-                BitsharesWalletWraper.getInstance().get_limit_orders(mWatchlistData.getBaseAsset().id, mWatchlistData.getQuoteAsset().id, 500, mLimitOrderCallback);
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>> mLimitOrderCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>>() {
-        @Override
-        public void onMessage(WebSocketClient.Reply<List<LimitOrderObject>> reply) {
-            List<LimitOrderObject> limitOrders = reply.result;
-            if(limitOrders == null || limitOrders.size() == 0){
-                //没有委单时，发送空数据，清空买卖单列表数据
-                EventBus.getDefault().post(new Event.UpdateBuySellOrders(null, null));
-                return;
-            }
-            LinkedList<Order> buyOrders = new LinkedList<>();
-            LinkedList<Order> sellOrders = new LinkedList<>();
-            Order order = null;
-            for(LimitOrderObject limitOrder : limitOrders){
-                if (limitOrder.sell_price.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
-                    if(buyOrders.size() > 5){
-                        continue;
-                    }
-                    /**
-                     * 合并深度
-                     */
-                    double price = priceToReal(limitOrder.sell_price);
-                    double amount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
-                            AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
-                    if(buyOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price))
-                            .equals(AssetUtil.formatNumberRounding(buyOrders.getLast().price, AssetUtil.pricePrecision(price)))){
-                        buyOrders.getLast().quoteAmount = AssetUtil.add(buyOrders.getLast().quoteAmount, amount);
-                    } else {
-                        order = new Order();
-                        order.price = price;
-                        order.quoteAmount = amount;
-                        order.baseAmount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getBasePrecision()));
-                        buyOrders.add(order);
-                    }
-                } else {
-                    if(sellOrders.size() > 5){
-                        continue;
-                    }
-                    /**
-                     * 合并深度
-                     */
-                    double price = priceToReal(limitOrder.sell_price);
-                    double amount = AssetUtil.divide(limitOrder.for_sale, Math.pow(10, mWatchlistData.getQuotePrecision()));
-                    if(sellOrders.size() > 0 && AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price), RoundingMode.UP)
-                            .equals(AssetUtil.formatNumberRounding(sellOrders.getLast().price, AssetUtil.pricePrecision(price), RoundingMode.UP))) {
-                        sellOrders.getLast().quoteAmount = AssetUtil.add(sellOrders.getLast().quoteAmount, amount);
-                    } else {
-                        order = new Order();
-                        order.price = price;
-                        order.quoteAmount = amount;
-                        order.baseAmount = AssetUtil.divide(AssetUtil.multiply(limitOrder.for_sale, limitOrder.sell_price.quote.amount),
-                                AssetUtil.multiply(limitOrder.sell_price.base.amount, Math.pow(10, mWatchlistData.getBasePrecision())));
-                        sellOrders.add(order);
-                    }
-                }
-            }
-            if(sellOrders.size() > 5) sellOrders.removeLast();
-            if(buyOrders.size() > 5) buyOrders.removeLast();
-//            Collections.sort(buyOrders, new Comparator<Order>() {
-//                @Override
-//                public int compare(Order o1, Order o2) {
-//                    return (o1.price - o2.price) < 0 ? 1 : -1;
-//                }
-//            });
-            Collections.sort(sellOrders, new Comparator<Order>() {
-                @Override
-                public int compare(Order o1, Order o2) {
-                    return (o1.price - o2.price) < 0 ? 1 : -1;
-                }
-            });
-            EventBus.getDefault().post(new Event.UpdateBuySellOrders(buyOrders, sellOrders));
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
-    private double priceToReal(Price p) {
-        if (p.base.asset_id.equals(mWatchlistData.getBaseAsset().id)) {
-            return AssetUtil.divide(AssetUtil.divide(p.base.amount, Math.pow(10, mWatchlistData.getBasePrecision())),
-                    AssetUtil.divide(p.quote.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
-        } else {
-            return AssetUtil.divide(AssetUtil.divide(p.quote.amount, Math.pow(10, mWatchlistData.getBasePrecision())),
-                    AssetUtil.divide(p.base.amount, Math.pow(10, mWatchlistData.getQuotePrecision())));
-        }
-    }
-
     private void initViewData(){
         if(mWatchlistData == null){
             return;
         }
         initPriceText();
+        initOrResetSpinnerData();
         String baseSymbol = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());
         String quoteSymbol = AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol());
         mTvOrderPrice.setText(getResources().getString(R.string.text_asset_price).replace("--", baseSymbol));
         mTvOrderAmount.setText(getResources().getString(R.string.text_asset_amount).replace("--", quoteSymbol));
+    }
+
+    private void initOrResetSpinnerData() {
+        List<String> items = new ArrayList<>();
+        int precision = mWatchlistData.getPricePrecision();
+        while (items.size() < 4 && precision >= 0) {
+            items.add(precision + mTextDecimals);
+            --precision;
+        }
+        mMaterialSpinner.notifyItems(items);
     }
 
     private void initPriceText(){
@@ -340,6 +237,20 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mBuyOrderAdapter.setWatchlistData(mWatchlistData);
         mSellOrderAdapter.setWatchlistData(mWatchlistData);
         initViewData();
-        loadBuySellOrder();
+        mBuyOrderAdapter.setPricePrecision(-1);
+        mSellOrderAdapter.setPricePrecision(-1);
+        mBuyOrders.clear();
+        mSellOrders.clear();
+        mBuyOrderAdapter.notifyDataSetChanged();
+        mSellOrderAdapter.notifyDataSetChanged();
+    }
+
+    public void notifyLimitOrderDataChanged(List<List<String>> sellOrders, List<List<String>> buyOrders) {
+        mBuyOrders.clear();
+        mSellOrders.clear();
+        mBuyOrders.addAll(sellOrders);
+        mSellOrders.addAll(buyOrders);
+        mBuyOrderAdapter.notifyDataSetChanged();
+        mSellOrderAdapter.notifyDataSetChanged();
     }
 }

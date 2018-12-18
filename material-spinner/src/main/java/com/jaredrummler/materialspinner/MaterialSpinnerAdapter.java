@@ -22,7 +22,7 @@ import java.util.List;
 
 public class MaterialSpinnerAdapter<T> extends MaterialSpinnerBaseAdapter {
 
-  private final List<T> items;
+  private List<T> items;
 
   public MaterialSpinnerAdapter(Context context, List<T> items) {
     super(context);
@@ -52,4 +52,10 @@ public class MaterialSpinnerAdapter<T> extends MaterialSpinnerBaseAdapter {
   @Override public List<T> getItems() {
     return items;
   }
+
+  @Override
+  public void setItems(List items) {
+    this.items = items;
+  }
+
 }
