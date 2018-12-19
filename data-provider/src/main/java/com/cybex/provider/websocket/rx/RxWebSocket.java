@@ -131,11 +131,9 @@ public class RxWebSocket implements RxListener {
             public Boolean call() throws Exception {
                 if (webSocket != null) {
                     String jsonBody = new Gson().toJson(payload);
-                    Log.d("dzm", jsonBody);
                     Log.v(TAG, jsonBody);
                     return webSocket.send(jsonBody);
                 } else {
-                    Log.d("dzm", "RxWebSocket not connected!");
                     throw new RuntimeException("RxWebSocket not connected!");
                 }
             }

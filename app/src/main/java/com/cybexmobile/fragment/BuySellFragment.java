@@ -793,6 +793,10 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         mExchangeLimitOrderFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
     }
 
+    public void notifyMarketPriceDataChanged(double price) {
+        mExchangeLimitOrderFragment.notifyMarketPriceDataChanged(price);
+    }
+
     private MessageCallback mLimitOrderCreateCallback = new MessageCallback<Reply<String>>(){
 
         @Override

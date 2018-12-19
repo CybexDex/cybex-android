@@ -68,6 +68,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     private Unbinder mUnbinder;
 
     private WatchlistData mWatchlistData;
+    //交易对价格
+    private double mMarketPrice;
 
     public static ExchangeLimitOrderFragment getInstance(WatchlistData watchlistData){
         ExchangeLimitOrderFragment fragment = new ExchangeLimitOrderFragment();
@@ -152,7 +154,6 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         }
         if(data.getBaseId().equals(mWatchlistData.getBaseId()) && data.getQuoteId().equals(mWatchlistData.getQuoteId())){
             mWatchlistData = data;
-            initPriceText();
         }
     }
 
@@ -176,7 +177,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
             return;
         }
         mWatchlistData.setRmbPrice(assetRmbPrice.getValue());
-        initPriceText();
+        initOrResetRmbPrice();
     }
 
     @Override
@@ -201,7 +202,6 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(mWatchlistData == null){
             return;
         }
-        initPriceText();
         initOrResetSpinnerData();
         String baseSymbol = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());
         String quoteSymbol = AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol());
@@ -213,23 +213,31 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         List<String> items = new ArrayList<>();
         int precision = mWatchlistData.getPricePrecision();
         while (items.size() < 4 && precision >= 0) {
-            items.add(precision + mTextDecimals);
+            items.add(precision + " " + mTextDecimals);
             --precision;
         }
         mMaterialSpinner.notifyItems(items);
     }
 
-    private void initPriceText(){
-        mTvQuotePrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) :
-                AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice(), mWatchlistData.getPricePrecision()));
-        double change = mWatchlistData.getChange();
-        if(change == 0){
+    private void initOrResetPrice(double price) {
+        if(price == mMarketPrice) {
             mTvQuotePrice.setTextColor(getResources().getColor(R.color.no_change_color));
+            mTvQuoteRmbPrice.setTextColor(getResources().getColor(R.color.no_change_color));
+        } else if(price > mMarketPrice){
+            mTvQuotePrice.setTextColor(getResources().getColor(R.color.increasing_color));
+            mTvQuoteRmbPrice.setTextColor(getResources().getColor(R.color.increasing_color));
         } else {
-            mTvQuotePrice.setTextColor(getResources().getColor(change > 0 ? R.color.increasing_color : R.color.decreasing_color));
+            mTvQuotePrice.setTextColor(getResources().getColor(R.color.decreasing_color));
+            mTvQuoteRmbPrice.setTextColor(getResources().getColor(R.color.decreasing_color));
         }
-        mTvQuoteRmbPrice.setText(mWatchlistData.getCurrentPrice() == 0 ? getString(R.string.text_empty) :
-                "≈¥ " + AssetUtil.formatNumberRounding(mWatchlistData.getCurrentPrice() * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision()));
+        mMarketPrice = price;
+        mTvQuotePrice.setText(mMarketPrice == 0 ? getString(R.string.text_empty) : AssetUtil.formatNumberRounding(mMarketPrice, mWatchlistData.getPricePrecision()));
+        initOrResetRmbPrice();
+    }
+
+    private void initOrResetRmbPrice() {
+        mTvQuoteRmbPrice.setText(mMarketPrice == 0 ? getString(R.string.text_empty) :
+                "≈¥ " + AssetUtil.formatNumberRounding(mMarketPrice * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision()));
     }
 
     public void changeWatchlist(WatchlistData watchlist){
@@ -252,5 +260,9 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mSellOrders.addAll(buyOrders);
         mBuyOrderAdapter.notifyDataSetChanged();
         mSellOrderAdapter.notifyDataSetChanged();
+    }
+
+    public void notifyMarketPriceDataChanged(double price) {
+        initOrResetPrice(price);
     }
 }

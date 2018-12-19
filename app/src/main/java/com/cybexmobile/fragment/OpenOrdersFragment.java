@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,6 +155,30 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                 EventBus.getDefault().register(this);
             }
         }
+    }
+
+    /**
+     * 流量优化
+     * 界面不显示取消网络请求
+     * @param hidden
+     */
+    public void onParentHiddenChanged(boolean hidden) {
+        if(hidden) {
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
+            }
+            return;
+        }
+        if(!this.isHidden()) {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+        }
+    }
+
+    @Override
+    public boolean getUserVisibleHint() {
+        return super.getUserVisibleHint();
     }
 
     @Override
