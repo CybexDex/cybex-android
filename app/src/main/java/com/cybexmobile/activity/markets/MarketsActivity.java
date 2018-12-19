@@ -30,6 +30,8 @@ import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.MyUtils;
 import com.cybex.provider.utils.PriceUtil;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.WebSocketClient;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.chat.ChatActivity;
@@ -424,9 +426,9 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         }
     }
 
-    private WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>> mMarketHistoryCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>>() {
+    private MessageCallback<Reply<List<BucketObject>>> mMarketHistoryCallback = new MessageCallback<Reply<List<BucketObject>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<BucketObject>> reply) {
+        public void onMessage(Reply<List<BucketObject>> reply) {
             List<BucketObject> bucketObjects = reply.result;
             if (bucketObjects == null || bucketObjects.size() == 0) {
                 runOnUiThread(new Runnable() {

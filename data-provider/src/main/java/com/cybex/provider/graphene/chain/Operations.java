@@ -358,7 +358,7 @@ public class Operations {
         ;
 
         public Asset fee;
-        public ObjectId<LimitOrderObject> order;
+        public ObjectId<LimitOrder> order;
         /**
          * must be order->seller
          */

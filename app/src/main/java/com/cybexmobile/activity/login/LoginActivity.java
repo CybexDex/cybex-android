@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.activity.register.RegisterActivity;
 import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -244,9 +246,9 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         }
         showLoadDialog(true);
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(email, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+            BitsharesWalletWraper.getInstance().get_account_object(email, new MessageCallback<Reply<AccountObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
                     int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, email, password);
                     runOnUiThread(new Runnable() {

@@ -1,13 +1,16 @@
 package com.cybexmobile.data.item;
 
-import com.cybex.provider.market.OpenOrder;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.LimitOrder;
 
 /**
- * OpenOrder item
+ * Open Order item
  */
 public class OpenOrderItem {
 
-    public OpenOrder openOrder;
+    public LimitOrder limitOrder;
+    public AssetObject baseAsset;
+    public AssetObject quoteAsset;
     public boolean isSell;
     public double itemRMBPrice;
 }

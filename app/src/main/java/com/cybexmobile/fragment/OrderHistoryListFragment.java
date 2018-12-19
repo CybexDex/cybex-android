@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.adapter.OrderHistoryRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
@@ -153,9 +155,9 @@ public class OrderHistoryListFragment extends BaseFragment {
         }
     }
 
-    private WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>> mLimitOrderCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>>() {
+    private MessageCallback<Reply<List<LimitOrderObject>>> mLimitOrderCallback = new MessageCallback<Reply<List<LimitOrderObject>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<LimitOrderObject>> reply) {
+        public void onMessage(Reply<List<LimitOrderObject>> reply) {
             List<LimitOrderObject> limitOrders = reply.result;
             if(limitOrders == null || limitOrders.size() == 0){
                 return;

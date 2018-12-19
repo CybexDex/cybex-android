@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
@@ -130,9 +132,9 @@ public class MarketTradeHistoryFragment extends BaseFragment {
         }
     }
 
-    private WebSocketClient.MessageCallback<WebSocketClient.Reply<List<HashMap<String, Object>>>> mMarketTradeHistoryCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<HashMap<String, Object>>>>() {
+    private MessageCallback<Reply<List<HashMap<String, Object>>>> mMarketTradeHistoryCallback = new MessageCallback<Reply<List<HashMap<String, Object>>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<HashMap<String, Object>>> reply) {
+        public void onMessage(Reply<List<HashMap<String, Object>>> reply) {
             List<HashMap<String, Object>> hashMaplist = reply.result;
             if(hashMaplist == null || hashMaplist.size() == 0){
                 return;

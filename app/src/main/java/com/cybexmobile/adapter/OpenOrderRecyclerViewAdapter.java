@@ -13,12 +13,12 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybex.basemodule.cache.AssetPairCache;
+import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.provider.graphene.chain.AssetsPair;
-import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybexmobile.R;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.basemodule.utils.AssetUtil;
 
 import java.util.ArrayList;
@@ -74,17 +74,19 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         }
         ViewHolder viewHolder = (ViewHolder) holder;
         OpenOrderItem openOrderItem = mOpenOrderItems.get(position);
-        AssetObject base = openOrderItem.openOrder.getBaseObject();
-        AssetObject quote = openOrderItem.openOrder.getQuoteObject();
-        LimitOrderObject data = openOrderItem.openOrder.getLimitOrder();
-        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(openOrderItem.isSell ? quote.id.toString() : base.id.toString(),
-                openOrderItem.isSell ? base.id.toString() : quote.id.toString());
+        AssetObject baseAsset = openOrderItem.baseAsset;
+        AssetObject quoteAsset = openOrderItem.quoteAsset;
+        LimitOrder limitOrder = openOrderItem.limitOrder;
+        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(
+                openOrderItem.isSell ? quoteAsset.id.toString() : baseAsset.id.toString(),
+                openOrderItem.isSell ? baseAsset.id.toString() : quoteAsset.id.toString());
         if (assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
         double amount;
         double price;
-        if (base != null && quote != null) {
-            if ((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE")) ||
-                    (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE"))) {
+        double sold;
+        if (baseAsset != null && quoteAsset != null) {
+            if ((!baseAsset.symbol.startsWith("CYB") && !baseAsset.symbol.startsWith("JADE")) ||
+                    (!quoteAsset.symbol.startsWith("CYB") && !quoteAsset.symbol.startsWith("JADE"))) {
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
                 layoutParams.height = 0;
                 layoutParams.width = 0;
@@ -94,40 +96,39 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
                 layoutParams.width = RecyclerView.LayoutParams.WRAP_CONTENT;
                 holder.itemView.setVisibility(View.VISIBLE);
-                String quoteSymbol = quote.symbol.contains("JADE") ? quote.symbol.substring(5, quote.symbol.length()) : quote.symbol;
-                String baseSymbol = base.symbol.contains("JADE") ? base.symbol.substring(5, base.symbol.length()) : base.symbol;
+                String quoteSymbol = AssetUtil.parseSymbol(quoteAsset.symbol);
+                String baseSymbol = AssetUtil.parseSymbol(baseAsset.symbol);
+                /**
+                 * 卖单baseAsset是quote quoteAsset是base
+                 * 买单baseAsset是base quoteAsset是quote
+                 */
                 if (openOrderItem.isSell) {
-                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
-                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
-                    price = AssetUtil.divide(AssetUtil.divide(data.sell_price.quote.amount, Math.pow(10, quote.precision)),
-                            AssetUtil.divide(data.sell_price.base.amount, Math.pow(10, base.precision)));
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), quoteSymbol));
-                    /**
-                     * fix bug:CYM-349
-                     * 订单部分撮合
-                     */
-                    amount = AssetUtil.divide(data.for_sale, Math.pow(10, base.precision));
-                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), baseSymbol));
                     viewHolder.mTvQuoteSymbol.setText(baseSymbol);
                     viewHolder.mTvBaseSymbol.setText(quoteSymbol);
-                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price * amount, Integer.parseInt(assetPairConfig.total)), quoteSymbol));
+                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
+                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
+                    viewHolder.mTvScale.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
+                    amount = AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision));
+                    sold = AssetUtil.divide(limitOrder.sold, Math.pow(10, baseAsset.precision));
+                    price = AssetUtil.divide(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision)), amount);
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), quoteSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s/%s %s", AssetUtil.formatNumberRounding(sold, Integer.parseInt(assetPairConfig.amount)),
+                            AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), baseSymbol));
                 } else {
-                    /**
-                     * fix bug:CYM-412
-                     * 买单数据显示错误
-                     */
-                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
-                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
-                    amount = AssetUtil.multiply(AssetUtil.divide(data.sell_price.quote.amount, Math.pow(10, quote.precision)),
-                            AssetUtil.divide(data.for_sale, data.sell_price.base.amount));
-                    price = AssetUtil.divide(AssetUtil.divide(data.sell_price.base.amount, Math.pow(10, base.precision)),
-                            AssetUtil.divide(data.sell_price.quote.amount, Math.pow(10, quote.precision)));
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), baseSymbol));
-                    viewHolder.mTvAssetAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                     viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
                     viewHolder.mTvBaseSymbol.setText(baseSymbol);
-                    viewHolder.mTvFilled.setText(String.format("%s %s", AssetUtil.formatNumberRounding(AssetUtil.divide(data.for_sale, Math.pow(10, base.precision)), Integer.parseInt(assetPairConfig.total)), baseSymbol));
+                    viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
+                    viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
+                    viewHolder.mTvScale.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
+                    amount = AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision));
+                    sold = AssetUtil.divide(limitOrder.received, Math.pow(10, quoteAsset.precision));
+                    price = AssetUtil.divide(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision)), amount);
+                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), baseSymbol));
+                    viewHolder.mTvAssetAmount.setText(String.format("%s/%s %s", AssetUtil.formatNumberRounding(sold, Integer.parseInt(assetPairConfig.amount)),
+                            AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                 }
+                viewHolder.mTvScale.setText(String.format("%s%%", AssetUtil.formatNumberRounding(sold / amount,2)));
+                viewHolder.mTvDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(limitOrder.create_time)));
             }
         }else{
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
@@ -165,9 +166,9 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             }
             List<OpenOrderItem> filterDatas = new ArrayList<>();
             for (OpenOrderItem data : mOriginalOpenOrderItems) {
-                if ("Sell".equals(filterStr) && data.isSell) {
+                if ("Sell".equals(filterStr) && data.limitOrder.is_sell) {
                     filterDatas.add(data);
-                } else if ("Buy".equals(filterStr) && !data.isSell) {
+                } else if ("Buy".equals(filterStr) && !data.limitOrder.is_sell) {
                     filterDatas.add(data);
                 }
             }
@@ -190,12 +191,14 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         TextView mTvQuoteSymbol;
         @BindView(R.id.item_exchange_open_order_tv_base_symbol)
         TextView mTvBaseSymbol;
-        @BindView(R.id.item_exchange_open_order_tv_filled)
-        TextView mTvFilled;
         @BindView(R.id.item_exchange_open_order_tv_asset_price)
         TextView mTvAssetPrice;
         @BindView(R.id.item_exchange_open_order_tv_asset_amount)
         TextView mTvAssetAmount;
+        @BindView(R.id.item_exchange_open_order_tv_scale)
+        TextView mTvScale;
+        @BindView(R.id.item_exchange_open_order_tv_date)
+        TextView mTvDate;
         @BindView(R.id.item_exchange_open_order_btn_cancel)
         TextView mBtnCancel;
 

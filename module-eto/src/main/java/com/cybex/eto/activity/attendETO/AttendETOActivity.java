@@ -41,6 +41,8 @@ import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoUserCurrentStatus;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.WebSocketClient;
 
 import org.greenrobot.eventbus.EventBus;
@@ -373,9 +375,9 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
                 mFromAccountObject.options.memo_key,
                 mFromAccountObject.options.memo_key);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee, new MessageCallback<Reply<List<FeeAmountObject>>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+                public void onMessage(Reply<List<FeeAmountObject>> reply) {
                     EventBus.getDefault().post(new Event.LoadTransferFee(reply.result.get(0), isLoadFeeToTransfer));
                 }
 
@@ -423,9 +425,9 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
                 mFromAccountObject.options.memo_key,
                 mToAccountObject.options.memo_key);
         try {
-            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                             mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
                     try {
@@ -448,10 +450,10 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     /**
      * 转账callback
      */
-    private WebSocketClient.MessageCallback mTransferCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+    private MessageCallback mTransferCallback = new MessageCallback<Reply<String>>() {
 
         @Override
-        public void onMessage(WebSocketClient.Reply<String> reply) {
+        public void onMessage(Reply<String> reply) {
             EventBus.getDefault().post(new Event.Transfer(reply.result == null && reply.error == null));
         }
 
@@ -466,9 +468,9 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
      */
     private void getReceiveAccountObject(EtoProject etoProject) {
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(etoProject.getReceive_address(), new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+            BitsharesWalletWraper.getInstance().get_account_object(etoProject.getReceive_address(), new MessageCallback<Reply<AccountObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
                     EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
                 }

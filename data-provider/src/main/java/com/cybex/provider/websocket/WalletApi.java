@@ -24,6 +24,7 @@ import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
+import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MemoData;
@@ -156,9 +157,9 @@ public class WalletApi {
     public void initialize() {
         mWebSocketClient.connect();
         try {
-            mWebSocketClient.get_chain_id(new WebSocketClient.MessageCallback<WebSocketClient.Reply<Sha256Object>>() {
+            mWebSocketClient.get_chain_id(new MessageCallback<Reply<Sha256Object>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<Sha256Object> reply) {
+                public void onMessage(Reply<Sha256Object> reply) {
                     Sha256Object sha256Object = reply.result;
                     if (mWalletObject == null) {
                         mWalletObject = new wallet_object();
@@ -172,9 +173,9 @@ public class WalletApi {
                 }
             });
 
-            mWebSocketClient.get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+            mWebSocketClient.get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     DynamicGlobalPropertyObject dynamicGlobalPropertyObject = reply.result;
                     if (mDynamicGlobalPropertyObject == null) {
                         mDynamicGlobalPropertyObject = new DynamicGlobalPropertyObject();
@@ -376,7 +377,8 @@ public class WalletApi {
         return accountObjectList;
     }
 
-    public void get_accounts(List<String> accountIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountObject>>> callback) throws NetworkStatusException {
+    public void get_accounts(List<String> accountIds,
+                             MessageCallback<Reply<List<AccountObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_accounts(accountIds, callback);
     }
 
@@ -384,7 +386,8 @@ public class WalletApi {
 //        mWebSocketClient.lookup_account_names(strAccountName, callback);
 //    }
 
-    public void get_account_by_name(String strAccountName, WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>> callback) throws NetworkStatusException {
+    public void get_account_by_name(String strAccountName,
+                                    MessageCallback<Reply<AccountObject>> callback) throws NetworkStatusException {
         mWebSocketClient.get_account_by_name(strAccountName, callback);
     }
 
@@ -392,11 +395,15 @@ public class WalletApi {
 //        return mWebSocketClient.list_account_balances(accountId);
 //    }
 
-    public void get_account_history(ObjectId<AccountObject> accountId, int nLimit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+    public void get_account_history(ObjectId<AccountObject> accountId,
+                                    int nLimit,
+                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_account_history(accountId, nLimit, callback);
     }
 
-    public void get_block(int callId, int blockNumber, WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>> callback) throws NetworkStatusException {
+    public void get_block(int callId,
+                          int blockNumber,
+                          MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
         mWebSocketClient.get_block(callId, blockNumber, callback);
     }
 
@@ -407,17 +414,20 @@ public class WalletApi {
 //        return mWebSocketClient.get_assets(listAssetObjectId);
 //    }
 
-    public void lookup_asset_symbols(String strAssetSymbol, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void lookup_asset_symbols(String strAssetSymbol,
+                                     MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.lookup_asset_symbols(strAssetSymbol, callback);
     }
 
-    public void get_objects(String objectId, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void get_objects(String objectId,
+                            MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         Set<String> objectIds = new HashSet<>();
         objectIds.add(objectId);
         get_objects(objectIds, callback);
     }
 
-    public void get_objects(Set<String> objectIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void get_objects(Set<String> objectIds,
+                            MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_objects(objectIds, callback);
     }
 
@@ -685,7 +695,7 @@ public class WalletApi {
 
     public Operations.limit_order_cancel_operation getLimitOrderCancelOperation(ObjectId<AccountObject> accountId,
                                                                                 ObjectId<AssetObject> assetFeeId,
-                                                                                ObjectId<LimitOrderObject> limitOrderId,
+                                                                                ObjectId<LimitOrder> limitOrderId,
                                                                                 long amountFee){
         Operations.limit_order_cancel_operation operation = new Operations.limit_order_cancel_operation();
         operation.fee = new Asset(amountFee, assetFeeId);
@@ -1123,14 +1133,15 @@ public class WalletApi {
 //    }
 
     public void get_market_history(ObjectId<AssetObject> baseAssetId,
-                                                 ObjectId<AssetObject> quoteAssetId,
-                                                 int nBucket,
-                                                 Date dateStart, Date dateEnd,
-                                                 WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>> callback) throws NetworkStatusException {
+                                   ObjectId<AssetObject> quoteAssetId,
+                                   int nBucket,
+                                   Date dateStart,
+                                   Date dateEnd,
+                                   MessageCallback<Reply<List<BucketObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_market_history(baseAssetId, quoteAssetId, nBucket, dateStart, dateEnd, callback);
     }
 
-    public void get_dynamic_global_properties(WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>> callback) throws NetworkStatusException {
+    public void get_dynamic_global_properties(MessageCallback<Reply<DynamicGlobalPropertyObject>> callback) throws NetworkStatusException {
         mWebSocketClient.get_dynamic_global_properties(callback);
     }
 
@@ -1203,7 +1214,10 @@ public class WalletApi {
 //        return strMessage;
 //    }
 
-    public void subscribe_to_market(String id, String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+    public void subscribe_to_market(String id,
+                                    String base,
+                                    String quote,
+                                    MessageCallback<Reply<String>> callback) throws NetworkStatusException {
         mWebSocketClient.subscribe_to_market(id, base, quote, callback);
     }
 
@@ -1215,7 +1229,9 @@ public class WalletApi {
 //        mWebSocketClient.set_subscribe_callback(filter);
 //    }
 
-    public void get_ticker(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>> callback) throws NetworkStatusException {
+    public void get_ticker(String base,
+                           String quote,
+                           MessageCallback<Reply<MarketTicker>> callback) throws NetworkStatusException {
         mWebSocketClient.get_ticker(base, quote, callback);
     }
 
@@ -1225,34 +1241,41 @@ public class WalletApi {
 //    }
 
     public void get_fill_order_history(ObjectId<AssetObject> base,
-                                                                ObjectId<AssetObject> quote,
-                                                                int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<HashMap<String, Object>>>> callback) throws NetworkStatusException {
+                                       ObjectId<AssetObject> quote,
+                                       int limit,
+                                       MessageCallback<Reply<List<HashMap<String, Object>>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_fill_order_history(base, quote,limit, callback);
     }
 
     public void get_limit_orders(ObjectId<AssetObject> base,
-                                                   ObjectId<AssetObject> quote,
-                                                   int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>> callback) throws NetworkStatusException {
+                                 ObjectId<AssetObject> quote,
+                                 int limit,
+                                 MessageCallback<Reply<List<LimitOrderObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_limit_orders(base, quote, limit, callback);
     }
 
-    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockAssetObject>>> callback) throws NetworkStatusException {
+    public void get_balance_objects(List<String> addresses,
+                                    MessageCallback<Reply<List<LockAssetObject>>> callback) throws NetworkStatusException {
         mWebSocketClient.get_balance_objects(addresses, callback);
     }
 
-    public void get_full_accounts(List<String> names, boolean subscribe,
-                                                     WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>> callback)
+    public void get_full_accounts(List<String> names,
+                                  boolean subscribe,
+                                  MessageCallback<Reply<List<FullAccountObjectReply>>> callback)
             throws NetworkStatusException {
         mWebSocketClient.get_full_accounts(names, subscribe, callback);
     }
 
-    public void get_required_fees(String assetId, int operationId, Operations.base_operation operation,
-                                  WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
+    public void get_required_fees(String assetId,
+                                  int operationId,
+                                  Operations.base_operation operation,
+                                  MessageCallback<Reply<List<FeeAmountObject>>> callback)
             throws NetworkStatusException {
         mWebSocketClient.get_required_fees(assetId, operationId, operation, callback);
     }
 
-    public void broadcast_transaction_with_callback(SignedTransaction signedTransaction, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+    public void broadcast_transaction_with_callback(SignedTransaction signedTransaction,
+                                                    MessageCallback<Reply<String>> callback) throws NetworkStatusException {
         mWebSocketClient.broadcast_transaction_with_callback(signedTransaction, callback);
     }
 

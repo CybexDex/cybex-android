@@ -29,6 +29,7 @@ import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,7 +55,7 @@ public class WebSocketClient extends WebSocketListener {
 
     private static final String TAG = "WebSocketClient";
 
-    private static final int WHAT_MESSAGE = 1;
+    private static final int WHAT_MESSAGE = 10000001;
 
     //交易对比例
     private static final String CALL_GET_TICKER = "get_ticker";
@@ -70,16 +71,12 @@ public class WebSocketClient extends WebSocketListener {
     private OkHttpClient mOkHttpClient;
     private WebSocket mWebSocket;
     //websocket connect status
-    private volatile int mConnectStatus = WEBSOCKET_CONNECT_CLOSED;
-    private static int WEBSOCKET_CONNECT_MANUALLY_CLOSED = -3;
-    private static int WEBSOCKET_CONNECT_FAIL = -2;
-    private static int WEBSOCKET_CONNECT_CLOSED = -1;
-    private static int WEBSOCKET_CONNECT_ING = 0;
-    private static int WEBSOCKET_CONNECT_SUCCESS = 1;
-    private static int WEBSOCKET_CONNECT_OK = 2;
+    private volatile WebSocketStatus mConnectStatus = WebSocketStatus.DEFAULT;
 
     //call id
-    private AtomicInteger mCallId = new AtomicInteger(1);
+    private final AtomicInteger mCallId = new AtomicInteger(1);
+    private final JsonParser mJsonParser = new JsonParser();
+
     private ConcurrentHashMap<Integer, ReplyProcessImpl> mHashMapIdToProcess = new ConcurrentHashMap<>();
     private List<DelayCall> delayCalls = null;
 
@@ -107,47 +104,12 @@ public class WebSocketClient extends WebSocketListener {
         delayCalls = Collections.synchronizedList(new LinkedList<DelayCall>());
     }
 
-    class WebsocketError {
-        int code;
-        String message;
-        Object data;
-    }
-
-    class Call {
-        int id;
-        String method;
-        List<Object> params;
-    }
-
-    class DelayCall{
-        String flag;
-        Call call;
-        ReplyProcessImpl replyProcess;
-        public DelayCall(String flag, Call call, ReplyProcessImpl replyProcess){
-            this.flag = flag;
-            this.call = call;
-            this.replyProcess = replyProcess;
-        }
-    }
-
-    public class Reply<T> {
-        public String id;
-        public String jsonrpc;
-        public T result;
-        public WebsocketError error;
-    }
-
-    class ReplyBase {
-        int id;
-        String jsonrpc;
-    }
-
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
         Log.v(TAG, "onOpen: WebSocket is connected" );
         mWebSocket = webSocket;
-        mConnectStatus = WEBSOCKET_CONNECT_SUCCESS;
+        mConnectStatus = WebSocketStatus.OPENED;
         try {
             //websocke连接成功, send login
             login("", "", loginCallback);
@@ -167,9 +129,8 @@ public class WebSocketClient extends WebSocketListener {
         super.onMessage(webSocket, text);
         Log.v(TAG, String.format("onMessage: %s", text));
         try {
-            Gson gson = new Gson();
-            ReplyBase replyObjectBase = gson.fromJson(text, ReplyBase.class);
-            IReplyProcess iReplyProcess = mHashMapIdToProcess.remove(replyObjectBase.id);
+            int callId = mJsonParser.parse(text).getAsJsonObject().get("id").getAsInt();
+            IReplyProcess iReplyProcess = mHashMapIdToProcess.remove(callId);
             if (iReplyProcess != null) {
                 iReplyProcess.processTextToObject(text);
                 mHandler.sendMessage(mHandler.obtainMessage(WHAT_MESSAGE, iReplyProcess));
@@ -183,7 +144,7 @@ public class WebSocketClient extends WebSocketListener {
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         super.onFailure(webSocket, t, response);
         Log.v(TAG, "onFailure: WebSocket on failure", t);
-        mConnectStatus = WEBSOCKET_CONNECT_FAIL;
+        mConnectStatus = WebSocketStatus.FAILURE;
         _nDatabaseId = -1;
         _nBroadcastId = -1;
         _nHistoryId = -1;
@@ -199,32 +160,33 @@ public class WebSocketClient extends WebSocketListener {
     public void onClosing(WebSocket webSocket, int code, String reason) {
         super.onClosing(webSocket, code, reason);
         Log.v(TAG, "WebSocket is closing, code:" + code + " reason:" + reason);
+        mConnectStatus = WebSocketStatus.CLOSING;
     }
 
     @Override
     public void onClosed(WebSocket webSocket, int code, String reason) {
         super.onClosed(webSocket, code, reason);
         Log.v(TAG, "WebSocket is closed, code:" + code + " reason:" + reason);
-        mConnectStatus = WEBSOCKET_CONNECT_CLOSED;
+        mConnectStatus = WebSocketStatus.CLOSED;
     }
 
     //连接WebSocket
     public void connect() {
-        if(mConnectStatus == WEBSOCKET_CONNECT_ING
-                || mConnectStatus == WEBSOCKET_CONNECT_SUCCESS
-                || mConnectStatus == WEBSOCKET_CONNECT_OK){
+        if(mConnectStatus == WebSocketStatus.OPENING
+                || mConnectStatus == WebSocketStatus.OPENED
+                || mConnectStatus == WebSocketStatus.LOGIN){
             return;
         }
         String strServer = FullNodeServerSelect.getInstance().getServer();
         Log.v(TAG, strServer);
         if (TextUtils.isEmpty(strServer)) {
-            mConnectStatus = ErrorCode.ERROR_CONNECT_SERVER_INVALID;
+            //无效地址
             return;
         }
         Request request = new Request.Builder().url(strServer).build();
         mOkHttpClient = new OkHttpClient();
         mOkHttpClient.newWebSocket(request, this);
-        mConnectStatus = WEBSOCKET_CONNECT_ING;
+        mConnectStatus = WebSocketStatus.OPENING;
     }
 
     public void disconnect() {
@@ -239,7 +201,7 @@ public class WebSocketClient extends WebSocketListener {
             mWebSocket = null;
         }
         mOkHttpClient = null;
-        mConnectStatus = WEBSOCKET_CONNECT_MANUALLY_CLOSED;
+        mConnectStatus = WebSocketStatus.CLOSING;
         mHashMapIdToProcess.clear();
         _nDatabaseId = -1;
         _nBroadcastId = -1;
@@ -751,11 +713,11 @@ public class WebSocketClient extends WebSocketListener {
 
 
     private <T> void sendForReply(String flag, Call callObject, ReplyProcessImpl<Reply<T>> replyObjectProcess) throws NetworkStatusException {
-        if(mWebSocket != null && mConnectStatus == WEBSOCKET_CONNECT_OK){
+        if(mWebSocket != null && mConnectStatus == WebSocketStatus.LOGIN){
             sendForReplyImpl(callObject, replyObjectProcess);
         }else {
             delayCalls.add(new DelayCall(flag, callObject, replyObjectProcess));
-            if (mConnectStatus != WEBSOCKET_CONNECT_MANUALLY_CLOSED) {
+            if (mConnectStatus != WebSocketStatus.CLOSING || mConnectStatus != WebSocketStatus.CLOSED) {
                 connect();
             }
         }
@@ -823,7 +785,7 @@ public class WebSocketClient extends WebSocketListener {
         public void onMessage(Reply<Integer> reply) {
             _nDatabaseId = reply.result;
             if(_nDatabaseId != -1 && _nBroadcastId != -1 && _nHistoryId != -1){
-                mConnectStatus = WEBSOCKET_CONNECT_OK;
+                mConnectStatus = WebSocketStatus.LOGIN;
                 sendDelayForReply();
             }
         }
@@ -834,13 +796,12 @@ public class WebSocketClient extends WebSocketListener {
         }
     };
 
-
     private MessageCallback<Reply<Integer>> historyCallback = new MessageCallback<Reply<Integer>>() {
         @Override
         public void onMessage(Reply<Integer> reply) {
             _nHistoryId = reply.result;
             if(_nDatabaseId != -1 && _nBroadcastId != -1 && _nHistoryId != -1){
-                mConnectStatus = WEBSOCKET_CONNECT_OK;
+                mConnectStatus = WebSocketStatus.LOGIN;
                 sendDelayForReply();
             }
         }
@@ -856,7 +817,7 @@ public class WebSocketClient extends WebSocketListener {
         public void onMessage(Reply<Integer> reply) {
             _nBroadcastId = reply.result;
             if(_nDatabaseId != -1 && _nBroadcastId != -1 && _nHistoryId != -1){
-                mConnectStatus = WEBSOCKET_CONNECT_OK;
+                mConnectStatus = WebSocketStatus.LOGIN;
                 sendDelayForReply();
             }
         }
@@ -867,11 +828,6 @@ public class WebSocketClient extends WebSocketListener {
         }
     };
 
-    public interface MessageCallback<T>{
-        void onMessage(T reply);
-
-        void onFailure();
-    }
 
 }
 

@@ -12,6 +12,7 @@ import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
+import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MemoData;
@@ -293,7 +294,7 @@ public class BitsharesWalletWraper {
 
     public void get_account_history(ObjectId<AccountObject> accountObjectId,
                                     int nLimit,
-                                    WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_account_history(accountObjectId, nLimit, callback);
     }
 
@@ -325,24 +326,29 @@ public class BitsharesWalletWraper {
 //        return mapId2Object;
 //    }
 
-    public void lookup_asset_symbols(String strAssetSymbol, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void lookup_asset_symbols(String strAssetSymbol,
+                                     MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         mWalletApi.lookup_asset_symbols(strAssetSymbol, callback);
     }
 
     //get asset detail
-    public void get_objects(String objectId, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void get_objects(String objectId,
+                            MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_objects(objectId, callback);
     }
 
-    public void get_objects(Set<String> objectIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>> callback) throws NetworkStatusException {
+    public void get_objects(Set<String> objectIds,
+                            MessageCallback<Reply<List<AssetObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_objects(objectIds, callback);
     }
 
-    public void get_accounts(List<String> accountIds, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountObject>>> callback) throws NetworkStatusException {
+    public void get_accounts(List<String> accountIds,
+                             MessageCallback<Reply<List<AccountObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_accounts(accountIds, callback);
     }
 
-    public void get_block(int callId, int blockNumber, WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>> callback) throws NetworkStatusException {
+    public void get_block(int callId, int blockNumber,
+                          MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
         mWalletApi.get_block(callId, blockNumber, callback);
     }
 
@@ -370,7 +376,7 @@ public class BitsharesWalletWraper {
 
     public Operations.limit_order_cancel_operation getLimitOrderCancelOperation(ObjectId<AccountObject> accountId,
                                                                                 ObjectId<AssetObject> assetFeeId,
-                                                                                ObjectId<LimitOrderObject> limitOrderId,
+                                                                                ObjectId<LimitOrder> limitOrderId,
                                                                                 long amountFee) {
         return mWalletApi.getLimitOrderCancelOperation(accountId, assetFeeId, limitOrderId, amountFee);
     }
@@ -534,12 +540,17 @@ public class BitsharesWalletWraper {
 
     public void get_market_history(ObjectId<AssetObject> baseAssetId,
                                    ObjectId<AssetObject> quoteAssetId,
-                                   int nBucket, Date dateStart, Date dateEnd,
-                                   WebSocketClient.MessageCallback<WebSocketClient.Reply<List<BucketObject>>> callback) throws NetworkStatusException {
+                                   int nBucket,
+                                   Date dateStart,
+                                   Date dateEnd,
+                                   MessageCallback<Reply<List<BucketObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_market_history(baseAssetId, quoteAssetId, nBucket, dateStart, dateEnd, callback);
     }
 
-    public void subscribe_to_market(String id, String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+    public void subscribe_to_market(String id,
+                                    String base,
+                                    String quote,
+                                    MessageCallback<Reply<String>> callback) throws NetworkStatusException {
         mWalletApi.subscribe_to_market(id, base, quote, callback);
     }
 
@@ -552,7 +563,9 @@ public class BitsharesWalletWraper {
 //    }
 
     //
-    public void get_ticker(String base, String quote, WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>> callback) throws NetworkStatusException {
+    public void get_ticker(String base,
+                           String quote,
+                           MessageCallback<Reply<MarketTicker>> callback) throws NetworkStatusException {
         mWalletApi.get_ticker(base, quote, callback);
     }
 
@@ -563,17 +576,20 @@ public class BitsharesWalletWraper {
 
     public void get_fill_order_history(ObjectId<AssetObject> base,
                                        ObjectId<AssetObject> quote,
-                                       int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<HashMap<String, Object>>>> callback) throws NetworkStatusException {
+                                       int limit,
+                                       MessageCallback<Reply<List<HashMap<String, Object>>>> callback) throws NetworkStatusException {
         mWalletApi.get_fill_order_history(base, quote, limit, callback);
     }
 
     public void get_limit_orders(ObjectId<AssetObject> base,
                                  ObjectId<AssetObject> quote,
-                                 int limit, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LimitOrderObject>>> callback) throws NetworkStatusException {
+                                 int limit,
+                                 MessageCallback<Reply<List<LimitOrderObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_limit_orders(base, quote, limit, callback);
     }
 
-    public void get_balance_objects(List<String> addresses, WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockAssetObject>>> callback) throws NetworkStatusException {
+    public void get_balance_objects(List<String> addresses,
+                                    MessageCallback<Reply<List<LockAssetObject>>> callback) throws NetworkStatusException {
         mWalletApi.get_balance_objects(addresses, callback);
     }
 
@@ -623,7 +639,8 @@ public class BitsharesWalletWraper {
 //        return mBitshareData;
 //    }
 
-    public void get_account_object(String strAccount, WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>> callback) throws NetworkStatusException {
+    public void get_account_object(String strAccount,
+                                   MessageCallback<Reply<AccountObject>> callback) throws NetworkStatusException {
         mWalletApi.get_account_by_name(strAccount, callback);
     }
 
@@ -637,18 +654,22 @@ public class BitsharesWalletWraper {
 //        return mWalletApi.decrypt_memo_message(memoData);
 //    }
 
-    public void get_full_accounts(List<String> names, boolean subscribe,
-                                  WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>> callback) throws NetworkStatusException {
+    public void get_full_accounts(List<String> names,
+                                  boolean subscribe,
+                                  MessageCallback<Reply<List<FullAccountObjectReply>>> callback) throws NetworkStatusException {
         mWalletApi.get_full_accounts(names, subscribe, callback);
     }
 
-    public void get_required_fees(String assetId, int operationId, Operations.base_operation operation,
-                                  WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>> callback)
+    public void get_required_fees(String assetId,
+                                  int operationId,
+                                  Operations.base_operation operation,
+                                  MessageCallback<Reply<List<FeeAmountObject>>> callback)
             throws NetworkStatusException {
         mWalletApi.get_required_fees(assetId, operationId, operation, callback);
     }
 
-    public void broadcast_transaction_with_callback(SignedTransaction signedTransaction, WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> callback) throws NetworkStatusException {
+    public void broadcast_transaction_with_callback(SignedTransaction signedTransaction,
+                                                    MessageCallback<Reply<String>> callback) throws NetworkStatusException {
         mWalletApi.broadcast_transaction_with_callback(signedTransaction, callback);
     }
 
@@ -667,7 +688,7 @@ public class BitsharesWalletWraper {
 //    }
 //
 
-    public void get_dynamic_global_properties(WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>> callback) throws NetworkStatusException {
+    public void get_dynamic_global_properties(MessageCallback<Reply<DynamicGlobalPropertyObject>> callback) throws NetworkStatusException {
         mWalletApi.get_dynamic_global_properties(callback);
     }
 

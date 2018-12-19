@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.main.BottomNavigationActivity;
 import com.cybexmobile.activity.introduction.WalletIntroductionActivity;
@@ -461,9 +463,9 @@ public class RegisterActivity extends BaseActivity {
 
     private void login(String account, String password){
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(account, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+            BitsharesWalletWraper.getInstance().get_account_object(account, new MessageCallback<Reply<AccountObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
                     int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, account, password);
                     runOnUiThread(new Runnable() {
@@ -548,9 +550,9 @@ public class RegisterActivity extends BaseActivity {
 
     private void processCheckAccount(final String strAccount) {
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(strAccount, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+            BitsharesWalletWraper.getInstance().get_account_object(strAccount, new MessageCallback<Reply<AccountObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
                     runOnUiThread(new Runnable() {
                         @Override

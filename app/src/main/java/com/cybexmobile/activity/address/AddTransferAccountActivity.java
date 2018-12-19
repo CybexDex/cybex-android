@@ -23,6 +23,8 @@ import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybex.provider.apollo.ApolloClientApi;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -280,9 +282,9 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
                     });
         } else {
             try {
-                BitsharesWalletWraper.getInstance().get_account_object(accountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+                BitsharesWalletWraper.getInstance().get_account_object(accountName, new MessageCallback<Reply<AccountObject>>() {
                     @Override
-                    public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                    public void onMessage(Reply<AccountObject> reply) {
                         AccountObject accountObject = reply.result;
                         EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
                     }

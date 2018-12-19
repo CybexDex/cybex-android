@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.cache.AssetPairCache;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.event.Event;
@@ -25,18 +26,20 @@ import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybex.provider.graphene.chain.LimitOrderObject;
+import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.http.entity.AssetRmbPrice;
-import com.cybex.provider.market.OpenOrder;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
+import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
 import com.cybexmobile.data.item.OpenOrderItem;
@@ -69,6 +72,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private static final String TAB_ALL = "All";
     private static final String TAB_BUY = "Buy";
     private static final String TAB_SELL = "Sell";
+    private final List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB"});
 
     private String mUserName;
     private double mTotalOpenOrderRMBPrice;
@@ -79,7 +83,6 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private TextView mOpenOrderTotalValue, mTvOpenOrderTotalTitle;
     private RecyclerView mRecyclerView;
     private OpenOrderRecyclerViewAdapter mOpenOrderRecycerViewAdapter;
-    private List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB"});
     private Toolbar mToolbar;
     private WebSocketService mWebSocketService;
     private SharedPreferences mSharedPreference;
@@ -126,6 +129,70 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         EventBus.getDefault().unregister(this);
     }
 
+    private void loadLimitOrderData() {
+        if(mFullAccountObject == null) {
+            return;
+        }
+        LimitOrderWrapper.getInstance().get_opend_limit_orders(
+                mFullAccountObject.account.id.toString(),
+                mOpendLimitOrderCallback);
+    }
+
+    private void parseOpenOrderItems(List<LimitOrder> limitOrders){
+        mOpenOrderItems.clear();
+        if(limitOrders == null || limitOrders.size() == 0){
+            return;
+        }
+        for (LimitOrder limitOrder : limitOrders) {
+            OpenOrderItem item = new OpenOrderItem();
+            item.limitOrder = limitOrder;
+            item.baseAsset = mWebSocketService.getAssetObject(limitOrder.key.asset1);
+            item.quoteAsset = mWebSocketService.getAssetObject(limitOrder.key.asset2);
+            item.isSell = checkIsSell(item.baseAsset.symbol, item.quoteAsset.symbol, mCompareSymbol);
+            mOpenOrderItems.add(item);
+        }
+    }
+
+    private boolean checkIsSell(String baseSymbol, String quoteSymbol, List<String> compareSymbol) {
+        boolean isContainBase = compareSymbol.contains(baseSymbol);
+        boolean isContainQuote = compareSymbol.contains(quoteSymbol);
+        int baseIndex = compareSymbol.indexOf(baseSymbol);
+        int quoteIndex = compareSymbol.indexOf(quoteSymbol);
+        if (isContainBase) {
+            if (!isContainQuote) {
+                return false;
+            } else {
+                if (baseIndex < quoteIndex) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } else {
+            if (isContainQuote) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private MessageCallback<Reply<List<LimitOrder>>> mOpendLimitOrderCallback = new MessageCallback<Reply<List<LimitOrder>>>() {
+        @Override
+        public void onMessage(Reply<List<LimitOrder>> reply) {
+            parseOpenOrderItems(reply.result);
+            calculateTotalValue();
+            hideLoadDialog();
+            mOpenOrderRecycerViewAdapter.getFilter().filter(mCurrTab);
+            mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -133,31 +200,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             mWebSocketService = binder.getService();
             //AccountFragment已经获取了FullAccount数据
             mFullAccountObject = mWebSocketService.getFullAccount(mUserName);
-            List<LimitOrderObject> limitOrderObjects = mFullAccountObject == null ? null : mFullAccountObject.limit_orders;
-            if (limitOrderObjects == null || limitOrderObjects.size() == 0) {
-                hideLoadDialog();
-                return;
-            }
-            for (LimitOrderObject limitOrderObject : limitOrderObjects) {
-                OpenOrderItem item = new OpenOrderItem();
-                OpenOrder openOrder = new OpenOrder();
-                openOrder.setLimitOrder(limitOrderObject);
-                String baseId = limitOrderObject.sell_price.base.asset_id.toString();
-                String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
-                List<AssetObject> assetObjects = mWebSocketService.getAssetObjects(baseId, quoteId);
-                if (assetObjects != null && assetObjects.size() == 2) {
-                    String baseSymbol = assetObjects.get(0).symbol;
-                    String quoteSymbol = assetObjects.get(1).symbol;
-                    item.isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
-                    openOrder.setBaseObject(assetObjects.get(0));
-                    openOrder.setQuoteObject(assetObjects.get(1));
-                }
-                item.openOrder = openOrder;
-                mOpenOrderItems.add(item);
-            }
-            calculateTotalValue();
-            hideLoadDialog();
-            mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
+            loadLimitOrderData();
         }
 
         @Override
@@ -187,36 +230,38 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         if(watchlistDataList == null || watchlistDataList.size() == 0){
             return;
         }
-        if(openOrderItem.openOrder.getBaseObject() == null || openOrderItem.openOrder.getQuoteObject() == null){
+        if(openOrderItem.baseAsset == null || openOrderItem.quoteAsset == null){
             return;
         }
-        if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_CYB)) {
+        if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_CYB)) {
             AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
             openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-        } else if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_ETH)) {
+        } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_ETH)) {
             AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_ETH);
             openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-        } else if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_USDT)) {
+        } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_USDT)) {
             AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_USDT);
             openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-        } else if (openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString().equals(ASSET_ID_BTC)) {
+        } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_BTC)) {
             AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_BTC);
             openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
         } else {
             for (WatchlistData watchlistData : watchlistDataList) {
-                if (watchlistData.getQuoteId().equals(openOrderItem.openOrder.getLimitOrder().sell_price.base.asset_id.toString())) {
+                if (watchlistData.getQuoteId().equals(openOrderItem.baseAsset.id.toString())) {
                     openOrderItem.itemRMBPrice = watchlistData.getRmbPrice() * watchlistData.getCurrentPrice();
                     break;
                 }
             }
         }
-        if (openOrderItem.isSell) {
-            mSellOpenOrderRMBPrice += (openOrderItem.openOrder.getLimitOrder().for_sale / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) * openOrderItem.itemRMBPrice;
+        double openOrderRMBPrice;
+        if (openOrderItem.limitOrder.is_sell) {
+            openOrderRMBPrice = AssetUtil.multiply(AssetUtil.divide(openOrderItem.limitOrder.min_to_receive, Math.pow(10, openOrderItem.baseAsset.precision)), openOrderItem.itemRMBPrice);
+            mSellOpenOrderRMBPrice += openOrderRMBPrice;
         } else {
-            mBuyOpenOrderRMBPrice += (openOrderItem.openOrder.getLimitOrder().for_sale / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) * openOrderItem.itemRMBPrice;
+            openOrderRMBPrice = AssetUtil.multiply(AssetUtil.divide(openOrderItem.limitOrder.amount_to_sell, Math.pow(10, openOrderItem.baseAsset.precision)), openOrderItem.itemRMBPrice);
+            mBuyOpenOrderRMBPrice += openOrderRMBPrice;
         }
-        mTotalOpenOrderRMBPrice += (openOrderItem.openOrder.getLimitOrder().for_sale / Math.pow(10, openOrderItem.openOrder.getBaseObject().precision)) * openOrderItem.itemRMBPrice;
-
+        mTotalOpenOrderRMBPrice += openOrderRMBPrice;
     }
 
     private void initViews() {
@@ -225,7 +270,6 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mOpenOrderTotalValue = findViewById(R.id.open_orders_total_value);
         mTvOpenOrderTotalTitle = findViewById(R.id.open_orders_title);
         mSegmentedGroup.setOnCheckedChangeListener(this);
-
     }
 
     @Override
@@ -259,8 +303,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mWebSocketService.loadLimitOrderCancelFee(assetId, ID_CANCEL_LMMIT_ORDER_OPERATION,
                 BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
                         ObjectId.create_from_string(ASSET_ID_CYB),
-                        mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.openOrder.getBaseObject().id : mCurrOpenOrderItem.openOrder.getQuoteObject().id,
-                        mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.openOrder.getQuoteObject().id : mCurrOpenOrderItem.openOrder.getBaseObject().id,
+                        mCurrOpenOrderItem.baseAsset.id,
+                        mCurrOpenOrderItem.quoteAsset.id,
                         0, 0, 0));
     }
 
@@ -301,13 +345,13 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             if (accountBalance.balance >= feeAmount.amount) {//cyb足够扣手续费
                 limitOrderCancelConfirm(mUserName, feeAmount);
             } else { //cyb不够扣手续费 扣取委单的base或者quote
-                if (ASSET_ID_CYB.equals(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString())) {
+                if (ASSET_ID_CYB.equals(mCurrOpenOrderItem.baseAsset.id.toString())) {
                     hideLoadDialog();
                     ToastMessage.showNotEnableDepositToastMessage(this,
                             getResources().getString(R.string.text_not_enough),
                             R.drawable.ic_error_16px);
                 } else {
-                    loadLimitOrderCancelFee(mCurrOpenOrderItem.openOrder.getBaseObject().id.toString());
+                    loadLimitOrderCancelFee(mCurrOpenOrderItem.baseAsset.id.toString());
                 }
             }
         } else {
@@ -323,99 +367,25 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadAssets(Event.LoadAssets event) {
-        List<AssetObject> assetObjects = event.getData();
-        if (assetObjects == null && assetObjects.size() != 2) {
-            return;
-        }
-        for (int i = 0; i < mOpenOrderItems.size(); i++) {
-            LimitOrderObject limitOrderObject = mOpenOrderItems.get(i).openOrder.getLimitOrder();
-            String baseId = limitOrderObject.sell_price.base.asset_id.toString();
-            String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
-            if (baseId.equals(assetObjects.get(0).id.toString()) && quoteId.equals(assetObjects.get(1).id.toString())) {
-                String baseSymbol = assetObjects.get(0).symbol;
-                String quoteSymbol = assetObjects.get(1).symbol;
-                mOpenOrderItems.get(i).isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
-                mOpenOrderItems.get(i).openOrder.setBaseObject(assetObjects.get(0));
-                mOpenOrderItems.get(i).openOrder.setQuoteObject(assetObjects.get(1));
-                hideLoadDialog();
-                mOpenOrderRecycerViewAdapter.notifyItemChanged(i);
-                break;
-            }
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event) {
         mFullAccountObject = event.getFullAccount();
-        mOpenOrderItems.clear();
         mTotalOpenOrderRMBPrice = 0;
         mSellOpenOrderRMBPrice = 0;
         mBuyOpenOrderRMBPrice = 0;
-        List<LimitOrderObject> limitOrderObjects = mFullAccountObject == null ? null : mFullAccountObject.limit_orders;
-        if (limitOrderObjects == null || limitOrderObjects.size() == 0) {
-            hideLoadDialog();
-            calculateTotalValue();
-            mOpenOrderRecycerViewAdapter.getFilter().filter(mCurrTab);
-            mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
-            return;
-        }
-        for (LimitOrderObject limitOrderObject : limitOrderObjects) {
-            OpenOrderItem item = new OpenOrderItem();
-            OpenOrder openOrder = new OpenOrder();
-            openOrder.setLimitOrder(limitOrderObject);
-            String baseId = limitOrderObject.sell_price.base.asset_id.toString();
-            String quoteId = limitOrderObject.sell_price.quote.asset_id.toString();
-            List<AssetObject> assetObjects = mWebSocketService.getAssetObjects(baseId, quoteId);
-            if (assetObjects != null && assetObjects.size() == 2) {
-                String baseSymbol = assetObjects.get(0).symbol;
-                String quoteSymbol = assetObjects.get(1).symbol;
-                item.isSell = checkIsSell(baseSymbol, quoteSymbol, mCompareSymbol);
-                openOrder.setBaseObject(assetObjects.get(0));
-                openOrder.setQuoteObject(assetObjects.get(1));
-            }
-            item.openOrder = openOrder;
-            mOpenOrderItems.add(item);
-        }
-        calculateTotalValue();
-        hideLoadDialog();
-        mOpenOrderRecycerViewAdapter.getFilter().filter(mCurrTab);
-        mOpenOrderRecycerViewAdapter.notifyDataSetChanged();
+        loadLimitOrderData();
     }
 
-    private boolean checkIsSell(String baseSymbol, String quoteSymbol, List<String> compareSymbol) {
-        boolean isContainBase = compareSymbol.contains(baseSymbol);
-        boolean isContainQuote = compareSymbol.contains(quoteSymbol);
-        int baseIndex = compareSymbol.indexOf(baseSymbol);
-        int quoteIndex = compareSymbol.indexOf(quoteSymbol);
-        if (isContainBase) {
-            if (!isContainQuote) {
-                return false;
-            } else {
-                if (baseIndex < quoteIndex) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        } else {
-            if (isContainQuote) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
+
 
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
 
-    private WebSocketClient.MessageCallback mLimitOrderCancelCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+    private MessageCallback mLimitOrderCancelCallback = new MessageCallback<Reply<String>>() {
 
         @Override
-        public void onMessage(WebSocketClient.Reply<String> reply) {
+        public void onMessage(Reply<String> reply) {
             EventBus.getDefault().post(new Event.LimitOrderCancel(reply.result == null && reply.error == null));
         }
 
@@ -425,43 +395,40 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         }
     };
 
-    private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount) {
+    private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
         hideLoadDialog();
         String priceStr;
         String amountStr;
         String totalStr;
         String feeStr;
-        LimitOrderObject limitOrderObject = mCurrOpenOrderItem.openOrder.getLimitOrder();
-        AssetObject base = mCurrOpenOrderItem.openOrder.getBaseObject();
-        AssetObject quote = mCurrOpenOrderItem.openOrder.getQuoteObject();
-        /**
-         * fix bug:CYM-349
-         * 订单部分撮合
-         */
-        if (mCurrOpenOrderItem.isSell) {
-            double amount = limitOrderObject.for_sale / Math.pow(10, base.precision);
-            double price = (limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision)) / (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision));
-            double total = amount * price;
-            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(quote.symbol));
-            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), AssetUtil.parseSymbol(base.symbol));
-            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(quote.symbol));
+        LimitOrder limitOrder = mCurrOpenOrderItem.limitOrder;
+        AssetObject baseAsset = mCurrOpenOrderItem.baseAsset;
+        AssetObject quoteAsset = mCurrOpenOrderItem.quoteAsset;
+        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(
+                mCurrOpenOrderItem.isSell ? quoteAsset.id.toString() : baseAsset.id.toString(),
+                mCurrOpenOrderItem.isSell ? baseAsset.id.toString() : quoteAsset.id.toString());
+        if(mCurrOpenOrderItem.isSell){
+            double amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision)),
+                    AssetUtil.divide(limitOrder.sold, Math.pow(10, baseAsset.precision)));
+            double total = AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision));
+            double price = AssetUtil.divide(total, amount);
+            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(quoteAsset.symbol));
+            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), AssetUtil.parseSymbol(baseAsset.symbol));
+            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(quoteAsset.symbol));
         } else {
-            double amount = limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision) * ((double) limitOrderObject.for_sale / limitOrderObject.sell_price.base.amount);
-            double price = (limitOrderObject.sell_price.base.amount / Math.pow(10, base.precision)) / ((double) limitOrderObject.sell_price.quote.amount / Math.pow(10, quote.precision));
-            double total = limitOrderObject.for_sale / Math.pow(10, base.precision);
-            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(base.symbol));
-            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(price)), AssetUtil.parseSymbol(quote.symbol));
-            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, AssetUtil.pricePrecision(price)), AssetUtil.parseSymbol(base.symbol));
+            double amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision)),
+                    AssetUtil.divide(limitOrder.received, Math.pow(10, quoteAsset.precision)));
+            double total = AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision));
+            double price = AssetUtil.divide(total, amount);
+            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
+            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), AssetUtil.parseSymbol(quoteAsset.symbol));
+            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
         }
-        if (feeAmount.asset_id.equals(ASSET_ID_CYB)) {
+        if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
             AssetObject cybAsset = mWebSocketService.getAssetObject(ASSET_ID_CYB);
-            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
+            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount/Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
         } else {
-            /**
-             * fix bug:CYM-419
-             * 未保留有效精度
-             */
-            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, base.precision), base.precision), AssetUtil.parseSymbol(base.symbol));
+            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, baseAsset.precision), baseAsset.precision), AssetUtil.parseSymbol(baseAsset.symbol));
         }
         CybexDialog.showLimitOrderCancelConfirmationDialog(this, !mCurrOpenOrderItem.isSell,
                 priceStr, amountStr, totalStr, feeStr,
@@ -489,12 +456,12 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     private void toCancelLimitOrder(FeeAmountObject feeAmount) {
         try {
-            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     Operations.limit_order_cancel_operation operation = BitsharesWalletWraper.getInstance().
                             getLimitOrderCancelOperation(mFullAccountObject.account.id, ObjectId.create_from_string(feeAmount.asset_id),
-                                    mCurrOpenOrderItem.openOrder.getLimitOrder().id, feeAmount.amount);
+                                    mCurrOpenOrderItem.limitOrder.order_id, feeAmount.amount);
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                             mFullAccountObject.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
                     try {

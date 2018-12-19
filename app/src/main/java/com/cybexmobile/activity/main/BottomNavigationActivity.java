@@ -20,6 +20,7 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.activity.markets.MarketsActivity;
 import com.cybex.provider.http.RetrofitFactory;
@@ -151,6 +152,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if(mDisposableAppConfig != null && !mDisposableAppConfig.isDisposed()){
             mDisposableAppConfig.dispose();
         }
+        LimitOrderWrapper.getInstance().disconnect();
     }
 
     @Override

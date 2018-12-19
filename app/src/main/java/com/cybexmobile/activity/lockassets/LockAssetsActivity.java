@@ -25,6 +25,8 @@ import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.Types;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
@@ -253,10 +255,10 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
         }
     };
 
-    private WebSocketClient.MessageCallback mLockupAssetCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<LockAssetObject>>>() {
+    private MessageCallback mLockupAssetCallback = new MessageCallback<Reply<List<LockAssetObject>>>() {
 
         @Override
-        public void onMessage(WebSocketClient.Reply<List<LockAssetObject>> reply) {
+        public void onMessage(Reply<List<LockAssetObject>> reply) {
             List<LockAssetObject> lockAssetObjects = reply.result;
             if (lockAssetObjects == null || lockAssetObjects.size() == 0) {
                 mHandler.sendEmptyMessage(MESSAGE_WHAT_NO_DATA);
@@ -384,9 +386,9 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
                     (long)lockAssetItem.lockAssetobject.balance.amount,
                     lockAssetItem.lockAssetobject.balance.asset_id
             );
-            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                             mAccountObject,
                             operation,
@@ -411,9 +413,9 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
         }
     }
 
-    WebSocketClient.MessageCallback mBalanceClaimCallBack = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+    MessageCallback mBalanceClaimCallBack = new MessageCallback<Reply<String>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<String> reply) {
+        public void onMessage(Reply<String> reply) {
             EventBus.getDefault().post(new Event.BalanceClaim(reply.result == null && reply.error == null));
         }
 

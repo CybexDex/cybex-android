@@ -17,6 +17,8 @@ import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.provider.http.response.AssetsPairResponse;
@@ -673,9 +675,9 @@ public class WebSocketService extends Service {
         }
     }
 
-    private WebSocketClient.MessageCallback mLimitOrderCreateFeeCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+    private MessageCallback mLimitOrderCreateFeeCallback = new MessageCallback<Reply<List<FeeAmountObject>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+        public void onMessage(Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
             if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
                 return;
@@ -690,9 +692,9 @@ public class WebSocketService extends Service {
         }
     };
 
-    private WebSocketClient.MessageCallback mLimitOrderCancelFeesCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+    private MessageCallback mLimitOrderCancelFeesCallback = new MessageCallback<Reply<List<FeeAmountObject>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+        public void onMessage(Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
             if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
                 return;
@@ -707,9 +709,9 @@ public class WebSocketService extends Service {
         }
     };
 
-    private WebSocketClient.MessageCallback mBlockCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<BlockHeader>>() {
+    private MessageCallback mBlockCallback = new MessageCallback<Reply<BlockHeader>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<BlockHeader> reply) {
+        public void onMessage(Reply<BlockHeader> reply) {
             BlockHeader block = reply.result;
             EventBus.getDefault().post(new Event.LoadBlock(Integer.parseInt(reply.id), block));
         }
@@ -720,10 +722,10 @@ public class WebSocketService extends Service {
         }
     };
 
-    private WebSocketClient.MessageCallback mAccountHistoryCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountHistoryObject>>>() {
+    private MessageCallback mAccountHistoryCallback = new MessageCallback<Reply<List<AccountHistoryObject>>>() {
 
         @Override
-        public void onMessage(WebSocketClient.Reply<List<AccountHistoryObject>> reply) {
+        public void onMessage(Reply<List<AccountHistoryObject>> reply) {
             List<AccountHistoryObject> accountHistoryObjects = reply.result;
             if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
                 return;
@@ -738,10 +740,10 @@ public class WebSocketService extends Service {
     };
 
     //get market ticker callback
-    private WebSocketClient.MessageCallback mMarketTickerCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<MarketTicker>>() {
+    private MessageCallback mMarketTickerCallback = new MessageCallback<Reply<MarketTicker>>() {
 
         @Override
-        public void onMessage(WebSocketClient.Reply<MarketTicker> reply) {
+        public void onMessage(Reply<MarketTicker> reply) {
             MarketTicker marketTicker = reply.result;
             if (marketTicker == null) {
                 return;
@@ -765,16 +767,13 @@ public class WebSocketService extends Service {
         }
     };
 
-    private WebSocketClient.MessageCallback mAccountObjectCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AccountObject>>>() {
+    private MessageCallback mAccountObjectCallback = new MessageCallback<Reply<List<AccountObject>>>() {
 
         @Override
-        public void onMessage(WebSocketClient.Reply<List<AccountObject>> reply) {
+        public void onMessage(Reply<List<AccountObject>> reply) {
             AccountObject accountObject = reply.result.get(0);
             mAccountHashMap.put(accountObject.id.toString(), accountObject);
-            if(accountObject != null){
-                EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
-            }
-
+            EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
         }
 
         @Override
@@ -818,9 +817,9 @@ public class WebSocketService extends Service {
     }
 
     //get asset object callback
-    private WebSocketClient.MessageCallback mAssetMultiCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>>() {
+    private MessageCallback mAssetMultiCallback = new MessageCallback<Reply<List<AssetObject>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<AssetObject>> reply) {
+        public void onMessage(Reply<List<AssetObject>> reply) {
             List<AssetObject> assetObjects = reply.result;
             if (assetObjects == null || assetObjects.size() == 0) {
                 return;
@@ -891,9 +890,9 @@ public class WebSocketService extends Service {
     };
 
     //get asset object callback
-    private WebSocketClient.MessageCallback mAssetOneCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<AssetObject>>>() {
+    private MessageCallback mAssetOneCallback = new MessageCallback<Reply<List<AssetObject>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<AssetObject>> reply) {
+        public void onMessage(Reply<List<AssetObject>> reply) {
             AssetObject assetObject = reply.result.get(0);
             mAssetObjects.add(assetObject);
             EventBus.getDefault().post(new Event.LoadAsset(assetObject));
@@ -906,9 +905,9 @@ public class WebSocketService extends Service {
     };
 
     //get full account callback
-    private WebSocketClient.MessageCallback mFullAccountCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>>() {
+    private MessageCallback mFullAccountCallback = new MessageCallback<Reply<List<FullAccountObjectReply>>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<List<FullAccountObjectReply>> reply) {
+        public void onMessage(Reply<List<FullAccountObjectReply>> reply) {
             List<FullAccountObjectReply> fullAccountObjectReplies = reply.result;
             if (fullAccountObjectReplies == null || fullAccountObjectReplies.size() == 0) {
                 return;
@@ -1053,8 +1052,6 @@ public class WebSocketService extends Service {
         loadAssetObjectData(assetSymbol);
         return null;
     }
-
-
 
     public List<AssetObject> getAssetObjects(String baseAssetId, String quoteAssetId) {
         List<AssetObject> assetObjects = new ArrayList<>();

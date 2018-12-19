@@ -28,6 +28,8 @@ import android.widget.TextView;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.utils.NetworkUtils;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -354,9 +356,9 @@ public class TransferActivity extends BaseActivity implements
         mPbLoading.setVisibility(View.VISIBLE);
         mIvAccountCheck.setVisibility(View.GONE);
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(accountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+            BitsharesWalletWraper.getInstance().get_account_object(accountName, new MessageCallback<Reply<AccountObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
                     EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
                 }
@@ -757,9 +759,9 @@ public class TransferActivity extends BaseActivity implements
                 mFromAccountObject.options.memo_key,
                 mToAccountObject.options.memo_key);
         try {
-            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                             mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
                     try {
@@ -799,9 +801,9 @@ public class TransferActivity extends BaseActivity implements
                 mFromAccountObject.options.memo_key,
                 mFromAccountObject.options.memo_key);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee, new MessageCallback<Reply<List<FeeAmountObject>>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+                public void onMessage(Reply<List<FeeAmountObject>> reply) {
                     EventBus.getDefault().post(new Event.LoadTransferFee(reply.result.get(0), isLoadFeeToTransfer));
                 }
 
@@ -877,10 +879,10 @@ public class TransferActivity extends BaseActivity implements
     /**
      * 转账callback
      */
-    private WebSocketClient.MessageCallback mTransferCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>(){
+    private MessageCallback mTransferCallback = new MessageCallback<Reply<String>>(){
 
         @Override
-        public void onMessage(WebSocketClient.Reply<String> reply) {
+        public void onMessage(Reply<String> reply) {
             EventBus.getDefault().post(new Event.Transfer(reply.result == null && reply.error == null));
         }
 

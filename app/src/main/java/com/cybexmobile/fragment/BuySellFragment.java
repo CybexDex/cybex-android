@@ -28,6 +28,8 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.login.LoginActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -745,9 +747,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
      */
     private void toExchange(){
         try {
-            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     long amountSell;
                     long amountReceive;
                     if(mCurrentAction.equals(ACTION_BUY)){
@@ -791,10 +793,10 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         mExchangeLimitOrderFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
     }
 
-    private WebSocketClient.MessageCallback mLimitOrderCreateCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>(){
+    private MessageCallback mLimitOrderCreateCallback = new MessageCallback<Reply<String>>(){
 
         @Override
-        public void onMessage(WebSocketClient.Reply<String> reply) {
+        public void onMessage(Reply<String> reply) {
             EventBus.getDefault().post(new Event.LimitOrderCreate(reply.result == null && reply.error == null));
         }
 

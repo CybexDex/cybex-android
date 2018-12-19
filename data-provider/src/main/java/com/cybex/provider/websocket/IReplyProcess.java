@@ -14,7 +14,7 @@ public interface IReplyProcess<T> {
 
     String getResponse();
 
-    WebSocketClient.MessageCallback<T> getCallback();
+    MessageCallback<T> getCallback();
 
     void release();
 }

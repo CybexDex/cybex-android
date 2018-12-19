@@ -40,6 +40,8 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
@@ -428,9 +430,9 @@ public class WithdrawActivity extends BaseActivity {
                     @Override
                     public void onClick(Dialog dialog) {
                         try {
-                            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+                            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                                 @Override
-                                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                                     mDynamicGlobalPropertyObject = reply.result;
                                     mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
                                     broadCastTransaction(mSignedTransaction);
@@ -555,9 +557,9 @@ public class WithdrawActivity extends BaseActivity {
         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, ASSET_ID_CYB, 0);
         double cybBalance = getBalance(mFullAccountObject, ASSET_ID_CYB);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(ASSET_ID_CYB, ID_TRANSER_OPERATION, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(ASSET_ID_CYB, ID_TRANSER_OPERATION, transferOperation, new MessageCallback<Reply<List<FeeAmountObject>>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+                public void onMessage(Reply<List<FeeAmountObject>> reply) {
                     if (mHandler == null) {
                         return;
                     }
@@ -593,9 +595,9 @@ public class WithdrawActivity extends BaseActivity {
 
     private void broadCastTransaction(SignedTransaction signedTransaction) {
         try {
-            BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+            BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new MessageCallback<Reply<String>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<String> reply) {
+                public void onMessage(Reply<String> reply) {
                     EventBus.getDefault().post(new Event.Withdraw(reply.result == null && reply.error == null));
                 }
 
@@ -645,9 +647,9 @@ public class WithdrawActivity extends BaseActivity {
         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo,
                 mWithdrawAmountEditText.getText().toString().trim(), mAssetObject.id.toString(), 0);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(mAssetObject.id.toString(), 0, transferOperation, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(mAssetObject.id.toString(), 0, transferOperation, new MessageCallback<Reply<List<FeeAmountObject>>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<List<FeeAmountObject>> reply) {
+                public void onMessage(Reply<List<FeeAmountObject>> reply) {
                     if (mHandler == null) {
                         return;
                     }
@@ -816,9 +818,9 @@ public class WithdrawActivity extends BaseActivity {
         List<String> accountIds = new ArrayList<>();
         accountIds.add(accountId);
         try {
-            BitsharesWalletWraper.getInstance().get_full_accounts(accountIds, true, new WebSocketClient.MessageCallback<WebSocketClient.Reply<List<FullAccountObjectReply>>>() {
+            BitsharesWalletWraper.getInstance().get_full_accounts(accountIds, true, new MessageCallback<Reply<List<FullAccountObjectReply>>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<List<FullAccountObjectReply>> reply) {
+                public void onMessage(Reply<List<FullAccountObjectReply>> reply) {
                     mToAccountObject = reply.result.get(0).fullAccountObject;
                 }
 
