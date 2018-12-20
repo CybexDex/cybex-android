@@ -225,7 +225,6 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 .subscribe(new Consumer<WebSocketMessage>() {
                     @Override
                     public void accept(WebSocketMessage webSocketMessage) throws Exception {
-                        Log.d("dzm", webSocketMessage.getText());
                         JsonElement jsonElement = mJsonParser.parse(webSocketMessage.getText());
                         JsonObject jsonObject = jsonElement.getAsJsonObject();
                         double price = jsonObject.get("px").getAsDouble();

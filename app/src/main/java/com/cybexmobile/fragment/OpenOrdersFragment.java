@@ -446,9 +446,10 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
         for (LimitOrder limitOrder : limitOrders) {
             OpenOrderItem item = new OpenOrderItem();
             item.limitOrder = limitOrder;
-            item.baseAsset = mWebSocketService.getAssetObject(limitOrder.key.asset1);
-            item.quoteAsset = mWebSocketService.getAssetObject(limitOrder.key.asset2);
-            item.isSell = checkIsSell(item.baseAsset.symbol, item.quoteAsset.symbol, mCompareSymbol);
+            AssetsPair assetsPair = AssetPairCache.getInstance().getAssetPair(limitOrder.key.asset1, limitOrder.key.asset2);
+            item.isSell = limitOrder.is_sell ? limitOrder.key.asset2.equals(assetsPair.getBase()) : limitOrder.key.asset1.equals(assetsPair.getBase());
+            item.baseAsset = assetsPair.getBaseAsset();
+            item.quoteAsset = assetsPair.getQuoteAsset();
             mOpenOrderItems.add(item);
         }
     }

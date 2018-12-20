@@ -146,34 +146,11 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         for (LimitOrder limitOrder : limitOrders) {
             OpenOrderItem item = new OpenOrderItem();
             item.limitOrder = limitOrder;
-            item.baseAsset = mWebSocketService.getAssetObject(limitOrder.key.asset1);
-            item.quoteAsset = mWebSocketService.getAssetObject(limitOrder.key.asset2);
-            item.isSell = checkIsSell(item.baseAsset.symbol, item.quoteAsset.symbol, mCompareSymbol);
+            AssetsPair assetsPair = AssetPairCache.getInstance().getAssetPair(limitOrder.key.asset1, limitOrder.key.asset2);
+            item.isSell = limitOrder.is_sell ? limitOrder.key.asset2.equals(assetsPair.getBase()) : limitOrder.key.asset1.equals(assetsPair.getBase());
+            item.baseAsset = assetsPair.getBaseAsset();
+            item.quoteAsset = assetsPair.getQuoteAsset();
             mOpenOrderItems.add(item);
-        }
-    }
-
-    private boolean checkIsSell(String baseSymbol, String quoteSymbol, List<String> compareSymbol) {
-        boolean isContainBase = compareSymbol.contains(baseSymbol);
-        boolean isContainQuote = compareSymbol.contains(quoteSymbol);
-        int baseIndex = compareSymbol.indexOf(baseSymbol);
-        int quoteIndex = compareSymbol.indexOf(quoteSymbol);
-        if (isContainBase) {
-            if (!isContainQuote) {
-                return false;
-            } else {
-                if (baseIndex < quoteIndex) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        } else {
-            if (isContainQuote) {
-                return true;
-            } else {
-                return false;
-            }
         }
     }
 
@@ -210,6 +187,9 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     };
 
     private void calculateTotalValue() {
+        mBuyOpenOrderRMBPrice = 0;
+        mSellOpenOrderRMBPrice = 0;
+        mTotalOpenOrderRMBPrice = 0;
         if (mOpenOrderItems.size() == 0) {
             mOpenOrderTotalValue.setText(String.format("≈¥%s", "0.0000"));
             return;
@@ -233,29 +213,46 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         if(openOrderItem.baseAsset == null || openOrderItem.quoteAsset == null){
             return;
         }
-        if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_CYB)) {
-            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
-            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-        } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_ETH)) {
-            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_ETH);
-            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-        } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_USDT)) {
-            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_USDT);
-            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-        } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_BTC)) {
-            AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_BTC);
-            openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
-        } else {
-            for (WatchlistData watchlistData : watchlistDataList) {
-                if (watchlistData.getQuoteId().equals(openOrderItem.baseAsset.id.toString())) {
-                    openOrderItem.itemRMBPrice = watchlistData.getRmbPrice() * watchlistData.getCurrentPrice();
-                    break;
+        if(openOrderItem.isSell) {
+            if (openOrderItem.quoteAsset.id.toString().equals(ASSET_ID_CYB)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (openOrderItem.quoteAsset.id.toString().equals(ASSET_ID_ETH)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_ETH);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (openOrderItem.quoteAsset.id.toString().equals(ASSET_ID_USDT)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_USDT);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (openOrderItem.quoteAsset.id.toString().equals(ASSET_ID_BTC)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_BTC);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else {
+                for (WatchlistData watchlistData : watchlistDataList) {
+                    if (watchlistData.getBaseId().equals(openOrderItem.baseAsset.id.toString()) &&
+                            watchlistData.getQuoteId().equals(openOrderItem.quoteAsset.id.toString())) {
+                        openOrderItem.itemRMBPrice = watchlistData.getRmbPrice() * watchlistData.getCurrentPrice();
+                        break;
+                    }
                 }
+            }
+        } else {
+            if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_CYB)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_CYB);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_ETH)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_ETH);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_USDT)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_USDT);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
+            } else if (openOrderItem.baseAsset.id.toString().equals(ASSET_ID_BTC)) {
+                AssetRmbPrice assetRmbPrice = mWebSocketService.getAssetRmbPrice(ASSET_SYMBOL_BTC);
+                openOrderItem.itemRMBPrice = assetRmbPrice == null ? 0 : assetRmbPrice.getValue();
             }
         }
         double openOrderRMBPrice;
-        if (openOrderItem.limitOrder.is_sell) {
-            openOrderRMBPrice = AssetUtil.multiply(AssetUtil.divide(openOrderItem.limitOrder.min_to_receive, Math.pow(10, openOrderItem.baseAsset.precision)), openOrderItem.itemRMBPrice);
+        if (openOrderItem.isSell) {
+                openOrderRMBPrice = AssetUtil.multiply(AssetUtil.divide(openOrderItem.limitOrder.amount_to_sell, Math.pow(10, openOrderItem.quoteAsset.precision)), openOrderItem.itemRMBPrice);
             mSellOpenOrderRMBPrice += openOrderRMBPrice;
         } else {
             openOrderRMBPrice = AssetUtil.multiply(AssetUtil.divide(openOrderItem.limitOrder.amount_to_sell, Math.pow(10, openOrderItem.baseAsset.precision)), openOrderItem.itemRMBPrice);
@@ -369,13 +366,8 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event) {
         mFullAccountObject = event.getFullAccount();
-        mTotalOpenOrderRMBPrice = 0;
-        mSellOpenOrderRMBPrice = 0;
-        mBuyOpenOrderRMBPrice = 0;
         loadLimitOrderData();
     }
-
-
 
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {

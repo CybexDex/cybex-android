@@ -77,9 +77,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         AssetObject baseAsset = openOrderItem.baseAsset;
         AssetObject quoteAsset = openOrderItem.quoteAsset;
         LimitOrder limitOrder = openOrderItem.limitOrder;
-        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(
-                openOrderItem.isSell ? quoteAsset.id.toString() : baseAsset.id.toString(),
-                openOrderItem.isSell ? baseAsset.id.toString() : quoteAsset.id.toString());
+        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(baseAsset.id.toString(), quoteAsset.id.toString());
         if (assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
         double amount;
         double price;
@@ -103,30 +101,25 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                  * 买单baseAsset是base quoteAsset是quote
                  */
                 if (openOrderItem.isSell) {
-                    viewHolder.mTvQuoteSymbol.setText(baseSymbol);
-                    viewHolder.mTvBaseSymbol.setText(quoteSymbol);
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
                     viewHolder.mTvScale.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
-                    amount = AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision));
-                    sold = AssetUtil.divide(limitOrder.sold, Math.pow(10, baseAsset.precision));
-                    price = AssetUtil.divide(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision)), amount);
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), quoteSymbol));
-                    viewHolder.mTvAssetAmount.setText(String.format("%s/%s %s", AssetUtil.formatNumberRounding(sold, Integer.parseInt(assetPairConfig.amount)),
-                            AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), baseSymbol));
+                    amount = AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, quoteAsset.precision));
+                    sold = AssetUtil.divide(limitOrder.sold, Math.pow(10, quoteAsset.precision));
+                    price = AssetUtil.divide(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, baseAsset.precision)), amount);
                 } else {
-                    viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
-                    viewHolder.mTvBaseSymbol.setText(baseSymbol);
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_buy));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_buy));
                     viewHolder.mTvScale.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
                     amount = AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision));
                     sold = AssetUtil.divide(limitOrder.received, Math.pow(10, quoteAsset.precision));
                     price = AssetUtil.divide(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision)), amount);
-                    viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), baseSymbol));
-                    viewHolder.mTvAssetAmount.setText(String.format("%s/%s %s", AssetUtil.formatNumberRounding(sold, Integer.parseInt(assetPairConfig.amount)),
-                            AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                 }
+                viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
+                viewHolder.mTvBaseSymbol.setText(baseSymbol);
+                viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), baseSymbol));
+                viewHolder.mTvAssetAmount.setText(String.format("%s/%s %s", AssetUtil.formatNumberRounding(sold, Integer.parseInt(assetPairConfig.amount)),
+                        AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                 viewHolder.mTvScale.setText(String.format("%s%%", AssetUtil.formatNumberRounding(sold / amount,2)));
                 viewHolder.mTvDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(limitOrder.create_time)));
             }
@@ -166,9 +159,9 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             }
             List<OpenOrderItem> filterDatas = new ArrayList<>();
             for (OpenOrderItem data : mOriginalOpenOrderItems) {
-                if ("Sell".equals(filterStr) && data.limitOrder.is_sell) {
+                if ("Sell".equals(filterStr) && data.isSell) {
                     filterDatas.add(data);
-                } else if ("Buy".equals(filterStr) && !data.limitOrder.is_sell) {
+                } else if ("Buy".equals(filterStr) && !data.isSell) {
                     filterDatas.add(data);
                 }
             }

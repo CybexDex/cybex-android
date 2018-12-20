@@ -23,6 +23,26 @@ public class AssetPairCache {
         this.assetPairCache = assetPairCache;
     }
 
+    public AssetsPair getAssetPair(String baseId, String quoteId) {
+        List<AssetsPair> assetsPairs = assetPairCache.get(baseId);
+        if(assetsPairs != null) {
+            for(AssetsPair assetsPair : assetsPairs) {
+                if(assetsPair.getQuote().equals(quoteId)){
+                    return assetsPair;
+                }
+            }
+        }
+        assetsPairs = assetPairCache.get(quoteId);
+        if(assetsPairs != null) {
+            for(AssetsPair assetsPair : assetsPairs) {
+                if(assetsPair.getQuote().equals(baseId)){
+                    return assetsPair;
+                }
+            }
+        }
+        return null;
+    }
+
     public AssetsPair.Config getAssetPairConfig(String baseId, String quoteId) {
         List<AssetsPair> assetsPairs = assetPairCache.get(baseId);
         if(assetsPairs == null){
