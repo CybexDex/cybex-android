@@ -13,6 +13,7 @@ import com.cybexmobile.R;
 import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybex.basemodule.utils.AssetUtil;
 
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -45,7 +46,9 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
          * fix bug:CYM-379
          * 精度不对
          */
-        holder.mPriceView.setText(AssetUtil.formatNumberRounding(mValues.get(position).price, mWatchlistData.getPricePrecision()));
+        //交易历史price卖单ronudup，买单rounddown
+        holder.mPriceView.setText(AssetUtil.formatNumberRounding(mValues.get(position).price, mWatchlistData.getPricePrecision(),
+                mValues.get(position).showRed.equals("showRed") ? RoundingMode.UP : RoundingMode.DOWN));
         holder.mBaseView.setText(AssetUtil.formatNumberRounding(mValues.get(position).baseAmount, mWatchlistData.getTotalPrecision()));
         holder.mQuoteView.setText(AssetUtil.formatNumberRounding(mValues.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
         holder.mDateView.setText(mValues.get(position).date);
