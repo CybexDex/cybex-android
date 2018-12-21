@@ -331,6 +331,7 @@
     <string name="dialog_text_cancel">Cancel</string>
     <string name="dialog_text_confirm">Confirm</string>
     <string name="dialog_text_title_transfer_confirmation">CONFIRMATION</string>
+    <string name="dialog_text_confirm_order_cancellation">Confirm order cancellation</string>
 
     <!-- Dialog withdraw confirmation -->
     <string name="dialog_withdraw_confirmation_address">Withdrawal Address:</string>

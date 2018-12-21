@@ -335,40 +335,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
 
     private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
         hideLoadDialog();
-        double amount;
-        double total;
-        double price;
-        String feeStr;
-        LimitOrder limitOrder = mCurrOpenOrderItem.limitOrder;
-        AssetObject baseAsset = mCurrOpenOrderItem.baseAsset;
-        AssetObject quoteAsset = mCurrOpenOrderItem.quoteAsset;
-        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(baseAsset.id.toString(), quoteAsset.id.toString());
-        if(mCurrOpenOrderItem.isSell){
-            amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, quoteAsset.precision)),
-                    AssetUtil.divide(limitOrder.sold, Math.pow(10, quoteAsset.precision)));
-            total = AssetUtil.divide(limitOrder.min_to_receive - limitOrder.received, Math.pow(10, baseAsset.precision));
-            price = AssetUtil.divide(total, amount);
-        } else {
-            amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision)),
-                    AssetUtil.divide(limitOrder.received, Math.pow(10, quoteAsset.precision)));
-            total = AssetUtil.divide(limitOrder.amount_to_sell - limitOrder.sold, Math.pow(10, baseAsset.precision));
-            price = AssetUtil.divide(total, amount);
-        }
-        String priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
-        String amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), AssetUtil.parseSymbol(quoteAsset.symbol));
-        String totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
-        if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
-            AssetObject cybAsset = mWebSocketService.getAssetObject(ASSET_ID_CYB);
-            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
-        } else {
-            if(mCurrOpenOrderItem.isSell) {
-                feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, quoteAsset.precision), quoteAsset.precision), AssetUtil.parseSymbol(quoteAsset.symbol));
-            } else {
-                feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, baseAsset.precision), baseAsset.precision), AssetUtil.parseSymbol(baseAsset.symbol));
-            }
-        }
-        CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(), !mCurrOpenOrderItem.isSell,
-                priceStr, amountStr, totalStr, feeStr,
+        CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(),
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {

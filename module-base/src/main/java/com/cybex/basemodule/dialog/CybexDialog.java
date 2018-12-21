@@ -168,8 +168,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showLimitOrderCancelConfirmationDialog(Context context, boolean isBuy, String price, String amount,
-                                                              String total, String fee, final ConfirmationDialogClickListener listener){
+    public static void showLimitOrderCancelConfirmationDialog(Context context, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         /**
          * fix bug:CYM-503
@@ -179,15 +178,6 @@ public class CybexDialog {
         dialog.setContentView(R.layout.dialog_limit_order_cancel_confirmation);
         TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
         tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_limit_order_cancel_confirmation));
-        TextView tvPrice = dialog.findViewById(R.id.dialog_limit_order_create_tv_price);
-        TextView tvAmount = dialog.findViewById(R.id.dialog_limit_order_create_tv_amount);
-        TextView tvTotal = dialog.findViewById(R.id.dialog_limit_order_create_tv_total);
-        TextView tvFee = dialog.findViewById(R.id.dialog_limit_order_create_tv_cancellation_fee);
-        tvPrice.setText(price);
-        tvAmount.setText(amount);
-        tvTotal.setText(total);
-        tvFee.setText(fee);
-        tvPrice.setTextColor(context.getResources().getColor(isBuy ? R.color.increasing_color : R.color.decreasing_color));
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {

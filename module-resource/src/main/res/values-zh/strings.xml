@@ -337,6 +337,7 @@
     <string name="dialog_text_cancel">取消</string>
     <string name="dialog_text_confirm">确认</string>
     <string name="dialog_text_title_transfer_confirmation">转账确认</string>
+    <string name="dialog_text_confirm_order_cancellation">确认取消订单</string>
 
     <!-- Dialog withdraw confirmation -->
     <string name="dialog_withdraw_confirmation_address">提现地址:</string>
