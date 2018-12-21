@@ -288,7 +288,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                         mEtAssetPrice.setText("");
                     } else {
                         mEtAssetPrice.setText(String.format(String.format(Locale.US, "%%.%df",
-                                AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(priceStr)));
+                                mWatchlistData.getPricePrecision()), Double.parseDouble(priceStr)));
                     }
                 }
             } else if (view.getId() == R.id.buysell_et_asset_amount){
@@ -298,7 +298,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                         mEtAssetAmount.setText("");
                     } else {
                         mEtAssetAmount.setText(String.format(String.format(Locale.US, "%%.%df",
-                                AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice())), Double.parseDouble(amountStr)));
+                                mWatchlistData.getAmountPrecision()), Double.parseDouble(amountStr)));
                     }
 
                 }
@@ -350,15 +350,15 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         double assetPrice = Double.parseDouble(assetPriceStr);
         switch (view.getId()){
             case R.id.buysell_tv_add:
-                assetPrice += (1/Math.pow(10, AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())));
+                assetPrice += (1 / Math.pow(10, mWatchlistData.getPricePrecision()));
                 break;
             case R.id.buysell_tv_sub:
                 if(assetPrice > 0){
-                    assetPrice -= (1/Math.pow(10, AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())));
+                    assetPrice -= (1/Math.pow(10, mWatchlistData.getPricePrecision()));
                 }
                 break;
         }
-        mEtAssetPrice.setText(String.format(String.format("%%.%sf", AssetUtil.pricePrecision(mWatchlistData.getCurrentPrice())), assetPrice));
+        mEtAssetPrice.setText(String.format(String.format("%%.%sf", mWatchlistData.getPricePrecision()), assetPrice));
     }
 
     @OnClick({R.id.buysell_tv_percentage_25, R.id.buysell_tv_percentage_50, R.id.buysell_tv_percentage_75, R.id.buysell_tv_percentage_100})
@@ -405,7 +405,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                 break;
         }
         //amount 不四舍五入
-        mEtAssetAmount.setText(AssetUtil.formatNumberRounding(amount, AssetUtil.amountPrecision(mWatchlistData.getCurrentPrice()), RoundingMode.DOWN));
+        mEtAssetAmount.setText(AssetUtil.formatNumberRounding(amount, mWatchlistData.getAmountPrecision(), RoundingMode.DOWN));
     }
 
     @OnClick(R.id.buysell_btn_buy_sell)

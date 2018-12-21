@@ -75,6 +75,7 @@ public class AssetUtil {
      * @param price
      * @return
      */
+    @Deprecated
     public static int amountPrecision(double price){
         if(price >= 1){
             return 6;
