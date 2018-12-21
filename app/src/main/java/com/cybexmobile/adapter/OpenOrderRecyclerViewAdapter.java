@@ -96,10 +96,6 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 holder.itemView.setVisibility(View.VISIBLE);
                 String quoteSymbol = AssetUtil.parseSymbol(quoteAsset.symbol);
                 String baseSymbol = AssetUtil.parseSymbol(baseAsset.symbol);
-                /**
-                 * 卖单baseAsset是quote quoteAsset是base
-                 * 买单baseAsset是base quoteAsset是quote
-                 */
                 if (openOrderItem.isSell) {
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
@@ -120,7 +116,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 viewHolder.mTvAssetPrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), baseSymbol));
                 viewHolder.mTvAssetAmount.setText(String.format("%s/%s %s", AssetUtil.formatNumberRounding(sold, Integer.parseInt(assetPairConfig.amount)),
                         AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
-                viewHolder.mTvScale.setText(String.format("%s%%", AssetUtil.formatNumberRounding(sold / amount,2)));
+                viewHolder.mTvScale.setText(String.format("%s%%", AssetUtil.formatNumberRounding(sold / amount * 100,2)));
                 viewHolder.mTvDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(limitOrder.create_time)));
             }
         }else{
