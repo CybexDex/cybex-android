@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -236,8 +237,9 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     }
 
     private void initOrResetRmbPrice() {
+        double marketPrice = Double.parseDouble(AssetUtil.formatNumberRounding(mMarketPrice, mWatchlistData.getPricePrecision()));
         mTvQuoteRmbPrice.setText(mMarketPrice == 0 ? getString(R.string.text_empty) :
-                "≈¥ " + AssetUtil.formatNumberRounding(mMarketPrice * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision()));
+                "≈¥ " + AssetUtil.formatNumberRounding(marketPrice * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision()));
     }
 
     public void changeWatchlist(WatchlistData watchlist){

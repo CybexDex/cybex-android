@@ -628,7 +628,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         String assetPrice = mEtAssetPrice.getText().toString();
         try {
             mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ 0.0000" :
-                    AssetUtil.formatNumberRounding(Double.parseDouble(assetPrice) * mAssetRmbPrice, mWatchlistData.getRmbPrecision()));
+                    "≈¥ " + AssetUtil.formatNumberRounding(Double.parseDouble(assetPrice) * mAssetRmbPrice, mWatchlistData.getRmbPrecision()));
         } catch (Exception e){
             e.printStackTrace();
             mTvAssetRmbPrice.setText("≈¥ 0.0000");
