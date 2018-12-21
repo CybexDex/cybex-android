@@ -1,11 +1,8 @@
 package com.cybexmobile.activity.splash;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.service.WebSocketService;

@@ -1,5 +1,6 @@
 package com.cybexmobile.activity.main;
 
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatDelegate;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +30,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
+import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.ExchangeFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
@@ -39,6 +42,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -65,7 +69,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private ExchangeFragment mExchangeFragment;
     private EtoFragment mEtoFragment;
     private CybexMainFragment mCybexMainFragment;
-    private Context mContext;
 
     private String mAction;
     private WatchlistData mWatchlistData;
@@ -74,6 +77,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     private Disposable mDisposableVersionUpdate;
     private Disposable mDisposableAppConfig;
+
+    private boolean isRecreate;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -88,7 +93,6 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = this;
         EventBus.getDefault().register(this);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_nav_button);
@@ -107,6 +111,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onConfigChanged(Event.ConfigChanged event) {
+        isRecreate = true;
         switch (event.getConfigName()) {
             case "EVENT_REFRESH_LANGUAGE":
                 recreate();
@@ -144,8 +149,10 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        Intent intentService = new Intent(this, WebSocketService.class);
-        stopService(intentService);
+        if(!isRecreate){
+            Intent intentService = new Intent(this, WebSocketService.class);
+            stopService(intentService);
+        }
         if(mDisposableVersionUpdate != null && !mDisposableVersionUpdate.isDisposed()){
             mDisposableVersionUpdate.dispose();
         }
@@ -166,6 +173,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         //register after recreate that activity
+        isRecreate = true;
         recreate();
     }
 
@@ -443,6 +451,18 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private void goToUpdate(String url) {
         Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(browseIntent);
+    }
+
+    public boolean isServiceRunning(Context context, String serviceName) {
+        if (TextUtils.isEmpty(serviceName)) return false;
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) activityManager.getRunningServices(30);
+        for (int i = 0; i < runningService.size(); i++) {
+            if (runningService.get(i).service.getClassName().equals(serviceName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
