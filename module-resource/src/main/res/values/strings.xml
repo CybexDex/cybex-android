@@ -83,6 +83,7 @@
     <string name="index_change_ratio">Chg%</string>
     <string name="index_vol">Vol</string>
     <string name="text_comment_now">Comment now</string>
+    <string name="text_percent_0">0.00%</string>
 
     <!-- Setting Strings -->
     <string name="setting_language">Language</string>

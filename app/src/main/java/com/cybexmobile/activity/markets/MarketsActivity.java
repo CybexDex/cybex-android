@@ -585,13 +585,9 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         mTvTitle.setText(String.format("%s/%s", trimmedQuote, trimmedBase));
         mCurrentPriceView.setText(watchListData.getCurrentPrice() == 0.f ? "-" :
                 AssetUtil.formatNumberRounding(watchListData.getCurrentPrice(), watchListData.getPricePrecision()));
-        mVolumeBaseView.setText(watchListData.getBaseVol() == 0.f ? "-" : String.format("%1$s: %2$s", trimmedBase,
+        mVolumeBaseView.setText(String.format("%1$s: %2$s", trimmedBase,
                 AssetUtil.formatAmountToKMB(watchListData.getBaseVol(), watchListData.getDayAmountPrecision())));
-        double volQuote = 0.f;
-        if (watchListData.getCurrentPrice() != 0.f) {
-            volQuote = AssetUtil.divide(watchListData.getBaseVol(), watchListData.getCurrentPrice());
-        }
-        mVolumeQuoteView.setText(volQuote == 0.f ? "-" : String.format("%1$s: %2$s", trimmedQuote,
+        mVolumeQuoteView.setText(String.format("%1$s: %2$s", trimmedQuote,
                 AssetUtil.formatAmountToKMB(watchListData.getQuoteVol(), watchListData.getDayAmountPrecision())));
         double change = watchListData.getChange();
         if (change > 0.f) {
@@ -603,7 +599,7 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             mChangeRateView.setText(String.format(Locale.US, "%.2f%%", change));
             mChangeRateView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_drop_down_24px, 0, 0, 0);
         } else {
-            mChangeRateView.setText(volQuote == 0.f ? "--" : "0.00%");
+            mChangeRateView.setText(getResources().getString(R.string.text_percent_0));
             mChangeRateView.setTextColor(getResources().getColor(R.color.no_change_color));
         }
     }

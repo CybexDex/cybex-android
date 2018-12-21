@@ -5,28 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_margin"
-        android:layout_marginEnd="@dimen/activity_margin"
-        android:layout_marginTop="@dimen/activity_margin"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/open_order_price_amount"
-            style="@style/font_gray_small"
-            android:alpha="0.5" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/open_order_filled_cancel"
-            android:layout_alignParentEnd="true"
-            style="@style/font_gray_small"
-            android:alpha="0.5"/>
-    </RelativeLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/open_orders_recycler_view"
         android:layout_marginTop="@dimen/margin_10"
