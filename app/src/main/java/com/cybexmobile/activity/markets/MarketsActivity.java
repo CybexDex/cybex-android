@@ -91,7 +91,7 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CHANNEL;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FROM;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
-public class MarketsActivity extends BaseActivity implements OrderHistoryListFragment.OnListFragmentInteractionListener{
+public class MarketsActivity extends BaseActivity {
 
     private static final long MARKET_STAT_INTERVAL_MILLIS_5_MIN = TimeUnit.MINUTES.toSeconds(5);
     private static final long MARKET_STAT_INTERVAL_MILLIS_1_HOUR = TimeUnit.HOURS.toSeconds(1);
@@ -110,7 +110,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
 
     private DataParse mData;
     private CandleData mCandleData;
-    int mBasePrecision;
 
     private ArrayList<KLineBean> kLineDatas;
 
@@ -209,7 +208,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
         EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         mWatchListData = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
-        mBasePrecision = mWatchListData.getBasePrecision();
         mFromWhere = getIntent().getStringExtra(INTENT_PARAM_FROM);
         initViews();
         mOrderHistoryFragmentPageAdapter = new OrderHistoryFragmentPageAdapter(getSupportFragmentManager());
@@ -1227,18 +1225,18 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
                     mTvChangeRatioIndex.setTextColor(getResources().getColor(R.color.increasing_color));
                     mTvChangePriceIndex.setTextColor(getResources().getColor(R.color.increasing_color));
                     mTvChangeRatioIndex.setText(String.format(Locale.US, "+%s%%", AssetUtil.formatNumberRounding(changeRatio, 2)));
-                    mTvChangePriceIndex.setText(String.format(Locale.US, "+%s", AssetUtil.formatNumberRounding(changePrice, mBasePrecision)));
+                    mTvChangePriceIndex.setText(String.format(Locale.US, "+%s", AssetUtil.formatNumberRounding(changePrice, mWatchListData.getPricePrecision())));
                 } else {
                     mTvChangeRatioIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
                     mTvChangePriceIndex.setTextColor(getResources().getColor(R.color.decreasing_color));
                     mTvChangeRatioIndex.setText(String.format(Locale.US, "%s%%", AssetUtil.formatNumberRounding(changeRatio, 2)));
-                    mTvChangePriceIndex.setText(AssetUtil.formatNumberRounding(changePrice, mBasePrecision));
+                    mTvChangePriceIndex.setText(AssetUtil.formatNumberRounding(changePrice, mWatchListData.getPricePrecision()));
                 }
             }
-            mTvOpenIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.open)), mBasePrecision));
-            mTvCloseIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.close)), mBasePrecision));
-            mTvHighIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.high)), mBasePrecision));
-            mTvLowIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.low)), mBasePrecision));
+            mTvOpenIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.open)), mWatchListData.getPricePrecision()));
+            mTvCloseIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.close)), mWatchListData.getPricePrecision()));
+            mTvHighIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.high)), mWatchListData.getPricePrecision()));
+            mTvLowIndex.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(klData.low)), mWatchListData.getPricePrecision()));
             mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.baseVol, 2), AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
         }
         int newIndex = index;
@@ -1283,11 +1281,6 @@ public class MarketsActivity extends BaseActivity implements OrderHistoryListFra
             if (index >= 0 && index < mData.getExpmaData10().size())
                 mEMA10Tv.setText(MyUtils.getDecimalFormatVol(mData.getExpmaData10().get(index).getVal()));
         }
-    }
-
-    @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-
     }
 
     @Override

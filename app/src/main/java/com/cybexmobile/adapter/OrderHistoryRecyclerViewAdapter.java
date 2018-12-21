@@ -10,33 +10,29 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybex.provider.market.WatchlistData;
-import com.cybexmobile.fragment.OrderHistoryListFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
 import com.cybexmobile.R;
-import com.cybex.provider.market.Order;
-import com.cybex.provider.market.OrderBook;
 import com.cybex.basemodule.utils.AssetUtil;
 
 import java.math.RoundingMode;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderHistoryRecyclerViewAdapter.ViewHolder> {
 
-    private OrderBook mValues;
     private WatchlistData mWatchlistData;
-    private final OnListFragmentInteractionListener mListener;
     private Context mContext;
+    private List<List<String>> mSellOrders;
+    private List<List<String>> mBuyOrders;
 
-
-    public OrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, OrderBook orderBook, OnListFragmentInteractionListener listener, Context context) {
-        mValues = orderBook;
+    public OrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, Context context) {
         mWatchlistData = watchlistData;
-        mListener = listener;
+        mContext = context;
+    }
+
+    public OrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, List<List<String>> sellOrders, List<List<String>> buyOrders, Context context) {
+        mWatchlistData = watchlistData;
+        mSellOrders = sellOrders;
+        mBuyOrders = buyOrders;
         mContext = context;
     }
 
@@ -49,22 +45,21 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if (position < mValues.buyOrders.size()) {
-            holder.mBuyPrice.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).price, mWatchlistData.getPricePrecision()));
-            holder.mVolume.setText(AssetUtil.formatNumberRounding(mValues.buyOrders.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
+        if (position < mBuyOrders.size()) {
+            holder.mBuyPrice.setText(AssetUtil.formatNumberRounding(Double.parseDouble(mBuyOrders.get(position).get(0)), mWatchlistData.getPricePrecision()));
+            holder.mVolume.setText(AssetUtil.formatAmountToKMB(Double.parseDouble(mBuyOrders.get(position).get(1)), mWatchlistData.getAmountPrecision()));
         }
-        if (position < mValues.sellOrders.size()) {
-            holder.mSellPrice.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).price, mWatchlistData.getPricePrecision(), RoundingMode.UP));
-            holder.mSellVolume.setText(AssetUtil.formatNumberRounding(mValues.sellOrders.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
+        if (position < mSellOrders.size()) {
+            holder.mSellPrice.setText(AssetUtil.formatNumberRounding(Double.parseDouble(mSellOrders.get(position).get(0)), mWatchlistData.getPricePrecision(), RoundingMode.UP));
+            holder.mSellVolume.setText(AssetUtil.formatAmountToKMB(Double.parseDouble(mSellOrders.get(position).get(1)), mWatchlistData.getAmountPrecision()));
         }
-
         float percentageBids = 0f;
-        if (position < mValues.buyOrders.size()) {
-            percentageBids = (float) getPercentage(mValues.buyOrders, position);
+        if (position < mBuyOrders.size()) {
+            percentageBids = (float) getPercentage(mBuyOrders, position);
         }
         float percentageAsks = 0f;
-        if (position < mValues.sellOrders.size()) {
-            percentageAsks = (float) getPercentage(mValues.sellOrders, position);
+        if (position < mSellOrders.size()) {
+            percentageAsks = (float) getPercentage(mSellOrders, position);
         }
         LinearLayout.LayoutParams barpar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, percentageBids);
         LinearLayout.LayoutParams barpar2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1 - percentageBids);
@@ -79,50 +74,41 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
         holder.mProgressBarRed.setBackgroundColor(Color.TRANSPARENT);
         holder.mProgressBarRedCompliment.setBackgroundColor(mContext.getResources().getColor(R.color.fade_background_red));
         holder.mTextLinearLayout.bringToFront();
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
-        if (mValues == null) {
+        if (mSellOrders == null && mBuyOrders == null) {
             return 0;
         }
-        return mValues.sellOrders.size() >= mValues.buyOrders.size() ? mValues.sellOrders.size() : mValues.buyOrders.size();
+        if(mSellOrders == null){
+            return mBuyOrders.size();
+        }
+        if(mBuyOrders == null) {
+            return mSellOrders.size();
+        }
+        return mSellOrders.size() >= mBuyOrders.size() ? mSellOrders.size() : mBuyOrders.size();
     }
 
-    public void setValues(OrderBook orderBook) {
-        this.mValues = orderBook;
+    public void setValues(List<List<String>> sellOrders, List<List<String>> buyOrders) {
+        mSellOrders = sellOrders;
+        mBuyOrders = buyOrders;
         notifyDataSetChanged();
     }
 
-    private double getPercentage(List<Order> orderList, int position) {
+    private double getPercentage(List<List<String>> orders, int position) {
         double divider = 0;
         for (int i = 0; i <= position; i++) {
-            divider += orderList.get(i).baseAmount;
+            divider += Double.parseDouble(orders.get(i).get(1));
         }
-        return divider / getSum(orderList);
+        return divider / getSum(orders);
     }
 
-    private double getSum(List<Order> orderList) {
+    private double getSum(List<List<String>> orders) {
         double sum = 0;
-        int length = 0;
-        if (orderList != null && orderList.size() != 0) {
-            if (orderList.size() > 20) {
-                length = 20;
-            } else {
-                length = orderList.size();
-            }
-            for (int i = 0; i < length; i++) {
-                sum += orderList.get(i).baseAmount;
+        if (orders != null && orders.size() != 0) {
+            for (int i = 0; i < orders.size(); i++) {
+                sum += Double.parseDouble(orders.get(i).get(1));
             }
         }
         return sum;
@@ -144,15 +130,15 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
         ViewHolder(View view) {
             super(view);
             mView = view;
-            mBuyPrice = (TextView) view.findViewById(R.id.buy_price);
-            mVolume = (TextView) view.findViewById(R.id.order_volume);
-            mProgressBar = (TextView) view.findViewById(R.id.catStatsRowBar);
-            mProgressBar2 = (TextView) view.findViewById(R.id.catStatsRowBar2);
-            mProgressBarRed = (TextView) view.findViewById(R.id.row_bar_red);
-            mProgressBarRedCompliment = (TextView) view.findViewById(R.id.row_bar_red_compliment);
-            mTextLinearLayout = (LinearLayout) view.findViewById(R.id.text_linear_layout);
-            mSellPrice = (TextView) view.findViewById(R.id.sell_price);
-            mSellVolume = (TextView) view.findViewById(R.id.sell_order_volume);
+            mBuyPrice = view.findViewById(R.id.buy_price);
+            mVolume = view.findViewById(R.id.order_volume);
+            mProgressBar = view.findViewById(R.id.catStatsRowBar);
+            mProgressBar2 = view.findViewById(R.id.catStatsRowBar2);
+            mProgressBarRed = view.findViewById(R.id.row_bar_red);
+            mProgressBarRedCompliment = view.findViewById(R.id.row_bar_red_compliment);
+            mTextLinearLayout = view.findViewById(R.id.text_linear_layout);
+            mSellPrice = view.findViewById(R.id.sell_price);
+            mSellVolume = view.findViewById(R.id.sell_order_volume);
         }
     }
 }

@@ -75,6 +75,7 @@ public class RxWebSocket implements RxListener {
     public Flowable<WebSocketMessage> onSubscribe() {
         return getErrorHandler()
                 .ofType(WebSocketMessage.class)
+                .onBackpressureLatest()
                 .doOnNext(new Consumer<WebSocketMessage>() {
                     @Override
                     public void accept(WebSocketMessage webSocketMessage) throws Exception {
@@ -125,7 +126,7 @@ public class RxWebSocket implements RxListener {
     }
 
     @Override
-    public synchronized <T>Single<Boolean> sendMessage(@NonNull final T payload) {
+    public <T>Single<Boolean> sendMessage(@NonNull final T payload) {
         return Single.fromCallable(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
@@ -141,7 +142,7 @@ public class RxWebSocket implements RxListener {
     }
 
     @Override
-    public synchronized Single<Boolean> sendMessage(@NonNull final String content) {
+    public Single<Boolean> sendMessage(@NonNull final String content) {
         return Single.fromCallable(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
@@ -156,7 +157,7 @@ public class RxWebSocket implements RxListener {
     }
 
     @Override
-    public synchronized Single<Boolean> sendMessage(@NonNull final ByteString bytes) {
+    public Single<Boolean> sendMessage(@NonNull final ByteString bytes) {
         return Single.fromCallable(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {

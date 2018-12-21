@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
-import com.cybex.provider.market.Order;
 import com.cybex.basemodule.utils.AssetUtil;
 
 import java.math.RoundingMode;

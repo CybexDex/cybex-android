@@ -8,11 +8,8 @@ import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.http.entity.EtoProject;
-import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.cybex.provider.market.HistoryPrice;
 import com.cybex.provider.graphene.chain.MarketTrade;
-import com.cybex.provider.market.Order;
-import com.cybex.provider.market.OrderBook;
 import com.cybex.provider.market.WatchlistData;
 
 import java.util.List;
@@ -127,23 +124,6 @@ public class Event {
         }
 
         public void setData(WatchlistData data) {
-            this.data = data;
-        }
-    }
-
-    //
-    public static class UpdateOrderBook {
-        private OrderBook data;
-
-        public UpdateOrderBook(OrderBook data) {
-            this.data = data;
-        }
-
-        public OrderBook getData() {
-            return data;
-        }
-
-        public void setData(OrderBook data) {
             this.data = data;
         }
     }
