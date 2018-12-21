@@ -398,9 +398,9 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         AssetObject quoteAsset = mCurrOpenOrderItem.quoteAsset;
         AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(baseAsset.id.toString(), quoteAsset.id.toString());
         if(mCurrOpenOrderItem.isSell){
-            amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision)),
-                    AssetUtil.divide(limitOrder.sold, Math.pow(10, baseAsset.precision)));
-            total = AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision));
+            amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, quoteAsset.precision)),
+                    AssetUtil.divide(limitOrder.sold, Math.pow(10, quoteAsset.precision)));
+            total = AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, baseAsset.precision));
             price = AssetUtil.divide(total, amount);
         } else {
             amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision)),
