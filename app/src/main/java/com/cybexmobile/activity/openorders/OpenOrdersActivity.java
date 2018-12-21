@@ -342,13 +342,13 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
             if (accountBalance.balance >= feeAmount.amount) {//cyb足够扣手续费
                 limitOrderCancelConfirm(mUserName, feeAmount);
             } else { //cyb不够扣手续费 扣取委单的base或者quote
-                if (ASSET_ID_CYB.equals(mCurrOpenOrderItem.baseAsset.id.toString())) {
+                if (ASSET_ID_CYB.equals(mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.quoteAsset.id.toString() : mCurrOpenOrderItem.baseAsset.id.toString())) {
                     hideLoadDialog();
                     ToastMessage.showNotEnableDepositToastMessage(this,
                             getResources().getString(R.string.text_not_enough),
                             R.drawable.ic_error_16px);
                 } else {
-                    loadLimitOrderCancelFee(mCurrOpenOrderItem.baseAsset.id.toString());
+                    loadLimitOrderCancelFee(mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.quoteAsset.id.toString() : mCurrOpenOrderItem.baseAsset.id.toString());
                 }
             }
         } else {
@@ -389,38 +389,37 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
 
     private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
         hideLoadDialog();
-        String priceStr;
-        String amountStr;
-        String totalStr;
+        double amount;
+        double total;
+        double price;
         String feeStr;
         LimitOrder limitOrder = mCurrOpenOrderItem.limitOrder;
         AssetObject baseAsset = mCurrOpenOrderItem.baseAsset;
         AssetObject quoteAsset = mCurrOpenOrderItem.quoteAsset;
-        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(
-                mCurrOpenOrderItem.isSell ? quoteAsset.id.toString() : baseAsset.id.toString(),
-                mCurrOpenOrderItem.isSell ? baseAsset.id.toString() : quoteAsset.id.toString());
+        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(baseAsset.id.toString(), quoteAsset.id.toString());
         if(mCurrOpenOrderItem.isSell){
-            double amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision)),
+            amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision)),
                     AssetUtil.divide(limitOrder.sold, Math.pow(10, baseAsset.precision)));
-            double total = AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision));
-            double price = AssetUtil.divide(total, amount);
-            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(quoteAsset.symbol));
-            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), AssetUtil.parseSymbol(baseAsset.symbol));
-            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(quoteAsset.symbol));
+            total = AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision));
+            price = AssetUtil.divide(total, amount);
         } else {
-            double amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision)),
+            amount = AssetUtil.subtract(AssetUtil.divide(limitOrder.min_to_receive, Math.pow(10, quoteAsset.precision)),
                     AssetUtil.divide(limitOrder.received, Math.pow(10, quoteAsset.precision)));
-            double total = AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision));
-            double price = AssetUtil.divide(total, amount);
-            priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
-            amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), AssetUtil.parseSymbol(quoteAsset.symbol));
-            totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
+            total = AssetUtil.divide(limitOrder.amount_to_sell, Math.pow(10, baseAsset.precision));
+            price = AssetUtil.divide(total, amount);
         }
+        String priceStr = String.format("%s %s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
+        String amountStr = String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), AssetUtil.parseSymbol(quoteAsset.symbol));
+        String totalStr = String.format("%s %s", AssetUtil.formatNumberRounding(total, Integer.parseInt(assetPairConfig.last_price)), AssetUtil.parseSymbol(baseAsset.symbol));
         if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
             AssetObject cybAsset = mWebSocketService.getAssetObject(ASSET_ID_CYB);
-            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount/Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
+            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, cybAsset.precision), cybAsset.precision), AssetUtil.parseSymbol(cybAsset.symbol));
         } else {
-            feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, baseAsset.precision), baseAsset.precision), AssetUtil.parseSymbol(baseAsset.symbol));
+            if(mCurrOpenOrderItem.isSell) {
+                feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, quoteAsset.precision), quoteAsset.precision), AssetUtil.parseSymbol(quoteAsset.symbol));
+            } else {
+                feeStr = String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount.amount / Math.pow(10, baseAsset.precision), baseAsset.precision), AssetUtil.parseSymbol(baseAsset.symbol));
+            }
         }
         CybexDialog.showLimitOrderCancelConfirmationDialog(this, !mCurrOpenOrderItem.isSell,
                 priceStr, amountStr, totalStr, feeStr,
