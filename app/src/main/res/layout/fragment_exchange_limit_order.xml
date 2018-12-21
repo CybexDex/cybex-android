@@ -70,10 +70,10 @@
 
     <com.jaredrummler.materialspinner.MaterialSpinner
         android:id="@+id/buysell_sp_precision"
-        android:layout_width="@dimen/width_110"
+        android:layout_width="@dimen/width_120"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:minWidth="@dimen/width_80"
+        android:gravity="center"
         android:textSize="@dimen/font_medium"
         android:layout_marginTop="@dimen/margin_3"
         app:ms_text_color="@color/material_spinner_text_color"
