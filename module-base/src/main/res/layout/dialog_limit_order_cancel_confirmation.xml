@@ -8,10 +8,14 @@
     <include layout="@layout/include_dialog_header" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/font_white_dark_medium"
-        android:padding="@dimen/activity_padding_double"
+        style="@style/font_white_dark_large"
+        android:paddingRight="@dimen/activity_padding_double"
+        android:paddingLeft="@dimen/activity_padding_double"
+        android:paddingTop="@dimen/activity_padding_triple"
+        android:paddingBottom="@dimen/activity_padding_triple"
+        android:gravity="center"
         android:layout_gravity="center"
         android:text="@string/dialog_text_confirm_order_cancellation" />
 

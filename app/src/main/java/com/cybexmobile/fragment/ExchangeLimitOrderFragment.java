@@ -238,12 +238,13 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
 
     private void initOrResetRmbPrice() {
         double marketPrice = Double.parseDouble(AssetUtil.formatNumberRounding(mMarketPrice, mWatchlistData.getPricePrecision()));
-        mTvQuoteRmbPrice.setText(mMarketPrice == 0 ? getString(R.string.text_empty) :
-                "≈¥ " + AssetUtil.formatNumberRounding(marketPrice * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision()));
+        mTvQuoteRmbPrice.setText(String.format("≈¥%s", mMarketPrice == 0 ? getString(R.string.text_empty) :
+                AssetUtil.formatNumberRounding(marketPrice * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision())));
     }
 
     public void changeWatchlist(WatchlistData watchlist){
         this.mWatchlistData = watchlist;
+        initOrResetPrice(0);
         mBuyOrderAdapter.setWatchlistData(mWatchlistData);
         mSellOrderAdapter.setWatchlistData(mWatchlistData);
         initViewData();

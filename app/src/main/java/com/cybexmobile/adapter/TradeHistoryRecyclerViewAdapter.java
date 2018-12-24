@@ -50,7 +50,7 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeH
         holder.mPriceView.setText(AssetUtil.formatNumberRounding(mValues.get(position).price, mWatchlistData.getPricePrecision(),
                 mValues.get(position).showRed.equals("showRed") ? RoundingMode.UP : RoundingMode.DOWN));
         holder.mBaseView.setText(AssetUtil.formatNumberRounding(mValues.get(position).baseAmount, mWatchlistData.getTotalPrecision()));
-        holder.mQuoteView.setText(AssetUtil.formatNumberRounding(mValues.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
+        holder.mQuoteView.setText(AssetUtil.formatAmountToKMB(mValues.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
         holder.mDateView.setText(mValues.get(position).date);
         if(mValues.get(position).showRed.equals("showRed")) {
             holder.mPriceView.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));

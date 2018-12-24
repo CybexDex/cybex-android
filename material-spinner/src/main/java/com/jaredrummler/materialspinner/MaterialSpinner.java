@@ -104,8 +104,7 @@ public class MaterialSpinner extends AppCompatTextView {
       hintText = ta.getString(R.styleable.MaterialSpinner_ms_hint) == null ? ""
           : ta.getString(R.styleable.MaterialSpinner_ms_hint);
       popupWindowMaxHeight = ta.getDimensionPixelSize(R.styleable.MaterialSpinner_ms_dropdown_max_height, 0);
-      popupWindowHeight = ta.getLayoutDimension(R.styleable.MaterialSpinner_ms_dropdown_height,
-          WindowManager.LayoutParams.WRAP_CONTENT);
+      popupWindowHeight = ta.getLayoutDimension(R.styleable.MaterialSpinner_ms_dropdown_height, WindowManager.LayoutParams.WRAP_CONTENT);
       arrowColorDisabled = Utils.lighter(arrowColor, 0.8f);
     } finally {
       ta.recycle();
@@ -143,6 +142,7 @@ public class MaterialSpinner extends AppCompatTextView {
     listView = new ListView(context);
     listView.setId(getId());
     listView.setDivider(null);
+    listView.setVerticalScrollBarEnabled(true);
     listView.setItemsCanFocus(true);
     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -387,6 +387,7 @@ public class MaterialSpinner extends AppCompatTextView {
     } else {
       selectedIndex = 0;
       setText((String)items.get(selectedIndex));
+      adapter.notifyItemSelected(selectedIndex);
       adapter.setItems(items);
       adapter.notifyDataSetChanged();
     }
@@ -412,7 +413,8 @@ public class MaterialSpinner extends AppCompatTextView {
    * @param adapter The list adapter
    */
   public void setAdapter(@NonNull ListAdapter adapter) {
-    this.adapter = new MaterialSpinnerAdapterWrapper(getContext(), adapter).setBackgroundSelector(backgroundSelector)
+    this.adapter = new MaterialSpinnerAdapterWrapper(getContext(), adapter)
+        .setBackgroundSelector(backgroundSelector)
         .setTextColor(textColor);
     setAdapterInternal(this.adapter);
   }

@@ -93,7 +93,7 @@ public class OwnOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                     baseAmount = AssetUtil.divide(orderHistoryItem.orderHistory.pays.amount, Math.pow(10, base.precision));
                     quoteAmount = AssetUtil.divide(orderHistoryItem.orderHistory.receives.amount, Math.pow(10, quote.precision));
                 }
-                viewHolder.mTvBasePrice.setText(AssetUtil.formatNumberRounding(AssetUtil.divide(baseAmount, quoteAmount), Integer.parseInt(assetPairConfig.last_price)));
+                viewHolder.mTvBasePrice.setText(String.format("%s %s", AssetUtil.formatNumberRounding(AssetUtil.divide(baseAmount, quoteAmount), Integer.parseInt(assetPairConfig.last_price)), baseSymbol));
                 viewHolder.mTvBaseAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(baseAmount, Integer.parseInt(assetPairConfig.total)), baseSymbol));
                 viewHolder.mTvQuoteAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(quoteAmount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                 if(block != null){

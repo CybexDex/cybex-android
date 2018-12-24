@@ -48,14 +48,16 @@
             android:id="@+id/buysell_tv_quote_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             style="@style/font_gray_large"
             android:text="@string/text_empty"/>
         <TextView
             android:id="@+id/buysell_tv_quote_rmb_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             style="@style/font_gray_small"
-            android:text="≈--"/>
+            android:text="≈¥--"/>
 
     </LinearLayout>
 
@@ -75,7 +77,7 @@
         android:layout_gravity="end"
         android:gravity="center"
         android:textSize="@dimen/font_medium"
-        android:layout_marginTop="@dimen/margin_3"
+        app:ms_padding="@dimen/padding_3"
         app:ms_text_color="@color/material_spinner_text_color"
         app:ms_background_selector="@drawable/bg_spinner_selector"
         app:ms_arrow_tint="@color/colorAccent"/>
