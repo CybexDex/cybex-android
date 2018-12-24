@@ -18,6 +18,7 @@ public class GlobalConfigObject {
 
     private GlobalConfigObject() {
         mGsonBuilder = new GsonBuilder();
+        mGsonBuilder.registerTypeAdapter(Types.vote_id_type.class, new Types.vote_id_type_deserializer());
         mGsonBuilder.registerTypeAdapter(Types.public_key_type.class, new Types.public_key_type_deserializer());
         mGsonBuilder.registerTypeAdapter(Types.public_key_type.class, new Types.public_type_serializer());
         mGsonBuilder.registerTypeAdapter(ObjectId.class, new ObjectId.object_id_deserializer());

@@ -20,7 +20,8 @@ import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.data.GameJson;
 import com.google.gson.Gson;
 
@@ -83,9 +84,9 @@ public class AndroidtoJs extends Object {
     @JavascriptInterface
     public void collect(String toAccountName, String feeAssetId, String transferAssetId, String feeAmount, String transferAmount) {
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(toAccountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+            BitsharesWalletWraper.getInstance().get_account_object(toAccountName, new MessageCallback<Reply<AccountObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                public void onMessage(Reply<AccountObject> reply) {
                     AccountObject toAccountObject = reply.result;
                     if (toAccountObject != null) {
                         Log.e("ToAccountName", toAccountObject.name);
@@ -103,9 +104,9 @@ public class AndroidtoJs extends Object {
                                 toAccountObject.options.memo_key);
 
                         try {
-                            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new WebSocketClient.MessageCallback<WebSocketClient.Reply<DynamicGlobalPropertyObject>>() {
+                            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                                 @Override
-                                public void onMessage(WebSocketClient.Reply<DynamicGlobalPropertyObject> reply) {
+                                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                                             fullAccountObject.account, transferOperation, ID_TRANSER_OPERATION, reply.result);
                                     Log.e("AndroidToJs", signedTransaction.toString());
@@ -141,9 +142,9 @@ public class AndroidtoJs extends Object {
         }
     }
 
-    private WebSocketClient.MessageCallback<WebSocketClient.Reply<String>> mTransferCallback = new WebSocketClient.MessageCallback<WebSocketClient.Reply<String>>() {
+    private MessageCallback<Reply<String>> mTransferCallback = new MessageCallback<Reply<String>>() {
         @Override
-        public void onMessage(WebSocketClient.Reply<String> reply) {
+        public void onMessage(Reply<String> reply) {
             if (reply.result == null && reply.error == null) {
                 EventBus.getDefault().post(new Event.onGameDeposit(Constant.GAME_STATUS_SUCCESS));
             } else {
@@ -161,9 +162,9 @@ public class AndroidtoJs extends Object {
     @JavascriptInterface
     public void getAccountObject(String accountName) {
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(accountName, new WebSocketClient.MessageCallback<WebSocketClient.Reply<AccountObject>>() {
+            BitsharesWalletWraper.getInstance().get_account_object(accountName, new MessageCallback<Reply<AccountObject>>() {
                 @Override
-                public void onMessage(WebSocketClient.Reply<AccountObject> reply) {
+                public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
                     Log.e("ToAccountName", accountObject.name);
                     Log.e("ToAccountMemo", accountObject.options.memo_key.toString());

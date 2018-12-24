@@ -112,14 +112,6 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                 .subscribe(new Consumer<List<SubLink>>() {
                     @Override
                     public void accept(List<SubLink> subLinks) throws Exception {
-                        for (SubLink subLink : subLinks) {
-                            if (subLink.getTitle().equals("ETO")) {
-                                subLink.setTitle(context.getResources().getString(R.string.text_game_name));
-                                subLink.setDesc(context.getResources().getString(R.string.text_game_details));
-                                subLink.setLink("cybexapp://game");
-                            }
-                            break;
-                        }
                         getMvpView().onLoadSubLinks(subLinks);
                     }
                 }, new Consumer<Throwable>() {
