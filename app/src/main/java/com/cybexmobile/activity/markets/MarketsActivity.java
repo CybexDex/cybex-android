@@ -267,7 +267,9 @@ public class MarketsActivity extends BaseActivity {
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 view.setTextColor(getResources().getColor(R.color.btn_orange_end));
                 view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
-                changeIndexLine(item);
+                if (mData != null) {
+                    changeIndexLine(item);
+                }
             }
         });
     }
