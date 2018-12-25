@@ -39,9 +39,10 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                                     ViewPortHandler viewPortHandler) {
         super(animator, viewPortHandler);
         mChart = chart;
+        int precision = chart.getCandleData().getDataSets().get(0).getPrecision();
         mFormat = new DecimalFormat();
-        mFormat.setMaximumFractionDigits(8);
-        mFormat.setMinimumFractionDigits(8);
+        mFormat.setMaximumFractionDigits(precision);
+        mFormat.setMinimumFractionDigits(precision);
         mFormat.setRoundingMode(RoundingMode.DOWN);
     }
 

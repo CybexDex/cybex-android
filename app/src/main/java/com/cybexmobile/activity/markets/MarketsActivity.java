@@ -894,12 +894,12 @@ public class MarketsActivity extends BaseActivity {
         kLineDatas = mData.getKLineDatas();
         mData.initLineDatas(kLineDatas);
 
-        setMarkerViewButtom(mData, mChartKline);
+        setMarkerViewBottom(mData, mChartKline);
         setMarkerView(mData, mChartVolume);
         setMarkerView(mData, mChartCharts);
     }
 
-    private void setMarkerViewButtom(DataParse mData, MyCombinedChart combinedChart) {
+    private void setMarkerViewBottom(DataParse mData, MyCombinedChart combinedChart) {
         MyLeftMarkerView leftMarkerView = new MyLeftMarkerView(MarketsActivity.this, R.layout.my_marker_view);
         MyHMarkerView hMarkerView = new MyHMarkerView(MarketsActivity.this, R.layout.mymarkerview_line);
         MyBottomMarkerView bottomMarkerView = new MyBottomMarkerView(MarketsActivity.this, R.layout.my_marker_view);
@@ -928,6 +928,7 @@ public class MarketsActivity extends BaseActivity {
         set.setHighLightColor(getResources().getColor(R.color.no_change_color));
         set.setDrawValues(true);
         set.setValueTextColor(getResources().getColor(R.color.font_color_white_dark));
+        set.setPrecision(mWatchListData.getPricePrecision());
         CandleData candleData = new CandleData(mData.getXVals(), set);
         mCandleData = candleData;
 

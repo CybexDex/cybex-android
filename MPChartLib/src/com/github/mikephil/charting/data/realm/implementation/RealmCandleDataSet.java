@@ -79,6 +79,11 @@ public class RealmCandleDataSet<T extends RealmObject> extends RealmLineScatterC
     protected int mShadowColor = ColorTemplate.COLOR_NONE;
 
     /**
+     * asset pair precision
+     */
+    protected int mPrecision;
+
+    /**
      * Constructor for creating a LineDataSet with realm data.
      *
      * @param result     the queried results from the realm database
@@ -303,6 +308,15 @@ public class RealmCandleDataSet<T extends RealmObject> extends RealmLineScatterC
     @Override
     public boolean getShadowColorSameAsCandle() {
         return mShadowColorSameAsCandle;
+    }
+
+    @Override
+    public int getPrecision() {
+        return mPrecision;
+    }
+
+    public void setPrecision(int precision) {
+        this.mPrecision = precision;
     }
 
     /**

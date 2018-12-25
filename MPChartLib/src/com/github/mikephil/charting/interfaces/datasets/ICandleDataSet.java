@@ -82,4 +82,11 @@ public interface ICandleDataSet extends ILineScatterCandleRadarDataSet<CandleEnt
      * @return
      */
     boolean getShadowColorSameAsCandle();
+
+    /**
+     * Return asset pair precision
+     *
+     * @return
+     */
+    int getPrecision();
 }

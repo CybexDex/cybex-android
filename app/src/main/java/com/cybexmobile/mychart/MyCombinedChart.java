@@ -92,7 +92,7 @@ public class MyCombinedChart extends CombinedChart {
                         CandleEntry b = set.getEntryForXIndex(xIndex);
                         //修改标记值
                         float yValForHighlight = mIndicesToHighlight[i].getTouchYValue();
-                        myMarkerViewLeft.setData(b.getClose());
+                        myMarkerViewLeft.setData(b.getClose(), set.getPrecision());
 
                         myMarkerViewLeft.refreshContent(e, mIndicesToHighlight[i]);
 

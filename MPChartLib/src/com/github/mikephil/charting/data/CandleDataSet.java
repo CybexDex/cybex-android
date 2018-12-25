@@ -73,6 +73,11 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
      */
     protected int mShadowColor = ColorTemplate.COLOR_NONE;
 
+    /**
+     * asset pair precision
+     */
+    protected int mPrecision;
+
     public CandleDataSet(List<CandleEntry> yVals, String label) {
         super(yVals, label);
     }
@@ -282,6 +287,15 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
     @Override
     public boolean getShadowColorSameAsCandle() {
         return mShadowColorSameAsCandle;
+    }
+
+    @Override
+    public int getPrecision() {
+        return mPrecision;
+    }
+
+    public void setPrecision(int precision) {
+        this.mPrecision = precision;
     }
 
     /**

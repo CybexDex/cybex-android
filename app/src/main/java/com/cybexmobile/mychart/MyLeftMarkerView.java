@@ -19,18 +19,21 @@ public class MyLeftMarkerView extends MarkerView {
      */
     private TextView markerTv;
     private float num;
+    private int precision;
+
     public MyLeftMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
         markerTv = findViewById(R.id.marker_tv);
         markerTv.setTextSize(10);
     }
 
-    public void setData(float num){
+    public void setData(float num, int precision){
         this.num=num;
+        this.precision = precision;
     }
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        markerTv.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(num)), 8));
+        markerTv.setText(AssetUtil.formatNumberRounding(Double.parseDouble(String.valueOf(num)), this.precision));
     }
 
     @Override
