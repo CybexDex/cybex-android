@@ -64,7 +64,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:layout_toStartOf="@+id/buysell_tv_add"
-                        style="@style/font_gray_xxlarge"
+                        style="@style/font_gray_xxxlarge"
                         android:text="-"/>
 
                     <TextView
@@ -72,7 +72,7 @@
                         android:layout_width="@dimen/width_40"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        style="@style/font_gray_xlarge"
+                        style="@style/font_gray_xxxlarge"
                         android:layout_alignParentEnd="true"
                         android:text="+"/>
 

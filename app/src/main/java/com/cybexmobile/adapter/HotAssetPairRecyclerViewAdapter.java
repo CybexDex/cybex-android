@@ -52,7 +52,7 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
         holder.mTvCurrPrice.setText(watchlistData.getCurrentPrice() == 0.f ? "-" : AssetUtil.formatNumberRounding(watchlistData.getCurrentPrice(), watchlistData.getPricePrecision()));
         double change = watchlistData.getChange();
         holder.mTvChangeRate.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                mContext.getResources().getDimension(change > 10 ? R.dimen.font_small : R.dimen.font_large));
+                mContext.getResources().getDimension(change > 100 ? R.dimen.font_small : R.dimen.font_large));
         if (change > 0.f) {
             holder.mTvChangeRate.setText(String.format("+%s%%", String.valueOf(formatter.format(change))));
             holder.mTvChangeRate.setTextColor(mContext.getResources().getColor(R.color.increasing_color));

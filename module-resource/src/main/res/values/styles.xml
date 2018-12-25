@@ -168,6 +168,10 @@
         <item name="android:textSize">@dimen/font_xxlarge</item>
     </style>
 
+    <style name="font_gray_xxxlarge" parent="font_gray">
+        <item name="android:textSize">@dimen/font_xxxlarge</item>
+    </style>
+
     <style name="font_gray_medium" parent="font_gray">
         <item name="android:textSize">@dimen/font_medium</item>
     </style>
