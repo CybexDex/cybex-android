@@ -160,6 +160,14 @@
         <item name="android:textSize">@dimen/font_large</item>
     </style>
 
+    <style name="font_gray_xlarge" parent="font_gray">
+        <item name="android:textSize">@dimen/font_xlarge</item>
+    </style>
+
+    <style name="font_gray_xxlarge" parent="font_gray">
+        <item name="android:textSize">@dimen/font_xxlarge</item>
+    </style>
+
     <style name="font_gray_medium" parent="font_gray">
         <item name="android:textSize">@dimen/font_medium</item>
     </style>

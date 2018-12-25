@@ -259,8 +259,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     public void notifyLimitOrderDataChanged(List<List<String>> sellOrders, List<List<String>> buyOrders) {
         mBuyOrders.clear();
         mSellOrders.clear();
-        mBuyOrders.addAll(sellOrders);
-        mSellOrders.addAll(buyOrders);
+        mBuyOrders.addAll(buyOrders);
+        mSellOrders.addAll(sellOrders);
         mBuyOrderAdapter.notifyDataSetChanged();
         mSellOrderAdapter.notifyDataSetChanged();
     }

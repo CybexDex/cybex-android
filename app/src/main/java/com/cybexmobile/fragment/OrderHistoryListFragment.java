@@ -162,8 +162,8 @@ public class OrderHistoryListFragment extends BaseFragment {
                         Log.d("dzm", webSocketMessage.getText());
                         JsonElement jsonElement = mJsonParser.parse(webSocketMessage.getText());
                         JsonObject jsonObject = jsonElement.getAsJsonObject();
-                        List<List<String>> sellOrders = mGson.fromJson(jsonObject.get("bids"), new TypeToken<List<List<String>>>(){}.getType());
-                        List<List<String>> buyOrders = mGson.fromJson(jsonObject.get("asks"), new TypeToken<List<List<String>>>(){}.getType());
+                        List<List<String>> sellOrders = mGson.fromJson(jsonObject.get("asks"), new TypeToken<List<List<String>>>(){}.getType());
+                        List<List<String>> buyOrders = mGson.fromJson(jsonObject.get("bids"), new TypeToken<List<List<String>>>(){}.getType());
                         mOrderHistoryItemRecycerViewAdapter.setValues(sellOrders, buyOrders);
                     }
                 }, new Consumer<Throwable>() {

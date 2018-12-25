@@ -204,8 +204,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                         Log.d("dzm", webSocketMessage.getText());
                         JsonElement jsonElement = mJsonParser.parse(webSocketMessage.getText());
                         JsonObject jsonObject = jsonElement.getAsJsonObject();
-                        List<List<String>> sellOrders = mGson.fromJson(jsonObject.get("bids"), new TypeToken<List<List<String>>>(){}.getType());
-                        List<List<String>> buyOrders = mGson.fromJson(jsonObject.get("asks"), new TypeToken<List<List<String>>>(){}.getType());
+                        List<List<String>> sellOrders = mGson.fromJson(jsonObject.get("asks"), new TypeToken<List<List<String>>>(){}.getType());
+                        List<List<String>> buyOrders = mGson.fromJson(jsonObject.get("bids"), new TypeToken<List<List<String>>>(){}.getType());
                         if(mBuyFragment != null && mBuyFragment.isResumed()) {
                             mBuyFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
                         }
@@ -228,11 +228,16 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                         JsonElement jsonElement = mJsonParser.parse(webSocketMessage.getText());
                         JsonObject jsonObject = jsonElement.getAsJsonObject();
                         double price = jsonObject.get("px").getAsDouble();
+                        String topic = jsonObject.get("topic").getAsString();
                         if(mBuyFragment != null && mBuyFragment.isResumed()) {
-                            mBuyFragment.notifyMarketPriceDataChanged(price);
+                            if (topic.contains(mWatchlistData.getBaseSymbol().replace(".", "_")) && topic.contains(mWatchlistData.getQuoteSymbol().replace(".", "_"))) {
+                                mBuyFragment.notifyMarketPriceDataChanged(price);
+                            }
                         }
                         if(mSellFragment != null && mSellFragment.isResumed()) {
-                            mSellFragment.notifyMarketPriceDataChanged(price);
+                            if (topic.contains(mWatchlistData.getBaseSymbol().replace(".", "_")) && topic.contains(mWatchlistData.getQuoteSymbol().replace(".", "_"))) {
+                                mSellFragment.notifyMarketPriceDataChanged(price);
+                            }
                         }
                     }
                 }, new Consumer<Throwable>() {

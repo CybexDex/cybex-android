@@ -27,6 +27,5 @@
     android:ellipsize="marquee"
     android:gravity="center_vertical"
     android:paddingLeft="@dimen/ms__popup_padding_left"
-    android:paddingRight="@dimen/ms__popup_padding_left"
     android:singleLine="true" />
 
