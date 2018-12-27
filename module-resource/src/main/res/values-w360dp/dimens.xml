@@ -21,6 +21,7 @@
     <dimen name="width_45">37.5dp</dimen>
     <dimen name="width_48">40dp</dimen>
     <dimen name="width_50">41.66dp</dimen>
+    <dimen name="width_54">45dp</dimen>
     <dimen name="width_56">46.66dp</dimen>
     <dimen name="width_60">50dp</dimen>
     <dimen name="width_65">54.16dp</dimen>

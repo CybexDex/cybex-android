@@ -1,0 +1,321 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/padding_8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/margin_16"
+        android:paddingRight="@dimen/margin_16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_110"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/eva_iv_icon"
+                android:layout_width="@dimen/width_54"
+                android:layout_height="@dimen/height_54"
+                android:layout_marginLeft="@dimen/margin_22"
+                android:layout_marginRight="@dimen/margin_30" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/eva_projectname"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="--" />
+
+                <TextView
+                    android:id="@+id/eva_projectdesc"
+                    style="@style/font_gray_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_8"
+                    android:lineSpacingExtra="@dimen/line_spacing_extra_4"
+                    android:lines="3"
+                    android:text="--" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--  -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_54">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/img_score_dark" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/score_tv"
+                    style="@style/font_gray_bold_large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_20"
+                    android:text="SCORE:" />
+
+                <TextView
+                    android:id="@+id/eva_score"
+                    style="@style/font_orange_bold_large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toEndOf="@+id/score_tv"
+                    android:text="--" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_80">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/margin_22">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_8"
+                    android:text="@string/text_eva_hype_score" />
+
+                <TextView
+                    android:id="@+id/eva_hypescore"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="--" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/margin_22">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_8"
+                    android:text="@string/text_eva_risk_score" />
+
+                <TextView
+                    android:id="@+id/eva_riskscore"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="--" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/margin_22">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_8"
+                    android:text="@string/text_eva_expectation" />
+
+                <TextView
+                    android:id="@+id/eva_expectation"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="--" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/padding_8"
+            android:paddingBottom="@dimen/padding_8">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_8">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_eva_platform" />
+
+                <TextView
+                    android:id="@+id/eva_platform"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="--" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_8">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_eva_industry" />
+
+                <TextView
+                    android:id="@+id/eva_industry"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="--" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_8">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_eva_supply" />
+
+                <TextView
+                    android:id="@+id/eva_supply"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="--" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_8">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_eva_tokenprice" />
+
+                <TextView
+                    android:id="@+id/eva_tokenprice"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="--" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_8">
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_eva_country" />
+
+                <TextView
+                    android:id="@+id/eva_country"
+                    style="@style/font_white_dark_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="--" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary" />
+
+        <TextView
+            style="@style/font_gray_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16"
+            android:text="@string/text_eva_introduction" />
+
+        <TextView
+            android:id="@+id/eva_introduction"
+            style="@style/font_white_dark_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_8"
+            android:lineSpacingExtra="@dimen/line_spacing_extra_8"
+            android:paddingBottom="@dimen/padding_8"
+            android:text="--" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_8"
+        android:background="@color/itemBackground">
+
+        <TextView
+            style="@style/font_gray_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="The data comes from EVALUAPE" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_30"
+            android:layout_marginBottom="@dimen/margin_8"
+            android:src="@drawable/evaluape_logo_white_background" />
+    </FrameLayout>
+</LinearLayout>

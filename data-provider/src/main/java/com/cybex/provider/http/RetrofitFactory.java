@@ -33,6 +33,8 @@ public class RetrofitFactory {
     //Chat测式服务器
     public static final String chat_base_url_test = "http://47.91.242.71:9099/";
 
+    public static final String eva_base_url = "https://api.evaluape.io/";
+
     private OkHttpClient okHttpClient;
 
     private CybexHttpApi cybexHttpApi;
@@ -41,6 +43,7 @@ public class RetrofitFactory {
     private GatewayHttpApi gatewayHttpApi;
     private EtoHttpApi etoHttpApi;
     private ChatHttpApi chatHttpApi;
+    private EvaHttpApi evaHttpApi;
 
     //是否是正式服务器环境
     public boolean isOfficialServer = true;
@@ -162,6 +165,22 @@ public class RetrofitFactory {
             chatHttpApi = retrofit.create(ChatHttpApi.class);
         }
         return chatHttpApi;
+    }
+
+    public EvaHttpApi apiEva() {
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before apiEto");
+        }
+        if(evaHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(isOfficialServer ? eva_base_url : eva_base_url)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            evaHttpApi = retrofit.create(EvaHttpApi.class);
+        }
+        return evaHttpApi;
     }
 
     public void setOfficialServer(boolean officialServer) {

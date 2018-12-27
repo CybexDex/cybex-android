@@ -42,6 +42,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -69,6 +70,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
@@ -105,6 +107,7 @@ public class WebSocketService extends Service {
     private volatile FullAccountObject mFullAccount;
 
     private Disposable mDisposable;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private String mName;
     private int mMode;//网络加载模式
@@ -160,7 +163,27 @@ public class WebSocketService extends Service {
         BitsharesWalletWraper.getInstance().build_connect();
         loadAssetsRmbPrice();
         startFullAccountWorkerSchedule();
+        loadEvaProjectNames();
         return START_NOT_STICKY;
+    }
+
+    private void loadEvaProjectNames() {
+        compositeDisposable.add(RetrofitFactory.getInstance().api().getEvaProjectNames()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<JsonObject>() {
+                    @Override
+                    public void accept(JsonObject jsonObject) throws Exception {
+                        Gson gson = new Gson();
+                        Map<String, String> result = gson.fromJson(jsonObject, new TypeToken<Map<String, String>>(){}.getType());
+                        AssetPairCache.getInstance().setEvaProjectNames(result);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
     }
 
     @Nullable

@@ -67,4 +67,7 @@ public interface CybexHttpApi {
 
     @GET("json/pairs.json")
     Observable<JsonObject> getAssetPairsConfig();
+
+    @GET("json/evaluape.json")
+    Observable<JsonObject> getEvaProjectNames();
 }

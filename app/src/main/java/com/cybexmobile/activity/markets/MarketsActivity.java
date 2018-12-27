@@ -6,19 +6,23 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.cache.AssetPairCache;
 import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.utils.AssetUtil;
@@ -38,6 +42,7 @@ import com.cybexmobile.activity.chat.ChatActivity;
 import com.cybexmobile.adapter.OrderHistoryFragmentPageAdapter;
 import com.cybexmobile.data.DataParse;
 import com.cybexmobile.data.KLineBean;
+import com.cybexmobile.fragment.EvaFragment;
 import com.cybexmobile.fragment.MarketTradeHistoryFragment;
 import com.cybexmobile.fragment.OrderHistoryListFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
@@ -213,6 +218,12 @@ public class MarketsActivity extends BaseActivity {
         mOrderHistoryFragmentPageAdapter = new OrderHistoryFragmentPageAdapter(getSupportFragmentManager());
         mOrderHistoryFragmentPageAdapter.addFragment(OrderHistoryListFragment.newInstance(mWatchListData));
         mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(mWatchListData));
+        if (!TextUtils.isEmpty(AssetPairCache.getInstance().getEvaProjectNameFromToken(AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol())))) {
+            TabLayout.Tab tab = mTabLayout.newTab();
+            tab.setText(R.string.text_eva_introduction);
+            mTabLayout.addTab(tab);
+            mOrderHistoryFragmentPageAdapter.addFragment(EvaFragment.newInstance(mWatchListData));
+        }
         mViewPager.setAdapter(mOrderHistoryFragmentPageAdapter);
         mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));

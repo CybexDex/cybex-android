@@ -8,6 +8,16 @@ import java.util.Map;
 public class AssetPairCache {
 
     private Map<String, List<AssetsPair>> assetPairCache;
+    private Map<String, String> evaProjectNames;
+
+    public void setEvaProjectNames(Map<String, String> evaProjectNames) {
+        this.evaProjectNames = evaProjectNames;
+    }
+
+    public String getEvaProjectNameFromToken(String tokenName) {
+        return evaProjectNames.get(tokenName);
+    }
+
 
     private AssetPairCache(){}
 

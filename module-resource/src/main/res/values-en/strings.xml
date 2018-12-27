@@ -525,4 +525,14 @@
     <string name="text_game_name">GAME CENTER</string>
     <string name="text_game_details">Blockchain Games</string>
 
+    <!-- Eva -->
+    <string name="text_eva_hype_score">Hype Score</string>
+    <string name="text_eva_risk_score">Risk Score</string>
+    <string name="text_eva_expectation">Expectation</string>
+    <string name="text_eva_platform">Platform</string>
+    <string name="text_eva_industry">Industry</string>
+    <string name="text_eva_supply">ICotokenSupply</string>
+    <string name="text_eva_tokenprice">Token Price</string>
+    <string name="text_eva_country">Country</string>
+    <string name="text_eva_introduction">Introduction</string>
 </resources>
