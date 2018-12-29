@@ -280,6 +280,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
          * fix bug:CYM-400
          * 软盘消失 输入框失去焦点 自动补全精度
          */
+        if (mWatchlistData == null) {
+            return;
+        }
         if(!isFocused){
             if(view.getId() == R.id.buysell_et_asset_price){
                 String priceStr = mEtAssetPrice.getText().toString();
@@ -344,7 +347,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     @OnClick({R.id.buysell_tv_add, R.id.buysell_tv_sub})
     public void onAssetPriceClick(View view){
         String assetPriceStr = mEtAssetPrice.getText().toString();
-        if(TextUtils.isEmpty(assetPriceStr)){
+        if(TextUtils.isEmpty(assetPriceStr) || mWatchlistData == null){
             return;
         }
         double assetPrice = Double.parseDouble(assetPriceStr);
@@ -363,6 +366,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
     @OnClick({R.id.buysell_tv_percentage_25, R.id.buysell_tv_percentage_50, R.id.buysell_tv_percentage_75, R.id.buysell_tv_percentage_100})
     public void onAssetAmountClick(View view){
+        if (mWatchlistData == null) {
+            return;
+        }
         String assetPrice = mEtAssetPrice.getText().toString();
         double price = TextUtils.isEmpty(assetPrice) ? 0 : Double.parseDouble(assetPrice);
         if(price == 0){
@@ -450,6 +456,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     }
 
     private void calculateTotal(){
+        if (mWatchlistData == null) {
+            return;
+        }
         String assetPrice = mEtAssetPrice.getText().toString();
         String assetAmount = mEtAssetAmount.getText().toString();
         /**
