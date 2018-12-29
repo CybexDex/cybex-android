@@ -193,7 +193,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
 
     @OnClick({R.id.buysell_tv_quote_price, R.id.buysell_tv_quote_rmb_price})
     public void onQuotePriceClick(View view){
-        if(mWatchlistData.getCurrentPrice() == 0){
+        if(mWatchlistData == null || mWatchlistData.getCurrentPrice() == 0){
             return;
         }
         EventBus.getDefault().post(new Event.LimitOrderClick(mTvQuotePrice.getText().toString()));

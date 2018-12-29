@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
@@ -44,6 +45,7 @@ public class EvaFragment extends Fragment {
     private static final String ARG_EvaData = "evadata";
     private Unbinder mUnbinder;
     HashMap<String, String> params = new HashMap<>();
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @BindView(R.id.eva_iv_icon)
     ImageView evaProjectIcon;
@@ -97,11 +99,12 @@ public class EvaFragment extends Fragment {
     }
 
     private void loadEvaProjectData() {
-        RetrofitFactory.getInstance()
+        mCompositeDisposable.add(RetrofitFactory.getInstance()
                 .apiEva()
                 .postEvaProjectInfo(params)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .retry()
                 .subscribe(new Consumer<CybexBaseResponse<EvaProject>>() {
             @Override
             public void accept(CybexBaseResponse<EvaProject> evaProjectCybexBaseResponse) throws Exception {
@@ -114,7 +117,7 @@ public class EvaFragment extends Fragment {
             public void accept(Throwable throwable) throws Exception {
 
             }
-        });
+        }));
     }
 
     void refreshView(EvaProject data) {
@@ -176,13 +179,6 @@ public class EvaFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        loadEvaProjectData();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -192,4 +188,22 @@ public class EvaFragment extends Fragment {
         return evaView;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        loadEvaProjectData();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCompositeDisposable.clear();
+    }
 }

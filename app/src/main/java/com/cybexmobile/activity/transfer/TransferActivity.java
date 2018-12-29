@@ -686,6 +686,9 @@ public class TransferActivity extends BaseActivity implements
      * 检查钱包锁定状态 -> 加载转账手续费
      */
     private void checkIsLockAndLoadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer){
+        if (mFromAccountObject == null) {
+            return;
+        }
         if(BitsharesWalletWraper.getInstance().is_locked()){
             CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
                     mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {

@@ -87,11 +87,11 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
 
     }
 
-    public void loadSubLinks(String lang, Context context){
+    public void loadSubLinks(String lang, String env, Context context){
         mCompositeDisposable.add(RetrofitFactory
                 .getInstance()
                 .apiMain()
-                .getSubLinks(lang)
+                .getSubLinks(lang, env)
                 .retry()
                 .map(new Function<CybexBaseResponse<List<SubLink>>, List<SubLink>>() {
                     @Override

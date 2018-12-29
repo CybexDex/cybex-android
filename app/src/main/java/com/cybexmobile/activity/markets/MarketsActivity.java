@@ -220,7 +220,7 @@ public class MarketsActivity extends BaseActivity {
         mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(mWatchListData));
         if (!TextUtils.isEmpty(AssetPairCache.getInstance().getEvaProjectNameFromToken(AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol())))) {
             TabLayout.Tab tab = mTabLayout.newTab();
-            tab.setText(R.string.text_eva_introduction);
+            tab.setText(getResources().getString(R.string.fragment_tab_title));
             mTabLayout.addTab(tab);
             mOrderHistoryFragmentPageAdapter.addFragment(EvaFragment.newInstance(mWatchListData));
         }

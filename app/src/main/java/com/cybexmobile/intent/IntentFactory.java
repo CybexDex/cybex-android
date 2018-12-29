@@ -129,7 +129,15 @@ public class IntentFactory {
         if(action == ACTION_INVALID){
             throw new Exception("------------------url invalid------------------");
         }
-        if(action == ACTION_HTTP){
+        if (action == ACTION_HTTP) {
+            if (url.equals("https://gamelive.cybex.io")) {
+                isNeedLogin = true;
+                if (isLogin) {
+                    param.put(INTENT_PARAM_URL, url);
+                    return GameActivity.class;
+                }
+                return LoginActivity.class;
+            }
             isNeedLogin = false;
             param.put(INTENT_PARAM_URL, url);
             return WebActivity.class;

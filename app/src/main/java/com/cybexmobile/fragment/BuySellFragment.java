@@ -813,6 +813,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private InputFilter mPriceFilter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (mWatchlistData == null) {
+                return null;
+            }
             if(mWatchlistData.getPricePrecision() == 0 && source.equals(".")){
                 return "";
             }
@@ -834,6 +837,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private InputFilter mAmountFilter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (mWatchlistData == null) {
+                return null;
+            }
             if(mWatchlistData.getAmountPrecision() == 0 && source.equals(".")){
                 return "";
             }

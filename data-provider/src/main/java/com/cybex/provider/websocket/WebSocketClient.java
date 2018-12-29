@@ -735,29 +735,31 @@ public class WebSocketClient extends WebSocketListener {
         }
     }
 
-    private void sendDelayForReply(){
-        if(delayCalls == null || delayCalls.size() == 0){
+    private void sendDelayForReply() {
+        if (delayCalls == null || delayCalls.size() == 0) {
             return;
         }
-        Iterator<DelayCall> iterator = delayCalls.iterator();
-        while (iterator.hasNext()){
-            DelayCall delayCall = iterator.next();
-            switch (delayCall.flag){
-                case FLAG_DATABASE:
-                    delayCall.call.params.set(0, _nDatabaseId);
-                    break;
-                case FLAG_HISTORY:
-                    delayCall.call.params.set(0, _nHistoryId);
-                    break;
-                case FLAG_BROADCAST:
-                    delayCall.call.params.set(0, _nDatabaseId);
-                    break;
-            }
-            try {
-                iterator.remove();
-                sendForReply(delayCall.flag, delayCall.call, delayCall.replyProcess);
-            } catch (NetworkStatusException e) {
-                e.printStackTrace();
+        synchronized (delayCalls) {
+            Iterator<DelayCall> iterator = delayCalls.iterator();
+            while (iterator.hasNext()) {
+                DelayCall delayCall = iterator.next();
+                switch (delayCall.flag) {
+                    case FLAG_DATABASE:
+                        delayCall.call.params.set(0, _nDatabaseId);
+                        break;
+                    case FLAG_HISTORY:
+                        delayCall.call.params.set(0, _nHistoryId);
+                        break;
+                    case FLAG_BROADCAST:
+                        delayCall.call.params.set(0, _nDatabaseId);
+                        break;
+                }
+                try {
+                    iterator.remove();
+                    sendForReply(delayCall.flag, delayCall.call, delayCall.replyProcess);
+                } catch (NetworkStatusException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -766,7 +768,6 @@ public class WebSocketClient extends WebSocketListener {
         @Override
         public void onMessage(Reply<Sha256Object> reply) {
             mChainIdObject = reply.result;
-            Log.e("chainID", mChainIdObject.toString());
         }
 
         @Override

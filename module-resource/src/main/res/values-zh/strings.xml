@@ -539,4 +539,5 @@
     <string name="text_eva_tokenprice">Token Price</string>
     <string name="text_eva_country">Country</string>
     <string name="text_eva_introduction">Introduction</string>
+    <string name="fragment_tab_title">项目介绍</string>
 </resources>

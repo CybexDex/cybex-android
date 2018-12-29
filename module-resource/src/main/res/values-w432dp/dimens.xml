@@ -64,6 +64,7 @@
     <dimen name="height_200">200dp</dimen>
     <dimen name="height_237">237dp</dimen>
     <dimen name="height_490">490dp</dimen>
+    <dimen name="height_650">650dp</dimen>
 
     <!-- margin -->
     <dimen name="margin_3">3dp</dimen>

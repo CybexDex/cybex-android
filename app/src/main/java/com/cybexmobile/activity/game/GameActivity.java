@@ -34,6 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_URL;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class GameActivity extends BaseActivity {
@@ -41,6 +42,7 @@ public class GameActivity extends BaseActivity {
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
     private AndroidtoJs mAndroidtoJs;
+    private String url;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -50,7 +52,7 @@ public class GameActivity extends BaseActivity {
             if (fullAccountObject != null) {
                 mAndroidtoJs.setAccountObject(fullAccountObject);
                 mWebView.addJavascriptInterface(mAndroidtoJs, "Potral");
-                mWebView.loadUrl("https://gamelive.cybex.io/");
+                mWebView.loadUrl(url);
             }
         }
 
@@ -77,6 +79,7 @@ public class GameActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         EventBus.getDefault().register(this);
         mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
+        url = getIntent().getStringExtra(INTENT_PARAM_URL);
         mAndroidtoJs = new AndroidtoJs(this);
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
