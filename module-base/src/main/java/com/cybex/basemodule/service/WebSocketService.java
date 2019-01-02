@@ -377,7 +377,7 @@ public class WebSocketService extends Service {
         loadAssetsRmbPrice();
 
         if(mWatchlistHashMap.isEmpty()){
-            loadWatchlistData(mCurrentBaseAssetId);
+            loadWatchlistData(mCurrentBaseAssetId == null ? ASSET_ID_CYB : mCurrentBaseAssetId);
         } else {
             startWatchlistWorkerSchedule();
         }

@@ -18,7 +18,6 @@ public class AssetPairCache {
         return evaProjectNames.get(tokenName);
     }
 
-
     private AssetPairCache(){}
 
     private static class Factory {
@@ -34,6 +33,9 @@ public class AssetPairCache {
     }
 
     public AssetsPair getAssetPair(String baseId, String quoteId) {
+        if (assetPairCache == null) {
+            return null;
+        }
         List<AssetsPair> assetsPairs = assetPairCache.get(baseId);
         if(assetsPairs != null) {
             for(AssetsPair assetsPair : assetsPairs) {
