@@ -1020,8 +1020,10 @@ public class WebSocketService extends Service {
                         mAssetRmbPrices = assetRmbPrices;
                         EventBus.getDefault().post(new Event.UpdateRmbPrice(assetRmbPrices));
                         //初始化交易界面 默认交易对CYB/ETH
-                        EventBus.getDefault().post(new Event.InitExchangeWatchlist(getWatchlist(ASSET_ID_ETH, ASSET_ID_CYB)));
-
+                        WatchlistData watchlistData = getWatchlist(ASSET_ID_ETH, ASSET_ID_CYB);
+                        if (watchlistData != null) {
+                            EventBus.getDefault().post(new Event.InitExchangeWatchlist(watchlistData));
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override

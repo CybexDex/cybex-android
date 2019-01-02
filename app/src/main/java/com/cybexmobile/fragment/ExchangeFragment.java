@@ -542,7 +542,6 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             mRteRequestTicker = new RteRequest(RteRequest.TYPE_SUBSCRIBE, "TICKER." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
                     mWatchlistData.getBaseSymbol().replace(".", "_"));
             sendRteRquest(mRteRequestTicker);
-
         }
         if(mBuyFragment != null){
             mBuyFragment.changeWatchlist(watchlistData);
