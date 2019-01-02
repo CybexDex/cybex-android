@@ -44,6 +44,9 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        if (mWatchlistData == null || mWatchlistData.size() == 0) {
+            return;
+        }
         WatchlistData watchlistData = mWatchlistData.get(position);
         if (watchlistData == null) {
             return;
@@ -83,7 +86,7 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
 
     @Override
     public int getItemCount() {
-        return mWatchlistData == null ? 0 : mWatchlistData.size();
+        return 3;
     }
 
     @Override

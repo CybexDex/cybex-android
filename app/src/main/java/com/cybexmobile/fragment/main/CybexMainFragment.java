@@ -108,9 +108,9 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
     private Unbinder mUnbinder;
 
     private List<CybexBanner> mCybexBanners;
-    private List<SubLink> mSubLinks;
-    private List<WatchlistData> mHotWatchlistData;
-    private List<WatchlistData> mAllWatchlistData;
+    private List<SubLink> mSubLinks = new ArrayList<>();
+    private List<WatchlistData> mHotWatchlistData = new ArrayList<>();
+    private List<WatchlistData> mAllWatchlistData = new ArrayList<>();
     private boolean mIsLoginIn;
     private String mName;
 
@@ -141,13 +141,14 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cybex_main, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        GridLayoutManager layoutManager_hotPair = new GridLayoutManager(getContext(), 3);
-        GridLayoutManager layoutManager_subLink = new GridLayoutManager(getContext(), 2);
-        mRvHotPair.setLayoutManager(layoutManager_hotPair);
-        mRvSubLink.setLayoutManager(layoutManager_subLink);
-        mRvSubLink.addItemDecoration(new GridSpacingItemDecoration(2, getResources().getDimensionPixelSize(R.dimen.margin_8), false));
-        mRvTopGainers.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvTopGainers.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        initSubLinkRecyclerView();
+        initHotPairRecyclerView();
+        initTopGainerRecyclerView();
+        initBanner();
+        return view;
+    }
+
+    private void initBanner() {
         mBanner.isAutoPlay(true);
         mBanner.setDelayTime(3000);
         mBanner.setOnBannerListener(this);
@@ -158,7 +159,29 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         mVfNotice.setOutAnimation(getContext(), R.anim.out_to_top);
         mVfNotice.setFlipInterval(5000);
         mVfNotice.setAutoStart(true);
-        return view;
+    }
+
+    private void initTopGainerRecyclerView() {
+        mRvTopGainers.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRvTopGainers.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        mTopGainerRecyclerViewAdapter = new TopGainerRecyclerViewAdapter(getContext(), mAllWatchlistData, mListener);
+        mRvTopGainers.setAdapter(mTopGainerRecyclerViewAdapter);
+    }
+
+    private void initHotPairRecyclerView() {
+        GridLayoutManager layoutManager_hotPair = new GridLayoutManager(getContext(), 3);
+        mRvHotPair.setLayoutManager(layoutManager_hotPair);
+        mHotAssetPairRecyclerViewAdapter = new HotAssetPairRecyclerViewAdapter(getContext(), mHotWatchlistData, mListener);
+        mRvHotPair.setAdapter(mHotAssetPairRecyclerViewAdapter);
+    }
+
+    private void initSubLinkRecyclerView() {
+        GridLayoutManager layoutManager_subLink = new GridLayoutManager(getContext(), 2);
+        mRvSubLink.setLayoutManager(layoutManager_subLink);
+        mRvSubLink.addItemDecoration(new GridSpacingItemDecoration(2, getResources().getDimensionPixelSize(R.dimen.margin_8), false));
+        mSubLinkRecyclerViewAdapter = new SubLinkRecyclerViewAdapter(getContext(), mSubLinks);
+        mSubLinkRecyclerViewAdapter.setOnItemClickListener(this);
+        mRvSubLink.setAdapter(mSubLinkRecyclerViewAdapter);
     }
 
     @Override
@@ -237,10 +260,8 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Override
     public void onLoadSubLinks(List<SubLink> subLinks) {
-        mSubLinks = subLinks;
-        mSubLinkRecyclerViewAdapter = new SubLinkRecyclerViewAdapter(getContext(), mSubLinks);
-        mSubLinkRecyclerViewAdapter.setOnItemClickListener(this);
-        mRvSubLink.setAdapter(mSubLinkRecyclerViewAdapter);
+        mSubLinks.addAll(subLinks);
+        mSubLinkRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -310,18 +331,18 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateHotWatchlistDate(Event.UpdateHotWatchlists event){
-        mAllWatchlistData = event.getAllWatchlists();
-        mHotWatchlistData = event.getHotWatchlists();
-        mHotAssetPairRecyclerViewAdapter = new HotAssetPairRecyclerViewAdapter(getContext(), mHotWatchlistData, mListener);
-        mRvHotPair.setAdapter(mHotAssetPairRecyclerViewAdapter);
+        //hot watchlist data
+        mHotWatchlistData.addAll(event.getHotWatchlists());
+        mHotAssetPairRecyclerViewAdapter.notifyDataSetChanged();
+        //all watchlist data
+        mAllWatchlistData.addAll(event.getAllWatchlists());
         Collections.sort(mAllWatchlistData, new Comparator<WatchlistData>() {
             @Override
             public int compare(WatchlistData o1, WatchlistData o2) {
                 return o1.getChange() > o2.getChange() ? -1 : 1;
             }
         });
-        mTopGainerRecyclerViewAdapter = new TopGainerRecyclerViewAdapter(getContext(), mAllWatchlistData, mListener);
-        mRvTopGainers.setAdapter(mTopGainerRecyclerViewAdapter);
+        mTopGainerRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

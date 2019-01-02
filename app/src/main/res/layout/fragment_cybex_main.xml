@@ -40,7 +40,7 @@
                 android:id="@+id/fragment_cybex_main_vf_notice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_margin">
+                android:layout_marginStart="@dimen/margin_6">
             </ViewFlipper>
 
         </LinearLayout>
