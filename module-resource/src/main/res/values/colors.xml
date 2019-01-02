@@ -89,4 +89,7 @@
 
     <color name="color_1c78819a">#1c78819a</color>
 
+    <!-- Eva Project Dividers -->
+    <color name="eva_divider">#171d2a</color>
+
 </resources>

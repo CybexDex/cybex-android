@@ -171,6 +171,7 @@ public class WebSocketService extends Service {
         compositeDisposable.add(RetrofitFactory.getInstance().api().getEvaProjectNames()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .retry()
                 .subscribe(new Consumer<JsonObject>() {
                     @Override
                     public void accept(JsonObject jsonObject) throws Exception {
@@ -372,13 +373,14 @@ public class WebSocketService extends Service {
         cancelFullAccountWorkerSchedule();
         cancelWatchlistWorkerSchedule();
         //重启任务
+        startFullAccountWorkerSchedule();
+        loadAssetsRmbPrice();
+
         if(mWatchlistHashMap.isEmpty()){
             loadWatchlistData(mCurrentBaseAssetId);
         } else {
             startWatchlistWorkerSchedule();
         }
-        startFullAccountWorkerSchedule();
-        loadAssetsRmbPrice();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

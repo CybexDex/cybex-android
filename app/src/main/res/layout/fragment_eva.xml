@@ -160,7 +160,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorPrimary" />
+        android:background="@color/eva_divider" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -273,7 +273,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorPrimary" />
+        android:background="@color/eva_divider" />
 
     <TextView
         style="@style/font_gray_medium"
@@ -291,6 +291,11 @@
         android:lineSpacingExtra="@dimen/line_spacing_extra_8"
         android:paddingBottom="@dimen/padding_8"
         android:text="--" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/eva_divider" />
 
 
     <FrameLayout

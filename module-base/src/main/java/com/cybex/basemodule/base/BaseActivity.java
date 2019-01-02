@@ -324,7 +324,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    protected final void showLoadDialog(boolean isCancelable) {
+    public final void showLoadDialog(boolean isCancelable) {
         if (mLoadDialog == null) {
             mLoadDialog = new LoadDialog(this, R.style.LoadDialog);
         }

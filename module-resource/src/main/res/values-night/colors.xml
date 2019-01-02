@@ -50,4 +50,7 @@
     <!-- Material Spinner text color -->
     <color name="material_spinner_text_color">#78819a</color>
 
+    <!-- Eva Project Dividers -->
+    <color name="eva_divider">#1c78819a</color>
+
 </resources>

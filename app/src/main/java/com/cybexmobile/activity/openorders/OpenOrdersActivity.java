@@ -114,7 +114,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
-        showLoadDialog();
+        showLoadDialog(true);
     }
 
     @Override

@@ -407,6 +407,7 @@ public class MarketsActivity extends BaseActivity {
         mDisposable = RetrofitFactory.getInstance().apiChat().getLastMsgID(
                 String.format("%s/%s", AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol()),
                 AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())))
+                .retry()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Integer>() {

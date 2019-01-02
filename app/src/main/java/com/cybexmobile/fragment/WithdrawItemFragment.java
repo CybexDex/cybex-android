@@ -223,7 +223,7 @@ public class WithdrawItemFragment extends Fragment {
             if (mWithdrawObjectList.size() == 0) {
                 if (mWebSocketService != null) {
                     if (mActivity != null) {
-                        mActivity.showLoadDialog();
+                        mActivity.showLoadDialog(true);
                     }
                     if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
                         requestWithdrawList();

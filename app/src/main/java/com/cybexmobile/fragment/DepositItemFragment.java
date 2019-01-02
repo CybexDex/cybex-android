@@ -232,7 +232,7 @@ public class DepositItemFragment extends Fragment {
             mWebSocketService = binder.getService();
             if (mDepositObjectList.size() == 0) {
                 if (mActivity != null) {
-                    mActivity.showLoadDialog();
+                    mActivity.showLoadDialog(true);
                 }
                 if (mWebSocketService != null) {
                     if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
