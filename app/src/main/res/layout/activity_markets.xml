@@ -214,10 +214,10 @@
 
             </android.support.design.widget.TabLayout>
 
-            <android.support.v4.view.ViewPager
+            <com.cybexmobile.widget.ViewPagerForScrollView
                 android:id="@+id/market_page_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/height_650"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_6"
                 android:background="@android:color/transparent" />
 

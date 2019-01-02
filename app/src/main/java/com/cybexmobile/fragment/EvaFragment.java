@@ -123,7 +123,7 @@ public class EvaFragment extends Fragment {
     void refreshView(EvaProject data) {
         Picasso.get().load(data.getLogo()).into(evaProjectIcon);
         projectName.setText(data.getName());
-        projectDesc.setText(data.getDescription());
+        projectDesc.setText(data.getPremium());
         score.setText(data.getScore());
         hyperScore.setText(data.getHype_score());
         riskScore.setText(data.getRisk_score());
@@ -164,7 +164,7 @@ public class EvaFragment extends Fragment {
             country.setText(data.getCountry());
         }
 
-        introduction.setText(data.getPremium());
+        introduction.setText(data.getDescription());
 
     }
 
