@@ -751,10 +751,24 @@ public class WalletApi {
         dateObject = calender.getTime();
 
         signedTransaction.set_expiration(dateObject);
+        Types.private_key_type privateKey = null;
 
-        Types.private_key_type privateKey = mHashMapPub2Priv.get(accountObject.active.get_keys().get(0));
-        signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
-
+        for (Types.public_key_type public_key_type : accountObject.active.get_keys()) {
+            privateKey = mHashMapPub2Priv.get(public_key_type);
+            if (privateKey != null) {
+                signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+                break;
+            }
+        }
+        if (privateKey == null) {
+            for (Types.public_key_type public_key_type : accountObject.owner.get_keys()) {
+                privateKey = mHashMapPub2Priv.get(public_key_type);
+                if (privateKey != null) {
+                    signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+                    break;
+                }
+            }
+        }
         return signedTransaction;
     }
 
@@ -764,16 +778,45 @@ public class WalletApi {
             byte[] assetByte = message.getBytes();
             encoder.write(assetByte);
         }
-        Types.private_key_type privateKey = mHashMapPub2Priv.get(accountObject.active.get_keys().get(0));
-        CompactSignature signature = privateKey.getPrivateKey().sign_compact(encoder.result(), true);
-        return MyUtils.bytesToHex(signature.data);
+        Types.private_key_type privateKey;
+        CompactSignature signature;
+        for (Types.public_key_type public_key_type : accountObject.active.get_keys()) {
+            privateKey = mHashMapPub2Priv.get(public_key_type);
+            if (privateKey != null) {
+                signature = privateKey.getPrivateKey().sign_compact(encoder.result(), true);
+                return MyUtils.bytesToHex(signature.data);
+            }
+        }
+
+        for (Types.public_key_type public_key_type : accountObject.owner.get_keys()) {
+            privateKey = mHashMapPub2Priv.get(public_key_type);
+            if (privateKey != null) {
+                signature = privateKey.getPrivateKey().sign_compact(encoder.result(), true);
+                return MyUtils.bytesToHex(signature.data);
+            }
+        }
+
+        return null;
     }
 
     public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
         SignedTransaction signedTransaction = new SignedTransaction();
         signedTransaction.operation = operation;
-        Types.private_key_type privateKey = mHashMapPub2Priv.get(accountObject.active.get_keys().get(0));
-        return signedTransaction.sign(privateKey);
+        Types.private_key_type privateKey;
+        for (Types.public_key_type public_key_type : accountObject.active.get_keys()) {
+             privateKey = mHashMapPub2Priv.get(public_key_type);
+            if (privateKey != null) {
+                return signedTransaction.sign(privateKey);
+            }
+        }
+
+        for (Types.public_key_type public_key_type : accountObject.owner.get_keys()) {
+            privateKey = mHashMapPub2Priv.get(public_key_type);
+            if (privateKey != null) {
+                return signedTransaction.sign(privateKey);
+            }
+        }
+        return null;
     }
 
     public String getMemoMessage(MemoData memoData) {
