@@ -224,51 +224,41 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             case R.id.navigation_watchlist:
                 if (mWatchListFragment == null) {
                     mWatchListFragment = new WatchlistFragment();
-                }
-                if (mWatchListFragment.isAdded() || fragmentManager.findFragmentByTag(WatchlistFragment.class.getSimpleName()) != null) {
-                    transaction.show(mWatchListFragment);
-                } else {
                     transaction.add(R.id.frame_container, mWatchListFragment, WatchlistFragment.class.getSimpleName());
+                } else  {
+                    transaction.show(mWatchListFragment);
                 }
                 break;
             case R.id.navigation_exchange:
                 if (mExchangeFragment == null) {
                     mExchangeFragment = ExchangeFragment.getInstance(mAction, mWatchlistData);
-                }
-                if (mExchangeFragment.isAdded() || fragmentManager.findFragmentByTag(ExchangeFragment.class.getSimpleName()) != null) {
-                    transaction.show(mExchangeFragment);
-                } else {
                     transaction.add(R.id.frame_container, mExchangeFragment, ExchangeFragment.class.getSimpleName());
+                } else {
+                    transaction.show(mExchangeFragment);
                 }
                 break;
             case R.id.navigation_eto:
                 if (mEtoFragment == null) {
                     mEtoFragment = EtoFragment.getInstance();
-                }
-                if (mEtoFragment.isAdded() || fragmentManager.findFragmentByTag(EtoFragment.class.getSimpleName()) != null) {
-                    transaction.show(mEtoFragment);
-                } else {
                     transaction.add(R.id.frame_container, mEtoFragment, EtoFragment.class.getSimpleName());
+                } else {
+                    transaction.show(mEtoFragment);
                 }
                 break;
             case R.id.navigation_account:
                 if (mAccountFragment == null) {
                     mAccountFragment = new AccountFragment();
-                }
-                if (mAccountFragment.isAdded() || fragmentManager.findFragmentByTag(AccountFragment.class.getSimpleName()) != null) {
-                    transaction.show(mAccountFragment);
-                } else {
                     transaction.add(R.id.frame_container, mAccountFragment, AccountFragment.class.getSimpleName());
+                } else {
+                    transaction.show(mAccountFragment);
                 }
                 break;
             case R.id.navigation_main:
                 if (mCybexMainFragment == null) {
                     mCybexMainFragment = new CybexMainFragment();
-                }
-                if (mCybexMainFragment.isAdded() || fragmentManager.findFragmentByTag(CybexMainFragment.class.getSimpleName()) != null) {
-                    transaction.show(mCybexMainFragment);
-                } else {
                     transaction.add(R.id.frame_container, mCybexMainFragment, CybexMainFragment.class.getSimpleName());
+                } else {
+                    transaction.show(mCybexMainFragment);
                 }
                 break;
         }
