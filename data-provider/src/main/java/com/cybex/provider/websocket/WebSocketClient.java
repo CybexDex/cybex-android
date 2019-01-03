@@ -69,7 +69,7 @@ public class WebSocketClient extends WebSocketListener {
     private static final String FLAG_BROADCAST = "broadcast";
 
     private OkHttpClient mOkHttpClient;
-    private WebSocket mWebSocket;
+    private volatile WebSocket mWebSocket;
     //websocket connect status
     private volatile WebSocketStatus mConnectStatus = WebSocketStatus.DEFAULT;
 
@@ -718,10 +718,28 @@ public class WebSocketClient extends WebSocketListener {
         if(mWebSocket != null && mConnectStatus == WebSocketStatus.LOGIN){
             sendForReplyImpl(callObject, replyObjectProcess);
         }else {
-            delayCalls.add(new DelayCall(flag, callObject, replyObjectProcess));
+            DelayCall<T> delayCall = new DelayCall<T>(flag, callObject, replyObjectProcess);
+            addDelayCall(delayCall);
             if (mConnectStatus != WebSocketStatus.CLOSING || mConnectStatus != WebSocketStatus.CLOSED) {
                 connect();
             }
+        }
+    }
+
+    private <T> void addDelayCall(DelayCall<T> delayCall) {
+        if (delayCalls.size() == 0) {
+            delayCalls.add(delayCall);
+            return;
+        }
+        boolean hasCall = false;
+        for(DelayCall call : delayCalls) {
+            if (call.call.params.get(1).equals(delayCall.call.params.get(1))) {
+                hasCall = true;
+                break;
+            }
+        }
+        if (!hasCall) {
+            delayCalls.add(delayCall);
         }
     }
 

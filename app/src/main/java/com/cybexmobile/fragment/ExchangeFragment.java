@@ -246,22 +246,6 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
                     }
                 }));
-        mCompositeDisposable.add(mRxRteWebSocket.onClosed()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<WebSocketClosed>() {
-                    @Override
-                    public void accept(WebSocketClosed webSocketClosed) throws Exception {
-                        if(webSocketClosed.getCode() == 1000){
-                            mCompositeDisposable.dispose();
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                }));
         mRxRteWebSocket.connect();
     }
 
@@ -695,20 +679,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         super.onDestroy();
         getContext().unbindService(mConnection);
         EventBus.getDefault().unregister(this);
-        mCompositeDisposable.add(mRxRteWebSocket.close(1000, "close")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                }));
+        mRxRteWebSocket.close(1000, "close");
+        mCompositeDisposable.dispose();
     }
 
     @Override

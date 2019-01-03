@@ -80,7 +80,7 @@ public interface RxListener {
      * @param reason
      * @return
      */
-    Single<Boolean> close(final int code, @Nullable final String reason);
+    boolean close(final int code, @Nullable final String reason);
 
     /**
      * 判断是否连接

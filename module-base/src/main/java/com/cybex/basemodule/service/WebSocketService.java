@@ -485,43 +485,6 @@ public class WebSocketService extends Service {
          return RetrofitFactory.getInstance()
                 .api()
                 .getAssetPairsConfig();
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Consumer<JsonObject>() {
-//                    @Override
-//                    public void accept(JsonObject jsonObject) throws Exception {
-//                        List<String> assetsIds = new ArrayList<>();
-//                        Gson gson = new Gson();
-//                        for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
-//                            List<AssetsPair> assetsPairs = entry.getValue();
-//                            for(AssetsPair assetsPair : assetsPairs){
-//                                if(!assetsIds.contains(assetsPair.getBase())){
-//                                    assetsIds.add(assetsPair.getBase());
-//                                }
-//                                assetsIds.add(assetsPair.getQuote());
-//
-//                                JsonElement jsonElement = jsonObject.get(assetsPair.getBase());
-//                                if(jsonElement != null) {
-//                                    JsonElement element = jsonElement.getAsJsonObject().get(assetsPair.getQuote());
-//                                    if(element != null) {
-//                                        assetsPair.setConfig(gson.fromJson(element.getAsJsonObject().get("book").getAsJsonObject(), AssetsPair.Config.class));
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        for (String assetId : mAssetWhiteList) {
-//                            if (!assetsIds.contains(assetId)) {
-//                                assetsIds.add(assetId);
-//                            }
-//                        }
-//                        loadAllAssetObjectData(assetsIds);
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//
-//                    }
-//                });
     }
 
     //加载交易对数据

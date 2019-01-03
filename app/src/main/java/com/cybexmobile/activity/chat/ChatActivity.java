@@ -243,22 +243,6 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
 
                     }
                 }));
-        mCompositeDisposable.add(mRxChatWebSocket.onClosed()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<WebSocketClosed>() {
-                    @Override
-                    public void accept(WebSocketClosed webSocketClosed) throws Exception {
-                        if(webSocketClosed.getCode() == 1000){
-                            mCompositeDisposable.dispose();
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                }));
         mRxChatWebSocket.connect();
         mPbChatLoading.setVisibility(View.VISIBLE);
     }
@@ -319,20 +303,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         EventBus.getDefault().unregister(this);
         mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
         unbindService(mConnection);
-        mCompositeDisposable.add(mRxChatWebSocket.close(1000, "close")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                }));
+        mRxChatWebSocket.close(1000, "close");
+        mCompositeDisposable.dispose();
         mUnbinder.unbind();
     }
 

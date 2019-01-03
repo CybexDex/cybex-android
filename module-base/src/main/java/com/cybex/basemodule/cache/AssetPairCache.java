@@ -15,6 +15,9 @@ public class AssetPairCache {
     }
 
     public String getEvaProjectNameFromToken(String tokenName) {
+        if (evaProjectNames == null) {
+            return null;
+        }
         return evaProjectNames.get(tokenName);
     }
 
@@ -56,6 +59,9 @@ public class AssetPairCache {
     }
 
     public AssetsPair.Config getAssetPairConfig(String baseId, String quoteId) {
+        if (assetPairCache == null) {
+            return null;
+        }
         List<AssetsPair> assetsPairs = assetPairCache.get(baseId);
         if(assetsPairs == null){
             return null;

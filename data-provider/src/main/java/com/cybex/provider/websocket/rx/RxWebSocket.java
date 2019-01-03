@@ -236,17 +236,12 @@ public class RxWebSocket implements RxListener {
     }
 
     @Override
-    public synchronized Single<Boolean> close(final int code, @Nullable final String reason) {
-        return Single.fromCallable(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                if (webSocket != null) {
-                    return webSocket.close(code, reason);
-                } else {
-                    throw new RuntimeException("RxWebSocket not connected!");
-                }
-            }
-        });
+    public synchronized boolean close(final int code, @Nullable final String reason) {
+        compositeDisposable.dispose();
+        if (webSocket == null || status == RxWebSocketStatus.CLOSING || status == RxWebSocketStatus.CLOSED) {
+            return true;
+        }
+        return webSocket.close(code, reason);
     }
 
     @Override

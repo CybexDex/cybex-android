@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
@@ -74,7 +75,10 @@ public class CommonSelectRecyclerViewAdapter<T> extends RecyclerView.Adapter<Rec
         viewHolder.mTvSymbol.setSelected(item == mSelectedItem);
         if(item instanceof AccountBalanceObjectItem){
             AccountBalanceObjectItem accountBalanceObjectItem = (AccountBalanceObjectItem) item;
-            viewHolder.mTvSymbol.setText(AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol));
+            AssetObject assetObject = accountBalanceObjectItem.assetObject;
+            if (assetObject != null) {
+                viewHolder.mTvSymbol.setText(AssetUtil.parseSymbol(assetObject.symbol));
+            }
         } else if(item instanceof Address){
             Address address = (Address) item;
             viewHolder.mTvSymbol.setText(address.getNote());

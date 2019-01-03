@@ -66,7 +66,6 @@ public class OrderHistoryListFragment extends BaseFragment {
     private final Gson mGson = new Gson();
     private final JsonParser mJsonParser = new JsonParser();
     private RteRequest mRteRequestDepth;
-    private RteRequest mRteRequestTicker;
 
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private RxRteWebSocket mRxRteWebSocket;
@@ -172,22 +171,6 @@ public class OrderHistoryListFragment extends BaseFragment {
 
                     }
                 }));
-        mCompositeDisposable.add(mRxRteWebSocket.onClosed()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<WebSocketClosed>() {
-                    @Override
-                    public void accept(WebSocketClosed webSocketClosed) throws Exception {
-                        if(webSocketClosed.getCode() == 1000){
-                            mCompositeDisposable.dispose();
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                }));
         mRxRteWebSocket.connect();
     }
 
@@ -221,20 +204,8 @@ public class OrderHistoryListFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mCompositeDisposable.add(mRxRteWebSocket.close(1000, "close")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-
-                    }
-                }));
+        mRxRteWebSocket.close(1000, "close");
+        mCompositeDisposable.dispose();
     }
 
     @Override

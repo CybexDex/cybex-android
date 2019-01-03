@@ -443,12 +443,7 @@ public class MarketsActivity extends BaseActivity {
         public void onMessage(Reply<List<BucketObject>> reply) {
             List<BucketObject> bucketObjects = reply.result;
             if (bucketObjects == null || bucketObjects.size() == 0) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressBar.setVisibility(View.GONE);
-                    }
-                });
+                mProgressBar.setVisibility(View.GONE);
                 return;
             }
             mHistoryPriceList.clear();
@@ -510,12 +505,7 @@ public class MarketsActivity extends BaseActivity {
 
         @Override
         public void onFailure() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mProgressBar.setVisibility(View.GONE);
-                }
-            });
+            mProgressBar.setVisibility(View.GONE);
         }
     };
 
