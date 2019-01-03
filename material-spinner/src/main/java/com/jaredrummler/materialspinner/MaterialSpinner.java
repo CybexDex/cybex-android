@@ -391,6 +391,7 @@ public class MaterialSpinner extends AppCompatTextView {
       adapter.setItems(items);
       adapter.notifyDataSetChanged();
     }
+    popupWindow.setHeight(calculatePopupWindowHeight());
   }
 
   /**
