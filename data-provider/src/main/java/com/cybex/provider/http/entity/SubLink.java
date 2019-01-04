@@ -17,17 +17,20 @@ public class SubLink {
     private String link;
     //状态
     private String status;
+    //是否需要登陆
+    private boolean needlogin;
     //排序
     private String score;
     //
     private String name;
 
-    public SubLink(String title, String desc, String icon, String link, String status, String score, String name) {
+    public SubLink(String title, String desc, String icon, String link, String status, boolean needlogin, String score, String name) {
         this.title = title;
         this.desc = desc;
         this.icon = icon;
         this.link = link;
         this.status = status;
+        this.needlogin = needlogin;
         this.score = score;
         this.name = name;
     }
@@ -70,6 +73,14 @@ public class SubLink {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean isNeedlogin() {
+        return needlogin;
+    }
+
+    public void setNeedlogin(boolean needlogin) {
+        this.needlogin = needlogin;
     }
 
     public String getScore() {
