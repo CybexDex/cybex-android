@@ -5,11 +5,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
+import com.cybexmobile.fragment.MarketTradeHistoryFragment;
+import com.cybexmobile.fragment.OrderHistoryListFragment;
+import com.cybexmobile.graphene.chain.OrderHistory;
+import com.cybexmobile.widget.ViewPagerForScrollView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderHistoryFragmentPageAdapter extends FragmentPagerAdapter {
     private List<Fragment> mListFragment = new ArrayList<>();
+    private int mCurrentPosition = -1;
 
     public OrderHistoryFragmentPageAdapter(FragmentManager fm) {
         super(fm);
@@ -39,4 +45,19 @@ public class OrderHistoryFragmentPageAdapter extends FragmentPagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
 //        super.destroyItem(container, position, object);
     }
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        super.setPrimaryItem(container, position, object);
+        if (position != mCurrentPosition) {
+            Fragment fragment = (Fragment) object;
+            ViewPagerForScrollView pager = (ViewPagerForScrollView) container;
+            if (fragment != null && fragment.getView() != null) {
+                mCurrentPosition = position;
+                pager.measureCurrentView(fragment);
+            }
+        }
+    }
+
+
 }

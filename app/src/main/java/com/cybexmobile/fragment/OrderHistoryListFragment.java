@@ -12,16 +12,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.graphene.rte.RteRequest;
-import com.cybex.provider.graphene.websocket.WebSocketClosed;
 import com.cybex.provider.graphene.websocket.WebSocketFailure;
 import com.cybex.provider.graphene.websocket.WebSocketMessage;
 import com.cybex.provider.graphene.websocket.WebSocketOpen;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.rte.RxRteWebSocket;
-import com.cybexmobile.adapter.OrderHistoryRecyclerViewAdapter;
 import com.cybexmobile.R;
-import com.cybex.basemodule.utils.AssetUtil;
+import com.cybexmobile.adapter.OrderHistoryRecyclerViewAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

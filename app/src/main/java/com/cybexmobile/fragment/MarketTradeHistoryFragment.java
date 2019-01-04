@@ -12,17 +12,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
-import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
-import com.cybex.basemodule.event.Event;
-import com.cybex.provider.exception.NetworkStatusException;
 import com.cybexmobile.R;
-import com.cybex.provider.graphene.chain.MarketTrade;
-import com.cybex.basemodule.utils.AssetUtil;
+import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.greenrobot.eventbus.EventBus;
