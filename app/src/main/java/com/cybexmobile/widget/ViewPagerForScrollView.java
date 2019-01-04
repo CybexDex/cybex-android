@@ -62,7 +62,7 @@ public class ViewPagerForScrollView extends ViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (enableScroll) {
+        if (!enableScroll) {
             return false;
         }
         return super.onTouchEvent(ev);
@@ -71,7 +71,7 @@ public class ViewPagerForScrollView extends ViewPager {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 
-        if (enableScroll) {
+        if (!enableScroll) {
             return false;
         }
 
