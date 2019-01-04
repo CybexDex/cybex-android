@@ -530,14 +530,16 @@
     <string name="text_game_details">体验区块链游戏</string>
 
     <!-- Eva -->
-    <string name="text_eva_hype_score">Hype Score</string>
-    <string name="text_eva_risk_score">Risk Score</string>
-    <string name="text_eva_expectation">Expectation</string>
-    <string name="text_eva_platform">Platform</string>
-    <string name="text_eva_industry">Industry</string>
-    <string name="text_eva_supply">ICotokenSupply</string>
-    <string name="text_eva_tokenprice">Token Price</string>
-    <string name="text_eva_country">Country</string>
-    <string name="text_eva_introduction">Introduction</string>
+    <string name="text_eva_hype_score">炒作值</string>
+    <string name="text_eva_risk_score">风险值</string>
+    <string name="text_eva_expectation">期望值</string>
+    <string name="text_eva_platform">平台</string>
+    <string name="text_eva_industry">行业</string>
+    <string name="text_eva_supply">ICO发行总量</string>
+    <string name="text_eva_tokenprice">币价</string>
+    <string name="text_eva_country">发行地</string>
+    <string name="text_eva_introduction">介绍</string>
     <string name="fragment_tab_title">项目介绍</string>
+    <string name="text_eva_score">综合得分:</string>
+
 </resources>
