@@ -23,7 +23,6 @@ import android.widget.CheckBox;
 
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.provider.graphene.rte.RteRequest;
-import com.cybex.provider.graphene.websocket.WebSocketClosed;
 import com.cybex.provider.graphene.websocket.WebSocketFailure;
 import com.cybex.provider.graphene.websocket.WebSocketMessage;
 import com.cybex.provider.graphene.websocket.WebSocketOpen;

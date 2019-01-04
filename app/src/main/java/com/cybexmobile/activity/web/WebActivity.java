@@ -132,8 +132,8 @@ public class WebActivity extends BaseActivity{
                 if(hitTestResult.getType() == WebView.HitTestResult.UNKNOWN_TYPE){
                     Log.v(TAG, view.getUrl() + "  ---> 重定向 --->  " + url);
                 }
-                //禁止重定向
-                return true;
+                //允许重定向
+                return false;
             }
         });
     }

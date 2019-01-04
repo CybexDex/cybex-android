@@ -573,11 +573,14 @@ public class WebSocketService extends Service {
         if(mNetworkState == TYPE_NOT_CONNECTED){
             return;
         }
-        if(mWatchlistWorker == null){
-            mWatchlistWorker = new WatchlistWorker();
-        }
         if(mWatchlistFuture != null && !mWatchlistFuture.isCancelled()){
             mWatchlistFuture.cancel(true);
+        }
+        if (mScheduled.isShutdown() || mScheduled.isTerminated()) {
+            mScheduled = Executors.newScheduledThreadPool(2);
+        }
+        if(mWatchlistWorker == null){
+            mWatchlistWorker = new WatchlistWorker();
         }
         mWatchlistFuture = mScheduled.scheduleAtFixedRate(mWatchlistWorker, 0,
                 mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
@@ -604,7 +607,10 @@ public class WebSocketService extends Service {
             return;
         }
         if(mFullAccountFuture != null && !mFullAccountFuture.isCancelled()){
-            return;
+            mFullAccountFuture.cancel(true);
+        }
+        if (mScheduled.isShutdown() || mScheduled.isTerminated()) {
+            mScheduled = Executors.newScheduledThreadPool(2);
         }
         if(mFullAccountWorker == null){
             mFullAccountWorker = new FullAccountWorker();
@@ -623,6 +629,7 @@ public class WebSocketService extends Service {
             return;
         }
         mFullAccountFuture.cancel(true);
+        mFullAccountFuture = null;
     }
 
     private void loadMarketTicker(String base, String quote) {
