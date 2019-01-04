@@ -554,25 +554,20 @@ public class RegisterActivity extends BaseActivity {
                 @Override
                 public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (accountObject != null && strAccount.equals(accountObject.name)) {
-                                mRegisterErrorText.setText(R.string.create_account_activity_account_object_exist);
-                                mRegisterErrorSign.setVisibility(View.VISIBLE);
-                                mUserNameChecker.setVisibility(View.GONE);
-                            } else {
-                                mRegisterErrorText.setText("");
-                                mUserNameChecker.setVisibility(View.VISIBLE);
-                                mRegisterErrorSign.setVisibility(View.GONE);
-                                checkPassword(mEtPassWord.getText().toString());
-                            }
-                            setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
-                                    mPasswordChecker.getVisibility() == View.VISIBLE &&
-                                    mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
-                                    !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
-                        }
-                    });
+                    if (accountObject != null && strAccount.equals(accountObject.name)) {
+                        mRegisterErrorText.setText(R.string.create_account_activity_account_object_exist);
+                        mRegisterErrorSign.setVisibility(View.VISIBLE);
+                        mUserNameChecker.setVisibility(View.GONE);
+                    } else {
+                        mRegisterErrorText.setText("");
+                        mUserNameChecker.setVisibility(View.VISIBLE);
+                        mRegisterErrorSign.setVisibility(View.GONE);
+                        checkPassword(mEtPassWord.getText().toString());
+                    }
+                    setRegisterButtonEnable(mUserNameChecker.getVisibility() == View.VISIBLE &&
+                            mPasswordChecker.getVisibility() == View.VISIBLE &&
+                            mPasswordConfirmChecker.getVisibility() == View.VISIBLE &&
+                            !TextUtils.isEmpty(mPinCodeTextView.getText().toString().trim()));
                 }
 
                 @Override

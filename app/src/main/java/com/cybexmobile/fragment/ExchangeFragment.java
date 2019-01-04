@@ -462,7 +462,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     }
 
     public void loadLimitOrderCreateFee(String assetId){
-        if(mWatchlistData == null){
+        if(mWatchlistData == null || mWebSocketService == null){
             return;
         }
         mWebSocketService.loadLimitOrderCreateFee(assetId, ID_CREATE_LIMIT_ORDER_OPERATION,

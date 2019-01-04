@@ -1,8 +1,6 @@
 package com.cybexmobile.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,16 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
-import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybexmobile.R;
-import com.cybexmobile.activity.gateway.deposit.DepositActivity;
-import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
-import com.cybexmobile.activity.address.WithdrawAddressManageListActivity;
 import com.cybexmobile.activity.address.WithdrawAddressManagerActivity;
-import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
-import com.cybexmobile.fragment.DepositItemFragment;
-import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.utils.MyUtils;
@@ -32,20 +23,19 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private final static int TYPE_EMPTY = 0;
     private final static int TYPE_CONTENT = 1;
-    private Activity mContext;
+    private Context mContext;
     private String mName;
     private List<DepositAndWithdrawObject> mDataList;
     private List<DepositAndWithdrawObject> mOriginDataList;
     private BalanceFilter mFilter;
+    private OnItemClickListener mOnItemClickListener;
 
-
-    public DepositAndWithdrawAdapter(Activity context, String name, List<DepositAndWithdrawObject> depositAndWithdrawObjectList) {
+    public DepositAndWithdrawAdapter(Context context, String name, List<DepositAndWithdrawObject> depositAndWithdrawObjectList) {
         mContext = context;
         mName = name;
         mDataList = depositAndWithdrawObjectList;
@@ -57,6 +47,9 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
         mDataList = depositAndWithdrawItems;
     }
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView mAssetName;
@@ -86,85 +79,29 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
             return;
         }
         ViewHolder holder = (ViewHolder) viewHolder;
-        AssetObject assetObject = mDataList.get(position).getAssetObject();
-        AccountBalanceObject accountBalanceObject = mDataList.get(position).getAccountBalanceObject();
-        if (assetObject != null) {
-            if (mName.equals(WithdrawAddressManagerActivity.class.getName())) {
-                holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
-                loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
-                holder.mAssetPrice.setText(String.valueOf(mDataList.get(position).getCount()));
-                holder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, WithdrawAddressManageListActivity.class);
-                        intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
-                        intent.putExtra("assetId", mDataList.get(position).getId());
-                        mContext.startActivity(intent);
-                    }
-                });
-            } else {
-                holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
-                loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
-                holder.mAssetFullName.setText(String.format(" (%s)", mDataList.get(position).getProjectName()));
-
-                if (mDataList.get(position).isEnable()) {
-                    holder.mAssetPrice.setText("");
-                } else {
-                    holder.mAssetPrice.setText(mContext.getResources().getString(R.string.gate_way_suspended));
-                }
-                holder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mName.equals(DepositItemFragment.class.getName())) {
-                            if (mDataList.get(position).isEnable()) {
-                                Intent intent = new Intent(mContext, DepositActivity.class);
-                                intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
-                                intent.putExtra("assetId", mDataList.get(position).getId());
-                                intent.putExtra("isEnabled", mDataList.get(position).isEnable());
-                                intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
-                                intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
-                                intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
-                                intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
-                                intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
-                                mContext.startActivity(intent);
-                            } else {
-                                if (!mDataList.get(position).getCnMsg().equals("") && !mDataList.get(position).getEnMsg().equals("")) {
-                                    if (Locale.getDefault().getLanguage().equals("zh")) {
-                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getCnMsg());
-                                    } else {
-                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getEnMsg());
-                                    }
-                                }
-                            }
-                        } else {
-                            if (mDataList.get(position).isEnable()) {
-                                Intent intent = new Intent(mContext, WithdrawActivity.class);
-                                intent.putExtra("assetName", MyUtils.removeJadePrefix(assetObject.symbol));
-                                intent.putExtra("assetId", mDataList.get(position).getId());
-                                intent.putExtra("isEnabled", mDataList.get(position).isEnable());
-                                intent.putExtra("enMsg", mDataList.get(position).getEnMsg());
-                                intent.putExtra("cnMsg", mDataList.get(position).getCnMsg());
-                                intent.putExtra("enInfo", mDataList.get(position).getEnInfo());
-                                intent.putExtra("cnInfo", mDataList.get(position).getCnInfo());
-                                intent.putExtra("assetObject", mDataList.get(position).getAssetObject());
-                                if (accountBalanceObject != null) {
-                                    intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, assetObject.precision));
-                                }
-                                mContext.startActivity(intent);
-                            } else {
-                                if (!mDataList.get(position).getCnMsg().equals("") && !mDataList.get(position).getEnMsg().equals("")) {
-                                    if (Locale.getDefault().getLanguage().equals("zh")) {
-                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getCnMsg());
-                                    } else {
-                                        ToastMessage.showDepositWithdrawToastMessage(mContext, mDataList.get(position).getEnMsg());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
+        final DepositAndWithdrawObject depositAndWithdrawObject = mDataList.get(position);
+        final AssetObject assetObject = depositAndWithdrawObject.getAssetObject();
+        if (assetObject == null) {
+            return;
         }
+        if (mName.equals(WithdrawAddressManagerActivity.class.getName())) {
+            holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
+            holder.mAssetPrice.setText(String.valueOf(depositAndWithdrawObject.getCount()));
+            loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
+        } else {
+            holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
+            holder.mAssetFullName.setText(String.format(" (%s)", depositAndWithdrawObject.getProjectName()));
+            holder.mAssetPrice.setText(depositAndWithdrawObject.isEnable() ? "" : mContext.getResources().getString(R.string.gate_way_suspended));
+            loadImage(depositAndWithdrawObject.getId(), holder.mAssetIcon);
+        }
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(depositAndWithdrawObject);
+                }
+            }
+        });
     }
 
     @NonNull
@@ -230,5 +167,9 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
             mDataList = (List<DepositAndWithdrawObject>)results.values;
             notifyDataSetChanged();
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject);
     }
 }

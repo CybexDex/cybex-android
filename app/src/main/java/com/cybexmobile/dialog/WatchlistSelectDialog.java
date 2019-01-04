@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -89,8 +90,9 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         Display display = manager.getDefaultDisplay();
         WindowManager.LayoutParams params = window.getAttributes();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = (int)(display.getHeight() * 0.7);
+        params.height = (int)(display.getHeight() * 0.6);
         params.gravity = Gravity.TOP;
+        params.y = getToolbarHeight();
         window.setAttributes(params);
         mUnbinder = ButterKnife.bind(this, view);
         mRvWatchlist.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -135,11 +137,6 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         Intent intent = new Intent();
         intent.putExtra(INTENT_PARAM_WATCHLIST, watchlist);
         getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_CODE_SELECTED_WATCHLIST, intent);
-        this.dismiss();
-    }
-
-    @OnClick(R.id.toolbar)
-    public void onToolBarClick(View view){
         this.dismiss();
     }
 
@@ -217,6 +214,15 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
             mWebSocketService = null;
         }
     };
+
+    private int getToolbarHeight() {
+        int toolBarHeight = 0;
+        TypedValue value = new TypedValue();
+        if (getContext().getTheme().resolveAttribute(android.R.attr.actionBarSize, value, true)) {
+            toolBarHeight = TypedValue.complexToDimensionPixelSize(value.data, getResources().getDisplayMetrics());
+        }
+        return toolBarHeight;
+    }
 
     private void initRadioButton(){
         if(mCurrWatchlist == null){

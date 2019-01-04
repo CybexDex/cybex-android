@@ -15,9 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.utils.MyUtils;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.GatewayActivity;
+import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
@@ -35,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,14 +52,13 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
-public class WithdrawItemFragment extends Fragment {
+public class WithdrawItemFragment extends BaseFragment implements DepositAndWithdrawAdapter.OnItemClickListener {
     private static final String TAG = WithdrawItemFragment.class.getName();
     private static String ARGS_ACCOUNT_BALANCE = "args_account_balance";
 
     private List<DepositAndWithdrawObject> mWithdrawObjectList = new ArrayList<>();
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItemList = new ArrayList<>();
     private DepositAndWithdrawAdapter mDepositAndWithdrawAdapter;
-    private BaseActivity mActivity;
 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
@@ -91,9 +96,9 @@ public class WithdrawItemFragment extends Fragment {
         Context context = view.getContext();
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        mActivity = (BaseActivity) getActivity();
 
-        mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(mActivity, TAG, mWithdrawObjectList);
+        mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(context, TAG, mWithdrawObjectList);
+        mDepositAndWithdrawAdapter.setOnItemClickListener(this);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.deposit_withdraw_divider));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -199,18 +204,12 @@ public class WithdrawItemFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        if (mActivity != null) {
-                            mActivity.hideLoadDialog();
-                        }
-
+                        hideLoadDialog();
                     }
 
                     @Override
                     public void onComplete() {
-                        if (mActivity != null) {
-                            mActivity.hideLoadDialog();
-                        }
-
+                        hideLoadDialog();
                     }
                 });
     }
@@ -222,9 +221,7 @@ public class WithdrawItemFragment extends Fragment {
             mWebSocketService = binder.getService();
             if (mWithdrawObjectList.size() == 0) {
                 if (mWebSocketService != null) {
-                    if (mActivity != null) {
-                        mActivity.showLoadDialog(true);
-                    }
+                    showLoadDialog(true);
                     if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
                         requestWithdrawList();
                     }
@@ -255,5 +252,38 @@ public class WithdrawItemFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         getContext().unbindService(mConnection);
+    }
+
+    @Override
+    public void onNetWorkStateChanged(boolean isAvailable) {
+
+    }
+
+    @Override
+    public void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject) {
+        if (depositAndWithdrawObject.isEnable()) {
+            Intent intent = new Intent(getContext(), WithdrawActivity.class);
+            intent.putExtra("assetName", MyUtils.removeJadePrefix(depositAndWithdrawObject.getAssetObject().symbol));
+            intent.putExtra("assetId", depositAndWithdrawObject.getId());
+            intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
+            intent.putExtra("enMsg", depositAndWithdrawObject.getEnMsg());
+            intent.putExtra("cnMsg", depositAndWithdrawObject.getCnMsg());
+            intent.putExtra("enInfo", depositAndWithdrawObject.getEnInfo());
+            intent.putExtra("cnInfo", depositAndWithdrawObject.getCnInfo());
+            intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
+            AccountBalanceObject accountBalanceObject = depositAndWithdrawObject.getAccountBalanceObject();
+            if (accountBalanceObject != null) {
+                intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, depositAndWithdrawObject.getAssetObject().precision));
+            }
+            getContext().startActivity(intent);
+        } else {
+            if (!depositAndWithdrawObject.getCnMsg().equals("") && !depositAndWithdrawObject.getEnMsg().equals("")) {
+                if (Locale.getDefault().getLanguage().equals("zh")) {
+                    ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getCnMsg());
+                } else {
+                    ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getEnMsg());
+                }
+            }
+        }
     }
 }

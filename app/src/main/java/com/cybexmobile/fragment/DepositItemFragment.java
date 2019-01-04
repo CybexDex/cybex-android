@@ -18,7 +18,10 @@ import android.view.ViewGroup;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.provider.utils.MyUtils;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.deposit.DepositActivity;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +58,7 @@ import okhttp3.ResponseBody;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class DepositItemFragment extends Fragment {
+public class DepositItemFragment extends Fragment implements DepositAndWithdrawAdapter.OnItemClickListener {
     private static String ARGS_ACCOUNT_BALANCE = "args_account_balance";
 
     private OnListFragmentInteractionListener mListener;
@@ -106,6 +110,7 @@ public class DepositItemFragment extends Fragment {
         // Set the adapter
         Context context = getContext();
         mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(mActivity, TAG, mDepositObjectList);
+        mDepositAndWithdrawAdapter.setOnItemClickListener(this);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(getResources().getDrawable(R.drawable.deposit_withdraw_divider));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -272,6 +277,30 @@ public class DepositItemFragment extends Fragment {
         super.onDetach();
         mListener = null;
         getContext().unbindService(mConnection);
+    }
+
+    @Override
+    public void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject) {
+        if (depositAndWithdrawObject.isEnable()) {
+            Intent intent = new Intent(getContext(), DepositActivity.class);
+            intent.putExtra("assetName", MyUtils.removeJadePrefix(depositAndWithdrawObject.getAssetObject().symbol));
+            intent.putExtra("assetId", depositAndWithdrawObject.getId());
+            intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
+            intent.putExtra("enMsg", depositAndWithdrawObject.getEnMsg());
+            intent.putExtra("cnMsg", depositAndWithdrawObject.getCnMsg());
+            intent.putExtra("enInfo", depositAndWithdrawObject.getEnInfo());
+            intent.putExtra("cnInfo", depositAndWithdrawObject.getCnInfo());
+            intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
+            getContext().startActivity(intent);
+        } else {
+            if (!depositAndWithdrawObject.getCnMsg().equals("") && !depositAndWithdrawObject.getEnMsg().equals("")) {
+                if (Locale.getDefault().getLanguage().equals("zh")) {
+                    ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getCnMsg());
+                } else {
+                    ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getEnMsg());
+                }
+            }
+        }
     }
 
     /**

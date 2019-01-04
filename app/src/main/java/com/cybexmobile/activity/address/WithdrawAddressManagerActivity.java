@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.utils.MyUtils;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
 import com.cybex.provider.http.RetrofitFactory;
@@ -39,7 +40,7 @@ import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
-public class WithdrawAddressManagerActivity extends BaseActivity {
+public class WithdrawAddressManagerActivity extends BaseActivity implements DepositAndWithdrawAdapter.OnItemClickListener {
     private static final String TAG = WithdrawAddressManagerActivity.class.getName();
 
     private List<DepositAndWithdrawObject> mWithdrawObjectList = new ArrayList<>();
@@ -65,6 +66,7 @@ public class WithdrawAddressManagerActivity extends BaseActivity {
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
         mDepositAndWithdrawAdapter = new DepositAndWithdrawAdapter(this, TAG, mWithdrawObjectList);
+        mDepositAndWithdrawAdapter.setOnItemClickListener(this);
         mWithdrawAddressRecyclerView.setAdapter(mDepositAndWithdrawAdapter);
         mWithdrawAddressRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mWithdrawAddressRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -179,5 +181,13 @@ public class WithdrawAddressManagerActivity extends BaseActivity {
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
+    }
+
+    @Override
+    public void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject) {
+        Intent intent = new Intent(this, WithdrawAddressManageListActivity.class);
+        intent.putExtra("assetName", MyUtils.removeJadePrefix(depositAndWithdrawObject.getAssetObject().symbol));
+        intent.putExtra("assetId", depositAndWithdrawObject.getId());
+        startActivity(intent);
     }
 }
