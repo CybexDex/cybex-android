@@ -12,6 +12,7 @@ import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.fragment.WatchlistFragment;
+import com.cybexmobile.shake.AntiShake;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -77,6 +78,7 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (AntiShake.check(v.getId())) { return; }
                 if (mListener != null) {
                     mListener.onListFragmentInteraction(watchlistData);
                 }

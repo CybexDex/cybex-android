@@ -73,7 +73,7 @@ public class ChooseThemeActivity extends BaseActivity {
 
                 }
                 EventBus.getDefault().post(new Event.ConfigChanged("THEME_CHANGED"));
-                recreate();
+                finish();
             }
         });
     }

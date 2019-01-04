@@ -30,6 +30,7 @@ import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
 import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.dialog.FrequencyModeDialog;
+import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -126,30 +127,35 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
 
     @OnClick(R.id.setting_layout_language)
     public void onLanguageClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(SettingActivity.this, ChooseLanguageActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.setting_layout_version)
     public void onVersionClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         showLoadDialog();
         checkVersion();
     }
 
     @OnClick(R.id.setting_layout_theme)
     public void onThemeClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(SettingActivity.this, ChooseThemeActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.setting_layout_help_feedback)
     public void onHelpFeedback(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(this, HelpActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.log_out)
-    public void onLoginOutClick(){
+    public void onLoginOutClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
         mSharedPreference.edit().putString(PREF_NAME, null).apply();
         mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
@@ -164,6 +170,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
 
     @OnClick(R.id.setting_layout_frequency)
     public void onFrequencyClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         FrequencyModeDialog dialog = new FrequencyModeDialog();
         Bundle bundle = new Bundle();
         bundle.putInt(INTENT_PARAM_LOAD_MODE, mMode);
@@ -181,7 +188,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
                 R.string.setting_official_server : R.string.setting_test_server));
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.edit().putString(PREF_SERVER, isChecked ? SERVER_OFFICIAL : SERVER_TEST).apply();
-        onLoginOutClick();
+        onLoginOutClick(mLogOutButton);
         //重启app
         restartApp();
     }

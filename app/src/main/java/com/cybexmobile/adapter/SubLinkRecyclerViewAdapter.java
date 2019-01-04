@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.cybex.provider.http.entity.SubLink;
 import com.cybexmobile.R;
+import com.cybexmobile.shake.AntiShake;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class SubLinkRecyclerViewAdapter extends RecyclerView.Adapter<SubLinkRecy
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (AntiShake.check(v.getId())) { return; }
                 if(mListener != null){
                     mListener.onItemClick(subLink);
                 }

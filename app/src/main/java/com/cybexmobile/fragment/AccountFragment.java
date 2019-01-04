@@ -27,6 +27,7 @@ import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybexmobile.activity.address.AddressManagerActivity;
 import com.cybex.provider.crypto.Sha256Object;
 import com.cybex.basemodule.event.Event;
+import com.cybexmobile.shake.AntiShake;
 import com.cybexmobile.utils.KotlinAvatarJavaBridge;
 import com.pixplicity.sharp.Sharp;
 
@@ -119,6 +120,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @OnClick(R.id.account_tv_name)
     public void onLoginClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         if(mIsLoginIn){
             return;
         }
@@ -127,6 +129,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @OnClick(R.id.account_layout_item_my_portfolio)
     public void onAllPortfolioClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         if(!mIsLoginIn){
             toLogin();
             return;
@@ -137,6 +140,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @OnClick(R.id.account_layout_item_address_manager)
     public void onAddressManagerClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         if(!mIsLoginIn){
             toLogin();
             return;
@@ -147,6 +151,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @OnClick(R.id.account_layout_item_gateway)
     public void onGatewayClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         if(!mIsLoginIn){
             toLogin();
             return;
@@ -157,6 +162,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @OnClick(R.id.account_layout_item_open_order)
     public void onOpenOrderClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         if(!mIsLoginIn){
             toLogin();
             return;
@@ -167,6 +173,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @OnClick(R.id.account_layout_item_lockup_asset)
     public void onLockupAssetsClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         if(!mIsLoginIn){
             toLogin();
             return;
@@ -237,6 +244,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        if (AntiShake.check(item.getItemId())) { return false; }
         switch (item.getItemId()) {
             case R.id.action_setting:
                 Intent intent = new Intent(getContext(), SettingActivity.class);

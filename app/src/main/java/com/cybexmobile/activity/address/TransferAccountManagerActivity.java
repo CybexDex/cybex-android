@@ -22,6 +22,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.dialog.AddressOperationSelectDialog;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybexmobile.shake.AntiShake;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,6 +106,7 @@ public class TransferAccountManagerActivity extends BaseActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (AntiShake.check(item.getItemId())) { return false; }
         switch (item.getItemId()) {
             case R.id.action_add_transfer_account:
                 Intent intent = new Intent(this, AddTransferAccountActivity.class);

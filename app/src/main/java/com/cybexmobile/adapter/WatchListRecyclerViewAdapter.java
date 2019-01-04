@@ -13,6 +13,7 @@ import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.fragment.WatchlistFragment.OnListFragmentInteractionListener;
 import com.cybexmobile.R;
 import com.cybex.basemodule.utils.AssetUtil;
+import com.cybexmobile.shake.AntiShake;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -77,6 +78,7 @@ public class WatchListRecyclerViewAdapter extends RecyclerView.Adapter<WatchList
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (AntiShake.check(v.getId())) { return; }
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.

@@ -41,23 +41,11 @@ public class ChooseLanguageActivity extends BaseActivity {
         clickChineseChange();
         clickEnglishChange();
         getDefaultLanguage();
-        EventBus.getDefault().register(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onConfigChanged(Event.ConfigChanged event) {
-        switch (event.getConfigName()) {
-            case "EVENT_REFRESH_LANGUAGE":
-                recreate();
-                break;
-        }
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -75,7 +63,7 @@ public class ChooseLanguageActivity extends BaseActivity {
                 mImageViewEnglish.setVisibility(View.GONE);
                 StoreLanguageHelper.setLanguageLocal(ChooseLanguageActivity.this, "zh");
                 EventBus.getDefault().post(new Event.ConfigChanged("EVENT_REFRESH_LANGUAGE"));
-
+                finish();
             }
         });
     }
@@ -90,6 +78,7 @@ public class ChooseLanguageActivity extends BaseActivity {
                 mImageViewChinese.setVisibility(View.GONE);
                 StoreLanguageHelper.setLanguageLocal(ChooseLanguageActivity.this, "en");
                 EventBus.getDefault().post(new Event.ConfigChanged("EVENT_REFRESH_LANGUAGE"));
+                finish();
             }
         });
     }

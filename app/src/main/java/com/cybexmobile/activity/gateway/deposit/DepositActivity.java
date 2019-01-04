@@ -51,6 +51,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybexmobile.activity.web.WebActivity;
+import com.cybexmobile.shake.AntiShake;
 import com.cybexmobile.utils.AntiMultiClick;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybexmobile.utils.QRCode;
@@ -209,6 +210,7 @@ public class DepositActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (AntiShake.check(item.getItemId())) { return false; }
         switch (item.getItemId()) {
             case R.id.action_records:
                 Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);

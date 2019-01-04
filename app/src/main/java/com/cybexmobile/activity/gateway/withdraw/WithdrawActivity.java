@@ -68,6 +68,7 @@ import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybexmobile.shake.AntiShake;
 import com.cybexmobile.utils.DecimalDigitsInputFilter;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
 
@@ -279,6 +280,7 @@ public class WithdrawActivity extends BaseActivity {
 
     @OnClick(R.id.withdraw_tv_select_address)
     public void onSelectAddressClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         if (mAddresses == null || mAddresses.size() == 0) {
             Intent intent = new Intent(this, AddTransferAccountActivity.class);
             intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mAssetName);
@@ -426,6 +428,7 @@ public class WithdrawActivity extends BaseActivity {
 
     @OnClick(value = R.id.withdraw_button)
     public void onWithdrawButtonClicked(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         CybexDialog.showConfirmationDialog(this, new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
@@ -912,6 +915,7 @@ public class WithdrawActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (AntiShake.check(item.getItemId())) { return false; }
         switch (item.getItemId()) {
             case R.id.action_records:
                 Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);

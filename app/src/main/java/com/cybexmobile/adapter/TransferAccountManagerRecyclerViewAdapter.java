@@ -13,6 +13,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.activity.address.TransferAccountManagerActivity;
 import com.cybexmobile.activity.address.WithdrawAddressManageListActivity;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
+import com.cybexmobile.shake.AntiShake;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +91,7 @@ public class TransferAccountManagerRecyclerViewAdapter extends RecyclerView.Adap
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (AntiShake.check(v.getId())) { return; }
                 if(mOnItemClickListener != null){
                     mOnItemClickListener.onItemClick(address, position);
                     viewHolder.itemView.setSelected(true);

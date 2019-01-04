@@ -47,6 +47,7 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
+import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -416,6 +417,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
     @OnClick(R.id.buysell_btn_buy_sell)
     public void onBtnBuySellClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         if(!mIsLoginIn){
             toLogin();
             return;

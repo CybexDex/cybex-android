@@ -42,6 +42,7 @@ import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.basemodule.service.WebSocketService;
+import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -184,11 +185,13 @@ public class AccountBalanceActivity extends BaseActivity {
 
     @OnClick(R.id.account_balance_info_question_marker)
     public void onBalanceInfoClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         CybexDialog.showBalanceDialog(this);
     }
 
     @OnClick(R.id.account_balance_deposit_layout)
     public void onDepositButtonClicked(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(this, GatewayActivity.class);
         intent.putExtra(GatewayActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         intent.putExtra(GatewayActivity.INTENT_IS_DEPOSIT, true);
@@ -197,6 +200,7 @@ public class AccountBalanceActivity extends BaseActivity {
 
     @OnClick(R.id.account_balance_withdraw_layout)
     public void onWithdrawButtonClicked(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(this, GatewayActivity.class);
         intent.putExtra(GatewayActivity.INTENT_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         intent.putExtra(GatewayActivity.INTENT_IS_DEPOSIT, false);
@@ -205,6 +209,7 @@ public class AccountBalanceActivity extends BaseActivity {
 
     @OnClick(R.id.account_balance_transfer_layout)
     public void onTransferButtonClicked(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(this, TransferActivity.class);
         intent.putExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         startActivity(intent);

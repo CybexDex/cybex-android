@@ -43,6 +43,7 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.constant.Constant;
+import com.cybexmobile.shake.AntiShake;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -430,6 +431,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+        if (AntiShake.check(v.getId())) { return; }
         /**
          * fix bug:CYM-454
          * WatchlistData为空不能跳转，防止MarketsActivity crash
@@ -445,6 +447,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @OnClick(R.id.cb_title)
     public void onTitleClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         WatchlistSelectDialog fragment = new WatchlistSelectDialog();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_WATCHLIST, mWatchlistData);
@@ -456,6 +459,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        if (AntiShake.check(item.getItemId())) { return false; }
         Intent intent = new Intent(getContext(), OwnOrderHistoryActivity.class);
         getContext().startActivity(intent);
         return false;

@@ -54,6 +54,7 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
+import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -211,6 +212,7 @@ public class TransferActivity extends BaseActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (AntiShake.check(item.getItemId())) { return false; }
         switch (item.getItemId()) {
             case R.id.action_records:
                 Intent intent = new Intent(this, TransferRecordsActivity.class);
@@ -285,6 +287,7 @@ public class TransferActivity extends BaseActivity implements
 
     @OnClick(R.id.transfer_tv_select_account)
     public void onSelectAccountClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         if(mAddresses == null || mAddresses.size() == 0){
             Intent intent = new Intent(this, AddTransferAccountActivity.class);
             startActivity(intent);
@@ -312,6 +315,7 @@ public class TransferActivity extends BaseActivity implements
 
     @OnClick(R.id.transfer_tv_crypto)
     public void onCryptoClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         CommonSelectDialog<AccountBalanceObjectItem> dialog = new CommonSelectDialog<AccountBalanceObjectItem>();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_ITEMS, (Serializable) mAccountBalanceObjectItems);
@@ -323,6 +327,7 @@ public class TransferActivity extends BaseActivity implements
 
     @OnClick(R.id.transfer_btn_transfer)
     public void onTransferClick(View view){
+        if (AntiShake.check(view.getId())) { return; }
         checkIsLockAndTransfer();
     }
 

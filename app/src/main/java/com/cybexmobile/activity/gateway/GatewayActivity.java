@@ -36,6 +36,7 @@ import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
 import com.cybexmobile.fragment.dummy.DummyContent;
+import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -232,6 +233,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (AntiShake.check(item.getItemId())) { return false; }
         switch (item.getItemId()) {
             case R.id.action_records:
                 Intent intent = new Intent(this, DepositAndWithdrawTotalActivity.class);

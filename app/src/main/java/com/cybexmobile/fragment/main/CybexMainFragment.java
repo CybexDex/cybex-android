@@ -52,6 +52,7 @@ import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.helper.GridSpacingItemDecoration;
 import com.cybexmobile.injection.base.AppBaseFragment;
 import com.cybexmobile.intent.IntentFactory;
+import com.cybexmobile.shake.AntiShake;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
@@ -273,6 +274,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Override
     public void onClick(View v) {
+        if (AntiShake.check(v.getId())) { return; }
         if(v.getTag() instanceof Announce){
             Announce announce = (Announce) v.getTag();
             new IntentFactory()
@@ -284,6 +286,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
 
     @Override
     public void OnBannerClick(int position) {
+        if (AntiShake.check(mBanner.getId())) { return; }
         new IntentFactory()
                 .action(mCybexBanners.get(position).getLink())
                 .checkLogin(mIsLoginIn)

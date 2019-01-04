@@ -19,6 +19,7 @@ import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.utils.MyUtils;
+import com.cybexmobile.shake.AntiShake;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -97,6 +98,7 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (AntiShake.check(v.getId())) { return; }
                 if (mOnItemClickListener != null) {
                     mOnItemClickListener.onItemClick(depositAndWithdrawObject);
                 }

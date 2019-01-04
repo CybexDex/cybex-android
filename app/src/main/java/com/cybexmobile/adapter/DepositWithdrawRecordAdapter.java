@@ -19,6 +19,7 @@ import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybexmobile.intent.IntentFactory;
+import com.cybexmobile.shake.AntiShake;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -128,6 +129,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (AntiShake.check(v.getId())) { return; }
                 new IntentFactory()
                         .action(item.getExplorerLink())
                         .checkLogin(true)

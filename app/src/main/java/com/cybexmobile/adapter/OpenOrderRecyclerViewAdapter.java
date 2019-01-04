@@ -20,6 +20,7 @@ import com.cybexmobile.R;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.basemodule.utils.AssetUtil;
+import com.cybexmobile.shake.AntiShake;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +78,12 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         AssetObject baseAsset = openOrderItem.baseAsset;
         AssetObject quoteAsset = openOrderItem.quoteAsset;
         LimitOrder limitOrder = openOrderItem.limitOrder;
-        AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(baseAsset.id.toString(), quoteAsset.id.toString());
-        if (assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
-        double amount;
-        double price;
-        double sold;
         if (baseAsset != null && quoteAsset != null) {
+            AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(baseAsset.id.toString(), quoteAsset.id.toString());
+            if (assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
+            double amount;
+            double price;
+            double sold;
             if ((!baseAsset.symbol.startsWith("CYB") && !baseAsset.symbol.startsWith("JADE")) ||
                     (!quoteAsset.symbol.startsWith("CYB") && !quoteAsset.symbol.startsWith("JADE"))) {
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
@@ -198,6 +199,7 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
 
         @OnClick(R.id.item_exchange_open_order_btn_cancel)
         public void onCancelClick(View view){
+            if (AntiShake.check(view.getId())) { return; }
             /**
              * fix online bug
              * java.lang.ArrayIndexOutOfBoundsException: length=10; index=-1

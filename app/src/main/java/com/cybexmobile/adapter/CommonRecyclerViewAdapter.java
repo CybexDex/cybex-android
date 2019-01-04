@@ -15,6 +15,7 @@ import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.basemodule.utils.DateUtils;
+import com.cybexmobile.shake.AntiShake;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -106,6 +107,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             holder.mBalanceClaimButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (AntiShake.check(v.getId())) { return; }
                     if (mListener != null) {
                         mListener.onClick(item);
                     }

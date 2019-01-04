@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.cybexmobile.R;
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybexmobile.shake.AntiShake;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +53,7 @@ public class AddressManagerActivity extends BaseActivity {
 
     @OnClick(R.id.address_manager_tv_withdraw_address)
     public void onWithdrawAddressClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(this, WithdrawAddressManagerActivity.class);
         startActivity(intent);
 
@@ -59,6 +61,7 @@ public class AddressManagerActivity extends BaseActivity {
 
     @OnClick(R.id.address_manager_tv_transfer_account)
     public void onTransferAccountClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
         Intent intent = new Intent(this, TransferAccountManagerActivity.class);
         startActivity(intent);
     }
