@@ -201,16 +201,18 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 .subscribe(new Consumer<WebSocketMessage>() {
                     @Override
                     public void accept(WebSocketMessage webSocketMessage) throws Exception {
-                        Log.d("dzm", webSocketMessage.getText());
                         JsonElement jsonElement = mJsonParser.parse(webSocketMessage.getText());
                         JsonObject jsonObject = jsonElement.getAsJsonObject();
                         List<List<String>> sellOrders = mGson.fromJson(jsonObject.get("asks"), new TypeToken<List<List<String>>>(){}.getType());
                         List<List<String>> buyOrders = mGson.fromJson(jsonObject.get("bids"), new TypeToken<List<List<String>>>(){}.getType());
-                        if(mBuyFragment != null && mBuyFragment.isResumed()) {
-                            mBuyFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
-                        }
-                        if(mSellFragment != null && mSellFragment.isResumed()) {
-                            mSellFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
+                        String topic = jsonObject.get("topic").getAsString();
+                        if (topic.contains(mWatchlistData.getBaseSymbol().replace(".", "_")) && topic.contains(mWatchlistData.getQuoteSymbol().replace(".", "_"))) {
+                            if(mBuyFragment != null && mBuyFragment.isResumed()) {
+                                mBuyFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
+                            }
+                            if(mSellFragment != null && mSellFragment.isResumed()) {
+                                mSellFragment.notifyLimitOrderDataChanged(sellOrders, buyOrders);
+                            }
                         }
                     }
                 }, new Consumer<Throwable>() {
@@ -229,13 +231,11 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                         JsonObject jsonObject = jsonElement.getAsJsonObject();
                         double price = jsonObject.get("px").getAsDouble();
                         String topic = jsonObject.get("topic").getAsString();
-                        if(mBuyFragment != null && mBuyFragment.isResumed()) {
-                            if (topic.contains(mWatchlistData.getBaseSymbol().replace(".", "_")) && topic.contains(mWatchlistData.getQuoteSymbol().replace(".", "_"))) {
+                        if (topic.contains(mWatchlistData.getBaseSymbol().replace(".", "_")) && topic.contains(mWatchlistData.getQuoteSymbol().replace(".", "_"))) {
+                            if(mBuyFragment != null && mBuyFragment.isResumed()) {
                                 mBuyFragment.notifyMarketPriceDataChanged(price);
                             }
-                        }
-                        if(mSellFragment != null && mSellFragment.isResumed()) {
-                            if (topic.contains(mWatchlistData.getBaseSymbol().replace(".", "_")) && topic.contains(mWatchlistData.getQuoteSymbol().replace(".", "_"))) {
+                            if(mSellFragment != null && mSellFragment.isResumed()) {
                                 mSellFragment.notifyMarketPriceDataChanged(price);
                             }
                         }
