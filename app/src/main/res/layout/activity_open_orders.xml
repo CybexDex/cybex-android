@@ -69,18 +69,20 @@
         android:alpha="0.5"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/activity_margin_double"
-        android:text="@string/open_orders_total_value"/>
+        android:text="@string/open_orders_total_value"
+        android:visibility="gone"/>
     <TextView
         android:id="@+id/open_orders_total_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         style="@style/font_white_dark_xxlarge"
-        android:text="≈¥0.0000"/>
+        android:text="≈¥0.0000"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/open_orders_recycler_view"
-        android:layout_marginTop="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_24"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

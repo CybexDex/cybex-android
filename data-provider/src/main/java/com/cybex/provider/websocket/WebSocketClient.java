@@ -112,7 +112,6 @@ public class WebSocketClient extends WebSocketListener {
         mWebSocket = webSocket;
         mConnectStatus = WebSocketStatus.OPENED;
         try {
-            get_chain_id(chainIdCallback);
             //websocke连接成功, send login
             login("", "", loginCallback);
         } catch (NetworkStatusException e) {
@@ -806,6 +805,7 @@ public class WebSocketClient extends WebSocketListener {
                     get_websocket_bitshares_api_id("database", databaseCallback);
                     get_websocket_bitshares_api_id("history", historyCallback);
                     get_websocket_bitshares_api_id("network_broadcast", broadcastCallback);
+                    get_chain_id(chainIdCallback);
                 } catch (NetworkStatusException e) {
                     e.printStackTrace();
                 }

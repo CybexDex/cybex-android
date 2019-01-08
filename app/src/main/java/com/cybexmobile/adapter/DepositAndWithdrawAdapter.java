@@ -75,8 +75,8 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof EmptyViewHolder) {
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) viewHolder;
-            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.deposit_withdraw_records_no_record));
-            emptyViewHolder.mIvImage.setImageResource(R.drawable.ic_no_records);
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.balance_page_no_asset));
+            emptyViewHolder.mIvImage.setImageResource(R.drawable.ic_no_assert);
             return;
         }
         ViewHolder holder = (ViewHolder) viewHolder;
