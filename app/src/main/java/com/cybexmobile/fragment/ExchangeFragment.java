@@ -66,6 +66,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_SPINNER_POSITION;
 import static com.cybex.provider.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
@@ -151,6 +153,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             mExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FEE);
             mCybExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_FEE);
             mCybAssetObject = (AssetObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT);
+            mPrecision = savedInstanceState.getInt(BUNDLE_SAVE_PRECISION, -1);
+            mSpinnerPosition = savedInstanceState.getInt(BUNDLE_SAVE_SPINNER_POSITION, 0);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mName = sharedPreferences.getString(PREF_NAME, "");
@@ -171,7 +175,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                         if(mWatchlistData != null) {
                             mRteRequestDepth = new RteRequest(RteRequest.TYPE_SUBSCRIBE,
                                     "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
-                                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + mWatchlistData.getPricePrecision() + ".5");
+                                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + (mPrecision == -1 ? mWatchlistData.getPricePrecision() : mPrecision) + ".5");
                             sendRteRquest(mRteRequestDepth);
                             mRteRequestTicker = new RteRequest(RteRequest.TYPE_SUBSCRIBE, "TICKER." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
                                     mWatchlistData.getBaseSymbol().replace(".", "_"));
@@ -674,6 +678,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         outState.putSerializable(BUNDLE_SAVE_FEE, mExchangeFee);
         outState.putSerializable(BUNDLE_SAVE_CYB_FEE, mCybExchangeFee);
         outState.putSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT, mCybAssetObject);
+        outState.putInt(BUNDLE_SAVE_PRECISION, mPrecision);
+        outState.putInt(BUNDLE_SAVE_SPINNER_POSITION, mSpinnerPosition);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mBuyFragment != null && mBuyFragment.isAdded()){
             fragmentManager.putFragment(outState, BuySellFragment.class.getSimpleName() + TAG_BUY, mBuyFragment);

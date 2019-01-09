@@ -33,6 +33,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SPINNER_POSITION;
@@ -103,6 +105,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         }
         if(savedInstanceState != null){
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
+            mPrecision = savedInstanceState.getInt(BUNDLE_SAVE_PRECISION, -1);
+            mSpinnerPosition = savedInstanceState.getInt(BUNDLE_SAVE_SPINNER_POSITION, 0);
         }
     }
 
@@ -124,7 +128,9 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mMaterialSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                mSpinnerPosition = position;
                 int precision = Integer.parseInt(item.substring(0, 1));
+                mPrecision = precision;
                 mBuyOrderAdapter.setPricePrecision(precision);
                 mSellOrderAdapter.setPricePrecision(precision);
                 ((ExchangeFragment)getParentFragment().getParentFragment()).reSubscribeOrderBook(precision, position);
@@ -143,6 +149,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
+        outState.putInt(BUNDLE_SAVE_PRECISION, mPrecision);
+        outState.putInt(BUNDLE_SAVE_SPINNER_POSITION, mSpinnerPosition);
     }
 
     @Override
@@ -270,6 +278,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     }
 
     public void notifyPrecisionChanged(int precision, int position) {
+        mPrecision = precision;
+        mSpinnerPosition = position;
         mBuyOrderAdapter.setPricePrecision(precision);
         mSellOrderAdapter.setPricePrecision(precision);
         mMaterialSpinner.setSelectedIndex(position);
