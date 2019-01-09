@@ -122,6 +122,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     private RteRequest mRteRequestDepth;
     private RteRequest mRteRequestTicker;
 
+    private int mPrecision = -1;
+    private int mSpinnerPosition = 0;
+
     public static ExchangeFragment getInstance(String action, WatchlistData watchlist){
         ExchangeFragment fragment = new ExchangeFragment();
         Bundle bundle = new Bundle();
@@ -541,7 +544,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    public void reSubscribeOrderBook(int precision) {
+    public void reSubscribeOrderBook(int precision, int position) {
+        notifyPrecisionChanged(precision, position);
         if(mRteRequestDepth != null) {
             mRteRequestDepth.setType(RteRequest.TYPE_UNSUBSCRIBE);
             sendRteRquest(mRteRequestDepth);
@@ -550,6 +554,17 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
                         mWatchlistData.getBaseSymbol().replace(".", "_") + "." + precision + ".5");
         sendRteRquest(mRteRequestDepth);
+    }
+
+    private void notifyPrecisionChanged(int precision, int position) {
+        if(mBuyFragment != null){
+            mBuyFragment.notifyPrecisionChanged(precision, position);
+        }
+        if(mSellFragment != null){
+            mSellFragment.notifyPrecisionChanged(precision, position);
+        }
+        mPrecision = precision;
+        mSpinnerPosition = position;
     }
 
     private void notifyExchangeFee(FeeAmountObject fee, AssetObject cybAsset){
@@ -612,7 +627,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         switch (position){
             case 0:
                 if(mBuyFragment == null){
-                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject);
+                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject, mPrecision, mSpinnerPosition);
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
@@ -625,7 +640,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case 1:
                 if(mSellFragment == null){
-                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject);
+                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject, mPrecision, mSpinnerPosition);
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);
