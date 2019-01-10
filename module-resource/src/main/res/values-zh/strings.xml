@@ -329,7 +329,7 @@
 
     <!-- Dialog limit order create and cancel -->
     <string name="dialog_text_title_limit_order_create_confirmation">买卖确认</string>
-    <string name="dialog_text_title_limit_order_cancel_confirmation">提示</string>
+    <string name="dialog_text_title_limit_order_cancel_confirmation">确认</string>
     <string name="dialog_text_price">价格:</string>
     <string name="dialog_text_amount">数量:</string>
     <string name="dialog_text_total">成交额:</string>

@@ -13,12 +13,12 @@
         android:layout_height="@dimen/height_110"
         android:gravity="center_vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/eva_iv_icon"
             android:layout_width="@dimen/width_54"
             android:layout_height="@dimen/height_54"
-            android:layout_marginLeft="@dimen/margin_22"
-            android:layout_marginRight="@dimen/margin_30" />
+            android:layout_marginStart="@dimen/margin_22"
+            android:layout_marginEnd="@dimen/margin_30" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -251,8 +251,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_8">
+            android:layout_height="wrap_content">
 
             <TextView
                 style="@style/font_gray_medium"
@@ -290,6 +289,7 @@
         android:layout_marginTop="@dimen/margin_8"
         android:lineSpacingExtra="@dimen/line_spacing_extra_8"
         android:paddingBottom="@dimen/padding_8"
+        android:alpha="0.8"
         android:text="--" />
 
     <View

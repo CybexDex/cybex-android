@@ -29,6 +29,7 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -48,7 +49,7 @@ public class EvaFragment extends Fragment {
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @BindView(R.id.eva_iv_icon)
-    ImageView evaProjectIcon;
+    CircleImageView evaProjectIcon;
 
     @BindView(R.id.eva_projectname)
     TextView projectName;

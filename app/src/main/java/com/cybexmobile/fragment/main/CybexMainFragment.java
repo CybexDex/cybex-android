@@ -309,6 +309,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
                             mPreferences.edit().putBoolean(Constant.PREF_GAME_INVITATION, true).apply();
                             new IntentFactory()
                                     .action(subLink.getLink())
+                                    .needTalk(subLink.getNeedtalk())
                                     .needLogin(subLink.isNeedlogin())
                                     .checkLogin(mIsLoginIn)
                                     .intent(getContext());
@@ -328,6 +329,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         } else {
             new IntentFactory()
                     .action(subLink.getLink())
+                    .needTalk(subLink.getNeedtalk())
                     .needLogin(subLink.isNeedlogin())
                     .checkLogin(mIsLoginIn)
                     .intent(getContext());

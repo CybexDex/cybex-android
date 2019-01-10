@@ -181,11 +181,11 @@ public class GameActivity extends BaseActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 WebView.HitTestResult hitTestResult = view.getHitTestResult();
-                if(hitTestResult.getType() == WebView.HitTestResult.UNKNOWN_TYPE){
+                if (hitTestResult.getType() == WebView.HitTestResult.UNKNOWN_TYPE) {
                     Log.v(TAG, view.getUrl() + "  ---> 重定向 --->  " + url);
                 }
                 //禁止重定向
-                return true;
+                return false;
             }
         });
     }

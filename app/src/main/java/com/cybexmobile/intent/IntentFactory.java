@@ -32,6 +32,7 @@ public class IntentFactory {
     private String url;
     private boolean isLogin;//是否已经登录
     private boolean isNeedLogin;//是否跳转前需要登录
+    private int needTalk;
     private HashMap<String, Object> param = new HashMap<>();
 
     public IntentFactory() {
@@ -51,6 +52,11 @@ public class IntentFactory {
         } else {
             action = ACTION_INVALID;
         }
+        return this;
+    }
+
+    public IntentFactory needTalk(int needTalk) {
+        this.needTalk = needTalk;
         return this;
     }
 
@@ -141,7 +147,7 @@ public class IntentFactory {
             }
         }
         if (action == ACTION_HTTP) {
-            if (url.equals("https://gamelive.cybex.io")) {
+            if (needTalk == 1) {
                 param.put(INTENT_PARAM_URL, url);
                 return GameActivity.class;
             }

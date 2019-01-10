@@ -72,7 +72,7 @@ public class OpenOrdersActivity extends BaseActivity implements RadioGroup.OnChe
     private static final String TAB_ALL = "All";
     private static final String TAB_BUY = "Buy";
     private static final String TAB_SELL = "Sell";
-    private final List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB"});
+    private final List<String> mCompareSymbol = Arrays.asList("JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB");
 
     private String mUserName;
     private double mTotalOpenOrderRMBPrice;

@@ -56,11 +56,12 @@
             android:id="@+id/item_exchange_open_order_btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:textAllCaps="false"
             style="@style/font_gray_large"
             android:text="@string/item_text_open_order_cancel"
-            android:drawableLeft="@drawable/ic_star_border_24_px"/>
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/ic_star_border_24_px"/>
 
     </RelativeLayout>
 
@@ -97,7 +98,7 @@
             style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:maxLines="1"
             android:text="@string/text_empty" />
 
@@ -134,7 +135,7 @@
             style="@style/font_gray_bold_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:maxLines="1"
             android:text="@string/text_empty" />
 

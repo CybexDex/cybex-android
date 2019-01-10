@@ -19,18 +19,21 @@ public class SubLink {
     private String status;
     //是否需要登陆
     private boolean needlogin;
+    //是否需要与原生交互
+    private int needtalk;
     //排序
     private String score;
     //
     private String name;
 
-    public SubLink(String title, String desc, String icon, String link, String status, boolean needlogin, String score, String name) {
+    public SubLink(String title, String desc, String icon, String link, String status, boolean needlogin, int needtalk, String score, String name) {
         this.title = title;
         this.desc = desc;
         this.icon = icon;
         this.link = link;
         this.status = status;
         this.needlogin = needlogin;
+        this.needtalk = needtalk;
         this.score = score;
         this.name = name;
     }
@@ -81,6 +84,14 @@ public class SubLink {
 
     public void setNeedlogin(boolean needlogin) {
         this.needlogin = needlogin;
+    }
+
+    public int getNeedtalk() {
+        return needtalk;
+    }
+
+    public void setNeedtalk(int needtalk) {
+        this.needtalk = needtalk;
     }
 
     public String getScore() {
