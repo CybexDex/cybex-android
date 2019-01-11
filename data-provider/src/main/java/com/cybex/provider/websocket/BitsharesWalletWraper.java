@@ -27,6 +27,7 @@ import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.graphene.chain.MarketTicker;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -383,6 +384,10 @@ public class BitsharesWalletWraper {
         mWalletApi.get_block(callId, blockNumber, callback);
     }
 
+    public void get_block_header(int blockNumber, MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
+        mWalletApi.get_block_header(blockNumber, callback);
+    }
+
     public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
                                                               ObjectId<AccountObject> to,
                                                               ObjectId<AssetObject> transferAssetId,
@@ -461,6 +466,10 @@ public class BitsharesWalletWraper {
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
 
         return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
+    }
+
+    public SignedTransaction getSignedTransactinForTickets(AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader) throws ParseException {
+        return mWalletApi.getSignedTransactionForTicket(accountObject, operation, operationId, blockHeader);
     }
 
     public String getChatMessageSignature(AccountObject accountObject, String message){

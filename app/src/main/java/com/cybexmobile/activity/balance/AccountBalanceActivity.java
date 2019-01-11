@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.deploy.DeployActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
@@ -66,6 +67,7 @@ import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
 
@@ -110,6 +112,8 @@ public class AccountBalanceActivity extends BaseActivity {
     LinearLayout mWithdrawButtonLayout;
     @BindView(R.id.account_balance_transfer_layout)
     LinearLayout mTransferButtonLayout;
+    @BindView(R.id.account_balance_use_layout)
+    LinearLayout mDeployButtonLayout;
     @BindView(R.id.account_balance_recycler_view)
     RecyclerView mAccountBalanceRecyclerView;
 
@@ -212,6 +216,19 @@ public class AccountBalanceActivity extends BaseActivity {
         intent.putExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         startActivity(intent);
     }
+
+    @OnClick(R.id.account_balance_use_layout)
+    public void onDeployButtonClicked(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        Intent intent = new Intent(this, DeployActivity.class);
+        intent.putExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        intent.putExtra(INTENT_PARAM_FULL_ACCOUNT_OBJECT, mFullAccountObject);
+        startActivity(intent);
+
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOut(Event.LoginOut event) {

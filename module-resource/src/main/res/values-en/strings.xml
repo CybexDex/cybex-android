@@ -11,6 +11,7 @@
     <string name="title_eto">ETO</string>
     <string name="title_order_history">Orders</string>
     <string name="title_transfer">Transfer</string>
+    <string name="title_deploy">Deploy</string>
     <string name="title_transfer_records">Transfer Records</string>
     <string name="title_transfer_details">Transfer Details</string>
     <string name="title_deposit_records">Deposit Records</string>
@@ -47,6 +48,7 @@
     <string name="balance_page_title">My Balance</string>
     <string name="balance_page_total_balance">Your Total Balance(CYB)</string>
     <string name="balance_page_transfer">Transfer</string>
+    <string name="balance_page_use">Deploy</string>
     <string name="balance_page_no_asset">No Asset</string>
     <string name="balance_page_frozen_no_asset">Frozen: --</string>
     <string name="balance_page_frozen_asset">Frozen:</string>
@@ -560,6 +562,17 @@
     <string name="text_eva_introduction">Introduction</string>
     <string name="fragment_tab_title">Introduction</string>
     <string name="text_eva_score">SCORE:</string>
+
+    <!-- Ticket -->
+    <string name="text_account_for_verification">Account for verification</string>
+    <string name="text_hint_account_for_verificaiton">Input or scan the account name</string>
+    <string name="text_deploy_asset">Deploy asset</string>
+    <string name="text_hint_deploy_asset">Input or choose asset</string>
+    <string name="text_quantity_to_deploy">Quantity to deploy</string>
+    <string name="text_hint_quantity_to_deploy">Input the quantity</string>
+    <string name="text_transaction_fee">Transaction fee</string>
+    <string name="text_scan_message">Align the QR Code within the frame to scan</string>
+    <string name="text_qr_code_message">Please show the QR Code to administrator.\nPlease keep your QR Code carefully.\nThe effective time of the QR code is 10 minutes.</string>
 
     <string name="text_trade_history">Trade History</string>
     <string name="text_order_history">Order History</string>

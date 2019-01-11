@@ -34,6 +34,7 @@
     <dimen name="width_155">147.46dp</dimen>
     <dimen name="width_200">190.27dp</dimen>
     <dimen name="width_220">209.3dp</dimen>
+    <dimen name="width_230">218.81dp</dimen>
     <dimen name="width_232">220.72dp</dimen>
 
     <!-- height -->
@@ -62,6 +63,7 @@
     <dimen name="height_180">171.25dp</dimen>
     <dimen name="height_190">180.76dp</dimen>
     <dimen name="height_200">190.27dp</dimen>
+    <dimen name="height_230">218.81dp</dimen>
     <dimen name="height_237">225.47dp</dimen>
     <dimen name="height_490">466.18dp</dimen>
     <dimen name="height_650">618.4dp</dimen>

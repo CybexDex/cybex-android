@@ -12,6 +12,7 @@
     <string name="title_eto">ETO</string>
     <string name="title_order_history">委单</string>
     <string name="title_transfer">转账</string>
+    <string name="title_deploy">使用我的资产</string>
     <string name="title_transfer_records">转账记录</string>
     <string name="title_transfer_details">转账详情</string>
     <string name="title_deposit_records">充值记录</string>
@@ -50,6 +51,7 @@
     <string name="balance_page_title">我的资产</string>
     <string name="balance_page_total_balance">账户资产估值(CYB)</string>
     <string name="balance_page_transfer">转账</string>
+    <string name="balance_page_use">使用</string>
     <string name="balance_page_no_asset">暂无资产</string>
     <string name="balance_page_frozen_no_asset">冻结: --</string>
     <string name="balance_page_frozen_asset">冻结:</string>
@@ -563,6 +565,18 @@
     <string name="text_eva_introduction">介绍</string>
     <string name="fragment_tab_title">项目介绍</string>
     <string name="text_eva_score">综合得分:</string>
+
+    <!-- Ticket -->
+    <string name="text_account_for_verification">验证账户</string>
+    <string name="text_hint_account_for_verificaiton">请输入验证账户或扫码获取验证账户</string>
+    <string name="text_deploy_asset">使用资产</string>
+    <string name="text_hint_deploy_asset">请输入或选择要使用的资产</string>
+    <string name="text_quantity_to_deploy">使用数量</string>
+    <string name="text_hint_quantity_to_deploy">请输入数量</string>
+    <string name="text_transaction_fee">手续费</string>
+    <string name="text_scan_message">对准二维码，即可自动扫描</string>
+    <string name="text_qr_code_message">请向管理员出示二维码。\n请注意保管好您的二维码。\n二维码的有效时间为10分钟。</string>
+
 
     <string name="text_trade_history">历史成交</string>
     <string name="text_order_history">历史委托</string>

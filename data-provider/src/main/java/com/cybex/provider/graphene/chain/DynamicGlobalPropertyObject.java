@@ -47,7 +47,7 @@ public class DynamicGlobalPropertyObject {
      */
     int dynamic_flags = 0;
 
-    int last_irreversible_block_num = 0;
+    public int last_irreversible_block_num;
 
     enum dynamic_flag_bits
     {

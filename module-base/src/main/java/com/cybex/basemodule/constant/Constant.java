@@ -32,6 +32,8 @@ public class Constant {
     public static final String INTENT_PARAM_ETO_PROJECT_DETAILS = "intent_param_eto_project_details";
     public static final String INTENT_PARAM_ETO_ATTEND_ETO = "intent_param_eto_attend_eto";
     public static final String INTENT_PARAM_ETO_PROJECT_ID = "intent_param_eto_project_id";
+    public static final String INTENT_PARAM_QR_CODE_TRANCTION = "intent_param_qr_code_transaction";
+
     public static final String INTENT_PARAM_PRECISION = "intent_param_precision";
     public static final String INTENT_PARAM_PRECISION_SPINNER_POSITION = "intent_param_precision_spinner_position";
     public static final String INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION = "intent_param_show_bug_sell_spinner_position";
@@ -149,4 +151,8 @@ public class Constant {
     public static final String GAME_STATUS_FAIL = "1";
     public static final String GAME_STATUS_NO_ACCOUNT = "2";
 
+    /**
+     *  scan Result
+     */
+    public static final String SCAN_RESULT = "scan_result";
 }

@@ -39,6 +39,7 @@ import com.cybex.provider.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.ByteArrayInputStream;
@@ -51,15 +52,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.enotes.sdk.core.CardManager;
@@ -379,6 +384,10 @@ public class WalletApi {
                           int blockNumber,
                           MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
         mWebSocketClient.get_block(callId, blockNumber, callback);
+    }
+
+    public void get_block_header(int blockNumber, MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_block_header(blockNumber, callback);
     }
 
 //    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
@@ -831,6 +840,53 @@ public class WalletApi {
         signedTransaction.set_reference_block(dynamicGlobalPropertyObject.head_block_id);
 
         Date dateObject = dynamicGlobalPropertyObject.time;
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(dateObject);
+        calender.add(Calendar.SECOND, 30);
+        dateObject = calender.getTime();
+
+        signedTransaction.set_expiration(dateObject);
+        Types.private_key_type privateKey = null;
+
+        for (Types.public_key_type public_key_type : accountObject.active.get_keys()) {
+            privateKey = mHashMapPub2Priv.get(public_key_type);
+            if (privateKey != null) {
+                signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+                break;
+            }
+        }
+        if (privateKey == null) {
+            for (Types.public_key_type public_key_type : accountObject.owner.get_keys()) {
+                privateKey = mHashMapPub2Priv.get(public_key_type);
+                if (privateKey != null) {
+                    signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+                    break;
+                }
+            }
+        }
+        return signedTransaction;
+    }
+
+    public SignedTransaction getSignedTransactionForTicket(AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader) throws ParseException {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Operations.operation_type operationType = new Operations.operation_type();
+        operationType.nOperationType = operationId;
+        operationType.operationContent = operation;
+        signedTransaction.operationTypes = new ArrayList<>();
+        signedTransaction.operationTypes.add(operationType);
+        signedTransaction.operations = new ArrayList<>();
+        List<Object> listInOperations = new ArrayList<>();
+        listInOperations.add(operationId);
+        listInOperations.add(operation);
+        signedTransaction.operations.add(listInOperations);
+        signedTransaction.extensions = new HashSet<>();
+
+        signedTransaction.set_reference_block(blockHeader.previous);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date dateObject = simpleDateFormat.parse(blockHeader.timestamp);
+
         Calendar calender = Calendar.getInstance();
         calender.setTime(dateObject);
         calender.add(Calendar.SECOND, 30);

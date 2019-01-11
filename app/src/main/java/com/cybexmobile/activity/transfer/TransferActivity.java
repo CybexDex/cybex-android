@@ -566,7 +566,7 @@ public class TransferActivity extends BaseActivity implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event) {
-        /**
+        /*
          * fix bug:CYM-577
          * 转账成功后刷新余额
          */
@@ -665,29 +665,21 @@ public class TransferActivity extends BaseActivity implements
                     mEtAccountName.getText().toString().trim(), Address.TYPE_TRANSFER)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<Address>() {
-                        @Override
-                        public void accept(Address address) throws Exception {
-                            if (address != null) {
-                                ToastMessage.showNotEnableDepositToastMessage(
-                                        TransferActivity.this,
-                                        getResources().getString(R.string.toast_message_transfer_success),
-                                        R.drawable.ic_check_circle_green);
-                                /**
-                                 * fix bug:CYM-505
-                                 * 转账成功和失败清除数据
-                                 */
-                                clearTransferData();
-                            } else {
-                                showAddAddressDialog();
-                            }
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) throws Exception {
+                    .subscribe(address -> {
+                        if(address != null){
+                            ToastMessage.showNotEnableDepositToastMessage(
+                                    TransferActivity.this,
+                                    getResources().getString(R.string.toast_message_transfer_success),
+                                    R.drawable.ic_check_circle_green);
+                            /*
+                             * fix bug:CYM-505
+                             * 转账成功和失败清除数据
+                             */
+                            clearTransferData();
+                        } else {
                             showAddAddressDialog();
                         }
-                    });
+                    }, throwable -> showAddAddressDialog());
         } else {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
                     R.string.toast_message_transfer_failed), R.drawable.ic_error_16px);
@@ -711,35 +703,28 @@ public class TransferActivity extends BaseActivity implements
         CybexDialog.showAddAddressDialog(this,
                 getResources().getString(R.string.toast_message_transfer_success),
                 getResources().getString(R.string.toast_message_add_to_transfer_account_list),
-                new CybexDialog.ConfirmationDialogClickListener() {
-                    @Override
-                    public void onClick(Dialog dialog) {
-                        Intent intent = new Intent(TransferActivity.this, AddTransferAccountActivity.class);
-                        intent.putExtra(INTENT_PARAM_ADDRESS, mEtAccountName.getText().toString().trim());
-                        startActivity(intent);
-                        /**
-                         * fix bug:CYM-505
-                         * 转账成功和失败清除数据
-                         */
-                        clearTransferData();
-                    }
+                dialog -> {
+                    Intent intent = new Intent(TransferActivity.this, AddTransferAccountActivity.class);
+                    intent.putExtra(INTENT_PARAM_ADDRESS, mEtAccountName.getText().toString().trim());
+                    startActivity(intent);
+                    /*
+                     * fix bug:CYM-505
+                     * 转账成功和失败清除数据
+                     */
+                    clearTransferData();
                 },
-                new CybexDialog.ConfirmationDialogCancelListener() {
-                    @Override
-                    public void onCancel(Dialog dialog) {
-                        /**
-                         * fix bug:CYM-505
-                         * 转账成功和失败清除数据
-                         */
-                        clearTransferData();
-                    }
+                dialog -> {
+                    /*
+                     * fix bug:CYM-505
+                     * 转账成功和失败清除数据
+                     */
+                    clearTransferData();
                 });
     }
 
     /**
      * 删除0资产币种
-     *
-     * @param items
+     * @param items 资产
      */
     private void removeZeroBalance(List<AccountBalanceObjectItem> items) {
         if (items == null || items.size() == 0) {
@@ -773,7 +758,7 @@ public class TransferActivity extends BaseActivity implements
     };
 
     private void loadAccountBalanceObjectItems(FullAccountObject fullAccountObject) {
-        /**
+        /*
          * fix online bug
          * java.lang.NullPointerException: Attempt to read from field
          * 'java.util.List com.cybex.provider.graphene.chain.FullAccountObject.balances' on a null object reference
@@ -809,21 +794,15 @@ public class TransferActivity extends BaseActivity implements
         mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mUserName, Address.TYPE_TRANSFER)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Address>>() {
-                    @Override
-                    public void accept(List<Address> addresses) throws Exception {
-                        mAddresses = addresses;
-                        if (mAddresses == null || mAddresses.size() == 0) {
-                            mTvSelectAccount.setText(getResources().getString(R.string.text_add_account));
-                        } else {
-                            mTvSelectAccount.setText(getResources().getString(R.string.text_select_account));
-                        }
+                .subscribe(addresses -> {
+                    mAddresses = addresses;
+                    if(mAddresses == null || mAddresses.size() == 0){
+                        mTvSelectAccount.setText(getResources().getString(R.string.text_add_account));
+                    } else {
+                        mTvSelectAccount.setText(getResources().getString(R.string.text_select_account));
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+                }, throwable -> {
 
-                    }
                 });
     }
 
@@ -848,7 +827,7 @@ public class TransferActivity extends BaseActivity implements
         mEtAccountName.setText("");
         mTvAvailable.setText("");
         mTvCrypto.setText("");
-        /**
+        /*
          * fix bug:CYM-555
          * 重置按钮状态
          */
@@ -936,7 +915,7 @@ public class TransferActivity extends BaseActivity implements
      * 转账确认
      */
     private void showTransferConfirmationDialog() {
-        /**
+        /*
          * fix bug:CYM-800
          * 修复手续费未获取到转账crash
          */
