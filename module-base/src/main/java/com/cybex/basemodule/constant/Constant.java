@@ -63,6 +63,7 @@ public class Constant {
     public static final String PREF_LOAD_MODE = "load_mode";
     public static final String PREF_SERVER = "pref_server";
     public static final String PREF_GAME_INVITATION = "pref_game_invitation";
+    public static final String PREF_HISTORY_URL = "pref_history_url";
 
     /**
      *

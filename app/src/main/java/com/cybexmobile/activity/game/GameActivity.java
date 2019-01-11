@@ -3,12 +3,14 @@ package com.cybexmobile.activity.game;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.graphene.chain.FullAccountObject;
@@ -35,6 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_URL;
+import static com.cybex.basemodule.constant.Constant.PREF_HISTORY_URL;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class GameActivity extends BaseActivity {
@@ -80,10 +84,28 @@ public class GameActivity extends BaseActivity {
         EventBus.getDefault().register(this);
         mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         url = getIntent().getStringExtra(INTENT_PARAM_URL);
+        clearWebViewCache();
         mAndroidtoJs = new AndroidtoJs(this);
+        initWebViewSetting();
         Intent intent = new Intent(this, WebSocketService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
-        initWebViewSetting();
+    }
+
+    private void clearWebViewCache() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String historyUrl = preferences.getString(PREF_HISTORY_URL, null);
+        //访问url地址不一致 清除缓存
+        if (!TextUtils.isEmpty(historyUrl) && !historyUrl.equals(url)) {
+            mWebView.clearCache(true);
+            deleteDatabase("webview.db");
+            deleteDatabase("webviewCache.db");
+        }
+        //记录url地址
+        if (TextUtils.isEmpty(historyUrl) || !historyUrl.equals(url)) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(PREF_HISTORY_URL, url);
+            editor.apply();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
