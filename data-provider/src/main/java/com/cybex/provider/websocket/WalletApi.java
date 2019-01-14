@@ -889,7 +889,7 @@ public class WalletApi {
 
         Calendar calender = Calendar.getInstance();
         calender.setTime(dateObject);
-        calender.add(Calendar.SECOND, 30);
+        calender.add(Calendar.MINUTE, 30);
         dateObject = calender.getTime();
 
         signedTransaction.set_expiration(dateObject);

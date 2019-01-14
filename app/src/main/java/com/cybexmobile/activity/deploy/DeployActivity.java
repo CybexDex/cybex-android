@@ -24,6 +24,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
 import com.cybex.provider.exception.NetworkStatusException;
@@ -110,6 +111,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deploy);
         mUnbinder = ButterKnife.bind(this);
+        SoftKeyBoardListener.setListener(this, this);
         setSupportActionBar(mToolbar);
         mQuantityToDeployEt.setFilters(new InputFilter[]{mQuantityFilter});
         mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
@@ -117,7 +119,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         if (mAccountBalanceObjectItems != null) {
             removeZeroBalance(mAccountBalanceObjectItems);
         }
-        mTransactionFeeTv.setText(String.format("%s %s", "0.0005", ASSET_SYMBOL_CYB));
+        mTransactionFeeTv.setText(String.format("%s %s", "0.01000", ASSET_SYMBOL_CYB));
     }
 
     @Override
@@ -369,8 +371,8 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     private void resetDeployButtonState() {
         try {
             mDeployButton.setEnabled(
-                    mToAccountObject != null &&
-                            mSelectedAccountBalanceObjectItem != null &&
+                    !mDeployAccountEt.getText().toString().isEmpty() &&
+                            !mDeployAssetEt.getText().toString().isEmpty() &&
                             Double.parseDouble(mQuantityToDeployEt.getText().toString()) > 0);
         } catch (Exception e) {
             e.printStackTrace();
@@ -379,15 +381,22 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     }
 
     private void toTransfer() {
-        if (mFullAccount.account == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null) {
+        if (mToAccountObject == null) {
+            ToastMessage.showNotEnableDepositToastMessage(this, "To Account is Wrong", R.drawable.ic_error_16px);
             return;
         }
-        showLoadDialog();
+        if (mSelectedAccountBalanceObjectItem == null) {
+            ToastMessage.showNotEnableDepositToastMessage(this, "Don't have enough balance", R.drawable.ic_error_16px);
+            return;
+        }
+        if (mFullAccount.account == null) {
+            return;
+        }
         mTransferOperation = BitsharesWalletWraper.getInstance().getTransferOperation(
                 mFullAccount.account.id,
                 mToAccountObject.id,
                 mSelectedAccountBalanceObjectItem.assetObject.id,
-                (long) 50,
+                (long) 1000,
                 ObjectId.create_from_string(ASSET_ID_CYB),
                 (long) (Double.parseDouble(mQuantityToDeployEt.getText().toString().trim()) * Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision)),
                 null,
@@ -397,9 +406,10 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
                 public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
+                    showLoadDialog();
                     DynamicGlobalPropertyObject dynamicGlobalPropertyObject = reply.result;
                     try {
-                        BitsharesWalletWraper.getInstance().get_block_header(dynamicGlobalPropertyObject.last_irreversible_block_num, mBlockHeaderCallback);
+                        BitsharesWalletWraper.getInstance().get_block_header(dynamicGlobalPropertyObject.last_irreversible_block_num + 1, mBlockHeaderCallback);
                     } catch (NetworkStatusException e) {
                         e.printStackTrace();
                     }
@@ -418,16 +428,26 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     private MessageCallback<Reply<BlockHeader>> mBlockHeaderCallback = new MessageCallback<Reply<BlockHeader>>() {
         @Override
         public void onMessage(Reply<BlockHeader> reply) {
-            try {
-                SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactinForTickets(
-                        mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
-                Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                String strMessage = gson.toJson(signedTransaction);
-                hideLoadDialog();
-                jumpToOtherActivity(strMessage);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactinForTickets(
+                                mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
+                        Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
+                        String strMessage = gson.toJson(signedTransaction);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideLoadDialog();
+                            }
+                        });
+                        jumpToOtherActivity(strMessage);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
 
         @Override
