@@ -9,6 +9,7 @@ public class AssetPairCache {
 
     private Map<String, List<AssetsPair>> assetPairCache;
     private Map<String, String> evaProjectNames;
+    private Map<String, List<String>> validTicketCache;
 
     public void setEvaProjectNames(Map<String, String> evaProjectNames) {
         this.evaProjectNames = evaProjectNames;
@@ -33,6 +34,17 @@ public class AssetPairCache {
 
     public void setAssetPairCache(Map<String, List<AssetsPair>> assetPairCache) {
         this.assetPairCache = assetPairCache;
+    }
+
+    public void setValidTicketCache(Map<String, List<String>> validTicketCache) {
+        this.validTicketCache = validTicketCache;
+    }
+
+    public List<String> getValidTickets() {
+        if (validTicketCache == null) {
+            return null;
+        }
+        return validTicketCache.get("prefix");
     }
 
     public AssetsPair getAssetPair(String baseId, String quoteId) {

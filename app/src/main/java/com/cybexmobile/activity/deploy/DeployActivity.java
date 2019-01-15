@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.cache.AssetPairCache;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
@@ -115,6 +116,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         setSupportActionBar(mToolbar);
         mQuantityToDeployEt.setFilters(new InputFilter[]{mQuantityFilter});
         mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
+
         mFullAccount = (FullAccountObject) getIntent().getSerializableExtra(INTENT_PARAM_FULL_ACCOUNT_OBJECT);
         if (mAccountBalanceObjectItems != null) {
             removeZeroBalance(mAccountBalanceObjectItems);
@@ -357,9 +359,13 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
             return;
         }
         Iterator<AccountBalanceObjectItem> it = items.iterator();
+        List<String> ticketFilterInfo = AssetPairCache.getInstance().getValidTickets();
         while (it.hasNext()) {
             AccountBalanceObjectItem item = it.next();
             if (item.accountBalanceObject.balance == 0) {
+                it.remove();
+            }
+            if (ticketFilterInfo != null && ticketFilterInfo.contains(AssetUtil.getPrefix(item.assetObject.symbol))) {
                 it.remove();
             }
         }
