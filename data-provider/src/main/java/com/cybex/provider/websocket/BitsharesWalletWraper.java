@@ -388,6 +388,10 @@ public class BitsharesWalletWraper {
         mWalletApi.get_block_header(blockNumber, callback);
     }
 
+    public void get_recent_transaction_by_id(String transactionId, MessageCallback<Reply<Object>> callback) throws NetworkStatusException {
+        mWalletApi.get_recent_transaction_by_id(transactionId, callback);
+    }
+
     public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
                                                               ObjectId<AccountObject> to,
                                                               ObjectId<AssetObject> transferAssetId,

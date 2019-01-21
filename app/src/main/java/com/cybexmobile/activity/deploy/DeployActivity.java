@@ -37,6 +37,7 @@ import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
+import com.cybex.provider.utils.MyUtils;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
@@ -49,6 +50,8 @@ import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
@@ -59,6 +62,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.Unbinder;
+import mrd.bitlib.lambdaworks.crypto.Base64;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -69,6 +73,7 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_O
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_QR_CODE_TRANCTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSACTIONID;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.basemodule.constant.Constant.SCAN_RESULT;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
@@ -441,14 +446,19 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
                         SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactinForTickets(
                                 mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
                         Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                        String strMessage = gson.toJson(signedTransaction);
+                        String json = gson.toJson(signedTransaction);
+                        String transactionId = signedTransaction.getTransactionID();
+                        Log.e("JsonData", json);
+                        Log.e("TransactionId", transactionId);
+
+                        String strMessage = compressTransaction((Operations.transfer_operation) mTransferOperation, signedTransaction, reply.result);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 hideLoadDialog();
                             }
                         });
-                        jumpToOtherActivity(strMessage);
+                        jumpToOtherActivity(strMessage, transactionId);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -462,10 +472,40 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         }
     };
 
-    private void jumpToOtherActivity(String message) {
+    private void jumpToOtherActivity(String message, String transactionId) {
         Intent intent = new Intent(this, QRCodeActivity.class);
         intent.putExtra(INTENT_PARAM_QR_CODE_TRANCTION, message);
+        intent.putExtra(INTENT_PARAM_TRANSACTIONID, transactionId);
         startActivity(intent);
+    }
+
+    private String compressTransaction(Operations.transfer_operation operation, SignedTransaction signedTransaction, BlockHeader blockHeader) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(32);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        int from = operation.from.get_instance();
+        int to = operation.to.get_instance();
+        int assetId = operation.amount.asset_id.get_instance();
+        int ref_block_num = (int) signedTransaction.getRef_block_num();
+        long amount = operation.amount.amount;
+        double timeInterval = (double) (signedTransaction.getExpiration().getTime()) / 1000;
+        long prefix_block_num = signedTransaction.getRef_block_prefix();
+        byteBuffer.putInt(from);
+        byteBuffer.putInt(to);
+        byteBuffer.putInt(assetId);
+        byteBuffer.putInt(ref_block_num);
+        byteBuffer.putLong(amount);
+        byteBuffer.putDouble(timeInterval);
+        byte[] firstByteArray = byteBuffer.array();
+        byte[] prefix_block_num_byte_array = MyUtils.hexToBytes(String.valueOf(prefix_block_num));
+        byte[] resultPeriodOne = new byte[firstByteArray.length + prefix_block_num_byte_array.length];
+        System.arraycopy(firstByteArray, 0, resultPeriodOne, 0, firstByteArray.length);
+        System.arraycopy(prefix_block_num_byte_array, 0, resultPeriodOne, firstByteArray.length, prefix_block_num_byte_array.length);
+        byte[] sig = signedTransaction.SignaturesBuffer.get(0).data;
+        byte[] result = new byte[resultPeriodOne.length + sig.length];
+        System.arraycopy(resultPeriodOne, 0, result, 0, resultPeriodOne.length);
+        System.arraycopy(sig, 0, result, resultPeriodOne.length, sig.length);
+
+        return Base64.encodeToString(result, false);
     }
 
 

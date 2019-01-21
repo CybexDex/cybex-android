@@ -573,6 +573,7 @@
     <string name="text_transaction_fee">Transaction fee</string>
     <string name="text_scan_message">Align the QR Code within the frame to scan</string>
     <string name="text_qr_code_message">Please show the QR Code to administrator.\nPlease keep your QR Code carefully.\nThe effective time of the QR code is 10 minutes.</string>
+    <string name="text_ticket_get_message">Passed</string>
 
 
     <string name="text_trade_history">Trade History</string>

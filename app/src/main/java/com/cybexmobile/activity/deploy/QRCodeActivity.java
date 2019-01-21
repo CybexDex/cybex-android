@@ -14,28 +14,49 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.utils.AntiMultiClick;
 import com.cybexmobile.utils.QRCode;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
+import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_QR_CODE_TRANCTION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSACTIONID;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class QRCodeActivity extends BaseActivity {
     private static int REQUEST_PERMISSION = 1;
 
     private Unbinder mUnbinder;
+    private ScheduledExecutorService mScheduled = Executors.newScheduledThreadPool(2);
+    private ScheduledFuture mGetTransacionByIDFuture;
+    private GetTransactionByIDWorker mGetTransactionByIDWorker;
+
+    private String mID;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -51,13 +72,22 @@ public class QRCodeActivity extends BaseActivity {
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         String message = getIntent().getStringExtra(INTENT_PARAM_QR_CODE_TRANCTION);
+        mID = getIntent().getStringExtra(INTENT_PARAM_TRANSACTIONID);
         generateBarCode(message);
 
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        startToPollingTransaction();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        cancelGetTransactionByIDWorkerSchedule();
+        mScheduled.shutdownNow();
         mUnbinder.unbind();
     }
 
@@ -78,6 +108,34 @@ public class QRCodeActivity extends BaseActivity {
         if (AntiMultiClick.isFastClick()) {
             checkImageGalleryPermission();
         }
+    }
+
+    private void startToPollingTransaction() {
+        if (TextUtils.isEmpty(mID)) {
+            return;
+        }
+        if (mGetTransacionByIDFuture != null && !mGetTransacionByIDFuture.isCancelled()) {
+            mGetTransacionByIDFuture.cancel(true);
+        }
+        if (mScheduled.isShutdown() || mScheduled.isTerminated()) {
+            mScheduled = Executors.newScheduledThreadPool(2);
+        }
+        if (mGetTransactionByIDWorker == null) {
+            mGetTransactionByIDWorker = new GetTransactionByIDWorker();
+        }
+        mGetTransacionByIDFuture = mScheduled.scheduleAtFixedRate(mGetTransactionByIDWorker, 0,
+                3, TimeUnit.SECONDS);
+    }
+
+    private void cancelGetTransactionByIDWorkerSchedule() {
+        if (mGetTransacionByIDFuture == null) {
+            return;
+        }
+        if (mGetTransacionByIDFuture.isCancelled()) {
+            return;
+        }
+        mGetTransacionByIDFuture.cancel(true);
+        mGetTransacionByIDFuture = null;
     }
 
     private void checkImageGalleryPermission() {
@@ -107,5 +165,35 @@ public class QRCodeActivity extends BaseActivity {
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
+    }
+
+    private class GetTransactionByIDWorker implements Runnable {
+
+        @Override
+        public void run() {
+            loadTransactionByID(mID);
+        }
+    }
+
+    private void loadTransactionByID(String id) {
+        try {
+            BitsharesWalletWraper.getInstance().get_recent_transaction_by_id(id, new MessageCallback<Reply<Object>>() {
+                @Override
+                public void onMessage(Reply<Object> reply) {
+                    if (reply.result != null) {
+                        ToastMessage.showNotEnableDepositToastMessage(QRCodeActivity.this, getResources().getString(R.string.text_ticket_get_message), R.drawable.ic_check_circle_green);
+                        cancelGetTransactionByIDWorkerSchedule();
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
     }
 }

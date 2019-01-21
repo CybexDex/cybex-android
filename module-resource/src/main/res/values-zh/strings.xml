@@ -576,7 +576,7 @@
     <string name="text_transaction_fee">手续费</string>
     <string name="text_scan_message">对准二维码，即可自动扫描</string>
     <string name="text_qr_code_message">请向管理员出示二维码。\n请注意保管好您的二维码。\n二维码的有效时间为10分钟。</string>
-
+    <string name="text_ticket_get_message">通过</string>
 
     <string name="text_trade_history">历史成交</string>
     <string name="text_order_history">历史委托</string>

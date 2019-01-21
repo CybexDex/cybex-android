@@ -390,6 +390,10 @@ public class WalletApi {
         mWebSocketClient.get_block_header(blockNumber, callback);
     }
 
+    public void get_recent_transaction_by_id(String transactionId, MessageCallback<Reply<Object>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_recent_transaction_by_id(transactionId, callback);
+    }
+
 //    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
 //        return mWebSocketClient.list_assets(strLowerBound, nLimit);
 //    }

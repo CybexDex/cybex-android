@@ -33,6 +33,7 @@ public class Constant {
     public static final String INTENT_PARAM_ETO_ATTEND_ETO = "intent_param_eto_attend_eto";
     public static final String INTENT_PARAM_ETO_PROJECT_ID = "intent_param_eto_project_id";
     public static final String INTENT_PARAM_QR_CODE_TRANCTION = "intent_param_qr_code_transaction";
+    public static final String INTENT_PARAM_TRANSACTIONID = "intent_param_transactionid";
 
     public static final String INTENT_PARAM_PRECISION = "intent_param_precision";
     public static final String INTENT_PARAM_PRECISION_SPINNER_POSITION = "intent_param_precision_spinner_position";

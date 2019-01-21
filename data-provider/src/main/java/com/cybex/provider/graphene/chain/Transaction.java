@@ -65,6 +65,10 @@ public class Transaction {
         expiration = expiration_time;
     }
 
+    public Date getExpiration() {
+        return expiration;
+    }
+
     public required_authorities get_required_authorities() {
         required_authorities requiredAuthorities = new required_authorities();
         requiredAuthorities.active = new ArrayList<>();
@@ -105,10 +109,34 @@ public class Transaction {
         return enc.result();
     }
 
+    protected Sha256Object sig_digest_with_signature() {
+        Sha256Object.encoder enc = new Sha256Object.encoder();
+        RawType rawTypeObject = new RawType();
+        enc.write(rawTypeObject.get_byte_array(unsign_ref_block_num.shortValue()));
+        enc.write(rawTypeObject.get_byte_array(unsign_ref_block_prefix.intValue()));
+        enc.write(rawTypeObject.get_byte_array(expiration));
+        rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(operationTypes.size()));
+        for (Operations.operation_type operationType : operationTypes) {
+            rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(operationType.nOperationType));
+            Operations.base_operation baseOperation = (Operations.base_operation) operationType.operationContent;
+            baseOperation.write_to_encoder(enc);
+        }
+        rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(extensions.size()));
+        return enc.result();
+    }
+
     public Sha256Object sig_digest() {
         Sha256Object.encoder enc = new Sha256Object.encoder();
         Operations.base_operation baseOperation = operation;
         baseOperation.write_to_encoder(enc);
         return enc.result();
+    }
+
+    public long getRef_block_num() {
+        return ref_block_num;
+    }
+
+    public long getRef_block_prefix() {
+        return ref_block_prefix;
     }
 }

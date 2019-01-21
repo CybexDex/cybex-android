@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.cybex.provider.crypto.Sha256Object;
 import com.cybex.provider.utils.MyUtils;
+import com.google.common.io.BaseEncoding;
+import com.cybex.provider.utils.MyUtils;
 
 import org.bitcoinj.core.ECKey;
 import org.ethereum.util.ByteUtil;
@@ -24,7 +26,7 @@ import mrd.bitlib.util.Sha256Hash;
 
 public class SignedTransaction extends Transaction {
     private final static char[] hexArray = "0123456789abcdef".toCharArray();
-    transient List<CompactSignature> SignaturesBuffer = new ArrayList<>();
+    public transient List<CompactSignature> SignaturesBuffer = new ArrayList<>();
     List<String> signatures = new ArrayList<>();
 
     public void sign(Types.private_key_type privateKeyType, Sha256Object chain_id) {
@@ -48,6 +50,16 @@ public class SignedTransaction extends Transaction {
         signatures.add(bytesToHex(privateKeyType.getPrivateKey().sign_compact(digest, true).data));
         Log.e("withdraw_deposit_hash", signatures.get(0));
         return signatures.get(0);
+    }
+
+    public String getTransactionID() {
+        if (SignaturesBuffer != null) {
+            Sha256Object signDigest = sig_digest_with_signature();
+            byte[] transactionId = new byte[20];
+            System.arraycopy(signDigest.hash, 0, transactionId, 0, transactionId.length);
+            return MyUtils.bytesToHex(transactionId);
+        }
+        return null;
     }
 
     public CompactSignature sign_compactByENotes(CardManager cardManager, Card card, Sha256Object digest, boolean require_canonical) {
