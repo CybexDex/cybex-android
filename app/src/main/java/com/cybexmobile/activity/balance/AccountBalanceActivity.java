@@ -21,6 +21,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.graphene.chain.AccountBalanceObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.LimitOrderObject;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
@@ -28,21 +37,8 @@ import com.cybexmobile.activity.deploy.DeployActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
-import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.cache.BalanceCache;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
-import com.cybex.basemodule.dialog.CybexDialog;
-import com.cybex.basemodule.event.Event;
-import com.cybex.provider.exception.NetworkStatusException;
-import com.cybex.provider.graphene.chain.AccountBalanceObject;
-import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybex.provider.graphene.chain.LimitOrderObject;
-import com.cybex.provider.graphene.chain.MarketTicker;
-import com.cybex.basemodule.service.WebSocketService;
 import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,12 +63,11 @@ import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
-import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
-
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();

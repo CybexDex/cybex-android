@@ -15,13 +15,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -41,12 +39,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
-import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_QR_CODE_TRANCTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSACTIONID;
-import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
-import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class QRCodeActivity extends BaseActivity {
     private static int REQUEST_PERMISSION = 1;
@@ -99,7 +93,7 @@ public class QRCodeActivity extends BaseActivity {
                 saveImageView(mQRCodeView);
             }
         } else {
-
+            ToastMessage.showNotEnableDepositToastMessage(this, "need permission", R.drawable.ic_error_16px);
         }
     }
 
@@ -184,11 +178,14 @@ public class QRCodeActivity extends BaseActivity {
                         ToastMessage.showNotEnableDepositToastMessage(QRCodeActivity.this, getResources().getString(R.string.text_ticket_get_message), R.drawable.ic_check_circle_green);
                         cancelGetTransactionByIDWorkerSchedule();
                         finish();
+                    } else if (reply.error != null) {
+                        ToastMessage.showNotEnableDepositToastMessage(QRCodeActivity.this, getResources().getString(R.string.text_ticket_wrong_message), R.drawable.ic_error_16px);
                     }
                 }
 
                 @Override
                 public void onFailure() {
+                    ToastMessage.showNotEnableDepositToastMessage(QRCodeActivity.this, getResources().getString(R.string.text_ticket_internet_wrong_message), R.drawable.ic_error_16px);
 
                 }
             });

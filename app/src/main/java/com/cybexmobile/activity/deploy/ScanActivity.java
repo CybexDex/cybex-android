@@ -82,6 +82,7 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate {
 
     private void vibrate() {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(200);
+        if (vibrator != null)
+            vibrator.vibrate(200);
     }
 }

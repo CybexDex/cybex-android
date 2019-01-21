@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -23,8 +22,6 @@ import android.widget.TextView;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.cache.AssetPairCache;
 import com.cybex.basemodule.dialog.CybexDialog;
-import com.cybex.basemodule.event.Event;
-import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
@@ -46,8 +43,6 @@ import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybexmobile.shake.AntiShake;
 import com.google.gson.Gson;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -74,7 +69,6 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_QR_CODE_TRANCTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSACTIONID;
-import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.basemodule.constant.Constant.SCAN_RESULT;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybexmobile.activity.deploy.ScanActivity.RESULT_CODE;
@@ -112,6 +106,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     @BindView(R.id.deploy_deploy_bt)
     Button mDeployButton;
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -211,7 +206,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         if (AntiShake.check(view.getId())) {
             return;
         }
-        CommonSelectDialog<AccountBalanceObjectItem> dialog = new CommonSelectDialog<AccountBalanceObjectItem>();
+        CommonSelectDialog<AccountBalanceObjectItem> dialog = new CommonSelectDialog<>();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_ITEMS, (Serializable) mAccountBalanceObjectItems);
         bundle.putSerializable(INTENT_PARAM_SELECTED_ITEM, mSelectedAccountBalanceObjectItem);
@@ -221,7 +216,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     }
 
     @OnFocusChange(R.id.deploy_account_for_verification_et)
-    public void onAccountNameFocusChanged(View view, boolean isFocused) {
+    public void onAccountNameFocusChanged(boolean isFocused) {
         String accountName = mDeployAccountEt.getText().toString().trim();
         if (isFocused) {
             return;
@@ -250,7 +245,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     }
 
     @OnFocusChange(R.id.deploy_deploy_asset_et)
-    public void onAssetToDeployFocusChanged(View view, boolean isFocused) {
+    public void onAssetToDeployFocusChanged(boolean isFocused) {
         String asset = mDeployAssetEt.getText().toString().trim();
         if (isFocused) {
             return;
@@ -275,7 +270,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     }
 
     @OnFocusChange(R.id.deploy_quantity_to_deploy_et)
-    public void onQuantityToDeployFocusChanged(View view, boolean isFocused) {
+    public void onQuantityToDeployFocusChanged(boolean isFocused) {
         if (isFocused) {
             return;
         }
@@ -344,15 +339,13 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     @AfterPermissionGranted(REQUEST_CODE_QRCODE_PERMISSIONS)
     private void requestCodeQRCodePermissions() {
         if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, "Please turn on camera permission", REQUEST_CODE_QRCODE_PERMISSIONS, perms);
+            EasyPermissions.requestPermissions(this, getResources().getString(R.string.text_camera_permission), REQUEST_CODE_QRCODE_PERMISSIONS, perms);
         }
     }
 
     private void checkIsLockAndTransfer() {
         if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFullAccount.account, mFullAccount.account.name, password -> {
-                toTransfer();
-            });
+            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFullAccount.account, mFullAccount.account.name, password -> toTransfer());
         } else {
             toTransfer();
         }
@@ -439,29 +432,21 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     private MessageCallback<Reply<BlockHeader>> mBlockHeaderCallback = new MessageCallback<Reply<BlockHeader>>() {
         @Override
         public void onMessage(Reply<BlockHeader> reply) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactinForTickets(
-                                mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
-                        Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                        String json = gson.toJson(signedTransaction);
-                        String transactionId = signedTransaction.getTransactionID();
-                        Log.e("JsonData", json);
-                        Log.e("TransactionId", transactionId);
+            new Thread(() -> {
+                try {
+                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactinForTickets(
+                            mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
+                    Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
+                    String json = gson.toJson(signedTransaction);
+                    String transactionId = signedTransaction.getTransactionID();
+                    Log.e("JsonData", json);
+                    Log.e("TransactionId", transactionId);
 
-                        String strMessage = compressTransaction((Operations.transfer_operation) mTransferOperation, signedTransaction, reply.result);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                hideLoadDialog();
-                            }
-                        });
-                        jumpToOtherActivity(strMessage, transactionId);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    String strMessage = compressTransaction((Operations.transfer_operation) mTransferOperation, signedTransaction);
+                    runOnUiThread(() -> hideLoadDialog());
+                    jumpToOtherActivity(strMessage, transactionId);
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             }).start();
         }
@@ -479,7 +464,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         startActivity(intent);
     }
 
-    private String compressTransaction(Operations.transfer_operation operation, SignedTransaction signedTransaction, BlockHeader blockHeader) {
+    private String compressTransaction(Operations.transfer_operation operation, SignedTransaction signedTransaction) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(32);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         int from = operation.from.get_instance();
@@ -515,7 +500,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     private InputFilter mQuantityFilter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            if(dest.length() == 0 && source.equals(".")){
+            if (dest.length() == 0 && source.equals(".")) {
                 return "0.";
             }
             String destStr = dest.toString();
