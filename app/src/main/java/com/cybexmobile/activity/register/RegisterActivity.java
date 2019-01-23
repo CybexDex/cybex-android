@@ -210,6 +210,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void checkPasswordConfirm(String passwordConfirm){
+        if (mPasswordChecker.getVisibility() == View.GONE) { return; }
         String strPassword = mEtPassWord.getText().toString();
         if (!strPassword.equals(passwordConfirm)) {
             //提示密码不一致
