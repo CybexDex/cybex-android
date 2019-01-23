@@ -427,7 +427,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                     }
                 }, new UnlockDialog.OnDismissListener() {
                     @Override
-                    public void onDismiss() {
+                    public void onDismiss(int result) {
                         hideSoftInput(mEtMessageForced);
                     }
                 });

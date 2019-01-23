@@ -30,12 +30,12 @@
         android:layout_height="@dimen/height_2"
         android:visibility="gone" />
 
-    <WebView
+    <com.github.lzyzsd.jsbridge.BridgeWebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
 
-    </WebView>
+    </com.github.lzyzsd.jsbridge.BridgeWebView>
 
 </LinearLayout>

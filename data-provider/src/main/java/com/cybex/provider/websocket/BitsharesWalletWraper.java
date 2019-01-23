@@ -34,7 +34,14 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 
 public class BitsharesWalletWraper {
 
@@ -48,6 +55,7 @@ public class BitsharesWalletWraper {
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
     private String password;
+    private Disposable lockWalletDisposable;
 
     private BitsharesWalletWraper() {
         //mstrWalletFilePath = BitsharesApplication.getInstance().getFilesDir().getPath();
@@ -83,7 +91,6 @@ public class BitsharesWalletWraper {
     }
 
     public boolean is_locked() {
-//        return mWalletApi.is_locked();
         return password == null;
     }
 
@@ -227,12 +234,11 @@ public class BitsharesWalletWraper {
         mWalletApi.set_password(strPassword);
         int nRet = mWalletApi.import_account_password(accountObject, strAccountName, strPassword);
         if (nRet == 0) {
-//            save_wallet_file();
             for (AccountObject account : list_my_accounts()) {
                 mMapAccountId2Object.put(account.id, account);
             }
             password = strPassword;
-            lockWallet();
+            startLockWalletTimer();
         }
         return nRet;
 
@@ -246,13 +252,33 @@ public class BitsharesWalletWraper {
         return mWalletApi.lock();
     }
 
-    public void lockWallet() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                password = null;
-            }
-        }, 360 * 1000, 360 * 1000);
+    public void startLockWalletTimer() {
+        lockWalletDisposable = Flowable.intervalRange(0, 1, 1, 1, TimeUnit.MINUTES)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        password = null;
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                    }
+                })
+                .doOnCancel(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        password = null;
+                    }
+                })
+                .subscribe();
+    }
+
+    public void cancelLockWalletTime() {
+        if (!lockWalletDisposable.isDisposed()) {
+            lockWalletDisposable.dispose();
+        }
     }
 
 //    public List<Asset> list_balances(boolean bRefresh) throws NetworkStatusException {

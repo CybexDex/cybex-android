@@ -53,8 +53,8 @@ android {
         applicationId "com.cybexmobile"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 80
-        versionName "1.8.0"
+        versionCode 81
+        versionName "1.8.1"
         multiDexEnabled true
 
         javaCompileOptions {
@@ -150,4 +150,6 @@ dependencies {
 
     //Dagger
     annotationProcessor 'com.google.dagger:dagger-compiler:2.7'
+
+    implementation project(':js-bridge')
 }

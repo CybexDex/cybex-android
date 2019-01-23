@@ -62,6 +62,8 @@ public class UnlockDialog extends DialogFragment{
 
     private Disposable mDisposable;
 
+    private int result = -1; // -1用户主动取消dialog 1解锁后关闭dialog
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +107,7 @@ public class UnlockDialog extends DialogFragment{
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         if(mOnDismissListener != null){
-            mOnDismissListener.onDismiss();
+            mOnDismissListener.onDismiss(result);
         }
     }
 
@@ -147,6 +149,7 @@ public class UnlockDialog extends DialogFragment{
                     if(mUnLockListener != null){
                         mUnLockListener.onUnLocked(password);
                     }
+                    result = 1;
                     dismiss();
                 } else {
                     mTvUnlockError.setVisibility(View.VISIBLE);
@@ -186,7 +189,7 @@ public class UnlockDialog extends DialogFragment{
     }
 
     public interface OnDismissListener {
-        void onDismiss();
+        void onDismiss(int result);
     }
 
 }

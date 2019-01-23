@@ -23,6 +23,7 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.activity.markets.MarketsActivity;
@@ -162,6 +163,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             mDisposableAppConfig.dispose();
         }
         LimitOrderWrapper.getInstance().disconnect();
+        BitsharesWalletWraper.getInstance().cancelLockWalletTime();
     }
 
     @Override

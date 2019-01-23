@@ -1042,7 +1042,7 @@ public class WebSocketService extends Service {
 
     public AssetObject getAssetObjectBySymbol(String assetSymbol) {
         for (AssetObject assetObject : mAssetObjects) {
-            if (assetObject.symbol.equals(assetSymbol)) {
+            if (assetObject.symbol.equals(assetSymbol) || AssetUtil.parseSymbol(assetObject.symbol).equals(assetSymbol)) {
                 return assetObject;
             }
         }
