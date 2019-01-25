@@ -84,7 +84,7 @@ public class GameActivity extends BaseActivity {
             mFullAccountObject = mWebSocketService.getFullAccount(mName);
             if (mFullAccountObject != null) {
                 mAndroidtoJs.setAccountObject(mFullAccountObject);
-                mWebView.loadUrl("http://10.18.120.241:5552");
+                mWebView.loadUrl(url);
                 registerHandler();
             }
         }
