@@ -17,6 +17,7 @@
     <string name="title_deposit_records">充值记录</string>
     <string name="title_withdraw_records">提现记录</string>
     <string name="title_withdraw_deposit_records">充提记录</string>
+    <string name="title_orders">委单</string>
 
     <!-- Watch List Page -->
     <string name="popular_title">最热</string>
@@ -41,7 +42,6 @@
     <string name="account_balance_dialog_content">这是你所有资产的估值，包含了在界面中设置了隐藏的资产、委单中的资产、债仓及抵押物。估值采用实时获得的区块链上的价格，可能不那么精确。</string>
     <string name="account_balance_dialog_button">我知道了</string>
     <string name="text_my_balance">我的资产</string>
-    <string name="text_opened_orders">我的委单</string>
     <string name="text_lockup_assets">锁定期资产</string>
     <string name="text_deposit_withdraw">充值提现</string>
     <string name="text_address_management">地址管理</string>
@@ -57,7 +57,6 @@
     <!-- Open Orders Page -->
     <string name="open_order_buy">买入</string>
     <string name="open_order_sell">卖出</string>
-    <string name="open_orders_title">我的委单</string>
     <string name="open_order_price_amount">委托单价/委托数量</string>
     <string name="open_order_filled_cancel">成交额/撤单</string>
 
@@ -222,8 +221,11 @@
     <string name="text_decimals">位小数</string>
 
     <!-- Order History Activity -->
-    <string name="text_asset_and_amount">资产/数量</string>
-    <string name="text_filled_and_price">成交额/单价</string>
+    <string name="text_pair">市场</string>
+    <string name="text_price_filled">价格/成交数量</string>
+    <string name="text_total_trading_fee">成交额/手续费</string>
+    <string name="text_average_price">均价/价格</string>
+    <string name="text_filled_amount">成交数量/数量</string>
     <string name="text_no_exchange_history">暂无交易记录</string>
 
     <!-- Order History Item -->
@@ -541,5 +543,9 @@
     <string name="text_eva_introduction">介绍</string>
     <string name="fragment_tab_title">项目介绍</string>
     <string name="text_eva_score">综合得分:</string>
+
+    <string name="text_trade_history">历史成交</string>
+    <string name="text_order_history">历史委托</string>
+    <string name="text_open_orders">当前委单</string>
 
 </resources>

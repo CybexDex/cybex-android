@@ -89,7 +89,7 @@
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.openorders.OpenOrdersActivity"
+            android:name=".activity.orders.OrdersHistoryActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
@@ -97,7 +97,7 @@
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.orderhistory.OwnOrderHistoryActivity"
+            android:name=".activity.orders.ExchangeOrdersHistoryActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity

@@ -15,6 +15,7 @@
     <string name="title_deposit_records">Deposit Records</string>
     <string name="title_withdraw_records">Withdraw Records</string>
     <string name="title_withdraw_deposit_records">Deposit&amp;Withdraw records</string>
+    <string name="title_orders">Orders</string>
 
     <!-- WatchList Page -->
     <string name="popular_title">most popular</string>
@@ -37,7 +38,6 @@
     <string name="account_balance_dialog_content">This is the estimated value of all your assets,including any hidden assets,open orders,debt and collateral.The estimate is done using only live blockchain data and may not be perfectly accurate.</string>
     <string name="account_balance_dialog_button">OK</string>
     <string name="text_my_balance">My Balance</string>
-    <string name="text_opened_orders">Opened Orders</string>
     <string name="text_lockup_assets">Lockup Assets</string>
     <string name="text_deposit_withdraw">Deposit/Withdraw</string>
     <string name="text_address_management">Address Management</string>
@@ -53,7 +53,6 @@
     <!-- Open Orders Page -->
     <string name="open_order_buy">BUY</string>
     <string name="open_order_sell">SELL</string>
-    <string name="open_orders_title">Opened Orders</string>
     <string name="open_order_price_amount">Order Price/Order Amount</string>
     <string name="open_order_filled_cancel">Filled/Cancel</string>
 
@@ -216,8 +215,11 @@
     <string name="text_decimals">decimals</string>
 
     <!-- Own Order History Activity -->
-    <string name="text_asset_and_amount">Asset/Amount</string>
-    <string name="text_filled_and_price">Filled/Price</string>
+    <string name="text_pair">Pair</string>
+    <string name="text_price_filled">Price/Filled</string>
+    <string name="text_total_trading_fee">Total/Trading Fee</string>
+    <string name="text_average_price">Average/Price</string>
+    <string name="text_filled_amount">Filled/Amount</string>
     <string name="text_no_exchange_history">No exchange history</string>
 
     <!-- Own Order History Item -->
@@ -537,5 +539,9 @@
     <string name="fragment_tab_title">Introduction</string>
     <string name="text_eva_score">SCORE:</string>
 
+
+    <string name="text_trade_history">Trade History</string>
+    <string name="text_order_history">Order History</string>
+    <string name="text_open_orders">Open Orders</string>
 
 </resources>

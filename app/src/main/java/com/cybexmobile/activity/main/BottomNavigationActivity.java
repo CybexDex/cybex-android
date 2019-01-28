@@ -11,11 +11,9 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.cybex.basemodule.constant.Constant;
@@ -32,9 +30,8 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
-import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.fragment.AccountFragment;
-import com.cybexmobile.fragment.ExchangeFragment;
+import com.cybexmobile.fragment.exchange.ExchangeFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.fragment.main.CybexMainFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
@@ -45,18 +42,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
-import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FROM_BROWSER;
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;

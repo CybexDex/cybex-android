@@ -22,7 +22,7 @@ import com.cybexmobile.activity.balance.AccountBalanceActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
 import com.cybexmobile.activity.lockassets.LockAssetsActivity;
 import com.cybexmobile.activity.login.LoginActivity;
-import com.cybexmobile.activity.openorders.OpenOrdersActivity;
+import com.cybexmobile.activity.orders.OrdersHistoryActivity;
 import com.cybexmobile.activity.setting.SettingActivity;
 import com.cybexmobile.activity.address.AddressManagerActivity;
 import com.cybex.provider.crypto.Sha256Object;
@@ -167,7 +167,7 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
             toLogin();
             return;
         }
-        Intent intent = new Intent(getActivity(), OpenOrdersActivity.class);
+        Intent intent = new Intent(getActivity(), OrdersHistoryActivity.class);
         startActivity(intent);
     }
 

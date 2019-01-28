@@ -13,27 +13,30 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitFactory {
 
     //cybex正式服务器
-    public static final String cybex_base_url = "https://app.cybex.io/";
+    private static final String cybex_base_url = "https://app.cybex.io/";
     //cybex测试服务器
-    public static final String cybex_base_url_test = "http://47.91.242.71:3039/";
+    private static final String cybex_base_url_test = "http://47.91.242.71:3039/";
     //faucet正式服务器
-    public static final String faucet_base_url = "https://faucet.cybex.io/";
+    private static final String faucet_base_url = "https://faucet.cybex.io/";
     //faucet测试服务器
-    public static final String faucet_base_url_test = "https://faucet.51nebula.com/";
+    private static final String faucet_base_url_test = "https://faucet.51nebula.com/";
     //网关测试正式服务器
-    public static final String gateway_base_url = "https://gateway-query.cybex.io/";
+    private static final String gateway_base_url = "https://gateway-query.cybex.io/";
     //网关测试测试服务器 暂无
-    public static final String gateway_base_url_test = "https://gateway-query.cybex.io/";
+    private static final String gateway_base_url_test = "https://gateway-query.cybex.io/";
     //Eto正式服务器
-    public static final String eto_base_url = "https://eto.cybex.io/api/";
+    private static final String eto_base_url = "https://eto.cybex.io/api/";
     //Eto测试服务器
-    public static final String eto_base_url_test = "https://ieo-apitest.cybex.io/api/";
+    private static final String eto_base_url_test = "https://ieo-apitest.cybex.io/api/";
     //Chat正式服务器
-    public static final String chat_base_url = "https://chat.cybex.io/";
+    private static final String chat_base_url = "https://chat.cybex.io/";
     //Chat测式服务器
-    public static final String chat_base_url_test = "http://47.91.242.71:9099/";
+    private static final String chat_base_url_test = "http://47.91.242.71:9099/";
 
-    public static final String eva_base_url = "https://api.evaluape.io/";
+    private static final String eva_base_url = "https://api.evaluape.io/";
+
+    private static final String cybex_live_base_url = "https://live.cybex.io/";
+    private static final String cybex_live_base_url_test = "https://cybtestbrowser.nbltrust.com/";
 
     private OkHttpClient okHttpClient;
 
@@ -44,6 +47,7 @@ public class RetrofitFactory {
     private EtoHttpApi etoHttpApi;
     private ChatHttpApi chatHttpApi;
     private EvaHttpApi evaHttpApi;
+    private CybexLiveHttpApi cybexLiveHttpApi;
 
     //是否是正式服务器环境
     public boolean isOfficialServer = true;
@@ -181,6 +185,22 @@ public class RetrofitFactory {
             evaHttpApi = retrofit.create(EvaHttpApi.class);
         }
         return evaHttpApi;
+    }
+
+    public CybexLiveHttpApi apiCybexLive() {
+        if(okHttpClient == null){
+            throw new RuntimeException("must getInstance before apiEto");
+        }
+        if(cybexLiveHttpApi == null){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(isOfficialServer ? cybex_live_base_url : cybex_live_base_url_test)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build();
+            cybexLiveHttpApi = retrofit.create(CybexLiveHttpApi.class);
+        }
+        return cybexLiveHttpApi;
     }
 
     public void setOfficialServer(boolean officialServer) {

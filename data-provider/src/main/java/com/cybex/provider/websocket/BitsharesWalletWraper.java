@@ -276,7 +276,7 @@ public class BitsharesWalletWraper {
     }
 
     public void cancelLockWalletTime() {
-        if (!lockWalletDisposable.isDisposed()) {
+        if (lockWalletDisposable != null && !lockWalletDisposable.isDisposed()) {
             lockWalletDisposable.dispose();
         }
     }
@@ -318,11 +318,11 @@ public class BitsharesWalletWraper {
 //        return listAllHistoryObject;
 //    }
 
-    public void get_account_history(ObjectId<AccountObject> accountObjectId,
-                                    int nLimit,
-                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
-        mWalletApi.get_account_history(accountObjectId, nLimit, callback);
-    }
+//    public void get_account_history(ObjectId<AccountObject> accountObjectId,
+//                                    int nLimit,
+//                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+//        mWalletApi.get_account_history(accountObjectId, nLimit, callback);
+//    }
 
 //    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
 //        return mWalletApi.list_assets(strLowerBound, nLimit);

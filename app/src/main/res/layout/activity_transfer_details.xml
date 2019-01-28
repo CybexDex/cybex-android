@@ -42,10 +42,9 @@
 
             <ImageView
                 android:id="@+id/transfer_details_iv_transfer_action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_income_40_px"/>
+                android:layout_width="@dimen/width_40"
+                android:layout_height="@dimen/height_40"
+                android:layout_centerVertical="true" />
 
             <TextView
                 android:id="@+id/transfer_details_tv_transfer_action"
@@ -53,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 style="@style/font_white_dark_xxxlarge"
+                android:layout_marginLeft="@dimen/margin_10"
                 android:layout_toEndOf="@+id/transfer_details_iv_transfer_action"
                 android:layout_gravity="end"
                 android:text="@string/text_empty" />

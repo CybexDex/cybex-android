@@ -239,6 +239,90 @@ public class ApihkWebSocketClient extends WebSocketListener {
         sendForReply(callObject, replyObjectProcess);
     }
 
+    /**
+     * 获取用户历史委单
+     * @param accountId 用户名
+     * @param lastOrderId 最后订单号
+     * @param limit 分页加载数量
+     */
+    public void get_limit_order_status(String accountId,
+                                       String lastOrderId,
+                                       int limit,
+                                       MessageCallback<Reply<List<LimitOrder>>> callback) {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(mStatusId);
+        callObject.params.add("get_limit_order_status");
+
+        List<Object> listParams = new ArrayList<>();
+        listParams.add(accountId);
+        listParams.add(lastOrderId);
+        listParams.add(limit);
+        callObject.params.add(listParams);
+
+        ReplyProcessImpl<Reply<List<LimitOrder>>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<LimitOrder>>>() {}.getType(), callback);
+        sendForReply(callObject, replyObjectProcess);
+    }
+
+    /**
+     * 获取用户历史委单
+     * @param accountId 用户名
+     * @param lastOrderId 最后订单号
+     * @param baseId baseId
+     * @param quoteId quoteId
+     * @param limit 分页加载数量
+     */
+    public void get_market_limit_order_status(String accountId,
+                                       String lastOrderId,
+                                       String baseId,
+                                       String quoteId,
+                                       int limit,
+                                       MessageCallback<Reply<List<LimitOrder>>> callback) {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(mStatusId);
+        callObject.params.add("get_market_limit_order_status");
+
+        List<Object> listParams = new ArrayList<>();
+        listParams.add(accountId);
+        listParams.add(baseId);
+        listParams.add(quoteId);
+        listParams.add(lastOrderId);
+        listParams.add(limit);
+        callObject.params.add(listParams);
+
+        ReplyProcessImpl<Reply<List<LimitOrder>>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<LimitOrder>>>() {}.getType(), callback);
+        sendForReply(callObject, replyObjectProcess);
+    }
+
+    /**
+     * 获取当前时间最后一笔交易订单号
+     * @param timestamp
+     * @param callback
+     */
+    public void get_limit_order_id_by_time(String timestamp, MessageCallback<Reply<String>> callback) {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(mStatusId);
+        callObject.params.add("get_limit_order_id_by_time");
+
+        List<Object> listParams = new ArrayList<>();
+        listParams.add(timestamp);
+        callObject.params.add(listParams);
+
+        ReplyProcessImpl<Reply<String>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<String>>() {}.getType(), callback);
+        sendForReply(callObject, replyObjectProcess);
+    }
+
     private <T> void sendForReply(Call callObject, ReplyProcessImpl<Reply<T>> replyObjectProcess) {
         if(mWebSocket != null && mConnectStatus == WebSocketStatus.LOGIN){
             sendForReplyImpl(callObject, replyObjectProcess);

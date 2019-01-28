@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.fragment.markets;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,7 +20,7 @@ import com.cybex.provider.graphene.websocket.WebSocketOpen;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.rte.RxRteWebSocket;
 import com.cybexmobile.R;
-import com.cybexmobile.adapter.OrderHistoryRecyclerViewAdapter;
+import com.cybexmobile.adapter.MarketOrderHistoryRecyclerViewAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -44,7 +44,7 @@ import io.reactivex.schedulers.Schedulers;
  * A fragment representing a list of Items.
  * <p/>
  */
-public class OrderHistoryListFragment extends BaseFragment {
+public class MarketOrderHistoryFragment extends BaseFragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_WATCHLIST = "watchlist";
@@ -61,7 +61,7 @@ public class OrderHistoryListFragment extends BaseFragment {
     TextView mTvSellAmount;
 
     private WatchlistData mWatchlistData;
-    private OrderHistoryRecyclerViewAdapter mOrderHistoryItemRecycerViewAdapter;
+    private MarketOrderHistoryRecyclerViewAdapter mOrderHistoryItemRecycerViewAdapter;
     private final Gson mGson = new Gson();
     private final JsonParser mJsonParser = new JsonParser();
     private RteRequest mRteRequestDepth;
@@ -71,8 +71,8 @@ public class OrderHistoryListFragment extends BaseFragment {
 
     private Unbinder mUnbunder;
 
-    public static OrderHistoryListFragment newInstance(WatchlistData watchListData) {
-        OrderHistoryListFragment fragment = new OrderHistoryListFragment();
+    public static MarketOrderHistoryFragment newInstance(WatchlistData watchListData) {
+        MarketOrderHistoryFragment fragment = new MarketOrderHistoryFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_WATCHLIST, watchListData);
         fragment.setArguments(args);
@@ -96,7 +96,7 @@ public class OrderHistoryListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_order_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_market_order_history, container, false);
         mUnbunder = ButterKnife.bind(this, view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;
@@ -110,7 +110,7 @@ public class OrderHistoryListFragment extends BaseFragment {
             mTvBuyAmount.setText(getResources().getString(R.string.market_page_trade_history_quote).replace("--", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
             mTvSellPrice.setText(getResources().getString(R.string.market_page_sell_price).replace("--", AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())));
             mTvSellAmount.setText(getResources().getString(R.string.market_page_trade_history_quote).replace("--", AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())));
-            mOrderHistoryItemRecycerViewAdapter = new OrderHistoryRecyclerViewAdapter(mWatchlistData, getContext());
+            mOrderHistoryItemRecycerViewAdapter = new MarketOrderHistoryRecyclerViewAdapter(mWatchlistData, getContext());
             recyclerView.setAdapter(mOrderHistoryItemRecycerViewAdapter);
             initRTEWebSocket();
         }

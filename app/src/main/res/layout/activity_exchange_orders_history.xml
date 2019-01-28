@@ -22,32 +22,40 @@
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
 
-    <RelativeLayout
+    <info.hoang8f.android.segmented.SegmentedGroup
+        android:id="@+id/sg_own_order_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_margin"
         android:layout_marginEnd="@dimen/activity_margin"
-        android:layout_marginTop="@dimen/activity_margin"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_asset_and_amount"
-            style="@style/font_gray_small"
-            android:alpha="0.5" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_filled_and_price"
-            android:layout_alignParentEnd="true"
-            style="@style/font_gray_small"
-            android:alpha="0.5"/>
-    </RelativeLayout>
+        android:layout_marginStart="@dimen/activity_margin"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:sc_border_width="@dimen/width_1"
+        app:sc_checked_text_color="@color/font_color_white_dark"
+        app:sc_corner_radius="@dimen/corner_radius_4"
+        app:sc_tint_color="@color/primary_color_grey">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/order_history_rv"
-        android:layout_marginTop="@dimen/margin_10"
+        <RadioButton
+            android:id="@+id/rb_own_order_history"
+            style="@style/RadioButton"
+            android:layout_width="@dimen/width_120"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/text_order_history" />
+
+        <RadioButton
+            android:id="@+id/rb_own_trade_history"
+            style="@style/RadioButton"
+            android:layout_width="@dimen/width_120"
+            android:layout_height="wrap_content"
+            android:text="@string/text_trade_history" />
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
+    <FrameLayout
+        android:id="@+id/layout_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
 </LinearLayout>

@@ -26,15 +26,66 @@ public class LimitOrderWrapper {
         mApihkWebSocketClient.disconnect();
     }
 
+    /**
+     * 获取当前用户的委单
+     * @param accountId 用户Id
+     * @param callback 结果回调
+     */
     public void get_opend_limit_orders(String accountId,
                                        MessageCallback<Reply<List<LimitOrder>>> callback) {
         mApihkWebSocketClient.get_opend_limit_orders(accountId, callback);
     }
 
+    /**
+     * 获取当前用户指定交易对委单
+     * @param accountId 用户Id
+     * @param baseId baseId
+     * @param quote quoteId
+     * @param callback 结果回调
+     */
     public void get_opend_market_limit_orders(String accountId,
                                               String baseId,
                                               String quote,
                                               MessageCallback<Reply<List<LimitOrder>>> callback) {
         mApihkWebSocketClient.get_opend_market_limit_orders(accountId, baseId, quote, callback);
+    }
+
+    /**
+     * 获取用户历史委单
+     * @param accountId 用户名
+     * @param lastOrderId 最后订单号
+     * @param limit 分页加载数量
+     */
+    public void get_limit_order_status(String accountId,
+                                       String lastOrderId,
+                                       int limit,
+                                       MessageCallback<Reply<List<LimitOrder>>> callback) {
+        mApihkWebSocketClient.get_limit_order_status(accountId, lastOrderId, limit, callback);
+    }
+
+    /**
+     * 获取用户历史委单
+     * @param accountId 用户名
+     * @param lastOrderId 最后订单号
+     * @param baseId baseId
+     * @param quoteId quoteId
+     * @param limit 分页加载数量
+     */
+    public void get_market_limit_order_status(String accountId,
+                                       String lastOrderId,
+                                       String baseId,
+                                       String quoteId,
+                                       int limit,
+                                       MessageCallback<Reply<List<LimitOrder>>> callback) {
+        mApihkWebSocketClient.get_market_limit_order_status(accountId, lastOrderId, baseId, quoteId, limit, callback);
+    }
+
+    /**
+     * 获取当前时间最后一笔交易订单号
+     * @param timestamp 当前时间戳
+     * @param callback
+     */
+    public void get_limit_order_id_by_time(String timestamp, MessageCallback<Reply<String>> callback) {
+        mApihkWebSocketClient.get_limit_order_id_by_time(timestamp, callback);
     }
 }

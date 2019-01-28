@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.fragment.orders;
 
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +34,6 @@ import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
-import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
@@ -44,14 +42,12 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
-import com.cybex.basemodule.utils.AssetUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,17 +55,19 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_IS_LOAD_ALL;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_IS_LOAD_ALL;
 import static com.cybex.provider.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 /**
- * 交易界面当前用户当前交易对委单
+ * 委托（当前交易对，当前用户）
+ *
  */
 public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecyclerViewAdapter.OnItemClickListener {
 
@@ -88,13 +86,13 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
 
     private boolean mIsLoginIn;
     private String mName;
+    private boolean mIsLoadAll;
 
-    private final List<String> mCompareSymbol = Arrays.asList(new String[]{"JADE.USDT", "JADE.ETH", "JADE.BTC", "CYB"});
-
-    public static OpenOrdersFragment getInstance(WatchlistData watchlistData){
+    public static OpenOrdersFragment getInstance(WatchlistData watchlistData, boolean isLoadAll){
         OpenOrdersFragment fragment = new OpenOrdersFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_WATCHLIST, watchlistData);
+        bundle.putBoolean(INTENT_PARAM_IS_LOAD_ALL, isLoadAll);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -109,11 +107,12 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
         Bundle bundle = getArguments();
         if(bundle != null){
             mWatchlistData = (WatchlistData) bundle.getSerializable(INTENT_PARAM_WATCHLIST);
-            mFullAccount = (FullAccountObject) bundle.getSerializable(INTENT_PARAM_FULL_ACCOUNT_OBJECT);
+            mIsLoadAll = bundle.getBoolean(INTENT_PARAM_IS_LOAD_ALL, false);
         }
         if(savedInstanceState != null){
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
             mFullAccount = (FullAccountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_FULL_ACCOUNT_OBJECT);
+            mIsLoadAll = savedInstanceState.getBoolean(BUNDLE_SAVE_IS_LOAD_ALL, false);
         }
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, BIND_AUTO_CREATE);
@@ -141,6 +140,8 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
+        outState.putSerializable(BUNDLE_SAVE_FULL_ACCOUNT_OBJECT, mFullAccount);
+        outState.putBoolean(BUNDLE_SAVE_IS_LOAD_ALL, mIsLoadAll);
     }
 
     @Override
@@ -238,18 +239,6 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLimitOrderCancel(Event.LimitOrderCancel event){
-        hideLoadDialog();
-        if(event.isSuccess()){
-            ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
-                    R.string.toast_message_cancel_order_successfully), R.drawable.ic_check_circle_green);
-        } else {
-            ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
-                    R.string.toast_message_cancel_order_failed), R.drawable.ic_error_16px);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
         mFullAccount = event.getFullAccount();
         loadLimitOrderData();
@@ -284,19 +273,6 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
         }
     };
 
-    private MessageCallback mLimitOrderCancelCallback = new MessageCallback<Reply<String>>(){
-
-        @Override
-        public void onMessage(Reply<String> reply) {
-            EventBus.getDefault().post(new Event.LimitOrderCancel(reply.result == null && reply.error == null));
-        }
-
-        @Override
-        public void onFailure() {
-            EventBus.getDefault().post(new Event.LimitOrderCancel(false));
-        }
-    };
-
     private MessageCallback<Reply<List<LimitOrder>>> mOpendLimitOrderCallback = new MessageCallback<Reply<List<LimitOrder>>>() {
         @Override
         public void onMessage(Reply<List<LimitOrder>> reply) {
@@ -323,14 +299,11 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     }
 
     public void loadLimitOrderCancelFee(String assetId){
-        if(mWatchlistData == null){
-            return;
-        }
         mWebSocketService.loadLimitOrderCancelFee(assetId, ID_CANCEL_LMMIT_ORDER_OPERATION,
                 BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
                         ObjectId.create_from_string(ASSET_ID_CYB),
-                        mWatchlistData.getBaseAsset().id,
-                        mWatchlistData.getQuoteAsset().id,  0, 0, 0));
+                        mCurrOpenOrderItem.baseAsset.id,
+                        mCurrOpenOrderItem.quoteAsset.id,  0, 0, 0));
     }
 
     private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
@@ -369,7 +342,26 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                             mFullAccount.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
                     try {
-                        BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mLimitOrderCancelCallback);
+                        BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new MessageCallback<Reply<String>>() {
+                            @Override
+                            public void onMessage(Reply<String> reply) {
+                                hideLoadDialog();
+                                if(reply.result == null && reply.error == null){
+                                    ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
+                                            R.string.toast_message_cancel_order_successfully), R.drawable.ic_check_circle_green);
+                                } else {
+                                    ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
+                                            R.string.toast_message_cancel_order_failed), R.drawable.ic_error_16px);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                hideLoadDialog();
+                                ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
+                                        R.string.toast_message_cancel_order_failed), R.drawable.ic_error_16px);
+                            }
+                        });
                     } catch (NetworkStatusException e) {
                         e.printStackTrace();
                     }
@@ -386,17 +378,20 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     }
 
     private void loadLimitOrderData(){
-        if(!mIsLoginIn) {
+        if(!mIsLoginIn || mFullAccount == null || (!mIsLoadAll && mWatchlistData == null)) {
             return;
         }
-        if(mFullAccount == null || mWatchlistData == null) {
-            return;
+        if (mIsLoadAll) {
+            LimitOrderWrapper.getInstance().get_opend_limit_orders(
+                    mFullAccount.account.id.toString(),
+                    mOpendLimitOrderCallback);
+        } else {
+            LimitOrderWrapper.getInstance().get_opend_market_limit_orders(
+                    mFullAccount.account.id.toString(),
+                    mWatchlistData.getBaseId(),
+                    mWatchlistData.getQuoteId(),
+                    mOpendLimitOrderCallback);
         }
-        LimitOrderWrapper.getInstance().get_opend_market_limit_orders(
-                mFullAccount.account.id.toString(),
-                mWatchlistData.getBaseId(),
-                mWatchlistData.getQuoteId(),
-                mOpendLimitOrderCallback);
     }
 
     private void clearLimitOrderData(){

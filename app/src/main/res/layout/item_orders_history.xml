@@ -16,7 +16,7 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/item_trade_history_tv_buy_sell"
+                android:id="@+id/item_orders_history_tv_buy_sell"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/padding_6"
@@ -28,7 +28,7 @@
                 android:background="@drawable/bg_btn_buy"/>
 
             <TextView
-                android:id="@+id/item_trade_history_tv_quote_symbol"
+                android:id="@+id/item_orders_history_tv_quote_symbol"
                 style="@style/font_white_dark_bold_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 android:text="/" />
 
             <TextView
-                android:id="@+id/item_trade_history_tv_base_symbol"
+                android:id="@+id/item_orders_history_tv_base_symbol"
                 style="@style/font_gray_bold_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/item_trade_history_tv_price"
+            android:id="@+id/item_orders_history_tv_average_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             style="@style/font_white_dark_bold_large"
@@ -59,7 +59,7 @@
             android:text="@string/text_empty"/>
 
         <TextView
-            android:id="@+id/item_trade_history_tv_total"
+            android:id="@+id/item_orders_history_tv_filled_amount"
             style="@style/font_white_dark_bold_large"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
         android:layout_marginTop="@dimen/margin_6">
 
         <TextView
-            android:id="@+id/item_trade_history_tv_time"
+            android:id="@+id/item_orders_history_tv_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -84,7 +84,7 @@
             android:text="@string/text_empty"/>
 
         <TextView
-            android:id="@+id/item_trade_history_tv_filled_amount"
+            android:id="@+id/item_orders_history_tv_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -93,7 +93,7 @@
 
 
         <TextView
-            android:id="@+id/item_trade_history_tv_fee"
+            android:id="@+id/item_orders_history_tv_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

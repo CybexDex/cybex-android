@@ -363,11 +363,11 @@ public class WalletApi {
 //        return mWebSocketClient.list_account_balances(accountId);
 //    }
 
-    public void get_account_history(ObjectId<AccountObject> accountId,
-                                    int nLimit,
-                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
-        mWebSocketClient.get_account_history(accountId, nLimit, callback);
-    }
+//    public void get_account_history(ObjectId<AccountObject> accountId,
+//                                    int nLimit,
+//                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+//        mWebSocketClient.get_account_history(accountId, nLimit, callback);
+//    }
 
     public void get_block(int callId,
                           int blockNumber,

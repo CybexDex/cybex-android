@@ -1,15 +1,13 @@
 package com.cybex.basemodule.event;
 
-import com.cybex.provider.http.entity.AssetRmbPrice;
-import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.MarketTrade;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.market.HistoryPrice;
-import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybex.provider.market.WatchlistData;
 
 import java.util.List;
@@ -303,36 +301,6 @@ public class Event {
         }
     }
 
-    public static class LoadAccountHistory {
-        private List<AccountHistoryObject> accountHistoryObjects;
-
-        public LoadAccountHistory(List<AccountHistoryObject> accountHistoryObjects) {
-            this.accountHistoryObjects = accountHistoryObjects;
-        }
-
-        public List<AccountHistoryObject> getAccountHistoryObjects() {
-            return accountHistoryObjects;
-        }
-    }
-
-    public static class LoadBlock {
-        private int callId;
-        private BlockHeader blockHeader;
-
-        public LoadBlock(int callId, BlockHeader blockHeader) {
-            this.callId = callId;
-            this.blockHeader = blockHeader;
-        }
-
-        public int getCallId() {
-            return callId;
-        }
-
-        public BlockHeader getBlockHeader() {
-            return blockHeader;
-        }
-    }
-
     /**
      * 加载交易手续费
      */
@@ -391,22 +359,6 @@ public class Event {
         private boolean isSuccess;
 
         public LimitOrderCreate(boolean isSuccess) {
-            this.isSuccess = isSuccess;
-        }
-
-        public boolean isSuccess() {
-            return isSuccess;
-        }
-
-    }
-
-    /**
-     * 撤销委单
-     */
-    public static class LimitOrderCancel {
-        private boolean isSuccess;
-
-        public LimitOrderCancel(boolean isSuccess) {
             this.isSuccess = isSuccess;
         }
 

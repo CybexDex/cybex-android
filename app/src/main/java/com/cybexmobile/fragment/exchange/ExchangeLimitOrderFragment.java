@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.fragment.exchange;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

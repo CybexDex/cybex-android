@@ -17,13 +17,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/open_orders_title"
+            android:text="@string/title_orders"
             style="@style/font_white_dark_bold_large"
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
 
     <info.hoang8f.android.segmented.SegmentedGroup
-        android:id="@+id/open_orders_segmented_group"
+        android:id="@+id/sg_orders_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/activity_margin"
@@ -36,54 +36,36 @@
         app:sc_tint_color="@color/primary_color_grey">
 
         <RadioButton
-            android:id="@+id/open_orders_segment_all"
+            android:id="@+id/rb_open_orders"
             style="@style/RadioButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="@string/open_orders_all" />
+            android:text="@string/text_open_orders" />
 
         <RadioButton
-            android:id="@+id/open_orders_segment_buy"
+            android:id="@+id/rb_orders_history"
             style="@style/RadioButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/open_orders_buy" />
+            android:text="@string/text_order_history" />
 
         <RadioButton
-            android:id="@+id/open_orders_segment_sell"
+            android:id="@+id/rb_trade_history"
             style="@style/RadioButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/open_orders_sell" />
+            android:text="@string/text_trade_history" />
     </info.hoang8f.android.segmented.SegmentedGroup>
 
-    <TextView
-        android:id="@+id/open_orders_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/font_gray_large"
-        android:alpha="0.5"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/activity_margin_double"
-        android:text="@string/open_orders_total_value"
-        android:visibility="gone"/>
-    <TextView
-        android:id="@+id/open_orders_total_value"
+    <FrameLayout
+        android:id="@+id/layout_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        style="@style/font_white_dark_xxlarge"
-        android:text="≈¥0.0000"
-        android:visibility="gone"/>
+        android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/open_orders_recycler_view"
-        android:layout_marginTop="@dimen/margin_24"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    </FrameLayout>
 
 </LinearLayout>

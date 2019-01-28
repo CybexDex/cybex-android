@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.fragment.exchange;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,7 +14,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,9 +29,9 @@ import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.rte.RxRteWebSocket;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.markets.MarketsActivity;
-import com.cybexmobile.activity.orderhistory.OwnOrderHistoryActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.entity.AssetRmbPrice;
+import com.cybexmobile.activity.orders.ExchangeOrdersHistoryActivity;
 import com.cybexmobile.dialog.WatchlistSelectDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.graphene.chain.AssetObject;
@@ -43,6 +42,7 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.constant.Constant;
+import com.cybexmobile.fragment.orders.OpenOrdersFragment;
 import com.cybexmobile.shake.AntiShake;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -467,7 +467,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (AntiShake.check(item.getItemId())) { return false; }
-        Intent intent = new Intent(getContext(), OwnOrderHistoryActivity.class);
+        Intent intent = new Intent(getContext(), ExchangeOrdersHistoryActivity.class);
+        intent.putExtra(INTENT_PARAM_WATCHLIST, mWatchlistData);
         getContext().startActivity(intent);
         return false;
     }
@@ -657,7 +658,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case 2:
                 if(mOpenOrdersFragment == null){
-                    mOpenOrdersFragment = OpenOrdersFragment.getInstance(mWatchlistData);
+                    mOpenOrdersFragment = OpenOrdersFragment.getInstance(mWatchlistData, false);
                 }
                 if(mOpenOrdersFragment.isAdded()){
                     transaction.show(mOpenOrdersFragment);
