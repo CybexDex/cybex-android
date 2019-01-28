@@ -390,6 +390,22 @@ public class BitsharesWalletWraper {
         return mWalletApi.getTransferOperation(from, to, transferAssetId, feeAmount, feeAssetId, transferAmount, memo, fromMemoKey, toMemoKey);
     }
 
+    public Operations.transfer_operation getTransferOperationWithLockTime(ObjectId<AccountObject> from,
+                                                                          ObjectId<AccountObject> to,
+                                                                          ObjectId<AssetObject> transferAssetId,
+                                                                          long feeAmount,
+                                                                          ObjectId<AssetObject> feeAssetId,
+                                                                          long transferAmount,
+                                                                          String memo,
+                                                                          Types.public_key_type fromMemoKey,
+                                                                          Types.public_key_type toMemoKey,
+                                                                          Types.public_key_type toActiveKey,
+                                                                          long vesting_period,
+                                                                          int type) {
+        return mWalletApi.getTransferOperationWithLockTime(from, to, transferAssetId, feeAmount, feeAssetId, transferAmount, memo, fromMemoKey, toMemoKey, toActiveKey, vesting_period, type);
+
+    }
+
     public Operations.limit_order_create_operation getLimitOrderCreateOperation(ObjectId<AccountObject> accountId,
                                                                                 ObjectId<AssetObject> assetFeeId,
                                                                                 ObjectId<AssetObject> assetSellId,

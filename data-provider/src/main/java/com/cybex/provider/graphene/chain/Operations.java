@@ -153,6 +153,8 @@ public class Operations {
         public Asset amount;
         public MemoData memo;
         //public extensions_type   extensions;
+        public transient Types.public_key_type public_key_type;
+        public transient long vesting_period;
         public Set<Set<Object>> extensions;
 
         @Override
@@ -197,7 +199,9 @@ public class Operations {
 
             //baseEncoder.write(rawObject.get_byte_array(extensions.size()));
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(extensions.size()));
-
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(1));
+            baseEncoder.write(rawObject.get_byte_array(vesting_period));
+            baseEncoder.write(public_key_type.key_data);
         }
 
         @Override

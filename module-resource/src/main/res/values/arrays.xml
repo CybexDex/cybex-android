@@ -13,6 +13,14 @@
         <item>TERCYBEXGAMECEN</item>
         <item>EXCENTERMECYBGA</item>
     </string-array>
+
+    <!-- Lock Time Transfer Time -->
+    <string-array name="transfer_time_period">
+        <item>@string/text_lock_time_transfer_period_seconds</item>
+        <item>@string/text_lock_time_transfer_period_minutes</item>
+        <item>@string/text_lock_time_transfer_period_hours</item>
+        <item>@string/text_lock_time_transfer_period_days</item>
+    </string-array>
 </resources>
 
 

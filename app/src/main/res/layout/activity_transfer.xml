@@ -166,6 +166,86 @@
                 android:layout_marginTop="@dimen/margin_10"
                 android:layout_marginBottom="@dimen/margin_10"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/transfer_lock_time_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/Switch" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/font_gray_medium"
+                    android:text="@string/text_with_vesting_period" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/transfer_lock_time_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_10">
+
+                    <EditText
+                        android:id="@+id/transfer_et_lock_time"
+                        style="@style/font_white_dark_large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/transfer_lock_time_spinner"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/text_hint_input_time"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:textColorHint="@color/text_hint_color" />
+
+                    <com.jaredrummler.materialspinner.MaterialSpinner
+                        android:id="@+id/transfer_lock_time_spinner"
+                        android:layout_width="@dimen/width_100"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textSize="@dimen/font_medium"
+                        app:ms_arrow_tint="@color/colorAccent"
+                        app:ms_background_selector="@drawable/lock_time_transfer_material_spinner_selector"
+                        app:ms_padding="@dimen/padding_6"
+                        app:ms_text_color="@color/material_spinner_text_color" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:layout_marginBottom="@dimen/margin_10"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/transfer_tv_public_key"
+                    style="@style/font_white_dark_large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_ieo_more"
+                    android:hint="@string/text_hint_input_public_key"
+                    android:maxLines="1"
+                    android:textColorHint="@color/text_hint_color" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_1"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/margin_10"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

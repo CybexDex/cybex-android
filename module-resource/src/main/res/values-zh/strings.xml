@@ -205,7 +205,6 @@
     <string name="text_percentage_75">75%</string>
     <string name="text_percentage_100">100%</string>
     <string name="text_available">可用余额</string>
-    <string name="text_free">手续费</string>
     <string name="text_total">成交额</string>
     <string name="text_buy">买入</string>
     <string name="text_sell">卖出</string>
@@ -324,8 +323,6 @@
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">解锁钱包</string>
-    <string name="unlock_wallet_dialog_cancel">取消</string>
-    <string name="unlock_wallet_dialog_confirm">确认</string>
     <string name="unlock_wallet_dialog_error_invalid_password">解锁失败，请重新输入密码</string>
     <string name="key_unlock">解锁</string>
 
@@ -372,6 +369,13 @@
     <string name="text_account_not_exist">账户不存在</string>
     <string name="text_please_select_crypto_type">请选择转账币种</string>
     <string name="text_send">转账</string>
+    <string name="text_with_vesting_period">锁定时间</string>
+    <string name="text_hint_input_time">请输入时间</string>
+    <string name="text_hint_input_public_key">请选择一个公钥</string>
+    <string name="text_lock_time_transfer_period_seconds">秒</string>
+    <string name="text_lock_time_transfer_period_minutes">分钟</string>
+    <string name="text_lock_time_transfer_period_hours">小时</string>
+    <string name="text_lock_time_transfer_period_days">天</string>
 
     <!-- Transfer Details Activity -->
     <string name="text_to">收款账户</string>

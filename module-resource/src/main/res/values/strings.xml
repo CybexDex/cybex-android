@@ -366,6 +366,13 @@
     <string name="text_account_not_exist">Account does not exist</string>
     <string name="text_please_select_crypto_type">Please select crypto type</string>
     <string name="text_send">Send</string>
+    <string name="text_with_vesting_period">With vesting period</string>
+    <string name="text_hint_input_time">Input Time</string>
+    <string name="text_hint_input_public_key">Input public key</string>
+    <string name="text_lock_time_transfer_period_seconds">seconds</string>
+    <string name="text_lock_time_transfer_period_minutes">minutes</string>
+    <string name="text_lock_time_transfer_period_hours">hours</string>
+    <string name="text_lock_time_transfer_period_days">days</string>
 
     <!-- Transfer Details Activity -->
     <string name="text_to">To</string>
