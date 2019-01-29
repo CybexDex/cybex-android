@@ -181,6 +181,13 @@
                     android:layout_height="wrap_content"
                     style="@style/font_gray_medium"
                     android:text="@string/text_with_vesting_period" />
+                <ImageView
+                    android:id="@+id/transfer_iv_question_marker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_8"
+                    android:src="@drawable/cloud_explain"
+                    android:layout_gravity="center_vertical"/>
             </LinearLayout>
 
             <LinearLayout
@@ -220,22 +227,29 @@
                         app:ms_text_color="@color/material_spinner_text_color" />
                 </RelativeLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_1"
-                    android:layout_marginTop="@dimen/margin_10"
-                    android:layout_marginBottom="@dimen/margin_10"
-                    android:background="@color/colorPrimary" />
-
-                <TextView
-                    android:id="@+id/transfer_tv_public_key"
-                    style="@style/font_white_dark_large"
+                <LinearLayout
+                    android:id="@+id/transfer_ll_public_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_ieo_more"
-                    android:hint="@string/text_hint_input_public_key"
-                    android:maxLines="1"
-                    android:textColorHint="@color/text_hint_color" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_1"
+                        android:layout_marginTop="@dimen/margin_10"
+                        android:layout_marginBottom="@dimen/margin_10"
+                        android:background="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/transfer_tv_public_key"
+                        style="@style/font_white_dark_large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/ic_ieo_more"
+                        android:hint="@string/text_hint_input_public_key"
+                        android:maxLines="2"
+                        android:textColorHint="@color/text_hint_color" />
+                </LinearLayout>
 
             </LinearLayout>
 

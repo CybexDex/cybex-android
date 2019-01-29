@@ -45,7 +45,7 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
-        if(viewType == TYPE_EMPTY){
+        if (viewType == TYPE_EMPTY) {
             view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
             return new EmptyViewHolder(view);
         }
@@ -55,7 +55,7 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof EmptyViewHolder){
+        if (holder instanceof EmptyViewHolder) {
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
             emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_open_order));
             return;
@@ -67,7 +67,8 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
         LimitOrder limitOrder = openOrderItem.limitOrder;
         if (baseAsset != null && quoteAsset != null) {
             AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(baseAsset.id.toString(), quoteAsset.id.toString());
-            if (assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
+            if (assetPairConfig == null)
+                throw new NullPointerException("AssetsPair.Config can't null");
             double amount;
             double price;
             double sold;
@@ -85,6 +86,16 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
                 holder.itemView.setVisibility(View.VISIBLE);
                 String quoteSymbol = AssetUtil.parseSymbol(quoteAsset.symbol);
                 String baseSymbol = AssetUtil.parseSymbol(baseAsset.symbol);
+
+                viewHolder.mTvBuySell.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvQuoteSymbol.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvBaseSymbol.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvPrice.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvAveragePrice.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvFilledAmount.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvAmount.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvTime.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+
                 if (openOrderItem.isSell) {
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));
                     viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(R.drawable.bg_btn_sell));
@@ -104,7 +115,7 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
                 viewHolder.mTvBaseSymbol.setText(baseSymbol);
                 viewHolder.mTvPrice.setText(String.format("%s", AssetUtil.formatNumberRounding(price, Integer.parseInt(assetPairConfig.last_price))));
                 if (sold > 0) {
-                    viewHolder.mTvAveragePrice.setText(String.format("%s", AssetUtil.formatNumberRounding(received/sold, Integer.parseInt(assetPairConfig.last_price))));
+                    viewHolder.mTvAveragePrice.setText(String.format("%s", AssetUtil.formatNumberRounding(received / sold, Integer.parseInt(assetPairConfig.last_price))));
                     viewHolder.mTvFilledAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(sold, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                 } else {
                     viewHolder.mTvAveragePrice.setText(mContext.getResources().getText(R.string.text_empty));
@@ -113,7 +124,7 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
                 viewHolder.mTvAmount.setText(String.format("%s %s", AssetUtil.formatNumberRounding(amount, Integer.parseInt(assetPairConfig.amount)), quoteSymbol));
                 viewHolder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(limitOrder.create_time)));
             }
-        }else{
+        } else {
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
             layoutParams.height = 0;
             layoutParams.width = 0;

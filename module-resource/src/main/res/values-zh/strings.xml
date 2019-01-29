@@ -376,6 +376,9 @@
     <string name="text_lock_time_transfer_period_minutes">分钟</string>
     <string name="text_lock_time_transfer_period_hours">小时</string>
     <string name="text_lock_time_transfer_period_days">天</string>
+    <string name="text_transfer_dialog_title">锁定时间</string>
+    <string name="text_transfer_dialog_content">您可以为转账设置一个锁定时长，从转账成功开始计算，锁定时间到期后，接收方可以领取并使用该笔资产。当收入方账户下有多个公钥时，您需要指定一个公钥作为领取人。</string>
+
 
     <!-- Transfer Details Activity -->
     <string name="text_to">收款账户</string>

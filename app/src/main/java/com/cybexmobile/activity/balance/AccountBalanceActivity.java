@@ -186,7 +186,7 @@ public class AccountBalanceActivity extends BaseActivity {
     @OnClick(R.id.account_balance_info_question_marker)
     public void onBalanceInfoClick(View view) {
         if (AntiShake.check(view.getId())) { return; }
-        CybexDialog.showBalanceDialog(this);
+        CybexDialog.showBalanceDialog(this, getResources().getString(R.string.account_balance_dialog_title), getResources().getString(R.string.account_balance_dialog_content));
     }
 
     @OnClick(R.id.account_balance_deposit_layout)

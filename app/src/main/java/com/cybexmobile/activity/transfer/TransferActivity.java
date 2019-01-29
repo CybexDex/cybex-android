@@ -112,12 +112,16 @@ public class TransferActivity extends BaseActivity implements
     TextView mTvAvailable;
     @BindView(R.id.transfer_lock_time_switch)
     SwitchCompat mSwLockTime;
+    @BindView(R.id.transfer_iv_question_marker)
+    ImageView mQuestionMarker;
     @BindView(R.id.transfer_lock_time_layout)
     LinearLayout mLinearLayoutTransferLockTime;
     @BindView(R.id.transfer_et_lock_time)
     EditText mEtTransferLockTime;
     @BindView(R.id.transfer_lock_time_spinner)
     MaterialSpinner mMsTransferLockTime;
+    @BindView(R.id.transfer_ll_public_key)
+    LinearLayout mLlPublicKey;
     @BindView(R.id.transfer_tv_public_key)
     TextView mTvPublicKey;
     @BindView(R.id.transfer_et_remark)
@@ -159,6 +163,7 @@ public class TransferActivity extends BaseActivity implements
     private boolean mIsActivityActive;//当前activity是否可见
 
     private int mTotalLockTime;
+    private int mLockTimeUnit = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -368,20 +373,29 @@ public class TransferActivity extends BaseActivity implements
             mLinearLayoutTransferLockTime.setVisibility(View.VISIBLE);
         } else {
             mLinearLayoutTransferLockTime.setVisibility(View.GONE);
+            mMsTransferLockTime.setTextColor(getResources().getColor(R.color.material_spinner_text_color));
         }
+        mMsTransferLockTime.setDrawableLevelValue(5000);
         mMsTransferLockTime.setItems(getResources().getStringArray(R.array.transfer_time_period));
         mMsTransferLockTime.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 view.setTextColor(getResources().getColor(R.color.btn_orange_end));
-                int lockTimeUnit = getTimeUnit(item);
+                mLockTimeUnit = getTimeUnit(item);
                 if (mEtTransferLockTime.getText() != null && !mEtTransferLockTime.getText().toString().isEmpty()) {
-                    mTotalLockTime = Integer.parseInt(mEtTransferLockTime.getText().toString().trim()) * lockTimeUnit;
+                    mTotalLockTime = (int) Double.parseDouble(mEtTransferLockTime.getText().toString().trim()) * mLockTimeUnit;
                 }
-
             }
         });
         resetTransferButtonState();
+    }
+
+    @OnClick(R.id.transfer_iv_question_marker)
+    public void onClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        CybexDialog.showBalanceDialog(this, getResources().getString(R.string.text_transfer_dialog_title), getResources().getString(R.string.text_transfer_dialog_content));
     }
 
     @OnClick(R.id.transfer_tv_public_key)
@@ -440,6 +454,10 @@ public class TransferActivity extends BaseActivity implements
         }
         if (TextUtils.isEmpty(accountName)) {
             mToAccountObject = null;
+            mTvPublicKey.setText("");
+            mLockTimePublicKeys = null;
+            mSelectedLockTimePublicKey = null;
+            mLlPublicKey.setVisibility(View.GONE);
             resetTransferButtonState();
             return;
         }
@@ -495,6 +513,9 @@ public class TransferActivity extends BaseActivity implements
         if (isFocused) {
             return;
         }
+        if (mEtTransferLockTime.getText() != null && !mEtTransferLockTime.getText().toString().isEmpty()) {
+            mTotalLockTime = (int) Double.parseDouble(mEtTransferLockTime.getText().toString().trim()) * mLockTimeUnit;
+        }
         resetTransferButtonState();
     }
 
@@ -519,6 +540,12 @@ public class TransferActivity extends BaseActivity implements
         } else {
             mIvAccountCheck.setImageResource(R.drawable.ic_check_success);
             mLockTimePublicKeys = mToAccountObject.active.get_keys();
+            if (mToAccountObject.active.get_keys().size() > 1) {
+                mLlPublicKey.setVisibility(View.VISIBLE);
+            } else {
+                mLlPublicKey.setVisibility(View.GONE);
+                mSelectedLockTimePublicKey = mLockTimePublicKeys.get(0);
+            }
         }
     }
 
@@ -653,7 +680,7 @@ public class TransferActivity extends BaseActivity implements
         } else if (unit.equals(getResources().getString(R.string.text_lock_time_transfer_period_days))) {
             return 21600;
         }
-        return 0;
+        return 1;
     }
 
     private void showAddAddressDialog() {
@@ -784,6 +811,7 @@ public class TransferActivity extends BaseActivity implements
         mToAccountObject = null;
         mTotalLockTime = 0;
         mSelectedLockTimePublicKey = null;
+        mLockTimePublicKeys = null;
         mSwLockTime.setChecked(false);
         mEtTransferLockTime.setText("");
         mTvPublicKey.setText("");

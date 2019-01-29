@@ -5,25 +5,27 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/notify_dialog_title_tv"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        style="@style/font_grey_large"
-        android:background="@color/dialog_title_background_color"
+        style="@style/font_white_dark_large"
+        android:background="@color/dialog_header_background_color"
         android:gravity="center"
-        android:text="@string/account_balance_dialog_title"/>
+        android:text="@string/text_empty"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/dialog_padding"
-        android:background="@android:color/white"
+        android:background="@color/itemBackground"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/notify_dialog_content_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/font_grey_medium"
-            android:text="@string/account_balance_dialog_content"
+            style="@style/font_white_dark_medium"
+            android:text="@string/text_empty"
             android:lineSpacingExtra="@dimen/line_spacing_extra_10" />
 
         <Button
