@@ -7,8 +7,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.cybexmobile.fragment.MarketTradeHistoryFragment;
-import com.cybexmobile.fragment.OrderHistoryListFragment;
+import com.cybexmobile.fragment.markets.MarketOrderHistoryFragment;
+import com.cybexmobile.fragment.markets.MarketTradeHistoryFragment;
 
 public class ViewPagerForScrollView extends ViewPager {
 
@@ -33,7 +33,7 @@ public class ViewPagerForScrollView extends ViewPager {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mCurrentView == null || mFragment instanceof OrderHistoryListFragment || mFragment instanceof MarketTradeHistoryFragment) {
+        if (mCurrentView == null || mFragment instanceof MarketOrderHistoryFragment || mFragment instanceof MarketTradeHistoryFragment) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }

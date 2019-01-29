@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.fragment.exchange;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -33,7 +33,6 @@ import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.login.LoginActivity;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.event.Event;
@@ -47,11 +46,11 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
+import com.cybexmobile.fragment.markets.MarketTradeHistoryFragment;
 import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;

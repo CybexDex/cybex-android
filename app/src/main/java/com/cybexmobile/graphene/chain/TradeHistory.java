@@ -3,7 +3,7 @@ package com.cybexmobile.graphene.chain;
 /**
  * 历史记录（买入，卖出）
  */
-public class OrderHistory {
+public class TradeHistory {
 
     public Fee fee;
     public String order_id;

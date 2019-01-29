@@ -45,6 +45,10 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         mOnItemClickListener = listener;
     }
 
+    public void setAccountObject(AccountObject accountObject) {
+        mAccountObject = accountObject;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -80,7 +84,7 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 viewHolder.mTvAccountName.setText(address == null ? fromAccount.name : address.getNote());
                 viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
                 viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_received));
-                viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_transfer_in);
+                viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_income_24_px);
                 if(transferAsset != null){
                     viewHolder.mTvAmount.setText(String.format("+%s %s",
                             AssetUtil.formatNumberRounding( transferOperation.amount.amount / Math.pow(10, transferAsset.precision), transferAsset.precision),
@@ -90,7 +94,7 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 viewHolder.mTvAccountName.setText(address == null ? toAccount.name : address.getNote());
                 viewHolder.mTvAmount.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
                 viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_sent));
-                viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_transfer_out);
+                viewHolder.mIvTransferAction.setImageResource(R.drawable.ic_outcome_24_px);
                 if(transferAsset != null){
                     viewHolder.mTvAmount.setText(String.format("-%s %s",
                             AssetUtil.formatNumberRounding( transferOperation.amount.amount / Math.pow(10, transferAsset.precision), transferAsset.precision),
@@ -98,9 +102,7 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 }
             }
         }
-        if(transferHistoryItem.block != null){
-            viewHolder.mTvDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(transferHistoryItem.block.timestamp)));
-        }
+        viewHolder.mTvDate.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(transferHistoryItem.accountHistoryObject.timestamp)));
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

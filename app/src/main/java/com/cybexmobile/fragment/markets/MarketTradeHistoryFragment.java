@@ -1,4 +1,4 @@
-package com.cybexmobile.fragment;
+package com.cybexmobile.fragment.markets;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,7 +21,7 @@ import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
-import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
+import com.cybexmobile.adapter.MarketTradeHistoryRecyclerViewAdapter;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.greenrobot.eventbus.EventBus;
@@ -51,7 +51,7 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     private List<MarketTrade> mMarketTradeList = new ArrayList<>();
     private WatchlistData mWatchlistData;
     private RecyclerView mRecyclerView;
-    private TradeHistoryRecyclerViewAdapter mTradeHistoryRecyclerViewAdapter;
+    private MarketTradeHistoryRecyclerViewAdapter mMarketTradeHistoryRecyclerViewAdapter;
 
     public static MarketTradeHistoryFragment newInstance(WatchlistData watchListData) {
         MarketTradeHistoryFragment fragment = new MarketTradeHistoryFragment();
@@ -81,7 +81,7 @@ public class MarketTradeHistoryFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_trade_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_market_trade_history, container, false);
         mRecyclerView = view.findViewById(R.id.trade_history_list);
         mTvBasePrice = view.findViewById(R.id.market_page_base_asset_price);
         mQuoteTextView = view.findViewById(R.id.market_page_trade_history_quote);
@@ -116,8 +116,8 @@ public class MarketTradeHistoryFragment extends BaseFragment {
         mTvBasePrice.setText(getResources().getString(R.string.market_page_trade_history_price).replace("--", trimmedBase));
         mBaseTextView.setText(getResources().getString(R.string.market_page_trade_history_base).replace("--", trimmedBase));
         mQuoteTextView.setText(getResources().getString(R.string.market_page_trade_history_quote).replace("--", trimmedQuote));
-        mTradeHistoryRecyclerViewAdapter = new TradeHistoryRecyclerViewAdapter(mMarketTradeList, mWatchlistData, getContext());
-        mRecyclerView.setAdapter(mTradeHistoryRecyclerViewAdapter);
+        mMarketTradeHistoryRecyclerViewAdapter = new MarketTradeHistoryRecyclerViewAdapter(mMarketTradeList, mWatchlistData, getContext());
+        mRecyclerView.setAdapter(mMarketTradeHistoryRecyclerViewAdapter);
         loadMarketTradHistory();
     }
 
@@ -211,14 +211,14 @@ public class MarketTradeHistoryFragment extends BaseFragment {
         List<MarketTrade> marketTrades = event.getData();
         if(marketTrades == null || marketTrades.size() == 0){
             mMarketTradeList.clear();
-            mTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
+            mMarketTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
             return;
         }
         if(marketTrades.get(0).base.equals(mWatchlistData.getBaseSymbol()) &&
                 marketTrades.get(0).quote.equals(mWatchlistData.getQuoteSymbol())){
             mMarketTradeList.clear();
             mMarketTradeList.addAll(event.getData());
-            mTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
+            mMarketTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 

@@ -166,7 +166,7 @@
                         android:drawableRight="@drawable/ic_arrow_forward_right_16_px"
                         android:layout_centerVertical="true"
                         style="@style/font_white_dark_large"
-                        android:text="@string/text_opened_orders"/>
+                        android:text="@string/title_orders"/>
 
                     <View
                         android:layout_width="match_parent"

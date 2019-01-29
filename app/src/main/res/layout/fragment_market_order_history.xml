@@ -58,7 +58,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/margin_6"
         android:layout_marginRight="@dimen/margin_6"
-        tools:context="com.cybexmobile.fragment.OrderHistoryListFragment"
-        tools:listitem="@layout/item_order_history" />
+        tools:context="com.cybexmobile.fragment.markets.MarketOrderHistoryFragment"
+        tools:listitem="@layout/item_market_order_history" />
 
 </LinearLayout>

@@ -53,4 +53,8 @@
     <!-- Eva Project Dividers -->
     <color name="eva_divider">#1c78819a</color>
 
+    <!-- Transfer Lock Time Spinner -->
+    <color name="background_color_spinner">#dee0e6</color>
+    <color name="background_color_spinner_pressed">#babfcb</color>
+
 </resources>

@@ -17,19 +17,19 @@ import com.cybex.basemodule.utils.AssetUtil;
 import java.math.RoundingMode;
 import java.util.List;
 
-public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderHistoryRecyclerViewAdapter.ViewHolder> {
+public class MarketOrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<MarketOrderHistoryRecyclerViewAdapter.ViewHolder> {
 
     private WatchlistData mWatchlistData;
     private Context mContext;
     private List<List<String>> mSellOrders;
     private List<List<String>> mBuyOrders;
 
-    public OrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, Context context) {
+    public MarketOrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, Context context) {
         mWatchlistData = watchlistData;
         mContext = context;
     }
 
-    public OrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, List<List<String>> sellOrders, List<List<String>> buyOrders, Context context) {
+    public MarketOrderHistoryRecyclerViewAdapter(WatchlistData watchlistData, List<List<String>> sellOrders, List<List<String>> buyOrders, Context context) {
         mWatchlistData = watchlistData;
         mSellOrders = sellOrders;
         mBuyOrders = buyOrders;
@@ -39,7 +39,7 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_order_history, parent, false);
+                .inflate(R.layout.item_market_order_history, parent, false);
         return new ViewHolder(view);
     }
 

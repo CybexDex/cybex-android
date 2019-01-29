@@ -63,12 +63,12 @@ public class TransferDetailsActivity extends BaseActivity {
     private String mUserName;
 
     private Operations.transfer_operation mTransferOperation;
-    private BlockHeader mBlock;
     private AccountObject mFromAccount;
     private AccountObject mToAccount;
     private AssetObject mFeeAsset;
     private AssetObject mTransferAsset;
     private AccountObject mAccountObject;
+    private String mTimestamp;
 
     private Unbinder mUnbinder;
 
@@ -77,12 +77,12 @@ public class TransferDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         mTransferOperation = (Operations.transfer_operation) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_OPERATION);
-        mBlock = (BlockHeader) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_BLOCK);
         mFromAccount = (AccountObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_FROM_ACCOUNT);
         mToAccount = (AccountObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_TO_ACCOUNT);
         mFeeAsset = (AssetObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_FEE_ASSET);
         mTransferAsset = (AssetObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_ASSET);
         mAccountObject = (AccountObject) intent.getSerializableExtra(Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT);
+        mTimestamp = intent.getStringExtra(Constant.INTENT_PARAM_TIMESTAMP);
         setContentView(R.layout.activity_transfer_details);
         mUnbinder = ButterKnife.bind(this);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
@@ -136,7 +136,7 @@ public class TransferDetailsActivity extends BaseActivity {
             if(mFromAccount.id.equals(mAccountObject.id)){
                 mTvTransferToFromAccountName.setText(mToAccount.name);
                 mTvTransferToFrom.setText(getResources().getString(R.string.text_to));
-                mIvTransferAction.setImageResource(R.drawable.ic_sent_40_px);
+                mIvTransferAction.setImageResource(R.drawable.ic_outcome_24_px);
                 mTvTransferAction.setText(getResources().getString(R.string.text_out));
                 mTvTransferAmount.setTextColor(getResources().getColor(R.color.font_color_white_dark));
                 if(mTransferAsset != null){
@@ -147,7 +147,7 @@ public class TransferDetailsActivity extends BaseActivity {
             } else if(mToAccount.id.equals(mAccountObject.id)){
                 mTvTransferToFromAccountName.setText(mFromAccount.name);
                 mTvTransferToFrom.setText(getResources().getString(R.string.text_from));
-                mIvTransferAction.setImageResource(R.drawable.ic_income_40_px);
+                mIvTransferAction.setImageResource(R.drawable.ic_income_24_px);
                 mTvTransferAction.setText(getResources().getString(R.string.text_in));
                 mTvTransferAmount.setTextColor(getResources().getColor(R.color.primary_color_orange));
                 if(mTransferAsset != null){
@@ -186,10 +186,7 @@ public class TransferDetailsActivity extends BaseActivity {
                         AssetUtil.parseSymbol(mFeeAsset.symbol)));
             }
         }
-        if(mBlock != null){
-            mTvTransferTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(mBlock.timestamp)));
-        }
-
+        mTvTransferTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(mTimestamp)));
     }
 
     private String parseTime(int time){

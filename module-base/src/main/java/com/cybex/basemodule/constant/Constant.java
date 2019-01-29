@@ -24,9 +24,9 @@ public class Constant {
     public static final String INTENT_PARAM_TRANSFER_FROM_ACCOUNT = "intent_param_transfer_from_account";
     public static final String INTENT_PARAM_TRANSFER_TO_ACCOUNT = "intent_param_transfer_to_account";
     public static final String INTENT_PARAM_TRANSFER_MY_ACCOUNT = "intent_param_transfer_my_account";
+    public static final String INTENT_PARAM_TIMESTAMP = "intent_param_timestamp";
     public static final String INTENT_PARAM_TRANSFER_FEE_ASSET = "intent_param_transfer_fee_asset";
     public static final String INTENT_PARAM_TRANSFER_ASSET = "intent_param_transfer_asset";
-    public static final String INTENT_PARAM_TRANSFER_BLOCK = "intent_param_transfer_block";
     public static final String INTENT_PARAM_LOAD_MODE = "intent_param_load_mode";
     public static final String INTENT_PARAM_ACCOUNT_BALANCE_ITEMS = "intent_param_account_balance_items";
     public static final String INTENT_PARAM_ETO_PROJECT_DETAILS = "intent_param_eto_project_details";
@@ -49,6 +49,8 @@ public class Constant {
     public static final String INTENT_PARAM_CHANNEL = "intent_param_channel";
 
     public static final String INTENT_PARAM_FROM_BROWSER = "intent_param_from_browser";
+
+    public static final String INTENT_PARAM_IS_LOAD_ALL = "intent_param_is_load_all";
 
     public static final int FREQUENCY_MODE_ORDINARY_MARKET = 1;
     public static final int FREQUENCY_MODE_REAL_TIME_MARKET = 2;
@@ -107,6 +109,7 @@ public class Constant {
     public static final String BUNDLE_SAVE_FULL_ACCOUNT_OBJECT = "bundle_save_full_account_object";
     public static final String BUNDLE_SAVE_PRECISION = "bundle_save_precision";
     public static final String BUNDLE_SAVE_SPINNER_POSITION = "bundle_save_spinner_precision";
+    public static final String BUNDLE_SAVE_IS_LOAD_ALL = "bundle_save_is_load_all";
 
     /**
      * withdraw deposit fundType

@@ -10,34 +10,29 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.cybex.basemodule.cache.AssetPairCache;
+import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.AssetsPair;
+import com.cybex.provider.graphene.chain.BucketObject;
+import com.cybex.provider.graphene.chain.FeeAmountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chain.FullAccountObjectReply;
+import com.cybex.provider.graphene.chain.MarketTicker;
+import com.cybex.provider.graphene.chain.Operations;
+import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.provider.http.entity.HotAssetPair;
+import com.cybex.provider.http.response.AssetsPairResponse;
+import com.cybex.provider.http.response.AssetsPairToppingResponse;
+import com.cybex.provider.http.response.CnyResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
-import com.cybex.provider.websocket.WebSocketClient;
-import com.cybex.provider.http.entity.AssetRmbPrice;
-import com.cybex.provider.http.response.AssetsPairResponse;
-import com.cybex.provider.http.response.AssetsPairToppingResponse;
-import com.cybex.basemodule.event.Event;
-import com.cybex.provider.exception.NetworkStatusException;
-import com.cybex.provider.http.response.CnyResponse;
-import com.cybex.provider.graphene.chain.AccountHistoryObject;
-import com.cybex.provider.graphene.chain.AccountObject;
-import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybex.provider.graphene.chain.BlockHeader;
-import com.cybex.provider.graphene.chain.BucketObject;
-import com.cybex.provider.graphene.chain.FeeAmountObject;
-import com.cybex.provider.graphene.chain.Operations;
-import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybex.provider.graphene.chain.FullAccountObjectReply;
-import com.cybex.provider.graphene.chain.ObjectId;
-import com.cybex.provider.market.HistoryPrice;
-import com.cybex.provider.graphene.chain.MarketTicker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -47,12 +42,10 @@ import com.google.gson.reflect.TypeToken;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
 import org.reactivestreams.Publisher;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,35 +61,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Function5;
-import io.reactivex.functions.Function6;
 import io.reactivex.functions.Function7;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_USDT;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
-import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
-import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
-import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
-import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybex.basemodule.constant.Constant.PREF_LOAD_MODE;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class WebSocketService extends Service {
 
@@ -640,22 +628,6 @@ public class WebSocketService extends Service {
         }
     }
 
-    public void loadAccountHistory(ObjectId<AccountObject> accountObjectId, int nLimit){
-        try {
-            BitsharesWalletWraper.getInstance().get_account_history(accountObjectId, nLimit, mAccountHistoryCallback);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void loadBlock(int callId, int blockNumber){
-        try {
-            BitsharesWalletWraper.getInstance().get_block(callId, blockNumber, mBlockCallback);
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void loadAccountObject(String accountId){
         if(mAccountHashMap.containsKey(accountId)){
             EventBus.getDefault().post(new Event.LoadAccountObject(mAccountHashMap.get(accountId)));
@@ -696,36 +668,6 @@ public class WebSocketService extends Service {
             }
             mLimitOrderCancelFees.add(feeAmountObjects.get(0));
             EventBus.getDefault().post(new Event.LoadRequiredCancelFee(feeAmountObjects.get(0)));
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
-    private MessageCallback mBlockCallback = new MessageCallback<Reply<BlockHeader>>() {
-        @Override
-        public void onMessage(Reply<BlockHeader> reply) {
-            BlockHeader block = reply.result;
-            EventBus.getDefault().post(new Event.LoadBlock(Integer.parseInt(reply.id), block));
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
-
-    private MessageCallback mAccountHistoryCallback = new MessageCallback<Reply<List<AccountHistoryObject>>>() {
-
-        @Override
-        public void onMessage(Reply<List<AccountHistoryObject>> reply) {
-            List<AccountHistoryObject> accountHistoryObjects = reply.result;
-            if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
-                return;
-            }
-            EventBus.getDefault().post(new Event.LoadAccountHistory(accountHistoryObjects));
         }
 
         @Override

@@ -9,24 +9,29 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
@@ -55,6 +60,8 @@ import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
 import com.cybexmobile.shake.AntiShake;
+import com.google.gson.Gson;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -69,6 +76,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
@@ -102,6 +110,16 @@ public class TransferActivity extends BaseActivity implements
     EditText mEtQuantity;//金额
     @BindView(R.id.transfer_tv_available)
     TextView mTvAvailable;
+    @BindView(R.id.transfer_lock_time_switch)
+    SwitchCompat mSwLockTime;
+    @BindView(R.id.transfer_lock_time_layout)
+    LinearLayout mLinearLayoutTransferLockTime;
+    @BindView(R.id.transfer_et_lock_time)
+    EditText mEtTransferLockTime;
+    @BindView(R.id.transfer_lock_time_spinner)
+    MaterialSpinner mMsTransferLockTime;
+    @BindView(R.id.transfer_tv_public_key)
+    TextView mTvPublicKey;
     @BindView(R.id.transfer_et_remark)
     EditText mEtRemark;//备注
     @BindView(R.id.transfer_tv_fee)
@@ -120,6 +138,8 @@ public class TransferActivity extends BaseActivity implements
 
     private List<Address> mAddresses;
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItems;
+    private List<Types.public_key_type> mLockTimePublicKeys;
+    private Types.public_key_type mSelectedLockTimePublicKey;
     private AccountBalanceObjectItem mSelectedAccountBalanceObjectItem;
     private AccountBalanceObjectItem mCybAccountBalanceObjectItem;
     private AccountObject mFromAccountObject;
@@ -138,6 +158,8 @@ public class TransferActivity extends BaseActivity implements
 
     private boolean mIsActivityActive;//当前activity是否可见
 
+    private int mTotalLockTime;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +171,7 @@ public class TransferActivity extends BaseActivity implements
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, null);
         mEtQuantity.setFilters(new InputFilter[]{mQuantityFilter});
         mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
-        if(mAccountBalanceObjectItems != null){
+        if (mAccountBalanceObjectItems != null) {
             mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
             /**
              * fix bug:CYM-551
@@ -191,10 +213,10 @@ public class TransferActivity extends BaseActivity implements
         mUnbinder.unbind();
         unbindService(mConnection);
         EventBus.getDefault().unregister(this);
-        if(mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()){
+        if (mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()) {
             mLoadAddressDisposable.dispose();
         }
-        if(mCheckAddressExistDisposable != null && !mCheckAddressExistDisposable.isDisposed()){
+        if (mCheckAddressExistDisposable != null && !mCheckAddressExistDisposable.isDisposed()) {
             mCheckAddressExistDisposable.dispose();
         }
     }
@@ -212,7 +234,9 @@ public class TransferActivity extends BaseActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (AntiShake.check(item.getItemId())) { return false; }
+        if (AntiShake.check(item.getItemId())) {
+            return false;
+        }
         switch (item.getItemId()) {
             case R.id.action_records:
                 Intent intent = new Intent(this, TransferRecordsActivity.class);
@@ -225,7 +249,7 @@ public class TransferActivity extends BaseActivity implements
     @Override
     public void onAssetSelected(AccountBalanceObjectItem accountBalanceObjectItem) {
         mSelectedAccountBalanceObjectItem = accountBalanceObjectItem;
-        if(mSelectedAccountBalanceObjectItem == null){
+        if (mSelectedAccountBalanceObjectItem == null) {
             return;
         }
         mTvCrypto.setText(AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol));
@@ -234,12 +258,12 @@ public class TransferActivity extends BaseActivity implements
                         Math.pow(10, accountBalanceObjectItem.assetObject.precision), accountBalanceObjectItem.assetObject.precision),
                 AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol)));
         String amountStr = mEtQuantity.getText().toString().trim();
-        if(amountStr.length() > 0){
+        if (amountStr.length() > 0) {
             mEtQuantity.setText(String.format(String.format(Locale.US, "%%.%df",
                     mSelectedAccountBalanceObjectItem.assetObject.precision), Double.parseDouble(amountStr)));
         }
         //选择币种时 CYB不够重新计算手续费并判断余额是否足够
-        if(!mIsCybEnough){
+        if (!mIsCybEnough) {
             checkIsLockAndLoadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(), false);
         } else {
             checkBalanceEnough(mEtQuantity.getText().toString().trim());
@@ -254,14 +278,17 @@ public class TransferActivity extends BaseActivity implements
 
     @Override
     public void keyBoardHide(int height) {
-        if(mEtAccountName.isFocused()){
+        if (mEtAccountName.isFocused()) {
             mEtAccountName.clearFocus();
         }
-        if(mEtQuantity.isFocused()){
+        if (mEtQuantity.isFocused()) {
             mEtQuantity.clearFocus();
         }
-        if(mEtRemark.isFocused()){
+        if (mEtRemark.isFocused()) {
             mEtRemark.clearFocus();
+        }
+        if (mEtTransferLockTime.isFocused()) {
+            mEtTransferLockTime.clearFocus();
         }
     }
 
@@ -269,17 +296,23 @@ public class TransferActivity extends BaseActivity implements
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if(mEtAccountName.isFocused()){
-                manager.hideSoftInputFromWindow(mEtAccountName.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                mEtAccountName.clearFocus();
-            }
-            if(mEtQuantity.isFocused()){
-                manager.hideSoftInputFromWindow(mEtQuantity.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                mEtQuantity.clearFocus();
-            }
-            if(mEtRemark.isFocused()){
-                manager.hideSoftInputFromWindow(mEtRemark.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                mEtRemark.clearFocus();
+            if (manager != null) {
+                if (mEtAccountName.isFocused()) {
+                    manager.hideSoftInputFromWindow(mEtAccountName.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    mEtAccountName.clearFocus();
+                }
+                if (mEtQuantity.isFocused()) {
+                    manager.hideSoftInputFromWindow(mEtQuantity.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    mEtQuantity.clearFocus();
+                }
+                if (mEtRemark.isFocused()) {
+                    manager.hideSoftInputFromWindow(mEtRemark.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    mEtRemark.clearFocus();
+                }
+                if (mEtTransferLockTime.isFocused()) {
+                    manager.hideSoftInputFromWindow(mEtTransferLockTime.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    mEtTransferLockTime.clearFocus();
+                }
             }
         }
         return false;
@@ -287,8 +320,10 @@ public class TransferActivity extends BaseActivity implements
 
     @OnClick(R.id.transfer_tv_select_account)
     public void onSelectAccountClick(View view) {
-        if (AntiShake.check(view.getId())) { return; }
-        if(mAddresses == null || mAddresses.size() == 0){
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        if (mAddresses == null || mAddresses.size() == 0) {
             Intent intent = new Intent(this, AddTransferAccountActivity.class);
             startActivity(intent);
             return;
@@ -302,11 +337,11 @@ public class TransferActivity extends BaseActivity implements
         dialog.setOnAssetSelectedListener(new CommonSelectDialog.OnAssetSelectedListener<Address>() {
             @Override
             public void onAssetSelected(Address address) {
-                if(address == null){
+                if (address == null) {
                     return;
                 }
                 mEtAccountName.setText(address.getAddress());
-                if(!mEtAccountName.isFocused()){
+                if (!mEtAccountName.isFocused()) {
                     onAccountNameFocusChanged(mEtAccountName, false);
                 }
             }
@@ -314,8 +349,10 @@ public class TransferActivity extends BaseActivity implements
     }
 
     @OnClick(R.id.transfer_tv_crypto)
-    public void onCryptoClick(View view){
-        if (AntiShake.check(view.getId())) { return; }
+    public void onCryptoClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         CommonSelectDialog<AccountBalanceObjectItem> dialog = new CommonSelectDialog<AccountBalanceObjectItem>();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_ITEMS, (Serializable) mAccountBalanceObjectItems);
@@ -325,21 +362,69 @@ public class TransferActivity extends BaseActivity implements
         dialog.setOnAssetSelectedListener(this);
     }
 
+    @OnCheckedChanged(R.id.transfer_lock_time_switch)
+    public void onSwitchClicked(CompoundButton button, boolean isChecked) {
+        if (isChecked) {
+            mLinearLayoutTransferLockTime.setVisibility(View.VISIBLE);
+        } else {
+            mLinearLayoutTransferLockTime.setVisibility(View.GONE);
+        }
+        mMsTransferLockTime.setItems(getResources().getStringArray(R.array.transfer_time_period));
+        mMsTransferLockTime.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                view.setTextColor(getResources().getColor(R.color.btn_orange_end));
+                int lockTimeUnit = getTimeUnit(item);
+                if (mEtTransferLockTime.getText() != null && !mEtTransferLockTime.getText().toString().isEmpty()) {
+                    mTotalLockTime = Integer.parseInt(mEtTransferLockTime.getText().toString().trim()) * lockTimeUnit;
+                }
+
+            }
+        });
+        resetTransferButtonState();
+    }
+
+    @OnClick(R.id.transfer_tv_public_key)
+    public void onInputPublicKeyClicked(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        CommonSelectDialog<AccountBalanceObjectItem> dialog = new CommonSelectDialog<AccountBalanceObjectItem>();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_PARAM_ITEMS, (Serializable) mLockTimePublicKeys);
+        bundle.putSerializable(INTENT_PARAM_SELECTED_ITEM, mSelectedLockTimePublicKey);
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), CommonSelectDialog.class.getSimpleName());
+        dialog.setOnAssetSelectedListener(new CommonSelectDialog.OnAssetSelectedListener<Types.public_key_type>() {
+            @Override
+            public void onAssetSelected(Types.public_key_type item) {
+                mSelectedLockTimePublicKey = item;
+                if (mSelectedLockTimePublicKey == null) {
+                    return;
+                }
+                mTvPublicKey.setText(mSelectedLockTimePublicKey.toString());
+                resetTransferButtonState();
+            }
+        });
+    }
+
     @OnClick(R.id.transfer_btn_transfer)
-    public void onTransferClick(View view){
-        if (AntiShake.check(view.getId())) { return; }
+    public void onTransferClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         checkIsLockAndTransfer();
     }
 
     @OnTextChanged(value = R.id.transfer_et_account_name, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    public void onAccountNameTextChanged(Editable editable){
-        if(editable.toString().length() == 0){
+    public void onAccountNameTextChanged(Editable editable) {
+        if (editable.toString().length() == 0) {
             mIvAccountCheck.setVisibility(View.INVISIBLE);
         }
     }
 
     @OnTextChanged(value = R.id.transfer_et_quantity, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    public void onQuantityTextChanged(Editable editable){
+    public void onQuantityTextChanged(Editable editable) {
         /**
          * fix bug:CYM-544
          * 不实时计判断余额是否足够
@@ -348,12 +433,12 @@ public class TransferActivity extends BaseActivity implements
     }
 
     @OnFocusChange(R.id.transfer_et_account_name)
-    public void onAccountNameFocusChanged(View view, boolean isFocused){
+    public void onAccountNameFocusChanged(View view, boolean isFocused) {
         String accountName = mEtAccountName.getText().toString().trim();
-        if(isFocused){
+        if (isFocused) {
             return;
         }
-        if(TextUtils.isEmpty(accountName)){
+        if (TextUtils.isEmpty(accountName)) {
             mToAccountObject = null;
             resetTransferButtonState();
             return;
@@ -379,16 +464,16 @@ public class TransferActivity extends BaseActivity implements
     }
 
     @OnFocusChange(R.id.transfer_et_quantity)
-    public void onQuantityFocusChanged(View view, boolean isFocused){
-        if(isFocused){
+    public void onQuantityFocusChanged(View view, boolean isFocused) {
+        if (isFocused) {
             return;
         }
         String amountStr = mEtQuantity.getText().toString().trim();
-        if(TextUtils.isEmpty(amountStr) || amountStr.equals(".")){
+        if (TextUtils.isEmpty(amountStr) || amountStr.equals(".")) {
             resetTransferButtonState();
             return;
         }
-        if(mSelectedAccountBalanceObjectItem == null){
+        if (mSelectedAccountBalanceObjectItem == null) {
             return;
         }
         mEtQuantity.setText(String.format(String.format(Locale.US, "%%.%df",
@@ -397,55 +482,64 @@ public class TransferActivity extends BaseActivity implements
     }
 
     @OnFocusChange(R.id.transfer_et_remark)
-    public void onRemarkFocusChanged(View view, boolean isFocused){
-        if(isFocused){
+    public void onRemarkFocusChanged(View view, boolean isFocused) {
+        if (isFocused) {
             return;
         }
         //输入完备注 重新计算手续费
         checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
     }
 
+    @OnFocusChange(R.id.transfer_et_lock_time)
+    public void onLockTimeFocusChanged(View view, boolean isFocused) {
+        if (isFocused) {
+            return;
+        }
+        resetTransferButtonState();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadAccountObject(Event.LoadAccountObject event){
+    public void onLoadAccountObject(Event.LoadAccountObject event) {
         /**
          * fix bug:CYM-581
          * 修复账户名验证报错
          */
-        if(!mIsActivityActive || (event.getAccountObject() != null &&
-                !event.getAccountObject().name.equals(mEtAccountName.getText().toString().trim()))){
+        if (!mIsActivityActive || (event.getAccountObject() != null &&
+                !event.getAccountObject().name.equals(mEtAccountName.getText().toString().trim()))) {
             return;
         }
         mToAccountObject = event.getAccountObject();
         resetTransferButtonState();
         mPbLoading.setVisibility(View.INVISIBLE);
         mIvAccountCheck.setVisibility(View.VISIBLE);
-        if(mToAccountObject == null){
+        if (mToAccountObject == null) {
             mIvAccountCheck.setImageResource(R.drawable.ic_close_red_24_px);
             ToastMessage.showNotEnableDepositToastMessage(this,
                     getResources().getString(R.string.text_account_not_exist), R.drawable.ic_error_16px);
         } else {
             mIvAccountCheck.setImageResource(R.drawable.ic_check_success);
+            mLockTimePublicKeys = mToAccountObject.active.get_keys();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateFullAccount(Event.UpdateFullAccount event){
+    public void onUpdateFullAccount(Event.UpdateFullAccount event) {
         /**
          * fix bug:CYM-577
          * 转账成功后刷新余额
          */
         FullAccountObject fullAccountObject = event.getFullAccount();
-        if(fullAccountObject == null){
+        if (fullAccountObject == null) {
             return;
         }
         List<AccountBalanceObject> balances = fullAccountObject.balances;
-        if(balances == null || balances.size() == 0 ||
-                mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0){
+        if (balances == null || balances.size() == 0 ||
+                mAccountBalanceObjectItems == null || mAccountBalanceObjectItems.size() == 0) {
             return;
         }
         for (AccountBalanceObjectItem item : mAccountBalanceObjectItems) {
             for (AccountBalanceObject balance : balances) {
-                if(item.accountBalanceObject.asset_type.equals(balance.asset_type)){
+                if (item.accountBalanceObject.asset_type.equals(balance.asset_type)) {
                     item.accountBalanceObject = balance;
                     break;
                 }
@@ -454,47 +548,47 @@ public class TransferActivity extends BaseActivity implements
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadTransferFee(Event.LoadTransferFee event){
+    public void onLoadTransferFee(Event.LoadTransferFee event) {
         FeeAmountObject fee = event.getFee();
-        if(fee.asset_id.equals(ASSET_ID_CYB)){
+        if (fee.asset_id.equals(ASSET_ID_CYB)) {
             mCybFeeAmountObject = fee;
             //未选择币种时 手续费默认显示CYB
-            if(mSelectedAccountBalanceObjectItem == null){
+            if (mSelectedAccountBalanceObjectItem == null) {
                 mIsCybEnough = mCybAccountBalanceObjectItem != null && mCybAccountBalanceObjectItem.accountBalanceObject.balance >= fee.amount;
                 /**
                  * fix bug:CYM-543
                  * 解决账户无资产时不显示手续费
                  */
-                if(mCybAccountBalanceObjectItem == null){
-                    if(mCybAssetObject == null){
+                if (mCybAccountBalanceObjectItem == null) {
+                    if (mCybAssetObject == null) {
                         mCybAssetObject = mWebSocketService.getAssetObject(fee.asset_id);
                     }
                     mTvFee.setText(String.format("%s %s",
-                            AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mCybAssetObject == null ? 5 : mCybAssetObject.precision),
+                            AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mCybAssetObject == null ? 5 : mCybAssetObject.precision),
                                     mCybAssetObject == null ? 5 : mCybAssetObject.precision),
                             mCybAssetObject == null ? ASSET_SYMBOL_CYB : AssetUtil.parseSymbol(mCybAssetObject.symbol)));
                 } else {
                     mTvFee.setText(String.format("%s %s",
-                            AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
+                            AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
                                     mCybAccountBalanceObjectItem.assetObject.precision),
                             AssetUtil.parseSymbol(mCybAccountBalanceObjectItem.assetObject.symbol)));
                 }
-            } else if (fee.asset_id.equals(mSelectedAccountBalanceObjectItem.assetObject.id.toString())){
+            } else if (fee.asset_id.equals(mSelectedAccountBalanceObjectItem.assetObject.id.toString())) {
                 //只有当CYB不足时才会扣除当前币的手续费 而当前选择币种为CYB时 默认CYB不足
                 mIsCybEnough = false;
                 mCurrAssetFeeAmountObject = fee;
                 mTvFee.setText(String.format("%s %s",
-                        AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
+                        AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
                                 mSelectedAccountBalanceObjectItem.assetObject.precision),
                         AssetUtil.parseSymbol(mSelectedAccountBalanceObjectItem.assetObject.symbol)));
             } else {
-                if(mCybAccountBalanceObjectItem == null || mCybAccountBalanceObjectItem.accountBalanceObject.balance < fee.amount){
+                if (mCybAccountBalanceObjectItem == null || mCybAccountBalanceObjectItem.accountBalanceObject.balance < fee.amount) {
                     mIsCybEnough = false;
                     checkIsLockAndLoadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(), event.isToTransfer());
                 } else {
                     mIsCybEnough = true;
                     mTvFee.setText(String.format("%s %s",
-                            AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
+                            AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
                                     mCybAccountBalanceObjectItem.assetObject.precision),
                             AssetUtil.parseSymbol(mCybAccountBalanceObjectItem.assetObject.symbol)));
                 }
@@ -502,20 +596,20 @@ public class TransferActivity extends BaseActivity implements
         } else {
             mCurrAssetFeeAmountObject = fee;
             mTvFee.setText(String.format("%s %s",
-                    AssetUtil.formatNumberRounding(fee.amount/Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
+                    AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
                             mSelectedAccountBalanceObjectItem.assetObject.precision),
                     AssetUtil.parseSymbol(mSelectedAccountBalanceObjectItem.assetObject.symbol)));
         }
         checkBalanceEnough(mEtQuantity.getText().toString().trim());
-        if(event.isToTransfer() && mIsBalanceEnough){
+        if (event.isToTransfer() && mIsBalanceEnough) {
             showTransferConfirmationDialog();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTransfer(Event.Transfer event){
+    public void onTransfer(Event.Transfer event) {
         hideLoadDialog();
-        if(event.isSuccess()){
+        if (event.isSuccess()) {
             mCheckAddressExistDisposable = DBManager.getDbProvider(this).checkAddressExist(mUserName,
                     mEtAccountName.getText().toString().trim(), Address.TYPE_TRANSFER)
                     .subscribeOn(Schedulers.io())
@@ -523,7 +617,7 @@ public class TransferActivity extends BaseActivity implements
                     .subscribe(new Consumer<Address>() {
                         @Override
                         public void accept(Address address) throws Exception {
-                            if(address != null){
+                            if (address != null) {
                                 ToastMessage.showNotEnableDepositToastMessage(
                                         TransferActivity.this,
                                         getResources().getString(R.string.toast_message_transfer_success),
@@ -549,7 +643,20 @@ public class TransferActivity extends BaseActivity implements
         }
     }
 
-    private void showAddAddressDialog(){
+    private int getTimeUnit(String unit) {
+        if (unit.equals(getResources().getString(R.string.text_lock_time_transfer_period_seconds))) {
+            return 1;
+        } else if (unit.equals(getResources().getString(R.string.text_lock_time_transfer_period_minutes))) {
+            return 60;
+        } else if (unit.equals(getResources().getString(R.string.text_lock_time_transfer_period_hours))) {
+            return 360;
+        } else if (unit.equals(getResources().getString(R.string.text_lock_time_transfer_period_days))) {
+            return 21600;
+        }
+        return 0;
+    }
+
+    private void showAddAddressDialog() {
         CybexDialog.showAddAddressDialog(this,
                 getResources().getString(R.string.toast_message_transfer_success),
                 getResources().getString(R.string.toast_message_add_to_transfer_account_list),
@@ -580,10 +687,11 @@ public class TransferActivity extends BaseActivity implements
 
     /**
      * 删除0资产币种
+     *
      * @param items
      */
-    private void removeZeroBalance(List<AccountBalanceObjectItem> items){
-        if(items == null || items.size() == 0){
+    private void removeZeroBalance(List<AccountBalanceObjectItem> items) {
+        if (items == null || items.size() == 0) {
             return;
         }
         Iterator<AccountBalanceObjectItem> it = items.iterator();
@@ -639,8 +747,8 @@ public class TransferActivity extends BaseActivity implements
         }
     }
 
-    private void loadAddress(){
-        if(TextUtils.isEmpty(mUserName)){
+    private void loadAddress() {
+        if (TextUtils.isEmpty(mUserName)) {
             return;
         }
         mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mUserName, Address.TYPE_TRANSFER)
@@ -650,7 +758,7 @@ public class TransferActivity extends BaseActivity implements
                     @Override
                     public void accept(List<Address> addresses) throws Exception {
                         mAddresses = addresses;
-                        if(mAddresses == null || mAddresses.size() == 0){
+                        if (mAddresses == null || mAddresses.size() == 0) {
                             mTvSelectAccount.setText(getResources().getString(R.string.text_add_account));
                         } else {
                             mTvSelectAccount.setText(getResources().getString(R.string.text_select_account));
@@ -668,12 +776,17 @@ public class TransferActivity extends BaseActivity implements
      * fix bug:CYM-505
      * 转账完清除数据
      */
-    private void clearTransferData(){
+    private void clearTransferData() {
         mIsCybEnough = false;
         mIsBalanceEnough = false;
         mTransferOperationFee = null;
         mSelectedAccountBalanceObjectItem = null;
         mToAccountObject = null;
+        mTotalLockTime = 0;
+        mSelectedLockTimePublicKey = null;
+        mSwLockTime.setChecked(false);
+        mEtTransferLockTime.setText("");
+        mTvPublicKey.setText("");
         mEtQuantity.setText("");
         mEtRemark.setText("");
         mEtAccountName.setText("");
@@ -690,18 +803,18 @@ public class TransferActivity extends BaseActivity implements
     /**
      * 检查钱包锁定状态 -> 加载转账手续费
      */
-    private void checkIsLockAndLoadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer){
+    private void checkIsLockAndLoadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer) {
         if (mFromAccountObject == null) {
             return;
         }
-        if(BitsharesWalletWraper.getInstance().is_locked()){
+        if (BitsharesWalletWraper.getInstance().is_locked()) {
             CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
                     mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
-                @Override
-                public void onUnLocked(String password) {
-                    loadTransferFee(feeAssetId, isLoadFeeToTransfer);
-                }
-            });
+                        @Override
+                        public void onUnLocked(String password) {
+                            loadTransferFee(feeAssetId, isLoadFeeToTransfer);
+                        }
+                    });
         } else {
             loadTransferFee(feeAssetId, isLoadFeeToTransfer);
         }
@@ -710,8 +823,8 @@ public class TransferActivity extends BaseActivity implements
     /**
      * 检查钱包锁定状态 -> 加载转账手续费 -> 转账
      */
-    private void checkIsLockAndTransfer(){
-        if(BitsharesWalletWraper.getInstance().is_locked()){
+    private void checkIsLockAndTransfer() {
+        if (BitsharesWalletWraper.getInstance().is_locked()) {
             CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject, mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
@@ -726,12 +839,12 @@ public class TransferActivity extends BaseActivity implements
     /**
      * 转账确认
      */
-    private void showTransferConfirmationDialog(){
+    private void showTransferConfirmationDialog() {
         /**
          * fix bug:CYM-800
          * 修复手续费未获取到转账crash
          */
-        if(mTransferOperationFee == null || (mCybFeeAmountObject == null && mCurrAssetFeeAmountObject == null)){
+        if (mTransferOperationFee == null || (mCybFeeAmountObject == null && mCurrAssetFeeAmountObject == null)) {
             loadTransferFee(ASSET_ID_CYB, true);
             return;
         }
@@ -751,21 +864,39 @@ public class TransferActivity extends BaseActivity implements
     /**
      * 转账
      */
-    private void toTransfer(){
-        if(mFromAccountObject == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null){
+    private void toTransfer() {
+        if (mFromAccountObject == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null) {
             return;
         }
         showLoadDialog();
-        Operations.base_operation transferOperation =  BitsharesWalletWraper.getInstance().getTransferOperation(
-                mFromAccountObject.id,
-                mToAccountObject.id,
-                mSelectedAccountBalanceObjectItem.assetObject.id,
-                mIsCybEnough ? mCybFeeAmountObject.amount : mCurrAssetFeeAmountObject.amount,
-                ObjectId.create_from_string(mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
-                (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision)),
-                mEtRemark.getText().toString().trim(),
-                mFromAccountObject.options.memo_key,
-                mToAccountObject.options.memo_key);
+        Operations.base_operation transferOperation;
+        if (mSwLockTime.isChecked() && mSelectedLockTimePublicKey != null && mTotalLockTime != 0) {
+            transferOperation = BitsharesWalletWraper.getInstance().getTransferOperationWithLockTime(
+                    mFromAccountObject.id,
+                    mToAccountObject.id,
+                    mSelectedAccountBalanceObjectItem.assetObject.id,
+                    mIsCybEnough ? mCybFeeAmountObject.amount : mCurrAssetFeeAmountObject.amount,
+                    ObjectId.create_from_string(mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
+                    (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision)),
+                    mEtRemark.getText().toString().trim(),
+                    mFromAccountObject.options.memo_key,
+                    mToAccountObject.options.memo_key,
+                    mSelectedLockTimePublicKey,
+                    mTotalLockTime,
+                    1);
+
+        } else {
+            transferOperation = BitsharesWalletWraper.getInstance().getTransferOperation(
+                    mFromAccountObject.id,
+                    mToAccountObject.id,
+                    mSelectedAccountBalanceObjectItem.assetObject.id,
+                    mIsCybEnough ? mCybFeeAmountObject.amount : mCurrAssetFeeAmountObject.amount,
+                    ObjectId.create_from_string(mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
+                    (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision)),
+                    mEtRemark.getText().toString().trim(),
+                    mFromAccountObject.options.memo_key,
+                    mToAccountObject.options.memo_key);
+        }
         try {
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
@@ -791,14 +922,15 @@ public class TransferActivity extends BaseActivity implements
 
     /**
      * 加载转账手续费
+     *
      * @param feeAssetId
      * @param isLoadFeeToTransfer 是否加载完手续费之后 自动转账
      */
-    private void loadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer){
-        if(mFromAccountObject == null){
+    private void loadTransferFee(String feeAssetId, boolean isLoadFeeToTransfer) {
+        if (mFromAccountObject == null) {
             return;
         }
-        mTransferOperationFee =  BitsharesWalletWraper.getInstance().getTransferOperation(
+        mTransferOperationFee = BitsharesWalletWraper.getInstance().getTransferOperation(
                 mFromAccountObject.id,
                 mFromAccountObject.id,
                 ObjectId.create_from_string(ASSET_ID_CYB),
@@ -825,12 +957,12 @@ public class TransferActivity extends BaseActivity implements
         }
     }
 
-    private AccountBalanceObjectItem findAccountBalanceObjectItem(String assetId, List<AccountBalanceObjectItem> items){
-        if(TextUtils.isEmpty(assetId) || items == null || items.size() == 0){
+    private AccountBalanceObjectItem findAccountBalanceObjectItem(String assetId, List<AccountBalanceObjectItem> items) {
+        if (TextUtils.isEmpty(assetId) || items == null || items.size() == 0) {
             return null;
         }
         for (AccountBalanceObjectItem item : items) {
-            if(assetId.equals(item.accountBalanceObject.asset_type.toString())){
+            if (assetId.equals(item.accountBalanceObject.asset_type.toString())) {
                 return item;
             }
         }
@@ -839,14 +971,15 @@ public class TransferActivity extends BaseActivity implements
 
     /**
      * 检查资产是否足够
+     *
      * @param amountStr
      */
-    private void checkBalanceEnough(String amountStr){
-        if(mSelectedAccountBalanceObjectItem == null ||
-                TextUtils.isEmpty(amountStr) || amountStr.endsWith(".")){
+    private void checkBalanceEnough(String amountStr) {
+        if (mSelectedAccountBalanceObjectItem == null ||
+                TextUtils.isEmpty(amountStr) || amountStr.endsWith(".")) {
             return;
         }
-        if(!mIsCybEnough && mCurrAssetFeeAmountObject == null){
+        if (!mIsCybEnough && mCurrAssetFeeAmountObject == null) {
             mBtnTransfer.setEnabled(true);
         }
         double fee = mIsCybEnough || mCurrAssetFeeAmountObject == null ? 0 : mCurrAssetFeeAmountObject.amount /
@@ -854,7 +987,7 @@ public class TransferActivity extends BaseActivity implements
         double balanceAmount = mSelectedAccountBalanceObjectItem.accountBalanceObject.balance /
                 Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision);
         BigDecimal balance = new BigDecimal(Double.toString(balanceAmount)).subtract(new BigDecimal(amountStr)).subtract(new BigDecimal(Double.toString(fee)));
-        if(balance.doubleValue() < 0){
+        if (balance.doubleValue() < 0) {
             mIsBalanceEnough = false;
             ToastMessage.showNotEnableDepositToastMessage(this,
                     getResources().getString(R.string.text_not_enough), R.drawable.ic_error_16px);
@@ -867,17 +1000,28 @@ public class TransferActivity extends BaseActivity implements
     /**
      * reset 转账状态
      */
-    private void resetTransferButtonState(){
+    private void resetTransferButtonState() {
         /**
          * fix bug:CYM-507
          * 转账金额必须大于0
          */
         try {
-            mBtnTransfer.setEnabled(
-                    mToAccountObject != null &&
-                            mSelectedAccountBalanceObjectItem != null &&
-                            Double.parseDouble(mEtQuantity.getText().toString()) > 0 &&
-                            mIsBalanceEnough);
+            if (mSwLockTime.isChecked()) {
+                mBtnTransfer.setEnabled(
+                        mToAccountObject != null &&
+                                mSelectedAccountBalanceObjectItem != null &&
+                                Double.parseDouble(mEtQuantity.getText().toString()) > 0 &&
+                                mIsBalanceEnough &&
+                                mSelectedLockTimePublicKey != null &&
+                                mTotalLockTime > 0
+                );
+            } else {
+                mBtnTransfer.setEnabled(
+                        mToAccountObject != null &&
+                                mSelectedAccountBalanceObjectItem != null &&
+                                Double.parseDouble(mEtQuantity.getText().toString()) > 0 &&
+                                mIsBalanceEnough);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             mBtnTransfer.setEnabled(false);
@@ -887,7 +1031,7 @@ public class TransferActivity extends BaseActivity implements
     /**
      * 转账callback
      */
-    private MessageCallback mTransferCallback = new MessageCallback<Reply<String>>(){
+    private MessageCallback mTransferCallback = new MessageCallback<Reply<String>>() {
 
         @Override
         public void onMessage(Reply<String> reply) {
@@ -906,7 +1050,7 @@ public class TransferActivity extends BaseActivity implements
     private InputFilter mQuantityFilter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            if(dest.length() == 0 && source.equals(".")){
+            if (dest.length() == 0 && source.equals(".")) {
                 return "0.";
             }
             String destStr = dest.toString();

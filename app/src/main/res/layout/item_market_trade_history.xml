@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="4">
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/market_page_trade_history_price_value"
+        style="@style/font_gray_small"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/text_empty" />
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/market_page_trade_history_quote_volume"
+        style="@style/font_gray_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:text="@string/text_empty"/>
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/market_page_trade_history_base_volume"
+        style="@style/font_gray_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:text="@string/text_empty"/>
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/market_page_trade_history_date_value"
+        style="@style/font_gray_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:singleLine="true"
+        android:layout_weight="1"
+        android:text="@string/text_empty" />
+
+</LinearLayout>

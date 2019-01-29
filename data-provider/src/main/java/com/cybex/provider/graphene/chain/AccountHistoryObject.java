@@ -8,9 +8,11 @@ import com.google.gson.JsonArray;
 public class AccountHistoryObject {
 
     public String id;
+    public String obj_id;
     public JsonArray op;
     public int block_num;
-    public int trx_in_block;
-    public int op_in_trx;
-    public int virtual_op;
+    public String timestamp;
 }
+
+
+

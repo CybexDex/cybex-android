@@ -363,11 +363,11 @@ public class WalletApi {
 //        return mWebSocketClient.list_account_balances(accountId);
 //    }
 
-    public void get_account_history(ObjectId<AccountObject> accountId,
-                                    int nLimit,
-                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
-        mWebSocketClient.get_account_history(accountId, nLimit, callback);
-    }
+//    public void get_account_history(ObjectId<AccountObject> accountId,
+//                                    int nLimit,
+//                                    MessageCallback<Reply<List<AccountHistoryObject>>> callback) throws NetworkStatusException {
+//        mWebSocketClient.get_account_history(accountId, nLimit, callback);
+//    }
 
     public void get_block(int callId,
                           int blockNumber,
@@ -659,6 +659,54 @@ public class WalletApi {
                     toMemoKey.getPublicKey());
         }
         return transferOperation;
+    }
+
+    public Operations.transfer_operation getTransferOperationWithLockTime(ObjectId<AccountObject> from,
+                                                                          ObjectId<AccountObject> to,
+                                                                          ObjectId<AssetObject> transferAssetId,
+                                                                          long feeAmount,
+                                                                          ObjectId<AssetObject> feeAssetId,
+                                                                          long transferAmount,
+                                                                          String memo,
+                                                                          Types.public_key_type fromMemoKey,
+                                                                          Types.public_key_type toMemoKey,
+                                                                          Types.public_key_type toActiveKey,
+                                                                          long vesting_period,
+                                                                          int type) {
+        Operations.transfer_operation transferOperation = new Operations.transfer_operation();
+        transferOperation.from = from;
+        transferOperation.to = to;
+        transferOperation.fee = new Asset(feeAmount, feeAssetId);
+        transferOperation.amount = new Asset(transferAmount, transferAssetId);
+        transferOperation.vesting_period = vesting_period;
+        transferOperation.public_key_type = toActiveKey;
+        HashSet<Object> lockTimeTransferObject = new HashSet<>();
+        lockTimeTransferObject.add(type);
+        HashMap<String, Object> object = new HashMap<>();
+        object.put("vesting_period", vesting_period);
+        object.put("public_key", toActiveKey.toString());
+        lockTimeTransferObject.add(object);
+        HashSet<Set<Object>> extensions = new HashSet<>();
+        extensions.add(lockTimeTransferObject);
+        transferOperation.extensions =extensions;
+
+
+        if(memo != null && memo.length() > 0){
+            transferOperation.memo = new MemoData();
+            transferOperation.memo.from = fromMemoKey;
+            transferOperation.memo.to = toMemoKey;
+            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            transferOperation.memo.set_message(
+                    privateKeyType.getPrivateKey(),
+                    toMemoKey.getPublicKey(),
+                    memo,
+                    0);
+            transferOperation.memo.get_message(
+                    privateKeyType.getPrivateKey(),
+                    toMemoKey.getPublicKey());
+        }
+        return transferOperation;
+
     }
 
     public Operations.limit_order_cancel_operation getLimitOrderCancelOperation(ObjectId<AccountObject> accountId,

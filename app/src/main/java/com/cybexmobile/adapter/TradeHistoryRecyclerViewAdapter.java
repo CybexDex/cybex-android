@@ -7,78 +7,138 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.cybex.provider.market.WatchlistData;
-import com.cybexmobile.fragment.dummy.DummyContent.DummyItem;
-import com.cybexmobile.R;
-import com.cybex.provider.graphene.chain.MarketTrade;
+import com.cybex.basemodule.cache.AssetPairCache;
 import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.graphene.chain.AssetsPair;
+import com.cybexmobile.R;
+import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.basemodule.utils.DateUtils;
+import com.cybexmobile.fragment.orders.TradeHistoryFragment;
 
-import java.math.RoundingMode;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * TODO: Replace the implementation with code for your data type.
- */
-public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TradeHistoryRecyclerViewAdapter.ViewHolder> {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    private final List<MarketTrade> mValues;
-    private final Context mContext;
-    private WatchlistData mWatchlistData;
+public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public TradeHistoryRecyclerViewAdapter(List<MarketTrade> items, WatchlistData watchlistData, Context context) {
-        mValues = items;
+    private final static int TYPE_EMPTY = 0;
+    private final static int TYPE_CONTENT = 1;
+
+    private List<TradeHistoryFragment.TradeHistoryItem> mOrderHistoryItems;
+    private Context mContext;
+
+    public TradeHistoryRecyclerViewAdapter(Context context, List<TradeHistoryFragment.TradeHistoryItem> orderHistoryItems) {
+        mOrderHistoryItems = orderHistoryItems;
         mContext = context;
-        mWatchlistData = watchlistData;
+    }
+
+    public void setOrderHistoryItems(List<TradeHistoryFragment.TradeHistoryItem> orderHistoryItems){
+        mOrderHistoryItems = orderHistoryItems;
+        notifyDataSetChanged();
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_trade_history, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = null;
+        if(viewType == TYPE_EMPTY){
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_empty, parent, false);
+            return new EmptyViewHolder(view);
+        }
+        view = LayoutInflater.from(mContext).inflate(R.layout.item_trade_history, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        /**
-         * fix bug:CYM-379
-         * 精度不对
-         */
-        //交易历史price卖单ronudup，买单rounddown
-        holder.mPriceView.setText(AssetUtil.formatNumberRounding(mValues.get(position).price, mWatchlistData.getPricePrecision(),
-                mValues.get(position).showRed.equals("showRed") ? RoundingMode.UP : RoundingMode.DOWN));
-        holder.mBaseView.setText(AssetUtil.formatNumberRounding(mValues.get(position).baseAmount, mWatchlistData.getTotalPrecision()));
-        holder.mQuoteView.setText(AssetUtil.formatAmountToKMB(mValues.get(position).quoteAmount, mWatchlistData.getAmountPrecision()));
-        holder.mDateView.setText(mValues.get(position).date);
-        if(mValues.get(position).showRed.equals("showRed")) {
-            holder.mPriceView.setTextColor(mContext.getResources().getColor(R.color.decreasing_color));
-        } else {
-            holder.mPriceView.setTextColor(mContext.getResources().getColor(R.color.increasing_color));
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if(holder instanceof EmptyViewHolder){
+            EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_exchange_history));
+            return;
+        }
+        ViewHolder viewHolder = (ViewHolder) holder;
+        TradeHistoryFragment.TradeHistoryItem orderHistoryItem = mOrderHistoryItems.get(position);
+        AssetObject base = orderHistoryItem.baseAsset;
+        AssetObject quote = orderHistoryItem.quoteAsset;
+        AssetObject fee = orderHistoryItem.feeAsset;
+        if (base != null && quote != null) {
+            AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(base.id.toString(), quote.id.toString());
+            if(assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
+            if ((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE")) ||
+                    (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE"))) {
+                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+                layoutParams.height = 0;
+                layoutParams.width = 0;
+                holder.itemView.setVisibility(View.GONE);
+            } else {
+                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+                layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+                layoutParams.width = RecyclerView.LayoutParams.MATCH_PARENT;
+                holder.itemView.setVisibility(View.VISIBLE);
+                String quoteSymbol = AssetUtil.parseSymbol(quote.symbol);
+                String baseSymbol = AssetUtil.parseSymbol(base.symbol);
+                String feeSymbol = AssetUtil.parseSymbol(fee.symbol);
+                viewHolder.mTvBuySell.setText(mContext.getResources().getString(orderHistoryItem.isSell ? R.string.open_order_sell : R.string.open_order_buy));
+                viewHolder.mTvBuySell.setBackground(mContext.getResources().getDrawable(orderHistoryItem.isSell ?R.drawable.bg_btn_sell : R.drawable.bg_btn_buy));
+                viewHolder.mTvBaseSymbol.setText(baseSymbol);
+                viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
+                double baseAmount;
+                double quoteAmount;
+                double feeAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.fee.amount, Math.pow(10, fee.precision));
+                if(orderHistoryItem.isSell){
+                    baseAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.receives.amount, Math.pow(10, base.precision));
+                    quoteAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.pays.amount, Math.pow(10, quote.precision));
+                }else {
+                    baseAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.pays.amount, Math.pow(10, base.precision));
+                    quoteAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.receives.amount, Math.pow(10, quote.precision));
+                }
+                viewHolder.mTvPrice.setText(String.format("%s", AssetUtil.formatNumberRounding(AssetUtil.divide(baseAmount, quoteAmount), Integer.parseInt(assetPairConfig.last_price))));
+                viewHolder.mTvTotal.setText(String.format("%s %s", AssetUtil.formatNumberRounding(baseAmount, Integer.parseInt(assetPairConfig.total)), baseSymbol));
+                viewHolder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(orderHistoryItem.accountHistoryObject.timestamp)));
+                viewHolder.mTvFilledAmount.setText(String.format("%s", AssetUtil.formatNumberRounding(quoteAmount, Integer.parseInt(assetPairConfig.amount))));
+                viewHolder.mTvFee.setText(String.format("%s %s", AssetUtil.formatNumberRounding(feeAmount, fee.precision), feeSymbol));
+            }
+        }else{
+                RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+                layoutParams.height = 0;
+                layoutParams.width = 0;
+                holder.itemView.setVisibility(View.GONE);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mOrderHistoryItems == null || mOrderHistoryItems.size() == 0 ? 1 : mOrderHistoryItems.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mOrderHistoryItems == null || mOrderHistoryItems.size() == 0 ? TYPE_EMPTY : TYPE_CONTENT;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        MarketTrade mItem;
-        final View mView;
-        final TextView mPriceView;
-        final TextView mQuoteView;
-        TextView mBaseView;
-        TextView mDateView;
+        @BindView(R.id.item_trade_history_tv_buy_sell)
+        TextView mTvBuySell;
+        @BindView(R.id.item_trade_history_tv_quote_symbol)
+        TextView mTvQuoteSymbol;
+        @BindView(R.id.item_trade_history_tv_base_symbol)
+        TextView mTvBaseSymbol;
+        @BindView(R.id.item_trade_history_tv_price)
+        TextView mTvPrice;
+        @BindView(R.id.item_trade_history_tv_total)
+        TextView mTvTotal;
+        @BindView(R.id.item_trade_history_tv_time)
+        TextView mTvTime;
+        @BindView(R.id.item_trade_history_tv_filled_amount)
+        TextView mTvFilledAmount;
+        @BindView(R.id.item_trade_history_tv_fee)
+        TextView mTvFee;
+
 
         ViewHolder(View view) {
             super(view);
-            mView = view;
-            mPriceView = (TextView) view.findViewById(R.id.market_page_trade_history_price_value);
-            mQuoteView = (TextView) view.findViewById(R.id.market_page_trade_history_quote_volume);
-            mBaseView = (TextView) view.findViewById(R.id.market_page_trade_history_base_volume);
-            mDateView = (TextView) view.findViewById(R.id.market_page_trade_history_date_value);
+            ButterKnife.bind(this, view);
         }
     }
 }

@@ -5,9 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
-import com.cybexmobile.fragment.MarketTradeHistoryFragment;
-import com.cybexmobile.fragment.OrderHistoryListFragment;
-import com.cybexmobile.graphene.chain.OrderHistory;
 import com.cybexmobile.widget.ViewPagerForScrollView;
 
 import java.util.ArrayList;

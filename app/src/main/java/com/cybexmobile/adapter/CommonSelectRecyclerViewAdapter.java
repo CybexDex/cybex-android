@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.Types;
 import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
@@ -82,6 +83,9 @@ public class CommonSelectRecyclerViewAdapter<T> extends RecyclerView.Adapter<Rec
         } else if(item instanceof Address){
             Address address = (Address) item;
             viewHolder.mTvSymbol.setText(address.getNote());
+        } else if (item instanceof Types.public_key_type) {
+            Types.public_key_type public_key_type = (Types.public_key_type) item;
+            viewHolder.mTvSymbol.setText(public_key_type.toString());
         }
 
     }
