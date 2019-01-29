@@ -14,8 +14,6 @@ import com.cybexmobile.fragment.orders.OpenOrdersFragment;
 import com.cybexmobile.fragment.orders.OrdersHistoryFragment;
 import com.cybexmobile.fragment.orders.TradeHistoryFragment;
 
-import org.greenrobot.eventbus.EventBus;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -38,7 +36,6 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_orders_history);
-        EventBus.getDefault().register(this);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolBar);
         mSegmentedGroup.setOnCheckedChangeListener(this);

@@ -14,8 +14,6 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.fragment.orders.OrdersHistoryFragment;
 import com.cybexmobile.fragment.orders.TradeHistoryFragment;
 
-import org.greenrobot.eventbus.EventBus;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -40,7 +38,6 @@ public class ExchangeOrdersHistoryActivity extends BaseActivity implements Radio
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange_orders_history);
-        EventBus.getDefault().register(this);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolBar);
         mWatchlistData = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
