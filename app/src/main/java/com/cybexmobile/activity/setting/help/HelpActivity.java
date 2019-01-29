@@ -40,7 +40,7 @@ public class HelpActivity extends BaseActivity{
         setSupportActionBar(mToolbar);
         initWebViewSetting();
         boolean isNight = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("night_mode", false);
-        String url = "http://47.75.154.39:3009/" + (isNight ? "cybexday" : "cybexnight" ) + "?lang=" + Locale.getDefault().getLanguage();
+        String url = "https://survey.cybex.io/" + (isNight ? "cybexday" : "cybexnight" ) + "?lang=" + Locale.getDefault().getLanguage();
         mWebView.loadUrl(url);
     }
 

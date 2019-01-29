@@ -87,14 +87,14 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
                 String quoteSymbol = AssetUtil.parseSymbol(quoteAsset.symbol);
                 String baseSymbol = AssetUtil.parseSymbol(baseAsset.symbol);
 
-                viewHolder.mTvBuySell.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
-                viewHolder.mTvQuoteSymbol.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
-                viewHolder.mTvBaseSymbol.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
-                viewHolder.mTvPrice.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
-                viewHolder.mTvAveragePrice.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
-                viewHolder.mTvFilledAmount.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
-                viewHolder.mTvAmount.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
-                viewHolder.mTvTime.setAlpha(limitOrder.canceled > 0 ? 0.5f : 1);
+                viewHolder.mTvBuySell.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
+                viewHolder.mTvQuoteSymbol.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
+                viewHolder.mTvBaseSymbol.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
+                viewHolder.mTvPrice.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
+                viewHolder.mTvAveragePrice.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
+                viewHolder.mTvFilledAmount.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
+                viewHolder.mTvAmount.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
+                viewHolder.mTvTime.setAlpha(limitOrder.canceled > 0 ? 0.3f : 1);
 
                 if (openOrderItem.isSell) {
                     viewHolder.mTvBuySell.setText(mContext.getResources().getString(R.string.open_order_sell));

@@ -217,7 +217,7 @@
 
                     <com.jaredrummler.materialspinner.MaterialSpinner
                         android:id="@+id/transfer_lock_time_spinner"
-                        android:layout_width="@dimen/width_100"
+                        android:layout_width="@dimen/width_120"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:textSize="@dimen/font_medium"
