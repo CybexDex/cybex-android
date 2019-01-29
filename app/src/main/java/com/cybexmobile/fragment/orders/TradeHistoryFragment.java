@@ -160,7 +160,7 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
     public void onUpdateFullAccount(Event.UpdateFullAccount event){
         if (mFullAccountObject == null) {
             mFullAccountObject = event.getFullAccount();
-            loadExchangeHistory(mCurrPage, MAX_PAGE_COUNT, false);
+            loadExchangeHistory(mCurrPage, MAX_PAGE_COUNT, true);
         }
     }
 
@@ -200,7 +200,7 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             mFullAccountObject = mWebSocketService.getFullAccount(mName);
-            loadExchangeHistory(mCurrPage, MAX_PAGE_COUNT, false);
+            loadExchangeHistory(mCurrPage, MAX_PAGE_COUNT, true);
         }
 
         @Override
