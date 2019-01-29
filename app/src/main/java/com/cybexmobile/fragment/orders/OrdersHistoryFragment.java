@@ -197,6 +197,7 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
             item.quoteAsset = assetsPair.getQuoteAsset();
             mOrderHistoryItems.add(item);
         }
+        mLastOrderId = mOrderHistoryItems.get(mOrderHistoryItems.size() - 1).limitOrder.order_id.toString();
     }
 
     private void loadLastOrderId() {
@@ -221,7 +222,7 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
      */
     private void nextPageOrderId() {
         String[] idSplits = mLastOrderId.split("\\.");
-        int idNext = Integer.parseInt(idSplits[2]) - MAX_PAGE_COUNT;
+        int idNext = Integer.parseInt(idSplits[2]) - 1;
         mLastOrderId =  mLastOrderId.replace(idSplits[2], String.valueOf(idNext > 0 ? idNext : 0));
     }
 
