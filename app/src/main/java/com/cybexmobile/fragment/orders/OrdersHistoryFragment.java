@@ -231,6 +231,10 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
             mRefreshLayout.finishLoadMore();
             return;
         }
+        if (!isRefresh && (mOrderHistoryItems.size() == 0 || mOrderHistoryItems.size() % MAX_PAGE_COUNT != 0)) {
+            mRefreshLayout.finishLoadMore();
+            mRefreshLayout.setNoMoreData(true);
+        }
         if (mIsLoadAll) {
             LimitOrderWrapper.getInstance().get_limit_order_status(
                     mFullAccount.account.id.toString(),

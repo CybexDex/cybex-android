@@ -215,6 +215,10 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
             mRefreshLayout.finishLoadMore();
             return;
         }
+        if (!isRefresh && (mOrderHistoryItems.size() == 0 || mOrderHistoryItems.size() % MAX_PAGE_COUNT != 0)) {
+            mRefreshLayout.finishLoadMore();
+            mRefreshLayout.setNoMoreData(true);
+        }
         mCompositeDisposable.add(RetrofitFactory.getInstance().apiCybexLive()
                 .getExchangeRecords(mFullAccountObject.account.id.toString(),
                         page,
@@ -226,6 +230,8 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accountHistoryObjects -> {
+                    mRefreshLayout.finishRefresh();
+                    mRefreshLayout.finishLoadMore();
                     if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
                         return;
                     }
@@ -243,8 +249,6 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
                             mOrderHistoryItems.add(item);
                         }
                     }
-                    mRefreshLayout.finishRefresh();
-                    mRefreshLayout.finishLoadMore();
                     mTradeHistoryRecyclerViewAdapter.notifyDataSetChanged();
                 }, throwable -> {
                     mRefreshLayout.finishRefresh();
