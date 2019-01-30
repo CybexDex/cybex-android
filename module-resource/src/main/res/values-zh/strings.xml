@@ -371,7 +371,7 @@
     <string name="text_send">转账</string>
     <string name="text_with_vesting_period">锁定时间</string>
     <string name="text_hint_input_time">请输入时间</string>
-    <string name="text_hint_input_public_key">请选择一个公钥</string>
+    <string name="text_hint_input_public_key">选择一个目标账户下的公钥作为领取人</string>
     <string name="text_lock_time_transfer_period_seconds">秒</string>
     <string name="text_lock_time_transfer_period_minutes">分钟</string>
     <string name="text_lock_time_transfer_period_hours">小时</string>

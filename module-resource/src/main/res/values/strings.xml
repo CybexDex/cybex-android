@@ -368,7 +368,7 @@
     <string name="text_send">Send</string>
     <string name="text_with_vesting_period">With vesting period</string>
     <string name="text_hint_input_time">Input Time</string>
-    <string name="text_hint_input_public_key">Input public key</string>
+    <string name="text_hint_input_public_key">Choose one public key as the recipient</string>
     <string name="text_lock_time_transfer_period_seconds">seconds</string>
     <string name="text_lock_time_transfer_period_minutes">minutes</string>
     <string name="text_lock_time_transfer_period_hours">hours</string>

@@ -199,9 +199,11 @@ public class Operations {
 
             //baseEncoder.write(rawObject.get_byte_array(extensions.size()));
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(extensions.size()));
-            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(1));
-            baseEncoder.write(rawObject.get_byte_array(vesting_period));
-            baseEncoder.write(public_key_type.key_data);
+            if (public_key_type != null) {
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(1));
+                baseEncoder.write(rawObject.get_byte_array(vesting_period));
+                baseEncoder.write(public_key_type.key_data);
+            }
         }
 
         @Override
