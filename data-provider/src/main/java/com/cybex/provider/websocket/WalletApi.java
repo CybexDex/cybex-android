@@ -58,6 +58,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WalletApi {
@@ -680,13 +681,13 @@ public class WalletApi {
         transferOperation.amount = new Asset(transferAmount, transferAssetId);
         transferOperation.vesting_period = vesting_period;
         transferOperation.public_key_type = toActiveKey;
-        HashSet<Object> lockTimeTransferObject = new HashSet<>();
+        List<Object> lockTimeTransferObject = new ArrayList<>();
         lockTimeTransferObject.add(type);
         HashMap<String, Object> object = new HashMap<>();
         object.put("vesting_period", vesting_period);
         object.put("public_key", toActiveKey.toString());
         lockTimeTransferObject.add(object);
-        HashSet<Set<Object>> extensions = new HashSet<>();
+        HashSet<List<Object>> extensions = new HashSet<>();
         extensions.add(lockTimeTransferObject);
         transferOperation.extensions =extensions;
 

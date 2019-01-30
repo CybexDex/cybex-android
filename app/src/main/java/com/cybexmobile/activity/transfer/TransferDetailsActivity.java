@@ -25,6 +25,7 @@ import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.utils.DateUtils;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -167,7 +168,7 @@ public class TransferDetailsActivity extends BaseActivity {
                 if(!it.hasNext()){
                     mTvTransferVestingPeriod.setText(getResources().getString(R.string.text_none));
                 } else {
-                    Iterator its = ((Set) it.next()).iterator();
+                    Iterator its = ((List)it.next()).iterator();
                     its.next();
                     Map map = (Map) its.next();
                     /**

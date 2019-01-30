@@ -155,7 +155,7 @@ public class Operations {
         //public extensions_type   extensions;
         public transient Types.public_key_type public_key_type;
         public transient long vesting_period;
-        public Set<Set<Object>> extensions;
+        public Set<List<Object>> extensions;
 
         @Override
         public List<Authority> get_required_authorities() {
