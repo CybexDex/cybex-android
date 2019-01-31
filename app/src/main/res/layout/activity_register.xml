@@ -276,7 +276,7 @@
                                 android:textColorHint="@color/text_hint_color"
                                 android:textCursorDrawable="@null" />
 
-                            <ImageView
+                            <com.caverock.androidsvg.SVGImageView
                                 android:id="@+id/register_pin_code_image"
                                 android:layout_width="@dimen/width_100"
                                 android:layout_height="@dimen/height_32"

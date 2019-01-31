@@ -85,6 +85,7 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     private int mCurrPage;
+    private int mCount  = 0;
 
     public static TradeHistoryFragment getInstance(WatchlistData watchlistData, boolean isLoadAll) {
         TradeHistoryFragment fragment = new TradeHistoryFragment();
@@ -215,7 +216,7 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
             mRefreshLayout.finishLoadMore();
             return;
         }
-        if (!isRefresh && (mOrderHistoryItems.size() == 0 || mOrderHistoryItems.size() % MAX_PAGE_COUNT != 0)) {
+        if (!isRefresh && (mOrderHistoryItems.size() == 0 || mCount % MAX_PAGE_COUNT != 0)) {
             mRefreshLayout.finishLoadMore();
             mRefreshLayout.setNoMoreData(true);
         }
@@ -235,10 +236,13 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
                     if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
                         return;
                     }
+                    mCount += accountHistoryObjects.size();
                     TradeHistoryItem item = null;
                     Gson gson = new Gson();
                     Map<String, List<AssetsPair>> assetPairs = mWebSocketService.getAssetPairHashMap();
-                    if (isRefresh) { mOrderHistoryItems.clear(); }
+                    if (isRefresh) {
+                        mCount = 0;
+                        mOrderHistoryItems.clear(); }
                     for (AccountHistoryObject accountHistoryObject : accountHistoryObjects) {
                         item = new TradeHistoryItem();
                         item.accountHistoryObject = accountHistoryObject;

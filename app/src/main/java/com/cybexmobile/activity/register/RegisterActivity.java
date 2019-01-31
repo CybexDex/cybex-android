@@ -2,7 +2,12 @@ package com.cybexmobile.activity.register;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +22,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGImageView;
+import com.caverock.androidsvg.SVGParseException;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
@@ -87,7 +95,7 @@ public class RegisterActivity extends BaseActivity {
     @BindView(R.id.register_cloud_wallet_question_marker)
     ImageView mCloudWalletIntroductionQuestionMarker;
     @BindView(R.id.register_pin_code_image)
-    ImageView mPinCodeImageView;
+    SVGImageView mPinCodeImageView;
     @BindView(R.id.user_name_check)
     ImageView mUserNameChecker;
     @BindView(R.id.password_check)
@@ -332,10 +340,14 @@ public class RegisterActivity extends BaseActivity {
                             jsonObject = new JSONObject(responseBody.string());
                             String svgString = jsonObject.getString("data");
                             mCapId = jsonObject.getString("id");
-                            Sharp.loadString(svgString).into(mPinCodeImageView);
+                            SVG svg = SVG.getFromString(svgString);
+                            mPinCodeImageView.setSVG(svg, "rect {opacity: 0;}");
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (SVGParseException e) {
                             e.printStackTrace();
                         }
                     }
