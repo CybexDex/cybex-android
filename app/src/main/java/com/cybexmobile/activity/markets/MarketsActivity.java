@@ -264,6 +264,9 @@ public class MarketsActivity extends BaseActivity {
                 mProgressBar.setVisibility(View.VISIBLE);
                 mChartKline.setVisibility(View.INVISIBLE);
                 mChartVolume.setVisibility(View.INVISIBLE);
+                mChartVolume.highlightValue(null);
+                mChartCharts.highlightValue(null);
+                mChartKline.highlightValue(null);
                 mDuration = getDuration(item);
                 loadMarketHistory();
             }

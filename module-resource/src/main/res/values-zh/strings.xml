@@ -191,7 +191,7 @@
     <!-- Exchange Fragment -->
     <string name="tab_buy">买入</string>
     <string name="tab_sell">卖出</string>
-    <string name="tab_open_orders">我的委单</string>
+    <string name="tab_open_orders">当前委托</string>
     <string name="menu_order_history">我的记录</string>
     <string name="menu_transfer_records">转账记录</string>
     <string name="menu_withdraw_records">提现记录</string>

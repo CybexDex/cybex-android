@@ -142,6 +142,7 @@ public class TransferActivity extends BaseActivity implements
 
     private List<Address> mAddresses;
     private List<AccountBalanceObjectItem> mAccountBalanceObjectItems;
+    private List<String> mAssetWhiteList;
     private List<Types.public_key_type> mLockTimePublicKeys;
     private Types.public_key_type mSelectedLockTimePublicKey;
     private AccountBalanceObjectItem mSelectedAccountBalanceObjectItem;
@@ -736,6 +737,7 @@ public class TransferActivity extends BaseActivity implements
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
             FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mUserName);
+            mAssetWhiteList = mWebSocketService.getAssetWhiteList();
             loadAccountBalanceObjectItems(fullAccountObject);
             mFromAccountObject = fullAccountObject == null ? null : fullAccountObject.account;
             checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
@@ -763,6 +765,9 @@ public class TransferActivity extends BaseActivity implements
         if (accountBalanceObjects != null && accountBalanceObjects.size() > 0) {
             mAccountBalanceObjectItems = new ArrayList<>();
             for (AccountBalanceObject balance : accountBalanceObjects) {
+                if (!mAssetWhiteList.contains(balance.asset_type.toString())) {
+                    continue;
+                }
                 if (balance.balance == 0) {
                     continue;
                 }
