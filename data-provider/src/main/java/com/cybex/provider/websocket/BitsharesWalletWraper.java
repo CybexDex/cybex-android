@@ -276,7 +276,7 @@ public class BitsharesWalletWraper {
     }
 
     public void cancelLockWalletTime() {
-        if (!lockWalletDisposable.isDisposed()) {
+        if (lockWalletDisposable != null && !lockWalletDisposable.isDisposed()) {
             lockWalletDisposable.dispose();
         }
     }
