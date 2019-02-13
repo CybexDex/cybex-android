@@ -10,7 +10,7 @@
     <string name="title_account">账户</string>
     <string name="title_exchange">交易</string>
     <string name="title_eto">ETO</string>
-    <string name="title_order_history">我的记录</string>
+    <string name="title_order_history">委单</string>
     <string name="title_transfer">转账</string>
     <string name="title_transfer_records">转账记录</string>
     <string name="title_transfer_details">转账详情</string>

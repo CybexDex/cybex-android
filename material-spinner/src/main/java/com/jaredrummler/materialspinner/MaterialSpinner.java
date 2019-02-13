@@ -394,6 +394,19 @@ public class MaterialSpinner extends AppCompatTextView {
     popupWindow.setHeight(calculatePopupWindowHeight());
   }
 
+  public <T> void notifyItemsWithIndex(@NonNull List<T> items, int index) {
+    if(adapter == null) {
+      setItems(items);
+    } else {
+      selectedIndex = index;
+      setText((String)items.get(selectedIndex));
+      adapter.notifyItemSelected(selectedIndex);
+      adapter.setItems(items);
+      adapter.notifyDataSetChanged();
+    }
+    popupWindow.setHeight(calculatePopupWindowHeight());
+  }
+
   /**
    * Get the list of items in the adapter
    *

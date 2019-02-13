@@ -128,6 +128,10 @@ public class WebSocketClient extends WebSocketListener {
         super.onMessage(webSocket, text);
         Log.v(TAG, String.format("onMessage: %s", text));
         try {
+            if (mJsonParser.parse(text).getAsJsonObject().get("id") == null) {
+                Log.v("lsf", String.format("onMessage: %s", text));
+                return;
+            }
             int callId = mJsonParser.parse(text).getAsJsonObject().get("id").getAsInt();
             IReplyProcess iReplyProcess = mHashMapIdToProcess.remove(callId);
             if (iReplyProcess != null) {

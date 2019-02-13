@@ -70,6 +70,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -372,22 +373,21 @@ public class TransferActivity extends BaseActivity implements
     public void onSwitchClicked(CompoundButton button, boolean isChecked) {
         if (isChecked) {
             mLinearLayoutTransferLockTime.setVisibility(View.VISIBLE);
+            mMsTransferLockTime.setDrawableLevelValue(5000);
+            mMsTransferLockTime.notifyItemsWithIndex(Arrays.asList(getResources().getStringArray(R.array.transfer_time_period)), mMsTransferLockTime.getSelectedIndex());
+            mMsTransferLockTime.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                    view.setTextColor(getResources().getColor(R.color.btn_orange_end));
+                    mLockTimeUnit = getTimeUnit(item);
+                    if (mEtTransferLockTime.getText() != null && !mEtTransferLockTime.getText().toString().isEmpty()) {
+                        mTotalLockTime = (int) Double.parseDouble(mEtTransferLockTime.getText().toString().trim()) * mLockTimeUnit;
+                    }
+                }
+            });
         } else {
             mLinearLayoutTransferLockTime.setVisibility(View.GONE);
-            mMsTransferLockTime.setTextColor(getResources().getColor(R.color.material_spinner_text_color));
         }
-        mMsTransferLockTime.setDrawableLevelValue(5000);
-        mMsTransferLockTime.setItems(getResources().getStringArray(R.array.transfer_time_period));
-        mMsTransferLockTime.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-            @Override
-            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                view.setTextColor(getResources().getColor(R.color.btn_orange_end));
-                mLockTimeUnit = getTimeUnit(item);
-                if (mEtTransferLockTime.getText() != null && !mEtTransferLockTime.getText().toString().isEmpty()) {
-                    mTotalLockTime = (int) Double.parseDouble(mEtTransferLockTime.getText().toString().trim()) * mLockTimeUnit;
-                }
-            }
-        });
         resetTransferButtonState();
     }
 
