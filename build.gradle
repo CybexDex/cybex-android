@@ -24,6 +24,10 @@ buildscript {
 
 task cleanOutputDir(type: Delete) {
     delete fileTree(dir: "app/build/outputs/apk/googleplay/debug/")
+    delete fileTree(dir: "app/build/outputs/apk/online/debug/")
+    delete fileTree(dir: "app/build/outputs/apk/googleplay/release/")
+    delete fileTree(dir: "app/build/outputs/apk/online/release/")
+
 }
 
 allprojects {
