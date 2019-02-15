@@ -184,6 +184,8 @@ public class MarketsActivity extends BaseActivity {
     TextView mEMA5Tv;
     @BindView(R.id.view_ema_tv_10)
     TextView mEMA10Tv;
+    @BindView(R.id.view_ema_tv_99)
+    TextView mEMA99Tv;
     @BindView(R.id.index_high_tv)
     TextView mTvHighIndex;
     @BindView(R.id.index_low_tv)
@@ -301,9 +303,9 @@ public class MarketsActivity extends BaseActivity {
     private void setDefaultAverageAlgorithm() {
         mData.initKLineMA(kLineDatas);
         ArrayList<ILineDataSet> sets = new ArrayList<>();
-        sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
-        sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
-        sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
+        sets.add(setMaLine(5, mData.getXVals(), mData.getMa7DataL()));
+        sets.add(setMaLine(10, mData.getXVals(), mData.getMa25DataL()));
+//        sets.add(setMaLine(20, mData.getXVals(), mData.getMa99DataL()));
         LineData lineData = new LineData(mData.getXVals(), sets);
         CombinedData combinedData = new CombinedData(mData.getXVals());
         combinedData.setData(lineData);
@@ -315,7 +317,7 @@ public class MarketsActivity extends BaseActivity {
         mHeaderKlineChart.setVisibility(View.VISIBLE);
         mHeaderBOLLChart.setVisibility(View.GONE);
         mHeaderEMAChart.setVisibility(View.GONE);
-        updateText(mData.getMa20DataL().size() - 1);
+        updateText(mData.getMa99DataL().size() - 1);
     }
 
     private void changeIndexLine(String item) {
@@ -323,9 +325,9 @@ public class MarketsActivity extends BaseActivity {
             case Constant.INDEXMA:
                 mData.initKLineMA(kLineDatas);
                 ArrayList<ILineDataSet> sets = new ArrayList<>();
-                sets.add(setMaLine(5, mData.getXVals(), mData.getMa5DataL()));
-                sets.add(setMaLine(10, mData.getXVals(), mData.getMa10DataL()));
-                sets.add(setMaLine(20, mData.getXVals(), mData.getMa20DataL()));
+                sets.add(setMaLine(5, mData.getXVals(), mData.getMa7DataL()));
+                sets.add(setMaLine(10, mData.getXVals(), mData.getMa25DataL()));
+//                sets.add(setMaLine(20, mData.getXVals(), mData.getMa99DataL()));
                 LineData lineData = new LineData(mData.getXVals(), sets);
                 CombinedData combinedData = new CombinedData(mData.getXVals());
                 combinedData.setData(lineData);
@@ -337,15 +339,14 @@ public class MarketsActivity extends BaseActivity {
                 mHeaderKlineChart.setVisibility(View.VISIBLE);
                 mHeaderBOLLChart.setVisibility(View.GONE);
                 mHeaderEMAChart.setVisibility(View.GONE);
-                updateText(mData.getMa20DataL().size() - 1);
+                updateText(mData.getMa99DataL().size() - 1);
                 break;
             case Constant.INDEXEMA:
                 mData.initEXPMA(kLineDatas);
                 ArrayList<ILineDataSet> setEMA = new ArrayList<>();
-                setEMA.add(setKDJMaLine(0, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData5()));
-                setEMA.add(setKDJMaLine(1, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData10()));
-                setEMA.add(setKDJMaLine(2, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData20()));
-                setEMA.add(setKDJMaLine(3, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData60()));
+                setEMA.add(setKDJMaLine(0, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData7()));
+                setEMA.add(setKDJMaLine(1, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData25()));
+//                setEMA.add(setKDJMaLine(2, mData.getXVals(), (ArrayList<Entry>) mData.getExpmaData99()));
                 LineData lineDataEma = new LineData(mData.getXVals(), setEMA);
 
                 CombinedData combinedDataEMa = new CombinedData(mData.getXVals());
@@ -358,7 +359,7 @@ public class MarketsActivity extends BaseActivity {
                 mHeaderKlineChart.setVisibility(View.GONE);
                 mHeaderBOLLChart.setVisibility(View.GONE);
                 mHeaderEMAChart.setVisibility(View.VISIBLE);
-                updateEMA(mData.getExpmaData5().size() - 1);
+                updateEMA(mData.getExpmaData99().size() - 1);
                 break;
             case Constant.INDEXBOLL:
                 mData.initBOLL(kLineDatas);
@@ -785,6 +786,7 @@ public class MarketsActivity extends BaseActivity {
 
                 updateText(e.getXIndex());
                 updateBOLL(e.getXIndex());
+                updateEMA(e.getXIndex());
             }
 
             @Override
@@ -792,7 +794,6 @@ public class MarketsActivity extends BaseActivity {
                 mChartVolume.highlightValue(null);
                 mChartCharts.highlightValue(null);
                 mIndexHeaderLayout.setVisibility(View.GONE);
-                mHeaderKlineChart.setVisibility(View.GONE);
                 mLayoutBaseHeader.setVisibility(View.VISIBLE);
             }
         });
@@ -840,6 +841,7 @@ public class MarketsActivity extends BaseActivity {
 
                 updateText(e.getXIndex());
                 updateBOLL(e.getXIndex());
+                updateEMA(e.getXIndex());
             }
 
             @Override
@@ -878,6 +880,7 @@ public class MarketsActivity extends BaseActivity {
 
                 updateText(e.getXIndex());
                 updateBOLL(e.getXIndex());
+                updateEMA(e.getXIndex());
             }
 
             @Override
@@ -1244,47 +1247,52 @@ public class MarketsActivity extends BaseActivity {
             mTvVol.setText(String.format(Locale.US, "%s %s", AssetUtil.formatAmountToKMB(klData.baseVol, 2), AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
         }
         int newIndex = index;
-        if (null != mData.getMa5DataL() && mData.getMa5DataL().size() > 0) {
-            if (newIndex >= 0 && newIndex < mData.getMa5DataL().size())
-                mTvKMa5.setText(Float.isNaN(mData.getMa5DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa5DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+        if (null != mData.getMa7DataL() && mData.getMa7DataL().size() > 0) {
+            if (newIndex >= 0 && newIndex < mData.getMa7DataL().size())
+                mTvKMa5.setText(Float.isNaN(mData.getMa7DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa7DataL().get(newIndex).getVal(), mWatchListData.getPricePrecision()));
         }
-        if (null != mData.getMa10DataL() && mData.getMa10DataL().size() > 0) {
-            if (newIndex >= 0 && newIndex < mData.getMa10DataL().size())
-                mTvKMa10.setText(Float.isNaN(mData.getMa10DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa10DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+        if (null != mData.getMa25DataL() && mData.getMa25DataL().size() > 0) {
+            if (newIndex >= 0 && newIndex < mData.getMa25DataL().size())
+                mTvKMa10.setText(Float.isNaN(mData.getMa25DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa25DataL().get(newIndex).getVal(), mWatchListData.getPricePrecision()));
         }
-        if (null != mData.getMa20DataL() && mData.getMa20DataL().size() > 0) {
-            if (newIndex >= 0 && newIndex < mData.getMa20DataL().size())
-                mTvKMa20.setText(Float.isNaN(mData.getMa20DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa20DataL().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
-        }
+//        if (null != mData.getMa99DataL() && mData.getMa99DataL().size() > 0) {
+//            if (newIndex >= 0 && newIndex < mData.getMa99DataL().size())
+//                mTvKMa20.setText(Float.isNaN(mData.getMa99DataL().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getMa99DataL().get(newIndex).getVal(), mWatchListData.getPricePrecision()));
+//        }
     }
 
     private void updateBOLL(int index) {
         int newIndex = index;
         if (null != mData.getBollDataDN() && mData.getBollDataDN().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataDN().size())
-                mBOLLTv1.setText(Float.isNaN(mData.getBollDataDN().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getBollDataDN().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mBOLLTv1.setText(Float.isNaN(mData.getBollDataDN().get(newIndex).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getBollDataDN().get(newIndex).getVal(), mWatchListData.getPricePrecision()));
         }
 
         if (null != mData.getBollDataMB() && mData.getBollDataMB().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataMB().size())
-                mBOLLTv2.setText(Float.isNaN(mData.getBollDataMB().get(newIndex).getVal()) ? "" :AssetUtil.formatNumberRounding(mData.getBollDataMB().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mBOLLTv2.setText(Float.isNaN(mData.getBollDataMB().get(newIndex).getVal()) ? "" :AssetUtil.formatNumberRounding(mData.getBollDataMB().get(newIndex).getVal(), mWatchListData.getPricePrecision()));
         }
         if (null != mData.getBollDataUP() && mData.getBollDataUP().size() > 0) {
             if (newIndex >= 0 && newIndex < mData.getBollDataUP().size())
-                mBOLLTv3.setText(Float.isNaN(mData.getBollDataUP().get(newIndex).getVal()) ? "" :AssetUtil.formatNumberRounding(mData.getBollDataUP().get(newIndex).getVal(), mWatchListData.getBasePrecision()));
+                mBOLLTv3.setText(Float.isNaN(mData.getBollDataUP().get(newIndex).getVal()) ? "" :AssetUtil.formatNumberRounding(mData.getBollDataUP().get(newIndex).getVal(), mWatchListData.getPricePrecision()));
         }
     }
 
     private void updateEMA(int index) {
-        if (null != mData.getExpmaData5() && mData.getExpmaData5().size() > 0) {
-            if (index >= 0 && index < mData.getExpmaData5().size())
-                mEMA5Tv.setText(MyUtils.getDecimalFormatVol(mData.getExpmaData5().get(index).getVal()));
+        if (null != mData.getExpmaData7() && mData.getExpmaData7().size() > 0) {
+            if (index >= 0 && index < mData.getExpmaData7().size())
+                mEMA5Tv.setText(Float.isNaN(mData.getExpmaData7().get(index).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getExpmaData7().get(index).getVal(), mWatchListData.getPricePrecision()));
         }
 
-        if (null != mData.getExpmaData10() && mData.getExpmaData10().size() > 0) {
-            if (index >= 0 && index < mData.getExpmaData10().size())
-                mEMA10Tv.setText(MyUtils.getDecimalFormatVol(mData.getExpmaData10().get(index).getVal()));
+        if (null != mData.getExpmaData25() && mData.getExpmaData25().size() > 0) {
+            if (index >= 0 && index < mData.getExpmaData25().size())
+                mEMA10Tv.setText(Float.isNaN(mData.getExpmaData25().get(index).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getExpmaData25().get(index).getVal(), mWatchListData.getPricePrecision()));
         }
+
+//        if (null != mData.getExpmaData99() && mData.getExpmaData99().size() > 0) {
+//            if (index >= 0 && index < mData.getExpmaData99().size())
+//                mEMA99Tv.setText(Float.isNaN(mData.getExpmaData99().get(index).getVal()) ? "" : AssetUtil.formatNumberRounding(mData.getExpmaData99().get(index).getVal(), mWatchListData.getPricePrecision()));
+//        }
     }
 
     @Override

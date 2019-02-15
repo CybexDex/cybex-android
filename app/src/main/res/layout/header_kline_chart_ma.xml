@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#0FFFFFFF"
-            android:text="@string/k_ma5"
+            android:text="@string/k_ma7"
             style="@style/font_gray_xsmall"/>
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_10"
             android:background="#0FFFFFFF"
-            android:text="@string/k_ma10"
+            android:text="@string/k_ma25"
             style="@style/font_gray_xsmall"/>
 
         <TextView
@@ -48,8 +48,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_10"
             android:background="#0FFFFFFF"
-            android:text="@string/k_ma20"
-            style="@style/font_gray_xsmall" />
+            android:text="@string/k_ma99"
+            style="@style/font_gray_xsmall"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/view_kline_tv_ma20"
@@ -57,7 +58,8 @@
             android:layout_height="wrap_content"
             android:text="0.00"
             android:textColor="@color/ma_20_color"
-            android:textSize="@dimen/font_xsmall" />
+            android:textSize="@dimen/font_xsmall"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
@@ -119,7 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#0FFFFFFF"
-            android:text="@string/k_ema5"
+            android:text="@string/k_ema7"
             style="@style/font_gray_xsmall" />
 
         <TextView
@@ -136,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_10"
             android:background="#0FFFFFFF"
-            android:text="@string/k_ema10"
+            android:text="@string/k_ema25"
             style="@style/font_gray_xsmall" />
 
         <TextView
@@ -147,6 +149,25 @@
             android:text="0.00"
             android:textColor="@color/ma_10_color"
             android:textSize="@dimen/font_xsmall" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_10"
+            android:background="#0FFFFFFF"
+            android:text="@string/k_ema99"
+            style="@style/font_gray_xsmall"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/view_ema_tv_99"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_10"
+            android:text="0.00"
+            android:textColor="@color/ma_20_color"
+            android:textSize="@dimen/font_xsmall"
+            android:visibility="gone"/>
 
 
     </LinearLayout>

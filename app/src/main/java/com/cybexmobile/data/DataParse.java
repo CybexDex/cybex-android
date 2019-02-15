@@ -22,9 +22,9 @@ public class DataParse {
     private ArrayList<BarEntry> barEntries = new ArrayList<>();//成交量数据
     private ArrayList<CandleEntry> candleEntries = new ArrayList<>();//K线数据
 
-    private ArrayList<Entry> ma5DataL = new ArrayList<>();
-    private ArrayList<Entry> ma10DataL = new ArrayList<>();
-    private ArrayList<Entry> ma20DataL = new ArrayList<>();
+    private ArrayList<Entry> ma7DataL = new ArrayList<>();
+    private ArrayList<Entry> ma25DataL = new ArrayList<>();
+    private ArrayList<Entry> ma99DataL = new ArrayList<>();
     private ArrayList<Entry> ma30DataL = new ArrayList<>();
 
     private ArrayList<Entry> ma5DataV = new ArrayList<>();
@@ -57,9 +57,9 @@ public class DataParse {
     private List<Entry> bollDataDN = new ArrayList<>();
 
     private List<BarEntry> barDatasEXPMA = new ArrayList<>();
-    private List<Entry> expmaData5 = new ArrayList<>();
-    private List<Entry> expmaData10 = new ArrayList<>();
-    private List<Entry> expmaData20 = new ArrayList<>();
+    private List<Entry> expmaData7 = new ArrayList<>();
+    private List<Entry> expmaData25 = new ArrayList<>();
+    private List<Entry> expmaData99 = new ArrayList<>();
     private List<Entry> expmaData60 = new ArrayList<>();
 
     private List<BarEntry> barDatasDMI = new ArrayList<>();
@@ -191,22 +191,22 @@ public class DataParse {
         if (null == datas) {
             return;
         }
-        ma5DataL = new ArrayList<>();
-        ma10DataL = new ArrayList<>();
-        ma20DataL = new ArrayList<>();
+        ma7DataL = new ArrayList<>();
+        ma25DataL = new ArrayList<>();
+        ma99DataL = new ArrayList<>();
         ma30DataL = new ArrayList<>();
 
-        KMAEntity kmaEntity5 = new KMAEntity(datas, 5);
-        KMAEntity kmaEntity10 = new KMAEntity(datas, 10);
-        KMAEntity kmaEntity20 = new KMAEntity(datas, 20);
+        KMAEntity kmaEntity7 = new KMAEntity(datas, 7);
+        KMAEntity kmaEntity25 = new KMAEntity(datas, 25);
+        KMAEntity kmaEntity99 = new KMAEntity(datas, 99);
         KMAEntity kmaEntity30 = new KMAEntity(datas, 30);
-        for (int i = 0; i < kmaEntity5.getMAs().size(); i++) {
+        for (int i = 0; i < kmaEntity7.getMAs().size(); i++) {
 
-            ma5DataL.add(new Entry(kmaEntity5.getMAs().get(i), i));
+            ma7DataL.add(new Entry(kmaEntity7.getMAs().get(i), i));
 
-            ma10DataL.add(new Entry(kmaEntity10.getMAs().get(i), i));
+            ma25DataL.add(new Entry(kmaEntity25.getMAs().get(i), i));
 
-            ma20DataL.add(new Entry(kmaEntity20.getMAs().get(i), i));
+            ma99DataL.add(new Entry(kmaEntity99.getMAs().get(i), i));
 
             ma30DataL.add(new Entry(kmaEntity30.getMAs().get(i), i));
         }
@@ -348,21 +348,21 @@ public class DataParse {
      * @param datas
      */
     public void initEXPMA(ArrayList<KLineBean> datas) {
-        EXPMAEntity expmaEntity5 = new EXPMAEntity(datas, 5);
-        EXPMAEntity expmaEntity10 = new EXPMAEntity(datas, 10);
-        EXPMAEntity expmaEntity20 = new EXPMAEntity(datas, 20);
+        EXPMAEntity expmaEntity7 = new EXPMAEntity(datas, 7);
+        EXPMAEntity expmaEntity25 = new EXPMAEntity(datas, 25);
+        EXPMAEntity expmaEntity99 = new EXPMAEntity(datas, 99);
         EXPMAEntity expmaEntity60 = new EXPMAEntity(datas, 60);
 
         barDatasEXPMA = new ArrayList<>();
-        expmaData5 = new ArrayList<>();
-        expmaData10 = new ArrayList<>();
-        expmaData20 = new ArrayList<>();
+        expmaData7 = new ArrayList<>();
+        expmaData25 = new ArrayList<>();
+        expmaData99 = new ArrayList<>();
         expmaData60 = new ArrayList<>();
-        for (int i = 0; i < expmaEntity5.getEXPMAs().size(); i++) {
+        for (int i = 0; i < expmaEntity7.getEXPMAs().size(); i++) {
             barDatasEXPMA.add(new BarEntry(0, i));
-            expmaData5.add(new Entry(expmaEntity5.getEXPMAs().get(i), i));
-            expmaData10.add(new Entry(expmaEntity10.getEXPMAs().get(i), i));
-            expmaData20.add(new Entry(expmaEntity20.getEXPMAs().get(i), i));
+            expmaData7.add(new Entry(expmaEntity7.getEXPMAs().get(i), i));
+            expmaData25.add(new Entry(expmaEntity25.getEXPMAs().get(i), i));
+            expmaData99.add(new Entry(expmaEntity99.getEXPMAs().get(i), i));
             expmaData60.add(new Entry(expmaEntity60.getEXPMAs().get(i), i));
         }
     }
@@ -486,8 +486,8 @@ public class DataParse {
      *
      * @return
      */
-    public ArrayList<Entry> getMa5DataL() {
-        return ma5DataL;
+    public ArrayList<Entry> getMa7DataL() {
+        return ma7DataL;
     }
 
 
@@ -496,8 +496,8 @@ public class DataParse {
      *
      * @return
      */
-    public ArrayList<Entry> getMa10DataL() {
-        return ma10DataL;
+    public ArrayList<Entry> getMa25DataL() {
+        return ma25DataL;
     }
 
     /**
@@ -505,8 +505,8 @@ public class DataParse {
      *
      * @return
      */
-    public ArrayList<Entry> getMa20DataL() {
-        return ma20DataL;
+    public ArrayList<Entry> getMa99DataL() {
+        return ma99DataL;
     }
 
     /**
@@ -709,16 +709,16 @@ public class DataParse {
         return barDatasEXPMA;
     }
 
-    public List<Entry> getExpmaData5() {
-        return expmaData5;
+    public List<Entry> getExpmaData7() {
+        return expmaData7;
     }
 
-    public List<Entry> getExpmaData10() {
-        return expmaData10;
+    public List<Entry> getExpmaData25() {
+        return expmaData25;
     }
 
-    public List<Entry> getExpmaData20() {
-        return expmaData20;
+    public List<Entry> getExpmaData99() {
+        return expmaData99;
     }
 
     public List<Entry> getExpmaData60() {

@@ -57,7 +57,7 @@ public class OrdersHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof EmptyViewHolder) {
             EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
-            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_open_order));
+            emptyViewHolder.mTvEmpty.setText(mContext.getResources().getString(R.string.text_no_order_history));
             return;
         }
         ViewHolder viewHolder = (ViewHolder) holder;

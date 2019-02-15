@@ -68,13 +68,13 @@
     <string name="market_page_trade_history_quote">Amount(--)</string>
     <string name="market_page_order_book">Order Book</string>
     <string name="market_page_trade_history">Market Trades</string>
-    <string name="k_ma">MA(5):</string>
-    <string name="k_ma5">MA(5):</string>
-    <string name="k_ma10">MA(10):</string>
-    <string name="k_ma20">MA(20):</string>
+    <string name="k_ma7">MA(7):</string>
+    <string name="k_ma25">MA(25):</string>
+    <string name="k_ma99">MA(99):</string>
     <string name="k_boll">BOLL:</string>
-    <string name="k_ema5">EMA(5):</string>
-    <string name="k_ema10">EMA(10)</string>
+    <string name="k_ema7">EMA(7):</string>
+    <string name="k_ema25">EMA(25)</string>
+    <string name="k_ema99">EMA(99)</string>
     <string name="index_high">H</string>
     <string name="index_low">L</string>
     <string name="index_open">O</string>
@@ -213,6 +213,7 @@
     <string name="item_text_open_order_amount">Amount:</string>
     <string name="item_text_open_order_cancel">Cancel</string>
     <string name="text_no_open_order">No open orders</string>
+    <string name="text_no_order_history">No order history</string>
     <string name="text_decimals">decimals</string>
 
     <!-- Own Order History Activity -->

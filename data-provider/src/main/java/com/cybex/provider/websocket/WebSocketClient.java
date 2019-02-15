@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.OkHttpClient;
@@ -76,7 +77,7 @@ public class WebSocketClient extends WebSocketListener {
     private final JsonParser mJsonParser = new JsonParser();
 
     private ConcurrentHashMap<Integer, ReplyProcessImpl> mHashMapIdToProcess = new ConcurrentHashMap<>();
-    private List<DelayCall> delayCalls = null;
+    private ConcurrentLinkedQueue<DelayCall> delayCalls = new ConcurrentLinkedQueue<>();
     private Sha256Object mChainIdObject;
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -99,8 +100,7 @@ public class WebSocketClient extends WebSocketListener {
         return mCallId;
     }
 
-    public WebSocketClient(){
-        delayCalls = Collections.synchronizedList(new LinkedList<DelayCall>());
+    public WebSocketClient() {
     }
 
     @Override
@@ -758,29 +758,29 @@ public class WebSocketClient extends WebSocketListener {
         if (delayCalls == null || delayCalls.size() == 0) {
             return;
         }
-        synchronized (delayCalls) {
-            Iterator<DelayCall> iterator = delayCalls.iterator();
-            while (iterator.hasNext()) {
-                DelayCall delayCall = iterator.next();
-                switch (delayCall.flag) {
-                    case FLAG_DATABASE:
-                        delayCall.call.params.set(0, _nDatabaseId);
-                        break;
-                    case FLAG_HISTORY:
-                        delayCall.call.params.set(0, _nHistoryId);
-                        break;
-                    case FLAG_BROADCAST:
-                        delayCall.call.params.set(0, _nDatabaseId);
-                        break;
-                }
-                try {
-                    iterator.remove();
-                    sendForReply(delayCall.flag, delayCall.call, delayCall.replyProcess);
-                } catch (NetworkStatusException e) {
-                    e.printStackTrace();
-                }
+
+        Iterator<DelayCall> iterator = delayCalls.iterator();
+        while (iterator.hasNext()) {
+            DelayCall delayCall = iterator.next();
+            switch (delayCall.flag) {
+                case FLAG_DATABASE:
+                    delayCall.call.params.set(0, _nDatabaseId);
+                    break;
+                case FLAG_HISTORY:
+                    delayCall.call.params.set(0, _nHistoryId);
+                    break;
+                case FLAG_BROADCAST:
+                    delayCall.call.params.set(0, _nDatabaseId);
+                    break;
+            }
+            try {
+                iterator.remove();
+                sendForReply(delayCall.flag, delayCall.call, delayCall.replyProcess);
+            } catch (NetworkStatusException e) {
+                e.printStackTrace();
             }
         }
+
     }
 
     private MessageCallback<Reply<Sha256Object>> chainIdCallback = new MessageCallback<Reply<Sha256Object>>() {

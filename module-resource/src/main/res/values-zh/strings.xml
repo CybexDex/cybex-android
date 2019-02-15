@@ -71,13 +71,13 @@
     <string name="market_page_trade_history_quote">数量(--)</string>
     <string name="market_page_order_book">买卖单</string>
     <string name="market_page_trade_history">交易历史</string>
-    <string name="k_ma">MA(5):</string>
-    <string name="k_ma5">MA(5):</string>
-    <string name="k_ma10">MA(10):</string>
-    <string name="k_ma20">MA(20):</string>
+    <string name="k_ma7">MA(7):</string>
+    <string name="k_ma25">MA(25):</string>
+    <string name="k_ma99">MA(99):</string>
     <string name="k_boll">BOLL:</string>
-    <string name="k_ema5">EMA(5):</string>
-    <string name="k_ema10">EMA(10)</string>
+    <string name="k_ema7">EMA(7):</string>
+    <string name="k_ema25">EMA(25)</string>
+    <string name="k_ema99">EMA(99)</string>
     <string name="index_high">高</string>
     <string name="index_low">低</string>
     <string name="index_open">开</string>
@@ -217,6 +217,7 @@
     <string name="item_text_open_order_amount">数量:</string>
     <string name="item_text_open_order_cancel">撤单</string>
     <string name="text_no_open_order">暂无委单</string>
+    <string name="text_no_order_history">暂无历史委托</string>
     <string name="text_decimals">位小数</string>
 
     <!-- Order History Activity -->
