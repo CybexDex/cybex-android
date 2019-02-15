@@ -413,7 +413,7 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
         }
     }
 
-    MessageCallback mBalanceClaimCallBack = new MessageCallback<Reply<String>>() {
+    MessageCallback<Reply<String>> mBalanceClaimCallBack = new MessageCallback<Reply<String>>() {
         @Override
         public void onMessage(Reply<String> reply) {
             EventBus.getDefault().post(new Event.BalanceClaim(reply.result == null && reply.error == null));

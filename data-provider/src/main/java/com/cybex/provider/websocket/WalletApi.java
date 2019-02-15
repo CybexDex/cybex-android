@@ -802,11 +802,19 @@ public class WalletApi {
         signedTransaction.set_expiration(dateObject);
         Types.private_key_type privateKey = null;
 
-        for (Types.public_key_type public_key_type : accountObject.active.get_keys()) {
-            privateKey = mHashMapPub2Priv.get(public_key_type);
-            if (privateKey != null) {
-                signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
-                break;
+        if (operation instanceof Operations.balance_claim_operation) {
+            privateKey = mHashMapPub2Priv.get(((Operations.balance_claim_operation) operation).balance_owner_key);
+            signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+        }
+
+
+        if (privateKey == null) {
+            for (Types.public_key_type public_key_type : accountObject.active.get_keys()) {
+                privateKey = mHashMapPub2Priv.get(public_key_type);
+                if (privateKey != null) {
+                    signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+                    break;
+                }
             }
         }
         if (privateKey == null) {
