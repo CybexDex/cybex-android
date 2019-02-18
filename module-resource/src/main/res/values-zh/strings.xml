@@ -556,4 +556,8 @@
     <string name="text_order_history">历史委托</string>
     <string name="text_open_orders">当前委单</string>
 
+    <string name="text_default">默认</string>
+    <string name="text_buy_orders">展示买单</string>
+    <string name="text_sell_orders">展示卖单</string>
+
 </resources>

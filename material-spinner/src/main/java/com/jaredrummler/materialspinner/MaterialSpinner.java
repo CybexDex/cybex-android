@@ -112,14 +112,8 @@ public class MaterialSpinner extends AppCompatTextView {
 
     nothingSelected = true;
 
-    Resources resources = getResources();
     int left, right, bottom, top;
     left = right = bottom = top = padding;
-    if (rtl) {
-      right = resources.getDimensionPixelSize(R.dimen.ms__padding_left);
-    } else {
-      left = resources.getDimensionPixelSize(R.dimen.ms__padding_left);
-    }
     setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
     setClickable(true);
     setPadding(left, top, right, bottom);

@@ -70,16 +70,38 @@
         tools:itemCount="5">
     </android.support.v7.widget.RecyclerView>
 
-    <com.jaredrummler.materialspinner.MaterialSpinner
-        android:id="@+id/buysell_sp_precision"
-        android:layout_width="@dimen/width_120"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:gravity="center"
-        android:textSize="@dimen/font_medium"
-        app:ms_padding="@dimen/padding_3"
-        app:ms_text_color="@color/material_spinner_text_color"
-        app:ms_background_selector="@drawable/bg_spinner_selector"
-        app:ms_arrow_tint="@color/colorAccent"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/buysell_sp_precision"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:textSize="@dimen/font_medium"
+            app:ms_padding="@dimen/padding_3"
+            app:ms_text_color="@color/material_spinner_text_color"
+            app:ms_background_selector="@drawable/bg_spinner_selector"
+            app:ms_arrow_tint="@color/colorAccent"/>
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/buysell_sp_buysell"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:textSize="@dimen/font_medium"
+            app:ms_padding="@dimen/padding_3"
+            app:ms_text_color="@color/material_spinner_text_color"
+            app:ms_background_selector="@drawable/bg_spinner_selector"
+            app:ms_arrow_tint="@color/colorAccent"/>
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

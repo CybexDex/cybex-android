@@ -19,7 +19,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6"
+                android:layout_weight="0.55"
                 android:paddingEnd="@dimen/activity_padding"
                 android:orientation="vertical">
 
@@ -82,6 +82,7 @@
                     android:id="@+id/butsell_tv_asset_rmb_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_3"
                     style="@style/font_gray_small"
                     android:text="≈¥ 0.0000"/>
 
@@ -133,6 +134,7 @@
                     android:drawableStart="@drawable/ic_error_16px"
                     style="@style/font_red_small"
                     android:text="@string/text_not_enough"
+                    android:layout_marginTop="@dimen/margin_3"
                     android:visibility="invisible"/>
 
                 <LinearLayout
@@ -263,6 +265,7 @@
                     android:layout_height="@dimen/height_48"
                     android:textAllCaps="false"
                     style="@style/font_white_large"
+                    android:layout_marginTop="@dimen/margin_3"
                     android:text="@string/text_empty"
                     android:background="@drawable/bg_btn_green_gradient_enabled"/>
 
@@ -273,7 +276,7 @@
                 android:id="@+id/layout_limit_order_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.4">
+                android:layout_weight="0.45">
             </FrameLayout>
 
         </LinearLayout>

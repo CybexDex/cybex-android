@@ -554,4 +554,8 @@
     <string name="text_order_history">Order History</string>
     <string name="text_open_orders">Open Orders</string>
 
+    <string name="text_default">Default</string>
+    <string name="text_buy_orders">Buy Orders</string>
+    <string name="text_sell_orders">Sell Orders</string>
+
 </resources>

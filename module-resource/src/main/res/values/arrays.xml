@@ -21,6 +21,12 @@
         <item>@string/text_lock_time_transfer_period_hours</item>
         <item>@string/text_lock_time_transfer_period_days</item>
     </string-array>
+
+    <string-array name="array_show_buy_sell">
+        <item>@string/text_default</item>
+        <item>@string/text_buy_orders</item>
+        <item>@string/text_sell_orders</item>
+    </string-array>
 </resources>
 
 

@@ -24,11 +24,17 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
     public static final int TYPE_BUY = 1;
     public static final int TYPE_SELL = 2;
 
-    public static final int MAX_ITEM = 5;
+    public static final int SHOW_DEFAULT = 1;
+    public static final int SHOW_ONLY_BUY = 2;
+    public static final int SHOW_ONLY_SELL = 3;
+
+    public static final int MAX_ITEM_5 = 5;
+    public static final int MAX_ITEM_10 = 10;
 
     private Context mContext;
     private List<List<String>> mOrders;
     private int mType;
+    private int mShowFlag = SHOW_DEFAULT;
     private OnItemClickListener mListener;
     private WatchlistData mWatchlistData;
     private int mPricePrecision = -1;
@@ -38,6 +44,11 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
         mOrders = orders;
         mType = type;
         mWatchlistData = watchlistData;
+    }
+
+    public void setShowFlag(int flag) {
+        mShowFlag = flag;
+        notifyDataSetChanged();
     }
 
     public void setWatchlistData(WatchlistData watchlistData) {
@@ -95,14 +106,14 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                 }
                 break;
             case TYPE_SELL:
-                if(mOrders.size() < MAX_ITEM - position){
+                if(mOrders.size() < getItemCount() - position){
                     holder.itemView.setOnClickListener(null);
                     holder.mOrderPrice.setText(mContext.getResources().getString(R.string.text_empty));
                     holder.mOrderVolume.setText(mContext.getResources().getString(R.string.text_empty));
                     holder.mColorBarNon.setBackgroundColor(Color.TRANSPARENT);
                     holder.mColorBar.setBackgroundColor(Color.TRANSPARENT);
                 } else {
-                    final List<String> order = mOrders.get(MAX_ITEM - position - 1);
+                    final List<String> order = mOrders.get(getItemCount() - position - 1);
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -113,7 +124,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
                     });
                     holder.mOrderPrice.setText(AssetUtil.formatNumberRounding(Double.parseDouble(order.get(0)), mPricePrecision == -1 ? mWatchlistData.getPricePrecision() : mPricePrecision, RoundingMode.UP));
                     holder.mOrderVolume.setText(AssetUtil.formatAmountToKMB(Double.parseDouble(order.get(1)), mWatchlistData.getAmountPrecision()));
-                    float percentage = (float) getPercentage(mOrders, mOrders.size() - MAX_ITEM + position);
+                    float percentage = (float) getPercentage(mOrders, mOrders.size() - getItemCount() + position);
                     LinearLayout.LayoutParams layoutParams_colorBar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1 - percentage);
                     LinearLayout.LayoutParams layoutParams_colorBarNon = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, percentage);
                     holder.mColorBar.setLayoutParams(layoutParams_colorBar);
@@ -129,7 +140,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
 
     @Override
     public int getItemCount() {
-        return MAX_ITEM;
+        return mShowFlag == SHOW_DEFAULT ? MAX_ITEM_5 : MAX_ITEM_10;
     }
 
     @Override

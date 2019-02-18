@@ -175,7 +175,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                         if(mWatchlistData != null) {
                             mRteRequestDepth = new RteRequest(RteRequest.TYPE_SUBSCRIBE,
                                     "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
-                                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + (mPrecision == -1 ? mWatchlistData.getPricePrecision() : mPrecision) + ".5");
+                                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + (mPrecision == -1 ? mWatchlistData.getPricePrecision() : mPrecision) + ".10");
                             sendRteRquest(mRteRequestDepth);
                             mRteRequestTicker = new RteRequest(RteRequest.TYPE_SUBSCRIBE, "TICKER." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
                                     mWatchlistData.getBaseSymbol().replace(".", "_"));
@@ -532,7 +532,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         if(mRxRteWebSocket.isConnected()) {
             mRteRequestDepth = new RteRequest(RteRequest.TYPE_SUBSCRIBE,
                     "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
-                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + mWatchlistData.getPricePrecision() + ".5");
+                            mWatchlistData.getBaseSymbol().replace(".", "_") + "." + mWatchlistData.getPricePrecision() + ".10");
             sendRteRquest(mRteRequestDepth);
             mRteRequestTicker = new RteRequest(RteRequest.TYPE_SUBSCRIBE, "TICKER." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
                     mWatchlistData.getBaseSymbol().replace(".", "_"));
@@ -557,7 +557,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         }
         mRteRequestDepth = new RteRequest(RteRequest.TYPE_SUBSCRIBE,
                 "ORDERBOOK." + mWatchlistData.getQuoteSymbol().replace(".", "_") +
-                        mWatchlistData.getBaseSymbol().replace(".", "_") + "." + precision + ".5");
+                        mWatchlistData.getBaseSymbol().replace(".", "_") + "." + precision + ".10");
         sendRteRquest(mRteRequestDepth);
     }
 

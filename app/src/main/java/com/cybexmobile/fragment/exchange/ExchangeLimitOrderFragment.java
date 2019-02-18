@@ -25,8 +25,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import butterknife.BindArray;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,6 +64,11 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     MaterialSpinner mMaterialSpinner;
     @BindString(R.string.text_decimals)
     String mTextDecimals;
+    @BindArray(R.array.array_show_buy_sell)
+    String[] mBuySellArray;
+    @BindView(R.id.buysell_sp_buysell)
+    MaterialSpinner mMaterialSpinnerBuySell;
+
 
     private List<List<String>> mBuyOrders = new ArrayList<>();
     private List<List<String>> mSellOrders = new ArrayList<>();
@@ -134,6 +141,31 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                 mBuyOrderAdapter.setPricePrecision(precision);
                 mSellOrderAdapter.setPricePrecision(precision);
                 ((ExchangeFragment)getParentFragment().getParentFragment()).reSubscribeOrderBook(precision, position);
+            }
+        });
+        mMaterialSpinnerBuySell.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                switch (position) {
+                    case 0:
+                        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                        mRvBuy.setVisibility(View.VISIBLE);
+                        mRvSell.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_ONLY_BUY);
+                        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                        mRvBuy.setVisibility(View.VISIBLE);
+                        mRvSell.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_ONLY_SELL);
+                        mRvBuy.setVisibility(View.GONE);
+                        mRvSell.setVisibility(View.VISIBLE);
+                        break;
+                }
             }
         });
         return view;
@@ -239,6 +271,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
             --precision;
         }
         mMaterialSpinner.notifyItems(items);
+        mMaterialSpinnerBuySell.notifyItems(Arrays.asList(mBuySellArray));
     }
 
     private void initOrResetPrice(double price) {
@@ -273,6 +306,10 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mSellOrderAdapter.setPricePrecision(-1);
         mBuyOrders.clear();
         mSellOrders.clear();
+        mRvBuy.setVisibility(View.VISIBLE);
+        mRvSell.setVisibility(View.VISIBLE);
+        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
         mBuyOrderAdapter.notifyDataSetChanged();
         mSellOrderAdapter.notifyDataSetChanged();
     }
