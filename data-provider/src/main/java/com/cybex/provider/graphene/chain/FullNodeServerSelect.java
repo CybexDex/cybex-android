@@ -32,7 +32,6 @@ public class FullNodeServerSelect {
 
     //正式节点
     private List<String> mListNode = Arrays.asList(
-            "wss://shanghai.51nebula.com/",
             "wss://singapore-01.cybex.io/",
             "wss://tokyo-01.cybex.io/",
             "wss://korea-01.cybex.io/",
