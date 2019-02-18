@@ -168,6 +168,8 @@
     <string name="open_orders_sell_total_value">卖单总额:</string>
     <string name="open_orders_buy_total_value">买单总额:</string>
     <string name="open_orders_volume">数量:</string>
+    <string name="open_orders_title">交易对/价格/数量</string>
+    <string name="open_order_cancel_all">全部撤单</string>
 
 
     <!-- Portfolio Page Related -->
@@ -338,6 +340,7 @@
     <string name="dialog_text_confirm">确认</string>
     <string name="dialog_text_title_transfer_confirmation">转账确认</string>
     <string name="dialog_text_confirm_order_cancellation">确认取消订单</string>
+    <string name="dialog_text_confirm_all_orders_cancellation">确认取消所有订单</string>
 
     <!-- Dialog withdraw confirmation -->
     <string name="dialog_withdraw_confirmation_address">提现地址:</string>

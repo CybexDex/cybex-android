@@ -722,6 +722,21 @@ public class WalletApi {
         return operation;
     }
 
+    public Operations.cancel_all_operation getLimitOrderCancelAllOperation(ObjectId<AssetObject> assetFeeId,
+                                                                            long amountFee,
+                                                                            ObjectId<AccountObject> accountId,
+                                                                            ObjectId<AssetObject> receiveAssetId,
+                                                                            ObjectId<AssetObject> sellAssetId
+                                                                            ) {
+        Operations.cancel_all_operation operation = new Operations.cancel_all_operation();
+        operation.fee = new Asset(amountFee, assetFeeId);
+        operation.seller = accountId;
+        operation.receive_asset_id = receiveAssetId;
+        operation.sell_asset_id = sellAssetId;
+        operation.extensions = new HashSet<>();
+        return operation;
+    }
+
     public Operations.limit_order_create_operation getLimitOrderCreateOperation(ObjectId<AccountObject> accountId,
                                                                                 ObjectId<AssetObject> assetFeeId,
                                                                                 ObjectId<AssetObject> assetSellId,

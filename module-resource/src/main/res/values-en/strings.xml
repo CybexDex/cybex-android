@@ -167,6 +167,8 @@
     <string name="open_orders_sell_total_value">Sell Total Value:</string>
     <string name="open_orders_buy_total_value">Buy Total Value:</string>
     <string name="open_orders_volume">Amount:</string>
+    <string name="open_orders_title">Pairs/Price/Amount</string>
+    <string name="open_order_cancel_all">Cancel All</string>
 
     <!-- Portfolio Page Related -->
     <string name="portfolio_price">Price(CYB)</string>
@@ -335,6 +337,7 @@
     <string name="dialog_text_confirm">Confirm</string>
     <string name="dialog_text_title_transfer_confirmation">CONFIRMATION</string>
     <string name="dialog_text_confirm_order_cancellation">Confirm order cancellation</string>
+    <string name="dialog_text_confirm_all_orders_cancellation">Confirm all orders cancellation</string>
 
     <!-- Dialog withdraw confirmation -->
     <string name="dialog_withdraw_confirmation_address">Withdrawal Address:</string>

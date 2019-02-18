@@ -423,6 +423,14 @@ public class BitsharesWalletWraper {
         return mWalletApi.getLimitOrderCancelOperation(accountId, assetFeeId, limitOrderId, amountFee);
     }
 
+    public Operations.cancel_all_operation getLimitOrderCancelAllOperation(ObjectId<AssetObject> assetFeeId,
+                                                                           long amountFee,
+                                                                           ObjectId<AccountObject> sellerId,
+                                                                           ObjectId<AssetObject> receiveAssetId,
+                                                                           ObjectId<AssetObject> sellAssetId) {
+        return mWalletApi.getLimitOrderCancelAllOperation(assetFeeId, amountFee, sellerId, receiveAssetId, sellAssetId);
+    }
+
     public Operations.withdraw_deposit_history_operation getWithdrawDepositOperation(String accountName, int offset, int size, String fundType, String asset, Date expiration) {
         return mWalletApi.getWithdrawDepositOperation(accountName, offset, size, fundType, asset, expiration);
     }

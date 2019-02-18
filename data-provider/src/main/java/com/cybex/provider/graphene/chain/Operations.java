@@ -38,6 +38,7 @@ public class Operations {
     public static final int ID_CREATE_ACCOUNT_OPERATION = 5;
     public static final int ID_WITHDRAW_DEPOSIT_OPERATION = 6;
     public static final int ID_BALANCE_CLAIM_OPERATION = 37;
+    public static final int ID_CANCEL_ALL_OPERATION = 52;
 
     public static operation_id_map operations_map = new operation_id_map();
 
@@ -55,6 +56,7 @@ public class Operations {
             mHashId2Operation.put(ID_CREATE_ACCOUNT_OPERATION, account_create_operation.class);
             mHashId2Operation.put(ID_WITHDRAW_DEPOSIT_OPERATION, withdraw_deposit_history_operation.class);
             mHashId2Operation.put(ID_BALANCE_CLAIM_OPERATION, balance_claim_operation.class);
+            mHashId2Operation.put(ID_CANCEL_ALL_OPERATION, cancel_all_operation.class);
 
             mHashId2OperationFee.put(ID_TRANSER_OPERATION, transfer_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_CREATE_LIMIT_ORDER_OPERATION, limit_order_create_operation.fee_parameters_type.class);
@@ -63,6 +65,7 @@ public class Operations {
             mHashId2OperationFee.put(ID_FILL_LMMIT_ORDER_OPERATION, fill_order_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_CREATE_ACCOUNT_OPERATION, account_create_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_WITHDRAW_DEPOSIT_OPERATION, withdraw_deposit_history_operation.class);
+            mHashId2OperationFee.put(ID_CANCEL_ALL_OPERATION, cancel_all_operation.fee_parameters_type.class);
         }
 
         public Type getOperationObjectById(int nId) {
@@ -435,6 +438,81 @@ public class Operations {
         public List<ObjectId<AssetObject>> get_asset_id_list() {
             List<ObjectId<AssetObject>> listAssetId = new ArrayList<>();
             return listAssetId;
+        }
+    }
+
+    public static class cancel_all_operation implements base_operation {
+
+        class fee_parameters_type {
+            long fee = 0;
+        }
+        public Asset fee;
+        public ObjectId<AccountObject> seller;
+        public ObjectId<AssetObject> sell_asset_id;
+        public ObjectId<AssetObject> receive_asset_id;
+        public Set<Types.void_t> extensions;
+
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawObject = new RawType();
+
+            // fee
+            baseEncoder.write(rawObject.get_byte_array(fee.amount));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(fee.asset_id.get_instance()));
+
+            // seller
+            rawObject.pack(baseEncoder,
+                    UnsignedInteger.fromIntBits(seller.get_instance()));
+
+            // sell_asset_id
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(sell_asset_id.get_instance()));
+
+            // receive_asset_id
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(receive_asset_id.get_instance()));
+
+            // extensions
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(extensions.size()));
+
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
         }
     }
 

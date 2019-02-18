@@ -5,6 +5,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin">
+
+        <TextView
+            style="@style/font_gray_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_16"
+            android:alpha="0.5"
+            android:text="@string/open_orders_title"/>
+        <TextView
+            android:id="@+id/open_orders_cancel_all"
+            style="@style/font_white_dark_bold_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:drawableStart="@drawable/ic_star_border_24_px"
+            android:text="@string/open_order_cancel_all"
+            android:gravity="center_vertical"/>
+
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/open_orders_recycler_view"
         android:layout_marginTop="@dimen/margin_10"

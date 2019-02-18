@@ -172,7 +172,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showLimitOrderCancelConfirmationDialog(Context context, final ConfirmationDialogClickListener listener){
+    public static void showLimitOrderCancelConfirmationDialog(Context context, String content, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         /**
          * fix bug:CYM-503
@@ -182,6 +182,8 @@ public class CybexDialog {
         dialog.setContentView(R.layout.dialog_limit_order_cancel_confirmation);
         TextView tvTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
         tvTitle.setText(context.getResources().getString(R.string.dialog_text_title_limit_order_cancel_confirmation));
+        TextView tvContent = dialog.findViewById(R.id.cancel_content_tv);
+        tvContent.setText(content);
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         confirmButton.setOnClickListener(new View.OnClickListener() {

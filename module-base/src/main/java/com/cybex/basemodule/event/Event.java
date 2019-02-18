@@ -353,6 +353,21 @@ public class Event {
     }
 
     /**
+     * 加载全部撤单手续费
+     */
+    public static class LoadRequiredCancelAllFee {
+        private FeeAmountObject fee;
+
+        public LoadRequiredCancelAllFee(FeeAmountObject fee) {
+            this.fee = fee;
+        }
+
+        public FeeAmountObject getFee() {
+            return fee;
+        }
+    }
+
+    /**
      * 创建委单
      */
     public static class LimitOrderCreate {

@@ -110,6 +110,7 @@ public class WebSocketService extends Service {
     private ConcurrentHashMap<String, AccountObject> mAccountHashMap = new ConcurrentHashMap<>();
     private List<FeeAmountObject> mLimitOrderCreateFees = null;
     private List<FeeAmountObject> mLimitOrderCancelFees = null;
+    private List<FeeAmountObject> mLimitOrderCancelAllFee = null;
     private List<HotAssetPair> mHotAssetPair = null;
     private JsonObject mAssetPairsConfig;
     //当前行情tab页
@@ -295,6 +296,26 @@ public class WebSocketService extends Service {
         }
         try {
             BitsharesWalletWraper.getInstance().get_required_fees(assetId, operationId, operation, mLimitOrderCancelFeesCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadLimitOrderCancelAllFee(String assetId, int operationId, Operations.base_operation operation) {
+        if (mLimitOrderCancelAllFee == null) {
+            mLimitOrderCancelAllFee = Collections.synchronizedList(new ArrayList<FeeAmountObject>());
+        }
+        if (mLimitOrderCancelAllFee.size() > 0) {
+            for (FeeAmountObject fee : mLimitOrderCancelAllFee) {
+                if (!assetId.equals(fee.asset_id)) {
+                    continue;
+                }
+                EventBus.getDefault().post(new Event.LoadRequiredCancelAllFee(fee));
+                return;
+            }
+        }
+        try {
+            BitsharesWalletWraper.getInstance().get_required_fees(assetId, operationId, operation, mLimitOrderCancelAllFeeCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -642,7 +663,7 @@ public class WebSocketService extends Service {
         }
     }
 
-    private MessageCallback mLimitOrderCreateFeeCallback = new MessageCallback<Reply<List<FeeAmountObject>>>() {
+    private MessageCallback<Reply<List<FeeAmountObject>>> mLimitOrderCreateFeeCallback = new MessageCallback<Reply<List<FeeAmountObject>>>() {
         @Override
         public void onMessage(Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
@@ -659,7 +680,7 @@ public class WebSocketService extends Service {
         }
     };
 
-    private MessageCallback mLimitOrderCancelFeesCallback = new MessageCallback<Reply<List<FeeAmountObject>>>() {
+    private MessageCallback<Reply<List<FeeAmountObject>>> mLimitOrderCancelFeesCallback = new MessageCallback<Reply<List<FeeAmountObject>>>() {
         @Override
         public void onMessage(Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
@@ -668,6 +689,23 @@ public class WebSocketService extends Service {
             }
             mLimitOrderCancelFees.add(feeAmountObjects.get(0));
             EventBus.getDefault().post(new Event.LoadRequiredCancelFee(feeAmountObjects.get(0)));
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
+    private MessageCallback<Reply<List<FeeAmountObject>>> mLimitOrderCancelAllFeeCallback = new MessageCallback<Reply<List<FeeAmountObject>>>() {
+        @Override
+        public void onMessage(Reply<List<FeeAmountObject>> reply) {
+            List<FeeAmountObject> feeAmountObjects = reply.result;
+            if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
+                return;
+            }
+            mLimitOrderCancelAllFee.add(feeAmountObjects.get(0));
+            EventBus.getDefault().post(new Event.LoadRequiredCancelAllFee(feeAmountObjects.get(0)));
         }
 
         @Override

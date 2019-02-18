@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.basemodule.cache.AssetPairCache;
@@ -49,14 +50,17 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_IS_LOAD_ALL;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_IS_LOAD_ALL;
+import static com.cybex.provider.graphene.chain.Operations.ID_CANCEL_ALL_OPERATION;
 import static com.cybex.provider.graphene.chain.Operations.ID_CANCEL_LMMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_FULL_ACCOUNT_OBJECT;
@@ -71,6 +75,8 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
  */
 public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecyclerViewAdapter.OnItemClickListener {
 
+    @BindView(R.id.open_orders_cancel_all)
+    TextView mOpenOrdersCancelAll;
     @BindView(R.id.open_orders_recycler_view)
     RecyclerView mRvOpenOrders;
 
@@ -87,6 +93,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     private boolean mIsLoginIn;
     private String mName;
     private boolean mIsLoadAll;
+    private int mCancelOperationId;
 
     public static OpenOrdersFragment getInstance(WatchlistData watchlistData, boolean isLoadAll){
         OpenOrdersFragment fragment = new OpenOrdersFragment();
@@ -202,11 +209,19 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
 
     }
 
+    @OnClick(R.id.open_orders_cancel_all)
+    public void onCancelAllClicked(View view) {
+        showLoadDialog();
+        mCancelOperationId = ID_CANCEL_ALL_OPERATION;
+        loadLimitOrderCancelFee(ASSET_ID_CYB, mCancelOperationId);
+    }
+
     @Override
     public void onItemClick(OpenOrderItem itemValue) {
         showLoadDialog();
+        mCancelOperationId = ID_CANCEL_LMMIT_ORDER_OPERATION;
         mCurrOpenOrderItem = itemValue;
-        loadLimitOrderCancelFee(ASSET_ID_CYB);
+        loadLimitOrderCancelFee(ASSET_ID_CYB, mCancelOperationId);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -223,12 +238,28 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                             getContext().getResources().getString(R.string.text_not_enough),
                             R.drawable.ic_error_16px);
                 } else {
-                    loadLimitOrderCancelFee(mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.quoteAsset.id.toString() : mCurrOpenOrderItem.baseAsset.id.toString());
+                    loadLimitOrderCancelFee(mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.quoteAsset.id.toString() : mCurrOpenOrderItem.baseAsset.id.toString(), mCancelOperationId);
                 }
             }
         } else {
             if(accountBalance.balance > feeAmount.amount){
                 limitOrderCancelConfirm(mName, feeAmount);
+            } else {
+                hideLoadDialog();
+                ToastMessage.showNotEnableDepositToastMessage(getActivity(),
+                        getContext().getResources().getString(R.string.text_not_enough),
+                        R.drawable.ic_error_16px);
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadRequiredCancelAllFee(Event.LoadRequiredCancelAllFee event) {
+        FeeAmountObject feeAmountObject = event.getFee();
+        AccountBalanceObject accountBalanceObject = getBalance(feeAmountObject.asset_id, mFullAccount);
+        if (feeAmountObject.asset_id.equals(ASSET_ID_CYB)) {
+            if (accountBalanceObject.balance >= feeAmountObject.amount) {
+                limitOrderCancelConfirm(mName, feeAmountObject);
             } else {
                 hideLoadDialog();
                 ToastMessage.showNotEnableDepositToastMessage(getActivity(),
@@ -298,17 +329,25 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
         loadLimitOrderData();
     }
 
-    public void loadLimitOrderCancelFee(String assetId){
-        mWebSocketService.loadLimitOrderCancelFee(assetId, ID_CANCEL_LMMIT_ORDER_OPERATION,
-                BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
-                        ObjectId.create_from_string(ASSET_ID_CYB),
-                        mCurrOpenOrderItem.baseAsset.id,
-                        mCurrOpenOrderItem.quoteAsset.id,  0, 0, 0));
+    public void loadLimitOrderCancelFee(String assetId, int operationId) {
+        if (operationId == ID_CANCEL_ALL_OPERATION) {
+            mWebSocketService.loadLimitOrderCancelAllFee(assetId, operationId,
+            BitsharesWalletWraper.getInstance().getLimitOrderCancelAllOperation(ObjectId.create_from_string(ASSET_ID_CYB),
+                    0, ObjectId.create_from_string(""), mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getBaseId()),
+                    mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getQuoteId())));
+        } else {
+            mWebSocketService.loadLimitOrderCancelFee(assetId, operationId,
+                    BitsharesWalletWraper.getInstance().getLimitOrderCreateOperation(ObjectId.create_from_string(""),
+                            ObjectId.create_from_string(ASSET_ID_CYB),
+                            mCurrOpenOrderItem.baseAsset.id,
+                            mCurrOpenOrderItem.quoteAsset.id, 0, 0, 0));
+        }
     }
 
     private void limitOrderCancelConfirm(String userName, FeeAmountObject feeAmount){
         hideLoadDialog();
         CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(),
+                mCancelOperationId == ID_CANCEL_LMMIT_ORDER_OPERATION ? getResources().getString(R.string.dialog_text_confirm_order_cancellation) : getResources().getString(R.string.dialog_text_confirm_all_orders_cancellation),
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
@@ -336,11 +375,22 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
                 public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
-                    Operations.limit_order_cancel_operation operation = BitsharesWalletWraper.getInstance().
-                            getLimitOrderCancelOperation(mFullAccount.account.id, ObjectId.create_from_string(feeAmount.asset_id),
-                                    mCurrOpenOrderItem.limitOrder.order_id, feeAmount.amount);
-                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                            mFullAccount.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
+                    SignedTransaction signedTransaction = new SignedTransaction();
+                    if (mCancelOperationId == ID_CANCEL_LMMIT_ORDER_OPERATION) {
+                        Operations.limit_order_cancel_operation operation = BitsharesWalletWraper.getInstance().
+                                getLimitOrderCancelOperation(mFullAccount.account.id, ObjectId.create_from_string(feeAmount.asset_id),
+                                        mCurrOpenOrderItem.limitOrder.order_id, feeAmount.amount);
+                         signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                                mFullAccount.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
+                    } else {
+                        Operations.cancel_all_operation operation = BitsharesWalletWraper.getInstance().
+                                getLimitOrderCancelAllOperation(ObjectId.create_from_string(feeAmount.asset_id), feeAmount.amount, mFullAccount.account.id,
+                                        mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getQuoteId()),
+                                        mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getBaseId()));
+                        signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                                mFullAccount.account, operation, ID_CANCEL_ALL_OPERATION, reply.result);
+
+                    }
                     try {
                         BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, new MessageCallback<Reply<String>>() {
                             @Override

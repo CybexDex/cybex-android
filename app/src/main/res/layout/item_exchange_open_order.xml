@@ -55,13 +55,15 @@
         <TextView
             android:id="@+id/item_exchange_open_order_btn_cancel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_24"
             android:layout_alignParentEnd="true"
+            android:paddingStart="@dimen/padding_16"
+            android:paddingEnd="@dimen/padding_16"
             android:textAllCaps="false"
-            style="@style/font_gray_large"
+            style="@style/font_white_small"
+            android:background="@drawable/bg_btn_orange_gradient_enabled"
             android:text="@string/item_text_open_order_cancel"
-            android:gravity="center_vertical"
-            android:drawableStart="@drawable/ic_star_border_24_px"/>
+            android:gravity="center_vertical" />
 
     </RelativeLayout>
 
