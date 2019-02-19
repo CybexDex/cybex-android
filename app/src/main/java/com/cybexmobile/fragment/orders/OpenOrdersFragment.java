@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
@@ -75,6 +76,8 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
  */
 public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecyclerViewAdapter.OnItemClickListener {
 
+    @BindView(R.id.open_orders_title_rl)
+    RelativeLayout mOpenOrderTitleLayout;
     @BindView(R.id.open_orders_cancel_all)
     TextView mOpenOrdersCancelAll;
     @BindView(R.id.open_orders_recycler_view)
@@ -307,6 +310,11 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     private MessageCallback<Reply<List<LimitOrder>>> mOpendLimitOrderCallback = new MessageCallback<Reply<List<LimitOrder>>>() {
         @Override
         public void onMessage(Reply<List<LimitOrder>> reply) {
+            if (reply.result != null && reply.result.size() > 0) {
+                mOpenOrderTitleLayout.setVisibility(View.VISIBLE);
+            } else {
+                mOpenOrderTitleLayout.setVisibility(View.GONE);
+            }
             parseOpenOrderItems(reply.result);
             mOpenOrderRecyclerViewAdapter.setOpenOrderItems(mOpenOrderItems);
         }

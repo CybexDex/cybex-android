@@ -6,10 +6,12 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/open_orders_title_rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_margin"
-        android:layout_marginEnd="@dimen/activity_margin">
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:visibility="gone">
 
         <TextView
             style="@style/font_gray_small"
