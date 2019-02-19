@@ -66,8 +66,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION;
-import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_SPINNER_POSITION;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION_SPINNER_POSITION;
 import static com.cybex.provider.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
@@ -125,7 +126,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     private RteRequest mRteRequestTicker;
 
     private int mPrecision = -1;
-    private int mSpinnerPosition = 0;
+    private int mPrecisionSpinnerPosition = 0;
+    private int mShowBuySellSpinnerPosition = 0;
 
     public static ExchangeFragment getInstance(String action, WatchlistData watchlist){
         ExchangeFragment fragment = new ExchangeFragment();
@@ -154,7 +156,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             mCybExchangeFee = (FeeAmountObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_FEE);
             mCybAssetObject = (AssetObject) savedInstanceState.getSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT);
             mPrecision = savedInstanceState.getInt(BUNDLE_SAVE_PRECISION, -1);
-            mSpinnerPosition = savedInstanceState.getInt(BUNDLE_SAVE_SPINNER_POSITION, 0);
+            mPrecisionSpinnerPosition = savedInstanceState.getInt(BUNDLE_SAVE_PRECISION_SPINNER_POSITION, 0);
+            mShowBuySellSpinnerPosition = savedInstanceState.getInt(BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION, 0);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mName = sharedPreferences.getString(PREF_NAME, "");
@@ -569,7 +572,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             mSellFragment.notifyPrecisionChanged(precision, position);
         }
         mPrecision = precision;
-        mSpinnerPosition = position;
+        mPrecisionSpinnerPosition = position;
     }
 
     private void notifyExchangeFee(FeeAmountObject fee, AssetObject cybAsset){
@@ -589,6 +592,16 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         if(mSellFragment != null){
             mSellFragment.changeFullAccount(fullAccount);
         }
+    }
+
+    public void notifyShowBuySellChanged(int position) {
+        if (mBuyFragment != null) {
+            mBuyFragment.notifyShowBuySellChanged(position);
+        }
+        if (mSellFragment != null) {
+            mSellFragment.notifyShowBuySellChanged(position);
+        }
+        mShowBuySellSpinnerPosition = position;
     }
 
     private void notifyLoginStateDataChange(boolean loginState, String name){
@@ -632,7 +645,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         switch (position){
             case 0:
                 if(mBuyFragment == null){
-                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject, mPrecision, mSpinnerPosition);
+                    mBuyFragment = BuySellFragment.getInstance(ACTION_BUY, mWatchlistData, mFullAccountObject,
+                            mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject, mPrecision, mPrecisionSpinnerPosition, mShowBuySellSpinnerPosition);
                 }
                 if(mBuyFragment.isAdded()){
                     transaction.show(mBuyFragment);
@@ -645,7 +659,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case 1:
                 if(mSellFragment == null){
-                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mFullAccountObject, mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject, mPrecision, mSpinnerPosition);
+                    mSellFragment = BuySellFragment.getInstance(ACTION_SELL, mWatchlistData, mFullAccountObject,
+                            mIsLoginIn, mName, mCybExchangeFee, mCybAssetObject, mPrecision, mPrecisionSpinnerPosition, mShowBuySellSpinnerPosition);
                 }
                 if(mSellFragment.isAdded()){
                     transaction.show(mSellFragment);
@@ -680,7 +695,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         outState.putSerializable(BUNDLE_SAVE_CYB_FEE, mCybExchangeFee);
         outState.putSerializable(BUNDLE_SAVE_CYB_ASSET_OBJECT, mCybAssetObject);
         outState.putInt(BUNDLE_SAVE_PRECISION, mPrecision);
-        outState.putInt(BUNDLE_SAVE_SPINNER_POSITION, mSpinnerPosition);
+        outState.putInt(BUNDLE_SAVE_PRECISION_SPINNER_POSITION, mPrecisionSpinnerPosition);
+        outState.putInt(BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION, mShowBuySellSpinnerPosition);
         FragmentManager fragmentManager = getChildFragmentManager();
         if(mBuyFragment != null && mBuyFragment.isAdded()){
             fragmentManager.putFragment(outState, BuySellFragment.class.getSimpleName() + TAG_BUY, mBuyFragment);

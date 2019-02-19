@@ -35,11 +35,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION;
-import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_SPINNER_POSITION;
+import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SPINNER_POSITION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION_SPINNER_POSITION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
 /**
@@ -83,14 +85,17 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     private double mMarketPrice;
 
     private int mPrecision;
-    private int mSpinnerPosition;
+    private int mPrecisionSpinnerPosition;
+    private int mShowBuySellSpinnerPosition;
 
-    public static ExchangeLimitOrderFragment getInstance(WatchlistData watchlistData, int precision, int position){
+    public static ExchangeLimitOrderFragment getInstance(WatchlistData watchlistData, int precision,
+                                                         int precisionPosition, int showBuySellPosition){
         ExchangeLimitOrderFragment fragment = new ExchangeLimitOrderFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_WATCHLIST, watchlistData);
         bundle.putInt(INTENT_PARAM_PRECISION, precision);
-        bundle.putInt(INTENT_PARAM_SPINNER_POSITION, position);
+        bundle.putInt(INTENT_PARAM_PRECISION_SPINNER_POSITION, precisionPosition);
+        bundle.putInt(INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION, showBuySellPosition);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -108,12 +113,14 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         if(bundle != null){
             mWatchlistData = (WatchlistData) bundle.getSerializable(INTENT_PARAM_WATCHLIST);
             mPrecision = bundle.getInt(INTENT_PARAM_PRECISION, -1);
-            mSpinnerPosition = bundle.getInt(INTENT_PARAM_SPINNER_POSITION, 0);
+            mPrecisionSpinnerPosition = bundle.getInt(INTENT_PARAM_PRECISION_SPINNER_POSITION, 0);
+            mShowBuySellSpinnerPosition = bundle.getInt(INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION, 0);
         }
         if(savedInstanceState != null){
             mWatchlistData = (WatchlistData) savedInstanceState.getSerializable(BUNDLE_SAVE_WATCHLIST);
             mPrecision = savedInstanceState.getInt(BUNDLE_SAVE_PRECISION, -1);
-            mSpinnerPosition = savedInstanceState.getInt(BUNDLE_SAVE_SPINNER_POSITION, 0);
+            mPrecisionSpinnerPosition = savedInstanceState.getInt(BUNDLE_SAVE_PRECISION_SPINNER_POSITION, 0);
+            mShowBuySellSpinnerPosition = savedInstanceState.getInt(BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION, 0);
         }
     }
 
@@ -126,8 +133,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mRvBuy.setLayoutManager(new LinearLayoutManager(getContext()));
         mBuyOrderAdapter = new BuySellOrderRecyclerViewAdapter(getContext(), mWatchlistData, BuySellOrderRecyclerViewAdapter.TYPE_BUY, mBuyOrders);
         mSellOrderAdapter = new BuySellOrderRecyclerViewAdapter(getContext(), mWatchlistData, BuySellOrderRecyclerViewAdapter.TYPE_SELL, mSellOrders);
-        mBuyOrderAdapter.setPricePrecision(mPrecision);
-        mSellOrderAdapter.setPricePrecision(mPrecision);
+        initOrResetAdapterPrecision(mPrecision);
+        initOrResetAdapterShowBuySell(mShowBuySellSpinnerPosition);
         mBuyOrderAdapter.setOnItemClickListener(this);
         mSellOrderAdapter.setOnItemClickListener(this);
         mRvBuy.setAdapter(mBuyOrderAdapter);
@@ -135,37 +142,19 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mMaterialSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                mSpinnerPosition = position;
+                mPrecisionSpinnerPosition = position;
                 int precision = Integer.parseInt(item.substring(0, 1));
                 mPrecision = precision;
-                mBuyOrderAdapter.setPricePrecision(precision);
-                mSellOrderAdapter.setPricePrecision(precision);
+                initOrResetAdapterPrecision(precision);
                 ((ExchangeFragment)getParentFragment().getParentFragment()).reSubscribeOrderBook(precision, position);
             }
         });
         mMaterialSpinnerBuySell.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                switch (position) {
-                    case 0:
-                        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
-                        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
-                        mRvBuy.setVisibility(View.VISIBLE);
-                        mRvSell.setVisibility(View.VISIBLE);
-                        break;
-                    case 1:
-                        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_ONLY_BUY);
-                        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
-                        mRvBuy.setVisibility(View.VISIBLE);
-                        mRvSell.setVisibility(View.GONE);
-                        break;
-                    case 2:
-                        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
-                        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_ONLY_SELL);
-                        mRvBuy.setVisibility(View.GONE);
-                        mRvSell.setVisibility(View.VISIBLE);
-                        break;
-                }
+                mShowBuySellSpinnerPosition = position;
+                initOrResetAdapterShowBuySell(position);
+                ((ExchangeFragment)getParentFragment().getParentFragment()).notifyShowBuySellChanged(position);
             }
         });
         return view;
@@ -182,7 +171,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_SAVE_WATCHLIST, mWatchlistData);
         outState.putInt(BUNDLE_SAVE_PRECISION, mPrecision);
-        outState.putInt(BUNDLE_SAVE_SPINNER_POSITION, mSpinnerPosition);
+        outState.putInt(BUNDLE_SAVE_PRECISION_SPINNER_POSITION, mPrecisionSpinnerPosition);
+        outState.putInt(BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION, mShowBuySellSpinnerPosition);
     }
 
     @Override
@@ -255,7 +245,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         }
         initOrResetSpinnerData();
         if (isInit) {
-            mMaterialSpinner.setSelectedIndex(mSpinnerPosition);
+            mMaterialSpinner.setSelectedIndex(mPrecisionSpinnerPosition);
+            mMaterialSpinnerBuySell.setSelectedIndex(mShowBuySellSpinnerPosition);
         }
         String baseSymbol = AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol());
         String quoteSymbol = AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol());
@@ -296,6 +287,34 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                 AssetUtil.formatNumberRounding(marketPrice * mWatchlistData.getRmbPrice(), mWatchlistData.getRmbPrecision())));
     }
 
+    private void initOrResetAdapterPrecision(int precision) {
+        mBuyOrderAdapter.setPricePrecision(precision);
+        mSellOrderAdapter.setPricePrecision(precision);
+    }
+
+    private void initOrResetAdapterShowBuySell(int position) {
+        switch (position) {
+            case 0:
+                mBuyOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                mSellOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                mRvBuy.setVisibility(View.VISIBLE);
+                mRvSell.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                mBuyOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_ONLY_BUY);
+                mSellOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                mRvBuy.setVisibility(View.VISIBLE);
+                mRvSell.setVisibility(View.GONE);
+                break;
+            case 2:
+                mBuyOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+                mSellOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_ONLY_SELL);
+                mRvBuy.setVisibility(View.GONE);
+                mRvSell.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
     public void changeWatchlist(WatchlistData watchlist){
         this.mWatchlistData = watchlist;
         initOrResetPrice(0);
@@ -308,18 +327,23 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         mSellOrders.clear();
         mRvBuy.setVisibility(View.VISIBLE);
         mRvSell.setVisibility(View.VISIBLE);
-        mBuyOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
-        mSellOrderAdapter.setShowFlag(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+        mBuyOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
+        mSellOrderAdapter.setShowBuySell(BuySellOrderRecyclerViewAdapter.SHOW_DEFAULT);
         mBuyOrderAdapter.notifyDataSetChanged();
         mSellOrderAdapter.notifyDataSetChanged();
     }
 
     public void notifyPrecisionChanged(int precision, int position) {
         mPrecision = precision;
-        mSpinnerPosition = position;
-        mBuyOrderAdapter.setPricePrecision(precision);
-        mSellOrderAdapter.setPricePrecision(precision);
+        mPrecisionSpinnerPosition = position;
+        initOrResetAdapterPrecision(precision);
         mMaterialSpinner.setSelectedIndex(position);
+    }
+
+    public void notifyShowBuySellChanged(int position) {
+        mShowBuySellSpinnerPosition = position;
+        mMaterialSpinnerBuySell.setSelectedIndex(position);
+        initOrResetAdapterShowBuySell(position);
     }
 
     public void notifyLimitOrderDataChanged(List<List<String>> sellOrders, List<List<String>> buyOrders) {

@@ -34,7 +34,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
     private Context mContext;
     private List<List<String>> mOrders;
     private int mType;
-    private int mShowFlag = SHOW_DEFAULT;
+    private int mShowBuySell = SHOW_DEFAULT;
     private OnItemClickListener mListener;
     private WatchlistData mWatchlistData;
     private int mPricePrecision = -1;
@@ -46,8 +46,8 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
         mWatchlistData = watchlistData;
     }
 
-    public void setShowFlag(int flag) {
-        mShowFlag = flag;
+    public void setShowBuySell(int showBuySell) {
+        mShowBuySell = showBuySell;
         notifyDataSetChanged();
     }
 
@@ -140,7 +140,7 @@ public class BuySellOrderRecyclerViewAdapter extends RecyclerView.Adapter<BuySel
 
     @Override
     public int getItemCount() {
-        return mShowFlag == SHOW_DEFAULT ? MAX_ITEM_5 : MAX_ITEM_10;
+        return mShowBuySell == SHOW_DEFAULT ? MAX_ITEM_5 : MAX_ITEM_10;
     }
 
     @Override

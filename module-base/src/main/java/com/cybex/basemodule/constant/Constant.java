@@ -33,7 +33,8 @@ public class Constant {
     public static final String INTENT_PARAM_ETO_ATTEND_ETO = "intent_param_eto_attend_eto";
     public static final String INTENT_PARAM_ETO_PROJECT_ID = "intent_param_eto_project_id";
     public static final String INTENT_PARAM_PRECISION = "intent_param_precision";
-    public static final String INTENT_PARAM_SPINNER_POSITION = "intent_param_spinner_position";
+    public static final String INTENT_PARAM_PRECISION_SPINNER_POSITION = "intent_param_precision_spinner_position";
+    public static final String INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION = "intent_param_show_bug_sell_spinner_position";
     public static final String INTENT_PARAM_ITEMS = "intent_param_items";
     public static final String INTENT_PARAM_SELECTED_ITEM = "intent_param_selected_item";
     public static final String INTENT_PARAM_ADDRESS = "intent_param_address";
@@ -108,7 +109,8 @@ public class Constant {
     public static final String BUNDLE_SAVE_CYB_ASSET_OBJECT = "bundle_save_cyb_asset_object";
     public static final String BUNDLE_SAVE_FULL_ACCOUNT_OBJECT = "bundle_save_full_account_object";
     public static final String BUNDLE_SAVE_PRECISION = "bundle_save_precision";
-    public static final String BUNDLE_SAVE_SPINNER_POSITION = "bundle_save_spinner_precision";
+    public static final String BUNDLE_SAVE_PRECISION_SPINNER_POSITION = "bundle_save_spinner_precision";
+    public static final String BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION = "bundle_save_show_buy_sell_spinner_position";
     public static final String BUNDLE_SAVE_IS_LOAD_ALL = "bundle_save_is_load_all";
 
     /**

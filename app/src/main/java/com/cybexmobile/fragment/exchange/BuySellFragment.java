@@ -65,7 +65,8 @@ import butterknife.OnTouch;
 import butterknife.Unbinder;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SPINNER_POSITION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION_SPINNER_POSITION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION;
 import static com.cybex.provider.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
@@ -156,7 +157,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
     public static BuySellFragment getInstance(String action, WatchlistData watchlistData,
                                               FullAccountObject fullAccountObject, boolean isLoginIn, String name,
-                                              FeeAmountObject fee, AssetObject cybAssetObject, int precision, int position){
+                                              FeeAmountObject fee, AssetObject cybAssetObject, int precision, int precisionPosition,
+                                              int showBuySellPosition){
         BuySellFragment fragment = new BuySellFragment();
         Bundle bundle = new Bundle();
         bundle.putString(INTENT_PARAM_ACTION, action);
@@ -167,7 +169,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         bundle.putSerializable(INTENT_PARAM_FEE, fee);
         bundle.putSerializable(INTENT_PARAM_CYB_ASSET_OBJECT, cybAssetObject);
         bundle.putInt(INTENT_PARAM_PRECISION, precision);
-        bundle.putInt(INTENT_PARAM_SPINNER_POSITION, position);
+        bundle.putInt(INTENT_PARAM_PRECISION_SPINNER_POSITION, precisionPosition);
+        bundle.putInt(INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION, showBuySellPosition);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -523,7 +526,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         }
         if(mExchangeLimitOrderFragment == null){
             mExchangeLimitOrderFragment = ExchangeLimitOrderFragment.getInstance(mWatchlistData,
-                    getArguments().getInt(INTENT_PARAM_PRECISION, -1), getArguments().getInt(INTENT_PARAM_SPINNER_POSITION, 0));
+                    getArguments().getInt(INTENT_PARAM_PRECISION, -1),
+                    getArguments().getInt(INTENT_PARAM_PRECISION_SPINNER_POSITION, 0),
+                    getArguments().getInt(INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION, 0));
         }
         if(mExchangeLimitOrderFragment.isAdded()){
             transaction.show(mExchangeLimitOrderFragment);
@@ -717,6 +722,12 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     public void notifyPrecisionChanged(int precision, int position) {
         if(mExchangeLimitOrderFragment != null){
             mExchangeLimitOrderFragment.notifyPrecisionChanged(precision, position);
+        }
+    }
+
+    public void notifyShowBuySellChanged(int position) {
+        if(mExchangeLimitOrderFragment != null){
+            mExchangeLimitOrderFragment.notifyShowBuySellChanged(position);
         }
     }
 
