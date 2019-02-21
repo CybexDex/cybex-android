@@ -84,7 +84,10 @@
             android:textSize="@dimen/font_medium"
             app:ms_padding="@dimen/padding_3"
             app:ms_text_color="@color/material_spinner_text_color"
+            app:ms_pop_text_color="@color/font_color_white_dark"
+            app:ms_pop_text_selected_color="@color/primary_color_orange"
             app:ms_background_selector="@drawable/bg_spinner_selector"
+            app:ms_is_dropdown="false"
             app:ms_arrow_tint="@color/colorAccent"/>
 
         <com.jaredrummler.materialspinner.MaterialSpinner
@@ -97,7 +100,10 @@
             android:textSize="@dimen/font_medium"
             app:ms_padding="@dimen/padding_3"
             app:ms_text_color="@color/material_spinner_text_color"
+            app:ms_pop_text_color="@color/font_color_white_dark"
+            app:ms_pop_text_selected_color="@color/primary_color_orange"
             app:ms_background_selector="@drawable/bg_spinner_selector"
+            app:ms_is_dropdown="false"
             app:ms_arrow_tint="@color/colorAccent"/>
 
     </LinearLayout>

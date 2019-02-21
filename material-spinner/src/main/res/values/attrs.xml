@@ -22,7 +22,10 @@
     <attr format="boolean" name="ms_hide_arrow"/>
     <attr format="color" name="ms_background_color"/>
     <attr format="color" name="ms_text_color"/>
+    <attr format="color" name="ms_pop_text_color"/>
+    <attr format="color" name="ms_pop_text_selected_color"/>
     <attr format="dimension" name="ms_dropdown_max_height"/>
+    <attr format="boolean" name="ms_is_dropdown"/>
     <attr format="dimension" name="ms_padding" />
     <attr format="dimension" name="ms_dropdown_height">
       <enum name="fill_parent" value="-1"/>

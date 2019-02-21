@@ -22,6 +22,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +34,8 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
 
   private final Context context;
   private int selectedIndex;
+  private int textSelectedColor;
   private int textColor;
-  private int backgroundSelector;
-  private boolean isHintEnabled;
 
   public MaterialSpinnerBaseAdapter(Context context) {
     this.context = context;
@@ -46,11 +46,7 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
     if (convertView == null) {
       LayoutInflater inflater = LayoutInflater.from(context);
       convertView = inflater.inflate(R.layout.ms__list_item, parent, false);
-      textView = (TextView) convertView.findViewById(R.id.tv_tinted_spinner);
-      textView.setTextColor(textColor);
-      if (backgroundSelector != 0) {
-        textView.setBackgroundResource(backgroundSelector);
-      }
+      textView = convertView.findViewById(R.id.tv_tinted_spinner);
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         Configuration config = context.getResources().getConfiguration();
         if (config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
@@ -61,6 +57,7 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
     } else {
       textView = ((ViewHolder) convertView.getTag()).textView;
     }
+    textView.setTextColor(selectedIndex == position ? textSelectedColor : textColor);
     textView.setText(getItemText(position));
     return convertView;
   }
@@ -69,12 +66,16 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
     return getItem(position).toString();
   }
 
-  public int getSelectedIndex() {
-    return selectedIndex;
+  public void setSelectedIndex(int index) {
+    selectedIndex = index;
   }
 
-  public void notifyItemSelected(int index) {
-    selectedIndex = index;
+  public void setTextColor(int color) {
+    textColor = color;
+  }
+
+  public void setTextSelectedColor(int color) {
+    textSelectedColor = color;
   }
 
   @Override public long getItemId(int position) {
@@ -90,24 +91,6 @@ public abstract class MaterialSpinnerBaseAdapter<T> extends BaseAdapter {
   public abstract List<T> getItems();
 
   public abstract <T> void setItems(List<T> items);
-
-  public void setHintEnabled(boolean isHintEnabled) {
-    this.isHintEnabled = isHintEnabled;
-  }
-
-  public boolean isHintEnabled() {
-    return this.isHintEnabled;
-  }
-
-  public MaterialSpinnerBaseAdapter<T> setTextColor(@ColorInt int textColor) {
-    this.textColor = textColor;
-    return this;
-  }
-
-  public MaterialSpinnerBaseAdapter<T> setBackgroundSelector(@DrawableRes int backgroundSelector) {
-    this.backgroundSelector = backgroundSelector;
-    return this;
-  }
 
   private static class ViewHolder {
 

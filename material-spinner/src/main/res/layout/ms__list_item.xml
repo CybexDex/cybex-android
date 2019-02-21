@@ -25,10 +25,6 @@
     android:textSize="@dimen/font_medium"
     android:layout_gravity="start|center_vertical"
     android:ellipsize="marquee"
-    android:gravity="center_vertical"
-    android:paddingLeft="@dimen/padding_3"
-    android:paddingStart="@dimen/padding_3"
-    android:paddingRight="@dimen/padding_3"
-    android:paddingEnd="@dimen/padding_3"
+    android:gravity="center"
     android:singleLine="true" />
 

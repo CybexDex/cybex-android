@@ -19,7 +19,6 @@ package com.jaredrummler.materialspinner;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -33,7 +32,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -53,14 +51,12 @@ import java.util.List;
  */
 public class MaterialSpinner extends AppCompatTextView {
 
-  private OnNothingSelectedListener onNothingSelectedListener;
   private OnItemSelectedListener onItemSelectedListener;
   private MaterialSpinnerBaseAdapter adapter;
   private PopupWindow popupWindow;
   private ListView listView;
   private Drawable arrowDrawable;
   private boolean hideArrow;
-  private boolean nothingSelected;
   private int popupWindowMaxHeight;
   private int popupWindowHeight;
   private int selectedIndex;
@@ -69,8 +65,9 @@ public class MaterialSpinner extends AppCompatTextView {
   private int arrowColor;
   private int arrowColorDisabled;
   private int textColor;
-  private int hintColor;
-  private String hintText;
+  private int popTextColor;
+  private int popSelectedTextColor;
+  private boolean isDropDown = true;//默认dropdown
   private int drawableLevelValue = 10000;
 
   public MaterialSpinner(Context context) {
@@ -98,23 +95,21 @@ public class MaterialSpinner extends AppCompatTextView {
       backgroundColor = ta.getColor(R.styleable.MaterialSpinner_ms_background_color, Color.WHITE);
       backgroundSelector = ta.getResourceId(R.styleable.MaterialSpinner_ms_background_selector, 0);
       textColor = ta.getColor(R.styleable.MaterialSpinner_ms_text_color, defaultColor);
-      hintColor = ta.getColor(R.styleable.MaterialSpinner_ms_hint_color, defaultColor);
+      popTextColor = ta.getColor(R.styleable.MaterialSpinner_ms_pop_text_color, getResources().getColor(R.color.font_color_white_dark));
+      popSelectedTextColor = ta.getColor(R.styleable.MaterialSpinner_ms_pop_text_selected_color, getResources().getColor(R.color.font_color_white_dark));
       arrowColor = ta.getColor(R.styleable.MaterialSpinner_ms_arrow_tint, textColor);
       hideArrow = ta.getBoolean(R.styleable.MaterialSpinner_ms_hide_arrow, false);
-      hintText = ta.getString(R.styleable.MaterialSpinner_ms_hint) == null ? ""
-          : ta.getString(R.styleable.MaterialSpinner_ms_hint);
       popupWindowMaxHeight = ta.getDimensionPixelSize(R.styleable.MaterialSpinner_ms_dropdown_max_height, 0);
       popupWindowHeight = ta.getLayoutDimension(R.styleable.MaterialSpinner_ms_dropdown_height, WindowManager.LayoutParams.WRAP_CONTENT);
+      isDropDown = ta.getBoolean(R.styleable.MaterialSpinner_ms_is_dropdown, true);
       arrowColorDisabled = Utils.lighter(arrowColor, 0.8f);
     } finally {
       ta.recycle();
     }
 
-    nothingSelected = true;
-
     int left, right, bottom, top;
     left = right = bottom = top = padding;
-    setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+    setGravity(Gravity.CENTER);
     setClickable(true);
     setPadding(left, top, right, bottom);
     setBackgroundResource(R.drawable.ms__selector);
@@ -136,22 +131,18 @@ public class MaterialSpinner extends AppCompatTextView {
     listView = new ListView(context);
     listView.setId(getId());
     listView.setDivider(null);
-    listView.setVerticalScrollBarEnabled(true);
+    listView.setVerticalScrollBarEnabled(false);
     listView.setItemsCanFocus(true);
     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
       @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (position >= selectedIndex
-            && position < adapter.getCount()
-            && adapter.getItems().size() != 1
-            && TextUtils.isEmpty(hintText)) {
-          position++;
+        if (position == selectedIndex) {
+          collapse();
+          return;
         }
         selectedIndex = position;
-        nothingSelected = false;
         Object item = adapter.get(position);
-        adapter.notifyItemSelected(position);
-        setTextColor(textColor);
+        adapter.setSelectedIndex(position);
         setText(item.toString());
         collapse();
         if (onItemSelectedListener != null) {
@@ -165,29 +156,20 @@ public class MaterialSpinner extends AppCompatTextView {
     popupWindow.setContentView(listView);
     popupWindow.setOutsideTouchable(true);
     popupWindow.setFocusable(true);
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      popupWindow.setElevation(16);
-      popupWindow.setBackgroundDrawable(Utils.getDrawable(context, R.drawable.ms__drawable));
-    } else {
-      popupWindow.setBackgroundDrawable(Utils.getDrawable(context, R.drawable.ms__drop_down_shadow));
-    }
+    popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_spinner_drop_direction));
 
     if (backgroundColor != Color.WHITE) { // default color is white
       setBackgroundColor(backgroundColor);
     } else if (backgroundSelector != 0) {
       setBackgroundResource(backgroundSelector);
     }
+
     if (textColor != defaultColor) {
       setTextColor(textColor);
     }
-
     popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
 
       @Override public void onDismiss() {
-        if (nothingSelected && onNothingSelectedListener != null) {
-          onNothingSelectedListener.onNothingSelected(MaterialSpinner.this);
-        }
         if (!hideArrow) {
           animateArrow(false);
         }
@@ -254,16 +236,10 @@ public class MaterialSpinner extends AppCompatTextView {
     super.setTextColor(color);
   }
 
-  public void setHintColor(int color) {
-    hintColor = color;
-    super.setTextColor(color);
-  }
-
   @Override public Parcelable onSaveInstanceState() {
     Bundle bundle = new Bundle();
     bundle.putParcelable("state", super.onSaveInstanceState());
     bundle.putInt("selected_index", selectedIndex);
-    bundle.putBoolean("nothing_selected", nothingSelected);
     if (popupWindow != null) {
       bundle.putBoolean("is_popup_showing", popupWindow.isShowing());
       collapse();
@@ -277,16 +253,10 @@ public class MaterialSpinner extends AppCompatTextView {
     if (savedState instanceof Bundle) {
       Bundle bundle = (Bundle) savedState;
       selectedIndex = bundle.getInt("selected_index");
-      nothingSelected = bundle.getBoolean("nothing_selected");
       if (adapter != null) {
-        if (nothingSelected && !TextUtils.isEmpty(hintText)) {
-          setHintColor(hintColor);
-          setText(hintText);
-        } else {
-          setTextColor(textColor);
-          setText(adapter.get(selectedIndex).toString());
-        }
-        adapter.notifyItemSelected(selectedIndex);
+        setTextColor(textColor);
+        setText(adapter.get(selectedIndex).toString());
+        adapter.setSelectedIndex(selectedIndex);
       }
       if (bundle.getBoolean("is_popup_showing")) {
         if (popupWindow != null) {
@@ -326,7 +296,7 @@ public class MaterialSpinner extends AppCompatTextView {
   public void setSelectedIndex(int position) {
     if (adapter != null) {
       if (position >= 0 && position <= adapter.getCount()) {
-        adapter.notifyItemSelected(position);
+        adapter.setSelectedIndex(position);
         selectedIndex = position;
         setText(adapter.get(position).toString());
       } else {
@@ -342,15 +312,6 @@ public class MaterialSpinner extends AppCompatTextView {
    */
   public void setOnItemSelectedListener(@Nullable OnItemSelectedListener onItemSelectedListener) {
     this.onItemSelectedListener = onItemSelectedListener;
-  }
-
-  /**
-   * Register a callback to be invoked when the {@link PopupWindow} is shown but the user didn't select an item.
-   *
-   * @param onNothingSelectedListener the callback that will run
-   */
-  public void setOnNothingSelectedListener(@Nullable OnNothingSelectedListener onNothingSelectedListener) {
-    this.onNothingSelectedListener = onNothingSelectedListener;
   }
 
   /**
@@ -370,8 +331,9 @@ public class MaterialSpinner extends AppCompatTextView {
    * @param <T> The item type
    */
   public <T> void setItems(@NonNull List<T> items) {
-    adapter = new MaterialSpinnerAdapter<>(getContext(), items).setBackgroundSelector(backgroundSelector)
-        .setTextColor(textColor);
+    adapter = new MaterialSpinnerAdapter<>(getContext(), items);
+    adapter.setTextColor(popTextColor);
+    adapter.setTextSelectedColor(popSelectedTextColor);
     setAdapterInternal(adapter);
   }
 
@@ -381,7 +343,7 @@ public class MaterialSpinner extends AppCompatTextView {
     } else {
       selectedIndex = 0;
       setText((String)items.get(selectedIndex));
-      adapter.notifyItemSelected(selectedIndex);
+      adapter.setSelectedIndex(selectedIndex);
       adapter.setItems(items);
       adapter.notifyDataSetChanged();
     }
@@ -394,7 +356,7 @@ public class MaterialSpinner extends AppCompatTextView {
     } else {
       selectedIndex = index;
       setText((String)items.get(selectedIndex));
-      adapter.notifyItemSelected(selectedIndex);
+      adapter.setSelectedIndex(selectedIndex);
       adapter.setItems(items);
       adapter.notifyDataSetChanged();
     }
@@ -421,9 +383,9 @@ public class MaterialSpinner extends AppCompatTextView {
    * @param adapter The list adapter
    */
   public void setAdapter(@NonNull ListAdapter adapter) {
-    this.adapter = new MaterialSpinnerAdapterWrapper(getContext(), adapter)
-        .setBackgroundSelector(backgroundSelector)
-        .setTextColor(textColor);
+    this.adapter = new MaterialSpinnerAdapterWrapper(getContext(), adapter);
+    this.adapter.setTextColor(popTextColor);
+    this.adapter.setTextSelectedColor(popSelectedTextColor);
     setAdapterInternal(this.adapter);
   }
 
@@ -435,25 +397,19 @@ public class MaterialSpinner extends AppCompatTextView {
    */
   public <T> void setAdapter(MaterialSpinnerAdapter<T> adapter) {
     this.adapter = adapter;
-    this.adapter.setTextColor(textColor);
-    this.adapter.setBackgroundSelector(backgroundSelector);
+    this.adapter.setTextColor(popTextColor);
+    this.adapter.setTextSelectedColor(popSelectedTextColor);
     setAdapterInternal(adapter);
   }
 
   private void setAdapterInternal(@NonNull MaterialSpinnerBaseAdapter adapter) {
-    adapter.setHintEnabled(!TextUtils.isEmpty(hintText));
     listView.setAdapter(adapter);
     if (selectedIndex >= adapter.getCount()) {
       selectedIndex = 0;
     }
     if (adapter.getItems().size() > 0) {
-      if (nothingSelected && !TextUtils.isEmpty(hintText)) {
-        setText(hintText);
-        setHintColor(hintColor);
-      } else {
-        setTextColor(textColor);
-        setText(adapter.get(selectedIndex).toString());
-      }
+      setTextColor(textColor);
+      setText(adapter.get(selectedIndex).toString());
     } else {
       setText("");
     }
@@ -466,8 +422,11 @@ public class MaterialSpinner extends AppCompatTextView {
     if (!hideArrow) {
       animateArrow(true);
     }
-    nothingSelected = true;
-    popupWindow.showAsDropDown(this);
+    if (isDropDown) {
+        popupWindow.showAsDropDown(this);
+    } else {
+        popupWindow.showAsDropDown(this,  0, -popupWindow.getHeight() - this.getHeight());
+    }
   }
 
   /**
@@ -533,9 +492,9 @@ public class MaterialSpinner extends AppCompatTextView {
         && popupWindowHeight <= listViewHeight) {
       return popupWindowHeight;
     } else if (listViewHeight == 0 && adapter.getItems().size() == 1) {
-      return (int) itemHeight;
+      return (int) itemHeight + 40;
     }
-    return (int) listViewHeight;
+    return (int) listViewHeight + 40;
   }
 
   public void setDrawableLevelValue(int drawableLevelValue) {
@@ -580,16 +539,4 @@ public class MaterialSpinner extends AppCompatTextView {
     void onItemSelected(MaterialSpinner view, int position, long id, T item);
   }
 
-  /**
-   * Interface definition for a callback to be invoked when the dropdown is dismissed and no item was selected.
-   */
-  public interface OnNothingSelectedListener {
-
-    /**
-     * Callback method to be invoked when the {@link PopupWindow} is dismissed and no item was selected.
-     *
-     * @param spinner the {@link MaterialSpinner}
-     */
-    void onNothingSelected(MaterialSpinner spinner);
-  }
 }

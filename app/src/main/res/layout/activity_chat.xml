@@ -62,7 +62,7 @@
             android:gravity="center"
             android:layout_above="@+id/layout_footer"
             android:layout_marginBottom="@dimen/margin_6"
-            android:background="@drawable/bg_chat_message_count"
+            android:background="@drawable/bg_pop_drop_up"
             android:visibility="gone"/>
 
         <FrameLayout
