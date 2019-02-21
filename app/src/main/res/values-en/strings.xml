@@ -6,5 +6,4 @@
     <string name="error_connect_card">Please scan your eNotes with the phone.</string>
     <string name="error_connect_card_ble">Please connect the bluetooth NFC reader.</string>
     <string name="please_right_card">Please scan the correct card!</string>
-
 </resources>

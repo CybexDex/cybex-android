@@ -3,6 +3,7 @@ package com.cybexmobile.fragment.exchange;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,7 +26,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.MessageCallback;
@@ -63,6 +66,8 @@ import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 import butterknife.Unbinder;
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.utils.ReaderUtils;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SPINNER_POSITION;
@@ -763,11 +768,53 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         });
     }
 
+    protected boolean isLoginFromENotes() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("from", true);
+    }
+
+    protected String getLoginPublicKey() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("key", "");
+    }
+
+    protected void showToast(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+
+    }
+
     /**
      * 挂单
      */
     private void toExchange(){
+        BaseActivity activity = (BaseActivity) getActivity();
         try {
+            if (isLoginFromENotes()) {
+
+                CardManager cardManager = activity.cardManager;
+                if (!cardManager.isConnected()) {
+                    if (ReaderUtils.supportNfc(activity))
+                        showToast(activity, getString(R.string.error_connect_card));
+                    else
+                        showToast(activity, getString(R.string.error_connect_card_ble));
+                    return;
+                }
+                if (!cardManager.isPresent()) {
+                    if (ReaderUtils.supportNfc(activity))
+                        showToast(activity, getString(R.string.error_connect_card));
+                    else
+                        showToast(activity, getString(R.string.error_connect_card_ble));
+                    return;
+                }
+                if (activity.currentCard != null && !activity.currentCard.getCurrencyPubKey().equals(getLoginPublicKey())) {
+                    showToast(activity, getString(R.string.please_right_card));
+                    return;
+                }
+                if(BaseActivity.cardApp!=null){
+                    activity.currentCard = BaseActivity.cardApp;
+                }
+            }
+
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
                 public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
@@ -786,8 +833,13 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                             mCurrentAction.equals(ACTION_BUY) ? mWatchlistData.getQuoteAsset().id : mWatchlistData.getBaseAsset().id,
                             mIsCybBalanceEnough ? mCybExchangeFee.amount : mBaseOrQuoteExchangeFee.amount,
                             amountSell, amountReceive);
-                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                            mFullAccountObject.account, operation, ID_CREATE_LIMIT_ORDER_OPERATION, reply.result);
+                    SignedTransaction signedTransaction;
+                    if (activity.currentCard == null)
+                        signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                                mFullAccountObject.account, operation, ID_CREATE_LIMIT_ORDER_OPERATION, reply.result);
+                    else
+                        signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactionByENotes(activity.cardManager, activity.currentCard,
+                                mFullAccountObject.account, operation, ID_CREATE_LIMIT_ORDER_OPERATION, reply.result);
                     try {
                         BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mLimitOrderCreateCallback);
                     } catch (NetworkStatusException e) {

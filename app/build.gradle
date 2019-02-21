@@ -133,7 +133,8 @@ dependencies {
     //Jadeticon
     implementation 'com.github.WycliffeAssociates:jdenticon-kotlin:-SNAPSHOT'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
+    //eNotes
+    implementation 'io.enotes.sdk:eNotes:1.0.0'
     implementation project(':MPChartLib')
     if (isModule == "true") {
         implementation project(':module-eto')

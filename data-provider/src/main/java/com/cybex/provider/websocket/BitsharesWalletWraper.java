@@ -37,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.db.entity.Card;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -440,6 +442,11 @@ public class BitsharesWalletWraper {
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
 
         return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
+    }
+
+    public SignedTransaction getSignedTransactionByENotes(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
+
+        return mWalletApi.getSignedTransactionByENotes(cardManager, card, accountObject, operation, operationId, dynamicGlobalPropertyObject);
     }
 
     public String getChatMessageSignature(AccountObject accountObject, String message){

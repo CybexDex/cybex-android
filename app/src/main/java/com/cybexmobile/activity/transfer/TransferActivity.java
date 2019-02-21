@@ -82,6 +82,8 @@ import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.db.entity.Card;
+import io.enotes.sdk.utils.ReaderUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -166,7 +168,7 @@ public class TransferActivity extends BaseActivity implements
 
     private int mTotalLockTime;
     private int mLockTimeUnit = 1;
-
+    private Card mCard;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -832,7 +834,7 @@ public class TransferActivity extends BaseActivity implements
         resetTransferButtonState();
         checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false);
     }
-
+    private UnlockDialog unlockDialog;
     /**
      * 检查钱包锁定状态 -> 加载转账手续费
      */
@@ -840,8 +842,8 @@ public class TransferActivity extends BaseActivity implements
         if (mFromAccountObject == null) {
             return;
         }
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
+        if (BitsharesWalletWraper.getInstance().is_locked() && !isLoginFromENotes()) {
+            unlockDialog = CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
                     mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
                         @Override
                         public void onUnLocked(String password) {
@@ -853,12 +855,19 @@ public class TransferActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    protected void readCardOnSuccess(Card card) {
+        super.readCardOnSuccess(card);
+        mCard = card;
+        if (unlockDialog != null) unlockDialog.dismiss();
+    }
+
     /**
      * 检查钱包锁定状态 -> 加载转账手续费 -> 转账
      */
     private void checkIsLockAndTransfer() {
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject, mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
+        if (BitsharesWalletWraper.getInstance().is_locked() && !isLoginFromENotes()) {
+            unlockDialog = CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject, mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
                     showTransferConfirmationDialog();
@@ -901,6 +910,29 @@ public class TransferActivity extends BaseActivity implements
         if (mFromAccountObject == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null) {
             return;
         }
+        if (isLoginFromENotes()) {
+            if (!cardManager.isConnected()) {
+                if (ReaderUtils.supportNfc(this))
+                    showToast(this, getString(R.string.error_connect_card));
+                else
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                return;
+            }
+            if (!cardManager.isPresent()) {
+                if (ReaderUtils.supportNfc(this))
+                    showToast(this, getString(R.string.error_connect_card));
+                else
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                return;
+            }
+            if (mCard != null && !mCard.getCurrencyPubKey().equals(getLoginPublicKey())) {
+                showToast(this, getString(R.string.please_right_card));
+                return;
+            }
+            if (BaseActivity.cardApp != null) {
+                mCard = BaseActivity.cardApp;
+            }
+        }
         showLoadDialog();
         Operations.base_operation transferOperation;
         if (mSwLockTime.isChecked() && mSelectedLockTimePublicKey != null && mTotalLockTime != 0) {
@@ -934,8 +966,14 @@ public class TransferActivity extends BaseActivity implements
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
                 public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
-                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                            mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
+                    SignedTransaction signedTransaction;
+                    if (mCard == null) {
+                        signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                                mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
+                    } else {
+                        signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactionByENotes(cardManager, mCard,
+                                mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
+                    }
                     try {
                         BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mTransferCallback);
                     } catch (NetworkStatusException e) {

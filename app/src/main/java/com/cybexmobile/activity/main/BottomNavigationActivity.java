@@ -4,8 +4,13 @@ import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -19,9 +24,13 @@ import android.widget.Toast;
 import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.activity.markets.MarketsActivity;
@@ -37,6 +46,7 @@ import com.cybexmobile.fragment.main.CybexMainFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
 import com.cybexmobile.R;
 
+import org.ethereum.util.ByteUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -44,11 +54,17 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import io.enotes.sdk.repository.card.Command;
+import io.enotes.sdk.repository.card.CommandException;
+import io.enotes.sdk.repository.card.TLVBox;
+import io.enotes.sdk.repository.db.entity.Card;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
@@ -104,6 +120,73 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         }
     }
 
+    @Override
+    protected void readCardOnSuccess(Card card) {
+        super.readCardOnSuccess(card);
+        if (mBottomNavigationView.getSelectedItemId() != R.id.navigation_exchange) {
+            try {
+                byte[] bytes = ByteUtil.hexStringToBytes(cardManager.transmitApdu(Command.newCmd().setDesc("cybex_account").setCmdStr("00CA0032")));
+                TLVBox tlvBox = TLVBox.parse(bytes, 0, bytes.length);
+                String stringValue = new String(tlvBox.getBytesValue(0x32));
+                setLoginPublicKey(card.getCurrencyPubKey());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loginByENotes(stringValue, "123456789");
+                    }
+                }, 500);
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loginByENotes(String email, String password) {
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            return;
+        }
+        showLoadDialog(true);
+        try {
+            BitsharesWalletWraper.getInstance().get_account_object(email, new MessageCallback<Reply<AccountObject>>() {
+                @Override
+                public void onMessage(Reply<AccountObject> reply) {
+                    AccountObject accountObject = reply.result;
+                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, email, password);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideLoadDialog();
+                            setLoginFrom(true);
+                            EventBus.getDefault().post(new Event.LoginIn(email));
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                            sharedPreferences.edit().putString(PREF_NAME, email).apply();
+
+                            mBottomNavigationView.setSelectedItemId(R.id.navigation_account);
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure() {
+                    hideLoadDialog();
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseIntent() {
+        Intent intent = getIntent();
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        if (tag != null) {// from nfc
+            cardManager.parseNfcTag(tag);
+        }
+
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onConfigChanged(Event.ConfigChanged event) {
         isRecreate = true;
@@ -156,6 +239,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         }
         LimitOrderWrapper.getInstance().disconnect();
         BitsharesWalletWraper.getInstance().cancelLockWalletTime();
+        BaseActivity.cardApp=null;
     }
 
     @Override
@@ -170,6 +254,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         super.onNewIntent(intent);
         //register after recreate that activity
         isRecreate = true;
+        parseIntent();
         recreate();
     }
 

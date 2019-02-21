@@ -327,7 +327,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showUnlockWalletDialog(FragmentManager fragmentManager,
+    public static UnlockDialog showUnlockWalletDialog(FragmentManager fragmentManager,
                                               AccountObject accountObject,
                                               String username,
                                               UnlockDialog.UnLockDialogClickListener unLockListener,
@@ -340,13 +340,14 @@ public class CybexDialog {
         dialog.show(fragmentManager, UnlockDialog.class.getSimpleName());
         dialog.setUnLockListener(unLockListener);
         dialog.setOnDismissListener(onDismissListener);
+        return dialog;
     }
 
-    public static void showUnlockWalletDialog(FragmentManager fragmentManager,
+    public static UnlockDialog showUnlockWalletDialog(FragmentManager fragmentManager,
                                               AccountObject accountObject,
                                               String username,
                                               UnlockDialog.UnLockDialogClickListener unLockListener){
-        showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
+        return showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
     }
 
     public static void showAddAddressDialog(Context context, String message, String subMessage,
