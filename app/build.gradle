@@ -11,22 +11,22 @@ android {
     def keystoreFile = ''
     def keystorePassword = ''
 
-//    Properties properties = new Properties()
-//    properties.load(project.rootProject.file('keystores/release.keystore.properties').newDataInputStream())
-//
-//    keystoreAlias = properties.getProperty("key.alias")
-//    keystoreAliasPassword = properties.getProperty("key.alias.password")
-//    keystoreFile = file(properties.getProperty("key.path"))
-//    keystorePassword = properties.getProperty("key.store.password")
-//
-//    signingConfigs {
-//        release {
-//            keyAlias keystoreAlias
-//            keyPassword keystoreAliasPassword
-//            storeFile keystoreFile
-//            storePassword keystorePassword
-//        }
-//    }
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('keystores/release.keystore.properties').newDataInputStream())
+
+    keystoreAlias = properties.getProperty("key.alias")
+    keystoreAliasPassword = properties.getProperty("key.alias.password")
+    keystoreFile = file(properties.getProperty("key.path"))
+    keystorePassword = properties.getProperty("key.store.password")
+
+    signingConfigs {
+        release {
+            keyAlias keystoreAlias
+            keyPassword keystoreAliasPassword
+            storeFile keystoreFile
+            storePassword keystorePassword
+        }
+    }
 
     flavorDimensions "default"
     productFlavors {
@@ -67,7 +67,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
     }
     lintOptions {
