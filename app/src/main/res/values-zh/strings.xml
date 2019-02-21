@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CybexDex</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_connect_card">请将eNotes靠近手机。</string>
+    <string name="error_connect_card_ble">请将eNotes靠近蓝牙NFC读卡器。</string>
+    <string name="please_right_card">请放置正确的eNotes！</string>
+</resources>

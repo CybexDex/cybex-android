@@ -61,6 +61,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.db.entity.Card;
+
 public class WalletApi {
 
     class wallet_object {
@@ -826,6 +829,34 @@ public class WalletApi {
                 }
             }
         }
+        return signedTransaction;
+    }
+
+    public SignedTransaction getSignedTransactionByENotes(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Operations.operation_type operationType = new Operations.operation_type();
+        operationType.nOperationType = operationId;
+        operationType.operationContent = operation;
+        signedTransaction.operationTypes = new ArrayList<>();
+        signedTransaction.operationTypes.add(operationType);
+        signedTransaction.operations = new ArrayList<>();
+        List<Object> listInOperations = new ArrayList<>();
+        listInOperations.add(operationId);
+        listInOperations.add(operation);
+        signedTransaction.operations.add(listInOperations);
+        signedTransaction.extensions = new HashSet<>();
+
+        signedTransaction.set_reference_block(dynamicGlobalPropertyObject.head_block_id);
+
+        Date dateObject = dynamicGlobalPropertyObject.time;
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(dateObject);
+        calender.add(Calendar.SECOND, 30);
+        dateObject = calender.getTime();
+
+        signedTransaction.set_expiration(dateObject);
+        Types.private_key_type privateKey = null;
+        signedTransaction.signByENotes(cardManager, card, privateKey, mWebSocketClient.getmChainIdObject());
         return signedTransaction;
     }
 

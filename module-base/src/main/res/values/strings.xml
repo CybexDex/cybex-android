@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bluetooth_connect_fail">Bluetooth connection lost!</string>
+    <string name="invalid_card">Invalid eNotes!</string>
+    <string name="not_support_card">No support for the card. Please upgrade the client.</string>
+    <string name="can_not_find_card">Can not find card</string>
+    <string name="tag_connection_lost">Scan failed, please do not move your eNotes when scanning.</string>
+    <string name="network_unavailable">The network connection is not available, please check the network setting.</string>
+
+</resources>
