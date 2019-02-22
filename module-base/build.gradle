@@ -57,4 +57,7 @@ dependencies {
     //rxpermissions
     api 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
 
+    //eNotes
+    api 'io.enotes.sdk:library:1.0.0'
+
 }

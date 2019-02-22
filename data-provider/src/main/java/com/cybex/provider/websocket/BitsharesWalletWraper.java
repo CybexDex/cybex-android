@@ -37,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.db.entity.Card;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -456,6 +458,11 @@ public class BitsharesWalletWraper {
 
     public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
         return mWalletApi.getWithdrawDepositSignature(accountObject, operation);
+    }
+
+    public SignedTransaction getSignedTransactionByENotes(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
+
+        return mWalletApi.getSignedTransactionByENotes(cardManager, card, accountObject, operation, operationId, dynamicGlobalPropertyObject);
     }
 
     public String getMemoMessage(MemoData memoData) {

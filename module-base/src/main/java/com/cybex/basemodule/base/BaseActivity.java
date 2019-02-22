@@ -3,9 +3,12 @@ package com.cybex.basemodule.base;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -22,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 import com.cybex.basemodule.R;
@@ -33,6 +37,8 @@ import com.cybex.basemodule.injection.component.DaggerBaseActivityComponent;
 import com.cybex.basemodule.injection.module.BaseActivityModule;
 import com.cybex.basemodule.receiver.NetWorkBroadcastReceiver;
 import com.cybex.basemodule.receiver.NetworkChangedCallback;
+import com.cybex.provider.graphene.chain.PublicKey;
+import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.utils.NetworkUtils;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -45,6 +51,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 import java.util.Locale;
 
+import io.enotes.sdk.constant.ErrorCode;
+import io.enotes.sdk.constant.Status;
+import io.enotes.sdk.core.Callback;
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.base.Resource;
+import io.enotes.sdk.repository.db.entity.Card;
+import io.enotes.sdk.utils.Utils;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -71,6 +84,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     private NetworkChangedCallback mNetworkChangedCallback;
     private BaseActivityComponent mBaseActivityComponent;
 
+    public CardManager cardManager;
+    public Card currentCard;
+    public static Card cardApp;
+
+
+    protected Dialog dialog;
+    private int tagLostCount;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(updateResources(newBase));
@@ -94,6 +115,99 @@ public abstract class BaseActivity extends AppCompatActivity {
             registerNetWorkReceiver();
             onLazyLoad();
         }
+        cardManager = new CardManager(this);
+        setCardReaderCallback();
+    }
+
+    private void setCardReaderCallback() {
+        if (cardManager != null) {
+            cardManager.setReadCardCallback(new Callback<Card>() {
+                @Override
+                public void onCallBack(Resource<Card> resource) {
+                    if (resource.status == Status.SUCCESS) {
+                        BaseActivity.this.readCardOnSuccess(resource.data);
+                    } else if (resource.status == Status.NFC_CONNECTED) {
+                        BaseActivity.this.nfcStartReadCard();
+                    } else if (resource.status == Status.ERROR) {
+                        BaseActivity.this.readCardError(resource.errorCode, resource.message);
+                    } else if (resource.status == Status.BLUETOOTH_PARSING) {
+                    }
+                }
+            });
+        }
+    }
+    protected void nfcStartReadCard() {
+        if (tagLostCount < 4) {
+            dialog = new ProgressDialog(this);
+            dialog.show();
+        }
+    }
+    /**
+     * read card successful
+     *
+     * @param card
+     */
+    protected void readCardOnSuccess(Card card) {
+        currentCard = card;
+        cardApp = card;
+        Types.public_key_type public_key_type = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
+        Log.i("eNotes", public_key_type.toString());
+        tagLostCount = 0;
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    protected void readCardError(int code, String message) {
+        if (code == ErrorCode.BLUETOOTH_DISCONNECT) {
+            showToast(this, getString(R.string.bluetooth_connect_fail));
+        } else if (code == ErrorCode.INVALID_CARD) {
+            showToast(this, getString(R.string.invalid_card));
+        } else if (code == ErrorCode.NOT_SUPPORT_CARD) {
+            showToast(this, getString(R.string.not_support_card));
+        } else if (code == ErrorCode.NOT_FIND_CARD) {
+            showToast(this, getString(R.string.can_not_find_card));
+        } else if (code == ErrorCode.NFC_DISCONNECTED) {
+            showToast(this, getString(R.string.tag_connection_lost));
+        } else if (code == ErrorCode.CALL_CERT_PUB_KEY_ERROR) {
+            if (Utils.isNetworkConnected(this)) {
+                showToast(this, message);
+            } else {
+                showToast(this, getString(R.string.network_unavailable));
+            }
+        } else {
+            showToast(this, message);
+        }
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    protected void showToast(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+
+    }
+
+    protected boolean isLoginFromENotes() {
+        SharedPreferences sharedPreferences = getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("from", true);
+    }
+
+    protected void setLoginFrom(boolean flag) {
+        SharedPreferences.Editor editor = getSharedPreferences("enotes", Context.MODE_PRIVATE).edit();
+        editor.putBoolean("from", flag);
+        editor.commit();
+    }
+
+    protected String getLoginPublicKey() {
+        SharedPreferences sharedPreferences = getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("key", "");
+    }
+
+    protected void setLoginPublicKey(String key) {
+        SharedPreferences.Editor editor = getSharedPreferences("enotes", Context.MODE_PRIVATE).edit();
+        editor.putString("key", key);
+        editor.commit();
     }
 
     @Override

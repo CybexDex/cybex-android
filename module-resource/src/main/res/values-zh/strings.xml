@@ -563,4 +563,15 @@
     <string name="text_buy_orders">展示买单</string>
     <string name="text_sell_orders">展示卖单</string>
 
+    <!-- Nfc Related -->
+    <string name="bluetooth_connect_fail">蓝牙连接已断开！</string>
+    <string name="invalid_card">无效的eNotes！</string>
+    <string name="not_support_card">当前软件版本不支持该eNotes，请升级到最新版本。</string>
+    <string name="can_not_find_card">没有发现eNotes</string>
+    <string name="tag_connection_lost">正在读取，请勿移动eNotes！</string>
+    <string name="network_unavailable">网络连接不可用，请检查网络设置！</string>
+    <string name="error_connect_card">请将eNotes靠近手机。</string>
+    <string name="error_connect_card_ble">请将eNotes靠近蓝牙NFC读卡器。</string>
+    <string name="please_right_card">请放置正确的eNotes！</string>
+
 </resources>
