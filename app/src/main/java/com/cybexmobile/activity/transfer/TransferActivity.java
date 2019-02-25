@@ -915,10 +915,11 @@ public class TransferActivity extends BaseActivity implements
 
         if (isLoginFromENotes()) {
             if (!cardManager.isConnected()) {
-                if (ReaderUtils.supportNfc(this))
-                    showToast(this, getString(R.string.error_connect_card));
-                else
+                if (ReaderUtils.supportNfc(this)) {
+                    showToast(this, getResources().getString(R.string.error_connect_card));
+                } else {
                     showToast(this, getString(R.string.error_connect_card_ble));
+                }
                 return;
             }
             if (!cardManager.isPresent()) {

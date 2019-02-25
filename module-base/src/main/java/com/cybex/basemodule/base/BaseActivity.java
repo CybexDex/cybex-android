@@ -236,6 +236,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             EventBus.getDefault().post(new Event.IsOnBackground(false));
         }
         super.onResume();
+        cardManager.enableNfcReader(this);
         MobclickAgent.onResume(this);
         Log.d(TAG, "onResume");
     }
@@ -250,6 +251,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+        cardManager.disableNfcReader(this);
         Log.d(TAG, "onPause");
     }
 

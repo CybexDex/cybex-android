@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
+import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.exchange.ExchangeFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
@@ -107,6 +109,11 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         EventBus.getDefault().register(this);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_nav_button);
+        if (!isMyServiceRunning(WebSocketService.class)) {
+            Intent intentService = new Intent(BottomNavigationActivity.this, WebSocketService.class);
+            startService(intentService);
+            Log.e("serviceLi", "startservice");
+        }
         mBottomNavigationView = findViewById(R.id.navigation);
         BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
         mBottomNavigationView.setItemIconTintList(null);
@@ -118,6 +125,17 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         } else {
             checkVersion();
         }
+//        parseIntent();
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
