@@ -36,6 +36,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -277,6 +278,12 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
                         }
                     });
         }
+    }
+
+    private List<List<String>> getFilteredOrders() {
+        List<List<String>> result = new ArrayList<>();
+        List<String> pairs1 = new ArrayList<>(Arrays.asList("1.3.0", "1.3.2"));
+        return result;
     }
 
 }

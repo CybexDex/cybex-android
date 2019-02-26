@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -49,6 +50,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.CYBEX_CONTEST_FLAG;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_CLICK_NO_MORE_REMINDER;
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
@@ -62,6 +65,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private WatchlistFragment mWatchListFragment;
     private AccountFragment mAccountFragment;
     private ExchangeFragment mExchangeFragment;
+    private ExchangeFragment mGameFragment;
     private EtoFragment mEtoFragment;
     private CybexMainFragment mCybexMainFragment;
 
@@ -132,6 +136,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         if (mEtoFragment != null && mEtoFragment.isAdded()) {
             fm.putFragment(outState, EtoFragment.class.getSimpleName(), mEtoFragment);
         }
+        if (mGameFragment != null && mGameFragment.isAdded()) {
+            fm.putFragment(outState, ExchangeFragment.class.getSimpleName(), mGameFragment);
+        }
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
         }
@@ -180,6 +187,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState, WatchlistFragment.class.getSimpleName());
             mExchangeFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
             mEtoFragment = (EtoFragment) fragmentManager.getFragment(savedInstanceState, EtoFragment.class.getSimpleName());
+            mGameFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
             mCybexMainFragment = (CybexMainFragment) fragmentManager.getFragment(savedInstanceState, CybexMainFragment.class.getSimpleName());
             selectedId = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
@@ -203,6 +211,9 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         }
         if (mEtoFragment != null && mEtoFragment.isAdded()) {
             transaction.hide(mEtoFragment);
+        }
+        if (mGameFragment != null && mGameFragment.isAdded()) {
+            transaction.hide(mGameFragment);
         }
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             transaction.hide(mAccountFragment);
@@ -237,6 +248,14 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                     transaction.add(R.id.frame_container, mEtoFragment, EtoFragment.class.getSimpleName());
                 } else {
                     transaction.show(mEtoFragment);
+                }
+                break;
+            case R.id.navigation_transaction_match:
+                if (mGameFragment == null) {
+                    mGameFragment = ExchangeFragment.getInstance(mAction, mWatchlistData);
+                    transaction.add(R.id.frame_container, mGameFragment, CYBEX_CONTEST_FLAG);
+                } else {
+                    transaction.show(mGameFragment);
                 }
                 break;
             case R.id.navigation_account:
@@ -314,6 +333,13 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_exchange);
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_account);
                             mBottomNavigationView.inflateMenu(R.menu.navigation_eto);
+                            BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
+                        } else {
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_main);
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_watchlist);
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_exchange);
+                            mBottomNavigationView.getMenu().removeItem(R.id.navigation_account);
+                            mBottomNavigationView.inflateMenu(R.menu.navigation_transaction_match);
                             BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
                         }
                     }

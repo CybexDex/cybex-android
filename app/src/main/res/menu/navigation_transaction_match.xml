@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_main"
+        android:icon="@drawable/ic_nav_home_selector"
+        android:title="@string/title_main" />
+    <item
+        android:id="@+id/navigation_watchlist"
+        android:icon="@drawable/ic_watch_list_selector"
+        android:title="@string/title_watchlist" />
+    <item
+        android:id="@+id/navigation_exchange"
+        android:icon="@drawable/ic_exchange_selector"
+        android:title="@string/title_exchange" />
+    <item
+        android:id="@+id/navigation_transaction_match"
+        android:icon="@drawable/ic_transaction_match_selector"
+        android:title="@string/title_transaction_match"/>
+    <item
+        android:id="@+id/navigation_account"
+        android:icon="@drawable/ic_account_selector"
+        android:title="@string/title_account"/>
+
+</menu>

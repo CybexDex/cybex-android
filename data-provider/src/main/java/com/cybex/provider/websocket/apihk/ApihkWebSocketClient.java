@@ -301,6 +301,61 @@ public class ApihkWebSocketClient extends WebSocketListener {
         sendForReply(callObject, replyObjectProcess);
     }
 
+
+    /**
+     * 添加过滤器
+     * @param filteredPair 需要过滤的交易对
+     */
+    public void add_filtered_market(List<List<String>> filteredPair, MessageCallback<Reply<String>> callback) {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(mStatusId);
+        callObject.params.add("add_filtered_market");
+
+        List<Object> listParams = new ArrayList<>();
+        listParams.add(filteredPair);
+        callObject.params.add(listParams);
+
+        ReplyProcessImpl<Reply<String>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<String>>() {}.getType(), callback);
+        sendForReply(callObject, replyObjectProcess);
+
+    }
+
+    /**
+     * 获取用户历史委单
+     * @param accountId 用户名
+     * @param lastOrderId 最后订单号
+     * @param limit 分页加载数量
+     * @param containFilteredPairs 是否查询添加在过滤其中的交易对
+     */
+    public void get_filtered_limit_order_status(String accountId,
+                                                String lastOrderId,
+                                                int limit,
+                                                boolean containFilteredPairs,
+                                                MessageCallback<Reply<List<LimitOrder>>> callback) {
+
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(mStatusId);
+        callObject.params.add("get_filtered_limit_order_status");
+
+        List<Object> listParams = new ArrayList<>();
+        listParams.add(accountId);
+        listParams.add(lastOrderId);
+        listParams.add(limit);
+        listParams.add(containFilteredPairs);
+        callObject.params.add(listParams);
+
+        ReplyProcessImpl<Reply<List<LimitOrder>>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<LimitOrder>>>() {}.getType(), callback);
+        sendForReply(callObject, replyObjectProcess);
+    }
+
     /**
      * 获取当前时间最后一笔交易订单号
      * @param timestamp

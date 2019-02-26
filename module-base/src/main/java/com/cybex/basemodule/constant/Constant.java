@@ -16,6 +16,7 @@ public class Constant {
      */
     public static final String INTENT_PARAM_ACTION = "intent_param_action";
     public static final String INTENT_PARAM_WATCHLIST = "intent_param_watchlist";
+    public static final String INTENT_PARAM_GAME_CONTEST_TRUE = "intent_param_game_contest_true";
     public static final String INTENT_PARAM_FROM = "intent_param_from";
     public static final String INTENT_PARAM_FEE = "intent_param_fee";
     public static final String INTENT_PARAM_CYB_ASSET_OBJECT = "intent_param_cyb_asset_object";
@@ -67,6 +68,7 @@ public class Constant {
     public static final String PREF_SERVER = "pref_server";
     public static final String PREF_GAME_INVITATION = "pref_game_invitation";
     public static final String PREF_HISTORY_URL = "pref_history_url";
+    public static final String PREF_IS_CLICK_NO_MORE_REMINDER = "pref_is_clicked_no_more_reminder";
 
     /**
      *
@@ -144,5 +146,10 @@ public class Constant {
     public static final String GAME_STATUS_SUCCESS = "0";
     public static final String GAME_STATUS_FAIL = "1";
     public static final String GAME_STATUS_NO_ACCOUNT = "2";
+
+    /**
+     * Game Contest constant
+     */
+    public static final String CYBEX_CONTEST_FLAG = "GameContest";
 
 }

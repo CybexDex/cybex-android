@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -86,6 +87,35 @@ public class CybexDialog {
                 }
             }
         });
+        dialog.show();
+    }
+
+    public static void showGameRuleDialog(Context context, final ConfirmationDialogClickListener listener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_trading_game_rules);
+        TextView textView = dialog.findViewById(R.id.notify_dialog_content_tv);
+        Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+        cancelButton.setText(context.getResources().getString(R.string.trading_game_dialog_button_close));
+        confirmButton.setText(context.getResources().getString(R.string.trading_game_dialog_button_no_more_reminder));
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClick(dialog);
+                }
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
     }
 

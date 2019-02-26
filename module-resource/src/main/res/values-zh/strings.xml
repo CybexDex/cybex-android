@@ -10,6 +10,7 @@
     <string name="title_account">账户</string>
     <string name="title_exchange">交易</string>
     <string name="title_eto">ETO</string>
+    <string name="title_transaction_match">交易大赛</string>
     <string name="title_order_history">委单</string>
     <string name="title_transfer">转账</string>
     <string name="title_transfer_records">转账记录</string>
@@ -562,5 +563,18 @@
     <string name="text_default">默认</string>
     <string name="text_buy_orders">展示买单</string>
     <string name="text_sell_orders">展示卖单</string>
+
+    <!-- Trading Game -->
+    <string name="trading_game_dialog_button_close">关闭</string>
+    <string name="trading_game_dialog_button_no_more_reminder">不再提示</string>
+    <string name="trading_game_dialog_content">本次比赛为期14天。大赛主办方鼓励参赛者使用API及量化模型参赛，并为量化接入提供各种协助支援。
+
+本次比赛采用虚拟资产ARENA.ETH，ARENA.USDT，ARENA.EOS，ARENA.BTC比赛期间自由交易（不不允许资产转账），仅开放arena.eth/arena.usdt、arena.eos/arena.usdt、arena.btc/arena.usdt三个交易对。
+
+每位参赛选⼿手初始资资金100,000 ARENA.USDT，由官方向报名成功的用户在比赛开始前夕空投。大赛期间，组织方将对有参赛选⼿手的账户定期做快照，按照CYBEX交易所对应资产中间价折算出账户内USDT余额。
+
+奖励计算均基于账户余额的变化情况，按照收益率（即账户价值与初始价值的差值），夏普比率（收益波动性）和换手率（每自然日累计交易量超过20%）进行综合排名。赛况可在赛事官网实时查询。
+
+为了保证比赛环境的公平，请协助我们一起杜绝作弊行为的发生。</string>
 
 </resources>

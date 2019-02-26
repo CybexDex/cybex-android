@@ -8,6 +8,7 @@
     <string name="title_faq">Application</string>
     <string name="title_exchange">Exchange</string>
     <string name="title_eto">ETO</string>
+    <string name="title_transaction_match">Transaction</string>
     <string name="title_order_history">Orders</string>
     <string name="title_transfer">Transfer</string>
     <string name="title_transfer_records">Transfer Records</string>
@@ -560,5 +561,18 @@
     <string name="text_default">Default</string>
     <string name="text_buy_orders">Buy Orders</string>
     <string name="text_sell_orders">Sell Orders</string>
+
+    <!-- Trading Game -->
+    <string name="trading_game_dialog_button_close">Close</string>
+    <string name="trading_game_dialog_button_no_more_reminder">Do not reminder again</string>
+    <string name="trading_game_dialog_content">The contest has a duration of 14 days. Participation by API and quantitative models is encouraged by the host that will provide various assistance for quantitative APIs.
+
+This contest uses the virtual assets ARENA.ETH, ARENA.USDT, ARENA.EOS, ARENA.BTC that can be freely traded during the game (transfer not permitted). Only 3 trading pairs are accessible during the game: ARENA.ETH/ARENA.USDT, ARENA.EOS/ARENA.USDT, ARENA.BTC/ARENA.USDT.
+
+Each contestant will be given an initial capital of 100,000 ARENA.USDT by the form of an airdrop once successfully registered to the game. During the competition, the host will take snapshots of the account balance of the competitors regularly and convert it to USDT value by the median price of the corresponding assets in CYBEX exchange.
+
+Reward calculations are based on changes in account balances. The final rank will be made by considerating yield rate (ie, the difference between the balance and the initial capital), the Sharpe ratio (revenue volatility), and the turnover rate(accumulated volume per natural day exceeds 20%), etc. comprehensively. The real-time ranking status can be queried on the official website.
+
+To ensure fairness, please help us in the prevention of cheating in any form.</string>
 
 </resources>

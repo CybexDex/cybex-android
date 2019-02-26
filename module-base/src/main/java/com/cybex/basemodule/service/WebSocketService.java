@@ -45,6 +45,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.reactivestreams.Publisher;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -464,6 +465,7 @@ public class WebSocketService extends Service {
 
                 @Override
                 public void onNext(Map<String,List<AssetsPair>> assetsPairMap) {
+                    assetsPairMap.putAll(loadContestGameData("1.3.1145"));
                     mAssetsPairHashMap.putAll(assetsPairMap);
                     Set<String> assetsIds = new HashSet<>();
                     for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
@@ -518,6 +520,18 @@ public class WebSocketService extends Service {
                     }
                 });
     }
+
+    private Map<String, List<AssetsPair>> loadContestGameData(final String baseAsset) {
+        Map<String, List<AssetsPair>> assetsPairMap = new HashMap<>();
+        List<AssetsPair> assetsPairs = new ArrayList<>();
+        assetsPairs.add(new AssetsPair(baseAsset, "1.3.1144"));
+        assetsPairs.add(new AssetsPair(baseAsset, "1.3.1146"));
+        assetsPairs.add(new AssetsPair(baseAsset, "1.3.1147"));
+        assetsPairMap.put(baseAsset, assetsPairs);
+        return assetsPairMap;
+    }
+
+
 
     //加载置顶交易对
     private Observable<List<AssetsPairToppingResponse>> loadToppingAssetsPair() {
@@ -792,7 +806,7 @@ public class WebSocketService extends Service {
     }
 
     //get asset object callback
-    private MessageCallback mAssetMultiCallback = new MessageCallback<Reply<List<AssetObject>>>() {
+    private MessageCallback<Reply<List<AssetObject>>> mAssetMultiCallback = new MessageCallback<Reply<List<AssetObject>>>() {
         @Override
         public void onMessage(Reply<List<AssetObject>> reply) {
             List<AssetObject> assetObjects = reply.result;

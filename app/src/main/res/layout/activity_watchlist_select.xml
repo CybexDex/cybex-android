@@ -83,6 +83,28 @@
 
             </RadioGroup>
 
+            <RadioGroup
+                android:id="@+id/activity_watchlist_select_rg_base_asset_game"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RadioButton
+                    android:id="@+id/activity_watchlist_select_rb_usdt_game"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_padding"
+                    android:paddingBottom="@dimen/activity_padding"
+                    android:checked="true"
+                    android:button="@null"
+                    android:gravity="center"
+                    style="@style/font_gray_medium"
+                    android:textColor="@color/bottom_nav_button_selector"
+                    android:tag="1.3.1145"
+                    android:text="USDT"/>
+            </RadioGroup>
+
         </LinearLayout>
 
         <LinearLayout

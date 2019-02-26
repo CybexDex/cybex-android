@@ -1,5 +1,6 @@
 package com.cybexmobile.fragment.exchange;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 
 import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.provider.graphene.rte.RteRequest;
 import com.cybex.provider.graphene.websocket.WebSocketFailure;
 import com.cybex.provider.graphene.websocket.WebSocketMessage;
@@ -55,6 +58,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -69,6 +73,9 @@ import io.reactivex.schedulers.Schedulers;
 import static com.cybex.basemodule.constant.Constant.BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION_SPINNER_POSITION;
+import static com.cybex.basemodule.constant.Constant.CYBEX_CONTEST_FLAG;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_GAME_CONTEST_TRUE;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_CLICK_NO_MORE_REMINDER;
 import static com.cybex.provider.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
@@ -99,6 +106,8 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     CheckBox mCbTitle;
     @BindView(R.id.tl_exchange)
     TabLayout mTlExchange;
+    @BindView(R.id.trading_contest_banner_iv)
+    ImageView mIvTradingContestBanner;
 
     private BuySellFragment mBuyFragment;
     private BuySellFragment mSellFragment;
@@ -290,7 +299,39 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         mToolbar.inflateMenu(R.menu.menu_exchange);
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
         mTlExchange.addOnTabSelectedListener(this);
+        if (getTag().equals(CYBEX_CONTEST_FLAG)) {
+            showBanner();
+            if (!PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(PREF_IS_CLICK_NO_MORE_REMINDER, false)) {
+                showDialog();
+            }
+        }
         return view;
+    }
+
+    private void showBanner() {
+        if (Locale.getDefault().getLanguage().equals("zh")) {
+            if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("night_mode", false)) {
+                mIvTradingContestBanner.setImageResource(R.drawable.img_contest_cn_lignt);
+            } else {
+                mIvTradingContestBanner.setImageResource(R.drawable.img_contest_cn_dark);
+            }
+        } else {
+            if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("night_mode", false)) {
+                mIvTradingContestBanner.setImageResource(R.drawable.img_contest_en_lignt);
+            } else {
+                mIvTradingContestBanner.setImageResource(R.drawable.img_contest_en_dark);
+            }
+        }
+    }
+
+    private void showDialog() {
+        CybexDialog.showGameRuleDialog(getContext(), new CybexDialog.ConfirmationDialogClickListener() {
+            @Override
+            public void onClick(Dialog dialog) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                sharedPreferences.edit().putBoolean(PREF_IS_CLICK_NO_MORE_REMINDER, true).apply();
+            }
+        });
     }
 
     @Override
@@ -350,11 +391,13 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMarketIntentToExchange(Event.MarketIntentToExchange event){
-        notifyWatchlistDataChange(event.getWatchlist());
-        setTitleData();
-        mAction = event.getAction();
-        mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
+    public void onMarketIntentToExchange(Event.MarketIntentToExchange event) {
+        if (!getTag().equals(CYBEX_CONTEST_FLAG)) {
+            notifyWatchlistDataChange(event.getWatchlist());
+            setTitleData();
+            mAction = event.getAction();
+            mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -461,6 +504,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         WatchlistSelectDialog fragment = new WatchlistSelectDialog();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_WATCHLIST, mWatchlistData);
+        if (getTag().equals(CYBEX_CONTEST_FLAG)) {
+            bundle.putBoolean(INTENT_PARAM_GAME_CONTEST_TRUE, true);
+        }
         fragment.setArguments(bundle);
         fragment.setTargetFragment(this, REQUEST_CODE_SELECT_WATCHLIST);
         fragment.show(getFragmentManager(), WatchlistSelectDialog.class.getSimpleName());
@@ -494,7 +540,12 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             mWebSocketService = binder.getService();
             //当WatchlistData为空时，默认取CYB/ETH交易对数据
             if(mWatchlistData == null){
-                notifyWatchlistDataChange(mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB));
+                assert getTag() != null;
+                if (getTag().equals(CYBEX_CONTEST_FLAG)) {
+                    notifyWatchlistDataChange(mWebSocketService.getWatchlist("1.3.1145", "1.3.1144"));
+                } else {
+                    notifyWatchlistDataChange(mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB));
+                }
                 setTitleData();
             }
             if(mIsLoginIn){

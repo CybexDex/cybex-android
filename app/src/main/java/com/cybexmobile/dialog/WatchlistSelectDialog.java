@@ -21,6 +21,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
@@ -46,10 +47,11 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_GAME_CONTEST_TRUE;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybex.basemodule.constant.Constant.RESULT_CODE_SELECTED_WATCHLIST;
 
-public class WatchlistSelectDialog extends DialogFragment implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener{
+public class WatchlistSelectDialog extends DialogFragment implements WatchlistSelectRecyclerViewAdapter.OnItemClickListener {
 
     @BindView(R.id.activity_watchlist_select_rv_watchlist)
     RecyclerView mRvWatchlist;
@@ -61,6 +63,12 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
     RadioButton mRbUsdt;
     @BindView(R.id.activity_watchlist_select_rb_btc)
     RadioButton mRbBtc;
+    @BindView(R.id.activity_watchlist_select_rb_usdt_game)
+    RadioButton mRbUsdtGame;
+    @BindView(R.id.activity_watchlist_select_rg_base_asset_game)
+    RadioGroup mRgGame;
+    @BindView(R.id.activity_watchlist_select_rg_base_asset)
+    RadioGroup mRgBaseAsset;
 
     private Unbinder mUnbinder;
 
@@ -70,6 +78,7 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
     private WatchlistData mCurrWatchlist;
 
     private String mCurrentBaseAssetId = Constant.ASSET_ID_ETH;
+    private boolean isGame;
 
     private OnWatchlistSelectedListener mListener;
 
@@ -79,6 +88,7 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_Dialog);
         EventBus.getDefault().register(this);
         mCurrWatchlist = (WatchlistData) getArguments().getSerializable(INTENT_PARAM_WATCHLIST);
+        isGame = getArguments().getBoolean(INTENT_PARAM_GAME_CONTEST_TRUE);
     }
 
     @Nullable
@@ -90,11 +100,18 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         Display display = manager.getDefaultDisplay();
         WindowManager.LayoutParams params = window.getAttributes();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = (int)(display.getHeight() * 0.6);
+        params.height = (int) (display.getHeight() * 0.6);
         params.gravity = Gravity.TOP;
         params.y = getToolbarHeight();
         window.setAttributes(params);
         mUnbinder = ButterKnife.bind(this, view);
+        if (isGame) {
+            mRgGame.setVisibility(View.VISIBLE);
+            mRgBaseAsset.setVisibility(View.GONE);
+        } else {
+            mRgBaseAsset.setVisibility(View.VISIBLE);
+            mRgGame.setVisibility(View.GONE);
+        }
         mRvWatchlist.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvWatchlist.setItemAnimator(null);
         return view;
@@ -127,7 +144,7 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        if(mListener != null){
+        if (mListener != null) {
             mListener.onWatchlistSelectDismiss();
         }
     }
@@ -142,11 +159,11 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
 
     @OnCheckedChanged({R.id.activity_watchlist_select_rb_eth, R.id.activity_watchlist_select_rb_cyb,
             R.id.activity_watchlist_select_rb_usdt, R.id.activity_watchlist_select_rb_btc})
-    public void onCheckedChanged(CompoundButton button, boolean checked){
-        if(!checked || mWebSocketService == null){
+    public void onCheckedChanged(CompoundButton button, boolean checked) {
+        if (!checked || mWebSocketService == null) {
             return;
         }
-        switch (button.getId()){
+        switch (button.getId()) {
             case R.id.activity_watchlist_select_rb_eth:
                 mCurrentBaseAssetId = Constant.ASSET_ID_ETH;
                 break;
@@ -182,7 +199,7 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateWatchlists(Event.UpdateWatchlists event) {
-        if(!event.getBaseAssetId().equals(mCurrentBaseAssetId)){
+        if (!event.getBaseAssetId().equals(mCurrentBaseAssetId)) {
             return;
         }
         mWatchlists.clear();
@@ -224,34 +241,37 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         return toolBarHeight;
     }
 
-    private void initRadioButton(){
-        if(mCurrWatchlist == null){
+    private void initRadioButton() {
+        if (mCurrWatchlist == null) {
             return;
         }
         AssetObject baseAsset = mCurrWatchlist.getBaseAsset();
-        if(baseAsset == null){
+        if (baseAsset == null) {
             return;
         }
-        if(baseAsset.id.toString().equals(Constant.ASSET_ID_ETH)){
+        if (baseAsset.id.toString().equals(Constant.ASSET_ID_ETH)) {
             mRbEth.setChecked(true);
             mCurrentBaseAssetId = Constant.ASSET_ID_ETH;
-        } else if(baseAsset.id.toString().equals(Constant.ASSET_ID_CYB)) {
+        } else if (baseAsset.id.toString().equals(Constant.ASSET_ID_CYB)) {
             mRbCyb.setChecked(true);
             mCurrentBaseAssetId = Constant.ASSET_ID_CYB;
-        } else if(baseAsset.id.toString().equals(Constant.ASSET_ID_USDT)) {
+        } else if (baseAsset.id.toString().equals(Constant.ASSET_ID_USDT)) {
             mRbUsdt.setChecked(true);
             mCurrentBaseAssetId = Constant.ASSET_ID_USDT;
-        } else if(baseAsset.id.toString().equals(Constant.ASSET_ID_BTC)) {
+        } else if (baseAsset.id.toString().equals(Constant.ASSET_ID_BTC)) {
             mRbBtc.setChecked(true);
             mCurrentBaseAssetId = Constant.ASSET_ID_BTC;
+        } else if (baseAsset.id.toString().equals("1.3.1145")) {
+            mRbUsdtGame.setChecked(true);
+            mCurrentBaseAssetId = "1.3.1145";
         }
     }
 
-    public void setOnWatchlistSelectListener(OnWatchlistSelectedListener listener){
+    public void setOnWatchlistSelectListener(OnWatchlistSelectedListener listener) {
         mListener = listener;
     }
 
-    public interface OnWatchlistSelectedListener{
+    public interface OnWatchlistSelectedListener {
         void onWatchlistSelectDismiss();
     }
 }
