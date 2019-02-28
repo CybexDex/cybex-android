@@ -88,7 +88,7 @@
     <string name="setting_default_unlock_method">Set default unlock method</string>
     <string name="setting_default_unlock_method_enotes">Unlock by enotes</string>
     <string name="setting_default_unlock_method_password">Unlock by password</string>
-    <string name="setting_set_cloud_password">Set cloud password</string>
+    <string name="setting_set_cloud_password">Set Cloud Password</string>
     <string name="setting_set_enotes_card_password">Set card password</string>
     <string name="setting_has_already_set">Set</string>
     <string name="setting_not_set">Set</string>
@@ -580,5 +580,14 @@
     <string name="error_connect_card_ble">Please connect the bluetooth NFC reader.</string>
     <string name="please_right_card">Please scan the correct card!</string>
 
+    <string name="title_set_cloud_pass">Set Cloud Password</string>
+
+    <string name="tip_set_cloud_pass">When you not having your eNotes with you, the cloud password allows you to
+        manipulate your account. Once set, it is uneditable and we can not assist you to get it back in any form,
+        please do remember it. Long password is highly recommended. </string>
+    <string name="title_set_enotes_pass">Set eNotes Password</string>
+    <string name="tip_set_enotes_pass">eNotes password can provider a higher security level protection. Once set, it
+        is uneditable and we can not assist you to get it back in any form, please do remember it.</string>
+    <string name="set_enotes_password_error">Password should be 6 digits precisely.</string>
 
 </resources>

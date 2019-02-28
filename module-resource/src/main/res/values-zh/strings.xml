@@ -581,4 +581,12 @@
     <string name="error_connect_card_ble">请将eNotes靠近蓝牙NFC读卡器。</string>
     <string name="please_right_card">请放置正确的eNotes！</string>
 
+    <string name="title_set_cloud_pass">设置云密码</string>
+    <string name="tip_set_cloud_pass">云密码能够让您没有随身携带eNotes
+        卡时，也可以对账户进行操作。一旦设定不可更改、不可找回，请您务必牢记。我们强烈建议您使用长密码，确保资产安全。</string>
+    <string name="title_set_enotes_pass">设置eNotes卡密码</string>
+    <string name="tip_set_enotes_pass">eNotes卡密码能够提供更高级别的安全性，一旦设定不可更改、不可找回，请您务必牢记。</string>
+    <string name="set_enotes_password_error">密码需为6位数字</string>
+
+
 </resources>
