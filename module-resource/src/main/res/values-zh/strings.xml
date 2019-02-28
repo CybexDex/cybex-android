@@ -90,6 +90,13 @@
 
 
     <!-- Setting page -->
+    <string name="setting_default_unlock_method">默认解锁方式</string>
+    <string name="setting_default_unlock_method_enotes">enotes解锁</string>
+    <string name="setting_default_unlock_method_password">云密码解锁</string>
+    <string name="setting_set_cloud_password">设置云密码</string>
+    <string name="setting_set_enotes_card_password">设置eNotes卡密码</string>
+    <string name="setting_has_already_set">已设置</string>
+    <string name="setting_not_set">未设置</string>
     <string name="setting_language">语言</string>
     <string name="setting_language_english">English</string>
     <string name="setting_language_chinese">简体中文</string>

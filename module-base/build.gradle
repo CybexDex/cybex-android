@@ -58,6 +58,7 @@ dependencies {
     api 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
 
     //eNotes
-    api 'io.enotes.sdk:library:1.0.2'
+    api 'io.enotes.sdk:library:1.0.5'
 
+    api 'com.github.jakob-grabner:Circle-Progress-View:1.4'
 }

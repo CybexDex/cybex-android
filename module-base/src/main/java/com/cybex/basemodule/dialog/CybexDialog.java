@@ -25,6 +25,8 @@ import com.cybex.provider.graphene.chain.AccountObject;
 
 import java.util.Locale;
 
+import at.grabner.circleprogress.CircleProgressView;
+
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
@@ -172,7 +174,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showLimitOrderCancelConfirmationDialog(Context context, String content, final ConfirmationDialogClickListener listener){
+    public static void showLimitOrderCancelConfirmationDialog(Context context, String content, String buttonText, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         /**
          * fix bug:CYM-503
@@ -186,6 +188,9 @@ public class CybexDialog {
         tvContent.setText(content);
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        if (buttonText != null) {
+            confirmButton.setText(buttonText);
+        }
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

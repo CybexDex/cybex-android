@@ -356,6 +356,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
         hideLoadDialog();
         CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(),
                 mCancelOperationId == ID_CANCEL_LMMIT_ORDER_OPERATION ? getResources().getString(R.string.dialog_text_confirm_order_cancellation) : getResources().getString(R.string.dialog_text_confirm_all_orders_cancellation),
+                null,
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {

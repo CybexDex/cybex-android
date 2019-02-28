@@ -727,6 +727,66 @@ public class Operations {
 
     }
 
+    public static class account_update_operation implements base_operation {
+
+        Asset fee;
+        ObjectId<AccountObject> account;
+        Authority owner;
+        Authority active;
+        Types.account_options new_options;
+        Set<Types.void_t> extensions;
+
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawObject = new RawType();
+            baseEncoder.write(rawObject.get_byte_array(fee.amount));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(fee.asset_id.get_instance()));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(account.get_instance()));
+            baseEncoder.write(rawObject.get_byte(owner != null));
+
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
+        }
+    }
+
     public static class withdraw_deposit_history_operation implements base_operation {
         public String accountName;
         public String asset;

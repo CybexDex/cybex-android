@@ -41,6 +41,98 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/setting_layout_log_in_by_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                <RelativeLayout
+                    android:id="@+id/setting_layout_default_unlock_method"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_large"
+                        android:text="@string/setting_default_unlock_method"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/setting_tv_unlock_method"
+                        style="@style/font_grey_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:drawablePadding="@dimen/padding_3" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:background="@color/colorPrimary"/>
+                <RelativeLayout
+                    android:id="@+id/setting_layout_set_cloud_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_large"
+                        android:text="@string/setting_set_cloud_password"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/setting_tv_set_cloud_password"
+                        style="@style/font_grey_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:drawablePadding="@dimen/padding_3" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:background="@color/colorPrimary"/>
+
+                <RelativeLayout
+                    android:id="@+id/setting_layout_set_card_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_large"
+                        android:text="@string/setting_set_enotes_card_password"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/setting_tv_set_card_password"
+                        style="@style/font_grey_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:drawablePadding="@dimen/padding_3" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:background="@color/colorPrimary"/>
+                </LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/setting_layout_language"

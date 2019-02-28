@@ -196,7 +196,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setLoginFrom(boolean flag) {
         SharedPreferences.Editor editor = getSharedPreferences("enotes", Context.MODE_PRIVATE).edit();
         editor.putBoolean("from", flag);
-        editor.commit();
+        editor.apply();
     }
 
     protected String getLoginPublicKey() {
@@ -207,7 +207,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setLoginPublicKey(String key) {
         SharedPreferences.Editor editor = getSharedPreferences("enotes", Context.MODE_PRIVATE).edit();
         editor.putString("key", key);
-        editor.commit();
+        editor.apply();
     }
 
     @Override

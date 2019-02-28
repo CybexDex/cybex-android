@@ -86,6 +86,13 @@
     <string name="text_percent_0">0.00%</string>
 
     <!-- Setting Strings -->
+    <string name="setting_default_unlock_method">Set default unlock method</string>
+    <string name="setting_default_unlock_method_enotes">Unlock by enotes</string>
+    <string name="setting_default_unlock_method_password">Unlock by password</string>
+    <string name="setting_set_cloud_password">Set cloud password</string>
+    <string name="setting_set_enotes_card_password">Set card password</string>
+    <string name="setting_has_already_set">Set</string>
+    <string name="setting_not_set">Set</string>
     <string name="setting_language">Language</string>
     <string name="setting_language_english">English</string>
     <string name="setting_language_chinese">简体中文</string>

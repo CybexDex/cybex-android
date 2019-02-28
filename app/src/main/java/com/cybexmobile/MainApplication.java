@@ -20,6 +20,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
+import io.enotes.sdk.core.ENotesSDK;
+
 import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
 import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 
@@ -44,6 +46,7 @@ public class MainApplication extends Application {
             LeakCanary.install(this);
         }
         ARouter.init(this);
+        ENotesSDK.config.debugCard = true;
     }
 
     @Override

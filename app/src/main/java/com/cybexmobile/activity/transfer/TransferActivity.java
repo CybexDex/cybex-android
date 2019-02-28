@@ -856,7 +856,7 @@ public class TransferActivity extends BaseActivity implements
             loadTransferFee(feeAssetId, isLoadFeeToTransfer);
         }
     }
-
+    
     @Override
     protected void readCardOnSuccess(Card card) {
         super.readCardOnSuccess(card);

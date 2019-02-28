@@ -1,10 +1,10 @@
 package com.cybex.basemodule.dialog;
 
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,8 +19,8 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.R;
 import com.cybex.basemodule.R2;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,10 +35,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_IS_MEMOKEY_NEEDED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
-public class UnlockDialog extends DialogFragment{
+public class UnlockDialogWithEnotes extends DialogFragment {
 
     @BindView(R2.id.dialog_confirm_tv_title)
     TextView mTvTitle;
@@ -61,8 +62,9 @@ public class UnlockDialog extends DialogFragment{
 
     private AccountObject mAccountObject;
     private String mUserName;
-    private UnLockDialogClickListener mUnLockListener;
-    private OnDismissListener mOnDismissListener;
+    private boolean isMemoKeyNeeded;
+    private UnlockDialog.UnLockDialogClickListener mUnLockListener;
+    private UnlockDialog.OnDismissListener mOnDismissListener;
 
     private Disposable mDisposable;
 
@@ -75,12 +77,13 @@ public class UnlockDialog extends DialogFragment{
         Bundle bundle = getArguments();
         mAccountObject = (AccountObject) bundle.getSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT);
         mUserName = bundle.getString(INTENT_PARAM_NAME);
+        isMemoKeyNeeded = bundle.getBoolean(INTENT_PARAM_IS_MEMOKEY_NEEDED);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_unclock_wallet, container, false);
+        View view = inflater.inflate(R.layout.dialog_unlock_wallet_with_enotes, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mEtPassword.requestFocus();
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -142,33 +145,33 @@ public class UnlockDialog extends DialogFragment{
                 }
             }
         })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                if(integer == 0){
-                    mTvUnlockError.setVisibility(View.GONE);
-                    mPbLoading.setVisibility(View.GONE);
-                    if(mUnLockListener != null){
-                        mUnLockListener.onUnLocked(password);
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        if(integer == 0){
+                            mTvUnlockError.setVisibility(View.GONE);
+                            mPbLoading.setVisibility(View.GONE);
+                            if(mUnLockListener != null){
+                                mUnLockListener.onUnLocked(password);
+                            }
+                            result = 1;
+                            dismiss();
+                        } else {
+                            mTvUnlockError.setVisibility(View.VISIBLE);
+                            mPbLoading.setVisibility(View.GONE);
+                            mBtnConfirm.setEnabled(true);
+                        }
                     }
-                    result = 1;
-                    dismiss();
-                } else {
-                    mTvUnlockError.setVisibility(View.VISIBLE);
-                    mPbLoading.setVisibility(View.GONE);
-                    mBtnConfirm.setEnabled(true);
-                }
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                mTvUnlockError.setVisibility(View.VISIBLE);
-                mPbLoading.setVisibility(View.GONE);
-                mBtnConfirm.setEnabled(true);
-            }
-        });
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mTvUnlockError.setVisibility(View.VISIBLE);
+                        mPbLoading.setVisibility(View.GONE);
+                        mBtnConfirm.setEnabled(true);
+                    }
+                });
     }
 
     @OnEditorAction(R2.id.dialog_confirm_et_password)
@@ -180,11 +183,11 @@ public class UnlockDialog extends DialogFragment{
         return false;
     }
 
-    public void setUnLockListener(UnLockDialogClickListener lockListener){
+    public void setUnLockListener(UnlockDialog.UnLockDialogClickListener lockListener){
         mUnLockListener = lockListener;
     }
 
-    public void setOnDismissListener(OnDismissListener onDismissListener) {
+    public void setOnDismissListener(UnlockDialog.OnDismissListener onDismissListener) {
         mOnDismissListener = onDismissListener;
     }
 
@@ -195,5 +198,7 @@ public class UnlockDialog extends DialogFragment{
     public interface OnDismissListener {
         void onDismiss(int result);
     }
+
+
 
 }

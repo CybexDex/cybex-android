@@ -46,6 +46,7 @@ public class Constant {
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";
     public static final String INTENT_PARAM_URL = "intent_param_url";
+    public static final String INTENT_PARAM_IS_MEMOKEY_NEEDED = "intent_param_is_memokey_needed";
 
     public static final String INTENT_PARAM_CHANNEL = "intent_param_channel";
 
@@ -67,6 +68,9 @@ public class Constant {
     public static final String PREF_SERVER = "pref_server";
     public static final String PREF_GAME_INVITATION = "pref_game_invitation";
     public static final String PREF_HISTORY_URL = "pref_history_url";
+    public static final String PREF_PARAM_UNLOCK_BY_CARDS = "pref_param_unlock_by_cards";
+    public static final String PREF_IS_CLOUD_PASSWORD_SET = "pref_is_cloud_password_set";
+    public static final String PREF_IS_CARD_PASSWORD_SET = "pref_is_card_password_set";
 
     /**
      *

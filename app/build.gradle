@@ -155,5 +155,5 @@ dependencies {
 
     implementation 'com.caverock:androidsvg-aar:1.3'
     //eNotes
-    implementation 'io.enotes.sdk:library:1.0.2'
+    implementation 'io.enotes.sdk:library:1.0.5'
 }
