@@ -16,10 +16,11 @@
         android:id="@+id/use_enotes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/dialog_confirm_tv_title"
         android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/margin_18"
         android:layout_marginStart="@dimen/activity_margin"
-        android:text="使用eNotes"
+        android:text="@string/title_use_password"
         android:visibility="gone"
         />
 

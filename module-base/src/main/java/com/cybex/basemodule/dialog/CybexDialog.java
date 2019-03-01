@@ -335,10 +335,10 @@ public class CybexDialog {
     }
 
     public static UnlockDialog showUnlockWalletDialog(FragmentManager fragmentManager,
-                                              AccountObject accountObject,
-                                              String username,
-                                              UnlockDialog.UnLockDialogClickListener unLockListener,
-                                              UnlockDialog.OnDismissListener onDismissListener){
+            AccountObject accountObject,
+            String username,
+            UnlockDialog.UnLockDialogClickListener unLockListener,
+            UnlockDialog.OnDismissListener onDismissListener){
         UnlockDialog dialog = new UnlockDialog();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT, accountObject);
@@ -350,12 +350,29 @@ public class CybexDialog {
         return dialog;
     }
 
+    public static UnlockDialogWithEnotes showUnlockWithEnotesWalletDialog(FragmentManager fragmentManager,
+            AccountObject accountObject,
+            String username,
+            UnlockDialogWithEnotes.UnLockDialogClickListener unLockListener,
+            UnlockDialogWithEnotes.OnDismissListener onDismissListener){
+        UnlockDialogWithEnotes dialog = new UnlockDialogWithEnotes();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT, accountObject);
+        bundle.putString(INTENT_PARAM_NAME, username);
+        dialog.setArguments(bundle);
+        dialog.show(fragmentManager, UnlockDialogWithEnotes.class.getSimpleName());
+        dialog.setUnLockListener(unLockListener);
+        dialog.setOnDismissListener(onDismissListener);
+        return dialog;
+    }
+
     public static UnlockDialog showUnlockWalletDialog(FragmentManager fragmentManager,
                                               AccountObject accountObject,
                                               String username,
                                               UnlockDialog.UnLockDialogClickListener unLockListener){
         return showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
     }
+
 
     public static void showAddAddressDialog(Context context, String message, String subMessage,
                                             final ConfirmationDialogClickListener confirmListener,

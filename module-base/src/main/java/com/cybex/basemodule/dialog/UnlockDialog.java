@@ -52,10 +52,6 @@ public class UnlockDialog extends DialogFragment{
     Button mBtnConfirm;
     @BindView(R2.id.dialog_confirm_pb_loading)
     ProgressBar mPbLoading;
-    @BindView(R2.id.enotes_text)
-    TextView mEnotesText;
-    @BindView(R2.id.use_enotes)
-    TextView mUseEnotesTitle;
 
     private Unbinder mUnbinder;
 
@@ -91,6 +87,7 @@ public class UnlockDialog extends DialogFragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle.setText(getResources().getString(R.string.unlock_wallet_dialog_title));
+//        mUseEnotesTitle.setVisibility(View.INVISIBLE);
     }
 
     @Override

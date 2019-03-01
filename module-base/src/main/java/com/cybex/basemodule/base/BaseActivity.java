@@ -188,6 +188,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 是否从eNotes登陆
+     */
     protected boolean isLoginFromENotes() {
         SharedPreferences sharedPreferences = getSharedPreferences("enotes", Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean("from", true);

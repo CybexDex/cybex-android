@@ -652,7 +652,7 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            Types.private_key_type  privateKeyType = new Types.private_key_type("5JEa3vVLLKuohJmi3SzXUs9FG9UtCquJttnGf3ArGH1s7pqjiwA");//使用随意一个私钥来避免空指针问题
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -664,6 +664,7 @@ public class WalletApi {
         }
         return transferOperation;
     }
+
 
     public Operations.transfer_operation getTransferOperationWithLockTime(ObjectId<AccountObject> from,
                                                                           ObjectId<AccountObject> to,

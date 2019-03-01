@@ -577,7 +577,7 @@
     <string name="can_not_find_card">没有发现eNotes</string>
     <string name="tag_connection_lost">正在读取，请勿移动eNotes！</string>
     <string name="network_unavailable">网络连接不可用，请检查网络设置！</string>
-    <string name="error_connect_card">请将eNotes靠近手机。</string>
+    <string name="error_connect_card">请将eNotes靠近手机。请勿移动eNotes直至转账结果弹框出现。</string>
     <string name="error_connect_card_ble">请将eNotes靠近蓝牙NFC读卡器。</string>
     <string name="please_right_card">请放置正确的eNotes！</string>
 
@@ -587,6 +587,10 @@
     <string name="title_set_enotes_pass">设置eNotes卡密码</string>
     <string name="tip_set_enotes_pass">eNotes卡密码能够提供更高级别的安全性，一旦设定不可更改、不可找回，请您务必牢记。</string>
     <string name="set_enotes_password_error">密码需为6位数字</string>
+    <string name="error_unlock_enotes">解锁失败，请重试！</string>
+    <string name="title_use_enotes">使用eNotes</string>
+    <string name="title_use_password">使用密码</string>
+    <string name="tip_no_memo_use_cloud_pass">eNotes卡暂不支持Memo功能，如需添加Memo，请使用云密码解锁</string>
 
 
 </resources>

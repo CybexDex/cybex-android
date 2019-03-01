@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
@@ -67,6 +68,7 @@ import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 import butterknife.Unbinder;
 import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.db.entity.Card;
 import io.enotes.sdk.utils.ReaderUtils;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION;
@@ -285,6 +287,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             mEtAssetAmount.clearFocus();
         }
     }
+
 
     @OnFocusChange({R.id.buysell_et_asset_price, R.id.buysell_et_asset_amount})
     public void onFocusChanged(View view, boolean isFocused){
@@ -771,12 +774,26 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             toExchange();
             return;
         }
-        CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccountObject.account, userName, new UnlockDialog.UnLockDialogClickListener() {
-            @Override
-            public void onUnLocked(String password) {
-                toExchange();
-            }
-        });
+
+        CybexDialog.showUnlockWithEnotesWalletDialog(getFragmentManager(), mFullAccountObject.account, userName,
+                new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                    @Override
+                    public void onUnLocked(String password) {
+
+                    }
+                }, new UnlockDialogWithEnotes.OnDismissListener() {
+                    @Override
+                    public void onDismiss(int result) {
+
+                    }
+                });
+
+//        CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccountObject.account, userName, new UnlockDialog.UnLockDialogClickListener() {
+//            @Override
+//            public void onUnLocked(String password) {
+//                toExchange();
+//            }
+//        });
     }
 
     protected boolean isLoginFromENotes() {

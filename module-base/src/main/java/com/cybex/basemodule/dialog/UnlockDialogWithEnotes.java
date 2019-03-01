@@ -1,6 +1,5 @@
 package com.cybex.basemodule.dialog;
 
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +13,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +22,7 @@ import com.cybex.basemodule.R2;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 
+import at.grabner.circleprogress.CircleProgressView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -39,7 +40,7 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_IS_MEMOKEY_NEE
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
-public class UnlockDialogWithEnotes extends DialogFragment {
+public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragment {
 
     @BindView(R2.id.dialog_confirm_tv_title)
     TextView mTvTitle;
@@ -51,20 +52,30 @@ public class UnlockDialogWithEnotes extends DialogFragment {
     Button mBtnCancel;
     @BindView(R2.id.dialog_confirm_btn_confirm)
     Button mBtnConfirm;
+    @BindView(R2.id.btn_cancel_enotes)
+    Button mBtnCancelEnotes;
     @BindView(R2.id.dialog_confirm_pb_loading)
     ProgressBar mPbLoading;
     @BindView(R2.id.enotes_text)
     TextView mEnotesText;
     @BindView(R2.id.use_enotes)
     TextView mUseEnotesTitle;
+    @BindView(R2.id.unlock_with_enotes_dialog_enotes_layout)
+    LinearLayout mEnotesLayout;
+    @BindView(R2.id.unlock_with_enotes_dialog_password_layout)
+    LinearLayout mCloudPasswordLayout;
+    @BindView(R2.id.circle_progress_v)
+    CircleProgressView mCircleProgess;
+    @BindView(R2.id.tv_tip_enotes_unlock)
+    TextView mTipText;
 
     private Unbinder mUnbinder;
 
     private AccountObject mAccountObject;
     private String mUserName;
     private boolean isMemoKeyNeeded;
-    private UnlockDialog.UnLockDialogClickListener mUnLockListener;
-    private UnlockDialog.OnDismissListener mOnDismissListener;
+    private UnlockDialogWithEnotes.UnLockDialogClickListener mUnLockListener;
+    private UnlockDialogWithEnotes.OnDismissListener mOnDismissListener;
 
     private Disposable mDisposable;
 
@@ -78,6 +89,8 @@ public class UnlockDialogWithEnotes extends DialogFragment {
         mAccountObject = (AccountObject) bundle.getSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT);
         mUserName = bundle.getString(INTENT_PARAM_NAME);
         isMemoKeyNeeded = bundle.getBoolean(INTENT_PARAM_IS_MEMOKEY_NEEDED);
+//        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
     }
 
     @Nullable
@@ -86,7 +99,6 @@ public class UnlockDialogWithEnotes extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_unlock_wallet_with_enotes, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mEtPassword.requestFocus();
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return view;
     }
 
@@ -94,6 +106,7 @@ public class UnlockDialogWithEnotes extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle.setText(getResources().getString(R.string.unlock_wallet_dialog_title));
+        mUseEnotesTitle.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -118,7 +131,7 @@ public class UnlockDialogWithEnotes extends DialogFragment {
         }
     }
 
-    @OnClick(R2.id.dialog_confirm_btn_cancel)
+    @OnClick({R2.id.dialog_confirm_btn_cancel, R2.id.btn_cancel_enotes})
     public void onDialogCancel(View view){
         this.dismiss();
     }
@@ -130,6 +143,22 @@ public class UnlockDialogWithEnotes extends DialogFragment {
             mBtnConfirm.setEnabled(false);
             mPbLoading.setVisibility(View.VISIBLE);
             verifyPassword(mAccountObject, mUserName, password);
+        }
+    }
+
+    @OnClick(R2.id.use_enotes)
+    public void switchEnotesAndPass(View view){
+        if (mEnotesLayout.getVisibility() == View.VISIBLE){
+            mEnotesLayout.setVisibility(View.GONE);
+            mCloudPasswordLayout.setVisibility(View.VISIBLE);
+            mUseEnotesTitle.setText(getResources().getString(R.string.title_use_enotes));
+
+        }else{
+            mEnotesLayout.setVisibility(View.VISIBLE);
+            mCloudPasswordLayout.setVisibility(View.GONE);
+            mUseEnotesTitle.setText(getResources().getString(R.string.title_use_password));
+            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         }
     }
 
@@ -183,12 +212,28 @@ public class UnlockDialogWithEnotes extends DialogFragment {
         return false;
     }
 
-    public void setUnLockListener(UnlockDialog.UnLockDialogClickListener lockListener){
+    public void setUnLockListener(UnlockDialogWithEnotes.UnLockDialogClickListener lockListener){
         mUnLockListener = lockListener;
     }
 
-    public void setOnDismissListener(UnlockDialog.OnDismissListener onDismissListener) {
+    public void setOnDismissListener(UnlockDialogWithEnotes.OnDismissListener onDismissListener) {
         mOnDismissListener = onDismissListener;
+    }
+
+    public void showProgress(){
+        mCircleProgess.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgress(){
+        mCircleProgess.setVisibility(View.INVISIBLE);
+    }
+
+    public void showNoSupportMemoText(){
+        mTipText.setText(getResources().getString(R.string.tip_no_memo_use_cloud_pass));
+    }
+
+    public void showNormalText(){
+        mTipText.setText(getResources().getString(R.string.error_connect_card));
     }
 
     public interface UnLockDialogClickListener {
