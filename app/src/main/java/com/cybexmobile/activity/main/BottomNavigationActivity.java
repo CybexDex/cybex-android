@@ -22,11 +22,16 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -34,19 +39,13 @@ import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.R;
 import com.cybexmobile.activity.markets.MarketsActivity;
-import com.cybex.provider.http.RetrofitFactory;
-import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.provider.http.entity.AppVersion;
-import com.cybex.basemodule.dialog.CybexDialog;
-import com.cybex.basemodule.event.Event;
-import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.fragment.AccountFragment;
-import com.cybexmobile.fragment.exchange.ExchangeFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
+import com.cybexmobile.fragment.exchange.ExchangeFragment;
 import com.cybexmobile.fragment.main.CybexMainFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
-import com.cybexmobile.R;
 
 import org.ethereum.util.ByteUtil;
 import org.greenrobot.eventbus.EventBus;
@@ -65,13 +64,14 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
-public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener {
+public class BottomNavigationActivity extends BaseActivity implements
+        WatchlistFragment.OnListFragmentInteractionListener {
 
     private BottomNavigationView mBottomNavigationView;
     private static final String KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID = "KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID";
@@ -139,11 +139,18 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     }
 
     @Override
+    protected void nfcStartReadCard() {
+        mExchangeFragment.getBuySellFragment().showProgress();
+    }
+
+    @Override
     protected void readCardOnSuccess(Card card) {
         super.readCardOnSuccess(card);
         if (mBottomNavigationView.getSelectedItemId() != R.id.navigation_exchange) {
+            //在交易Fragment执行的逻辑
             try {
-                byte[] bytes = ByteUtil.hexStringToBytes(cardManager.transmitApdu(Command.newCmd().setDesc("cybex_account").setCmdStr("00CA0032")));
+                byte[] bytes = ByteUtil.hexStringToBytes(
+                        cardManager.transmitApdu(Command.newCmd().setDesc("cybex_account").setCmdStr("00CA0032")));
                 TLVBox tlvBox = TLVBox.parse(bytes, 0, bytes.length);
                 String stringValue = new String(tlvBox.getBytesValue(0x32));
                 setLoginPublicKey(card.getCurrencyPubKey());
@@ -153,10 +160,21 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                         loginByENotes(stringValue, "123456789");
                     }
                 }, 500);
+
             } catch (CommandException e) {
                 e.printStackTrace();
             }
+        } else {
+            if (isLoginFromENotes()) {
+                mExchangeFragment.getBuySellFragment().toExchange();
+            }
         }
+    }
+
+    @Override
+    protected void readCardError(int code, String message) {
+        super.readCardError(code, message);
+        mExchangeFragment.getBuySellFragment().hideProgress();
     }
 
     private void loginByENotes(String email, String password) {
@@ -169,14 +187,16 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 @Override
                 public void onMessage(Reply<AccountObject> reply) {
                     AccountObject accountObject = reply.result;
-                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, email, password);
+                    int result = BitsharesWalletWraper.getInstance()
+                            .import_account_password(accountObject, email, password);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             hideLoadDialog();
                             setLoginFrom(true);
                             EventBus.getDefault().post(new Event.LoginIn(email));
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+                                    getApplicationContext());
                             sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
                             sharedPreferences.edit().putString(PREF_NAME, email).apply();
 
@@ -245,14 +265,14 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        if(!isRecreate){
+        if (!isRecreate) {
             Intent intentService = new Intent(this, WebSocketService.class);
             stopService(intentService);
         }
-        if(mDisposableVersionUpdate != null && !mDisposableVersionUpdate.isDisposed()){
+        if (mDisposableVersionUpdate != null && !mDisposableVersionUpdate.isDisposed()) {
             mDisposableVersionUpdate.dispose();
         }
-        if(mDisposableAppConfig != null && !mDisposableAppConfig.isDisposed()){
+        if (mDisposableAppConfig != null && !mDisposableAppConfig.isDisposed()) {
             mDisposableAppConfig.dispose();
         }
         LimitOrderWrapper.getInstance().disconnect();
@@ -263,7 +283,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
         if (!isAvailable) {
-            Toast.makeText(this, getResources().getString(R.string.network_connection_is_not_available), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.network_connection_is_not_available),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -280,11 +301,16 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
         FragmentManager fragmentManager = getSupportFragmentManager();
         int selectedId = R.id.navigation_main;
         if (savedInstanceState != null) {
-            mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState, WatchlistFragment.class.getSimpleName());
-            mExchangeFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
-            mEtoFragment = (EtoFragment) fragmentManager.getFragment(savedInstanceState, EtoFragment.class.getSimpleName());
-            mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
-            mCybexMainFragment = (CybexMainFragment) fragmentManager.getFragment(savedInstanceState, CybexMainFragment.class.getSimpleName());
+            mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState,
+                    WatchlistFragment.class.getSimpleName());
+            mExchangeFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState,
+                    ExchangeFragment.class.getSimpleName());
+            mEtoFragment = (EtoFragment) fragmentManager.getFragment(savedInstanceState,
+                    EtoFragment.class.getSimpleName());
+            mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState,
+                    AccountFragment.class.getSimpleName());
+            mCybexMainFragment = (CybexMainFragment) fragmentManager.getFragment(savedInstanceState,
+                    CybexMainFragment.class.getSimpleName());
             selectedId = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
         }
         showFragment(selectedId);
@@ -322,7 +348,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 if (mWatchListFragment == null) {
                     mWatchListFragment = new WatchlistFragment();
                     transaction.add(R.id.frame_container, mWatchListFragment, WatchlistFragment.class.getSimpleName());
-                } else  {
+                } else {
                     transaction.show(mWatchListFragment);
                 }
                 break;
@@ -373,7 +399,8 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             long currentTime = System.currentTimeMillis();
             if (currentTime - mLastExitTime > 2 * 1000) {
                 mLastExitTime = currentTime;
-                Toast.makeText(this, getResources().getString(R.string.text_press_again_to_exit), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.text_press_again_to_exit), Toast.LENGTH_SHORT)
+                        .show();
             } else {
                 finish();
             }
@@ -440,38 +467,46 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                         if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
                             if (appVersion.isForceUpdate(BuildConfig.VERSION_NAME)) {
                                 if (Locale.getDefault().getLanguage().equals("zh")) {
-                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
-                                        }
-                                    });
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this,
+                                            appVersion.getCnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
+                                                }
+                                            });
                                 } else {
-                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this,
+                                            appVersion.getEnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
 
-                                        }
-                                    });
+                                                }
+                                            });
                                 }
                             } else {
                                 if (Locale.getDefault().getLanguage().equals("zh")) {
-                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this,
+                                            appVersion.getCnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
 
-                                        }
-                                    });
+                                                }
+                                            });
                                 } else {
-                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this,
+                                            appVersion.getEnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
 
-                                        }
-                                    });
+                                                }
+                                            });
                                 }
                             }
                         }
@@ -496,35 +531,43 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                         if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
                             if (appVersion.isForceUpdate(BuildConfig.VERSION_NAME)) {
                                 if (Locale.getDefault().getLanguage().equals("zh")) {
-                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
-                                        }
-                                    });
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this,
+                                            appVersion.getCnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
+                                                }
+                                            });
                                 } else {
-                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
-                                        }
-                                    });
+                                    CybexDialog.showVersionUpdateDialogForced(BottomNavigationActivity.this,
+                                            appVersion.getEnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
+                                                }
+                                            });
                                 }
                             } else {
                                 if (Locale.getDefault().getLanguage().equals("zh")) {
-                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getCnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
-                                        }
-                                    });
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this,
+                                            appVersion.getCnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
+                                                }
+                                            });
                                 } else {
-                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this, appVersion.getEnUpdateInfo(), new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            goToUpdate(appVersion.getUrl());
-                                        }
-                                    });
+                                    CybexDialog.showVersionUpdateDialog(BottomNavigationActivity.this,
+                                            appVersion.getEnUpdateInfo(),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    goToUpdate(appVersion.getUrl());
+                                                }
+                                            });
                                 }
                             }
                         }
@@ -543,9 +586,10 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     }
 
     public boolean isServiceRunning(Context context, String serviceName) {
-        if (TextUtils.isEmpty(serviceName)) return false;
+        if (TextUtils.isEmpty(serviceName)) { return false; }
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) activityManager.getRunningServices(30);
+        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) activityManager
+                .getRunningServices(30);
         for (int i = 0; i < runningService.size(); i++) {
             if (runningService.get(i).service.getClassName().equals(serviceName)) {
                 return true;

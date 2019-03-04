@@ -162,6 +162,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
     private boolean mIsViewCreated;
 
+    private UnlockDialogWithEnotes mUnlockDialogWithEnotes;
+
     public static BuySellFragment getInstance(String action, WatchlistData watchlistData,
                                               FullAccountObject fullAccountObject, boolean isLoginIn, String name,
                                               FeeAmountObject fee, AssetObject cybAssetObject, int precision, int precisionPosition,
@@ -775,7 +777,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
             return;
         }
 
-        CybexDialog.showUnlockWithEnotesWalletDialog(getFragmentManager(), mFullAccountObject.account, userName,
+        mUnlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(getFragmentManager(), mFullAccountObject
+                        .account, userName,
                 new UnlockDialogWithEnotes.UnLockDialogClickListener() {
                     @Override
                     public void onUnLocked(String password) {
@@ -796,6 +799,18 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 //        });
     }
 
+    public void showProgress(){
+        mUnlockDialogWithEnotes.showProgress();
+    }
+
+    public void hideProgress(){
+        mUnlockDialogWithEnotes.hideProgress();
+    }
+
+    public void hideEnotesDialog(){
+        mUnlockDialogWithEnotes.dismiss();
+    }
+
     protected boolean isLoginFromENotes() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean("from", true);
@@ -814,7 +829,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     /**
      * 挂单
      */
-    private void toExchange(){
+    public void toExchange(){
         BaseActivity activity = (BaseActivity) getActivity();
         try {
 

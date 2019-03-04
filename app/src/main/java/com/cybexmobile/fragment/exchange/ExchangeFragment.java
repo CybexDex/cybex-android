@@ -417,9 +417,11 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             } else {
               mSellFragment.clearEditTextData();
             }
+            getBuySellFragment().hideEnotesDialog();
             ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
                     R.string.toast_message_place_order_successfully), R.drawable.ic_check_circle_green);
         } else {
+            getBuySellFragment().hideEnotesDialog();
             ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
                     R.string.toast_message_place_order_failed), R.drawable.ic_error_16px);
         }
@@ -753,5 +755,9 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onWatchlistSelectDismiss() {
         mCbTitle.setChecked(false);
+    }
+
+    public BuySellFragment getBuySellFragment(){
+        return mBuyFragment;
     }
 }
