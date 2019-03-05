@@ -42,9 +42,9 @@ public class MainApplication extends Application {
         }
         Picasso picasso = PicassoUtils.getPicassoInstance(this);
         Picasso.setSingletonInstance(picasso);
-        if(!LeakCanary.isInAnalyzerProcess(this)){
-            LeakCanary.install(this);
-        }
+//        if(!LeakCanary.isInAnalyzerProcess(this)){
+//            LeakCanary.install(this);
+//        }
         ARouter.init(this);
         ENotesSDK.config.debugCard = true;
     }

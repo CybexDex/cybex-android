@@ -103,8 +103,10 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
     @Override
     protected void nfcStartReadCard() {
         if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
-            if (mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+            if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
                 mOpenOrdersFragment.getUnlockDialog().showProgress();
+            } else {
+                super.nfcStartReadCard();
             }
         } else {
             super.nfcStartReadCard();
@@ -118,9 +120,11 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
             currentCard = card;
             cardApp = card;
             if (isLoginFromENotes()) {
-                if (mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
                     mOpenOrdersFragment.hideEnotesDialog();
                     mOpenOrdersFragment.toCancelLimitOrder();
+                } else {
+                    super.nfcStartReadCard();
                 }
             }
         } else {
@@ -132,7 +136,7 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
     protected void readCardError(int code, String message) {
         super.readCardError(code, message);
         if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
-            if (mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+            if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
                 mOpenOrdersFragment.hideProgress();
             }
         }

@@ -755,8 +755,12 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         mCbTitle.setChecked(false);
     }
 
-    public BuySellFragment getBuySellFragment() {
+    public BuySellFragment getBuyFragment() {
         return mBuyFragment;
+    }
+
+    public BuySellFragment getSellFragment() {
+        return mSellFragment;
     }
 
     public OpenOrdersFragment getOpenOrdersFragment() {
