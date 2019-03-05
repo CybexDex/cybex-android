@@ -141,10 +141,12 @@ public class BottomNavigationActivity extends BaseActivity implements
     @Override
     protected void nfcStartReadCard() {
         if (mBottomNavigationView.getSelectedItemId() == R.id.navigation_exchange && mExchangeFragment != null ) {
-            if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()){
-                mExchangeFragment.getBuySellFragment().showProgress();
-            } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
-                mExchangeFragment.getOpenOrdersFragment().showProgress();
+            if (mExchangeFragment.getBuySellFragment().getUnlockDialog() != null) {
+                if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()) {
+                    mExchangeFragment.getBuySellFragment().showProgress();
+                } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
+                    mExchangeFragment.getOpenOrdersFragment().showProgress();
+                }
             }
         } else {
             super.nfcStartReadCard();
@@ -158,12 +160,14 @@ public class BottomNavigationActivity extends BaseActivity implements
             currentCard = card;
             cardApp = card;
             if (isLoginFromENotes()) {
-                if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()) {
-                    mExchangeFragment.getBuySellFragment().hideEnotesDialog();
-                    mExchangeFragment.getBuySellFragment().toExchange();
-                } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
-                    mExchangeFragment.getOpenOrdersFragment().hideEnotesDialog();
-                    mExchangeFragment.getOpenOrdersFragment().toCancelLimitOrder();
+                if (mExchangeFragment.getBuySellFragment().getUnlockDialog() != null) {
+                    if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()) {
+                        mExchangeFragment.getBuySellFragment().hideEnotesDialog();
+                        mExchangeFragment.getBuySellFragment().toExchange();
+                    } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
+                        mExchangeFragment.getOpenOrdersFragment().hideEnotesDialog();
+                        mExchangeFragment.getOpenOrdersFragment().toCancelLimitOrder();
+                    }
                 }
             }
         } else {
@@ -175,10 +179,12 @@ public class BottomNavigationActivity extends BaseActivity implements
     protected void readCardError(int code, String message) {
         super.readCardError(code, message);
         if (mBottomNavigationView.getSelectedItemId() == R.id.navigation_exchange && mExchangeFragment != null) {
-            if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()) {
-                mExchangeFragment.getBuySellFragment().hideProgress();
-            } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
-                mExchangeFragment.getOpenOrdersFragment().hideProgress();
+            if (mExchangeFragment.getBuySellFragment().getUnlockDialog() != null) {
+                if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()) {
+                    mExchangeFragment.getBuySellFragment().hideProgress();
+                } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
+                    mExchangeFragment.getOpenOrdersFragment().hideProgress();
+                }
             }
         }
     }
