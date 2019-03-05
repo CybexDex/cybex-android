@@ -36,8 +36,10 @@ public class SignedTransaction extends Transaction {
     public void signByENotes(CardManager cardManager, Card card, Types.private_key_type privateKeyType, Sha256Object chain_id) {
         Sha256Object digest = sig_digest(chain_id);
         Log.e("sha256Digest", MyUtils.bytesToHex(digest.hash));
-        SignaturesBuffer.add(sign_compactByENotes(cardManager, card, digest, true));
-        signatures.add(bytesToHex(sign_compactByENotes(cardManager, card, digest, true).data));
+        CompactSignature compactSignature = sign_compactByENotes(cardManager, card, digest, true);
+        SignaturesBuffer.add(compactSignature);
+        if (compactSignature != null)
+        signatures.add(bytesToHex(compactSignature.data));
     }
 
     public String sign(Types.private_key_type privateKeyType) {
