@@ -136,7 +136,6 @@ public class AccountBalanceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_balance);
         mUnbinder = ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mAccountName = mSharedPreferences.getString(PREF_NAME, "");
@@ -173,7 +172,6 @@ public class AccountBalanceActivity extends BaseActivity {
         BalanceCache.getInstance().setmAccountBalanceObjectItemList(mAccountBalanceObjectItems);
         mUnbinder.unbind();
         unbindService(mConnection);
-        EventBus.getDefault().unregister(this);
         mHandler.removeCallbacksAndMessages(null);
         mHandler = null;
     }

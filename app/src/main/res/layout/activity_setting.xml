@@ -108,7 +108,8 @@
                     android:id="@+id/setting_layout_set_card_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/activity_padding">
+                    android:padding="@dimen/activity_padding"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"

@@ -168,6 +168,8 @@ public class TransferActivity extends BaseActivity implements
 
     private boolean mIsActivityActive;//当前activity是否可见
 
+    private boolean mIsUsedCloudPassword = false;//当前卡登陆但有memo要用云密码
+
     private int mTotalLockTime;
     private int mLockTimeUnit = 1;
 
@@ -175,7 +177,6 @@ public class TransferActivity extends BaseActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer);
-        EventBus.getDefault().register(this);
         SoftKeyBoardListener.setListener(this, this);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
@@ -225,7 +226,6 @@ public class TransferActivity extends BaseActivity implements
         mUnbinder.unbind();
         unlockDialogWithEnotes = null;
         unbindService(mConnection);
-        EventBus.getDefault().unregister(this);
         if (mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()) {
             mLoadAddressDisposable.dispose();
         }
@@ -883,7 +883,6 @@ public class TransferActivity extends BaseActivity implements
      */
     @Override
     protected void readCardOnSuccess(Card card) {
-        super.readCardOnSuccess(card);
         mCard = card;
         if (unlockDialog != null) { unlockDialog.dismiss(); }
         if (unlockDialogWithEnotes != null) {
@@ -895,19 +894,25 @@ public class TransferActivity extends BaseActivity implements
                 unlockDialogWithEnotes.dismiss();
                 toTransfer();
             }
+        } else {
+            super.readCardOnSuccess(card);
         }
     }
 
     @Override
     protected void readCardError(int code, String message) {
         super.readCardError(code, message);
-        unlockDialogWithEnotes.hideProgress();
+        if (unlockDialogWithEnotes != null) {
+            unlockDialogWithEnotes.hideProgress();
+        }
     }
 
     @Override
     protected void nfcStartReadCard() {
-        unlockDialogWithEnotes.showProgress();
-        unlockDialogWithEnotes.showNormalText();
+        if(unlockDialogWithEnotes != null) {
+            unlockDialogWithEnotes.showProgress();
+            unlockDialogWithEnotes.showNormalText();
+        }
     }
 
     /**
@@ -953,6 +958,7 @@ public class TransferActivity extends BaseActivity implements
                         if (isLoginFromENotes()) {
                             //eNotes登陆
                             Log.d("status", "eNotes : true");
+                            mIsUsedCloudPassword = false;
                             showEnotesWaitingDialog();
                         } else {
                             //其他方式登陆
@@ -974,8 +980,11 @@ public class TransferActivity extends BaseActivity implements
                 new UnlockDialogWithEnotes.UnLockDialogClickListener() {
                     @Override
                     public void onUnLocked(String password) {
-
-                    }
+                        if(password != null) {
+                            mIsUsedCloudPassword = true;
+                            toTransfer();
+                        }
+                     }
                 },
                 new UnlockDialogWithEnotes.OnDismissListener() {
                     @Override
@@ -994,7 +1003,7 @@ public class TransferActivity extends BaseActivity implements
             return;
         }
 
-        if (isLoginFromENotes()) {
+        if (isLoginFromENotes() && !mIsUsedCloudPassword) {
             if (!cardManager.isConnected()) {
                 if (ReaderUtils.supportNfc(this)) {
                     showToast(this, getResources().getString(R.string.error_connect_card));
@@ -1056,7 +1065,7 @@ public class TransferActivity extends BaseActivity implements
                         @Override
                         public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                             SignedTransaction signedTransaction;
-                            if (mCard == null) {
+                            if (mCard == null || mIsUsedCloudPassword) {
                                 signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                                         mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
                             } else {

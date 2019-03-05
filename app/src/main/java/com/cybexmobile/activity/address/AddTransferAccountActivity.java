@@ -104,7 +104,6 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         setContentView(R.layout.activity_add_transfer_account);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        EventBus.getDefault().register(this);
         SoftKeyBoardListener.setListener(this, this);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         String address = getIntent().getStringExtra(INTENT_PARAM_ADDRESS);
@@ -159,7 +158,6 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
-        EventBus.getDefault().unregister(this);
         if (mAddTransferAccountDisposable != null && !mAddTransferAccountDisposable.isDisposed()) {
             mAddTransferAccountDisposable.dispose();
         }

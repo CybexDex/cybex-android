@@ -17,6 +17,7 @@ import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.Authority;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.CompactSignature;
@@ -97,6 +98,7 @@ public class WalletApi {
     private wallet_object mWalletObject;
     private boolean mbLogin = false;
     private HashMap<Types.public_key_type, Types.private_key_type> mHashMapPub2Priv = new HashMap<>();
+    private Types.private_key_type mMemoPrivateKey;
     private Sha512Object mCheckSum = new Sha512Object();
     private String unCompressedOwnerKey;
     private Context mContext;
@@ -151,7 +153,7 @@ public class WalletApi {
     }
 
     public WalletApi() {
-
+        mMemoPrivateKey = new Types.private_key_type(PrivateKey.from_seed("cybex-testactivecybextest123456"));
     }
 
     public WalletApi(Context context) {
@@ -652,7 +654,7 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = new Types.private_key_type("5JEa3vVLLKuohJmi3SzXUs9FG9UtCquJttnGf3ArGH1s7pqjiwA");//使用随意一个私钥来避免空指针问题
+            Types.private_key_type  privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -700,7 +702,7 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            Types.private_key_type  privateKeyType = mMemoPrivateKey;
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -794,6 +796,22 @@ public class WalletApi {
         operation.balance_owner_key = balanceOwnerKey;
         operation.total_claimed = new Asset(totalClaimedAmount, totalClaimedAmountId);
         return operation;
+    }
+
+    public Operations.account_update_operation getAccountUpdateOperation(ObjectId<AssetObject> feeAssetId,
+                                                                         long fee,
+                                                                         ObjectId<AccountObject> accountId,
+                                                                         Authority authority,
+                                                                         Types.public_key_type public_key_type
+                                                                         ) {
+        Operations.account_update_operation account_update_operation = new Operations.account_update_operation();
+        account_update_operation.fee = new Asset(fee, feeAssetId);
+        account_update_operation.account = accountId;
+        account_update_operation.active = authority;
+        account_update_operation.owner = null;
+        account_update_operation.new_options = null;
+        account_update_operation.extensions = new HashSet<>();
+        return account_update_operation;
     }
 
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {

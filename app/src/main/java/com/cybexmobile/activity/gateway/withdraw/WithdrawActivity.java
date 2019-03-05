@@ -49,6 +49,7 @@ import com.cybex.provider.apollo.ApolloClientApi;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
@@ -187,7 +188,6 @@ public class WithdrawActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_withdraw);
-        EventBus.getDefault().register(this);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         Intent serviceIntent = new Intent(this, WebSocketService.class);
@@ -262,7 +262,21 @@ public class WithdrawActivity extends BaseActivity {
             mFullAccountObject = mWebSocketService.getFullAccount(mUserName);
             mAccountObject = mFullAccountObject.account;
             if (mIsEnabled) {
-                checkIfLocked();
+                if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
+                    CybexDialog.showLimitOrderCancelConfirmationDialog(
+                            WithdrawActivity.this,
+                            getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                            getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                            new CybexDialog.ConfirmationDialogClickListener() {
+                                @Override
+                                public void onClick(Dialog dialog) {
+                                    Intent intent = new Intent(WithdrawActivity.this, SetCloudPasswordActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
+                } else {
+                    checkIfLocked();
+                }
             } else {
                 if (Locale.getDefault().getLanguage().equals("zh")) {
                     ToastMessage.showNotEnableDepositToastMessage((Activity) getApplicationContext(), mCnMsg, R.drawable.ic_error_16px);
@@ -432,22 +446,36 @@ public class WithdrawActivity extends BaseActivity {
         CybexDialog.showConfirmationDialog(this, new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
-                        try {
-                            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
-                                @Override
-                                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
-                                    mDynamicGlobalPropertyObject = reply.result;
-                                    mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
-                                    broadCastTransaction(mSignedTransaction);
-                                }
+                        if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
+                            CybexDialog.showLimitOrderCancelConfirmationDialog(
+                                    WithdrawActivity.this,
+                                    getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                                    getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                                    new CybexDialog.ConfirmationDialogClickListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog) {
+                                            Intent intent = new Intent(WithdrawActivity.this, SetCloudPasswordActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
+                        } else {
+                            try {
+                                BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
+                                    @Override
+                                    public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
+                                        mDynamicGlobalPropertyObject = reply.result;
+                                        mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
+                                        broadCastTransaction(mSignedTransaction);
+                                    }
 
-                                @Override
-                                public void onFailure() {
+                                    @Override
+                                    public void onFailure() {
 
-                                }
-                            });
-                        } catch (NetworkStatusException e) {
-                            e.printStackTrace();
+                                    }
+                                });
+                            } catch (NetworkStatusException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                     }
@@ -933,7 +961,6 @@ public class WithdrawActivity extends BaseActivity {
         mUnbinder.unbind();
         unbindService(mConnection);
         mHandler.removeCallbacksAndMessages(null);
-        EventBus.getDefault().unregister(this);
         mHandler = null;
         if(!mCompositeDisposable.isDisposed()){
             mCompositeDisposable.dispose();

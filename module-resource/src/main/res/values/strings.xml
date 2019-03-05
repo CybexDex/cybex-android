@@ -91,7 +91,7 @@
     <string name="setting_set_cloud_password">Set Cloud Password</string>
     <string name="setting_set_enotes_card_password">Set card password</string>
     <string name="setting_has_already_set">Set</string>
-    <string name="setting_not_set">Set</string>
+    <string name="setting_not_set">Not Set</string>
     <string name="setting_language">Language</string>
     <string name="setting_language_english">English</string>
     <string name="setting_language_chinese">简体中文</string>
@@ -326,6 +326,8 @@
     <string name="toast_message_add_to_transfer_account_list">Add to transfer account list?</string>
     <string name="toast_message_balance_claim_succeeded">Claim succeeded</string>
     <string name="toast_message_balance_claim_failed">Claim failed</string>
+    <string name="toast_message_update_account_succeeded">Account update succeeded</string>
+    <string name="toast_message_update_account_failed">Account update failed</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
@@ -595,5 +597,15 @@
     <string name="title_use_password">Use Password</string>
     <string name="tip_no_memo_use_cloud_pass">eNotes does not support memo yet, if you want to use it, please
         use cloud password to unlock</string>
+
+    <!-- Nfc Dialog Message -->
+    <string name="nfc_dialog_change_account_content">Change Account to %1$s? Please do not move card</string>
+    <string name="nfc_dialog_verify_enotes_password_titile">Verify Enotes password</string>
+    <string name="nfc_dialog_add_cloud_password_content">Add cloud password to unlock this function</string>
+    <string name="nfc_dialog_add_cloud_password_button">Add</string>
+
+    <!-- Nfc Toast Message -->
+    <string name="nfc_toast_message_already_logged_in">Already Logged in by eNotes</string>
+    <string name="nfc_toast_message_logged_in_successful_by_eNotes">Logged in successfully by eNotes</string>
 
 </resources>

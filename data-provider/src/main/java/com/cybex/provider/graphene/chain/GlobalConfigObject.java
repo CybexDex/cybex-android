@@ -30,6 +30,9 @@ public class GlobalConfigObject {
         mGsonBuilder.registerTypeAdapter(Ripemd160Object.class, new Ripemd160Object.ripemd160_object_deserializer());
         mGsonBuilder.registerTypeAdapter(Sha256Object.class, new Sha256Object.sha256_object_deserializer());
         mGsonBuilder.registerTypeAdapter(Sha256Object.class, new Sha256Object.sha256_object_serializer());
+//        mGsonBuilder.registerTypeAdapter(Operations.operation_type.class, new Operations.operation_type.operation_type_deserializer());
+//        mGsonBuilder.registerTypeAdapter(Operations.operation_type.class, new Operations.operation_type.operation_type_serializer());
+        mGsonBuilder.registerTypeAdapter(Authority.class, new Authority.AuthoritySerializer());
     }
 
     public GsonBuilder getGsonBuilder() {

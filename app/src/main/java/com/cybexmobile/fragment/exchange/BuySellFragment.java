@@ -163,6 +163,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private boolean mIsViewCreated;
 
     private UnlockDialogWithEnotes mUnlockDialogWithEnotes;
+    private boolean mIsUsedCloudPassword = false;
 
     public static BuySellFragment getInstance(String action, WatchlistData watchlistData,
                                               FullAccountObject fullAccountObject, boolean isLoginIn, String name,
@@ -262,6 +263,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        mUnlockDialogWithEnotes = null;
     }
 
     @Override
@@ -456,6 +458,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                     new CybexDialog.ConfirmationDialogClickListener() {
                 @Override
                 public void onClick(Dialog dialog) {
+                    mIsUsedCloudPassword = false;
                     checkIfLocked(mName);
                 }
             });
@@ -772,31 +775,36 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
      * @param userName
      */
     private void checkIfLocked(String userName) {
-        if(!BitsharesWalletWraper.getInstance().is_locked()){
-            toExchange();
-            return;
-        }
+        if (isLoginFromENotes()) {
+            mUnlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(getFragmentManager(), mFullAccountObject
+                            .account, userName,
+                    new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                        @Override
+                        public void onUnLocked(String password) {
+                            if (password != null) {
+                                mIsUsedCloudPassword = true;
+                                toExchange();
+                            }
+                        }
+                    }, new UnlockDialogWithEnotes.OnDismissListener() {
+                        @Override
+                        public void onDismiss(int result) {
 
-        mUnlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(getFragmentManager(), mFullAccountObject
-                        .account, userName,
-                new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                        }
+                    });
+        } else {
+            if (BitsharesWalletWraper.getInstance().is_locked()) {
+                CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccountObject.account, userName, new UnlockDialog.UnLockDialogClickListener() {
                     @Override
                     public void onUnLocked(String password) {
-
-                    }
-                }, new UnlockDialogWithEnotes.OnDismissListener() {
-                    @Override
-                    public void onDismiss(int result) {
-
+                        toExchange();
                     }
                 });
+            } else {
+                toExchange();
+            }
 
-//        CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccountObject.account, userName, new UnlockDialog.UnLockDialogClickListener() {
-//            @Override
-//            public void onUnLocked(String password) {
-//                toExchange();
-//            }
-//        });
+        }
     }
 
     public void showProgress(){
@@ -811,19 +819,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         mUnlockDialogWithEnotes.dismiss();
     }
 
-    protected boolean isLoginFromENotes() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("from", true);
-    }
-
-    protected String getLoginPublicKey() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("key", "");
-    }
-
-    protected void showToast(Context context, String text) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
-
+    public UnlockDialogWithEnotes getUnlockDialog() {
+        return mUnlockDialogWithEnotes;
     }
 
     /**
@@ -833,7 +830,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         BaseActivity activity = (BaseActivity) getActivity();
         try {
 
-            if (isLoginFromENotes()) {
+            if (isLoginFromENotes() && !mIsUsedCloudPassword) {
 
                 CardManager cardManager = activity.cardManager;
                 if (!cardManager.isConnected()) {
@@ -877,7 +874,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                             mIsCybBalanceEnough ? mCybExchangeFee.amount : mBaseOrQuoteExchangeFee.amount,
                             amountSell, amountReceive);
                     SignedTransaction signedTransaction;
-                    if (activity.currentCard == null) {
+                    if (activity.currentCard == null || mIsUsedCloudPassword) {
                         signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                                 mFullAccountObject.account, operation, ID_CREATE_LIMIT_ORDER_OPERATION, reply.result);
                     } else {
@@ -915,7 +912,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
         mExchangeLimitOrderFragment.notifyMarketPriceDataChanged(price);
     }
 
-    private MessageCallback mLimitOrderCreateCallback = new MessageCallback<Reply<String>>(){
+    private MessageCallback<Reply<String>> mLimitOrderCreateCallback = new MessageCallback<Reply<String>>(){
 
         @Override
         public void onMessage(Reply<String> reply) {

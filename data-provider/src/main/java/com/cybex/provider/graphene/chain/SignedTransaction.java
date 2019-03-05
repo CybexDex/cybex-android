@@ -3,6 +3,7 @@ package com.cybex.provider.graphene.chain;
 import android.util.Log;
 
 import com.cybex.provider.crypto.Sha256Object;
+import com.cybex.provider.utils.MyUtils;
 
 import org.bitcoinj.core.ECKey;
 import org.ethereum.util.ByteUtil;
@@ -34,6 +35,7 @@ public class SignedTransaction extends Transaction {
 
     public void signByENotes(CardManager cardManager, Card card, Types.private_key_type privateKeyType, Sha256Object chain_id) {
         Sha256Object digest = sig_digest(chain_id);
+        Log.e("sha256Digest", MyUtils.bytesToHex(digest.hash));
         SignaturesBuffer.add(sign_compactByENotes(cardManager, card, digest, true));
         signatures.add(bytesToHex(sign_compactByENotes(cardManager, card, digest, true).data));
     }
@@ -52,6 +54,8 @@ public class SignedTransaction extends Transaction {
 
 
             while (true) {
+                Sha256Hash a = new Sha256Hash(digest.hash);
+                Log.e("sha256hash",a.toHex());
                 SignedMessage signedMessage = signHashByENotes(cardManager, card, new Sha256Hash(digest.hash));
                 byte[] byteCompact = signedMessage.bitcoinEncodingOfSignature();
                 signature = new CompactSignature(byteCompact);

@@ -333,6 +333,7 @@ public class Types{
     public static class vote_id_type implements Serializable {
         int content;
 
+
         public vote_id_type(String strSerial) {
             int nIndex = strSerial.indexOf(':');
             if (nIndex == -1) {
@@ -359,7 +360,7 @@ public class Types{
 
     public static class account_options implements Serializable {
         public public_key_type memo_key;
-        public String voting_account;
+        public ObjectId<AccountObject> voting_account;
         public Integer num_witness;
         public Integer num_committee;
         public HashSet<vote_id_type> votes;

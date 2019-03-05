@@ -373,6 +373,35 @@ public class CybexDialog {
         return showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
     }
 
+    public static void showVerifyEnotesCardPasswordDialog(Context context, String title, final ConfirmationDialogClickWithButtonTimerListener confirmListener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_nfc_enotes_password_verification);
+        TextView dialogTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        final TextView dialogErrorMessage = dialog.findViewById(R.id.dialog_confirm_tv_error);
+        final EditText dialogEditText = dialog.findViewById(R.id.dialog_confirm_et_password);
+        dialogTitle.setText(title);
+        final Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (confirmListener != null) {
+                    confirmListener.onClick(dialog, null, dialogEditText, dialogErrorMessage);
+                }
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
 
     public static void showAddAddressDialog(Context context, String message, String subMessage,
                                             final ConfirmationDialogClickListener confirmListener,

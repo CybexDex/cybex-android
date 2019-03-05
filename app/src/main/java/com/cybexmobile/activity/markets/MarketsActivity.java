@@ -208,7 +208,6 @@ public class MarketsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_markets);
         mUnbinder = ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         mWatchListData = (WatchlistData) getIntent().getSerializableExtra(INTENT_PARAM_WATCHLIST);
         mFromWhere = getIntent().getStringExtra(INTENT_PARAM_FROM);
@@ -246,7 +245,6 @@ public class MarketsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
         if(mDisposable != null && !mDisposable.isDisposed()){
             mDisposable.dispose();
         }

@@ -62,7 +62,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
     implementation 'com.belerweb:pinyin4j:2.5.0'
     //eNotes
-    implementation 'io.enotes.sdk:library:1.0.5'
+    implementation 'io.enotes.sdk:library:1.0.8'
 }
 
 greendao {

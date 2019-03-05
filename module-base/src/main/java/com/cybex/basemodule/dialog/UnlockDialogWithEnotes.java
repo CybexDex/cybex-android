@@ -2,6 +2,7 @@ package com.cybex.basemodule.dialog;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -39,6 +40,7 @@ import io.reactivex.schedulers.Schedulers;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_IS_MEMOKEY_NEEDED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
+import static com.cybex.basemodule.constant.Constant.PREF_PARAM_UNLOCK_BY_CARDS;
 
 public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragment {
 
@@ -74,6 +76,7 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     private AccountObject mAccountObject;
     private String mUserName;
     private boolean isMemoKeyNeeded;
+    private boolean isUnlockByCardDefault;
     private UnlockDialogWithEnotes.UnLockDialogClickListener mUnLockListener;
     private UnlockDialogWithEnotes.OnDismissListener mOnDismissListener;
 
@@ -89,7 +92,8 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
         mAccountObject = (AccountObject) bundle.getSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT);
         mUserName = bundle.getString(INTENT_PARAM_NAME);
         isMemoKeyNeeded = bundle.getBoolean(INTENT_PARAM_IS_MEMOKEY_NEEDED);
-//        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        isUnlockByCardDefault = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true);
+        //        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
     }
 
@@ -106,7 +110,19 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle.setText(getResources().getString(R.string.unlock_wallet_dialog_title));
-        mUseEnotesTitle.setVisibility(View.VISIBLE);
+        if (mAccountObject.active.key_auths.size() > 1) {
+            mUseEnotesTitle.setVisibility(View.VISIBLE);
+        }
+        if (isUnlockByCardDefault) {
+            mEnotesLayout.setVisibility(View.VISIBLE);
+            mCloudPasswordLayout.setVisibility(View.GONE);
+            mUseEnotesTitle.setText(getResources().getString(R.string.title_use_password));
+            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        } else {
+            mEnotesLayout.setVisibility(View.GONE);
+            mCloudPasswordLayout.setVisibility(View.VISIBLE);
+            mUseEnotesTitle.setText(getResources().getString(R.string.title_use_enotes));
+        }
     }
 
     @Override
@@ -118,7 +134,7 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mDisposable != null && !mDisposable.isDisposed()){
+        if (mDisposable != null && !mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
     }
@@ -126,18 +142,18 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        if(mOnDismissListener != null){
+        if (mOnDismissListener != null) {
             mOnDismissListener.onDismiss(result);
         }
     }
 
     @OnClick({R2.id.dialog_confirm_btn_cancel, R2.id.btn_cancel_enotes})
-    public void onDialogCancel(View view){
+    public void onDialogCancel(View view) {
         this.dismiss();
     }
 
     @OnClick(R2.id.dialog_confirm_btn_confirm)
-    public void onDialogConfirm(View view){
+    public void onDialogConfirm(View view) {
         String password = mEtPassword.getText().toString().trim();
         if (mUnLockListener != null && !TextUtils.isEmpty(password)) {
             mBtnConfirm.setEnabled(false);
@@ -147,13 +163,13 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     }
 
     @OnClick(R2.id.use_enotes)
-    public void switchEnotesAndPass(View view){
-        if (mEnotesLayout.getVisibility() == View.VISIBLE){
+    public void switchEnotesAndPass(View view) {
+        if (mEnotesLayout.getVisibility() == View.VISIBLE) {
             mEnotesLayout.setVisibility(View.GONE);
             mCloudPasswordLayout.setVisibility(View.VISIBLE);
             mUseEnotesTitle.setText(getResources().getString(R.string.title_use_enotes));
 
-        }else{
+        } else {
             mEnotesLayout.setVisibility(View.VISIBLE);
             mCloudPasswordLayout.setVisibility(View.GONE);
             mUseEnotesTitle.setText(getResources().getString(R.string.title_use_password));
@@ -162,13 +178,13 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
         }
     }
 
-    private void verifyPassword(final AccountObject accountObject, final String username, final String password){
+    private void verifyPassword(final AccountObject accountObject, final String username, final String password) {
         mDisposable = Observable.create(new ObservableOnSubscribe<Integer>() {
 
             @Override
             public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
                 int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, username, password);
-                if(!emitter.isDisposed()){
+                if (!emitter.isDisposed()) {
                     emitter.onNext(result);
                     emitter.onComplete();
                 }
@@ -179,10 +195,10 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
                 .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
-                        if(integer == 0){
+                        if (integer == 0) {
                             mTvUnlockError.setVisibility(View.GONE);
                             mPbLoading.setVisibility(View.GONE);
-                            if(mUnLockListener != null){
+                            if (mUnLockListener != null) {
                                 mUnLockListener.onUnLocked(password);
                             }
                             result = 1;
@@ -204,7 +220,7 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     }
 
     @OnEditorAction(R2.id.dialog_confirm_et_password)
-    public boolean onUnlockEditorAction(TextView textView, int actionId, KeyEvent event){
+    public boolean onUnlockEditorAction(TextView textView, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
             mBtnConfirm.performClick();
             return true;
@@ -212,7 +228,7 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
         return false;
     }
 
-    public void setUnLockListener(UnlockDialogWithEnotes.UnLockDialogClickListener lockListener){
+    public void setUnLockListener(UnlockDialogWithEnotes.UnLockDialogClickListener lockListener) {
         mUnLockListener = lockListener;
     }
 
@@ -220,19 +236,19 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
         mOnDismissListener = onDismissListener;
     }
 
-    public void showProgress(){
+    public void showProgress() {
         mCircleProgess.setVisibility(View.VISIBLE);
     }
 
-    public void hideProgress(){
+    public void hideProgress() {
         mCircleProgess.setVisibility(View.INVISIBLE);
     }
 
-    public void showNoSupportMemoText(){
+    public void showNoSupportMemoText() {
         mTipText.setText(getResources().getString(R.string.tip_no_memo_use_cloud_pass));
     }
 
-    public void showNormalText(){
+    public void showNormalText() {
         mTipText.setText(getResources().getString(R.string.error_connect_card));
     }
 
@@ -243,7 +259,6 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     public interface OnDismissListener {
         void onDismiss(int result);
     }
-
 
 
 }

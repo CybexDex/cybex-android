@@ -22,16 +22,11 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.constant.Constant;
-import com.cybex.basemodule.dialog.CybexDialog;
-import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
-import com.cybex.provider.http.RetrofitFactory;
-import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
@@ -39,13 +34,19 @@ import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
-import com.cybexmobile.R;
 import com.cybexmobile.activity.markets.MarketsActivity;
+import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.provider.http.entity.AppVersion;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.event.Event;
+import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.fragment.AccountFragment;
-import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.fragment.exchange.ExchangeFragment;
+import com.cybexmobile.fragment.WatchlistFragment;
 import com.cybexmobile.fragment.main.CybexMainFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
+import com.cybexmobile.R;
 
 import org.ethereum.util.ByteUtil;
 import org.greenrobot.eventbus.EventBus;
@@ -64,11 +65,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
-import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
 public class BottomNavigationActivity extends BaseActivity implements
         WatchlistFragment.OnListFragmentInteractionListener {
@@ -106,7 +107,6 @@ public class BottomNavigationActivity extends BaseActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setContentView(R.layout.activity_nav_button);
         if (!isMyServiceRunning(WebSocketService.class)) {
@@ -125,7 +125,7 @@ public class BottomNavigationActivity extends BaseActivity implements
         } else {
             checkVersion();
         }
-//        parseIntent();
+        parseIntent();
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -140,81 +140,49 @@ public class BottomNavigationActivity extends BaseActivity implements
 
     @Override
     protected void nfcStartReadCard() {
-        mExchangeFragment.getBuySellFragment().showProgress();
+        if (mBottomNavigationView.getSelectedItemId() == R.id.navigation_exchange && mExchangeFragment != null ) {
+            if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()){
+                mExchangeFragment.getBuySellFragment().showProgress();
+            } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
+                mExchangeFragment.getOpenOrdersFragment().showProgress();
+            }
+        } else {
+            super.nfcStartReadCard();
+        }
+
     }
 
     @Override
     protected void readCardOnSuccess(Card card) {
-        super.readCardOnSuccess(card);
-        if (mBottomNavigationView.getSelectedItemId() != R.id.navigation_exchange) {
-            //在交易Fragment执行的逻辑
-            try {
-                byte[] bytes = ByteUtil.hexStringToBytes(
-                        cardManager.transmitApdu(Command.newCmd().setDesc("cybex_account").setCmdStr("00CA0032")));
-                TLVBox tlvBox = TLVBox.parse(bytes, 0, bytes.length);
-                String stringValue = new String(tlvBox.getBytesValue(0x32));
-                setLoginPublicKey(card.getCurrencyPubKey());
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loginByENotes(stringValue, "123456789");
-                    }
-                }, 500);
-
-            } catch (CommandException e) {
-                e.printStackTrace();
+        if (mBottomNavigationView.getSelectedItemId() == R.id.navigation_exchange && mExchangeFragment != null) {
+            currentCard = card;
+            cardApp = card;
+            if (isLoginFromENotes()) {
+                if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()) {
+                    mExchangeFragment.getBuySellFragment().hideEnotesDialog();
+                    mExchangeFragment.getBuySellFragment().toExchange();
+                } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
+                    mExchangeFragment.getOpenOrdersFragment().hideEnotesDialog();
+                    mExchangeFragment.getOpenOrdersFragment().toCancelLimitOrder();
+                }
             }
         } else {
-            if (isLoginFromENotes()) {
-                mExchangeFragment.getBuySellFragment().toExchange();
-            }
+            super.readCardOnSuccess(card);
         }
     }
 
     @Override
     protected void readCardError(int code, String message) {
         super.readCardError(code, message);
-        mExchangeFragment.getBuySellFragment().hideProgress();
-    }
-
-    private void loginByENotes(String email, String password) {
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            return;
-        }
-        showLoadDialog(true);
-        try {
-            BitsharesWalletWraper.getInstance().get_account_object(email, new MessageCallback<Reply<AccountObject>>() {
-                @Override
-                public void onMessage(Reply<AccountObject> reply) {
-                    AccountObject accountObject = reply.result;
-                    int result = BitsharesWalletWraper.getInstance()
-                            .import_account_password(accountObject, email, password);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            hideLoadDialog();
-                            setLoginFrom(true);
-                            EventBus.getDefault().post(new Event.LoginIn(email));
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
-                                    getApplicationContext());
-                            sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
-                            sharedPreferences.edit().putString(PREF_NAME, email).apply();
-
-                            mBottomNavigationView.setSelectedItemId(R.id.navigation_account);
-                        }
-                    });
-
-                }
-
-                @Override
-                public void onFailure() {
-                    hideLoadDialog();
-                }
-            });
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
+        if (mBottomNavigationView.getSelectedItemId() == R.id.navigation_exchange && mExchangeFragment != null) {
+            if (mExchangeFragment.getBuySellFragment().getUnlockDialog().isVisible()) {
+                mExchangeFragment.getBuySellFragment().hideProgress();
+            } else if (mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
+                mExchangeFragment.getOpenOrdersFragment().hideProgress();
+            }
         }
     }
+
 
     private void parseIntent() {
         Intent intent = getIntent();
@@ -264,7 +232,6 @@ public class BottomNavigationActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
         if (!isRecreate) {
             Intent intentService = new Intent(this, WebSocketService.class);
             stopService(intentService);

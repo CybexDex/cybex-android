@@ -330,6 +330,8 @@
     <string name="toast_message_add_to_transfer_account_list">是否将该账户储存到转账账户列表?</string>
     <string name="toast_message_balance_claim_succeeded">申领成功</string>
     <string name="toast_message_balance_claim_failed">申领失败</string>
+    <string name="toast_message_update_account_succeeded">帐号更新成功</string>
+    <string name="toast_message_update_account_failed">帐号更新失败</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">解锁钱包</string>
@@ -592,5 +594,14 @@
     <string name="title_use_password">使用密码</string>
     <string name="tip_no_memo_use_cloud_pass">eNotes卡暂不支持Memo功能，如需添加Memo，请使用云密码解锁</string>
 
+    <!-- Nfc Dialog Message -->
+    <string name="nfc_dialog_change_account_content"> 切换帐号至 %1$s? 请不要移动卡片</string>
+    <string name="nfc_dialog_verify_enotes_password_titile">验证eNotes卡密码</string>
+    <string name="nfc_dialog_add_cloud_password_content">使用该功能，必须添加云密码并使用云密码解锁账户，是否现在添加？</string>
+    <string name="nfc_dialog_add_cloud_password_button">去添加</string>
+
+    <!-- Nfc Toast Message -->
+    <string name="nfc_toast_message_already_logged_in">已经用eNotes登陆</string>
+    <string name="nfc_toast_message_logged_in_successful_by_eNotes">eNotes登陆成功</string>
 
 </resources>

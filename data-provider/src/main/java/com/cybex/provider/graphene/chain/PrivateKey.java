@@ -43,6 +43,7 @@ public class PrivateKey {
 
     public static PrivateKey generate() {
         try {
+            Security.addProvider(new BouncyCastleProvider());
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDsA", "SC");
             ECGenParameterSpec ecSpec = new ECGenParameterSpec("secp256k1");
             keyGen.initialize(ecSpec, new SecureRandom());
@@ -133,9 +134,7 @@ public class PrivateKey {
         Sha256Object.encoder encoder = new Sha256Object.encoder();
 
         encoder.write(strSeed.getBytes(Charset.forName("UTF-8")));
-        PrivateKey privateKey = new PrivateKey(encoder.result().hash);
-
-        return privateKey;
+        return new PrivateKey(encoder.result().hash);
     }
 
     public Sha512Object get_shared_secret(PublicKey publicKey) {

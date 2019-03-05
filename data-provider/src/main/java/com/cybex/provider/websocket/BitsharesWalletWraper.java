@@ -7,6 +7,7 @@ import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.Authority;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
@@ -20,6 +21,7 @@ import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.PrivateKey;
+import com.cybex.provider.graphene.chain.PublicKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.graphene.chain.MarketTicker;
@@ -56,6 +58,7 @@ public class BitsharesWalletWraper {
     private String mstrWalletFilePath;
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
+    private List<String> addressListFromPublicKey = new ArrayList<>();
     private String password;
     private Disposable lockWalletDisposable;
 
@@ -447,6 +450,14 @@ public class BitsharesWalletWraper {
         return mWalletApi.getBalanceClaimOperation(fee, feeAssetId, depositToAccount, balanceToClaim, balanceOwnerKey, totalClaimedAmount, totalClaimedAmountId);
     }
 
+    public Operations.account_update_operation getAccountUpdateOperation(ObjectId<AssetObject> feeAssetId,
+                                                                         long fee,
+                                                                         ObjectId<AccountObject> accountId,
+                                                                         Authority authority,
+                                                                         Types.public_key_type public_key_type) {
+        return mWalletApi.getAccountUpdateOperation(feeAssetId, fee, accountId, authority, public_key_type);
+    }
+
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
 
         return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
@@ -799,6 +810,20 @@ public class BitsharesWalletWraper {
         Log.e("uncompressedOwner", unCompressedOwnerKey);
         Log.e("uncompressedMemo", unCompressedMemo);
         return addressList;
+    }
+
+    public List<String> getAddressListFromPublicKey(Card card) {
+        if (addressListFromPublicKey.size() != 0) {
+            return addressListFromPublicKey;
+        } else {
+            Types.public_key_type public_key_type_compress = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
+            Types.public_key_type public_key_type_uncompress = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(false), false), false);
+            addressListFromPublicKey.add(public_key_type_compress.getAddress());
+            addressListFromPublicKey.add(public_key_type_uncompress.getAddress());
+            addressListFromPublicKey.add(public_key_type_compress.getPTSAddress(public_key_type_compress.key_data));
+            addressListFromPublicKey.add(public_key_type_uncompress.getPTSAddress(public_key_type_uncompress.key_data_uncompressed));
+            return addressListFromPublicKey;
+        }
     }
 
     public List<String> getAddressList(String userName, String passWord) {

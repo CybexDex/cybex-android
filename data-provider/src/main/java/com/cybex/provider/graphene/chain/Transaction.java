@@ -1,16 +1,21 @@
 package com.cybex.provider.graphene.chain;
 
+import android.util.Log;
+
 import com.cybex.provider.common.UnsignedShort;
 import com.cybex.provider.crypto.Ripemd160Object;
 import com.cybex.provider.crypto.Sha256Object;
 import com.cybex.provider.fc.io.BitUtil;
 import com.cybex.provider.fc.io.RawType;
+import com.cybex.provider.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import mrd.bitlib.util.HexUtils;
 
 public class Transaction {
     public class required_authorities {
@@ -87,6 +92,7 @@ public class Transaction {
         enc.write(rawTypeObject.get_byte_array(expiration));
 
         //enc.write(rawTypeObject.get_byte_array(operations.size()));
+        Log.e("write","beforeOperation");
         rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(operationTypes.size()));
         for (Operations.operation_type operationType : operationTypes) {
             //enc.write(rawTypeObject.get_byte_array(operationType.nOperationType));
@@ -94,10 +100,8 @@ public class Transaction {
             Operations.base_operation baseOperation = (Operations.base_operation) operationType.operationContent;
             baseOperation.write_to_encoder(enc);
         }
-        //enc.write(rawTypeObject.get_byte_array(extensions.size()));
+        Log.e("write", "afterOperation");
         rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(extensions.size()));
-
-
         return enc.result();
     }
 

@@ -426,6 +426,21 @@ public class Event {
             return isSuccess;
         }
     }
+
+    /**
+     * 更新帐号
+     */
+    public static class UpdateAccount {
+        private boolean isSuccess;
+
+        public UpdateAccount(boolean isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        public boolean isSuccess() {
+            return isSuccess;
+        }
+    }
     /**
      * 行情数据加载完通知交易界面刷新 防止行情界面数据没加载出来进入交易界面交易界面数据为空
      */

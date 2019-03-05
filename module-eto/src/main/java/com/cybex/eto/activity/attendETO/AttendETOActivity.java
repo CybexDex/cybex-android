@@ -120,7 +120,6 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attend_eto);
         etoActivityComponent().inject(this);
-        EventBus.getDefault().register(this);
         mAttendETOPresenter.attachView(this);
         SoftKeyBoardListener.setListener(this, this);
         mEtoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_ATTEND_ETO);
@@ -146,7 +145,6 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         super.onDestroy();
         unbindService(mConnection);
         mAttendETOPresenter.detachView();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override

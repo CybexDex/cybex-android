@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
+import io.enotes.sdk.repository.db.entity.Card;
 
 public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -97,6 +98,44 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
                 break;
         }
         transaction.commit();
+    }
+
+    @Override
+    protected void nfcStartReadCard() {
+        if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
+            if (mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                mOpenOrdersFragment.getUnlockDialog().showProgress();
+            }
+        } else {
+            super.nfcStartReadCard();
+        }
+
+    }
+
+    @Override
+    protected void readCardOnSuccess(Card card) {
+        if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
+            currentCard = card;
+            cardApp = card;
+            if (isLoginFromENotes()) {
+                if (mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                    mOpenOrdersFragment.hideEnotesDialog();
+                    mOpenOrdersFragment.toCancelLimitOrder();
+                }
+            }
+        } else {
+            super.readCardOnSuccess(card);
+        }
+    }
+
+    @Override
+    protected void readCardError(int code, String message) {
+        super.readCardError(code, message);
+        if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
+            if (mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                mOpenOrdersFragment.hideProgress();
+            }
+        }
     }
 
     @Override

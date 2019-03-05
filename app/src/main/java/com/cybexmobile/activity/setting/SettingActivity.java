@@ -1,10 +1,13 @@
 package com.cybexmobile.activity.setting;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -21,11 +24,15 @@ import android.widget.Toast;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.help.StoreLanguageHelper;
+import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.activity.setting.help.HelpActivity;
 import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
@@ -95,23 +102,46 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     private SharedPreferences mSharedPreference;
     private Unbinder mUnbinder;
     private int mMode;
-    private boolean mIsCloudPasswordSet;
+    private String mName;
     private boolean mIsCardPasswordSet;
+    private WebSocketService mWebSocketService;
+    private AccountObject mAccountObject;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
+            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
+            if (fullAccountObject != null) {
+                mAccountObject = fullAccountObject.account;
+                mLogInByEnotesLayout.setVisibility(View.VISIBLE);
+                displayDefaultUnlockSetting();
+                displayPassWordSet();
+                displayCardPasswordSet();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         mUnbinder = ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
+        mName = mSharedPreference.getString(PREF_NAME, "");
         mMode = mSharedPreference.getInt(PREF_LOAD_MODE, FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI);
         setSupportActionBar(mToolbar);
         if (isLoginFromENotes()) {
-            mLogInByEnotesLayout.setVisibility(View.VISIBLE);
-            displayDefaultUnlockSetting();
-            displayPassWordSet();
-            displayCardPasswordSet();
+            Intent intent = new Intent(this, WebSocketService.class);
+            bindService(intent, mConnection, BIND_AUTO_CREATE);
+
         } else {
             mLogInByEnotesLayout.setVisibility(View.GONE);
         }
@@ -145,7 +175,20 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
-        EventBus.getDefault().unregister(this);
+        if(isLoginFromENotes() && mSharedPreference.getBoolean(PREF_IS_LOGIN_IN, false )) {
+            unbindService(mConnection);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadFullAccount(Event.UpdateFullAccount event) {
+        if (isLoginFromENotes() && (mAccountObject == null || mAccountObject.active.key_auths.size() != event.getFullAccount().account.active.key_auths.size())) {
+            mAccountObject = event.getFullAccount().account;
+            mLogInByEnotesLayout.setVisibility(View.VISIBLE);
+            displayDefaultUnlockSetting();
+            displayPassWordSet();
+            displayCardPasswordSet();
+        }
     }
 
     @OnClick(R.id.setting_tv_unlock_method)
@@ -153,7 +196,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         if (AntiShake.check(view.getId())) {
             return;
         }
-        if (mIsCloudPasswordSet) {
+        if (mAccountObject.active.key_auths.size() > 1) {
             UnlockMethodSelectorDialog dialog = new UnlockMethodSelectorDialog();
             dialog.show(getSupportFragmentManager(), UnlockMethodSelectorDialog.class.getSimpleName());
             dialog.setOnUnlockMethodSelectedListener(this);
@@ -165,8 +208,8 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         if (AntiShake.check(view.getId())) {
             return;
         }
-        if (!mIsCloudPasswordSet) {
-            Intent intent = new Intent(SettingActivity.this, ChooseLanguageActivity.class);
+        if (mAccountObject.active.key_auths.size() < 2) {
+            Intent intent = new Intent(SettingActivity.this, SetCloudPasswordActivity.class);
             startActivity(intent);
         }
     }
@@ -223,9 +266,13 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         if (AntiShake.check(view.getId())) {
             return;
         }
+        if (isLoginFromENotes()) {
+            unbindService(mConnection);
+        }
         mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
         mSharedPreference.edit().putString(PREF_NAME, null).apply();
         mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
+        setLoginFrom(false);
         /**
          * fix bug:CYM-558
          * 转账存在锁定期，在锁定期页面没有显示出来
@@ -282,15 +329,14 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         } else {
             mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_password));
         }
-        if (mIsCardPasswordSet) {
-            mTvCloudPasswordSet.setCompoundDrawables(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
+        if (mAccountObject.active.key_auths.size() > 1) {
+            mTvUnlockMethod.setCompoundDrawables(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
 
         }
     }
 
     private void displayPassWordSet() {
-        mIsCloudPasswordSet = mSharedPreference.getBoolean(PREF_IS_CLOUD_PASSWORD_SET,false);
-        if (mIsCloudPasswordSet) {
+        if (mAccountObject.active.key_auths.size() > 1) {
            mTvCloudPasswordSet.setText(getResources().getString(R.string.setting_has_already_set));
         } else {
             mTvCloudPasswordSet.setText(getResources().getString(R.string.setting_not_set));
