@@ -35,7 +35,7 @@ public class RetrofitFactory {
 
     private static final String eva_base_url = "https://api.evaluape.io/";
 
-    private static final String cybex_live_base_url = "https://live.cybex.io/";
+    private static final String cybex_live_base_url = "https://live-pro.cybex.io/";
     private static final String cybex_live_base_url_test = "https://cybtestbrowser.nbltrust.com/";
 
     private OkHttpClient okHttpClient;

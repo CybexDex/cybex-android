@@ -65,8 +65,8 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
         if (base != null && quote != null) {
             AssetsPair.Config assetPairConfig = AssetPairCache.getInstance().getAssetPairConfig(base.id.toString(), quote.id.toString());
             if(assetPairConfig == null) throw new NullPointerException("AssetsPair.Config can't null");
-            if ((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE")) ||
-                    (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE"))) {
+            if ((!base.symbol.startsWith("CYB") && !base.symbol.startsWith("JADE") && !base.symbol.startsWith("ARENA")) ||
+                    (!quote.symbol.startsWith("CYB") && !quote.symbol.startsWith("JADE") && !quote.symbol.startsWith("ARENA"))) {
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
                 layoutParams.height = 0;
                 layoutParams.width = 0;

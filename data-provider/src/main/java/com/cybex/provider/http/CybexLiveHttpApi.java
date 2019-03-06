@@ -1,6 +1,7 @@
 package com.cybex.provider.http;
 
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
+import com.squareup.okhttp.ResponseBody;
 
 import java.util.List;
 
@@ -25,5 +26,13 @@ public interface CybexLiveHttpApi {
                                                                                @Query("limit") int limit,
                                                                                @Query("acct_from") String acct_from,
                                                                                @Query("acct_to") String acct_to);
+    @GET("get_fill_bypair")
+    Observable<List<Object>> getTransactionRecords(@Query("account") String account,
+                                                         @Query("page") int page,
+                                                         @Query("limit") int limit,
+                                                         @Query("start") String start,
+                                                         @Query("end") String end,
+                                                         @Query(value = "filter_in", encoded = true) String filerIn,
+                                                         @Query(value = "filter_out", encoded = true) String filterOut);
 
 }

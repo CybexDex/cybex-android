@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +24,17 @@ import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.graphene.chat.ChatMessages;
+import com.cybex.provider.graphene.chat.ChatSubscribe;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.market.WatchlistData;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.TradeHistoryRecyclerViewAdapter;
 import com.cybexmobile.graphene.chain.TradeHistory;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.reflect.TypeToken;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -37,7 +43,10 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +94,7 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     private int mCurrPage;
-    private int mCount  = 0;
+    private int mCount = 0;
 
     public static TradeHistoryFragment getInstance(WatchlistData watchlistData, boolean isLoadAll) {
         TradeHistoryFragment fragment = new TradeHistoryFragment();
@@ -158,22 +167,22 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateFullAccount(Event.UpdateFullAccount event){
+    public void onUpdateFullAccount(Event.UpdateFullAccount event) {
         if (mFullAccountObject == null) {
             mFullAccountObject = event.getFullAccount();
             loadExchangeHistory(mCurrPage, MAX_PAGE_COUNT, true);
         }
     }
 
-    private void parseBuyOrSell(TradeHistoryItem item, Map<String, List<AssetsPair>> assetPairs){
+    private void parseBuyOrSell(TradeHistoryItem item, Map<String, List<AssetsPair>> assetPairs) {
         String payAssetId = item.tradeHistory.pays.asset_id;
         String receiveAssetId = item.tradeHistory.receives.asset_id;
         here:
-        for(Map.Entry<String, List<AssetsPair>> entry : assetPairs.entrySet()){
+        for (Map.Entry<String, List<AssetsPair>> entry : assetPairs.entrySet()) {
             //支付baseAssetId 接收quoteAssetId 为买单
-            if(entry.getKey().equals(payAssetId)){
-                for(AssetsPair assetsPair : entry.getValue()){
-                    if(assetsPair.getQuote().equals(receiveAssetId)){
+            if (entry.getKey().equals(payAssetId)) {
+                for (AssetsPair assetsPair : entry.getValue()) {
+                    if (assetsPair.getQuote().equals(receiveAssetId)) {
                         item.isSell = false;
                         item.baseAsset = assetsPair.getBaseAsset();
                         item.quoteAsset = assetsPair.getQuoteAsset();
@@ -182,9 +191,9 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
                 }
             }
             //支付quoteAssetId 接收baseAssetId 为卖单
-            if(entry.getKey().equals(receiveAssetId)){
-                for(AssetsPair assetsPair : entry.getValue()){
-                    if(assetsPair.getQuote().equals(payAssetId)){
+            if (entry.getKey().equals(receiveAssetId)) {
+                for (AssetsPair assetsPair : entry.getValue()) {
+                    if (assetsPair.getQuote().equals(payAssetId)) {
                         item.isSell = true;
                         item.baseAsset = assetsPair.getBaseAsset();
                         item.quoteAsset = assetsPair.getQuoteAsset();
@@ -220,29 +229,34 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
             mRefreshLayout.finishLoadMore();
             mRefreshLayout.setNoMoreData(true);
         }
+
         mCompositeDisposable.add(RetrofitFactory.getInstance().apiCybexLive()
-                .getExchangeRecords(mFullAccountObject.account.id.toString(),
+                .getTransactionRecords(mFullAccountObject.account.id.toString(),
                         page,
                         limit,
-                        mIsLoadAll ? "null" : mWatchlistData.getBaseId(),
-                        mIsLoadAll ? "null" : mWatchlistData.getQuoteId(),
                         "null",
-                        "null")
+                        "null",
+                        mIsLoadAll ? "null" : mWatchlistData.getBaseId() + "_" + mWatchlistData.getQuoteId() + "," + mWatchlistData.getQuoteId() + "_" + mWatchlistData.getBaseId(),
+                        mIsLoadAll ? "1.3.1148_1.3.1149,1.3.1149_1.3.1148,1.3.1148_1.3.1150,1.3.1150_1.3.1148,1.3.1148_1.3.1151,1.3.1151_1.3.1148" : "null")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(accountHistoryObjects -> {
+                .subscribe(objectList -> {
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadMore();
-                    if(accountHistoryObjects == null || accountHistoryObjects.size() == 0){
+                    Gson gson = new GsonBuilder().create();
+                    String accountHistoryArray = gson.toJson(objectList.get(0));
+                    List<AccountHistoryObject> accountHistoryObjects = gson.fromJson(accountHistoryArray, new TypeToken<ArrayList<AccountHistoryObject>>() {
+                    }.getType());
+                    if (accountHistoryObjects == null || accountHistoryObjects.size() == 0) {
                         return;
                     }
                     mCount += accountHistoryObjects.size();
                     TradeHistoryItem item = null;
-                    Gson gson = new Gson();
                     Map<String, List<AssetsPair>> assetPairs = mWebSocketService.getAssetPairHashMap();
                     if (isRefresh) {
                         mCount = 0;
-                        mOrderHistoryItems.clear(); }
+                        mOrderHistoryItems.clear();
+                    }
                     for (AccountHistoryObject accountHistoryObject : accountHistoryObjects) {
                         item = new TradeHistoryItem();
                         item.accountHistoryObject = accountHistoryObject;
@@ -258,6 +272,7 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
                     mRefreshLayout.finishRefresh();
                     mRefreshLayout.finishLoadMore();
                 }));
+
     }
 
     public class TradeHistoryItem {

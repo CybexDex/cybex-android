@@ -238,24 +238,57 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
             mRefreshLayout.setNoMoreData(true);
         }
         if (mIsLoadAll) {
-            LimitOrderWrapper.getInstance().get_limit_order_status(
-                    mFullAccount.account.id.toString(),
-                    mLastOrderId,
-                    MAX_PAGE_COUNT,
-                    new MessageCallback<Reply<List<LimitOrder>>>() {
+            LimitOrderWrapper.getInstance().add_filtered_market(
+                    getFilteredOrders(),
+                    new MessageCallback<Reply<String>>() {
                         @Override
-                        public void onMessage(Reply<List<LimitOrder>> reply) {
-                            parseOpenOrderItems(reply.result, isRefresh);
-                            mRefreshLayout.finishRefresh();
-                            mRefreshLayout.finishLoadMore();
-                            mOrdersHistoryRecyclerViewAdapter.notifyDataSetChanged();
+                        public void onMessage(Reply<String> reply) {
+                            LimitOrderWrapper.getInstance().get_filtered_limit_order_status(
+                                    mFullAccount.account.id.toString(),
+                                    mLastOrderId,
+                                    MAX_PAGE_COUNT,
+                                    false,
+                                    new MessageCallback<Reply<List<LimitOrder>>>() {
+                                        @Override
+                                        public void onMessage(Reply<List<LimitOrder>> reply) {
+                                            parseOpenOrderItems(reply.result, isRefresh);
+                                            mRefreshLayout.finishRefresh();
+                                            mRefreshLayout.finishLoadMore();
+                                            mOrdersHistoryRecyclerViewAdapter.notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onFailure() {
+
+                                        }
+                                    }
+                            );
                         }
 
                         @Override
                         public void onFailure() {
 
                         }
-                    });
+                    }
+            );
+//            LimitOrderWrapper.getInstance().get_limit_order_status(
+//                    mFullAccount.account.id.toString(),
+//                    mLastOrderId,
+//                    MAX_PAGE_COUNT,
+//                    new MessageCallback<Reply<List<LimitOrder>>>() {
+//                        @Override
+//                        public void onMessage(Reply<List<LimitOrder>> reply) {
+//                            parseOpenOrderItems(reply.result, isRefresh);
+//                            mRefreshLayout.finishRefresh();
+//                            mRefreshLayout.finishLoadMore();
+//                            mOrdersHistoryRecyclerViewAdapter.notifyDataSetChanged();
+//                        }
+//
+//                        @Override
+//                        public void onFailure() {
+//
+//                        }
+//                    });
         } else {
             LimitOrderWrapper.getInstance().get_market_limit_order_status(
                     mFullAccount.account.id.toString(),
@@ -281,9 +314,10 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
     }
 
     private List<List<String>> getFilteredOrders() {
-        List<List<String>> result = new ArrayList<>();
-        List<String> pairs1 = new ArrayList<>(Arrays.asList("1.3.0", "1.3.2"));
-        return result;
+        List<String> pairs1 = new ArrayList<>(Arrays.asList("1.3.1148", "1.3.1149"));
+        List<String> pairs2 = new ArrayList<>(Arrays.asList("1.3.1148", "1.3.1150"));
+        List<String> pairs3 = new ArrayList<>(Arrays.asList("1.3.1148", "1.3.1151"));
+        return new ArrayList<>(Arrays.asList(pairs1, pairs2, pairs3));
     }
 
 }

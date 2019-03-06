@@ -12,6 +12,7 @@ public class AccountHistoryObject {
     public JsonArray op;
     public int block_num;
     public String timestamp;
+    public String pair;
 }
 
 
