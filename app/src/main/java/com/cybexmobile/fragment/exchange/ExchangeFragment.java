@@ -70,6 +70,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_USDT;
 import static com.cybex.basemodule.constant.Constant.BUNDEL_SAVE_SHOW_BUY_SELL_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION_SPINNER_POSITION;
@@ -542,7 +544,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             if(mWatchlistData == null){
                 assert getTag() != null;
                 if (getTag().equals(CYBEX_CONTEST_FLAG)) {
-                    notifyWatchlistDataChange(mWebSocketService.getWatchlist("1.3.1145", "1.3.1144"));
+                    notifyWatchlistDataChange(mWebSocketService.getWatchlist(ASSET_ID_ARENA_USDT, ASSET_ID_ARENA_ETH));
                 } else {
                     notifyWatchlistDataChange(mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB));
                 }

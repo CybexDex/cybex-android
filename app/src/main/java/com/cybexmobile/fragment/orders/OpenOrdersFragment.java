@@ -310,12 +310,12 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     private MessageCallback<Reply<List<LimitOrder>>> mOpendLimitOrderCallback = new MessageCallback<Reply<List<LimitOrder>>>() {
         @Override
         public void onMessage(Reply<List<LimitOrder>> reply) {
-            if (reply.result != null && reply.result.size() > 0) {
+            parseOpenOrderItems(reply.result);
+            if (mOpenOrderItems != null && mOpenOrderItems.size() > 0) {
                 mOpenOrderTitleLayout.setVisibility(View.VISIBLE);
             } else {
                 mOpenOrderTitleLayout.setVisibility(View.GONE);
             }
-            parseOpenOrderItems(reply.result);
             mOpenOrderRecyclerViewAdapter.setOpenOrderItems(mOpenOrderItems);
         }
 
@@ -472,7 +472,17 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
             item.isSell = limitOrder.is_sell ? limitOrder.key.asset2.equals(assetsPair.getBase()) : limitOrder.key.asset1.equals(assetsPair.getBase());
             item.baseAsset = assetsPair.getBaseAsset();
             item.quoteAsset = assetsPair.getQuoteAsset();
-            mOpenOrderItems.add(item);
+            if (mIsLoadAll) {
+                if ((item.baseAsset.symbol.startsWith("CYB") || item.baseAsset.symbol.startsWith("JADE"))
+                        && (item.quoteAsset.symbol.startsWith("CYB") || item.quoteAsset.symbol.startsWith("JADE"))) {
+                    mOpenOrderItems.add(item);
+                }
+            } else {
+                if ((item.baseAsset.symbol.startsWith("CYB") || item.baseAsset.symbol.startsWith("JADE") || item.baseAsset.symbol.startsWith("ARENA"))
+                        && (item.quoteAsset.symbol.startsWith("CYB") || item.quoteAsset.symbol.startsWith("JADE") || item.quoteAsset.symbol.startsWith("ARENA"))) {
+                    mOpenOrderItems.add(item);
+                }
+            }
         }
     }
 

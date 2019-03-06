@@ -261,9 +261,9 @@ public class WatchlistSelectDialog extends DialogFragment implements WatchlistSe
         } else if (baseAsset.id.toString().equals(Constant.ASSET_ID_BTC)) {
             mRbBtc.setChecked(true);
             mCurrentBaseAssetId = Constant.ASSET_ID_BTC;
-        } else if (baseAsset.id.toString().equals("1.3.1145")) {
+        } else if (baseAsset.id.toString().equals(Constant.ASSET_ID_ARENA_USDT)) {
             mRbUsdtGame.setChecked(true);
-            mCurrentBaseAssetId = "1.3.1145";
+            mCurrentBaseAssetId = Constant.ASSET_ID_ARENA_USDT;
         }
     }
 

@@ -101,7 +101,7 @@
                     android:gravity="center"
                     style="@style/font_gray_medium"
                     android:textColor="@color/bottom_nav_button_selector"
-                    android:tag="1.3.1145"
+                    android:tag="1.3.1148"
                     android:text="USDT"/>
             </RadioGroup>
 

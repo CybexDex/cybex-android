@@ -71,6 +71,10 @@ import io.reactivex.functions.Function7;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_BTC;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_EOS;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_ETH;
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_USDT;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_ETH;
@@ -465,7 +469,7 @@ public class WebSocketService extends Service {
 
                 @Override
                 public void onNext(Map<String,List<AssetsPair>> assetsPairMap) {
-                    assetsPairMap.putAll(loadContestGameData("1.3.1145"));
+                    assetsPairMap.putAll(loadContestGameData());
                     mAssetsPairHashMap.putAll(assetsPairMap);
                     Set<String> assetsIds = new HashSet<>();
                     for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
@@ -521,13 +525,13 @@ public class WebSocketService extends Service {
                 });
     }
 
-    private Map<String, List<AssetsPair>> loadContestGameData(final String baseAsset) {
+    private Map<String, List<AssetsPair>> loadContestGameData () {
         Map<String, List<AssetsPair>> assetsPairMap = new HashMap<>();
         List<AssetsPair> assetsPairs = new ArrayList<>();
-        assetsPairs.add(new AssetsPair(baseAsset, "1.3.1144"));
-        assetsPairs.add(new AssetsPair(baseAsset, "1.3.1146"));
-        assetsPairs.add(new AssetsPair(baseAsset, "1.3.1147"));
-        assetsPairMap.put(baseAsset, assetsPairs);
+        assetsPairs.add(new AssetsPair(ASSET_ID_ARENA_USDT, ASSET_ID_ARENA_ETH));
+        assetsPairs.add(new AssetsPair(ASSET_ID_ARENA_USDT, ASSET_ID_ARENA_EOS));
+        assetsPairs.add(new AssetsPair(ASSET_ID_ARENA_USDT, ASSET_ID_ARENA_BTC));
+        assetsPairMap.put(ASSET_ID_ARENA_USDT, assetsPairs);
         return assetsPairMap;
     }
 

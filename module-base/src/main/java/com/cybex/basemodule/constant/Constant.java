@@ -84,6 +84,11 @@ public class Constant {
     public static final String ASSET_ID_USDT = "1.3.27";
     public static final String ASSET_ID_BTC = "1.3.3";
 
+    public static final String ASSET_ID_ARENA_USDT = "1.3.1148";
+    public static final String ASSET_ID_ARENA_ETH = "1.3.1149";
+    public static final String ASSET_ID_ARENA_EOS = "1.3.1150";
+    public static final String ASSET_ID_ARENA_BTC = "1.3.1151";
+
     /**
      * 币symbol
      */

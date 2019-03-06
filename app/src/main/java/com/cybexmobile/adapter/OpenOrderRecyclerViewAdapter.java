@@ -84,8 +84,8 @@ public class OpenOrderRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             double amount;
             double price;
             double sold;
-            if ((!baseAsset.symbol.startsWith("CYB") && !baseAsset.symbol.startsWith("JADE")) ||
-                    (!quoteAsset.symbol.startsWith("CYB") && !quoteAsset.symbol.startsWith("JADE"))) {
+            if ((!baseAsset.symbol.startsWith("CYB") && !baseAsset.symbol.startsWith("JADE") && !baseAsset.symbol.startsWith("ARENA")) ||
+                    (!quoteAsset.symbol.startsWith("CYB") && !quoteAsset.symbol.startsWith("JADE") && !quoteAsset.symbol.startsWith("ARENA"))) {
                 RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
                 layoutParams.height = 0;
                 layoutParams.width = 0;

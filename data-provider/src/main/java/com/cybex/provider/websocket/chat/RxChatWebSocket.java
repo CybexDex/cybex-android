@@ -39,7 +39,7 @@ public class RxChatWebSocket extends RxWebSocket {
     //聊天正式服务器
     public static final String CHAT_URL = "wss://chat.cybex.io/ws";
     //聊天测试服务器
-    public static final String CHAT_UTL_TEST = "ws://47.91.242.71:9099/ws";
+    public static final String CHAT_UTL_TEST = "wss://47.91.242.71:9099/ws";
 
     public RxChatWebSocket(@NonNull String url) {
         super(url);
