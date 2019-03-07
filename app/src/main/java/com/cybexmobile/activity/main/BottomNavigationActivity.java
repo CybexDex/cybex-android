@@ -151,14 +151,14 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        if(!isRecreate){
+        if (!isRecreate) {
             Intent intentService = new Intent(this, WebSocketService.class);
             stopService(intentService);
         }
-        if(mDisposableVersionUpdate != null && !mDisposableVersionUpdate.isDisposed()){
+        if (mDisposableVersionUpdate != null && !mDisposableVersionUpdate.isDisposed()) {
             mDisposableVersionUpdate.dispose();
         }
-        if(mDisposableAppConfig != null && !mDisposableAppConfig.isDisposed()){
+        if (mDisposableAppConfig != null && !mDisposableAppConfig.isDisposed()) {
             mDisposableAppConfig.dispose();
         }
         LimitOrderWrapper.getInstance().disconnect();
@@ -230,7 +230,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                 if (mWatchListFragment == null) {
                     mWatchListFragment = new WatchlistFragment();
                     transaction.add(R.id.frame_container, mWatchListFragment, WatchlistFragment.class.getSimpleName());
-                } else  {
+                } else {
                     transaction.show(mWatchListFragment);
                 }
                 break;
@@ -334,7 +334,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_account);
                             mBottomNavigationView.inflateMenu(R.menu.navigation_eto);
                             BottomNavigationViewHelper.removeShiftMode(mBottomNavigationView);
-                        } else {
+                        } else if (appConfigResponse.isContestEnabled()) {
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_main);
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_watchlist);
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_exchange);

@@ -845,9 +845,9 @@ public class WebSocketService extends Service {
                 }
                 List<WatchlistData> watchlistData = new ArrayList<>();
                 for (AssetsPair assetsPair : assetsPairs) {
-                    JsonElement jsonElement = mAssetPairsConfig.get(AssetUtil.parseSymbol(assetsPair.getBaseAsset().symbol));
+                    JsonElement jsonElement = mAssetPairsConfig.get(AssetUtil.parseSymbolWithTransactionTest(assetsPair.getBaseAsset().symbol));
                     if(jsonElement != null) {
-                        JsonElement element = jsonElement.getAsJsonObject().get(AssetUtil.parseSymbol(assetsPair.getQuoteAsset().symbol));
+                        JsonElement element = jsonElement.getAsJsonObject().get(AssetUtil.parseSymbolWithTransactionTest(assetsPair.getQuoteAsset().symbol));
                         if(element != null) {
                             assetsPair.setConfig(gson.fromJson(element.getAsJsonObject().get("book").getAsJsonObject(), AssetsPair.Config.class));
                         }

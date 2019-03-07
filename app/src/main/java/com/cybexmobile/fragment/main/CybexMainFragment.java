@@ -66,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -74,6 +75,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_USDT;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
@@ -343,6 +345,14 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         mHotAssetPairRecyclerViewAdapter.notifyDataSetChanged();
         //all watchlist data
         mAllWatchlistData.addAll(event.getAllWatchlists());
+
+        for (Iterator<WatchlistData> it = mAllWatchlistData.iterator(); it.hasNext(); ) {
+            WatchlistData watchlistData = it.next();
+            if (watchlistData.getBaseId().equals(ASSET_ID_ARENA_USDT) || watchlistData.getQuoteId().equals(ASSET_ID_ARENA_USDT)) {
+                it.remove();
+            }
+        }
+
         Collections.sort(mAllWatchlistData, new Comparator<WatchlistData>() {
             @Override
             public int compare(WatchlistData o1, WatchlistData o2) {

@@ -209,7 +209,7 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
         }
         AssetRmbPrice assetRmbPrice = null;
         for (AssetRmbPrice rmbPrice : assetRmbPrices) {
-            if (mWatchlistData.getBaseSymbol().contains(rmbPrice.getName())) {
+            if (AssetUtil.parseSymbolWithTransactionTest(mWatchlistData.getBaseSymbol()).equals(rmbPrice.getName())) {
                 assetRmbPrice = rmbPrice;
                 break;
             }

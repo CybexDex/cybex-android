@@ -422,7 +422,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
             return;
         }
         for (AssetRmbPrice rmbPrice : assetRmbPrices) {
-            if (mWatchlistData.getBaseSymbol().contains(rmbPrice.getName())) {
+            if (AssetUtil.parseSymbolWithTransactionTest(mWatchlistData.getBaseSymbol()).equals(rmbPrice.getName())) {
                 notifyRmbPriceDataChange(rmbPrice.getValue());
                 break;
             }

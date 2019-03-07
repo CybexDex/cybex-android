@@ -25,6 +25,23 @@ public class AssetUtil {
         return "";
     }
 
+    public static String parseSymbolWithTransactionTest(String assetSymbol){
+        if(assetSymbol == null){
+            return null;
+        }
+        String[] symbolArr = assetSymbol.split("\\.");
+        if(symbolArr.length == 1){
+            return symbolArr[0];
+        }
+        if(symbolArr.length == 2){
+            if (symbolArr[0].equals("ARENA")) {
+                return assetSymbol;
+            }
+            return symbolArr[1];
+        }
+        return "";
+    }
+
     /**
      * 格式化数据 取消科学计数法
      * @param number

@@ -8,7 +8,7 @@
     <string name="title_faq">Application</string>
     <string name="title_exchange">Exchange</string>
     <string name="title_eto">ETO</string>
-    <string name="title_transaction_match">Transaction</string>
+    <string name="title_transaction_match">Contest</string>
     <string name="title_order_history">Orders</string>
     <string name="title_transfer">Transfer</string>
     <string name="title_transfer_records">Transfer Records</string>
