@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.cache.AssetPairCache;
 import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.dialog.UnlockDialog;
+import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
@@ -57,6 +59,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.db.entity.Card;
+import io.enotes.sdk.utils.ReaderUtils;
 import mrd.bitlib.lambdaworks.crypto.Base64;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -85,6 +89,11 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     private FullAccountObject mFullAccount;
     private AccountObject mToAccountObject;
     private Operations.base_operation mTransferOperation;
+    private Card mCard;
+    private UnlockDialog unlockDialog;
+    private UnlockDialogWithEnotes unlockDialogWithEnotes;
+
+    private boolean mIsUsedCloudPassword = false;
 
 
     @BindView(R.id.toolbar)
@@ -122,6 +131,41 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
             removeZeroBalance(mAccountBalanceObjectItems);
         }
         mTransactionFeeTv.setText(String.format("%s %s", "0.01000", ASSET_SYMBOL_CYB));
+    }
+
+    /**
+     * 卡状态读取成功后回调
+     *
+     * @param card
+     */
+    @Override
+    protected void readCardOnSuccess(Card card) {
+        mCard = card;
+        if (unlockDialogWithEnotes != null) {
+            //没带memo，执行转账
+            unlockDialogWithEnotes.dismiss();
+            toTransfer();
+        } else {
+            super.readCardOnSuccess(card);
+        }
+    }
+
+    @Override
+    protected void readCardError(int code, String message) {
+        super.readCardError(code, message);
+        if (unlockDialogWithEnotes != null) {
+            unlockDialogWithEnotes.hideProgress();
+        }
+    }
+
+    @Override
+    protected void nfcStartReadCard() {
+        if (unlockDialogWithEnotes != null) {
+            unlockDialogWithEnotes.showProgress();
+            unlockDialogWithEnotes.showNormalText();
+        } else {
+            super.nfcStartReadCard();
+        }
     }
 
     @Override
@@ -344,10 +388,15 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     }
 
     private void checkIsLockAndTransfer() {
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFullAccount.account, mFullAccount.account.name, password -> toTransfer());
+        if (isLoginFromENotes()) {
+            mIsUsedCloudPassword = false;
+            showEnotesWaitingDialog();
         } else {
-            toTransfer();
+            if (BitsharesWalletWraper.getInstance().is_locked()) {
+                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFullAccount.account, mFullAccount.account.name, password -> toTransfer());
+            } else {
+                toTransfer();
+            }
         }
     }
 
@@ -367,6 +416,29 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
                 it.remove();
             }
         }
+    }
+
+    private void showEnotesWaitingDialog() {
+        unlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(
+                getSupportFragmentManager(),
+                mFullAccount.account,
+                mFullAccount.account.name,
+                new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                    @Override
+                    public void onUnLocked(String password) {
+                        if (password != null) {
+                            mIsUsedCloudPassword = true;
+                            toTransfer();
+                        }
+                    }
+                },
+                new UnlockDialogWithEnotes.OnDismissListener() {
+                    @Override
+                    public void onDismiss(int result) {
+
+                    }
+                }
+        );
     }
 
     /**
@@ -396,6 +468,33 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         if (mFullAccount.account == null) {
             return;
         }
+
+        if (isLoginFromENotes() && !mIsUsedCloudPassword) {
+            if (!cardManager.isConnected()) {
+                if (ReaderUtils.supportNfc(this)) {
+                    showToast(this, getResources().getString(R.string.error_connect_card));
+                } else {
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                }
+                return;
+            }
+            if (!cardManager.isPresent()) {
+                if (ReaderUtils.supportNfc(this)) {
+                    showToast(this, getString(R.string.error_connect_card));
+                } else {
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                }
+                return;
+            }
+            if (mCard != null && !mCard.getCurrencyPubKey().equals(getLoginPublicKey())) {
+                showToast(this, getString(R.string.please_right_card));
+                return;
+            }
+            if (BaseActivity.cardApp != null) {
+                mCard = BaseActivity.cardApp;
+            }
+        }
+
         mTransferOperation = BitsharesWalletWraper.getInstance().getTransferOperation(
                 mFullAccount.account.id,
                 mToAccountObject.id,
@@ -434,8 +533,17 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
         public void onMessage(Reply<BlockHeader> reply) {
             new Thread(() -> {
                 try {
-                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactinForTickets(
-                            mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
+                    SignedTransaction signedTransaction;
+                    if (mCard == null || mIsUsedCloudPassword) {
+                        signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactinForTickets(
+                                mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION, reply.result);
+                    } else {
+                        signedTransaction = BitsharesWalletWraper.getInstance()
+                                .getSignedTransactionByENotesForTicket(cardManager, mCard,
+                                        mFullAccount.account, mTransferOperation, ID_TRANSER_OPERATION,
+                                        reply.result);
+                    }
+
                     Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
                     String json = gson.toJson(signedTransaction);
                     String transactionId = signedTransaction.getTransactionID();
@@ -445,6 +553,7 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
                     String strMessage = compressTransaction((Operations.transfer_operation) mTransferOperation, signedTransaction);
                     runOnUiThread(() -> hideLoadDialog());
                     jumpToOtherActivity(strMessage, transactionId);
+                    unlockDialogWithEnotes = null;
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

@@ -954,6 +954,36 @@ public class WalletApi {
         return signedTransaction;
     }
 
+    public SignedTransaction getSignedTransactionByENotesForTicket(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader) throws ParseException {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Operations.operation_type operationType = new Operations.operation_type();
+        operationType.nOperationType = operationId;
+        operationType.operationContent = operation;
+        signedTransaction.operationTypes = new ArrayList<>();
+        signedTransaction.operationTypes.add(operationType);
+        signedTransaction.operations = new ArrayList<>();
+        List<Object> listInOperations = new ArrayList<>();
+        listInOperations.add(operationId);
+        listInOperations.add(operation);
+        signedTransaction.operations.add(listInOperations);
+        signedTransaction.extensions = new HashSet<>();
+
+        signedTransaction.set_reference_block(blockHeader.previous);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date dateObject = simpleDateFormat.parse(blockHeader.timestamp);
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(dateObject);
+        calender.add(Calendar.MINUTE, 30);
+        dateObject = calender.getTime();
+
+        signedTransaction.set_expiration(dateObject);
+        Types.private_key_type privateKey = null;
+        signedTransaction.signByENotes(cardManager, card, privateKey, mWebSocketClient.getmChainIdObject());
+        return signedTransaction;
+    }
+
     public String getChatMessageSignature(AccountObject accountObject, String message) {
         Sha256Object.encoder encoder = new Sha256Object.encoder();
         if(message != null){

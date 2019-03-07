@@ -476,6 +476,10 @@ public class BitsharesWalletWraper {
         return mWalletApi.getSignedTransactionForTicket(accountObject, operation, operationId, blockHeader);
     }
 
+    public SignedTransaction getSignedTransactionByENotesForTicket(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader ) throws ParseException {
+        return mWalletApi.getSignedTransactionByENotesForTicket(cardManager, card, accountObject, operation, operationId, blockHeader);
+    }
+
     public String getChatMessageSignature(AccountObject accountObject, String message){
         return mWalletApi.getChatMessageSignature(accountObject, message);
     }

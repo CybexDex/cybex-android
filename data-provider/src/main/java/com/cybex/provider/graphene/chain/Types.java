@@ -365,7 +365,7 @@ public class Types{
         public Integer num_committee;
         public HashSet<vote_id_type> votes;
         // 未完成
-        public HashSet<String> extensions;  // extension type
+        public HashSet<String> extensions;// extension type
 
     }
 

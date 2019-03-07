@@ -107,6 +107,8 @@ public class SetCloudPasswordActivity extends BaseActivity {
         if (unlockDialogWithEnotes != null) {
             unlockDialogWithEnotes.showProgress();
             unlockDialogWithEnotes.showNormalText();
+        } else {
+            super.nfcStartReadCard();
         }
     }
 
@@ -115,6 +117,7 @@ public class SetCloudPasswordActivity extends BaseActivity {
         mCard = card;
         if (unlockDialogWithEnotes != null) {
             unlockDialogWithEnotes.dismiss();
+            unlockDialogWithEnotes = null;
             toUpdateAccount();
         } else {
             super.readCardOnSuccess(card);
@@ -212,6 +215,12 @@ public class SetCloudPasswordActivity extends BaseActivity {
         public void onMessage(Reply<String> reply) {
             hideLoadDialog();
             if (reply.result == null && reply.error == null) {
+                mEtSetCloudPassword.setText("");
+                mEtSetCloudPasswordConfirm.setText("");
+                mPasswordChecker.setVisibility(View.GONE);
+                mPasswordConfirmChecker.setVisibility(View.GONE);
+                mSetCloudPassLlError.setVisibility(View.GONE);
+                mSetCloudPassButton.setEnabled(false);
                 ToastMessage.showNotEnableDepositToastMessage(
                         SetCloudPasswordActivity.this,
                         getResources().getString(R.string.toast_message_update_account_succeeded),
@@ -222,7 +231,11 @@ public class SetCloudPasswordActivity extends BaseActivity {
                         setResult(INT_RESULT_CODE_FROM_SET_PASSWORD);
                         finish();
                     }
-                }, 3000);
+                }, 2000);
+            } else {
+                ToastMessage.showNotEnableDepositToastMessage(SetCloudPasswordActivity.this, getResources().getString(
+                        R.string.toast_message_update_account_failed), R.drawable.ic_error_16px);
+
             }
         }
 

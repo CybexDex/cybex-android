@@ -891,6 +891,8 @@ public class TransferActivity extends BaseActivity implements
         if(unlockDialogWithEnotes != null) {
             unlockDialogWithEnotes.showProgress();
             unlockDialogWithEnotes.showNormalText();
+        } else {
+            super.nfcStartReadCard();
         }
     }
 
@@ -1192,6 +1194,7 @@ public class TransferActivity extends BaseActivity implements
 
         @Override
         public void onMessage(Reply<String> reply) {
+            unlockDialogWithEnotes = null;
             EventBus.getDefault().post(new Event.Transfer(reply.result == null && reply.error == null));
         }
 
