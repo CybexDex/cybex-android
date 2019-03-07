@@ -85,15 +85,22 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
                 viewHolder.mTvQuoteSymbol.setText(quoteSymbol);
                 double baseAmount;
                 double quoteAmount;
+                double baseAmountForPrice;
+                double quoteAmountForPrice;
                 double feeAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.fee.amount, Math.pow(10, fee.precision));
                 if(orderHistoryItem.isSell){
                     baseAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.receives.amount, Math.pow(10, base.precision));
                     quoteAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.pays.amount, Math.pow(10, quote.precision));
+                    baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, base.precision));
+                    quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, quote.precision));
                 }else {
                     baseAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.pays.amount, Math.pow(10, base.precision));
                     quoteAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.receives.amount, Math.pow(10, quote.precision));
+                    baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, base.precision));
+                    quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, quote.precision));
+
                 }
-                viewHolder.mTvPrice.setText(String.format("%s", AssetUtil.formatNumberRounding(AssetUtil.divide(baseAmount, quoteAmount), Integer.parseInt(assetPairConfig.last_price))));
+                viewHolder.mTvPrice.setText(String.format("%s", AssetUtil.formatNumberRounding(AssetUtil.divide(baseAmountForPrice, quoteAmountForPrice), Integer.parseInt(assetPairConfig.last_price))));
                 viewHolder.mTvTotal.setText(String.format("%s %s", AssetUtil.formatNumberRounding(baseAmount, Integer.parseInt(assetPairConfig.total)), baseSymbol));
                 viewHolder.mTvTime.setText(DateUtils.formatToDate(DateUtils.PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(orderHistoryItem.accountHistoryObject.timestamp)));
                 viewHolder.mTvFilledAmount.setText(String.format("%s", AssetUtil.formatNumberRounding(quoteAmount, Integer.parseInt(assetPairConfig.amount))));

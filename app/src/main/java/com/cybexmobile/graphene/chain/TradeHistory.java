@@ -8,6 +8,7 @@ public class TradeHistory {
     public Fee fee;
     public String order_id;
     public String account_id;
+    public FillPrice fill_price;
     public Pay pays;
     public Receive receives;
 
@@ -15,6 +16,12 @@ public class TradeHistory {
         public int amount;
         public String asset_id;
     }
+
+    public class FillPrice {
+        public Pay base;
+        public Pay quote;
+    }
+
 
     public class Pay {
         public int amount;

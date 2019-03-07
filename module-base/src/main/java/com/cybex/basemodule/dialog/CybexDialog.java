@@ -95,6 +95,8 @@ public class CybexDialog {
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_trading_game_rules);
         TextView textView = dialog.findViewById(R.id.notify_dialog_content_tv);
+        TextView title = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        title.setText(context.getResources().getString(R.string.trading_game_dialog_title));
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
         textView.setMovementMethod(new ScrollingMovementMethod());

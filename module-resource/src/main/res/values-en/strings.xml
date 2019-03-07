@@ -573,5 +573,6 @@ Each contestant will be given an initial capital of 100,000 ARENA.USDT by the fo
 Reward calculations are based on changes in account balances. The final rank will be made by considerating yield rate (ie, the difference between the balance and the initial capital), the Sharpe ratio (revenue volatility), and the turnover rate(accumulated volume per natural day exceeds 20%), etc. comprehensively. The real-time ranking status can be queried on the official website.
 
 To ensure fairness, please help us in the prevention of cheating in any form.</string>
+    <string name="trading_game_dialog_title">Game Rules</string>
 
 </resources>
