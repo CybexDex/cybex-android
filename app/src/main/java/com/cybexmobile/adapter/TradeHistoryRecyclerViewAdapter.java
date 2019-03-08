@@ -91,14 +91,23 @@ public class TradeHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
                 if(orderHistoryItem.isSell){
                     baseAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.receives.amount, Math.pow(10, base.precision));
                     quoteAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.pays.amount, Math.pow(10, quote.precision));
-                    baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, base.precision));
-                    quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, quote.precision));
+                    if (orderHistoryItem.tradeHistory.receives.asset_id.equals(orderHistoryItem.tradeHistory.fill_price.quote.asset_id)) {
+                        baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, base.precision));
+                        quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, quote.precision));
+                    } else {
+                        baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, base.precision));
+                        quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, quote.precision));
+                    }
                 }else {
                     baseAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.pays.amount, Math.pow(10, base.precision));
                     quoteAmount = AssetUtil.divide(orderHistoryItem.tradeHistory.receives.amount, Math.pow(10, quote.precision));
-                    baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, base.precision));
-                    quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, quote.precision));
-
+                    if (orderHistoryItem.tradeHistory.pays.asset_id.equals(orderHistoryItem.tradeHistory.fill_price.quote.asset_id)) {
+                        baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, base.precision));
+                        quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, quote.precision));
+                    } else {
+                        baseAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.base.amount, Math.pow(10, base.precision));
+                        quoteAmountForPrice = AssetUtil.divide(orderHistoryItem.tradeHistory.fill_price.quote.amount, Math.pow(10, quote.precision));
+                    }
                 }
                 viewHolder.mTvPrice.setText(String.format("%s", AssetUtil.formatNumberRounding(AssetUtil.divide(baseAmountForPrice, quoteAmountForPrice), Integer.parseInt(assetPairConfig.last_price))));
                 viewHolder.mTvTotal.setText(String.format("%s %s", AssetUtil.formatNumberRounding(baseAmount, Integer.parseInt(assetPairConfig.total)), baseSymbol));
