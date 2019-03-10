@@ -76,7 +76,7 @@ public class WatchlistSelectRecyclerViewAdapter extends RecyclerView.Adapter<Wat
             holder.mTvChange.setText(watchlist.getCurrentPrice() == 0.f ? "-" : "0.00%");
             holder.mTvChange.setTextColor(mContext.getResources().getColor(R.color.no_change_color));
         }
-        holder.mTvVolume.setText(watchlist.getQuoteVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlist.getQuoteVol(), 2));
+        holder.mTvVolume.setText(watchlist.getBaseVol() == 0.f ? "-" : AssetUtil.formatAmountToKMB(watchlist.getBaseVol(), 2));
         /**
          * add feature
          * 交易量为0时隐藏交易对

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseFragment;
@@ -39,6 +40,7 @@ import static com.cybex.basemodule.constant.Constant.BUNDEL_SAVE_SHOW_BUY_SELL_S
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_WATCHLIST;
+import static com.cybex.basemodule.constant.Constant.CYBEX_CONTEST_FLAG;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION;
@@ -58,6 +60,8 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
     TextView mTvOrderPrice;
     @BindView(R.id.buysell_tv_order_amount)
     TextView mTvOrderAmount;
+    @BindView(R.id.buy_sell_ll_quote_rmb)
+    LinearLayout mLlRmbPrice;
     @BindView(R.id.buysell_tv_quote_price)
     TextView mTvQuotePrice;
     @BindView(R.id.buysell_tv_quote_rmb_price)
@@ -157,6 +161,11 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
                 ((ExchangeFragment)getParentFragment().getParentFragment()).notifyShowBuySellChanged(position);
             }
         });
+        if (getParentFragment().getParentFragment().getTag().equals(CYBEX_CONTEST_FLAG)) {
+            mLlRmbPrice.setVisibility(View.INVISIBLE);
+        } else {
+            mLlRmbPrice.setVisibility(View.VISIBLE);
+        }
         return view;
     }
 

@@ -64,6 +64,7 @@ import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.CYBEX_CONTEST_FLAG;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_PRECISION_SPINNER_POSITION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION;
@@ -647,6 +648,11 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private void initOrResetRmbTextData(){
         String assetPrice = mEtAssetPrice.getText().toString();
         try {
+            if (getParentFragment() != null && getParentFragment().getTag().equals(CYBEX_CONTEST_FLAG)) {
+                mTvAssetRmbPrice.setVisibility(View.GONE);
+            } else {
+                mTvAssetRmbPrice.setVisibility(View.VISIBLE);
+            }
             mTvAssetRmbPrice.setText(TextUtils.isEmpty(assetPrice) ? "≈¥ 0.0000" :
                     "≈¥ " + AssetUtil.formatNumberRounding(Double.parseDouble(assetPrice) * mAssetRmbPrice, mWatchlistData.getRmbPrecision()));
         } catch (Exception e){
