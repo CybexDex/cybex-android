@@ -367,6 +367,9 @@ public class Types{
         // 未完成
         public HashSet<String> extensions;// extension type
 
+        public void setMemo_key(public_key_type memo_key) {
+            this.memo_key = memo_key;
+        }
     }
 
     public static class public_key_type_deserializer implements JsonDeserializer<public_key_type> {

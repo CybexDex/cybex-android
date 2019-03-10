@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.service.WebSocketService;
@@ -321,6 +322,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
             mTvSendForced.setEnabled(!TextUtils.isEmpty(mTvMessageNormal.getText().toString()));
             mChatRecyclerViewAdapter.setUsername(mAccountName);
             mChatRecyclerViewAdapter.notifyDataSetChanged();
+        } else if (requestCode == Constant.REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT ) {
+            mFullAccountObject = mWebSocketService.getFullAccount(mAccountName);
         }
     }
 
@@ -396,7 +399,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                         @Override
                         public void onClick(Dialog dialog) {
                             Intent intent = new Intent(ChatActivity.this, SetCloudPasswordActivity.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
                         }
                     });
             return;

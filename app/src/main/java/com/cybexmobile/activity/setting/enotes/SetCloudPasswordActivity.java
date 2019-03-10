@@ -1,6 +1,6 @@
 package com.cybexmobile.activity.setting.enotes;
 
-import android.app.Activity;
+
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
 import com.cybex.basemodule.event.Event;
@@ -39,7 +40,6 @@ import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -51,6 +51,7 @@ import butterknife.Unbinder;
 import io.enotes.sdk.repository.db.entity.Card;
 import io.enotes.sdk.utils.ReaderUtils;
 
+import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.provider.graphene.chain.Operations.ID_UPDATE_ACCOUNT_OPERATION;
 
@@ -73,7 +74,6 @@ public class SetCloudPasswordActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     private static final String TAG = "SetCloudPasswordActivity";
-    public static final int INT_RESULT_CODE_FROM_SET_PASSWORD = 300;
     private Unbinder mUnbinder;
     private final String passwordRegPattern = "(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9])" + ".{12,}";
     private WebSocketService mWebSocketService;
@@ -228,7 +228,7 @@ public class SetCloudPasswordActivity extends BaseActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        setResult(INT_RESULT_CODE_FROM_SET_PASSWORD);
+                        setResult(Constant.RESULT_CODE_UPDATE_ACCOUNT);
                         finish();
                     }
                 }, 2000);
@@ -275,12 +275,15 @@ public class SetCloudPasswordActivity extends BaseActivity {
         showLoadDialog(true);
         Authority authority = mAccountObject.active;
         authority.putNewKeys(mPublicKeyType, 1);
+        Types.account_options options = mAccountObject.options;
+        options.setMemo_key(mPublicKeyType);
         Operations.account_update_operation account_update_operation =
                 BitsharesWalletWraper.getInstance().getAccountUpdateOperation(
                         ObjectId.create_from_string("1.3.0"),
-                        55,
+                        105,
                         mAccountObject.id,
                         authority,
+                        options,
                         mPublicKeyType);
         try {
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {

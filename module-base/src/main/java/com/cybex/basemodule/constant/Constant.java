@@ -102,6 +102,8 @@ public class Constant {
      */
     public static final int REQUEST_CODE_SELECT_WATCHLIST = 1;
     public static final int RESULT_CODE_SELECTED_WATCHLIST = 1;
+    public static final int REQUEST_CODE_UPDATE_ACCOUNT = 2;
+    public static final int RESULT_CODE_UPDATE_ACCOUNT = 2;
 
     /**
      * bundle save state参数

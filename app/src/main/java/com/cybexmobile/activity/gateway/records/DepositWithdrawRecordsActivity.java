@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.http.entity.BlockerExplorer;
@@ -72,7 +73,6 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
-import static com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity.INT_RESULT_CODE_FROM_SET_PASSWORD;
 
 public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
 
@@ -249,7 +249,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == INT_REQUEST_CODE_FOR_SET_CLOUD_PASSWORD && resultCode == INT_RESULT_CODE_FROM_SET_PASSWORD) {
+        if (requestCode == INT_REQUEST_CODE_FOR_SET_CLOUD_PASSWORD && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
             if (mAccountObject != null) {
                 if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
                     CybexDialog.showLimitOrderCancelConfirmationDialog(

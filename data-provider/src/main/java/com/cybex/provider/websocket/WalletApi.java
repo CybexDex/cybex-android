@@ -667,7 +667,12 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
+            Types.private_key_type  privateKeyType;
+            if (feeAmount == 0) {
+                privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
+            } else {
+                privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            }
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -715,7 +720,7 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = mMemoPrivateKey;
+            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -815,6 +820,7 @@ public class WalletApi {
                                                                          long fee,
                                                                          ObjectId<AccountObject> accountId,
                                                                          Authority authority,
+                                                                         Types.account_options account_options,
                                                                          Types.public_key_type public_key_type
                                                                          ) {
         Operations.account_update_operation account_update_operation = new Operations.account_update_operation();
@@ -822,7 +828,7 @@ public class WalletApi {
         account_update_operation.account = accountId;
         account_update_operation.active = authority;
         account_update_operation.owner = null;
-        account_update_operation.new_options = null;
+        account_update_operation.new_options = account_options;
         account_update_operation.extensions = new HashSet<>();
         return account_update_operation;
     }

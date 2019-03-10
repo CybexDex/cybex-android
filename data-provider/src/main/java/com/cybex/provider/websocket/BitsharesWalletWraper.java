@@ -463,8 +463,9 @@ public class BitsharesWalletWraper {
                                                                          long fee,
                                                                          ObjectId<AccountObject> accountId,
                                                                          Authority authority,
+                                                                         Types.account_options account_options,
                                                                          Types.public_key_type public_key_type) {
-        return mWalletApi.getAccountUpdateOperation(feeAssetId, fee, accountId, authority, public_key_type);
+        return mWalletApi.getAccountUpdateOperation(feeAssetId, fee, accountId, authority, account_options, public_key_type);
     }
 
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
