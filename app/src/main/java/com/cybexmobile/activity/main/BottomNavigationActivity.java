@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -17,26 +16,26 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.dialog.CybexDialog;
+import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
+import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
+import com.cybexmobile.R;
 import com.cybexmobile.activity.markets.MarketsActivity;
-import com.cybex.provider.http.RetrofitFactory;
-import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.provider.http.entity.AppVersion;
-import com.cybex.basemodule.dialog.CybexDialog;
-import com.cybex.basemodule.event.Event;
 import com.cybexmobile.fragment.AccountFragment;
-import com.cybexmobile.fragment.exchange.ExchangeFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
+import com.cybexmobile.fragment.exchange.ExchangeFragment;
 import com.cybexmobile.fragment.main.CybexMainFragment;
 import com.cybexmobile.helper.BottomNavigationViewHelper;
-import com.cybexmobile.R;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,10 +50,9 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.basemodule.constant.Constant.CYBEX_CONTEST_FLAG;
-import static com.cybex.basemodule.constant.Constant.PREF_IS_CLICK_NO_MORE_REMINDER;
-import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
+import static com.cybexmobile.activity.markets.MarketsActivity.RESULT_CODE_BACK;
 
 public class BottomNavigationActivity extends BaseActivity implements WatchlistFragment.OnListFragmentInteractionListener {
 
@@ -68,6 +66,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private ExchangeFragment mGameFragment;
     private EtoFragment mEtoFragment;
     private CybexMainFragment mCybexMainFragment;
+    private Bundle mSavedInstance;
 
     private String mAction;
     private WatchlistData mWatchlistData;
@@ -78,6 +77,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     private Disposable mDisposableAppConfig;
 
     private boolean isRecreate;
+    private int mSelectedId;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -137,7 +137,7 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
             fm.putFragment(outState, EtoFragment.class.getSimpleName(), mEtoFragment);
         }
         if (mGameFragment != null && mGameFragment.isAdded()) {
-            fm.putFragment(outState, ExchangeFragment.class.getSimpleName(), mGameFragment);
+            fm.putFragment(outState, "ContestFragment", mGameFragment);
         }
         if (mAccountFragment != null && mAccountFragment.isAdded()) {
             fm.putFragment(outState, AccountFragment.class.getSimpleName(), mAccountFragment);
@@ -182,17 +182,18 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
 
     private void initFragment(Bundle savedInstanceState) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        int selectedId = R.id.navigation_main;
+        mSelectedId = R.id.navigation_main;
         if (savedInstanceState != null) {
             mWatchListFragment = (WatchlistFragment) fragmentManager.getFragment(savedInstanceState, WatchlistFragment.class.getSimpleName());
             mExchangeFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
             mEtoFragment = (EtoFragment) fragmentManager.getFragment(savedInstanceState, EtoFragment.class.getSimpleName());
-            mGameFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, ExchangeFragment.class.getSimpleName());
+            mGameFragment = (ExchangeFragment) fragmentManager.getFragment(savedInstanceState, "ContestFragment");
             mAccountFragment = (AccountFragment) fragmentManager.getFragment(savedInstanceState, AccountFragment.class.getSimpleName());
             mCybexMainFragment = (CybexMainFragment) fragmentManager.getFragment(savedInstanceState, CybexMainFragment.class.getSimpleName());
-            selectedId = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
+            mSelectedId = savedInstanceState.getInt(KEY_BOTTOM_NAVIGATION_VIEW_SELECTED_ID, R.id.navigation_watchlist);
+            mSavedInstance = savedInstanceState;
         }
-        showFragment(selectedId);
+        showFragment(mSelectedId);
     }
 
     /**
@@ -281,6 +282,11 @@ public class BottomNavigationActivity extends BaseActivity implements WatchlistF
     @Override
     protected void onResume() {
         super.onResume();
+        if (mSavedInstance != null && !mAccountFragment.isHidden()) {
+            mBottomNavigationView.setSelectedItemId(mSelectedId);
+        } else {
+            mSavedInstance = null;
+        }
     }
 
     @Override

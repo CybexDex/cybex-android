@@ -725,7 +725,7 @@ public class TransferActivity extends BaseActivity implements
         Iterator<AccountBalanceObjectItem> it = items.iterator();
         while (it.hasNext()) {
             AccountBalanceObjectItem item = it.next();
-            if (item.accountBalanceObject.balance == 0) {
+            if (item.accountBalanceObject.balance == 0 || item.assetObject.symbol.contains("ARENA")) {
                 it.remove();
             }
         }
@@ -774,7 +774,9 @@ public class TransferActivity extends BaseActivity implements
                 AccountBalanceObjectItem item = new AccountBalanceObjectItem();
                 item.accountBalanceObject = balance;
                 item.assetObject = mWebSocketService.getAssetObject(balance.asset_type.toString());
-                mAccountBalanceObjectItems.add(item);
+                if (!item.assetObject.symbol.contains("ARENA")) {
+                    mAccountBalanceObjectItems.add(item);
+                }
             }
         }
     }

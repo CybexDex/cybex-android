@@ -301,7 +301,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         mToolbar.inflateMenu(R.menu.menu_exchange);
         mTlExchange.getTabAt(mAction == null || mAction.equals(ACTION_BUY) ? 0 : 1).select();
         mTlExchange.addOnTabSelectedListener(this);
-        if (getTag().equals(CYBEX_CONTEST_FLAG)) {
+        if (getTag().equals(CYBEX_CONTEST_FLAG) && !this.isHidden()) {
             showBanner();
             if (!PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(PREF_IS_CLICK_NO_MORE_REMINDER, false)) {
                 showDialog();

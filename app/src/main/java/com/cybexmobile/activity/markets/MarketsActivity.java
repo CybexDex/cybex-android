@@ -217,7 +217,7 @@ public class MarketsActivity extends BaseActivity {
         mOrderHistoryFragmentPageAdapter = new OrderHistoryFragmentPageAdapter(getSupportFragmentManager());
         mOrderHistoryFragmentPageAdapter.addFragment(MarketOrderHistoryFragment.newInstance(mWatchListData));
         mOrderHistoryFragmentPageAdapter.addFragment(MarketTradeHistoryFragment.newInstance(mWatchListData));
-        if (!TextUtils.isEmpty(AssetPairCache.getInstance().getEvaProjectNameFromToken(AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol())))) {
+        if (!TextUtils.isEmpty(AssetPairCache.getInstance().getEvaProjectNameFromToken(AssetUtil.parseSymbolWithTransactionTest(mWatchListData.getQuoteSymbol())))) {
             TabLayout.Tab tab = mTabLayout.newTab();
             tab.setText(getResources().getString(R.string.fragment_tab_title));
             mTabLayout.addTab(tab);
