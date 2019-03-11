@@ -49,6 +49,7 @@ public class Constant {
     public static final String INTENT_PARAM_URL = "intent_param_url";
 
     public static final String INTENT_PARAM_CHANNEL = "intent_param_channel";
+    public static final String INTENT_PARAM_CHANNEL_TITLE = "intent_param_channel_title";
 
     public static final String INTENT_PARAM_FROM_BROWSER = "intent_param_from_browser";
 

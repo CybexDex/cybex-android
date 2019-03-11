@@ -89,6 +89,7 @@ import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CHANNEL;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CHANNEL_TITLE;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FROM;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_WATCHLIST;
 
@@ -398,6 +399,9 @@ public class MarketsActivity extends BaseActivity {
     public void onCommentNowClick(View view){
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra(INTENT_PARAM_CHANNEL, String.format("%s/%s",
+                AssetUtil.parseSymbolWithTransactionTest(mWatchListData.getQuoteSymbol()),
+                AssetUtil.parseSymbolWithTransactionTest(mWatchListData.getBaseSymbol())));
+        intent.putExtra(INTENT_PARAM_CHANNEL_TITLE, String.format("%s/%s",
                 AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol()),
                 AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())));
         startActivity(intent);
@@ -405,8 +409,8 @@ public class MarketsActivity extends BaseActivity {
 
     private void loadLastMsgID() {
         mDisposable = RetrofitFactory.getInstance().apiChat().getLastMsgID(
-                String.format("%s/%s", AssetUtil.parseSymbol(mWatchListData.getQuoteSymbol()),
-                AssetUtil.parseSymbol(mWatchListData.getBaseSymbol())))
+                String.format("%s/%s", AssetUtil.parseSymbolWithTransactionTest(mWatchListData.getQuoteSymbol()),
+                AssetUtil.parseSymbolWithTransactionTest(mWatchListData.getBaseSymbol())))
                 .retry()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

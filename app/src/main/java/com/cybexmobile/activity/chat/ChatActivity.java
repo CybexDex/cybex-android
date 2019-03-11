@@ -41,7 +41,6 @@ import com.cybex.provider.graphene.chat.ChatMessageRequest;
 import com.cybex.provider.graphene.chat.ChatMessages;
 import com.cybex.provider.graphene.chat.ChatReply;
 import com.cybex.provider.graphene.chat.ChatRequest;
-import com.cybex.provider.graphene.websocket.WebSocketClosed;
 import com.cybex.provider.graphene.websocket.WebSocketFailure;
 import com.cybex.provider.graphene.websocket.WebSocketMessage;
 import com.cybex.provider.graphene.websocket.WebSocketOpen;
@@ -82,6 +81,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CHANNEL;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CHANNEL_TITLE;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
@@ -133,6 +133,7 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     private RxChatWebSocket mRxChatWebSocket;
     private String mAccountName;
     private String mChannel;//频道
+    private String mChannelTitle;
     private boolean mIsLogin;
 
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
@@ -151,7 +152,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mIsLogin = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_IS_LOGIN_IN, false);
         mChannel = getIntent().getStringExtra(INTENT_PARAM_CHANNEL);
-        mTvTitle.setText(mChannel);
+        mChannelTitle = getIntent().getStringExtra(INTENT_PARAM_CHANNEL_TITLE);
+        mTvTitle.setText(mChannelTitle);
         if(!mIsLogin){
             mTvSendNormal.setText(getResources().getString(R.string.action_sign_in));
             mTvSendForced.setText(getResources().getString(R.string.action_sign_in));
@@ -256,10 +258,10 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
                 mChatMessages.clear();
                 mChatRecyclerViewAdapter.notifyDataSetChanged();
             }
-            mTvTitle.setText(String.format(Locale.ENGLISH, "%s(%d)", mChannel, subscribeReplies.getLast().getOnline()));
+            mTvTitle.setText(String.format(Locale.ENGLISH, "%s(%d)", mChannelTitle, subscribeReplies.getLast().getOnline()));
         }
         if(subscribeMessages != null && subscribeMessages.size() > 0){
-            mTvTitle.setText(String.format(Locale.ENGLISH, "%s(%d)", mChannel, subscribeMessages.getLast().getOnline()));
+            mTvTitle.setText(String.format(Locale.ENGLISH, "%s(%d)", mChannelTitle, subscribeMessages.getLast().getOnline()));
             for(ChatSubscribe<ChatMessages> subscribeMessage : subscribeMessages){
                 mChatMessages.addAll(subscribeMessage.getData().getMessages());
             }
