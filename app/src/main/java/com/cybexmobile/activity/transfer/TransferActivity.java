@@ -543,6 +543,8 @@ public class TransferActivity extends BaseActivity implements
             mLockTimePublicKeys = mToAccountObject.active.get_keys();
             if (mToAccountObject.active.get_keys().size() > 1) {
                 mLlPublicKey.setVisibility(View.VISIBLE);
+                mTvPublicKey.setText("");
+                mSelectedLockTimePublicKey = null;
             } else {
                 mLlPublicKey.setVisibility(View.GONE);
                 mSelectedLockTimePublicKey = mLockTimePublicKeys.get(0);
