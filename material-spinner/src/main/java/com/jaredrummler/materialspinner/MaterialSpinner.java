@@ -111,7 +111,7 @@ public class MaterialSpinner extends AppCompatTextView {
     left = right = bottom = top = padding;
     setGravity(Gravity.CENTER);
     setClickable(true);
-    setPadding(left, top, right, bottom);
+    setPadding(0, top, 0, bottom);
     setBackgroundResource(R.drawable.ms__selector);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && rtl) {
       setLayoutDirection(View.LAYOUT_DIRECTION_RTL);

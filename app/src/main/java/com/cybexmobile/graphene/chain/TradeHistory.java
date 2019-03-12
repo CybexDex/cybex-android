@@ -13,7 +13,7 @@ public class TradeHistory {
     public Receive receives;
 
     public class Fee {
-        public int amount;
+        public long amount;
         public String asset_id;
     }
 
@@ -24,12 +24,12 @@ public class TradeHistory {
 
 
     public class Pay {
-        public int amount;
+        public long amount;
         public String asset_id;
     }
 
     public class Receive {
-        public int amount;
+        public long amount;
         public String asset_id;
     }
 

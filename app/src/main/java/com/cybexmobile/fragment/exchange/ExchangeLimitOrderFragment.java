@@ -162,9 +162,9 @@ public class ExchangeLimitOrderFragment extends BaseFragment implements BuySellO
             }
         });
         if (getParentFragment().getParentFragment().getTag().equals(CYBEX_CONTEST_FLAG)) {
-            mLlRmbPrice.setVisibility(View.INVISIBLE);
+            mTvQuoteRmbPrice.setVisibility(View.GONE);
         } else {
-            mLlRmbPrice.setVisibility(View.VISIBLE);
+            mTvQuoteRmbPrice.setVisibility(View.VISIBLE);
         }
         return view;
     }
