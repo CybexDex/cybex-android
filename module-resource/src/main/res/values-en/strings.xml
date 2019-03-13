@@ -577,6 +577,7 @@
     <string name="text_ticket_internet_wrong_message">Internet connection is not correct</string>
     <string name="text_ticket_wrong_message">Wrong ticket</string>
     <string name="text_camera_permission">Please turn on camera permission</string>
+    <string name="text_ticket_toast_sign_failed_enotes">Please do not move the card</string>
 
     <string name="text_trade_history">Trade History</string>
     <string name="text_order_history">Order History</string>

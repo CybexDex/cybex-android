@@ -37,6 +37,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.fragment.WithdrawinfoObject;
 import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.http.RetrofitFactory;
@@ -271,7 +272,7 @@ public class WithdrawActivity extends BaseActivity {
                                 @Override
                                 public void onClick(Dialog dialog) {
                                     Intent intent = new Intent(WithdrawActivity.this, SetCloudPasswordActivity.class);
-                                    startActivity(intent);
+                                    startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
                                 }
                             });
                 } else {
@@ -455,7 +456,7 @@ public class WithdrawActivity extends BaseActivity {
                                         @Override
                                         public void onClick(Dialog dialog) {
                                             Intent intent = new Intent(WithdrawActivity.this, SetCloudPasswordActivity.class);
-                                            startActivity(intent);
+                                            startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
                                         }
                                     });
                         } else {
@@ -985,5 +986,13 @@ public class WithdrawActivity extends BaseActivity {
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
+            mAccountObject = mWebSocketService.getFullAccount(mUserName).account;
+        }
     }
 }

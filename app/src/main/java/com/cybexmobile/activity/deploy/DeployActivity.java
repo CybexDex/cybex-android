@@ -186,6 +186,9 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     @Override
     protected void onStop() {
         super.onStop();
+        if (dialog != null) {
+            dialog.dismiss();
+        }
     }
 
     @Override
@@ -549,10 +552,16 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
                     String transactionId = signedTransaction.getTransactionID();
                     Log.e("JsonData", json);
                     Log.e("TransactionId", transactionId);
-
-                    String strMessage = compressTransaction((Operations.transfer_operation) mTransferOperation, signedTransaction);
-                    runOnUiThread(() -> hideLoadDialog());
-                    jumpToOtherActivity(strMessage, transactionId);
+                    if (signedTransaction.getSignatures().size() > 0) {
+                        String strMessage = compressTransaction((Operations.transfer_operation) mTransferOperation, signedTransaction);
+                        runOnUiThread(() -> hideLoadDialog());
+                        jumpToOtherActivity(strMessage, transactionId);
+                    } else {
+                        runOnUiThread(() -> {
+                            hideLoadDialog();
+                            ToastMessage.showNotEnableDepositToastMessage(DeployActivity.this, getResources().getString(R.string.text_ticket_toast_sign_failed_enotes), R.drawable.ic_error_16px);
+                        });
+                    }
                     unlockDialogWithEnotes = null;
                 } catch (ParseException e) {
                     e.printStackTrace();

@@ -51,6 +51,10 @@ public class SignedTransaction extends Transaction {
         return signatures.get(0);
     }
 
+    public List<String> getSignatures() {
+        return signatures;
+    }
+
     public String getTransactionID() {
         if (SignaturesBuffer != null) {
             Sha256Object signDigest = sig_digest_with_signature();

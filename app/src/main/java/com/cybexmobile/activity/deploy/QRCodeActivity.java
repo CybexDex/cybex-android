@@ -38,6 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.db.entity.Card;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_QR_CODE_TRANCTION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSACTIONID;
@@ -83,6 +84,19 @@ public class QRCodeActivity extends BaseActivity {
         cancelGetTransactionByIDWorkerSchedule();
         mScheduled.shutdownNow();
         mUnbinder.unbind();
+    }
+
+    @Override
+    protected void nfcStartReadCard() {
+    }
+
+    @Override
+    protected void readCardOnSuccess(Card card) {
+    }
+
+    @Override
+    protected void readCardError(int code, String message) {
+
     }
 
     @Override

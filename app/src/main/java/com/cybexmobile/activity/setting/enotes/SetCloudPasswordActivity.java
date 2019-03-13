@@ -100,6 +100,7 @@ public class SetCloudPasswordActivity extends BaseActivity {
         super.onDestroy();
         mUnbinder.unbind();
         unlockDialogWithEnotes = null;
+        unbindService(mConnection);
     }
 
     @Override

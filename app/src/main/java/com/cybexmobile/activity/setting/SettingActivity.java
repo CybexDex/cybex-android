@@ -336,6 +336,8 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         }
         if (mAccountObject.active.key_auths.size() > 1) {
             mTvUnlockMethod.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
+        } else {
+            mTvUnlockMethod.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
         }
     }
 

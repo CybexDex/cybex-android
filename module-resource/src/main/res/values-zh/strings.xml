@@ -580,6 +580,7 @@
     <string name="text_ticket_internet_wrong_message">网络连接错误</string>
     <string name="text_ticket_wrong_message">票务上链不成功</string>
     <string name="text_camera_permission">请同意打开照相机权限</string>
+    <string name="text_ticket_toast_sign_failed_enotes">请不要移动eNotes卡</string>
 
     <string name="text_trade_history">历史成交</string>
     <string name="text_order_history">历史委托</string>

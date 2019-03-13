@@ -45,8 +45,11 @@ public class MyUtils {
 
     public static byte[] hexToBytes(String hex) {
         int arglen = hex.length();
-        if (arglen % 2 != 0)
-            throw new RuntimeException("Odd-length string");
+        if (arglen % 2 != 0) {
+            hex = "0" + hex;
+            arglen ++;
+        }
+
 
         byte[] retbuf = new byte[arglen/2];
 
