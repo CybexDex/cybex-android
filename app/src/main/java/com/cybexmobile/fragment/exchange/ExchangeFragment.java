@@ -354,6 +354,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 return;
             }
             notifyWatchlistDataChange(watchlist);
+            notifyPrecisionChanged(watchlist.getPricePrecision(), 0);
             setTitleData();
             notifyFullAccountDataChange(mWebSocketService.getFullAccount(mName));
             //切换交易对 重新加载交易手续费
@@ -392,7 +393,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         notifyExchangeFee(mExchangeFee, mCybAssetObject);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMarketIntentToExchange(Event.MarketIntentToExchange event) {
         if (!getTag().equals(CYBEX_CONTEST_FLAG)) {
             notifyWatchlistDataChange(event.getWatchlist());
@@ -553,6 +554,11 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                     notifyWatchlistDataChange(mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB));
                 }
                 setTitleData();
+            } else {
+                if (getTag().equals(CYBEX_CONTEST_FLAG)) {
+                    notifyWatchlistDataChange(mWebSocketService.getWatchlist(ASSET_ID_ARENA_USDT, ASSET_ID_ARENA_ETH));
+                    setTitleData();
+                }
             }
             if(mIsLoginIn){
                 notifyFullAccountDataChange(mWebSocketService.getFullAccount(mName));

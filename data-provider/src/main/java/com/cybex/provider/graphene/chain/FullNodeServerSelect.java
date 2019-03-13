@@ -35,7 +35,8 @@ public class FullNodeServerSelect {
             "wss://singapore-01.cybex.io/",
             "wss://tokyo-01.cybex.io/",
             "wss://korea-01.cybex.io/",
-            "wss://hongkong.cybex.io/"
+            "wss://hongkong.cybex.io/",
+            "wss://hkbak.cybex.io/"
     );
     //测试节点
     private List<String> mListNode_test = Arrays.asList(
