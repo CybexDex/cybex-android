@@ -21,6 +21,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cybex.basemodule.constant.Constant.PREF_PARAM_UNLOCK_BY_CARDS;
+
 public class UnlockMethodSelectorDialog extends DialogFragment {
     @BindView(R.id.dialog_unlock_method_selector_tv_unlock_by_enotes)
     TextView mTvUnlockedByEnotes;
@@ -36,7 +38,7 @@ public class UnlockMethodSelectorDialog extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(android.support.v4.app.DialogFragment.STYLE_NORMAL, R.style.AppTheme_Dialog_Bottom);
-        isUnlockByCard = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("isUnlockByEnotes", true);
+        isUnlockByCard = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true);
     }
 
     @Nullable

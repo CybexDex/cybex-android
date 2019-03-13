@@ -250,7 +250,7 @@ public class WithdrawActivity extends BaseActivity {
     private UnlockDialog.UnLockDialogClickListener mUnLockDialogListener = new UnlockDialog.UnLockDialogClickListener() {
         @Override
         public void onUnLocked(String password) {
-            checkWithdrawAuthority(mAccountObject, password);
+            displayFee();
         }
     };
 
@@ -459,22 +459,17 @@ public class WithdrawActivity extends BaseActivity {
                                         }
                                     });
                         } else {
-                            try {
-                                BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
+                            if (BitsharesWalletWraper.getInstance().is_locked()) {
+                                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
                                     @Override
-                                    public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
-                                        mDynamicGlobalPropertyObject = reply.result;
-                                        mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
-                                        broadCastTransaction(mSignedTransaction);
-                                    }
-
-                                    @Override
-                                    public void onFailure() {
-
+                                    public void onUnLocked(String password) {
+                                        checkWithdrawAuthority(mAccountObject, password);
+                                        toWithdraw();
                                     }
                                 });
-                            } catch (NetworkStatusException e) {
-                                e.printStackTrace();
+                            } else {
+                                checkWithdrawAuthority(mAccountObject, BitsharesWalletWraper.getInstance().getPassword());
+                                toWithdraw();
                             }
                         }
 
@@ -522,6 +517,26 @@ public class WithdrawActivity extends BaseActivity {
                                     R.drawable.ic_check_circle_green);
                         }
                     }));
+        }
+    }
+
+    private void toWithdraw() {
+        try {
+            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
+                @Override
+                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
+                    mDynamicGlobalPropertyObject = reply.result;
+                    mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
+                    broadCastTransaction(mSignedTransaction);
+                }
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
         }
     }
 
@@ -866,10 +881,10 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void checkIfLocked() {
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
+        if (BitsharesWalletWraper.getInstance().is_locked() && !isLoginFromENotes()) {
             CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
         } else {
-            checkWithdrawAuthority(mAccountObject, BitsharesWalletWraper.getInstance().getPassword());
+            displayFee();
         }
     }
 

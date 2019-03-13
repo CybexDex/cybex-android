@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import at.grabner.circleprogress.CircleProgressView;
 
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_IS_MEMOKEY_NEEDED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
@@ -353,17 +354,28 @@ public class CybexDialog {
     public static UnlockDialogWithEnotes showUnlockWithEnotesWalletDialog(FragmentManager fragmentManager,
             AccountObject accountObject,
             String username,
+            boolean hasMemo,
             UnlockDialogWithEnotes.UnLockDialogClickListener unLockListener,
             UnlockDialogWithEnotes.OnDismissListener onDismissListener){
         UnlockDialogWithEnotes dialog = new UnlockDialogWithEnotes();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT, accountObject);
         bundle.putString(INTENT_PARAM_NAME, username);
+        bundle.putBoolean(INTENT_PARAM_IS_MEMOKEY_NEEDED, hasMemo);
         dialog.setArguments(bundle);
         dialog.show(fragmentManager, UnlockDialogWithEnotes.class.getSimpleName());
         dialog.setUnLockListener(unLockListener);
         dialog.setOnDismissListener(onDismissListener);
         return dialog;
+    }
+
+    public static UnlockDialogWithEnotes showUnlockWithEnotesWalletDialog(
+            FragmentManager fragmentManager,
+            AccountObject accountObject,
+            String username,
+            UnlockDialogWithEnotes.UnLockDialogClickListener unlockListener,
+            UnlockDialogWithEnotes.OnDismissListener onDismissListener) {
+        return showUnlockWithEnotesWalletDialog(fragmentManager, accountObject, username, false, unlockListener, onDismissListener);
     }
 
     public static UnlockDialog showUnlockWalletDialog(FragmentManager fragmentManager,

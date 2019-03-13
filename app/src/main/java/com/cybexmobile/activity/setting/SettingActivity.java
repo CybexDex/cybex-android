@@ -327,11 +327,15 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         if (isUnlockByEnotes) {
             mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_enotes));
         } else {
-            mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_password));
+            if (mAccountObject.active.key_auths.size() > 1) {
+                mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_password));
+            } else {
+                mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_enotes));
+                mSharedPreference.edit().putBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true).apply();
+            }
         }
         if (mAccountObject.active.key_auths.size() > 1) {
-            mTvUnlockMethod.setCompoundDrawables(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
-
+            mTvUnlockMethod.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
         }
     }
 
@@ -340,7 +344,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
            mTvCloudPasswordSet.setText(getResources().getString(R.string.setting_has_already_set));
         } else {
             mTvCloudPasswordSet.setText(getResources().getString(R.string.setting_not_set));
-            mTvCloudPasswordSet.setCompoundDrawables(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
+            mTvCloudPasswordSet.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
         }
     }
 

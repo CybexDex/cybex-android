@@ -93,8 +93,6 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
         mUserName = bundle.getString(INTENT_PARAM_NAME);
         isMemoKeyNeeded = bundle.getBoolean(INTENT_PARAM_IS_MEMOKEY_NEEDED);
         isUnlockByCardDefault = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true);
-        //        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
     }
 
     @Nullable
@@ -109,19 +107,25 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTvTitle.setText(getResources().getString(R.string.unlock_wallet_dialog_title));
         if (mAccountObject.active.key_auths.size() > 1) {
             mUseEnotesTitle.setVisibility(View.VISIBLE);
         }
-        if (isUnlockByCardDefault) {
+        if (isUnlockByCardDefault && !isMemoKeyNeeded) {
+            mTvTitle.setText(getResources().getString(R.string.nfc_dialog_unlock_title_by_card));
             mEnotesLayout.setVisibility(View.VISIBLE);
             mCloudPasswordLayout.setVisibility(View.GONE);
             mUseEnotesTitle.setText(getResources().getString(R.string.title_use_password));
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         } else {
+            mTvTitle.setText(getResources().getString(R.string.nfc_dialog_unlock_title_by_cloud));
             mEnotesLayout.setVisibility(View.GONE);
             mCloudPasswordLayout.setVisibility(View.VISIBLE);
             mUseEnotesTitle.setText(getResources().getString(R.string.title_use_enotes));
+            if (isMemoKeyNeeded) {
+                mEnotesText.setVisibility(View.VISIBLE);
+            } else {
+                mEnotesText.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -168,12 +172,14 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
             mEnotesLayout.setVisibility(View.GONE);
             mCloudPasswordLayout.setVisibility(View.VISIBLE);
             mUseEnotesTitle.setText(getResources().getString(R.string.title_use_enotes));
+            mTvTitle.setText(getResources().getString(R.string.nfc_dialog_unlock_title_by_cloud));
 
         } else {
             mEnotesLayout.setVisibility(View.VISIBLE);
             mCloudPasswordLayout.setVisibility(View.GONE);
             mUseEnotesTitle.setText(getResources().getString(R.string.title_use_password));
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            mTvTitle.setText(getResources().getString(R.string.nfc_dialog_unlock_title_by_card));
 
         }
     }

@@ -617,6 +617,8 @@
     <string name="nfc_dialog_verify_enotes_password_titile">Verify Enotes password</string>
     <string name="nfc_dialog_add_cloud_password_content">Add cloud password to unlock this function</string>
     <string name="nfc_dialog_add_cloud_password_button">Add</string>
+    <string name="nfc_dialog_unlock_title_by_card">unlock</string>
+    <string name="nfc_dialog_unlock_title_by_cloud">unlock</string>
     <!-- Nfc Toast Message -->
     <string name="nfc_toast_message_already_logged_in">Already Logged in by eNotes</string>
     <string name="nfc_toast_message_logged_in_successful_by_eNotes">Logged in successfully by eNotes</string>

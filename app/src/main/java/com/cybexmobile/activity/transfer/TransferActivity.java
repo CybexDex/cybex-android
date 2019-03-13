@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
@@ -57,6 +58,8 @@ import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
+import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybexmobile.shake.AntiShake;
@@ -237,6 +240,14 @@ public class TransferActivity extends BaseActivity implements
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
+            mFromAccountObject = mWebSocketService.getFullAccount(mUserName).account;
+        }
     }
 
     @Override
@@ -940,7 +951,25 @@ public class TransferActivity extends BaseActivity implements
                             //eNotes登陆
                             Log.d("status", "eNotes : true");
                             mIsUsedCloudPassword = false;
-                            showEnotesWaitingDialog();
+                            if (!TextUtils.isEmpty(mEtRemark.getText().toString().trim())) {
+                                if (mFromAccountObject.active.key_auths.size() == 1) {
+                                    CybexDialog.showLimitOrderCancelConfirmationDialog(
+                                            TransferActivity.this,
+                                            getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                                            getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    Intent intent = new Intent(TransferActivity.this, SetCloudPasswordActivity.class);
+                                                    startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
+                                                }
+                                            });
+                                } else {
+                                    showEnotesWaitingWithMemoDialog();
+                                }
+                            } else {
+                                showEnotesWaitingDialog();
+                            }
                         } else {
                             //其他方式登陆
                             Log.d("status", "eNotes : false");
@@ -966,6 +995,33 @@ public class TransferActivity extends BaseActivity implements
                             toTransfer();
                         }
                      }
+                },
+                new UnlockDialogWithEnotes.OnDismissListener() {
+                    @Override
+                    public void onDismiss(int result) {
+
+                    }
+                }
+        );
+    }
+
+    /**
+     * eNotes with Memo Dialog
+     */
+    private void showEnotesWaitingWithMemoDialog() {
+        unlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(
+                getSupportFragmentManager(),
+                mFromAccountObject,
+                mFromAccountObject.name,
+                !TextUtils.isEmpty(mEtRemark.getText().toString().trim()),
+                new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                    @Override
+                    public void onUnLocked(String password) {
+                        if (password != null) {
+                            mIsUsedCloudPassword = true;
+                            toTransfer();
+                        }
+                    }
                 },
                 new UnlockDialogWithEnotes.OnDismissListener() {
                     @Override

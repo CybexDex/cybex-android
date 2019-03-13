@@ -44,12 +44,19 @@ public class MyUtils {
     }
 
     public static byte[] hexToBytes(String hex) {
-        int len = hex.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
-                    + Character.digit(hex.charAt(i+1), 16));
+        int arglen = hex.length();
+        if (arglen % 2 != 0)
+            throw new RuntimeException("Odd-length string");
+
+        byte[] retbuf = new byte[arglen/2];
+
+        for (int i = 0; i < arglen; i += 2) {
+            int top = Character.digit(hex.charAt(i), 16);
+            int bot = Character.digit(hex.charAt(i+1), 16);
+            if (top == -1 || bot == -1)
+                throw new RuntimeException("Non-hexadecimal digit found");
+            retbuf[i / 2] = (byte) ((top << 4) + bot);
         }
-        return data;
+        return retbuf;
     }
 }

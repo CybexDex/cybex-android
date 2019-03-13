@@ -124,7 +124,7 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
                     mOpenOrdersFragment.hideEnotesDialog();
                     mOpenOrdersFragment.toCancelLimitOrder();
                 } else {
-                    super.nfcStartReadCard();
+                    super.readCardOnSuccess(card);
                 }
             }
         } else {

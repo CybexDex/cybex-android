@@ -720,7 +720,12 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            Types.private_key_type  privateKeyType;
+            if (feeAmount == 0) {
+                privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
+            } else {
+                privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            }
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
