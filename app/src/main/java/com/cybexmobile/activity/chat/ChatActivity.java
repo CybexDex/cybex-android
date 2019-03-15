@@ -1,6 +1,7 @@
 package com.cybexmobile.activity.chat;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.service.WebSocketService;
@@ -48,7 +50,9 @@ import com.cybex.provider.graphene.chat.ChatSubscribe;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.chat.RxChatWebSocket;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
 import com.cybexmobile.activity.login.LoginActivity;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.adapter.ChatRecyclerViewAdapter;
 import com.cybexmobile.adapter.decoration.VisibleDividerItemDecoration;
 import com.cybexmobile.utils.DeviceUtils;
@@ -146,7 +150,6 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mUnbinder = ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         SoftKeyBoardListener.setListener(this, this);
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
@@ -302,7 +305,6 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
         mRvChatMessage.removeOnScrollListener(mChatOnScrollListener);
         unbindService(mConnection);
         mRxChatWebSocket.close(1000, "close");
@@ -322,6 +324,8 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
             mTvSendForced.setEnabled(!TextUtils.isEmpty(mTvMessageNormal.getText().toString()));
             mChatRecyclerViewAdapter.setUsername(mAccountName);
             mChatRecyclerViewAdapter.notifyDataSetChanged();
+        } else if (requestCode == Constant.REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT ) {
+            mFullAccountObject = mWebSocketService.getFullAccount(mAccountName);
         }
     }
 
@@ -386,6 +390,20 @@ public class ChatActivity extends BaseActivity implements SoftKeyBoardListener.O
         if(!mIsLogin){ //未登录
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 1);
+            return;
+        }
+        if (isLoginFromENotes() && mFullAccountObject.account.active.key_auths.size() < 2) {
+            CybexDialog.showLimitOrderCancelConfirmationDialog(
+                    ChatActivity.this,
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                    new CybexDialog.ConfirmationDialogClickListener() {
+                        @Override
+                        public void onClick(Dialog dialog) {
+                            Intent intent = new Intent(ChatActivity.this, SetCloudPasswordActivity.class);
+                            startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
+                        }
+                    });
             return;
         }
         if(mRxChatWebSocket == null || !mRxChatWebSocket.isConnected()){

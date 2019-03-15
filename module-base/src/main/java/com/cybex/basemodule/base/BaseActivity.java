@@ -3,9 +3,11 @@ package com.cybex.basemodule.base;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -13,18 +15,26 @@ import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cybex.basemodule.R;
+import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.LoadDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.help.StoreLanguageHelper;
@@ -33,7 +43,16 @@ import com.cybex.basemodule.injection.component.DaggerBaseActivityComponent;
 import com.cybex.basemodule.injection.module.BaseActivityModule;
 import com.cybex.basemodule.receiver.NetWorkBroadcastReceiver;
 import com.cybex.basemodule.receiver.NetworkChangedCallback;
+import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.PublicKey;
+import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.utils.NetworkUtils;
+import com.cybex.provider.utils.SpUtil;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
@@ -42,17 +61,26 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import io.enotes.sdk.constant.ErrorCode;
+import io.enotes.sdk.constant.Status;
+import io.enotes.sdk.core.Callback;
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.base.Resource;
+import io.enotes.sdk.repository.card.CommandException;
+import io.enotes.sdk.repository.db.entity.Card;
+import io.enotes.sdk.utils.ReaderUtils;
+import io.enotes.sdk.utils.Utils;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
-
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
+import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -70,6 +98,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     private NetWorkBroadcastReceiver mNetWorkBroadcastReceiver;
     private NetworkChangedCallback mNetworkChangedCallback;
     private BaseActivityComponent mBaseActivityComponent;
+
+    public CardManager cardManager;
+    public Card currentCard;
+    public static Card cardApp;
+    private String mUserName;
+    private boolean mIsLoggedIn;
+    private SharedPreferences mSharedPreferences;
+
+
+    protected Dialog dialog;
+    private Dialog mEnotesPasswordDialog;
+    private int tagLostCount;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -94,6 +134,263 @@ public abstract class BaseActivity extends AppCompatActivity {
             registerNetWorkReceiver();
             onLazyLoad();
         }
+        cardManager = new CardManager(this);
+        setCardReaderCallback();
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        EventBus.getDefault().register(this);
+    }
+
+    private void setCardReaderCallback() {
+        if (cardManager != null) {
+            cardManager.setReadCardCallback(new Callback<Card>() {
+                @Override
+                public void onCallBack(Resource<Card> resource) {
+                    if (resource.status == Status.SUCCESS) {
+                        BaseActivity.this.readCardOnSuccess(resource.data);
+                    } else if (resource.status == Status.NFC_CONNECTED) {
+                        BaseActivity.this.nfcStartReadCard();
+                    } else if (resource.status == Status.ERROR) {
+                        BaseActivity.this.readCardError(resource.errorCode, resource.message);
+                    } else if (resource.status == Status.BLUETOOTH_PARSING) {
+                    }
+                }
+            });
+        }
+    }
+
+    protected void nfcStartReadCard() {
+        if (tagLostCount < 4) {
+            dialog = new Dialog(this);
+            dialog.setContentView(R.layout.dialog_loading_nfc);
+            dialog.show();
+        }
+    }
+
+    /**
+     * read card successful
+     *
+     * @param card
+     */
+    protected void readCardOnSuccess(final Card card) {
+        currentCard = card;
+        cardApp = card;
+        mUserName = mSharedPreferences.getString(PREF_NAME, "");
+        mIsLoggedIn = mSharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
+        Types.public_key_type public_key_type = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
+        Log.i("eNotes", public_key_type.toString());
+        tagLostCount = 0;
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        if (mIsLoggedIn) {
+            if (!card.getAccount().equals(mUserName)) {
+                CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), card.getAccount()), null,
+                        new CybexDialog.ConfirmationDialogClickListener() {
+                            @Override
+                            public void onClick(Dialog dialog) {
+                                try {
+                                    dialog.dismiss();
+                                    checkeNotesPassword(card);
+                                } catch (CommandException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+            } else {
+                if (!isLoginFromENotes()) {
+
+                    try {
+                        checkeNotesPassword(card);
+                    } catch (CommandException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.nfc_toast_message_already_logged_in), R.drawable.ic_check_circle_green);
+                }
+            }
+        } else {
+            try {
+                checkeNotesPassword(card);
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void checkeNotesPassword(final Card card) throws CommandException {
+        if (!cardManager.isConnected()) {
+            if (ReaderUtils.supportNfc(this)) {
+                showToast(this, getResources().getString(R.string.error_connect_card));
+            } else {
+                showToast(this, getString(R.string.error_connect_card_ble));
+            }
+            return;
+        }
+        if (!cardManager.isPresent()) {
+            if (ReaderUtils.supportNfc(this)) { showToast(this, getString(R.string.error_connect_card)); } else {
+                showToast(this, getString(R.string.error_connect_card_ble));
+            }
+            return;
+        }
+        if (cardManager.getTransactionPinStatus() == 0) {
+            setLoginPublicKey(card.getCurrencyPubKey());
+            Log.e("pinStatus", "noPin");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loginByENotes(card.getAccount(), "123456789");
+                }
+            }, 500);
+        } else {
+
+            final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+            if (cardIdToCardPasswordMap == null || cardIdToCardPasswordMap.size() == 0) {
+                if (mEnotesPasswordDialog == null) {
+                    CybexDialog.showVerifyEnotesCardPasswordDialog(
+                            this,
+                            getResources().getString(R.string.nfc_dialog_verify_enotes_password_titile),
+                            new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
+                                @Override
+                                public void onClick(Dialog dialog, Button button, EditText editText, TextView textView) {
+                                    String cardPassword = editText.getText().toString().trim();
+                                    textView.setVisibility(View.GONE);
+                                    mEnotesPasswordDialog = dialog;
+                                    try {
+                                        if (cardManager.verifyTransactionPin(cardPassword)) {
+                                            dialog.dismiss();
+                                            Map<Long, String> map = new HashMap<Long, String>();
+                                            map.put(card.getId(), cardPassword);
+                                            SpUtil.putMap(BaseActivity.this, "eNotesCardMap", map);
+                                            setLoginPublicKey(card.getCurrencyPubKey());
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    loginByENotes(card.getAccount(), "123456789");
+                                                }
+                                            }, 500);
+                                        } else {
+                                            textView.setVisibility(View.VISIBLE);
+                                            textView.setText(getResources().getString(R.string.error_incorrect_password));
+                                        }
+                                    } catch (CommandException e) {
+                                        e.printStackTrace();
+                                        textView.setVisibility(View.VISIBLE);
+                                        textView.setText(getResources().getString(R.string.error_incorrect_password));
+
+                                    }
+                                }
+                            }, new CybexDialog.ConfirmationDialogCancelListener() {
+                                @Override
+                                public void onCancel(Dialog dialog) {
+                                    mEnotesPasswordDialog = null;
+                                }
+                            });
+                }
+            } else {
+                String cardPasswordFromSp = cardIdToCardPasswordMap.get(card.getId());
+                if (cardManager.verifyTransactionPin(cardPasswordFromSp)) {
+                    setLoginPublicKey(card.getCurrencyPubKey());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loginByENotes(card.getAccount(), "123456789");
+                        }
+                    }, 500);
+                }
+            }
+        }
+    }
+
+    private void loginByENotes(final String email, final String password) {
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            return;
+        }
+        showLoadDialog(true);
+        try {
+            BitsharesWalletWraper.getInstance().get_account_object(email, new MessageCallback<Reply<AccountObject>>() {
+                @Override
+                public void onMessage(Reply<AccountObject> reply) {
+                    AccountObject accountObject = reply.result;
+                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, email, password);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideLoadDialog();
+                            setLoginFrom(true);
+                            EventBus.getDefault().post(new Event.LoginIn(email));
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                            sharedPreferences.edit().putString(PREF_NAME, email).apply();
+                            ToastMessage.showNotEnableDepositToastMessage(BaseActivity.this, getResources().getString(R.string.nfc_toast_message_logged_in_successful_by_eNotes), R.drawable.ic_check_circle_green);
+                            mEnotesPasswordDialog = null;
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure() {
+                    hideLoadDialog();
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void readCardError(int code, String message) {
+        if (code == ErrorCode.BLUETOOTH_DISCONNECT) {
+            showToast(this, getString(R.string.bluetooth_connect_fail));
+        } else if (code == ErrorCode.INVALID_CARD) {
+            showToast(this, getString(R.string.invalid_card));
+        } else if (code == ErrorCode.NOT_SUPPORT_CARD) {
+            showToast(this, getString(R.string.not_support_card));
+        } else if (code == ErrorCode.NOT_FIND_CARD) {
+            showToast(this, getString(R.string.can_not_find_card));
+        } else if (code == ErrorCode.NFC_DISCONNECTED) {
+            showToast(this, getString(R.string.tag_connection_lost));
+        } else if (code == ErrorCode.CALL_CERT_PUB_KEY_ERROR) {
+            if (Utils.isNetworkConnected(this)) {
+                showToast(this, message);
+            } else {
+                showToast(this, getString(R.string.network_unavailable));
+            }
+        } else {
+            showToast(this, message);
+        }
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    protected void showToast(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+
+    }
+
+    /**
+     * 是否从eNotes登陆
+     */
+    protected boolean isLoginFromENotes() {
+        SharedPreferences sharedPreferences = getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("from", true);
+    }
+
+    protected void setLoginFrom(boolean flag) {
+        SharedPreferences.Editor editor = getSharedPreferences("enotes", Context.MODE_PRIVATE).edit();
+        editor.putBoolean("from", flag);
+        editor.apply();
+    }
+
+    protected String getLoginPublicKey() {
+        SharedPreferences sharedPreferences = getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("key", "");
+    }
+
+    protected void setLoginPublicKey(String key) {
+        SharedPreferences.Editor editor = getSharedPreferences("enotes", Context.MODE_PRIVATE).edit();
+        editor.putString("key", key);
+        editor.apply();
     }
 
     @Override
@@ -122,6 +419,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             EventBus.getDefault().post(new Event.IsOnBackground(false));
         }
         super.onResume();
+        cardManager.enableNfcReader(this);
         MobclickAgent.onResume(this);
         Log.d(TAG, "onResume");
     }
@@ -136,6 +434,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+        cardManager.disableNfcReader(this);
         Log.d(TAG, "onPause");
     }
 
@@ -165,6 +464,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             unregisterNetWorkReceiver();
         }
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -386,7 +686,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public void onLazyLoad(){
+    public void onLazyLoad() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             registerNetWorkCallback();
         }

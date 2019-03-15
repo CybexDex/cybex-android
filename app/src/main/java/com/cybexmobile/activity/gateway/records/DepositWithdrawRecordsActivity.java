@@ -1,5 +1,6 @@
 package com.cybexmobile.activity.gateway.records;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -16,10 +17,13 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.http.entity.BlockerExplorer;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
@@ -69,6 +73,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.REQUEST_CODE_UPDATE_ACCOUNT;
 
 public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
 
@@ -144,7 +149,22 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        checkIfLocked(true);
+        if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
+            CybexDialog.showLimitOrderCancelConfirmationDialog(
+                    DepositWithdrawRecordsActivity.this,
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                    new CybexDialog.ConfirmationDialogClickListener() {
+                        @Override
+                        public void onClick(Dialog dialog) {
+                            mRefreshLayout.finishRefresh();
+                            Intent intent = new Intent(DepositWithdrawRecordsActivity.this, SetCloudPasswordActivity.class);
+                            startActivityForResult(intent, REQUEST_CODE_UPDATE_ACCOUNT);
+                        }
+                    });
+        } else {
+            checkIfLocked(true);
+        }
     }
 
     @Override
@@ -153,14 +173,6 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
             refreshLayout.finishLoadMoreWithNoMoreData();
         } else {
             checkIfLocked(false);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateFullAccount(Event.UpdateFullAccount event) {
-        if (mAccountObject == null) {
-            mAccountObject = event.getFullAccount().account;
-            checkIfLocked(true);
         }
     }
 
@@ -189,6 +201,12 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("onResumeCalled", "called");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
@@ -204,6 +222,15 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         }
         if (mUnbinder != null) {
             mUnbinder.unbind();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
+            mAccountObject = mWebSocketService.getFullAccount(mAccountName).account;
+            mRefreshLayout.autoRefresh();
         }
     }
 

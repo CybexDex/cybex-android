@@ -495,6 +495,36 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, call, replyReplyProcess);
     }
 
+    public void get_block_header(int blockNumber, MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
+        Call call = new Call();
+        call.id = mCallId.getAndIncrement();
+        call.method = "call";
+        call.params = new ArrayList<>();
+        call.params.add(_nDatabaseId);
+        call.params.add("get_block_header");
+        List<Object> blockData = new ArrayList<>();
+        blockData.add(blockNumber);
+        call.params.add(blockData);
+        ReplyProcessImpl<Reply<BlockHeader>> replyReplyProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<BlockHeader>>(){}.getType(), callback);
+        sendForReply(FLAG_DATABASE, call, replyReplyProcess);
+    }
+
+    public void get_recent_transaction_by_id(String transactionId, MessageCallback<Reply<Object>> callback) throws NetworkStatusException {
+        Call call = new Call();
+        call.id = mCallId.getAndIncrement();
+        call.method = "call";
+        call.params = new ArrayList<>();
+        call.params.add(_nDatabaseId);
+        call.params.add("get_recent_transaction_by_id");
+        List<Object> blockData = new ArrayList<>();
+        blockData.add(transactionId);
+        call.params.add(blockData);
+        ReplyProcessImpl<Reply<Object>> replyReplyProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<Object>>(){}.getType(), callback);
+        sendForReply(FLAG_DATABASE, call, replyReplyProcess);
+    }
+
     public void broadcast_transaction_with_callback(SignedTransaction tx, MessageCallback<Reply<String>> callback) throws NetworkStatusException {
         Call callObject = new Call();
         callObject.id = mCallId.getAndIncrement();

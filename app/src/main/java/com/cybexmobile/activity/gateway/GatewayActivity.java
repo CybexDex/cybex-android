@@ -102,7 +102,6 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gateway);
         mUnbinder = ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         setViews();
         mAccountBalanceObjectItemList = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_ACCOUNT_BALANCE_ITEMS);
@@ -214,7 +213,6 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
-        EventBus.getDefault().unregister(this);
         if (mWebSocketService != null) {
             unbindService(mConnection);
         }

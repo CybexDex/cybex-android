@@ -11,6 +11,7 @@
     <string name="title_transaction_match">Contest</string>
     <string name="title_order_history">Orders</string>
     <string name="title_transfer">Transfer</string>
+    <string name="title_deploy">Deploy</string>
     <string name="title_transfer_records">Transfer Records</string>
     <string name="title_transfer_details">Transfer Details</string>
     <string name="title_deposit_records">Deposit Records</string>
@@ -47,6 +48,7 @@
     <string name="balance_page_title">My Balance</string>
     <string name="balance_page_total_balance">Your Total Balance(CYB)</string>
     <string name="balance_page_transfer">Transfer</string>
+    <string name="balance_page_use">Deploy</string>
     <string name="balance_page_no_asset">No Asset</string>
     <string name="balance_page_frozen_no_asset">Frozen: --</string>
     <string name="balance_page_frozen_asset">Frozen:</string>
@@ -86,6 +88,13 @@
     <string name="text_percent_0">0.00%</string>
 
     <!-- Setting Strings -->
+    <string name="setting_default_unlock_method">Set default unlock method</string>
+    <string name="setting_default_unlock_method_enotes">Unlock by enotes</string>
+    <string name="setting_default_unlock_method_password">Unlock by password</string>
+    <string name="setting_set_cloud_password">Set Cloud Password</string>
+    <string name="setting_set_enotes_card_password">Set card password</string>
+    <string name="setting_has_already_set">Set</string>
+    <string name="setting_not_set">Not Set</string>
     <string name="setting_language">Language</string>
     <string name="setting_language_english">English</string>
     <string name="setting_language_chinese">简体中文</string>
@@ -320,6 +329,8 @@
     <string name="toast_message_add_to_transfer_account_list">Add to transfer account list?</string>
     <string name="toast_message_balance_claim_succeeded">Claim succeeded</string>
     <string name="toast_message_balance_claim_failed">Claim failed</string>
+    <string name="toast_message_update_account_succeeded">Account update succeeded</string>
+    <string name="toast_message_update_account_failed">Account update failed</string>
 
     <!-- unlock wallet -->
     <string name="unlock_wallet_dialog_title">Unlock Wallet</string>
@@ -553,6 +564,21 @@
     <string name="fragment_tab_title">Introduction</string>
     <string name="text_eva_score">SCORE:</string>
 
+    <!-- Ticket -->
+    <string name="text_account_for_verification">Account for verification</string>
+    <string name="text_hint_account_for_verificaiton">Input or scan the account name</string>
+    <string name="text_deploy_asset">Deploy asset</string>
+    <string name="text_hint_deploy_asset">Input or choose asset</string>
+    <string name="text_quantity_to_deploy">Quantity to deploy</string>
+    <string name="text_hint_quantity_to_deploy">Input the quantity</string>
+    <string name="text_transaction_fee">Transaction fee</string>
+    <string name="text_scan_message">Align the QR Code within the frame to scan</string>
+    <string name="text_qr_code_message">Please show the QR Code to administrator.\nPlease keep your QR Code carefully.\nThe effective time of the QR code is 10 minutes.</string>
+    <string name="text_ticket_get_message">Passed</string>
+    <string name="text_ticket_internet_wrong_message">Internet connection is not correct</string>
+    <string name="text_ticket_wrong_message">Wrong ticket</string>
+    <string name="text_camera_permission">Please turn on camera permission</string>
+    <string name="text_ticket_toast_sign_failed_enotes">Please do not move the card</string>
 
     <string name="text_trade_history">Trade History</string>
     <string name="text_order_history">Order History</string>
@@ -575,5 +601,45 @@ Reward calculations are based on changes in account balances. The final rank wil
 
 To ensure fairness, please help us in the prevention of cheating in any form.</string>
     <string name="trading_game_dialog_title">Game Rules</string>
+
+    <!-- Nfc related -->
+    <string name="bluetooth_connect_fail">Bluetooth connection lost!</string>
+    <string name="invalid_card">Invalid eNotes!</string>
+    <string name="not_support_card">No support for the card. Please upgrade the client.</string>
+    <string name="can_not_find_card">Can not find card</string>
+    <string name="tag_connection_lost">Scan failed, please do not move your eNotes when scanning.</string>
+    <string name="network_unavailable">The network connection is not available, please check the network setting.</string>
+
+    <string name="error_connect_card">Please scan your eNotes with the phone. And DO NOT move your card until
+        you see a status dialog.</string>
+    <string name="error_connect_card_ble">Please connect the bluetooth NFC reader.</string>
+    <string name="please_right_card">Please scan the correct card!</string>
+
+    <string name="title_set_cloud_pass">Set Cloud Password</string>
+
+    <string name="tip_set_cloud_pass">When you not having your eNotes with you, the cloud password allows you to
+        manipulate your account. Once set, it is uneditable and we can not assist you to get it back in any form,
+        please do remember it. Long password is highly recommended. </string>
+    <string name="title_set_enotes_pass">Set eNotes Password</string>
+    <string name="tip_set_enotes_pass">eNotes password can provider a higher security level protection. Once set, it
+        is uneditable and we can not assist you to get it back in any form, please do remember it.</string>
+    <string name="set_enotes_password_error">Password should be 6 digits precisely.</string>
+    <string name="error_unlock_enotes">Unlock fail, please try again</string>
+    <string name="title_use_enotes">Use eNotes</string>
+    <string name="title_use_password">Use Password</string>
+    <string name="tip_no_memo_use_cloud_pass">eNotes does not support memo yet, if you want to use it, please
+        use cloud password to unlock</string>
+
+    <!-- Nfc Dialog Message -->
+    <string name="nfc_dialog_change_account_content">Change Account to %1$s? Please do not move card</string>
+    <string name="nfc_dialog_verify_enotes_password_titile">Verify Enotes password</string>
+    <string name="nfc_dialog_add_cloud_password_content">Add cloud password to unlock this function</string>
+    <string name="nfc_dialog_add_cloud_password_button">Add</string>
+    <string name="nfc_dialog_unlock_title_by_card">unlock</string>
+    <string name="nfc_dialog_unlock_title_by_cloud">unlock</string>
+
+    <!-- Nfc Toast Message -->
+    <string name="nfc_toast_message_already_logged_in">Already Logged in by eNotes</string>
+    <string name="nfc_toast_message_logged_in_successful_by_eNotes">Logged in successfully by eNotes</string>
 
 </resources>

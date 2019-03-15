@@ -29,22 +29,18 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cybex.provider.db.DBManager;
-import com.cybex.provider.db.entity.Address;
-import com.cybex.provider.graphene.chain.Types;
-import com.cybex.provider.utils.NetworkUtils;
-import com.cybex.provider.websocket.MessageCallback;
-import com.cybex.provider.websocket.Reply;
-import com.cybexmobile.R;
-import com.cybexmobile.activity.address.AddTransferAccountActivity;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.basemodule.base.BaseActivity;
-import com.cybexmobile.data.item.AccountBalanceObjectItem;
-import com.cybexmobile.dialog.CommonSelectDialog;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
+import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
 import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.basemodule.toastmessage.ToastMessage;
+import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.basemodule.utils.SoftKeyBoardListener;
+import com.cybex.provider.db.DBManager;
+import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AccountObject;
@@ -55,12 +51,19 @@ import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
-import com.cybex.basemodule.service.WebSocketService;
-import com.cybex.basemodule.toastmessage.ToastMessage;
-import com.cybex.basemodule.utils.AssetUtil;
-import com.cybex.basemodule.utils.SoftKeyBoardListener;
+import com.cybex.provider.graphene.chain.Types;
+import com.cybex.provider.utils.NetworkUtils;
+import com.cybex.provider.utils.SpUtil;
+import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
+import com.cybexmobile.R;
+import com.cybexmobile.activity.address.AddTransferAccountActivity;
+import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
+import com.cybexmobile.data.item.AccountBalanceObjectItem;
+import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybexmobile.shake.AntiShake;
-import com.google.gson.Gson;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.greenrobot.eventbus.EventBus;
@@ -74,6 +77,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,12 +86,14 @@ import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.card.CommandException;
+import io.enotes.sdk.repository.db.entity.Card;
+import io.enotes.sdk.utils.ReaderUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
@@ -95,6 +101,7 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class TransferActivity extends BaseActivity implements
@@ -156,6 +163,9 @@ public class TransferActivity extends BaseActivity implements
     private String mUserName;
     private Disposable mLoadAddressDisposable;
     private Disposable mCheckAddressExistDisposable;
+    private Card mCard;
+    private UnlockDialog unlockDialog;
+    private UnlockDialogWithEnotes unlockDialogWithEnotes;
 
     private Operations.transfer_operation mTransferOperationFee;//手续费TransferOperation
 
@@ -164,6 +174,8 @@ public class TransferActivity extends BaseActivity implements
 
     private boolean mIsActivityActive;//当前activity是否可见
 
+    private boolean mIsUsedCloudPassword = false;//当前卡登陆但有memo要用云密码
+
     private int mTotalLockTime;
     private int mLockTimeUnit = 1;
 
@@ -171,13 +183,13 @@ public class TransferActivity extends BaseActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer);
-        EventBus.getDefault().register(this);
         SoftKeyBoardListener.setListener(this, this);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, null);
-        mEtQuantity.setFilters(new InputFilter[]{mQuantityFilter});
-        mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
+        mEtQuantity.setFilters(new InputFilter[] {mQuantityFilter});
+        mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(
+                INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
         if (mAccountBalanceObjectItems != null) {
             mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
             /**
@@ -218,8 +230,8 @@ public class TransferActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        unlockDialogWithEnotes = null;
         unbindService(mConnection);
-        EventBus.getDefault().unregister(this);
         if (mLoadAddressDisposable != null && !mLoadAddressDisposable.isDisposed()) {
             mLoadAddressDisposable.dispose();
         }
@@ -231,6 +243,14 @@ public class TransferActivity extends BaseActivity implements
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
+            mFromAccountObject = mWebSocketService.getFullAccount(mUserName).account;
+        }
     }
 
     @Override
@@ -262,7 +282,8 @@ public class TransferActivity extends BaseActivity implements
         mTvCrypto.setText(AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol));
         mTvAvailable.setText(String.format("%s %s %s", getResources().getString(R.string.text_available),
                 AssetUtil.formatNumberRounding(accountBalanceObjectItem.accountBalanceObject.balance /
-                        Math.pow(10, accountBalanceObjectItem.assetObject.precision), accountBalanceObjectItem.assetObject.precision),
+                                Math.pow(10, accountBalanceObjectItem.assetObject.precision),
+                        accountBalanceObjectItem.assetObject.precision),
                 AssetUtil.parseSymbol(accountBalanceObjectItem.assetObject.symbol)));
         String amountStr = mEtQuantity.getText().toString().trim();
         if (amountStr.length() > 0) {
@@ -305,7 +326,8 @@ public class TransferActivity extends BaseActivity implements
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (manager != null) {
                 if (mEtAccountName.isFocused()) {
-                    manager.hideSoftInputFromWindow(mEtAccountName.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    manager.hideSoftInputFromWindow(mEtAccountName.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
                     mEtAccountName.clearFocus();
                 }
                 if (mEtQuantity.isFocused()) {
@@ -317,7 +339,8 @@ public class TransferActivity extends BaseActivity implements
                     mEtRemark.clearFocus();
                 }
                 if (mEtTransferLockTime.isFocused()) {
-                    manager.hideSoftInputFromWindow(mEtTransferLockTime.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    manager.hideSoftInputFromWindow(mEtTransferLockTime.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
                     mEtTransferLockTime.clearFocus();
                 }
             }
@@ -374,14 +397,17 @@ public class TransferActivity extends BaseActivity implements
         if (isChecked) {
             mLinearLayoutTransferLockTime.setVisibility(View.VISIBLE);
             mMsTransferLockTime.setDrawableLevelValue(5000);
-            mMsTransferLockTime.notifyItemsWithIndex(Arrays.asList(getResources().getStringArray(R.array.transfer_time_period)), mMsTransferLockTime.getSelectedIndex());
+            mMsTransferLockTime.notifyItemsWithIndex(
+                    Arrays.asList(getResources().getStringArray(R.array.transfer_time_period)),
+                    mMsTransferLockTime.getSelectedIndex());
             mMsTransferLockTime.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
                 @Override
                 public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                     view.setTextColor(getResources().getColor(R.color.btn_orange_end));
                     mLockTimeUnit = getTimeUnit(item);
                     if (mEtTransferLockTime.getText() != null && !mEtTransferLockTime.getText().toString().isEmpty()) {
-                        mTotalLockTime = (int) Double.parseDouble(mEtTransferLockTime.getText().toString().trim()) * mLockTimeUnit;
+                        mTotalLockTime = (int) Double.parseDouble(mEtTransferLockTime.getText().toString().trim())
+                                * mLockTimeUnit;
                     }
                 }
             });
@@ -396,7 +422,8 @@ public class TransferActivity extends BaseActivity implements
         if (AntiShake.check(view.getId())) {
             return;
         }
-        CybexDialog.showBalanceDialog(this, getResources().getString(R.string.text_transfer_dialog_title), getResources().getString(R.string.text_transfer_dialog_content));
+        CybexDialog.showBalanceDialog(this, getResources().getString(R.string.text_transfer_dialog_title),
+                getResources().getString(R.string.text_transfer_dialog_content));
     }
 
     @OnClick(R.id.transfer_tv_public_key)
@@ -465,18 +492,19 @@ public class TransferActivity extends BaseActivity implements
         mPbLoading.setVisibility(View.VISIBLE);
         mIvAccountCheck.setVisibility(View.GONE);
         try {
-            BitsharesWalletWraper.getInstance().get_account_object(accountName, new MessageCallback<Reply<AccountObject>>() {
-                @Override
-                public void onMessage(Reply<AccountObject> reply) {
-                    AccountObject accountObject = reply.result;
-                    EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
-                }
+            BitsharesWalletWraper.getInstance()
+                    .get_account_object(accountName, new MessageCallback<Reply<AccountObject>>() {
+                        @Override
+                        public void onMessage(Reply<AccountObject> reply) {
+                            AccountObject accountObject = reply.result;
+                            EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
+                        }
 
-                @Override
-                public void onFailure() {
+                        @Override
+                        public void onFailure() {
 
-                }
-            });
+                        }
+                    });
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -554,7 +582,7 @@ public class TransferActivity extends BaseActivity implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event) {
-        /**
+        /*
          * fix bug:CYM-577
          * 转账成功后刷新余额
          */
@@ -584,7 +612,8 @@ public class TransferActivity extends BaseActivity implements
             mCybFeeAmountObject = fee;
             //未选择币种时 手续费默认显示CYB
             if (mSelectedAccountBalanceObjectItem == null) {
-                mIsCybEnough = mCybAccountBalanceObjectItem != null && mCybAccountBalanceObjectItem.accountBalanceObject.balance >= fee.amount;
+                mIsCybEnough = mCybAccountBalanceObjectItem != null
+                        && mCybAccountBalanceObjectItem.accountBalanceObject.balance >= fee.amount;
                 /**
                  * fix bug:CYM-543
                  * 解决账户无资产时不显示手续费
@@ -594,12 +623,15 @@ public class TransferActivity extends BaseActivity implements
                         mCybAssetObject = mWebSocketService.getAssetObject(fee.asset_id);
                     }
                     mTvFee.setText(String.format("%s %s",
-                            AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mCybAssetObject == null ? 5 : mCybAssetObject.precision),
+                            AssetUtil.formatNumberRounding(
+                                    fee.amount / Math.pow(10, mCybAssetObject == null ? 5 : mCybAssetObject.precision),
                                     mCybAssetObject == null ? 5 : mCybAssetObject.precision),
-                            mCybAssetObject == null ? ASSET_SYMBOL_CYB : AssetUtil.parseSymbol(mCybAssetObject.symbol)));
+                            mCybAssetObject == null ? ASSET_SYMBOL_CYB :
+                                    AssetUtil.parseSymbol(mCybAssetObject.symbol)));
                 } else {
                     mTvFee.setText(String.format("%s %s",
-                            AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
+                            AssetUtil.formatNumberRounding(
+                                    fee.amount / Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
                                     mCybAccountBalanceObjectItem.assetObject.precision),
                             AssetUtil.parseSymbol(mCybAccountBalanceObjectItem.assetObject.symbol)));
                 }
@@ -608,17 +640,21 @@ public class TransferActivity extends BaseActivity implements
                 mIsCybEnough = false;
                 mCurrAssetFeeAmountObject = fee;
                 mTvFee.setText(String.format("%s %s",
-                        AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
+                        AssetUtil.formatNumberRounding(
+                                fee.amount / Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
                                 mSelectedAccountBalanceObjectItem.assetObject.precision),
                         AssetUtil.parseSymbol(mSelectedAccountBalanceObjectItem.assetObject.symbol)));
             } else {
-                if (mCybAccountBalanceObjectItem == null || mCybAccountBalanceObjectItem.accountBalanceObject.balance < fee.amount) {
+                if (mCybAccountBalanceObjectItem == null
+                        || mCybAccountBalanceObjectItem.accountBalanceObject.balance < fee.amount) {
                     mIsCybEnough = false;
-                    checkIsLockAndLoadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(), event.isToTransfer());
+                    checkIsLockAndLoadTransferFee(mSelectedAccountBalanceObjectItem.assetObject.id.toString(),
+                            event.isToTransfer());
                 } else {
                     mIsCybEnough = true;
                     mTvFee.setText(String.format("%s %s",
-                            AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
+                            AssetUtil.formatNumberRounding(
+                                    fee.amount / Math.pow(10, mCybAccountBalanceObjectItem.assetObject.precision),
                                     mCybAccountBalanceObjectItem.assetObject.precision),
                             AssetUtil.parseSymbol(mCybAccountBalanceObjectItem.assetObject.symbol)));
                 }
@@ -626,7 +662,8 @@ public class TransferActivity extends BaseActivity implements
         } else {
             mCurrAssetFeeAmountObject = fee;
             mTvFee.setText(String.format("%s %s",
-                    AssetUtil.formatNumberRounding(fee.amount / Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
+                    AssetUtil.formatNumberRounding(
+                            fee.amount / Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision),
                             mSelectedAccountBalanceObjectItem.assetObject.precision),
                     AssetUtil.parseSymbol(mSelectedAccountBalanceObjectItem.assetObject.symbol)));
         }
@@ -644,29 +681,21 @@ public class TransferActivity extends BaseActivity implements
                     mEtAccountName.getText().toString().trim(), Address.TYPE_TRANSFER)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<Address>() {
-                        @Override
-                        public void accept(Address address) throws Exception {
-                            if (address != null) {
-                                ToastMessage.showNotEnableDepositToastMessage(
-                                        TransferActivity.this,
-                                        getResources().getString(R.string.toast_message_transfer_success),
-                                        R.drawable.ic_check_circle_green);
-                                /**
-                                 * fix bug:CYM-505
-                                 * 转账成功和失败清除数据
-                                 */
-                                clearTransferData();
-                            } else {
-                                showAddAddressDialog();
-                            }
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) throws Exception {
+                    .subscribe(address -> {
+                        if(address != null){
+                            ToastMessage.showNotEnableDepositToastMessage(
+                                    TransferActivity.this,
+                                    getResources().getString(R.string.toast_message_transfer_success),
+                                    R.drawable.ic_check_circle_green);
+                            /*
+                             * fix bug:CYM-505
+                             * 转账成功和失败清除数据
+                             */
+                            clearTransferData();
+                        } else {
                             showAddAddressDialog();
                         }
-                    });
+                    }, throwable -> showAddAddressDialog());
         } else {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
                     R.string.toast_message_transfer_failed), R.drawable.ic_error_16px);
@@ -690,35 +719,28 @@ public class TransferActivity extends BaseActivity implements
         CybexDialog.showAddAddressDialog(this,
                 getResources().getString(R.string.toast_message_transfer_success),
                 getResources().getString(R.string.toast_message_add_to_transfer_account_list),
-                new CybexDialog.ConfirmationDialogClickListener() {
-                    @Override
-                    public void onClick(Dialog dialog) {
-                        Intent intent = new Intent(TransferActivity.this, AddTransferAccountActivity.class);
-                        intent.putExtra(INTENT_PARAM_ADDRESS, mEtAccountName.getText().toString().trim());
-                        startActivity(intent);
-                        /**
-                         * fix bug:CYM-505
-                         * 转账成功和失败清除数据
-                         */
-                        clearTransferData();
-                    }
+                dialog -> {
+                    Intent intent = new Intent(TransferActivity.this, AddTransferAccountActivity.class);
+                    intent.putExtra(INTENT_PARAM_ADDRESS, mEtAccountName.getText().toString().trim());
+                    startActivity(intent);
+                    /*
+                     * fix bug:CYM-505
+                     * 转账成功和失败清除数据
+                     */
+                    clearTransferData();
                 },
-                new CybexDialog.ConfirmationDialogCancelListener() {
-                    @Override
-                    public void onCancel(Dialog dialog) {
-                        /**
-                         * fix bug:CYM-505
-                         * 转账成功和失败清除数据
-                         */
-                        clearTransferData();
-                    }
+                dialog -> {
+                    /*
+                     * fix bug:CYM-505
+                     * 转账成功和失败清除数据
+                     */
+                    clearTransferData();
                 });
     }
 
     /**
      * 删除0资产币种
-     *
-     * @param items
+     * @param items 资产
      */
     private void removeZeroBalance(List<AccountBalanceObjectItem> items) {
         if (items == null || items.size() == 0) {
@@ -752,7 +774,7 @@ public class TransferActivity extends BaseActivity implements
     };
 
     private void loadAccountBalanceObjectItems(FullAccountObject fullAccountObject) {
-        /**
+        /*
          * fix online bug
          * java.lang.NullPointerException: Attempt to read from field
          * 'java.util.List com.cybex.provider.graphene.chain.FullAccountObject.balances' on a null object reference
@@ -790,21 +812,15 @@ public class TransferActivity extends BaseActivity implements
         mLoadAddressDisposable = DBManager.getDbProvider(this).getAddress(mUserName, Address.TYPE_TRANSFER)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Address>>() {
-                    @Override
-                    public void accept(List<Address> addresses) throws Exception {
-                        mAddresses = addresses;
-                        if (mAddresses == null || mAddresses.size() == 0) {
-                            mTvSelectAccount.setText(getResources().getString(R.string.text_add_account));
-                        } else {
-                            mTvSelectAccount.setText(getResources().getString(R.string.text_select_account));
-                        }
+                .subscribe(addresses -> {
+                    mAddresses = addresses;
+                    if(mAddresses == null || mAddresses.size() == 0){
+                        mTvSelectAccount.setText(getResources().getString(R.string.text_add_account));
+                    } else {
+                        mTvSelectAccount.setText(getResources().getString(R.string.text_select_account));
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+                }, throwable -> {
 
-                    }
                 });
     }
 
@@ -829,7 +845,7 @@ public class TransferActivity extends BaseActivity implements
         mEtAccountName.setText("");
         mTvAvailable.setText("");
         mTvCrypto.setText("");
-        /**
+        /*
          * fix bug:CYM-555
          * 重置按钮状态
          */
@@ -844,8 +860,8 @@ public class TransferActivity extends BaseActivity implements
         if (mFromAccountObject == null) {
             return;
         }
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
+        if (BitsharesWalletWraper.getInstance().is_locked() && !isLoginFromENotes()) {
+            unlockDialog = CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
                     mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
                         @Override
                         public void onUnLocked(String password) {
@@ -858,16 +874,70 @@ public class TransferActivity extends BaseActivity implements
     }
 
     /**
+     * 卡状态读取成功后回调
+     *
+     * @param card
+     */
+    @Override
+    protected void readCardOnSuccess(Card card) {
+        mCard = card;
+        if (unlockDialog != null) { unlockDialog.dismiss(); }
+        if (unlockDialogWithEnotes != null) {
+            try {
+                if (cardManager.getTransactionPinStatus() == 0) {
+                    if (!TextUtils.isEmpty(mEtRemark.getText().toString())) {
+                        //如果带了memo，更新UI
+                        unlockDialogWithEnotes.showNoSupportMemoText();
+                    } else {
+                        //没带memo，执行转账
+                        unlockDialogWithEnotes.dismiss();
+                        toTransfer();
+                    }
+                } else {
+                    final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                    if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                        unlockDialogWithEnotes.dismiss();
+                        toTransfer();
+                    }
+                }
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
+        } else {
+            super.readCardOnSuccess(card);
+        }
+    }
+
+    @Override
+    protected void readCardError(int code, String message) {
+        super.readCardError(code, message);
+        if (unlockDialogWithEnotes != null) {
+            unlockDialogWithEnotes.hideProgress();
+        }
+    }
+
+    @Override
+    protected void nfcStartReadCard() {
+        if(unlockDialogWithEnotes != null) {
+            unlockDialogWithEnotes.showProgress();
+            unlockDialogWithEnotes.showNormalText();
+        } else {
+            super.nfcStartReadCard();
+        }
+    }
+
+    /**
      * 检查钱包锁定状态 -> 加载转账手续费 -> 转账
      */
     private void checkIsLockAndTransfer() {
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject, mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
-                @Override
-                public void onUnLocked(String password) {
-                    showTransferConfirmationDialog();
-                }
-            });
+        if (BitsharesWalletWraper.getInstance().is_locked() && !isLoginFromENotes()) {
+            unlockDialog = CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mFromAccountObject,
+                    mFromAccountObject.name, new UnlockDialog.UnLockDialogClickListener() {
+                        @Override
+                        public void onUnLocked(String password) {
+                            showTransferConfirmationDialog();
+                        }
+                    });
         } else {
             showTransferConfirmationDialog();
         }
@@ -877,7 +947,7 @@ public class TransferActivity extends BaseActivity implements
      * 转账确认
      */
     private void showTransferConfirmationDialog() {
-        /**
+        /*
          * fix bug:CYM-800
          * 修复手续费未获取到转账crash
          */
@@ -885,7 +955,9 @@ public class TransferActivity extends BaseActivity implements
             loadTransferFee(ASSET_ID_CYB, true);
             return;
         }
-        CybexDialog.showTransferConfirmationDialog(this, mEtAccountName.getText().toString().trim(),
+        CybexDialog.showTransferConfirmationDialog(
+                this,
+                mEtAccountName.getText().toString().trim(),
                 String.format("%s %s", mEtQuantity.getText().toString().trim(),
                         AssetUtil.parseSymbol(mSelectedAccountBalanceObjectItem.assetObject.symbol)),
                 mTvFee.getText().toString().trim(),
@@ -893,9 +965,90 @@ public class TransferActivity extends BaseActivity implements
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
-                        toTransfer();
+                        //确认转账弹框确认按钮点击事件
+                        if (isLoginFromENotes()) {
+                            //eNotes登陆
+                            Log.d("status", "eNotes : true");
+                            mIsUsedCloudPassword = false;
+                            if (!TextUtils.isEmpty(mEtRemark.getText().toString().trim())) {
+                                if (mFromAccountObject.active.key_auths.size() == 1) {
+                                    CybexDialog.showLimitOrderCancelConfirmationDialog(
+                                            TransferActivity.this,
+                                            getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                                            getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                                            new CybexDialog.ConfirmationDialogClickListener() {
+                                                @Override
+                                                public void onClick(Dialog dialog) {
+                                                    Intent intent = new Intent(TransferActivity.this, SetCloudPasswordActivity.class);
+                                                    startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
+                                                }
+                                            });
+                                } else {
+                                    showEnotesWaitingWithMemoDialog();
+                                }
+                            } else {
+                                showEnotesWaitingDialog();
+                            }
+                        } else {
+                            //其他方式登陆
+                            Log.d("status", "eNotes : false");
+                            toTransfer();
+                        }
                     }
                 });
+    }
+
+    /**
+     * eNotes等待弹窗
+     */
+    private void showEnotesWaitingDialog() {
+        unlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(
+                getSupportFragmentManager(),
+                mFromAccountObject,
+                mFromAccountObject.name,
+                new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                    @Override
+                    public void onUnLocked(String password) {
+                        if(password != null) {
+                            mIsUsedCloudPassword = true;
+                            toTransfer();
+                        }
+                     }
+                },
+                new UnlockDialogWithEnotes.OnDismissListener() {
+                    @Override
+                    public void onDismiss(int result) {
+
+                    }
+                }
+        );
+    }
+
+    /**
+     * eNotes with Memo Dialog
+     */
+    private void showEnotesWaitingWithMemoDialog() {
+        unlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(
+                getSupportFragmentManager(),
+                mFromAccountObject,
+                mFromAccountObject.name,
+                !TextUtils.isEmpty(mEtRemark.getText().toString().trim()),
+                new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                    @Override
+                    public void onUnLocked(String password) {
+                        if (password != null) {
+                            mIsUsedCloudPassword = true;
+                            toTransfer();
+                        }
+                    }
+                },
+                new UnlockDialogWithEnotes.OnDismissListener() {
+                    @Override
+                    public void onDismiss(int result) {
+
+                    }
+                }
+        );
     }
 
     /**
@@ -905,6 +1058,30 @@ public class TransferActivity extends BaseActivity implements
         if (mFromAccountObject == null || mToAccountObject == null || mSelectedAccountBalanceObjectItem == null) {
             return;
         }
+
+        if (isLoginFromENotes() && !mIsUsedCloudPassword) {
+            if (!cardManager.isConnected()) {
+                if (ReaderUtils.supportNfc(this)) {
+                    showToast(this, getResources().getString(R.string.error_connect_card));
+                } else {
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                }
+                return;
+            }
+            if (!cardManager.isPresent()) {
+                if (ReaderUtils.supportNfc(this)) { showToast(this, getString(R.string.error_connect_card)); } else {
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                }
+                return;
+            }
+            if (mCard != null && !mCard.getCurrencyPubKey().equals(getLoginPublicKey())) {
+                showToast(this, getString(R.string.please_right_card));
+                return;
+            }
+            if (BaseActivity.cardApp != null) {
+                mCard = BaseActivity.cardApp;
+            }
+        }
         showLoadDialog();
         Operations.base_operation transferOperation;
         if (mSwLockTime.isChecked() && mSelectedLockTimePublicKey != null && mTotalLockTime != 0) {
@@ -913,8 +1090,10 @@ public class TransferActivity extends BaseActivity implements
                     mToAccountObject.id,
                     mSelectedAccountBalanceObjectItem.assetObject.id,
                     mIsCybEnough ? mCybFeeAmountObject.amount : mCurrAssetFeeAmountObject.amount,
-                    ObjectId.create_from_string(mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
-                    (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision)),
+                    ObjectId.create_from_string(
+                            mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
+                    (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10,
+                            mSelectedAccountBalanceObjectItem.assetObject.precision)),
                     mEtRemark.getText().toString().trim(),
                     mFromAccountObject.options.memo_key,
                     mToAccountObject.options.memo_key,
@@ -928,30 +1107,42 @@ public class TransferActivity extends BaseActivity implements
                     mToAccountObject.id,
                     mSelectedAccountBalanceObjectItem.assetObject.id,
                     mIsCybEnough ? mCybFeeAmountObject.amount : mCurrAssetFeeAmountObject.amount,
-                    ObjectId.create_from_string(mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
-                    (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision)),
+                    ObjectId.create_from_string(
+                            mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
+                    (long) (Double.parseDouble(mEtQuantity.getText().toString().trim()) * Math.pow(10,
+                            mSelectedAccountBalanceObjectItem.assetObject.precision)),
                     mEtRemark.getText().toString().trim(),
                     mFromAccountObject.options.memo_key,
                     mToAccountObject.options.memo_key);
         }
         try {
-            BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
-                @Override
-                public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
-                    SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                            mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
-                    try {
-                        BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mTransferCallback);
-                    } catch (NetworkStatusException e) {
-                        e.printStackTrace();
-                    }
-                }
+            BitsharesWalletWraper.getInstance()
+                    .get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
+                        @Override
+                        public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
+                            SignedTransaction signedTransaction;
+                            if (mCard == null || mIsUsedCloudPassword) {
+                                signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                                        mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
+                            } else {
+                                signedTransaction = BitsharesWalletWraper.getInstance()
+                                        .getSignedTransactionByENotes(cardManager, mCard,
+                                                mFromAccountObject, transferOperation, ID_TRANSER_OPERATION,
+                                                reply.result);
+                            }
+                            try {
+                                BitsharesWalletWraper.getInstance()
+                                        .broadcast_transaction_with_callback(signedTransaction, mTransferCallback);
+                            } catch (NetworkStatusException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
-                @Override
-                public void onFailure() {
+                        @Override
+                        public void onFailure() {
 
-                }
-            });
+                        }
+                    });
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
@@ -978,23 +1169,28 @@ public class TransferActivity extends BaseActivity implements
                 mFromAccountObject.options.memo_key,
                 mFromAccountObject.options.memo_key);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee, new MessageCallback<Reply<List<FeeAmountObject>>>() {
-                @Override
-                public void onMessage(Reply<List<FeeAmountObject>> reply) {
-                    EventBus.getDefault().post(new Event.LoadTransferFee(reply.result.get(0), isLoadFeeToTransfer));
-                }
+            BitsharesWalletWraper.getInstance()
+                    .get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee,
+                            new MessageCallback<Reply<List<FeeAmountObject>>>() {
+                                @Override
+                                public void onMessage(Reply<List<FeeAmountObject>> reply) {
+                                    EventBus.getDefault()
+                                            .post(new Event.LoadTransferFee(reply.result.get(0), isLoadFeeToTransfer));
+                                }
 
-                @Override
-                public void onFailure() {
+                                @Override
+                                public void onFailure() {
 
-                }
-            });
+                                }
+                            });
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
     }
 
-    private AccountBalanceObjectItem findAccountBalanceObjectItem(String assetId, List<AccountBalanceObjectItem> items) {
+    private AccountBalanceObjectItem findAccountBalanceObjectItem(
+            String assetId,
+            List<AccountBalanceObjectItem> items) {
         if (TextUtils.isEmpty(assetId) || items == null || items.size() == 0) {
             return null;
         }
@@ -1023,7 +1219,8 @@ public class TransferActivity extends BaseActivity implements
                 Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision);
         double balanceAmount = mSelectedAccountBalanceObjectItem.accountBalanceObject.balance /
                 Math.pow(10, mSelectedAccountBalanceObjectItem.assetObject.precision);
-        BigDecimal balance = new BigDecimal(Double.toString(balanceAmount)).subtract(new BigDecimal(amountStr)).subtract(new BigDecimal(Double.toString(fee)));
+        BigDecimal balance = new BigDecimal(Double.toString(balanceAmount)).subtract(new BigDecimal(amountStr))
+                .subtract(new BigDecimal(Double.toString(fee)));
         if (balance.doubleValue() < 0) {
             mIsBalanceEnough = false;
             ToastMessage.showNotEnableDepositToastMessage(this,
@@ -1068,10 +1265,11 @@ public class TransferActivity extends BaseActivity implements
     /**
      * 转账callback
      */
-    private MessageCallback mTransferCallback = new MessageCallback<Reply<String>>() {
+    private MessageCallback<Reply<String>> mTransferCallback = new MessageCallback<Reply<String>>() {
 
         @Override
         public void onMessage(Reply<String> reply) {
+            unlockDialogWithEnotes = null;
             EventBus.getDefault().post(new Event.Transfer(reply.result == null && reply.error == null));
         }
 

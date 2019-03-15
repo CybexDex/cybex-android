@@ -26,6 +26,9 @@ import com.cybex.provider.graphene.chain.AccountObject;
 
 import java.util.Locale;
 
+import at.grabner.circleprogress.CircleProgressView;
+
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_IS_MEMOKEY_NEEDED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_TRANSFER_MY_ACCOUNT;
 
@@ -205,7 +208,7 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showLimitOrderCancelConfirmationDialog(Context context, String content, final ConfirmationDialogClickListener listener){
+    public static void showLimitOrderCancelConfirmationDialog(Context context, String content, String buttonText, final ConfirmationDialogClickListener listener){
         final Dialog dialog = new Dialog(context);
         /**
          * fix bug:CYM-503
@@ -219,6 +222,9 @@ public class CybexDialog {
         tvContent.setText(content);
         Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
         Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        if (buttonText != null) {
+            confirmButton.setText(buttonText);
+        }
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -362,11 +368,11 @@ public class CybexDialog {
         dialog.show();
     }
 
-    public static void showUnlockWalletDialog(FragmentManager fragmentManager,
-                                              AccountObject accountObject,
-                                              String username,
-                                              UnlockDialog.UnLockDialogClickListener unLockListener,
-                                              UnlockDialog.OnDismissListener onDismissListener){
+    public static UnlockDialog showUnlockWalletDialog(FragmentManager fragmentManager,
+            AccountObject accountObject,
+            String username,
+            UnlockDialog.UnLockDialogClickListener unLockListener,
+            UnlockDialog.OnDismissListener onDismissListener){
         UnlockDialog dialog = new UnlockDialog();
         Bundle bundle = new Bundle();
         bundle.putSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT, accountObject);
@@ -375,14 +381,75 @@ public class CybexDialog {
         dialog.show(fragmentManager, UnlockDialog.class.getSimpleName());
         dialog.setUnLockListener(unLockListener);
         dialog.setOnDismissListener(onDismissListener);
+        return dialog;
     }
 
-    public static void showUnlockWalletDialog(FragmentManager fragmentManager,
+    public static UnlockDialogWithEnotes showUnlockWithEnotesWalletDialog(FragmentManager fragmentManager,
+            AccountObject accountObject,
+            String username,
+            boolean hasMemo,
+            UnlockDialogWithEnotes.UnLockDialogClickListener unLockListener,
+            UnlockDialogWithEnotes.OnDismissListener onDismissListener){
+        UnlockDialogWithEnotes dialog = new UnlockDialogWithEnotes();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(INTENT_PARAM_TRANSFER_MY_ACCOUNT, accountObject);
+        bundle.putString(INTENT_PARAM_NAME, username);
+        bundle.putBoolean(INTENT_PARAM_IS_MEMOKEY_NEEDED, hasMemo);
+        dialog.setArguments(bundle);
+        dialog.show(fragmentManager, UnlockDialogWithEnotes.class.getSimpleName());
+        dialog.setUnLockListener(unLockListener);
+        dialog.setOnDismissListener(onDismissListener);
+        return dialog;
+    }
+
+    public static UnlockDialogWithEnotes showUnlockWithEnotesWalletDialog(
+            FragmentManager fragmentManager,
+            AccountObject accountObject,
+            String username,
+            UnlockDialogWithEnotes.UnLockDialogClickListener unlockListener,
+            UnlockDialogWithEnotes.OnDismissListener onDismissListener) {
+        return showUnlockWithEnotesWalletDialog(fragmentManager, accountObject, username, false, unlockListener, onDismissListener);
+    }
+
+    public static UnlockDialog showUnlockWalletDialog(FragmentManager fragmentManager,
                                               AccountObject accountObject,
                                               String username,
                                               UnlockDialog.UnLockDialogClickListener unLockListener){
-        showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
+        return showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
     }
+
+    public static void showVerifyEnotesCardPasswordDialog(Context context, String title, final ConfirmationDialogClickWithButtonTimerListener confirmListener, final ConfirmationDialogCancelListener cancelListener) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_nfc_enotes_password_verification);
+        TextView dialogTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
+        final TextView dialogErrorMessage = dialog.findViewById(R.id.dialog_confirm_tv_error);
+        final EditText dialogEditText = dialog.findViewById(R.id.dialog_confirm_et_password);
+        dialogTitle.setText(title);
+        final Button confirmButton = dialog.findViewById(R.id.dialog_confirm_btn_confirm);
+        Button cancelButton = dialog.findViewById(R.id.dialog_confirm_btn_cancel);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (confirmListener != null) {
+                    confirmListener.onClick(dialog, null, dialogEditText, dialogErrorMessage);
+                }
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cancelListener != null) {
+                    cancelListener.onCancel(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
 
     public static void showAddAddressDialog(Context context, String message, String subMessage,
                                             final ConfirmationDialogClickListener confirmListener,

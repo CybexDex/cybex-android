@@ -1,9 +1,12 @@
 package com.cybex.basemodule.base;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import com.cybex.basemodule.R;
 import com.cybex.basemodule.dialog.LoadDialog;
@@ -77,5 +80,20 @@ public abstract class BaseFragment extends Fragment{
         if(mLoadDialog != null && mLoadDialog.isShowing()){
             mLoadDialog.dismiss();
         }
+    }
+
+    protected boolean isLoginFromENotes() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("from", true);
+    }
+
+    protected String getLoginPublicKey() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("key", "");
+    }
+
+    protected void showToast(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+
     }
 }

@@ -1,6 +1,7 @@
 package com.cybexmobile.fragment.main;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.cybex.basemodule.base.BasePresenter;
 import com.cybex.provider.http.RetrofitFactory;
@@ -76,11 +77,13 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                 .subscribe(new Consumer<List<HotAssetPair>>() {
                     @Override
                     public void accept(List<HotAssetPair> hotAssetPairs) throws Exception {
+                        Log.e("serviceLi", hotAssetPairs.get(0).getBase());
                         getMvpView().onLoadHotAssetPairs(hotAssetPairs);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        Log.e("serviceLi", throwable.getMessage());
                         getMvpView().onError();
                     }
                 }));

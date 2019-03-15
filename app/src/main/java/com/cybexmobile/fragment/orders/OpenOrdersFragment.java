@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.basemodule.cache.AssetPairCache;
+import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
 import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.market.WatchlistData;
@@ -57,6 +59,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.utils.ReaderUtils;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_IS_LOAD_ALL;
@@ -97,6 +101,10 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
     private String mName;
     private boolean mIsLoadAll;
     private int mCancelOperationId;
+    private UnlockDialogWithEnotes mUnlockDialogWithEnotes;
+    private FeeAmountObject mCancelLimitOrderFeeObject;
+    private FeeAmountObject mCancelAllOrderFeeObject;
+    private boolean mIsUsedCloudPassword = false;
 
     public static OpenOrdersFragment getInstance(WatchlistData watchlistData, boolean isLoadAll){
         OpenOrdersFragment fragment = new OpenOrdersFragment();
@@ -204,6 +212,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
         if(EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().unregister(this);
         }
+        mUnlockDialogWithEnotes = null;
         getContext().unbindService(mConnection);
     }
 
@@ -229,13 +238,13 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadRequiredCancelFee(Event.LoadRequiredCancelFee event){
-        FeeAmountObject feeAmount = event.getFee();
-        AccountBalanceObject accountBalance = getBalance(feeAmount.asset_id, mFullAccount);
-        if(feeAmount.asset_id.equals(ASSET_ID_CYB)){
-            if(accountBalance.balance >= feeAmount.amount){//cyb足够扣手续费
-                limitOrderCancelConfirm(mName, feeAmount);
+        mCancelLimitOrderFeeObject = event.getFee();
+        AccountBalanceObject accountBalance = getBalance(mCancelLimitOrderFeeObject.asset_id, mFullAccount);
+        if (mCancelLimitOrderFeeObject.asset_id.equals(ASSET_ID_CYB)) {
+            if (accountBalance.balance >= mCancelLimitOrderFeeObject.amount) {//cyb足够扣手续费
+                limitOrderCancelConfirm(mName, mCancelLimitOrderFeeObject);
             } else { //cyb不够扣手续费 扣取委单的base或者quote
-                if(ASSET_ID_CYB.equals(mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.quoteAsset.id.toString() : mCurrOpenOrderItem.baseAsset.id.toString())){
+                if (ASSET_ID_CYB.equals(mCurrOpenOrderItem.isSell ? mCurrOpenOrderItem.quoteAsset.id.toString() : mCurrOpenOrderItem.baseAsset.id.toString())) {
                     hideLoadDialog();
                     ToastMessage.showNotEnableDepositToastMessage(getActivity(),
                             getContext().getResources().getString(R.string.text_not_enough),
@@ -245,8 +254,8 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                 }
             }
         } else {
-            if(accountBalance.balance > feeAmount.amount){
-                limitOrderCancelConfirm(mName, feeAmount);
+            if (accountBalance.balance > mCancelLimitOrderFeeObject.amount) {
+                limitOrderCancelConfirm(mName, mCancelLimitOrderFeeObject);
             } else {
                 hideLoadDialog();
                 ToastMessage.showNotEnableDepositToastMessage(getActivity(),
@@ -258,11 +267,11 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadRequiredCancelAllFee(Event.LoadRequiredCancelAllFee event) {
-        FeeAmountObject feeAmountObject = event.getFee();
-        AccountBalanceObject accountBalanceObject = getBalance(feeAmountObject.asset_id, mFullAccount);
-        if (feeAmountObject.asset_id.equals(ASSET_ID_CYB)) {
-            if (accountBalanceObject.balance >= feeAmountObject.amount) {
-                limitOrderCancelConfirm(mName, feeAmountObject);
+        mCancelAllOrderFeeObject = event.getFee();
+        AccountBalanceObject accountBalanceObject = getBalance(mCancelAllOrderFeeObject.asset_id, mFullAccount);
+        if (mCancelAllOrderFeeObject.asset_id.equals(ASSET_ID_CYB)) {
+            if (accountBalanceObject.balance >= mCancelAllOrderFeeObject.amount) {
+                limitOrderCancelConfirm(mName, mCancelAllOrderFeeObject);
             } else {
                 hideLoadDialog();
                 ToastMessage.showNotEnableDepositToastMessage(getActivity(),
@@ -356,47 +365,111 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
         hideLoadDialog();
         CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(),
                 mCancelOperationId == ID_CANCEL_LMMIT_ORDER_OPERATION ? getResources().getString(R.string.dialog_text_confirm_order_cancellation) : getResources().getString(R.string.dialog_text_confirm_all_orders_cancellation),
+                null,
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
+                        mIsUsedCloudPassword = false;
                         checkIfLocked(userName, feeAmount);
                     }
                 });
     }
 
     private void checkIfLocked(String userName, FeeAmountObject feeAmount) {
-        if(!BitsharesWalletWraper.getInstance().is_locked()){
-            toCancelLimitOrder(feeAmount);
-            return;
-        }
-        CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccount.account, userName, new UnlockDialog.UnLockDialogClickListener() {
-            @Override
-            public void onUnLocked(String password) {
+        if (isLoginFromENotes()) {
+            mUnlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(getFragmentManager(), mFullAccount
+                            .account, userName,
+                    new UnlockDialogWithEnotes.UnLockDialogClickListener() {
+                        @Override
+                        public void onUnLocked(String password) {
+                            if (password != null) {
+                                mIsUsedCloudPassword = true;
+                                toCancelLimitOrder();
+                            }
+                        }
+                    }, new UnlockDialogWithEnotes.OnDismissListener() {
+                        @Override
+                        public void onDismiss(int result) {
+
+                        }
+                    });
+        } else {
+            if (!BitsharesWalletWraper.getInstance().is_locked()) {
                 showLoadDialog();
-                toCancelLimitOrder(feeAmount);
+                toCancelLimitOrder();
+                return;
             }
-        });
+            CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccount.account, userName, new UnlockDialog.UnLockDialogClickListener() {
+                @Override
+                public void onUnLocked(String password) {
+                    showLoadDialog();
+                    toCancelLimitOrder();
+                }
+            });
+        }
     }
 
-    private void toCancelLimitOrder(FeeAmountObject feeAmount){
+    public void toCancelLimitOrder() {
+        BaseActivity activity = (BaseActivity) getActivity();
         try {
+            if (isLoginFromENotes() && !mIsUsedCloudPassword) {
+
+                CardManager cardManager = activity.cardManager;
+                if (!cardManager.isConnected()) {
+                    if (ReaderUtils.supportNfc(activity))
+                        showToast(activity, getString(R.string.error_connect_card));
+                    else
+                        showToast(activity, getString(R.string.error_connect_card_ble));
+                    return;
+                }
+                if (!cardManager.isPresent()) {
+                    if (ReaderUtils.supportNfc(activity))
+                        showToast(activity, getString(R.string.error_connect_card));
+                    else
+                        showToast(activity, getString(R.string.error_connect_card_ble));
+                    return;
+                }
+                if (activity.currentCard != null && !activity.currentCard.getCurrencyPubKey().equals(getLoginPublicKey())) {
+                    showToast(activity, getString(R.string.please_right_card));
+                    return;
+                }
+                if (BaseActivity.cardApp != null) {
+                    activity.currentCard = BaseActivity.cardApp;
+                }
+            }
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
                 public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     SignedTransaction signedTransaction = new SignedTransaction();
                     if (mCancelOperationId == ID_CANCEL_LMMIT_ORDER_OPERATION) {
                         Operations.limit_order_cancel_operation operation = BitsharesWalletWraper.getInstance().
-                                getLimitOrderCancelOperation(mFullAccount.account.id, ObjectId.create_from_string(feeAmount.asset_id),
-                                        mCurrOpenOrderItem.limitOrder.order_id, feeAmount.amount);
-                         signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                                mFullAccount.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
+                                getLimitOrderCancelOperation(mFullAccount.account.id, ObjectId.create_from_string(mCancelLimitOrderFeeObject.asset_id),
+                                        mCurrOpenOrderItem.limitOrder.order_id, mCancelLimitOrderFeeObject.amount);
+                        if (activity.currentCard == null || mIsUsedCloudPassword) {
+                            signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                                    mFullAccount.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
+                        } else {
+                            signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactionByENotes(
+                                    activity.cardManager,
+                                    activity.currentCard,
+                                    mFullAccount.account,
+                                    operation,
+                                    ID_CANCEL_LMMIT_ORDER_OPERATION,
+                                    reply.result);
+                        }
                     } else {
                         Operations.cancel_all_operation operation = BitsharesWalletWraper.getInstance().
-                                getLimitOrderCancelAllOperation(ObjectId.create_from_string(feeAmount.asset_id), feeAmount.amount, mFullAccount.account.id,
+                                getLimitOrderCancelAllOperation(ObjectId.create_from_string(mCancelAllOrderFeeObject.asset_id), mCancelAllOrderFeeObject.amount, mFullAccount.account.id,
                                         mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getQuoteId()),
                                         mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getBaseId()));
-                        signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                                mFullAccount.account, operation, ID_CANCEL_ALL_OPERATION, reply.result);
+                        if (activity.currentCard == null || mIsUsedCloudPassword) {
+                            signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
+                                    mFullAccount.account, operation, ID_CANCEL_ALL_OPERATION, reply.result);
+                        } else {
+                            signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransactionByENotes(
+                                    activity.cardManager, activity.currentCard, mFullAccount.account, operation,
+                                    ID_CANCEL_ALL_OPERATION, reply.result);
+                        }
 
                     }
                     try {
@@ -404,7 +477,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                             @Override
                             public void onMessage(Reply<String> reply) {
                                 hideLoadDialog();
-                                if(reply.result == null && reply.error == null){
+                                if (reply.result == null && reply.error == null) {
                                     ToastMessage.showNotEnableDepositToastMessage(getActivity(), getResources().getString(
                                             R.string.toast_message_cancel_order_successfully), R.drawable.ic_check_circle_green);
                                 } else {
@@ -502,5 +575,21 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
             }
         }
         return accountBalanceObject;
+    }
+
+    public void showProgress(){
+        mUnlockDialogWithEnotes.showProgress();
+    }
+
+    public void hideProgress(){
+        mUnlockDialogWithEnotes.hideProgress();
+    }
+
+    public void hideEnotesDialog(){
+        mUnlockDialogWithEnotes.dismiss();
+    }
+
+    public UnlockDialogWithEnotes getUnlockDialog() {
+        return mUnlockDialogWithEnotes;
     }
 }

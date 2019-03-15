@@ -48,9 +48,15 @@ import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 
+import org.ethereum.util.ByteUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import io.enotes.sdk.repository.card.Command;
+import io.enotes.sdk.repository.card.CommandException;
+import io.enotes.sdk.repository.card.TLVBox;
+import io.enotes.sdk.repository.db.entity.Card;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
@@ -89,7 +95,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        EventBus.getDefault().register(this);
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
@@ -184,6 +189,12 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     @Override
+    protected void readCardOnSuccess(Card card) {
+        super.readCardOnSuccess(card);
+        finish();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_setting, menu);
         return super.onCreateOptionsMenu(menu);
@@ -208,7 +219,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -256,6 +266,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                         public void run() {
                             hideLoadDialog();
                             if (result == 0) {
+                                setLoginFrom(false);
                                 Intent returnIntent = new Intent();
                                 returnIntent.putExtra(INTENT_PARAM_LOGIN_IN, true);
                                 returnIntent.putExtra(INTENT_PARAM_NAME, email);
@@ -270,6 +281,49 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();
                             }
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure() {
+                    hideLoadDialog();
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loginByENotes() {
+        // Store values at the time of the login attempt.
+        String email = mUserNameView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            return;
+        }
+        showLoadDialog(true);
+        try {
+            BitsharesWalletWraper.getInstance().get_account_object(email, new MessageCallback<Reply<AccountObject>>() {
+                @Override
+                public void onMessage(Reply<AccountObject> reply) {
+                    AccountObject accountObject = reply.result;
+                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, email, password);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideLoadDialog();
+                            setLoginFrom(true);
+                            Intent returnIntent = new Intent();
+                            returnIntent.putExtra(INTENT_PARAM_LOGIN_IN, true);
+                            returnIntent.putExtra(INTENT_PARAM_NAME, email);
+                            setResult(Activity.RESULT_OK, returnIntent);
+                            EventBus.getDefault().post(new Event.LoginIn(email));
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                            sharedPreferences.edit().putString(PREF_NAME, email).apply();
+                            finish();
                         }
                     });
 

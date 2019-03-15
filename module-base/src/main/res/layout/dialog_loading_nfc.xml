@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/itemBackground"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/unlock_with_enotes_dialog_enotes_layout"
+        android:layout_width="@dimen/width_272"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_14"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_tip_enotes_unlock"
+            style="@style/font_white_dark_bold_large"
+            android:layout_width="@dimen/width_200"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/error_connect_card"
+            android:textAlignment="center"
+            android:textSize="@dimen/font_large" />
+
+        <RelativeLayout
+            android:id="@+id/unlock_with_enotes_dialog_nfc_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_iphone" />
+
+            <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/circle_progress_v"
+                android:layout_width="@dimen/width_60"
+                android:layout_height="@dimen/height_60"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="28dp"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/primary_color_orange"
+                CircleProgressView:cpv_barWidth="3dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="100"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/font_color_white"
+                CircleProgressView:cpv_rimWidth="3dp"
+                CircleProgressView:cpv_spin="true"
+                CircleProgressView:cpv_spinBarLength="90"
+                CircleProgressView:cpv_spinColor="@color/primary_color_orange"
+                CircleProgressView:cpv_textScale="0" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</LinearLayout>

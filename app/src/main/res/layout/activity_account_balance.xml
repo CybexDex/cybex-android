@@ -76,7 +76,7 @@
             android:layout_marginTop="@dimen/margin_8"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:weightSum="3">
+            android:weightSum="4">
 
             <LinearLayout
                 android:id="@+id/account_balance_deposit_layout"
@@ -142,6 +142,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/balance_page_transfer" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/account_balance_use_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:background="@drawable/bg_account_action_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_3"
+                    android:src="@drawable/ic_depoly_24_px" />
+
+                <TextView
+                    style="@style/font_gray_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/balance_page_use" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

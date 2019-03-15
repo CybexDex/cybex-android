@@ -7,6 +7,7 @@ import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.Authority;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
@@ -20,11 +21,13 @@ import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.PrivateKey;
+import com.cybex.provider.graphene.chain.PublicKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.graphene.chain.MarketTicker;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.db.entity.Card;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -54,6 +59,7 @@ public class BitsharesWalletWraper {
     private String mstrWalletFilePath;
     private List<ObjectId<AssetObject>> mObjectList = new ArrayList<>();
     private List<String> addressList = new ArrayList<>();
+    private List<String> addressListFromPublicKey = new ArrayList<>();
     private String password;
     private Disposable lockWalletDisposable;
 
@@ -378,6 +384,14 @@ public class BitsharesWalletWraper {
         mWalletApi.get_block(callId, blockNumber, callback);
     }
 
+    public void get_block_header(int blockNumber, MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
+        mWalletApi.get_block_header(blockNumber, callback);
+    }
+
+    public void get_recent_transaction_by_id(String transactionId, MessageCallback<Reply<Object>> callback) throws NetworkStatusException {
+        mWalletApi.get_recent_transaction_by_id(transactionId, callback);
+    }
+
     public Operations.transfer_operation getTransferOperation(ObjectId<AccountObject> from,
                                                               ObjectId<AccountObject> to,
                                                               ObjectId<AssetObject> transferAssetId,
@@ -445,9 +459,26 @@ public class BitsharesWalletWraper {
         return mWalletApi.getBalanceClaimOperation(fee, feeAssetId, depositToAccount, balanceToClaim, balanceOwnerKey, totalClaimedAmount, totalClaimedAmountId);
     }
 
+    public Operations.account_update_operation getAccountUpdateOperation(ObjectId<AssetObject> feeAssetId,
+                                                                         long fee,
+                                                                         ObjectId<AccountObject> accountId,
+                                                                         Authority authority,
+                                                                         Types.account_options account_options,
+                                                                         Types.public_key_type public_key_type) {
+        return mWalletApi.getAccountUpdateOperation(feeAssetId, fee, accountId, authority, account_options, public_key_type);
+    }
+
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
 
         return mWalletApi.getSignedTransaction(accountObject, operation, operationId, dynamicGlobalPropertyObject);
+    }
+
+    public SignedTransaction getSignedTransactinForTickets(AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader) throws ParseException {
+        return mWalletApi.getSignedTransactionForTicket(accountObject, operation, operationId, blockHeader);
+    }
+
+    public SignedTransaction getSignedTransactionByENotesForTicket(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader ) throws ParseException {
+        return mWalletApi.getSignedTransactionByENotesForTicket(cardManager, card, accountObject, operation, operationId, blockHeader);
     }
 
     public String getChatMessageSignature(AccountObject accountObject, String message){
@@ -456,6 +487,11 @@ public class BitsharesWalletWraper {
 
     public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
         return mWalletApi.getWithdrawDepositSignature(accountObject, operation);
+    }
+
+    public SignedTransaction getSignedTransactionByENotes(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
+
+        return mWalletApi.getSignedTransactionByENotes(cardManager, card, accountObject, operation, operationId, dynamicGlobalPropertyObject);
     }
 
     public String getMemoMessage(MemoData memoData) {
@@ -792,6 +828,20 @@ public class BitsharesWalletWraper {
         Log.e("uncompressedOwner", unCompressedOwnerKey);
         Log.e("uncompressedMemo", unCompressedMemo);
         return addressList;
+    }
+
+    public List<String> getAddressListFromPublicKey(Card card) {
+        if (addressListFromPublicKey.size() != 0) {
+            return addressListFromPublicKey;
+        } else {
+            Types.public_key_type public_key_type_compress = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
+            Types.public_key_type public_key_type_uncompress = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(false), false), false);
+            addressListFromPublicKey.add(public_key_type_compress.getAddress());
+            addressListFromPublicKey.add(public_key_type_uncompress.getAddress());
+            addressListFromPublicKey.add(public_key_type_compress.getPTSAddress(public_key_type_compress.key_data));
+            addressListFromPublicKey.add(public_key_type_uncompress.getPTSAddress(public_key_type_uncompress.key_data_uncompressed));
+            return addressListFromPublicKey;
+        }
     }
 
     public List<String> getAddressList(String userName, String passWord) {

@@ -43,6 +43,18 @@ public class AssetUtil {
     }
 
     /**
+     * 获取币种前缀
+     *
+     */
+    public static String getPrefix(String assetSymbol) {
+        if (assetSymbol == null) {
+            return null;
+        }
+        String[] symbolArr = assetSymbol.split("\\.");
+        return symbolArr[0] + ".";
+    }
+
+    /**
      * 格式化数据 取消科学计数法
      * @param number
      * @param mode 数据取舍模式

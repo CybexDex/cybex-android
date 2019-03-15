@@ -1,16 +1,21 @@
 package com.cybex.provider.graphene.chain;
 
+import android.util.Log;
+
 import com.cybex.provider.common.UnsignedShort;
 import com.cybex.provider.crypto.Ripemd160Object;
 import com.cybex.provider.crypto.Sha256Object;
 import com.cybex.provider.fc.io.BitUtil;
 import com.cybex.provider.fc.io.RawType;
+import com.cybex.provider.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import mrd.bitlib.util.HexUtils;
 
 public class Transaction {
     public class required_authorities {
@@ -60,6 +65,10 @@ public class Transaction {
         expiration = expiration_time;
     }
 
+    public Date getExpiration() {
+        return expiration;
+    }
+
     public required_authorities get_required_authorities() {
         required_authorities requiredAuthorities = new required_authorities();
         requiredAuthorities.active = new ArrayList<>();
@@ -87,6 +96,7 @@ public class Transaction {
         enc.write(rawTypeObject.get_byte_array(expiration));
 
         //enc.write(rawTypeObject.get_byte_array(operations.size()));
+        Log.e("write","beforeOperation");
         rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(operationTypes.size()));
         for (Operations.operation_type operationType : operationTypes) {
             //enc.write(rawTypeObject.get_byte_array(operationType.nOperationType));
@@ -94,10 +104,24 @@ public class Transaction {
             Operations.base_operation baseOperation = (Operations.base_operation) operationType.operationContent;
             baseOperation.write_to_encoder(enc);
         }
-        //enc.write(rawTypeObject.get_byte_array(extensions.size()));
+        Log.e("write", "afterOperation");
         rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(extensions.size()));
+        return enc.result();
+    }
 
-
+    protected Sha256Object sig_digest_with_signature() {
+        Sha256Object.encoder enc = new Sha256Object.encoder();
+        RawType rawTypeObject = new RawType();
+        enc.write(rawTypeObject.get_byte_array(unsign_ref_block_num.shortValue()));
+        enc.write(rawTypeObject.get_byte_array(unsign_ref_block_prefix.intValue()));
+        enc.write(rawTypeObject.get_byte_array(expiration));
+        rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(operationTypes.size()));
+        for (Operations.operation_type operationType : operationTypes) {
+            rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(operationType.nOperationType));
+            Operations.base_operation baseOperation = (Operations.base_operation) operationType.operationContent;
+            baseOperation.write_to_encoder(enc);
+        }
+        rawTypeObject.pack(enc, UnsignedInteger.fromIntBits(extensions.size()));
         return enc.result();
     }
 
@@ -106,5 +130,13 @@ public class Transaction {
         Operations.base_operation baseOperation = operation;
         baseOperation.write_to_encoder(enc);
         return enc.result();
+    }
+
+    public long getRef_block_num() {
+        return ref_block_num;
+    }
+
+    public long getRef_block_prefix() {
+        return ref_block_prefix;
     }
 }

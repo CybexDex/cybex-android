@@ -333,6 +333,7 @@ public class Types{
     public static class vote_id_type implements Serializable {
         int content;
 
+
         public vote_id_type(String strSerial) {
             int nIndex = strSerial.indexOf(':');
             if (nIndex == -1) {
@@ -359,13 +360,16 @@ public class Types{
 
     public static class account_options implements Serializable {
         public public_key_type memo_key;
-        public String voting_account;
+        public ObjectId<AccountObject> voting_account;
         public Integer num_witness;
         public Integer num_committee;
         public HashSet<vote_id_type> votes;
         // 未完成
-        public HashSet<String> extensions;  // extension type
+        public HashSet<String> extensions;// extension type
 
+        public void setMemo_key(public_key_type memo_key) {
+            this.memo_key = memo_key;
+        }
     }
 
     public static class public_key_type_deserializer implements JsonDeserializer<public_key_type> {

@@ -1,5 +1,6 @@
 package com.cybexmobile.activity.gateway.records;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -12,13 +13,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
+import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
 import com.cybexmobile.injection.base.AppBaseActivity;
@@ -27,6 +32,10 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.ethereum.config.ConstantsAdapter;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -171,6 +180,15 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
+            mAccountObject = mWebSocketService.getFullAccount(mUserName).account;
+            mRefreshLayout.autoRefresh();
+        }
+    }
+
+    @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
@@ -247,15 +265,30 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
             return;
         }
 
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
-                @Override
-                public void onUnLocked(String password) {
-                    refreshRecords();
-                }
-            });
+        if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
+            CybexDialog.showLimitOrderCancelConfirmationDialog(
+                    DepositAndWithdrawTotalActivity.this,
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                    new CybexDialog.ConfirmationDialogClickListener() {
+                        @Override
+                        public void onClick(Dialog dialog) {
+                            mRefreshLayout.finishRefresh();
+                            Intent intent = new Intent(DepositAndWithdrawTotalActivity.this, SetCloudPasswordActivity.class);
+                            startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
+                        }
+                    });
         } else {
-            refreshRecords();
+            if (BitsharesWalletWraper.getInstance().is_locked()) {
+                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
+                    @Override
+                    public void onUnLocked(String password) {
+                        refreshRecords();
+                    }
+                });
+            } else {
+                refreshRecords();
+            }
         }
     }
 

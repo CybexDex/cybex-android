@@ -110,7 +110,6 @@ public class GameActivity extends BaseActivity {
         setContentView(R.layout.activity_game_layout);
         mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        EventBus.getDefault().register(this);
         mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         url = getIntent().getStringExtra(INTENT_PARAM_URL);
         clearWebViewCache();
@@ -342,7 +341,6 @@ public class GameActivity extends BaseActivity {
         }
         mUnbinder.unbind();
         unbindService(mConnection);
-        EventBus.getDefault().unregister(this);
     }
 
     @Override

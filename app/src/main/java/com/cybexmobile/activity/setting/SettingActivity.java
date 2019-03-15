@@ -1,10 +1,13 @@
 package com.cybexmobile.activity.setting;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -14,22 +17,28 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.help.StoreLanguageHelper;
+import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.activity.setting.help.HelpActivity;
 import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
 import com.cybexmobile.activity.splash.SplashActivity;
 import com.cybexmobile.dialog.FrequencyModeDialog;
+import com.cybexmobile.dialog.UnlockMethodSelectorDialog;
 import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
@@ -50,16 +59,27 @@ import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MAR
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOAD_MODE;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_CARD_PASSWORD_SET;
+import static com.cybex.basemodule.constant.Constant.PREF_IS_CLOUD_PASSWORD_SET;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_LOAD_MODE;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_PARAM_UNLOCK_BY_CARDS;
 import static com.cybex.basemodule.constant.Constant.PREF_PASSWORD;
 import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
 import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 import static com.cybex.basemodule.constant.Constant.SERVER_TEST;
 
-public class SettingActivity extends BaseActivity implements FrequencyModeDialog.OnFrequencyModeSelectedListener {
+public class SettingActivity extends BaseActivity implements FrequencyModeDialog.OnFrequencyModeSelectedListener, UnlockMethodSelectorDialog.OnUnlockMethodSelectedListener {
 
+    @BindView(R.id.setting_layout_log_in_by_card)
+    LinearLayout mLogInByEnotesLayout;
+    @BindView(R.id.setting_tv_unlock_method)
+    TextView mTvUnlockMethod;
+    @BindView(R.id.setting_tv_set_cloud_password)
+    TextView mTvCloudPasswordSet;
+    @BindView(R.id.setting_tv_set_card_password)
+    TextView mTvCardPasswordSet;
     @BindView(R.id.setting_tv_language)
     TextView mTvLanguage;
     @BindView(R.id.setting_tv_frequency)
@@ -82,16 +102,49 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     private SharedPreferences mSharedPreference;
     private Unbinder mUnbinder;
     private int mMode;
+    private String mName;
+    private boolean mIsCardPasswordSet;
+    private WebSocketService mWebSocketService;
+    private AccountObject mAccountObject;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            mWebSocketService = binder.getService();
+            FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
+            if (fullAccountObject != null) {
+                mAccountObject = fullAccountObject.account;
+                mLogInByEnotesLayout.setVisibility(View.VISIBLE);
+                displayDefaultUnlockSetting();
+                displayPassWordSet();
+                displayCardPasswordSet();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mWebSocketService = null;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         mUnbinder = ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
+        mName = mSharedPreference.getString(PREF_NAME, "");
         mMode = mSharedPreference.getInt(PREF_LOAD_MODE, FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI);
         setSupportActionBar(mToolbar);
+        if (isLoginFromENotes()) {
+            Intent intent = new Intent(this, WebSocketService.class);
+            bindService(intent, mConnection, BIND_AUTO_CREATE);
+
+        } else {
+            mLogInByEnotesLayout.setVisibility(View.GONE);
+        }
         displayLanguage();
         displayFrequency();
         displayTheme();
@@ -122,43 +175,104 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
-        EventBus.getDefault().unregister(this);
+        if(isLoginFromENotes() && mSharedPreference.getBoolean(PREF_IS_LOGIN_IN, false )) {
+            unbindService(mConnection);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadFullAccount(Event.UpdateFullAccount event) {
+        if (isLoginFromENotes() && (mAccountObject == null || mAccountObject.active.key_auths.size() != event.getFullAccount().account.active.key_auths.size())) {
+            mAccountObject = event.getFullAccount().account;
+            mLogInByEnotesLayout.setVisibility(View.VISIBLE);
+            displayDefaultUnlockSetting();
+            displayPassWordSet();
+            displayCardPasswordSet();
+        }
+    }
+
+    @OnClick(R.id.setting_tv_unlock_method)
+    public void onUnlockMethodClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        if (mAccountObject.active.key_auths.size() > 1) {
+            UnlockMethodSelectorDialog dialog = new UnlockMethodSelectorDialog();
+            dialog.show(getSupportFragmentManager(), UnlockMethodSelectorDialog.class.getSimpleName());
+            dialog.setOnUnlockMethodSelectedListener(this);
+        }
+    }
+
+    @OnClick(R.id.setting_layout_set_cloud_password)
+    public void onSetCloudPasswordClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        if (mAccountObject.active.key_auths.size() < 2) {
+            Intent intent = new Intent(SettingActivity.this, SetCloudPasswordActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    @OnClick(R.id.setting_tv_set_card_password)
+    public void onCardPasswordSetClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        if (!mIsCardPasswordSet) {
+            Intent intent = new Intent(SettingActivity.this, ChooseLanguageActivity.class);
+            startActivity(intent);
+        }
     }
 
     @OnClick(R.id.setting_layout_language)
-    public void onLanguageClick(View view){
-        if (AntiShake.check(view.getId())) { return; }
+    public void onLanguageClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         Intent intent = new Intent(SettingActivity.this, ChooseLanguageActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.setting_layout_version)
-    public void onVersionClick(View view){
-        if (AntiShake.check(view.getId())) { return; }
+    public void onVersionClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         showLoadDialog();
         checkVersion();
     }
 
     @OnClick(R.id.setting_layout_theme)
-    public void onThemeClick(View view){
-        if (AntiShake.check(view.getId())) { return; }
+    public void onThemeClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         Intent intent = new Intent(SettingActivity.this, ChooseThemeActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.setting_layout_help_feedback)
     public void onHelpFeedback(View view) {
-        if (AntiShake.check(view.getId())) { return; }
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         Intent intent = new Intent(this, HelpActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.log_out)
-    public void onLoginOutClick(View view){
-        if (AntiShake.check(view.getId())) { return; }
+    public void onLoginOutClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        if (isLoginFromENotes()) {
+            unbindService(mConnection);
+        }
         mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
         mSharedPreference.edit().putString(PREF_NAME, null).apply();
         mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
+        setLoginFrom(false);
         /**
          * fix bug:CYM-558
          * 转账存在锁定期，在锁定期页面没有显示出来
@@ -169,8 +283,10 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     }
 
     @OnClick(R.id.setting_layout_frequency)
-    public void onFrequencyClick(View view){
-        if (AntiShake.check(view.getId())) { return; }
+    public void onFrequencyClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         FrequencyModeDialog dialog = new FrequencyModeDialog();
         Bundle bundle = new Bundle();
         bundle.putInt(INTENT_PARAM_LOAD_MODE, mMode);
@@ -180,8 +296,8 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     }
 
     @OnCheckedChanged(R.id.setting_sc_switch_server)
-    public void onChangeServerClick(CompoundButton button, boolean isChecked){
-        if(!button.isPressed()){
+    public void onChangeServerClick(CompoundButton button, boolean isChecked) {
+        if (!button.isPressed()) {
             return;
         }
         mTvServer.setText(getResources().getString(isChecked ?
@@ -206,6 +322,44 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         }, 2000);
     }
 
+    private void displayDefaultUnlockSetting() {
+        boolean isUnlockByEnotes = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true);
+        if (isUnlockByEnotes) {
+            mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_enotes));
+        } else {
+            if (mAccountObject.active.key_auths.size() > 1) {
+                mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_password));
+            } else {
+                mTvUnlockMethod.setText(getResources().getString(R.string.setting_default_unlock_method_enotes));
+                mSharedPreference.edit().putBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true).apply();
+            }
+        }
+        if (mAccountObject.active.key_auths.size() > 1) {
+            mTvUnlockMethod.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
+        } else {
+            mTvUnlockMethod.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        }
+    }
+
+    private void displayPassWordSet() {
+        if (mAccountObject.active.key_auths.size() > 1) {
+           mTvCloudPasswordSet.setText(getResources().getString(R.string.setting_has_already_set));
+        } else {
+            mTvCloudPasswordSet.setText(getResources().getString(R.string.setting_not_set));
+            mTvCloudPasswordSet.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
+        }
+    }
+
+    private void displayCardPasswordSet() {
+        mIsCardPasswordSet = mSharedPreference.getBoolean(PREF_IS_CARD_PASSWORD_SET,false);
+        if (mIsCardPasswordSet) {
+            mTvCardPasswordSet.setText(getResources().getString(R.string.setting_has_already_set));
+        } else {
+            mTvCardPasswordSet.setText(getResources().getString(R.string.setting_not_set));
+            mTvCardPasswordSet.setCompoundDrawables(null, null, getDrawable(R.drawable.ic_arrow_forward_right_16_px), null);
+        }
+    }
+
     private void displayLanguage() {
         String defaultLanguage = StoreLanguageHelper.getLanguageLocal(this);
         if (defaultLanguage != null) {
@@ -218,12 +372,12 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         }
     }
 
-    private void displayFrequency(){
-        if(mMode == FREQUENCY_MODE_ORDINARY_MARKET){
+    private void displayFrequency() {
+        if (mMode == FREQUENCY_MODE_ORDINARY_MARKET) {
             mTvFrequency.setText(getResources().getString(R.string.setting_frequency_ordinary_market));
-        } else if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET){
+        } else if (mMode == FREQUENCY_MODE_REAL_TIME_MARKET) {
             mTvFrequency.setText(getResources().getString(R.string.setting_frequency_real_time_market));
-        } else if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI){
+        } else if (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI) {
             mTvFrequency.setText(getResources().getString(R.string.setting_frequency_real_time_market_only_wifi));
         }
     }
@@ -268,7 +422,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
 
                     @Override
                     public void onNext(AppVersion appVersion) {
-                        if(appVersion.compareVersion(BuildConfig.VERSION_NAME)){
+                        if (appVersion.compareVersion(BuildConfig.VERSION_NAME)) {
                             new AlertDialog.Builder(SettingActivity.this)
                                     .setCancelable(false)
                                     .setTitle(R.string.setting_version_update_available)
@@ -312,7 +466,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
 
     @Override
     public void onFrequencyModeSelected(int mode) {
-        if(mMode == mode){
+        if (mMode == mode) {
             return;
         }
         mMode = mode;
@@ -321,5 +475,13 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         editor.apply();
         EventBus.getDefault().post(new Event.LoadModeChanged(mMode));
         displayFrequency();
+    }
+
+    @Override
+    public void onUnlockMethodSelectedListener(boolean isUnlockByCard) {
+        SharedPreferences.Editor editor = mSharedPreference.edit();
+        editor.putBoolean(PREF_PARAM_UNLOCK_BY_CARDS, isUnlockByCard);
+        editor.apply();
+        displayDefaultUnlockSetting();
     }
 }

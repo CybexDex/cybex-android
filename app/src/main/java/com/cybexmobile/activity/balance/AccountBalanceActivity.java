@@ -21,27 +21,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cybex.provider.market.WatchlistData;
-import com.cybex.provider.utils.NetworkUtils;
-import com.cybexmobile.R;
-import com.cybexmobile.activity.gateway.GatewayActivity;
-import com.cybexmobile.activity.transfer.TransferActivity;
-import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.provider.http.entity.AssetRmbPrice;
-import com.cybexmobile.cache.BalanceCache;
-import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
-import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
-import com.cybex.provider.graphene.chain.MarketTicker;
-import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.http.entity.AssetRmbPrice;
+import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.utils.NetworkUtils;
+import com.cybexmobile.R;
+import com.cybexmobile.activity.deploy.DeployActivity;
+import com.cybexmobile.activity.gateway.GatewayActivity;
+import com.cybexmobile.activity.transfer.TransferActivity;
+import com.cybexmobile.adapter.PortfolioRecyclerViewAdapter;
+import com.cybexmobile.cache.BalanceCache;
+import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
@@ -66,11 +63,11 @@ import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
-import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANCE_ITEMS;
-
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_FULL_ACCOUNT_OBJECT;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
 public class AccountBalanceActivity extends BaseActivity {
     private static final String TAG = AccountBalanceActivity.class.getName();
@@ -110,6 +107,8 @@ public class AccountBalanceActivity extends BaseActivity {
     LinearLayout mWithdrawButtonLayout;
     @BindView(R.id.account_balance_transfer_layout)
     LinearLayout mTransferButtonLayout;
+    @BindView(R.id.account_balance_use_layout)
+    LinearLayout mDeployButtonLayout;
     @BindView(R.id.account_balance_recycler_view)
     RecyclerView mAccountBalanceRecyclerView;
 
@@ -136,7 +135,6 @@ public class AccountBalanceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_balance);
         mUnbinder = ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         setSupportActionBar(mToolbar);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mAccountName = mSharedPreferences.getString(PREF_NAME, "");
@@ -173,7 +171,6 @@ public class AccountBalanceActivity extends BaseActivity {
         BalanceCache.getInstance().setmAccountBalanceObjectItemList(mAccountBalanceObjectItems);
         mUnbinder.unbind();
         unbindService(mConnection);
-        EventBus.getDefault().unregister(this);
         mHandler.removeCallbacksAndMessages(null);
         mHandler = null;
     }
@@ -214,6 +211,19 @@ public class AccountBalanceActivity extends BaseActivity {
         intent.putExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
         startActivity(intent);
     }
+
+    @OnClick(R.id.account_balance_use_layout)
+    public void onDeployButtonClicked(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        Intent intent = new Intent(this, DeployActivity.class);
+        intent.putExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS, (Serializable) mAccountBalanceObjectItems);
+        intent.putExtra(INTENT_PARAM_FULL_ACCOUNT_OBJECT, mFullAccountObject);
+        startActivity(intent);
+
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginOut(Event.LoginOut event) {

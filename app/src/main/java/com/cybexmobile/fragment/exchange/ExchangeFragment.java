@@ -817,4 +817,16 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     public void onWatchlistSelectDismiss() {
         mCbTitle.setChecked(false);
     }
+
+    public BuySellFragment getBuyFragment() {
+        return mBuyFragment;
+    }
+
+    public BuySellFragment getSellFragment() {
+        return mSellFragment;
+    }
+
+    public OpenOrdersFragment getOpenOrdersFragment() {
+        return mOpenOrdersFragment;
+    }
 }

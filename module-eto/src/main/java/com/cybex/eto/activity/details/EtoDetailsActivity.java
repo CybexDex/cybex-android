@@ -104,7 +104,6 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         setContentView(R.layout.activity_eto_details);
         etoActivityComponent().inject(this);
         mEtoDetailsPresenter.attachView(this);
-        EventBus.getDefault().register(this);
         initViews();
         setSupportActionBar(mToolbar);
         setOnclickListener();
@@ -129,7 +128,6 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mHandler.removeCallbacks(mRunnable);
         mHandler = null;
         mEtoDetailsPresenter.detachView();
-        EventBus.getDefault().unregister(this);
     }
 
     private void initViews() {

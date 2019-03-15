@@ -158,8 +158,10 @@ public class WebSocketService extends Service {
         loadAssetsRmbPrice();
         startFullAccountWorkerSchedule();
         loadEvaProjectNames();
+        loadTicketInfo();
         return START_NOT_STICKY;
     }
+
 
     private void loadEvaProjectNames() {
         compositeDisposable.add(RetrofitFactory.getInstance().api().getEvaProjectNames()
@@ -172,6 +174,27 @@ public class WebSocketService extends Service {
                         Gson gson = new Gson();
                         Map<String, String> result = gson.fromJson(jsonObject, new TypeToken<Map<String, String>>(){}.getType());
                         AssetPairCache.getInstance().setEvaProjectNames(result);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                }));
+    }
+
+    private void loadTicketInfo() {
+        compositeDisposable.add(RetrofitFactory.getInstance().api().getValidTickets()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .retry()
+                .subscribe(new Consumer<JsonObject>() {
+                    @Override
+                    public void accept(JsonObject jsonObject) throws Exception {
+                        Gson gson = new Gson();
+                        Map<String, List<String>> result = gson.fromJson(jsonObject, new TypeToken<Map<String, List<String>>>() {
+                        }.getType());
+                        AssetPairCache.getInstance().setValidTicketCache(result);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

@@ -17,6 +17,7 @@ import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.Authority;
 import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.CompactSignature;
@@ -38,6 +39,7 @@ import com.cybex.provider.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.ByteArrayInputStream;
@@ -50,16 +52,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.enotes.sdk.core.CardManager;
+import io.enotes.sdk.repository.db.entity.Card;
 
 public class WalletApi {
 
@@ -94,6 +103,7 @@ public class WalletApi {
     private wallet_object mWalletObject;
     private boolean mbLogin = false;
     private HashMap<Types.public_key_type, Types.private_key_type> mHashMapPub2Priv = new HashMap<>();
+    private Types.private_key_type mMemoPrivateKey;
     private Sha512Object mCheckSum = new Sha512Object();
     private String unCompressedOwnerKey;
     private Context mContext;
@@ -148,7 +158,7 @@ public class WalletApi {
     }
 
     public WalletApi() {
-
+        mMemoPrivateKey = new Types.private_key_type(PrivateKey.from_seed("cybex-testactivecybextest123456"));
     }
 
     public WalletApi(Context context) {
@@ -374,6 +384,14 @@ public class WalletApi {
                           int blockNumber,
                           MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
         mWebSocketClient.get_block(callId, blockNumber, callback);
+    }
+
+    public void get_block_header(int blockNumber, MessageCallback<Reply<BlockHeader>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_block_header(blockNumber, callback);
+    }
+
+    public void get_recent_transaction_by_id(String transactionId, MessageCallback<Reply<Object>> callback) throws NetworkStatusException {
+        mWebSocketClient.get_recent_transaction_by_id(transactionId, callback);
     }
 
 //    public List<AssetObject> list_assets(String strLowerBound, int nLimit) throws NetworkStatusException {
@@ -649,7 +667,12 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            Types.private_key_type  privateKeyType;
+            if (feeAmount == 0) {
+                privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
+            } else {
+                privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            }
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -661,6 +684,7 @@ public class WalletApi {
         }
         return transferOperation;
     }
+
 
     public Operations.transfer_operation getTransferOperationWithLockTime(ObjectId<AccountObject> from,
                                                                           ObjectId<AccountObject> to,
@@ -696,7 +720,12 @@ public class WalletApi {
             transferOperation.memo = new MemoData();
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
-            Types.private_key_type  privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            Types.private_key_type  privateKeyType;
+            if (feeAmount == 0) {
+                privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
+            } else {
+                privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            }
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -792,6 +821,23 @@ public class WalletApi {
         return operation;
     }
 
+    public Operations.account_update_operation getAccountUpdateOperation(ObjectId<AssetObject> feeAssetId,
+                                                                         long fee,
+                                                                         ObjectId<AccountObject> accountId,
+                                                                         Authority authority,
+                                                                         Types.account_options account_options,
+                                                                         Types.public_key_type public_key_type
+                                                                         ) {
+        Operations.account_update_operation account_update_operation = new Operations.account_update_operation();
+        account_update_operation.fee = new Asset(fee, feeAssetId);
+        account_update_operation.account = accountId;
+        account_update_operation.active = authority;
+        account_update_operation.owner = null;
+        account_update_operation.new_options = account_options;
+        account_update_operation.extensions = new HashSet<>();
+        return account_update_operation;
+    }
+
     public SignedTransaction getSignedTransaction(AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
         SignedTransaction signedTransaction = new SignedTransaction();
         Operations.operation_type operationType = new Operations.operation_type();
@@ -812,6 +858,53 @@ public class WalletApi {
         Calendar calender = Calendar.getInstance();
         calender.setTime(dateObject);
         calender.add(Calendar.SECOND, 30);
+        dateObject = calender.getTime();
+
+        signedTransaction.set_expiration(dateObject);
+        Types.private_key_type privateKey = null;
+
+        for (Types.public_key_type public_key_type : accountObject.active.get_keys()) {
+            privateKey = mHashMapPub2Priv.get(public_key_type);
+            if (privateKey != null) {
+                signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+                break;
+            }
+        }
+        if (privateKey == null) {
+            for (Types.public_key_type public_key_type : accountObject.owner.get_keys()) {
+                privateKey = mHashMapPub2Priv.get(public_key_type);
+                if (privateKey != null) {
+                    signedTransaction.sign(privateKey, mWebSocketClient.getmChainIdObject());
+                    break;
+                }
+            }
+        }
+        return signedTransaction;
+    }
+
+    public SignedTransaction getSignedTransactionForTicket(AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader) throws ParseException {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Operations.operation_type operationType = new Operations.operation_type();
+        operationType.nOperationType = operationId;
+        operationType.operationContent = operation;
+        signedTransaction.operationTypes = new ArrayList<>();
+        signedTransaction.operationTypes.add(operationType);
+        signedTransaction.operations = new ArrayList<>();
+        List<Object> listInOperations = new ArrayList<>();
+        listInOperations.add(operationId);
+        listInOperations.add(operation);
+        signedTransaction.operations.add(listInOperations);
+        signedTransaction.extensions = new HashSet<>();
+
+        signedTransaction.set_reference_block(blockHeader.previous);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date dateObject = simpleDateFormat.parse(blockHeader.timestamp);
+
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(dateObject);
+        calender.add(Calendar.MINUTE, 30);
         dateObject = calender.getTime();
 
         signedTransaction.set_expiration(dateObject);
@@ -841,6 +934,64 @@ public class WalletApi {
                 }
             }
         }
+        return signedTransaction;
+    }
+
+    public SignedTransaction getSignedTransactionByENotes(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, DynamicGlobalPropertyObject dynamicGlobalPropertyObject) {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Operations.operation_type operationType = new Operations.operation_type();
+        operationType.nOperationType = operationId;
+        operationType.operationContent = operation;
+        signedTransaction.operationTypes = new ArrayList<>();
+        signedTransaction.operationTypes.add(operationType);
+        signedTransaction.operations = new ArrayList<>();
+        List<Object> listInOperations = new ArrayList<>();
+        listInOperations.add(operationId);
+        listInOperations.add(operation);
+        signedTransaction.operations.add(listInOperations);
+        signedTransaction.extensions = new HashSet<>();
+
+        signedTransaction.set_reference_block(dynamicGlobalPropertyObject.head_block_id);
+
+        Date dateObject = dynamicGlobalPropertyObject.time;
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(dateObject);
+        calender.add(Calendar.SECOND, 30);
+        dateObject = calender.getTime();
+
+        signedTransaction.set_expiration(dateObject);
+        Types.private_key_type privateKey = null;
+        signedTransaction.signByENotes(cardManager, card, privateKey, mWebSocketClient.getmChainIdObject());
+        return signedTransaction;
+    }
+
+    public SignedTransaction getSignedTransactionByENotesForTicket(CardManager cardManager, Card card, AccountObject accountObject, Operations.base_operation operation, int operationId, BlockHeader blockHeader) throws ParseException {
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Operations.operation_type operationType = new Operations.operation_type();
+        operationType.nOperationType = operationId;
+        operationType.operationContent = operation;
+        signedTransaction.operationTypes = new ArrayList<>();
+        signedTransaction.operationTypes.add(operationType);
+        signedTransaction.operations = new ArrayList<>();
+        List<Object> listInOperations = new ArrayList<>();
+        listInOperations.add(operationId);
+        listInOperations.add(operation);
+        signedTransaction.operations.add(listInOperations);
+        signedTransaction.extensions = new HashSet<>();
+
+        signedTransaction.set_reference_block(blockHeader.previous);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date dateObject = simpleDateFormat.parse(blockHeader.timestamp);
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(dateObject);
+        calender.add(Calendar.MINUTE, 30);
+        dateObject = calender.getTime();
+
+        signedTransaction.set_expiration(dateObject);
+        Types.private_key_type privateKey = null;
+        signedTransaction.signByENotes(cardManager, card, privateKey, mWebSocketClient.getmChainIdObject());
         return signedTransaction;
     }
 

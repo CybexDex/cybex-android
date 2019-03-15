@@ -12,9 +12,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.squareup.moshi.Json;
 
 import org.bitcoinj.wallet.Wallet;
 
@@ -25,7 +27,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import static com.cybex.provider.graphene.chain.Config.GRAPHENE_BLOCKCHAIN_PRECISION;
 
@@ -36,7 +40,8 @@ public class Operations {
     public static final int ID_UPDATE_LMMIT_ORDER_OPERATION = 3;
     public static final int ID_FILL_LMMIT_ORDER_OPERATION = 4;
     public static final int ID_CREATE_ACCOUNT_OPERATION = 5;
-    public static final int ID_WITHDRAW_DEPOSIT_OPERATION = 6;
+    public static final int ID_UPDATE_ACCOUNT_OPERATION = 6;
+    public static final int ID_WITHDRAW_DEPOSIT_OPERATION = 7;
     public static final int ID_BALANCE_CLAIM_OPERATION = 37;
     public static final int ID_CANCEL_ALL_OPERATION = 52;
 
@@ -54,6 +59,7 @@ public class Operations {
             mHashId2Operation.put(ID_UPDATE_LMMIT_ORDER_OPERATION, call_order_update_operation.class);
             mHashId2Operation.put(ID_FILL_LMMIT_ORDER_OPERATION, fill_order_operation.class);
             mHashId2Operation.put(ID_CREATE_ACCOUNT_OPERATION, account_create_operation.class);
+            mHashId2Operation.put(ID_UPDATE_ACCOUNT_OPERATION, account_update_operation.class);
             mHashId2Operation.put(ID_WITHDRAW_DEPOSIT_OPERATION, withdraw_deposit_history_operation.class);
             mHashId2Operation.put(ID_BALANCE_CLAIM_OPERATION, balance_claim_operation.class);
             mHashId2Operation.put(ID_CANCEL_ALL_OPERATION, cancel_all_operation.class);
@@ -112,8 +118,35 @@ public class Operations {
                 Type type = operations_map.getOperationObjectById(src.nOperationType);
 
                 assert (type != null);
-                jsonArray.add(context.serialize(src.operationContent, type));
-
+//                if (src.nOperationType == ID_UPDATE_ACCOUNT_OPERATION) {
+//                    Operations.account_update_operation account_update_operation = (Operations.account_update_operation) src.operationContent;
+//                    JsonObject accountUpdate = new JsonObject();
+//                    JsonObject jsonAmount = new JsonObject();
+//                    jsonAmount.addProperty("amount", account_update_operation.fee.amount);
+//                    jsonAmount.addProperty("asset_id", account_update_operation.fee.asset_id.get_instance());
+//                    accountUpdate.add("fee", jsonAmount);
+//                    accountUpdate.addProperty("account", account_update_operation.account.get_instance());
+//                    JsonObject authority = new JsonObject();
+//                    authority.addProperty("weight_threshold", account_update_operation.active.weight_threshold);
+//                    JsonArray keyAuthArray = new JsonArray();
+//                    JsonArray accountAuthArray = new JsonArray();
+//                    JsonArray addressAuthArray = new JsonArray();
+//                    for (Types.public_key_type  public_key_type : account_update_operation.active.key_auths.keySet()) {
+//                        JsonArray subArray = new JsonArray();
+//                        subArray.add(public_key_type.toString());
+//                        subArray.add(account_update_operation.active.key_auths.get(public_key_type));
+//                        keyAuthArray.add(subArray);
+//                    }
+//                    authority.add("key_auth", keyAuthArray);
+//                    authority.add("account_auth", accountAuthArray);
+//                    authority.add("address_auth", addressAuthArray);
+//
+//                    accountUpdate.add("active", authority);
+//                    accountUpdate.add("extensions", new JsonArray());
+//                    jsonArray.add(accountUpdate);
+//                } else {
+//                    jsonArray.add(context.serialize(src.operationContent, type));
+//                }
                 return jsonArray;
             }
         }
@@ -725,6 +758,122 @@ public class Operations {
             return listAssetId;
         }
 
+    }
+
+    public static class account_update_operation implements base_operation {
+
+        public Asset fee;
+        public ObjectId<AccountObject> account;
+        public Authority owner;
+        public Authority active;
+        public Types.account_options new_options;
+        public Set<Types.void_t> extensions;
+
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawObject = new RawType();
+            baseEncoder.write(rawObject.get_byte_array(fee.amount));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(fee.asset_id.get_instance()));
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(account.get_instance()));
+            baseEncoder.write(rawObject.get_byte(owner != null));
+            if (owner != null) {
+                baseEncoder.write(rawObject.get_byte_array(owner.weight_threshold));
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(owner.account_auths.size()));
+                if (owner.account_auths.size() > 0) {
+                    for (ObjectId<AccountObject> accountObjectObjectId : owner.account_auths.keySet()) {
+                        rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(accountObjectObjectId.get_instance()));
+                        baseEncoder.write(rawObject.get_byte_array(owner.account_auths.get(accountObjectObjectId).shortValue()));
+                    }
+                }
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(owner.key_auths.size()));
+                if (owner.key_auths.size() > 0) {
+                    for (Types.public_key_type public_key_type : owner.key_auths.keySet()) {
+                        baseEncoder.write(public_key_type.key_data);
+                        baseEncoder.write(rawObject.get_byte_array(owner.key_auths.get(public_key_type).shortValue()));
+                    }
+                }
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(owner.address_auths.size()));
+            }
+            baseEncoder.write(rawObject.get_byte(active != null));
+            if (active != null) {
+                baseEncoder.write(rawObject.get_byte_array(active.weight_threshold));
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(active.account_auths.size()));
+                if (active.account_auths.size() > 0) {
+                    for (ObjectId<AccountObject> accountObjectObjectId : active.account_auths.keySet()) {
+                        rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(accountObjectObjectId.get_instance()));
+                        baseEncoder.write(rawObject.get_byte_array(active.account_auths.get(accountObjectObjectId).shortValue()));
+                    }
+                }
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(active.key_auths.size()));
+
+                if (active.key_auths.size() > 0) {
+                    TreeMap<String, Types.public_key_type> sortedMap = new TreeMap<>();
+                    for (Types.public_key_type public_key_type : active.key_auths.keySet()) {
+                        sortedMap.put(public_key_type.getAddress(), public_key_type);
+                    }
+                    for (Map.Entry<String, Types.public_key_type> entry : sortedMap.entrySet()) {
+                        baseEncoder.write(entry.getValue().key_data);
+                        baseEncoder.write(rawObject.get_byte_array(active.key_auths.get(entry.getValue()).shortValue()));
+                    }
+                }
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(active.address_auths.size()));
+            }
+            baseEncoder.write(rawObject.get_byte(new_options != null));
+            if (new_options != null) {
+                baseEncoder.write(new_options.memo_key.key_data);
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(new_options.voting_account.get_instance()));
+                baseEncoder.write(rawObject.get_byte_array(new_options.num_witness.shortValue()));
+                baseEncoder.write(rawObject.get_byte_array(new_options.num_committee.shortValue()));
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(new_options.votes.size()));
+                if (new_options.votes.size() > 0) {
+                    for (Types.vote_id_type vote_id_type : new_options.votes) {
+                        baseEncoder.write(rawObject.get_byte_array(vote_id_type.content));
+                    }
+                }
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(new_options.extensions.size()));
+            }
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(extensions.size()));
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
+        }
     }
 
     public static class withdraw_deposit_history_operation implements base_operation {

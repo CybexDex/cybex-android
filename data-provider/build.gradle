@@ -61,6 +61,8 @@ dependencies {
     implementation 'com.github.bilthon:graphenej:0.4.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
     implementation 'com.belerweb:pinyin4j:2.5.0'
+    //eNotes
+    implementation 'io.enotes.sdk:library:1.0.8'
 }
 
 greendao {

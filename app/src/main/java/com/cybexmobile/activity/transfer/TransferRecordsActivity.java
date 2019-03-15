@@ -79,7 +79,6 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         setContentView(R.layout.activity_transfer_records);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         mIsLoginIn = preferences.getBoolean(PREF_IS_LOGIN_IN, false);
@@ -111,7 +110,6 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         super.onDestroy();
         mUnbinder.unbind();
         unbindService(mConnection);
-        EventBus.getDefault().unregister(this);
     }
 
     @Override

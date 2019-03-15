@@ -33,6 +33,9 @@ public class Constant {
     public static final String INTENT_PARAM_ETO_PROJECT_DETAILS = "intent_param_eto_project_details";
     public static final String INTENT_PARAM_ETO_ATTEND_ETO = "intent_param_eto_attend_eto";
     public static final String INTENT_PARAM_ETO_PROJECT_ID = "intent_param_eto_project_id";
+    public static final String INTENT_PARAM_QR_CODE_TRANCTION = "intent_param_qr_code_transaction";
+    public static final String INTENT_PARAM_TRANSACTIONID = "intent_param_transactionid";
+
     public static final String INTENT_PARAM_PRECISION = "intent_param_precision";
     public static final String INTENT_PARAM_PRECISION_SPINNER_POSITION = "intent_param_precision_spinner_position";
     public static final String INTENT_PARAM_SHOW_BUY_SELL_SPINNER_POSITION = "intent_param_show_bug_sell_spinner_position";
@@ -47,6 +50,7 @@ public class Constant {
     public static final String INTENT_PARAM_LOGIN_IN = "loginIn";
     public static final String INTENT_PARAM_NAME = "name";
     public static final String INTENT_PARAM_URL = "intent_param_url";
+    public static final String INTENT_PARAM_IS_MEMOKEY_NEEDED = "intent_param_is_memokey_needed";
 
     public static final String INTENT_PARAM_CHANNEL = "intent_param_channel";
     public static final String INTENT_PARAM_CHANNEL_TITLE = "intent_param_channel_title";
@@ -70,6 +74,9 @@ public class Constant {
     public static final String PREF_GAME_INVITATION = "pref_game_invitation";
     public static final String PREF_HISTORY_URL = "pref_history_url";
     public static final String PREF_IS_CLICK_NO_MORE_REMINDER = "pref_is_clicked_no_more_reminder";
+    public static final String PREF_PARAM_UNLOCK_BY_CARDS = "pref_param_unlock_by_cards";
+    public static final String PREF_IS_CLOUD_PASSWORD_SET = "pref_is_cloud_password_set";
+    public static final String PREF_IS_CARD_PASSWORD_SET = "pref_is_card_password_set";
 
     /**
      *
@@ -103,6 +110,8 @@ public class Constant {
      */
     public static final int REQUEST_CODE_SELECT_WATCHLIST = 1;
     public static final int RESULT_CODE_SELECTED_WATCHLIST = 1;
+    public static final int REQUEST_CODE_UPDATE_ACCOUNT = 2;
+    public static final int RESULT_CODE_UPDATE_ACCOUNT = 2;
 
     /**
      * bundle save state参数
@@ -158,4 +167,8 @@ public class Constant {
      */
     public static final String CYBEX_CONTEST_FLAG = "GameContest";
 
+    /**
+     *  scan Result
+     */
+    public static final String SCAN_RESULT = "scan_result";
 }

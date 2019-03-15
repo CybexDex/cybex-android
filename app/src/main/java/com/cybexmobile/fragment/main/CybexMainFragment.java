@@ -192,7 +192,6 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         super.onViewCreated(view, savedInstanceState);
         mPresenter.loadAnnounces(StoreLanguageHelper.getLanguageLocal(getContext()));
         mPresenter.loadSubLinks(StoreLanguageHelper.getLanguageLocal(getContext()),"pro", getContext());
-        mPresenter.loadHotAssetPairs();
         mPresenter.loadBanners(StoreLanguageHelper.getLanguageLocal(getContext()));
     }
 
@@ -425,6 +424,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            mPresenter.loadHotAssetPairs();
         }
 
         @Override

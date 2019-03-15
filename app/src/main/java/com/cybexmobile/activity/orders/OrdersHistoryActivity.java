@@ -9,15 +9,20 @@ import android.support.v7.widget.Toolbar;
 import android.widget.RadioGroup;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.provider.utils.SpUtil;
 import com.cybexmobile.R;
 import com.cybexmobile.fragment.orders.OpenOrdersFragment;
 import com.cybexmobile.fragment.orders.OrdersHistoryFragment;
 import com.cybexmobile.fragment.orders.TradeHistoryFragment;
 
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
+import io.enotes.sdk.repository.card.CommandException;
+import io.enotes.sdk.repository.db.entity.Card;
 
 public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -97,6 +102,64 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
                 break;
         }
         transaction.commit();
+    }
+
+    @Override
+    protected void nfcStartReadCard() {
+        if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
+            if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                mOpenOrdersFragment.getUnlockDialog().showProgress();
+            } else {
+                super.nfcStartReadCard();
+            }
+        } else {
+            super.nfcStartReadCard();
+        }
+
+    }
+
+    @Override
+    protected void readCardOnSuccess(Card card) {
+        if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
+            currentCard = card;
+            cardApp = card;
+            if (isLoginFromENotes()) {
+                try {
+                    if (cardManager.getTransactionPinStatus() == 0) {
+                        if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                            mOpenOrdersFragment.hideEnotesDialog();
+                            mOpenOrdersFragment.toCancelLimitOrder();
+                        } else {
+                            super.readCardOnSuccess(card);
+                        }
+                    } else {
+                        final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                        if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                            if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                                mOpenOrdersFragment.hideEnotesDialog();
+                                mOpenOrdersFragment.toCancelLimitOrder();
+                            } else {
+                                super.readCardOnSuccess(card);
+                            }
+                        }
+                    }
+                } catch (CommandException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            super.readCardOnSuccess(card);
+        }
+    }
+
+    @Override
+    protected void readCardError(int code, String message) {
+        super.readCardError(code, message);
+        if (mOpenOrdersFragment != null && mSegmentedGroup.getCheckedRadioButtonId() == R.id.rb_open_orders) {
+            if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                mOpenOrdersFragment.hideProgress();
+            }
+        }
     }
 
     @Override

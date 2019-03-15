@@ -87,6 +87,7 @@ public class UnlockDialog extends DialogFragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle.setText(getResources().getString(R.string.unlock_wallet_dialog_title));
+//        mUseEnotesTitle.setVisibility(View.INVISIBLE);
     }
 
     @Override
