@@ -9,15 +9,19 @@ import android.support.v7.widget.Toolbar;
 import android.widget.RadioGroup;
 
 import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.provider.utils.SpUtil;
 import com.cybexmobile.R;
 import com.cybexmobile.fragment.orders.OpenOrdersFragment;
 import com.cybexmobile.fragment.orders.OrdersHistoryFragment;
 import com.cybexmobile.fragment.orders.TradeHistoryFragment;
 
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
+import io.enotes.sdk.repository.card.CommandException;
 import io.enotes.sdk.repository.db.entity.Card;
 
 public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
@@ -120,11 +124,27 @@ public class OrdersHistoryActivity extends BaseActivity implements RadioGroup.On
             currentCard = card;
             cardApp = card;
             if (isLoginFromENotes()) {
-                if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
-                    mOpenOrdersFragment.hideEnotesDialog();
-                    mOpenOrdersFragment.toCancelLimitOrder();
-                } else {
-                    super.readCardOnSuccess(card);
+                try {
+                    if (cardManager.getTransactionPinStatus() == 0) {
+                        if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                            mOpenOrdersFragment.hideEnotesDialog();
+                            mOpenOrdersFragment.toCancelLimitOrder();
+                        } else {
+                            super.readCardOnSuccess(card);
+                        }
+                    } else {
+                        final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                        if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                            if (mOpenOrdersFragment.getUnlockDialog() != null && mOpenOrdersFragment.getUnlockDialog().isVisible()) {
+                                mOpenOrdersFragment.hideEnotesDialog();
+                                mOpenOrdersFragment.toCancelLimitOrder();
+                            } else {
+                                super.readCardOnSuccess(card);
+                            }
+                        }
+                    }
+                } catch (CommandException e) {
+                    e.printStackTrace();
                 }
             }
         } else {

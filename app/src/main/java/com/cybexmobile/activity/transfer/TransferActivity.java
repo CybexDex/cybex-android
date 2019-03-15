@@ -53,6 +53,7 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.utils.NetworkUtils;
+import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
@@ -76,6 +77,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,6 +86,7 @@ import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.card.CommandException;
 import io.enotes.sdk.repository.db.entity.Card;
 import io.enotes.sdk.utils.ReaderUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -876,13 +879,25 @@ public class TransferActivity extends BaseActivity implements
         mCard = card;
         if (unlockDialog != null) { unlockDialog.dismiss(); }
         if (unlockDialogWithEnotes != null) {
-            if (!TextUtils.isEmpty(mEtRemark.getText().toString())) {
-                //如果带了memo，更新UI
-                unlockDialogWithEnotes.showNoSupportMemoText();
-            } else {
-                //没带memo，执行转账
-                unlockDialogWithEnotes.dismiss();
-                toTransfer();
+            try {
+                if (cardManager.getTransactionPinStatus() == 0) {
+                    if (!TextUtils.isEmpty(mEtRemark.getText().toString())) {
+                        //如果带了memo，更新UI
+                        unlockDialogWithEnotes.showNoSupportMemoText();
+                    } else {
+                        //没带memo，执行转账
+                        unlockDialogWithEnotes.dismiss();
+                        toTransfer();
+                    }
+                } else {
+                    final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                    if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                        unlockDialogWithEnotes.dismiss();
+                        toTransfer();
+                    }
+                }
+            } catch (CommandException e) {
+                e.printStackTrace();
             }
         } else {
             super.readCardOnSuccess(card);

@@ -35,6 +35,7 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
+import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
@@ -43,11 +44,14 @@ import com.cybexmobile.R;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.card.CommandException;
 import io.enotes.sdk.repository.db.entity.Card;
 import io.enotes.sdk.utils.ReaderUtils;
 
@@ -117,9 +121,22 @@ public class SetCloudPasswordActivity extends BaseActivity {
     protected void readCardOnSuccess(Card card) {
         mCard = card;
         if (unlockDialogWithEnotes != null) {
-            unlockDialogWithEnotes.dismiss();
-            unlockDialogWithEnotes = null;
-            toUpdateAccount();
+            try {
+                if (cardManager.getTransactionPinStatus() == 0) {
+                    unlockDialogWithEnotes.dismiss();
+                    unlockDialogWithEnotes = null;
+                    toUpdateAccount();
+                } else {
+                    final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                    if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                        unlockDialogWithEnotes.dismiss();
+                        unlockDialogWithEnotes = null;
+                        toUpdateAccount();
+                    }
+                }
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
         } else {
             super.readCardOnSuccess(card);
         }
@@ -226,6 +243,7 @@ public class SetCloudPasswordActivity extends BaseActivity {
                         SetCloudPasswordActivity.this,
                         getResources().getString(R.string.toast_message_update_account_succeeded),
                         R.drawable.ic_check_circle_green);
+                mWebSocketService.loadFullAccount(mName);
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

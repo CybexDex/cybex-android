@@ -108,6 +108,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     protected Dialog dialog;
+    private Dialog mEnotesPasswordDialog;
     private int tagLostCount;
 
     @Override
@@ -244,37 +245,57 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
             if (cardIdToCardPasswordMap == null || cardIdToCardPasswordMap.size() == 0) {
-                CybexDialog.showVerifyEnotesCardPasswordDialog(
-                        this,
-                        getResources().getString(R.string.nfc_dialog_verify_enotes_password_titile),
-                        new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
-                            @Override
-                            public void onClick(Dialog dialog, Button button, EditText editText, TextView textView) {
-                                String cardPassword = editText.getText().toString().trim();
-                                textView.setVisibility(View.GONE);
-                                try {
-                                    if (cardManager.verifyTransactionPin(cardPassword)) {
-                                        dialog.dismiss();
-                                        Map<Long, String> map = new HashMap<Long, String>();
-                                        map.put(card.getId(), cardPassword);
-                                        SpUtil.putMap(BaseActivity.this, "eNotesCardMap", map);
-                                        loginByENotes(card.getAccount(), "123456789");
-                                    } else {
+                if (mEnotesPasswordDialog == null) {
+                    CybexDialog.showVerifyEnotesCardPasswordDialog(
+                            this,
+                            getResources().getString(R.string.nfc_dialog_verify_enotes_password_titile),
+                            new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
+                                @Override
+                                public void onClick(Dialog dialog, Button button, EditText editText, TextView textView) {
+                                    String cardPassword = editText.getText().toString().trim();
+                                    textView.setVisibility(View.GONE);
+                                    mEnotesPasswordDialog = dialog;
+                                    try {
+                                        if (cardManager.verifyTransactionPin(cardPassword)) {
+                                            dialog.dismiss();
+                                            Map<Long, String> map = new HashMap<Long, String>();
+                                            map.put(card.getId(), cardPassword);
+                                            SpUtil.putMap(BaseActivity.this, "eNotesCardMap", map);
+                                            setLoginPublicKey(card.getCurrencyPubKey());
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    loginByENotes(card.getAccount(), "123456789");
+                                                }
+                                            }, 500);
+                                        } else {
+                                            textView.setVisibility(View.VISIBLE);
+                                            textView.setText(getResources().getString(R.string.error_incorrect_password));
+                                        }
+                                    } catch (CommandException e) {
+                                        e.printStackTrace();
                                         textView.setVisibility(View.VISIBLE);
                                         textView.setText(getResources().getString(R.string.error_incorrect_password));
-                                    }
-                                } catch (CommandException e) {
-                                    e.printStackTrace();
-                                    textView.setVisibility(View.VISIBLE);
-                                    textView.setText(getResources().getString(R.string.error_incorrect_password));
 
+                                    }
                                 }
-                            }
-                        });
+                            }, new CybexDialog.ConfirmationDialogCancelListener() {
+                                @Override
+                                public void onCancel(Dialog dialog) {
+                                    mEnotesPasswordDialog = null;
+                                }
+                            });
+                }
             } else {
                 String cardPasswordFromSp = cardIdToCardPasswordMap.get(card.getId());
                 if (cardManager.verifyTransactionPin(cardPasswordFromSp)) {
-                    loginByENotes(card.getAccount(), "1234567");
+                    setLoginPublicKey(card.getCurrencyPubKey());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loginByENotes(card.getAccount(), "123456789");
+                        }
+                    }, 500);
                 }
             }
         }
@@ -301,6 +322,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                             sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
                             sharedPreferences.edit().putString(PREF_NAME, email).apply();
                             ToastMessage.showNotEnableDepositToastMessage(BaseActivity.this, getResources().getString(R.string.nfc_toast_message_logged_in_successful_by_eNotes), R.drawable.ic_check_circle_green);
+                            mEnotesPasswordDialog = null;
                         }
                     });
 

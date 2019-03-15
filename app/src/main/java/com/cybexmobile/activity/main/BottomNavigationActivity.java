@@ -24,6 +24,7 @@ import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.eto.fragment.EtoFragment;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
+import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
@@ -46,7 +47,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Map;
 
+import io.enotes.sdk.repository.card.CommandException;
 import io.enotes.sdk.repository.db.entity.Card;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -148,17 +151,18 @@ public class BottomNavigationActivity extends BaseActivity implements
             currentCard = card;
             cardApp = card;
             if (isLoginFromENotes()) {
-                if (mExchangeFragment.getBuyFragment() != null && mExchangeFragment.getBuyFragment().getUnlockDialog() != null && mExchangeFragment.getBuyFragment().getUnlockDialog().isVisible()) {
-                    mExchangeFragment.getBuyFragment().hideEnotesDialog();
-                    mExchangeFragment.getBuyFragment().toExchange();
-                } else if (mExchangeFragment.getSellFragment() != null && mExchangeFragment.getSellFragment().getUnlockDialog() != null && mExchangeFragment.getSellFragment().getUnlockDialog().isVisible()) {
-                    mExchangeFragment.getSellFragment().hideEnotesDialog();
-                    mExchangeFragment.getSellFragment().toExchange();
-                } else if (mExchangeFragment.getOpenOrdersFragment() != null && mExchangeFragment.getOpenOrdersFragment().getUnlockDialog() != null && mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
-                    mExchangeFragment.getOpenOrdersFragment().hideEnotesDialog();
-                    mExchangeFragment.getOpenOrdersFragment().toCancelLimitOrder();
-                } else {
-                    super.readCardOnSuccess(card);
+                try {
+                    if (cardManager.getTransactionPinStatus() == 0) {
+                        toTransactionOperation(card);
+                    } else {
+                        final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                        if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                            toTransactionOperation(card);
+                        }
+
+                    }
+                } catch (CommandException e) {
+                    e.printStackTrace();
                 }
             }
         } else {
@@ -177,6 +181,21 @@ public class BottomNavigationActivity extends BaseActivity implements
             } else if (mExchangeFragment.getOpenOrdersFragment() != null && mExchangeFragment.getOpenOrdersFragment().getUnlockDialog() != null && mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
                 mExchangeFragment.getOpenOrdersFragment().hideProgress();
             }
+        }
+    }
+
+    private void toTransactionOperation(Card card) {
+        if (mExchangeFragment.getBuyFragment() != null && mExchangeFragment.getBuyFragment().getUnlockDialog() != null && mExchangeFragment.getBuyFragment().getUnlockDialog().isVisible()) {
+            mExchangeFragment.getBuyFragment().hideEnotesDialog();
+            mExchangeFragment.getBuyFragment().toExchange();
+        } else if (mExchangeFragment.getSellFragment() != null && mExchangeFragment.getSellFragment().getUnlockDialog() != null && mExchangeFragment.getSellFragment().getUnlockDialog().isVisible()) {
+            mExchangeFragment.getSellFragment().hideEnotesDialog();
+            mExchangeFragment.getSellFragment().toExchange();
+        } else if (mExchangeFragment.getOpenOrdersFragment() != null && mExchangeFragment.getOpenOrdersFragment().getUnlockDialog() != null && mExchangeFragment.getOpenOrdersFragment().getUnlockDialog().isVisible()) {
+            mExchangeFragment.getOpenOrdersFragment().hideEnotesDialog();
+            mExchangeFragment.getOpenOrdersFragment().toCancelLimitOrder();
+        } else {
+            super.readCardOnSuccess(card);
         }
     }
 

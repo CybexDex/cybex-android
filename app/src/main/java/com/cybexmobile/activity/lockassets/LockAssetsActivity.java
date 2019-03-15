@@ -28,6 +28,7 @@ import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.Types;
+import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
@@ -60,8 +61,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
+import io.enotes.sdk.repository.card.CommandException;
 import io.enotes.sdk.repository.db.entity.Card;
 import io.enotes.sdk.utils.ReaderUtils;
 import io.reactivex.Observable;
@@ -134,11 +137,27 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
     protected void readCardOnSuccess(Card card) {
         mCard = card;
         if (mUnlockDialogWithEnotes != null) {
-            mUnlockDialogWithEnotes.dismiss();
-            if (mAddresses.size() == 0) {
-                loadData(card);
-            } else {
-                broadcastOperation(mCurrentLockAssetItem);
+            try {
+                if (cardManager.getTransactionPinStatus() == 0) {
+                    mUnlockDialogWithEnotes.dismiss();
+                    if (mAddresses.size() == 0) {
+                        loadData(card);
+                    } else {
+                        broadcastOperation(mCurrentLockAssetItem);
+                    }
+                } else {
+                    final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                    if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                        mUnlockDialogWithEnotes.dismiss();
+                        if (mAddresses.size() == 0) {
+                            loadData(card);
+                        } else {
+                            broadcastOperation(mCurrentLockAssetItem);
+                        }
+                    }
+                }
+            } catch (CommandException e) {
+                e.printStackTrace();
             }
         } else {
             super.readCardOnSuccess(card);

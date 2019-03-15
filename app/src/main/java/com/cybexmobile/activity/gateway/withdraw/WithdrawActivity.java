@@ -136,6 +136,8 @@ public class WithdrawActivity extends BaseActivity {
     private SignedTransaction mSignedTransaction;
     private DynamicGlobalPropertyObject mDynamicGlobalPropertyObject;
     private List<Address> mAddresses;
+    private FeeAmountObject mFeeAmountObject;
+    private String mMemo;
 
     //private boolean
 
@@ -369,11 +371,7 @@ public class WithdrawActivity extends BaseActivity {
             mIsFeeLoaded = false;
             return;
         }
-        if (BitsharesWalletWraper.getInstance().is_locked()) {
-            CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
-        } else {
-            displayFee();
-        }
+        displayFee();
     }
 
     @OnFocusChange(R.id.withdraw_memo_eos_et)
@@ -435,9 +433,6 @@ public class WithdrawActivity extends BaseActivity {
         } else {
             mErrorLinearLayout.setVisibility(View.GONE);
             mWithdrawButton.setEnabled(true);
-            if (BitsharesWalletWraper.getInstance().is_locked()) {
-                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
-            }
         }
     }
 
@@ -447,18 +442,28 @@ public class WithdrawActivity extends BaseActivity {
         CybexDialog.showConfirmationDialog(this, new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
-                        if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
-                            CybexDialog.showLimitOrderCancelConfirmationDialog(
-                                    WithdrawActivity.this,
-                                    getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
-                                    getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
-                                    new CybexDialog.ConfirmationDialogClickListener() {
-                                        @Override
-                                        public void onClick(Dialog dialog) {
-                                            Intent intent = new Intent(WithdrawActivity.this, SetCloudPasswordActivity.class);
-                                            startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
-                                        }
-                                    });
+                        if (isLoginFromENotes()) {
+                            if (mAccountObject.active.key_auths.size() < 2) {
+                                CybexDialog.showLimitOrderCancelConfirmationDialog(
+                                        WithdrawActivity.this,
+                                        getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                                        getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                                        new CybexDialog.ConfirmationDialogClickListener() {
+                                            @Override
+                                            public void onClick(Dialog dialog) {
+                                                Intent intent = new Intent(WithdrawActivity.this, SetCloudPasswordActivity.class);
+                                                startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
+                                            }
+                                        });
+                            } else {
+                                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
+                                    @Override
+                                    public void onUnLocked(String password) {
+                                        checkWithdrawAuthority(mAccountObject, password);
+                                        toWithdraw();
+                                    }
+                                });
+                            }
                         } else {
                             if (BitsharesWalletWraper.getInstance().is_locked()) {
                                 CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
@@ -527,6 +532,11 @@ public class WithdrawActivity extends BaseActivity {
                 @Override
                 public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     mDynamicGlobalPropertyObject = reply.result;
+                    if (mFeeAmountObject.amount <= getBalance(mFullAccountObject, ASSET_ID_CYB)) {
+                        mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, mMemo, mWithdrawAmountEditText.getText().toString().trim(), mFeeAmountObject.asset_id, mFeeAmountObject.amount);
+                    } else {
+                        mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, mMemo, getSubmitAmount(mFeeAmountObject), mFeeAmountObject.asset_id, mFeeAmountObject.amount);
+                    }
                     mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
                     broadCastTransaction(mSignedTransaction);
                 }
@@ -596,12 +606,12 @@ public class WithdrawActivity extends BaseActivity {
         String amount = mWithdrawAmountEditText.getText().toString().trim();
         String eosMemo = mWithdrawMemoEosEditText.getText().toString().trim();
         if (TextUtils.isEmpty(address) || TextUtils.isEmpty(amount) ||
-                mAccountObject == null || mToAccountObject == null || BitsharesWalletWraper.getInstance().is_locked()) {
+                mAccountObject == null || mToAccountObject == null) {
             return;
         }
-        String memo = getMemo(address, mAssetName, eosMemo);
-        Log.e("memo", memo);
-        Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, ASSET_ID_CYB, 0);
+        mMemo = getMemo(address, mAssetName, eosMemo);
+        Log.e("memo", mMemo);
+        Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, mMemo, amount, ASSET_ID_CYB, 0);
         double cybBalance = getBalance(mFullAccountObject, ASSET_ID_CYB);
         try {
             BitsharesWalletWraper.getInstance().get_required_fees(ASSET_ID_CYB, ID_TRANSER_OPERATION, transferOperation, new MessageCallback<Reply<List<FeeAmountObject>>>() {
@@ -610,22 +620,19 @@ public class WithdrawActivity extends BaseActivity {
                     if (mHandler == null) {
                         return;
                     }
-                    FeeAmountObject feeAmountObject = reply.result.get(0);
-                    if (feeAmountObject.amount <= cybBalance) {
-                        mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, amount, feeAmountObject.asset_id, feeAmountObject.amount);
+                    mFeeAmountObject = reply.result.get(0);
+                    if (mFeeAmountObject.amount <= cybBalance) {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                mTransferFeeTextView.setText(String.format("%s CYB", String.valueOf(feeAmountObject.amount / Math.pow(10, 5))));
-                                calculateReceiveAmount(feeAmountObject);
-                                if (!BitsharesWalletWraper.getInstance().is_locked()) {
-                                    mIsFeeLoaded = true;
-                                    resetWithdrawBtnState();
-                                }
+                                mTransferFeeTextView.setText(String.format("%s CYB", String.valueOf(mFeeAmountObject.amount / Math.pow(10, 5))));
+                                calculateReceiveAmount(mFeeAmountObject);
+                                mIsFeeLoaded = true;
+                                resetWithdrawBtnState();
                             }
                         });
                     } else {
-                        getNoneCybFee(memo);
+                        getNoneCybFee(mMemo);
                     }
 
                 }
@@ -700,17 +707,14 @@ public class WithdrawActivity extends BaseActivity {
                     if (mHandler == null) {
                         return;
                     }
-                    FeeAmountObject feeAmountObject = reply.result.get(0);
-                    mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo, getSubmitAmount(feeAmountObject), feeAmountObject.asset_id, feeAmountObject.amount);
+                    mFeeAmountObject = reply.result.get(0);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            mTransferFeeTextView.setText(String.format("%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f " + mAssetName, (feeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
-                            calculateReceiveAmount(feeAmountObject);
-                            if (!BitsharesWalletWraper.getInstance().is_locked()) {
-                                mIsFeeLoaded = true;
-                                resetWithdrawBtnState();
-                            }
+                            mTransferFeeTextView.setText(String.format("%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f " + mAssetName, (mFeeAmountObject.amount / Math.pow(10, mAssetObject.precision))));
+                            calculateReceiveAmount(mFeeAmountObject);
+                            mIsFeeLoaded = true;
+                            resetWithdrawBtnState();
                         }
                     });
 
@@ -767,11 +771,7 @@ public class WithdrawActivity extends BaseActivity {
                             mIvAddressCheck.setVisibility(View.VISIBLE);
                             mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
                             resetWithdrawBtnState();
-                            if (BitsharesWalletWraper.getInstance().is_locked()) {
-                                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, mUnLockDialogListener);
-                            } else {
-                                displayFee();
-                            }
+                            displayFee();
                         }
                     }
                 }, new Consumer<Throwable>() {

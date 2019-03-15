@@ -37,6 +37,7 @@ import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.utils.MyUtils;
+import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
@@ -53,12 +54,14 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.card.CommandException;
 import io.enotes.sdk.repository.db.entity.Card;
 import io.enotes.sdk.utils.ReaderUtils;
 import mrd.bitlib.lambdaworks.crypto.Base64;
@@ -90,7 +93,6 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     private AccountObject mToAccountObject;
     private Operations.base_operation mTransferOperation;
     private Card mCard;
-    private UnlockDialog unlockDialog;
     private UnlockDialogWithEnotes unlockDialogWithEnotes;
 
     private boolean mIsUsedCloudPassword = false;
@@ -142,9 +144,21 @@ public class DeployActivity extends BaseActivity implements EasyPermissions.Perm
     protected void readCardOnSuccess(Card card) {
         mCard = card;
         if (unlockDialogWithEnotes != null) {
-            //没带memo，执行转账
-            unlockDialogWithEnotes.dismiss();
-            toTransfer();
+            try {
+                if (cardManager.getTransactionPinStatus() == 0) {
+                    //没带memo，执行转账
+                    unlockDialogWithEnotes.dismiss();
+                    toTransfer();
+                } else {
+                    final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                    if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                        unlockDialogWithEnotes.dismiss();
+                        toTransfer();
+                    }
+                }
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
         } else {
             super.readCardOnSuccess(card);
         }

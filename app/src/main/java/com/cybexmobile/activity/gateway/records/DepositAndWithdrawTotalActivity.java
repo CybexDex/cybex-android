@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.event.Event;
@@ -32,6 +33,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.ethereum.config.ConstantsAdapter;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -178,6 +180,15 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
+            mAccountObject = mWebSocketService.getFullAccount(mUserName).account;
+            mRefreshLayout.autoRefresh();
+        }
+    }
+
+    @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
     }
@@ -262,8 +273,9 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                     new CybexDialog.ConfirmationDialogClickListener() {
                         @Override
                         public void onClick(Dialog dialog) {
+                            mRefreshLayout.finishRefresh();
                             Intent intent = new Intent(DepositAndWithdrawTotalActivity.this, SetCloudPasswordActivity.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, Constant.REQUEST_CODE_UPDATE_ACCOUNT);
                         }
                     });
         } else {

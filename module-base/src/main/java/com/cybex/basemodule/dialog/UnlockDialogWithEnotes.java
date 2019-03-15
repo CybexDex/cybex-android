@@ -123,8 +123,10 @@ public class UnlockDialogWithEnotes extends android.support.v4.app.DialogFragmen
             mUseEnotesTitle.setText(getResources().getString(R.string.title_use_enotes));
             if (isMemoKeyNeeded) {
                 mEnotesText.setVisibility(View.VISIBLE);
+                mUseEnotesTitle.setVisibility(View.GONE);
             } else {
                 mEnotesText.setVisibility(View.GONE);
+                mUseEnotesTitle.setVisibility(View.VISIBLE);
             }
         }
     }

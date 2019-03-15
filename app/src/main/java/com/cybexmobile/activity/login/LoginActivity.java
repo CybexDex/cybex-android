@@ -191,18 +191,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     @Override
     protected void readCardOnSuccess(Card card) {
         super.readCardOnSuccess(card);
-        try {
-            byte[] bytes = ByteUtil.hexStringToBytes(cardManager.transmitApdu(Command.newCmd().setDesc("cybex_account").setCmdStr("00CA0032")));
-            TLVBox tlvBox = TLVBox.parse(bytes,0,bytes.length);
-            String stringValue = new String(tlvBox.getBytesValue(0x32));
-            mUserNameView.setText(stringValue);
-            mPasswordView.setText("123456789");
-            setLoginPublicKey(card.getCurrencyPubKey());
-            loginByENotes();
-        } catch (CommandException e) {
-            e.printStackTrace();
-        }
-
+        finish();
     }
 
     @Override

@@ -385,7 +385,7 @@ public class CybexDialog {
         return showUnlockWalletDialog(fragmentManager, accountObject, username, unLockListener, null);
     }
 
-    public static void showVerifyEnotesCardPasswordDialog(Context context, String title, final ConfirmationDialogClickWithButtonTimerListener confirmListener) {
+    public static void showVerifyEnotesCardPasswordDialog(Context context, String title, final ConfirmationDialogClickWithButtonTimerListener confirmListener, final ConfirmationDialogCancelListener cancelListener) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_nfc_enotes_password_verification);
         TextView dialogTitle = dialog.findViewById(R.id.dialog_confirm_tv_title);
@@ -406,6 +406,9 @@ public class CybexDialog {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (cancelListener != null) {
+                    cancelListener.onCancel(dialog);
+                }
                 dialog.dismiss();
             }
         });

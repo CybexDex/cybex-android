@@ -73,12 +73,12 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.REQUEST_CODE_UPDATE_ACCOUNT;
 
 public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRefreshListener, OnLoadMoreListener {
 
     public static final String TAG = DepositWithdrawRecordsActivity.class.getName();
     private static final int LOAD_COUNT = 20;
-    private static final int INT_REQUEST_CODE_FOR_SET_CLOUD_PASSWORD = 100;
     private String mAccountName;
     private String mFundType;
     private int mTotalItemAmount = 0;
@@ -157,8 +157,9 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                     new CybexDialog.ConfirmationDialogClickListener() {
                         @Override
                         public void onClick(Dialog dialog) {
+                            mRefreshLayout.finishRefresh();
                             Intent intent = new Intent(DepositWithdrawRecordsActivity.this, SetCloudPasswordActivity.class);
-                            startActivityForResult(intent, INT_REQUEST_CODE_FOR_SET_CLOUD_PASSWORD);
+                            startActivityForResult(intent, REQUEST_CODE_UPDATE_ACCOUNT);
                         }
                     });
         } else {
@@ -172,28 +173,6 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
             refreshLayout.finishLoadMoreWithNoMoreData();
         } else {
             checkIfLocked(false);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateFullAccount(Event.UpdateFullAccount event) {
-        if (mAccountObject == null) {
-            mAccountObject = event.getFullAccount().account;
-            if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
-                CybexDialog.showLimitOrderCancelConfirmationDialog(
-                        DepositWithdrawRecordsActivity.this,
-                        getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
-                        getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
-                        new CybexDialog.ConfirmationDialogClickListener() {
-                            @Override
-                            public void onClick(Dialog dialog) {
-                                Intent intent = new Intent(DepositWithdrawRecordsActivity.this, SetCloudPasswordActivity.class);
-                                startActivityForResult(intent, INT_REQUEST_CODE_FOR_SET_CLOUD_PASSWORD);
-                            }
-                        });
-            } else {
-                checkIfLocked(true);
-            }
         }
     }
 
@@ -249,24 +228,9 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == INT_REQUEST_CODE_FOR_SET_CLOUD_PASSWORD && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
-            if (mAccountObject != null) {
-                if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
-                    CybexDialog.showLimitOrderCancelConfirmationDialog(
-                            DepositWithdrawRecordsActivity.this,
-                            getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
-                            getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
-                            new CybexDialog.ConfirmationDialogClickListener() {
-                                @Override
-                                public void onClick(Dialog dialog) {
-                                    Intent intent = new Intent(DepositWithdrawRecordsActivity.this, SetCloudPasswordActivity.class);
-                                    startActivityForResult(intent, INT_REQUEST_CODE_FOR_SET_CLOUD_PASSWORD);
-                                }
-                            });
-                } else {
-                    checkIfLocked(true);
-                }
-            }
+        if (requestCode == REQUEST_CODE_UPDATE_ACCOUNT && resultCode == Constant.RESULT_CODE_UPDATE_ACCOUNT) {
+            mAccountObject = mWebSocketService.getFullAccount(mAccountName).account;
+            mRefreshLayout.autoRefresh();
         }
     }
 
