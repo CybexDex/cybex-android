@@ -193,6 +193,9 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
             OpenOrderItem item = new OpenOrderItem();
             item.limitOrder = limitOrder;
             AssetsPair assetsPair = AssetPairCache.getInstance().getAssetPair(limitOrder.key.asset1, limitOrder.key.asset2);
+            if (assetsPair == null) {
+                continue;
+            }
             item.isSell = limitOrder.is_sell ? limitOrder.key.asset2.equals(assetsPair.getBase()) : limitOrder.key.asset1.equals(assetsPair.getBase());
             item.baseAsset = assetsPair.getBaseAsset();
             item.quoteAsset = assetsPair.getQuoteAsset();

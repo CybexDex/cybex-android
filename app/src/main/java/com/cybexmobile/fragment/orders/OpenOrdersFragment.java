@@ -540,7 +540,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
             item.limitOrder = limitOrder;
             AssetsPair assetsPair = AssetPairCache.getInstance().getAssetPair(limitOrder.key.asset1, limitOrder.key.asset2);
             if (assetsPair == null) {
-                return;
+                continue;
             }
             item.isSell = limitOrder.is_sell ? limitOrder.key.asset2.equals(assetsPair.getBase()) : limitOrder.key.asset1.equals(assetsPair.getBase());
             item.baseAsset = assetsPair.getBaseAsset();
