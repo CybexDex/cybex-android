@@ -25,6 +25,8 @@ public class RetrofitFactory {
     private static final String gateway_base_url = "https://gateway-query.cybex.io/";
     //网关测试测试服务器 暂无
     private static final String gateway_base_url_test = "https://gateway-query.cybex.io/";
+    //新网关测试地址
+    private static final String gateway_new_base_url_test = "http://47.75.48.121:8181/";
     //Eto正式服务器
     private static final String eto_base_url = "https://etoapi.cybex.io/api/";
     //Eto测试服务器
@@ -114,7 +116,7 @@ public class RetrofitFactory {
         }
         if(gatewayHttpApi == null){
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(isOfficialServer ? gateway_base_url : gateway_base_url_test)
+                    .baseUrl(isOfficialServer ? gateway_base_url : gateway_new_base_url_test)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

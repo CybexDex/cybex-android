@@ -467,6 +467,10 @@ public class BitsharesWalletWraper {
         return mWalletApi.getWithdrawDepositOperation(accountName, offset, size, fundType, asset, expiration);
     }
 
+    public Operations.gateway_login_operation getGatewayLoginOperation(String user, Date expiration) {
+        return mWalletApi.getGatewayLoginOperation(user, expiration);
+    }
+
     public Operations.balance_claim_operation getBalanceClaimOperation(long fee,
                                                                        ObjectId<AssetObject> feeAssetId,
                                                                        ObjectId<AccountObject> depositToAccount,

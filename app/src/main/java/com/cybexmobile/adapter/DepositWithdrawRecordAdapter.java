@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.provider.http.gateway.entity.GatewayNewDepositWithdrawRecordItem;
 import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
@@ -37,7 +38,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
     private final static int TYPE_CONTENT = 1;
 
     Context mContext;
-    private List<GatewayDepositWithdrawRecordsItem> mGatewayDepositWithdrawRecordsItem = new ArrayList<>();
+    private List<GatewayNewDepositWithdrawRecordItem> mGatewayDepositWithdrawRecordsItem = new ArrayList<>();
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -64,12 +65,12 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         }
     }
 
-    public DepositWithdrawRecordAdapter(Context context, List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
+    public DepositWithdrawRecordAdapter(Context context, List<GatewayNewDepositWithdrawRecordItem> gatewayDepositWithdrawRecordsItemList) {
         mContext = context;
         mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
     }
 
-    public void setData(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
+    public void setData(List<GatewayNewDepositWithdrawRecordItem> gatewayDepositWithdrawRecordsItemList) {
         mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
         notifyDataSetChanged();
     }
@@ -105,14 +106,15 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
             return;
         }
         ViewHolder viewHolder = (ViewHolder) holder;
-        GatewayDepositWithdrawRecordsItem item = mGatewayDepositWithdrawRecordsItem.get(position);
+        GatewayNewDepositWithdrawRecordItem item = mGatewayDepositWithdrawRecordsItem.get(position);
         AssetObject itemAssetObject = item.getItemAsset();
         loadImage(itemAssetObject.id.toString(), viewHolder.mAssetIcon);
-        viewHolder.mAssetSymbol.setText(item.getRecord().getCoinType());
-        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getRecord().getAmount() / Math.pow(10, itemAssetObject.precision), item.getRecord().getCoinType()));
-        viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getUpdateAt())));
-        viewHolder.mAssetStatus.setText(getStateString(item.getRecord().getState()));
-        viewHolder.mAssetAddress.setText(item.getRecord().getAddress());
+        viewHolder.mAssetSymbol.setText(item.getRecord().getAsset());
+//        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getRecord().getTotalAmount() / Math.pow(10, itemAssetObject.precision), item.getRecord().getAsset()));
+        viewHolder.mAssetAmount.setText(item.getRecord().getTotalAmount());
+        viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getCreatedAt())));
+        viewHolder.mAssetStatus.setText(item.getRecord().getStatus());
+        viewHolder.mAssetAddress.setText(item.getRecord().getOutAddr());
         if (TextUtils.isEmpty(item.getNote())) {
             viewHolder.mAssetNote.setVisibility(View.GONE);
         } else {
@@ -120,7 +122,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
             viewHolder.mAssetNote.setText(item.getNote());
         }
 
-        if (item.getRecord().getFundType().equals(Constant.WITHDRAW)) {
+        if (item.getRecord().getType().equals(Constant.WITHDRAW)) {
             viewHolder.mInOutSymbol.setImageResource(R.drawable.ic_sent_40_px);
         } else {
             viewHolder.mInOutSymbol.setImageResource(R.drawable.ic_income_40_px);
@@ -131,7 +133,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
             public void onClick(View v) {
                 if (AntiShake.check(v.getId())) { return; }
                 new IntentFactory()
-                        .action(item.getExplorerLink())
+                        .action(item.getRecord().getLink())
                         .checkLogin(true)
                         .intent(mContext);
             }

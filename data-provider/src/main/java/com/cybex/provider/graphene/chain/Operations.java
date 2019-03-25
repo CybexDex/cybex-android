@@ -977,6 +977,60 @@ public class Operations {
         }
     }
 
+    public static class gateway_login_operation implements base_operation {
+        public String expiration;
+        public transient Date expirationDate;
+        public String accountName;
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawType = new RawType();
+            String a = String.valueOf(expiration) + accountName;
+            byte[] userBytes = a.getBytes();
+//            rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(userBytes.length));
+            baseEncoder.write(userBytes);
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
+        }
+    }
+
     public static class balance_claim_operation implements base_operation {
         public Asset fee;
         public ObjectId<AccountObject> deposit_to_account;

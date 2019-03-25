@@ -27,10 +27,12 @@ import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 
 public class MainApplication extends Application {
 
+    private static MainApplication mMainApplication;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mMainApplication = this;
         String server = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_SERVER, SERVER_OFFICIAL);
         RetrofitFactory.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
         ApolloClientApi.getInstance().setOfficialServer(server.equals(SERVER_OFFICIAL));
@@ -82,5 +84,9 @@ public class MainApplication extends Application {
         config.setLocale(locale);
         context = context.createConfigurationContext(config);
         return context;
+    }
+
+    public static MainApplication getContext() {
+        return mMainApplication;
     }
 }

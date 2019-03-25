@@ -19,6 +19,7 @@ import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
+import com.cybex.provider.http.gateway.entity.GatewayNewDepositWithdrawRecordItem;
 import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
@@ -54,7 +55,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
     private Unbinder mUnbinder;
     private WebSocketService mWebSocketService;
     private AccountObject mAccountObject;
-    private List<GatewayDepositWithdrawRecordsItem> mRecordsItems = new ArrayList<>();
+    private List<GatewayNewDepositWithdrawRecordItem> mRecordsItems = new ArrayList<>();
     private DepositWithdrawRecordAdapter mDepositWithdrawRecordAdapter;
 
     private String mUserName;
@@ -228,7 +229,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
     }
 
     @Override
-    public void onLoadRecordsData(int loadMode, List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) {
+    public void onLoadRecordsData(int loadMode, List<GatewayNewDepositWithdrawRecordItem> gatewayDepositWithdrawRecordsItems) {
         hideLoadDialog();
         if (loadMode == LOAD_REFRESH) {
             mRecordsItems = gatewayDepositWithdrawRecordsItems;

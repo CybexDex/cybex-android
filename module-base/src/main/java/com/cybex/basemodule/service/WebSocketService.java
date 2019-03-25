@@ -22,6 +22,7 @@ import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.FullNodeServerSelect;
+import com.cybex.provider.graphene.chain.FullNodeServerSelect;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.http.RetrofitFactory;
@@ -35,6 +36,7 @@ import com.cybex.provider.utils.NetworkUtils;
 import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
+import com.cybex.provider.websocket.WebSocketNodeConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -89,6 +91,8 @@ import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MA
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybex.basemodule.constant.Constant.PREF_LOAD_MODE;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_MOBILE;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
 
@@ -123,6 +127,7 @@ public class WebSocketService extends Service {
     private volatile String mCurrentBaseAssetId;
 
     private boolean mIsWebSocketAvailable;
+    private boolean mIsOfficialServer;
 
     private ScheduledExecutorService mScheduled = Executors.newScheduledThreadPool(2);
     private WatchlistWorker mWatchlistWorker;
@@ -143,6 +148,7 @@ public class WebSocketService extends Service {
         mMode = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREF_LOAD_MODE, FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI);
         mName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mNetworkState = NetworkUtils.getConnectivityStatus(this);
+        mIsOfficialServer = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_SERVER, SERVER_OFFICIAL).equals(SERVER_OFFICIAL);
         RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
@@ -517,7 +523,9 @@ public class WebSocketService extends Service {
 
                 @Override
                 public void onNext(Map<String,List<AssetsPair>> assetsPairMap) {
-                    //assetsPairMap.putAll(loadContestGameData());
+                    if (mIsOfficialServer) {
+                        assetsPairMap.putAll(loadContestGameData());
+                    }
                     mAssetsPairHashMap.putAll(assetsPairMap);
                     Set<String> assetsIds = new HashSet<>();
                     for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){

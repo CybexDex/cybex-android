@@ -88,7 +88,7 @@ public class HotAssetPairRecyclerViewAdapter extends RecyclerView.Adapter<HotAss
 
     @Override
     public int getItemCount() {
-        return 3;
+        return mWatchlistData.size() < 3 ? mWatchlistData.size() : 3;
     }
 
     @Override

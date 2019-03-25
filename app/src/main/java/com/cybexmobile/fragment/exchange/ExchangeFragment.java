@@ -79,6 +79,8 @@ import static com.cybex.basemodule.constant.Constant.BUNDLE_SAVE_PRECISION_SPINN
 import static com.cybex.basemodule.constant.Constant.CYBEX_CONTEST_FLAG;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_GAME_CONTEST_TRUE;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_CLICK_NO_MORE_REMINDER;
+import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 import static com.cybex.provider.graphene.chain.Operations.ID_CREATE_LIMIT_ORDER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.ACTION_BUY;
 import static com.cybex.basemodule.constant.Constant.ACTION_SELL;
@@ -96,6 +98,8 @@ import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.basemodule.constant.Constant.REQUEST_CODE_SELECT_WATCHLIST;
 import static com.cybex.basemodule.constant.Constant.RESULT_CODE_SELECTED_WATCHLIST;
+import static com.cybex.provider.websocket.rte.RxRteWebSocket.RTE_URL;
+import static com.cybex.provider.websocket.rte.RxRteWebSocket.RTE_UTL_TEST;
 
 public class ExchangeFragment extends BaseFragment implements View.OnClickListener,
         Toolbar.OnMenuItemClickListener, TabLayout.OnTabSelectedListener, WatchlistSelectDialog.OnWatchlistSelectedListener{
@@ -131,6 +135,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
 
     private String mName;
     private boolean mIsLoginIn;
+    private String mRTEServer;
 
     private final Gson mGson = new Gson();
     private final JsonParser mJsonParser = new JsonParser();
@@ -174,6 +179,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mName = sharedPreferences.getString(PREF_NAME, "");
         mIsLoginIn = sharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
+        mRTEServer = sharedPreferences.getString(PREF_SERVER, SERVER_OFFICIAL);
         Intent intent = new Intent(getContext(), WebSocketService.class);
         getContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         initRTEWebSocket();

@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.utils.MyUtils;
@@ -199,7 +200,7 @@ public class WithdrawAddressManagerActivity extends BaseActivity implements Depo
     @Override
     public void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject) {
         Intent intent = new Intent(this, WithdrawAddressManageListActivity.class);
-        intent.putExtra("assetName", MyUtils.removeJadePrefix(depositAndWithdrawObject.getAssetObject().symbol));
+        intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
         intent.putExtra("assetId", depositAndWithdrawObject.getId());
         intent.putExtra("tag", depositAndWithdrawObject.isTag());
         startActivity(intent);

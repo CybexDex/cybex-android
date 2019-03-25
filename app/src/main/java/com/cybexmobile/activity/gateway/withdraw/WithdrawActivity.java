@@ -40,6 +40,7 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.MessageCallback;
@@ -51,6 +52,7 @@ import com.cybex.provider.apollo.ApolloClientApi;
 import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
+import com.cybexmobile.data.GatewayLogInRecordRequest;
 import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
@@ -73,6 +75,8 @@ import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybexmobile.shake.AntiShake;
 import com.cybexmobile.utils.DecimalDigitsInputFilter;
 import com.cybex.basemodule.utils.SoftKeyBoardListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -82,6 +86,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -93,10 +99,16 @@ import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.OnTouch;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
@@ -137,6 +149,7 @@ public class WithdrawActivity extends BaseActivity {
     private List<Address> mAddresses;
     private FeeAmountObject mFeeAmountObject;
     private String mMemo;
+    private String mSignature;
 
     //private boolean
 
@@ -742,40 +755,100 @@ public class WithdrawActivity extends BaseActivity {
         if (TextUtils.isEmpty(address)) {
             return;
         }
-        ApolloQueryWatcher<VerifyAddress.Data> apolloQueryWatcher = ApolloClientApi.getInstance().client()
-                .query(VerifyAddress.builder().address(address).asset(mAssetName).accountName(mUserName).build())
-                .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST);
-        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryWatcher)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Response<VerifyAddress.Data>>() {
-                    @Override
-                    public void accept(Response<VerifyAddress.Data> response) throws Exception {
-                        VerifyAddress.Data verifyAddressData = response.data();
-                        if (verifyAddressData == null) {
-                            return;
-                        }
-                        if (!verifyAddressData.verifyAddress().fragments().withdrawAddressInfo().valid()) {
-                            mIsAddressInvalidate = false;
-                            mPbLoading.setVisibility(View.INVISIBLE);
-                            mIvAddressCheck.setVisibility(View.VISIBLE);
-                            mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
-                            resetWithdrawBtnState();
-                        } else {
-                            mIsAddressInvalidate = true;
-                            mPbLoading.setVisibility(View.INVISIBLE);
-                            mIvAddressCheck.setVisibility(View.VISIBLE);
-                            mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
-                            resetWithdrawBtnState();
-                            displayFee();
-                        }
+        mCompositeDisposable.add(
+                Observable.create((ObservableOnSubscribe<Operations.gateway_login_operation>) emitter -> {
+                    Date expiration = getExpiration();
+                    Operations.gateway_login_operation operation = BitsharesWalletWraper.getInstance().getGatewayLoginOperation(mUserName, expiration);
+                    mSignature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
+                    if (!emitter.isDisposed()) {
+                        emitter.onNext(operation);
+                        emitter.onComplete();
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+                })
+                        .concatMap((Function<Operations.gateway_login_operation, ObservableSource<ResponseBody>>) gatewayLoginOperation -> {
+                            GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(gatewayLoginOperation, mSignature);
+                            Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
+                            Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
+                            return RetrofitFactory.getInstance()
+                                    .apiGateway()
+                                    .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
+                        })
+                        .concatMap((Function<ResponseBody, Observable<JsonObject>>) responseBody ->
+                                RetrofitFactory.getInstance()
+                                        .apiGateway()
+                                        .verifyAddress(
+                                                "application/json",
+                                                "bearer " + mSignature,
+                                                mAssetName,
+                                                address))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                jsonObject -> {
+                                    if (jsonObject == null) {
+                                        return;
+                                    }
+                                    if (jsonObject.get("valid").getAsBoolean()) {
+                                        mIsAddressInvalidate = true;
+                                        mPbLoading.setVisibility(View.INVISIBLE);
+                                        mIvAddressCheck.setVisibility(View.VISIBLE);
+                                        mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
+                                        resetWithdrawBtnState();
+                                        displayFee();
+                                    } else {
+                                        mIsAddressInvalidate = false;
+                                        mPbLoading.setVisibility(View.INVISIBLE);
+                                        mIvAddressCheck.setVisibility(View.VISIBLE);
+                                        mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
+                                        resetWithdrawBtnState();
+                                    }
+                                },
+                                throwable -> {
+                                    mIsAddressInvalidate = false;
+                                    mPbLoading.setVisibility(View.INVISIBLE);
+                                    mIvAddressCheck.setVisibility(View.VISIBLE);
+                                    mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
+                                    resetWithdrawBtnState();
+                                }
+                        )
 
-                    }
-                }));
+        );
+
+
+//        ApolloQueryWatcher<VerifyAddress.Data> apolloQueryWatcher = ApolloClientApi.getInstance().client()
+//                .query(VerifyAddress.builder().address(address).asset(mAssetName).accountName(mUserName).build())
+//                .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST);
+//        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryWatcher)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<Response<VerifyAddress.Data>>() {
+//                    @Override
+//                    public void accept(Response<VerifyAddress.Data> response) throws Exception {
+//                        VerifyAddress.Data verifyAddressData = response.data();
+//                        if (verifyAddressData == null) {
+//                            return;
+//                        }
+//                        if (!verifyAddressData.verifyAddress().fragments().withdrawAddressInfo().valid()) {
+//                            mIsAddressInvalidate = false;
+//                            mPbLoading.setVisibility(View.INVISIBLE);
+//                            mIvAddressCheck.setVisibility(View.VISIBLE);
+//                            mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
+//                            resetWithdrawBtnState();
+//                        } else {
+//                            mIsAddressInvalidate = true;
+//                            mPbLoading.setVisibility(View.INVISIBLE);
+//                            mIvAddressCheck.setVisibility(View.VISIBLE);
+//                            mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
+//                            resetWithdrawBtnState();
+//                            displayFee();
+//                        }
+//                    }
+//                }, new Consumer<Throwable>() {
+//                    @Override
+//                    public void accept(Throwable throwable) throws Exception {
+//
+//                    }
+//                }));
     }
 
     private void setAvailableAmount(double availableAmount, String assetName) {
@@ -945,6 +1018,20 @@ public class WithdrawActivity extends BaseActivity {
 
                     }
                 }));
+    }
+
+    private Date getExpiration() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MINUTE, 20);
+        return calendar.getTime();
+    }
+
+    private GatewayLogInRecordRequest createLogInRequest(Operations.gateway_login_operation operation, String signature) {
+        GatewayLogInRecordRequest gatewayLogInRecordRequest = new GatewayLogInRecordRequest();
+        gatewayLogInRecordRequest.setOp(operation);
+        gatewayLogInRecordRequest.setSigner(signature);
+        return gatewayLogInRecordRequest;
     }
 
     @Override

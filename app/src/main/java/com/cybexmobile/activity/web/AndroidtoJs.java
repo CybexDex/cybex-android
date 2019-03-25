@@ -184,7 +184,7 @@ public class AndroidtoJs extends Object {
     private Date getExpiration() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.MINUTE, 5);
+        calendar.add(Calendar.MINUTE, 15);
         return calendar.getTime();
     }
 
