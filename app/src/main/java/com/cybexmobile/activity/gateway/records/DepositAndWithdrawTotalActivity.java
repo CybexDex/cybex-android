@@ -16,13 +16,11 @@ import android.text.TextUtils;
 import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
-import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybexmobile.R;
-import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
 import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
@@ -33,12 +31,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import org.ethereum.config.ConstantsAdapter;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;

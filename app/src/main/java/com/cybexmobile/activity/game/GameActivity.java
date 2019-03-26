@@ -32,7 +32,7 @@ import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
@@ -43,7 +43,6 @@ import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 

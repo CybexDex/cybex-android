@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.cybex.basemodule.base.BaseActivity;
@@ -24,7 +23,6 @@ import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.PublicKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.market.WatchlistData;
-import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.Types;
@@ -32,10 +30,8 @@ import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
-import com.cybexmobile.activity.transfer.TransferActivity;
 import com.cybexmobile.adapter.CommonRecyclerViewAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
@@ -45,7 +41,6 @@ import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.LockAssetObject;
-import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.basemodule.service.WebSocketService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,9 +54,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import io.enotes.sdk.repository.card.CommandException;
@@ -84,6 +82,7 @@ import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
+import static com.cybex.basemodule.constant.Constant.PREF_ADDRESS_TO_PUB_MAP;
 import static com.cybex.provider.graphene.chain.Operations.ID_BALANCE_CLAIM_OPERATION;
 
 public class LockAssetsActivity extends BaseActivity implements CommonRecyclerViewAdapter.OnClickLockAssetItemListener {
@@ -140,20 +139,20 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
             try {
                 if (cardManager.getTransactionPinStatus() == 0) {
                     mUnlockDialogWithEnotes.dismiss();
-                    if (mAddresses.size() == 0) {
-                        loadData(card);
-                    } else {
+//                    if (mAddresses.size() == 0) {
+//                        loadData(card);
+//                    } else {
                         broadcastOperation(mCurrentLockAssetItem);
-                    }
+//                    }
                 } else {
                     final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
                     if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
                         mUnlockDialogWithEnotes.dismiss();
-                        if (mAddresses.size() == 0) {
-                            loadData(card);
-                        } else {
+//                        if (mAddresses.size() == 0) {
+//                            loadData(card);
+//                        } else {
                             broadcastOperation(mCurrentLockAssetItem);
-                        }
+//                        }
                     }
                 }
             } catch (CommandException e) {
@@ -217,45 +216,17 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
             return;
         }
         if (isLoginFromENotes()) {
-            mUnlockDialogWithEnotes = CybexDialog.showUnlockWithEnotesWalletDialog(getSupportFragmentManager(), mAccountObject, userName,
-                    new UnlockDialogWithEnotes.UnLockDialogClickListener() {
-                        @Override
-                        public void onUnLocked(String password) {
-                            if (password != null) {
-                                loadData(userName, password);
-                            }
-                        }
-                    }, new UnlockDialogWithEnotes.OnDismissListener() {
-                        @Override
-                        public void onDismiss(int result) {
-
-                        }
-                    });
+            loadData(getPublicKeyFromCard());
         } else {
-            if (BitsharesWalletWraper.getInstance().is_locked()) {
-                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject,
-                        userName, new UnlockDialog.UnLockDialogClickListener() {
-                            @Override
-                            public void onUnLocked(String password) {
-                                showLoadDialog(true);
-                                loadData(userName, password);
-                            }
-                        });
-            } else {
-                showLoadDialog(true);
-                loadData(userName, BitsharesWalletWraper.getInstance().getPassword());
-            }
+            loadData(SpUtil.getMap(this,PREF_ADDRESS_TO_PUB_MAP));
         }
     }
 
-    private void loadData(String name, String password) {
-        Observable.create(new ObservableOnSubscribe<List<String>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<String>> e) {
-                e.isDisposed();
-                e.onNext(BitsharesWalletWraper.getInstance().getAddressList(name, password));
-                e.onComplete();
-            }
+    private void loadData(Map<String, Types.public_key_type> map) {
+        Observable.create((ObservableOnSubscribe<List<String>>) e -> {
+            e.isDisposed();
+            e.onNext(getAddressListFromMap(map));
+            e.onComplete();
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -292,51 +263,6 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
                     }
                 });
 
-    }
-
-    private void loadData(Card card) {
-        Observable.create(new ObservableOnSubscribe<List<String>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<String>> e) {
-                e.isDisposed();
-                e.onNext(BitsharesWalletWraper.getInstance().getAddressListFromPublicKey(card));
-                e.onComplete();
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<String>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.v(TAG, "onSubscribe");
-                    }
-
-                    @Override
-                    public void onNext(List<String> strings) {
-                        Log.v(TAG, "onNext");
-
-                        mAddresses.clear();
-                        mAddresses.addAll(strings);
-
-                        try {
-                            BitsharesWalletWraper.getInstance().get_balance_objects(mAddresses, mLockupAssetCallback);
-                        } catch (NetworkStatusException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.v(TAG, "onError");
-                        hideLoadDialog();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.v(TAG, "onComplete");
-
-                    }
-                });
     }
 
     private void initViews() {
@@ -553,7 +479,7 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
             public_key_type = new Types.public_key_type(new PublicKey(mCard.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
 
         } else {
-            public_key_type = BitsharesWalletWraper.getInstance().getPublicKeyFromAddress(lockAssetItem.lockAssetobject.owner);
+            public_key_type = getPublicKeyFromAddress(lockAssetItem.lockAssetobject.owner);
         }
         try {
             Operations.balance_claim_operation operation = BitsharesWalletWraper.getInstance().getBalanceClaimOperation(
@@ -627,15 +553,35 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
             if (mLockAssetItems != null && mLockAssetItems.size() > 0) {
                 mLockAssetItems.clear();
                 if (isLoginFromENotes() && !mIsUsedCloudPassword) {
-                    loadData(mName, BitsharesWalletWraper.getInstance().getPassword());
+                    loadData(getPublicKeyFromCard());
                 } else {
-                    loadData(mCard);
+                    loadData(SpUtil.getMap(this, PREF_ADDRESS_TO_PUB_MAP));
                 }
             }
         } else {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
                     R.string.toast_message_balance_claim_failed), R.drawable.ic_error_16px);
         }
+    }
+
+    private List<String> getAddressListFromMap(Map<String, Types.public_key_type> map) {
+        List<String> addressList = new ArrayList<>();
+        for (Map.Entry<String, Types.public_key_type> entry : map.entrySet()) {
+            addressList.add(entry.getKey());
+        }
+        return addressList;
+    }
+
+    private Types.public_key_type getPublicKeyFromAddress(String address) {
+        Map<String, Types.public_key_type> map = SpUtil.getMap(this, PREF_ADDRESS_TO_PUB_MAP);
+        if (map != null) {
+            for (Map.Entry<String, Types.public_key_type> entry : map.entrySet() ) {
+                if (entry.getKey().equals(address)) {
+                    return entry.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     @Override

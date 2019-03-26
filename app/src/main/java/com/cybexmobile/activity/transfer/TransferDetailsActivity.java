@@ -12,12 +12,11 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.R;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;
-import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.MemoData;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.basemodule.utils.AssetUtil;
@@ -27,7 +26,6 @@ import com.cybex.basemodule.utils.DateUtils;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.cybex.basemodule.R;
 import com.cybex.basemodule.R2;
 import com.cybex.provider.graphene.chain.AccountObject;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 
 import at.grabner.circleprogress.CircleProgressView;
 import butterknife.BindView;

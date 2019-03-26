@@ -41,14 +41,14 @@ import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybexmobile.activity.address.AddTransferAccountActivity;
 import com.cybex.provider.apollo.ApolloClientApi;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
-import com.cybex.provider.websocket.WebSocketClient;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.dialog.CommonSelectDialog;
@@ -84,6 +84,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,6 +101,7 @@ import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_TAG;
+import static com.cybex.basemodule.constant.Constant.PREF_ADDRESS_TO_PUB_MAP;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_ID;
@@ -890,18 +892,27 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void checkWithdrawAuthority(AccountObject accountObject, String password) {
+        Map<String, Types.public_key_type> map = SpUtil.getMap(this, PREF_ADDRESS_TO_PUB_MAP);
         Types.public_key_type memoKey = accountObject.options.memo_key;
-        PrivateKey privateMemoKey = PrivateKey.from_seed(mUserName + "memo" + password);
-        PrivateKey privateActiveKey = PrivateKey.from_seed(mUserName + "active" + password);
-        PrivateKey privateOwnerKey = PrivateKey.from_seed(mUserName + "owner" + password);
-        Types.public_key_type publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true);
-        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
-        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
-        if (!memoKey.toString().equals(publicMemoKeyType.toString()) && !accountObject.active.is_public_key_type_exist(publicActiveKeyType) &&
-                !accountObject.active.is_public_key_type_exist(publicOwnerKeyType)) {
-            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
+        for (Map.Entry<String, Types.public_key_type> entry : map.entrySet()) {
+            if (memoKey.equals(entry.getValue())) {
+                displayFee();
+                return;
+            }
         }
-        displayFee();
+        ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
+
+
+//        PrivateKey privateMemoKey = PrivateKey.from_seed(mUserName + "memo" + password);
+//        PrivateKey privateActiveKey = PrivateKey.from_seed(mUserName + "active" + password);
+//        PrivateKey privateOwnerKey = PrivateKey.from_seed(mUserName + "owner" + password);
+//        Types.public_key_type publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true);
+//        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
+//        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
+//        if (!memoKey.toString().equals(publicMemoKeyType.toString()) && !accountObject.active.is_public_key_type_exist(publicActiveKeyType) &&
+//                !accountObject.active.is_public_key_type_exist(publicOwnerKeyType)) {
+//            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
+//        }
 
     }
 

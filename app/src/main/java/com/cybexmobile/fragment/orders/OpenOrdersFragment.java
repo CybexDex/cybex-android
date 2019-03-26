@@ -31,7 +31,7 @@ import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.OpenOrderRecyclerViewAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybexmobile.data.item.OpenOrderItem;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
@@ -53,7 +53,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

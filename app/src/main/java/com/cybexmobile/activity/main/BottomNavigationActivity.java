@@ -30,7 +30,7 @@ import com.cybex.provider.http.entity.AppVersion;
 import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.SpUtil;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.R;

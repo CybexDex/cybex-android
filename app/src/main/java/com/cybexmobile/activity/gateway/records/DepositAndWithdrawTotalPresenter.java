@@ -18,7 +18,7 @@ import com.cybex.provider.http.entity.BlockerExplorer;
 import com.cybex.provider.http.entity.Record;
 import com.cybex.provider.http.response.GateWayAssetInRecordsResponse;
 import com.cybex.provider.http.response.GateWayRecordsResponse;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybexmobile.R;
 import com.cybexmobile.data.GatewayLogInRecordRequest;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;

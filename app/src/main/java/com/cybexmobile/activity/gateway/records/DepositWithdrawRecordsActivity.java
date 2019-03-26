@@ -22,10 +22,9 @@ import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.http.entity.BlockerExplorer;
 import com.cybexmobile.R;
-import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
 import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.adapter.DepositWithdrawRecordAdapter;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.response.GateWayRecordsResponse;
 import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
@@ -33,7 +32,6 @@ import com.cybexmobile.data.GatewayLogInRecordRequest;
 import com.cybex.provider.http.entity.Record;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
-import com.cybex.basemodule.event.Event;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
@@ -46,8 +44,6 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

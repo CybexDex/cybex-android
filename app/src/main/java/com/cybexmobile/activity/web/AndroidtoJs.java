@@ -19,7 +19,7 @@ import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.ObjectId;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.data.GameJson;

@@ -65,6 +65,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.enotes.sdk.core.CardManager;
@@ -103,9 +104,9 @@ public class WalletApi {
     private wallet_object mWalletObject;
     private boolean mbLogin = false;
     private HashMap<Types.public_key_type, Types.private_key_type> mHashMapPub2Priv = new HashMap<>();
+    private Map<String, Types.public_key_type> mMapAddress2Pub = new ConcurrentHashMap<>();
     private Types.private_key_type mMemoPrivateKey;
     private Sha512Object mCheckSum = new Sha512Object();
-    private String unCompressedOwnerKey;
     private Context mContext;
     static class plain_keys {
         Map<Types.public_key_type, String> keys;
@@ -186,11 +187,8 @@ public class WalletApi {
     }
 
     public boolean is_locked() {
-        if (mWalletObject.cipher_keys.array().length > 0 &&
-                mCheckSum.equals(new Sha512Object())) {
-            return true;
-        }
-        return false;
+        return mWalletObject.cipher_keys == null || mCheckSum == null || (mWalletObject.cipher_keys.array().length > 0 &&
+                mCheckSum.equals(new Sha512Object()));
     }
 
     private void encrypt_keys() {
@@ -558,6 +556,7 @@ public class WalletApi {
         if (accountObject == null) {
             return ErrorCode.ERROR_NO_ACCOUNT_OBJECT;
         }
+        mMapAddress2Pub.clear();
         PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
         PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
         PrivateKey privateMemoKey = PrivateKey.from_seed(strAccountName + "memo" + strPassword);
@@ -571,14 +570,23 @@ public class WalletApi {
         Types.public_key_type publicMemoKeyTypeUnCompressed = new Types.public_key_type(privateMemoKey.get_public_key(false), false);
 
         String address = publicActiveKeyType.getAddress();
+        mMapAddress2Pub.put(address, publicActiveKeyType);
         String ownerAddress = publicOwnerKeyType.getAddress();
+        mMapAddress2Pub.put(ownerAddress, publicOwnerKeyType);
         String memoAddress = publicMemoKeyType.getAddress();
+        mMapAddress2Pub.put(memoAddress, publicMemoKeyType);
         String PTSAddress = publicActiveKeyType.getPTSAddress(publicActiveKeyType.key_data);
+        mMapAddress2Pub.put(PTSAddress, publicActiveKeyType);
         String ownerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
+        mMapAddress2Pub.put(ownerPtsAddress, publicOwnerKeyType);
         String memoPtsAddress = publicMemoKeyType.getPTSAddress(publicMemoKeyType.key_data);
+        mMapAddress2Pub.put(memoPtsAddress, publicMemoKeyType);
         String uncompressedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
-        unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
+        mMapAddress2Pub.put(uncompressedPts, publicActiveKeyType);
+        String unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
+        mMapAddress2Pub.put(unCompressedOwnerKey, publicOwnerKeyType);
         String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
+        mMapAddress2Pub.put(unCompressedMemo, publicMemoKeyType);
         Log.v("Address", address);
         Log.v("OwnerAddress", ownerAddress);
         Log.v("ActivePTSAddress", PTSAddress);
@@ -610,6 +618,10 @@ public class WalletApi {
         mHashMapPub2Priv.put(publicMemoKeyType, new Types.private_key_type(privateMemoKey));
 
         return 0;
+    }
+
+    public Map<String, Types.public_key_type> getMapAddress2Pub() {
+        return mMapAddress2Pub;
     }
 
 //    public Asset transfer_calculate_fee(String strAmount,

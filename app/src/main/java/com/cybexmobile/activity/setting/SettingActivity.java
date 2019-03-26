@@ -29,7 +29,8 @@ import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.entity.AppVersion;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
+import com.cybex.provider.utils.SpUtil;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
@@ -59,8 +60,8 @@ import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MAR
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOAD_MODE;
+import static com.cybex.basemodule.constant.Constant.PREF_ADDRESS_TO_PUB_MAP;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_CARD_PASSWORD_SET;
-import static com.cybex.basemodule.constant.Constant.PREF_IS_CLOUD_PASSWORD_SET;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.PREF_LOAD_MODE;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
@@ -272,12 +273,16 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
         mSharedPreference.edit().putString(PREF_NAME, null).apply();
         mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
+        SpUtil.putMap(this,PREF_ADDRESS_TO_PUB_MAP, null);
+        SpUtil.putMap(this, "eNotesCardMap", null);
         setLoginFrom(false);
+        setLoginPublicKey("");
+        setPublicKeyFromCard(null);
         /**
          * fix bug:CYM-558
          * 转账存在锁定期，在锁定期页面没有显示出来
          */
-        BitsharesWalletWraper.getInstance().clearAddressesForLockAsset();
+//        BitsharesWalletWraper.getInstance().clearAddressesForLockAsset();
         EventBus.getDefault().post(new Event.LoginOut());
         finish();
     }

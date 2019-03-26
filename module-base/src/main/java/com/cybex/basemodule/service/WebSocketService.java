@@ -30,7 +30,7 @@ import com.cybex.provider.http.response.AssetsPairToppingResponse;
 import com.cybex.provider.http.response.CnyResponse;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.NetworkUtils;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.google.gson.Gson;
@@ -45,7 +45,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.reactivestreams.Publisher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;

@@ -1,8 +1,13 @@
-package com.cybex.provider.websocket;
+package com.cybex.basemodule;
 
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.alibaba.android.arouter.utils.MapUtils;
+import com.cybex.basemodule.base.BaseActivity;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.Asset;
@@ -18,13 +23,16 @@ import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.LockAssetObject;
 import com.cybex.provider.graphene.chain.MemoData;
 import com.cybex.provider.graphene.chain.ObjectId;
-import com.cybex.provider.graphene.chain.AccountHistoryObject;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.PublicKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.graphene.chain.MarketTicker;
+import com.cybex.provider.utils.SpUtil;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
+import com.cybex.provider.websocket.WalletApi;
 
 import java.io.File;
 import java.text.ParseException;
@@ -34,8 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,7 +52,6 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 
 public class BitsharesWalletWraper {
 
@@ -97,7 +102,7 @@ public class BitsharesWalletWraper {
     }
 
     public boolean is_locked() {
-        return password == null;
+        return mWalletApi.is_locked();
     }
 
     public int load_wallet_file() {
@@ -243,7 +248,9 @@ public class BitsharesWalletWraper {
             for (AccountObject account : list_my_accounts()) {
                 mMapAccountId2Object.put(account.id, account);
             }
+            SpUtil.putMap(BaseActivity.getContext(), Constant.PREF_ADDRESS_TO_PUB_MAP, mWalletApi.getMapAddress2Pub());
             password = strPassword;
+            unlock(strPassword);
             startLockWalletTimer();
         }
         return nRet;
@@ -258,20 +265,10 @@ public class BitsharesWalletWraper {
         return mWalletApi.lock();
     }
 
-    public void startLockWalletTimer() {
-        lockWalletDisposable = Flowable.intervalRange(0, 1, 1, 1, TimeUnit.MINUTES)
+    private void startLockWalletTimer() {
+        lockWalletDisposable = Flowable.intervalRange(0, 0, 10, 0, TimeUnit.MINUTES)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        password = null;
-                    }
-                })
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                    }
-                })
+                .doOnComplete(this::lock)
                 .doOnCancel(new Action() {
                     @Override
                     public void run() throws Exception {
@@ -280,6 +277,7 @@ public class BitsharesWalletWraper {
                 })
                 .subscribe();
     }
+
 
     public void cancelLockWalletTime() {
         if (lockWalletDisposable != null && !lockWalletDisposable.isDisposed()) {
@@ -778,96 +776,8 @@ public class BitsharesWalletWraper {
         mWalletApi.get_dynamic_global_properties(callback);
     }
 
-    private List<String> getAddressesForLockAsset(String strAccountName, String strPassword) {
-        PrivateKey privateActiveKey = PrivateKey.from_seed(strAccountName + "active" + strPassword);
-        PrivateKey privateOwnerKey = PrivateKey.from_seed(strAccountName + "owner" + strPassword);
-        PrivateKey privateMemoKey = PrivateKey.from_seed(strAccountName + "memo" + strPassword);
-
-        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
-        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
-        Types.public_key_type publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true);
-
-        Types.public_key_type publicActiveKeyTypeUnCompressed = new Types.public_key_type(privateActiveKey.get_public_key(false), false);
-        Types.public_key_type publicOwnerKeyTypeUnCompressed = new Types.public_key_type(privateOwnerKey.get_public_key(false), false);
-        Types.public_key_type publicMemoKeyTypeUnCompressed = new Types.public_key_type(privateMemoKey.get_public_key(false), false);
-
-        String address = publicActiveKeyType.getAddress();
-        addressList.add(address);
-        mMapAddress2PublicKey.put(address, publicActiveKeyType);
-        String ownerAddress = publicOwnerKeyType.getAddress();
-        addressList.add(ownerAddress);
-        mMapAddress2PublicKey.put(ownerAddress, publicOwnerKeyType);
-        String memoAddress = publicMemoKeyType.getAddress();
-        addressList.add(memoAddress);
-        mMapAddress2PublicKey.put(memoAddress, publicMemoKeyType);
-        String PTSAddress = publicActiveKeyType.getPTSAddress(publicActiveKeyType.key_data);
-        addressList.add(PTSAddress);
-        mMapAddress2PublicKey.put(PTSAddress, publicActiveKeyType);
-        String ownerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
-        addressList.add(ownerPtsAddress);
-        mMapAddress2PublicKey.put(ownerPtsAddress, publicOwnerKeyType);
-        String memoPtsAddress = publicMemoKeyType.getPTSAddress(publicMemoKeyType.key_data);
-        addressList.add(memoPtsAddress);
-        mMapAddress2PublicKey.put(memoPtsAddress, publicMemoKeyType);
-        String unCompressedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
-        addressList.add(unCompressedPts);
-        mMapAddress2PublicKey.put(unCompressedPts, publicActiveKeyType);
-        String unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
-        addressList.add(unCompressedOwnerKey);
-        mMapAddress2PublicKey.put(unCompressedOwnerKey, publicOwnerKeyType);
-        String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
-        addressList.add(unCompressedMemo);
-        mMapAddress2PublicKey.put(unCompressedMemo, publicMemoKeyType);
-        Log.e("Address", address);
-        Log.e("OwnerAddress", ownerAddress);
-        Log.e("ActivePTSAddress", PTSAddress);
-        Log.e("OwnerPtsAddress", ownerPtsAddress);
-        Log.e("MemoAddress", memoAddress);
-        Log.e("MemoPTSAddress", memoPtsAddress);
-        Log.e("uncompressedActive", unCompressedPts);
-        Log.e("uncompressedOwner", unCompressedOwnerKey);
-        Log.e("uncompressedMemo", unCompressedMemo);
-        return addressList;
-    }
-
-    public List<String> getAddressListFromPublicKey(Card card) {
-        if (addressListFromPublicKey.size() != 0) {
-            return addressListFromPublicKey;
-        } else {
-            Types.public_key_type public_key_type_compress = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
-            Types.public_key_type public_key_type_uncompress = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(false), false), false);
-            addressListFromPublicKey.add(public_key_type_compress.getAddress());
-            addressListFromPublicKey.add(public_key_type_uncompress.getAddress());
-            addressListFromPublicKey.add(public_key_type_compress.getPTSAddress(public_key_type_compress.key_data));
-            addressListFromPublicKey.add(public_key_type_uncompress.getPTSAddress(public_key_type_uncompress.key_data_uncompressed));
-            return addressListFromPublicKey;
-        }
-    }
-
-    public List<String> getAddressList(String userName, String passWord) {
-        if (addressList.size() != 0) {
-            return addressList;
-        } else {
-            return getAddressesForLockAsset(userName, passWord);
-        }
-    }
-
-    public Types.public_key_type getPublicKeyFromAddress(String address) {
-        if (!mMapAddress2PublicKey.isEmpty()) {
-            for (Map.Entry<String, Types.public_key_type> entry : mMapAddress2PublicKey.entrySet() ) {
-                if (entry.getKey().equals(address)) {
-                    return entry.getValue();
-                }
-            }
-        }
-        return null;
-    }
     public String getPassword() {
         return password;
-    }
-
-    public void clearAddressesForLockAsset(){
-        addressList.clear();
     }
 
 }

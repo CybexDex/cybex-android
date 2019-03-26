@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.provider.exception.NetworkStatusException;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;

@@ -36,7 +36,7 @@ import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.utils.SpUtil;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
@@ -55,7 +55,6 @@ import io.enotes.sdk.repository.card.CommandException;
 import io.enotes.sdk.repository.db.entity.Card;
 import io.enotes.sdk.utils.ReaderUtils;
 
-import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.provider.graphene.chain.Operations.ID_UPDATE_ACCOUNT_OPERATION;
 

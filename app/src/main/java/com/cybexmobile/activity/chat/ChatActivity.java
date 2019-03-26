@@ -47,10 +47,9 @@ import com.cybex.provider.graphene.websocket.WebSocketFailure;
 import com.cybex.provider.graphene.websocket.WebSocketMessage;
 import com.cybex.provider.graphene.websocket.WebSocketOpen;
 import com.cybex.provider.graphene.chat.ChatSubscribe;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.chat.RxChatWebSocket;
 import com.cybexmobile.R;
-import com.cybexmobile.activity.gateway.withdraw.WithdrawActivity;
 import com.cybexmobile.activity.login.LoginActivity;
 import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 import com.cybexmobile.adapter.ChatRecyclerViewAdapter;
@@ -61,8 +60,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

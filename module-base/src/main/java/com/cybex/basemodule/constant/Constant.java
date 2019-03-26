@@ -77,6 +77,7 @@ public class Constant {
     public static final String PREF_PARAM_UNLOCK_BY_CARDS = "pref_param_unlock_by_cards";
     public static final String PREF_IS_CLOUD_PASSWORD_SET = "pref_is_cloud_password_set";
     public static final String PREF_IS_CARD_PASSWORD_SET = "pref_is_card_password_set";
+    public static final String PREF_ADDRESS_TO_PUB_MAP = "pref_address_to_pub_map";
 
     /**
      *

@@ -3,6 +3,7 @@ package com.cybex.basemodule.base;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -50,7 +51,7 @@ import com.cybex.provider.graphene.chain.PublicKey;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybex.provider.utils.SpUtil;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.tbruyelle.rxpermissions2.Permission;
@@ -62,9 +63,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.enotes.sdk.constant.ErrorCode;
 import io.enotes.sdk.constant.Status;
@@ -105,6 +109,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private String mUserName;
     private boolean mIsLoggedIn;
     private SharedPreferences mSharedPreferences;
+    private static Application mContext;
 
 
     protected Dialog dialog;
@@ -119,6 +124,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getApplication();
         Log.d(TAG, "onCreate");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -138,6 +144,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         setCardReaderCallback();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         EventBus.getDefault().register(this);
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     private void setCardReaderCallback() {
@@ -176,8 +186,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         cardApp = card;
         mUserName = mSharedPreferences.getString(PREF_NAME, "");
         mIsLoggedIn = mSharedPreferences.getBoolean(PREF_IS_LOGIN_IN, false);
-        Types.public_key_type public_key_type = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
-        Log.i("eNotes", public_key_type.toString());
         tagLostCount = 0;
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
@@ -232,8 +240,18 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
             return;
         }
+        Types.public_key_type typesPublicKey = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
+        Types.public_key_type unCompressedPublicKey = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(false), false), false);
+        Map<String, Types.public_key_type> mapForPublicKeyFromEnotes = new ConcurrentHashMap<>();
+        mapForPublicKeyFromEnotes.put(typesPublicKey.getAddress(), typesPublicKey);
+        mapForPublicKeyFromEnotes.put(typesPublicKey.getPTSAddress(typesPublicKey.key_data), typesPublicKey);
+        mapForPublicKeyFromEnotes.put(unCompressedPublicKey.getAddress(), typesPublicKey);
+        mapForPublicKeyFromEnotes.put(unCompressedPublicKey.getPTSAddress(unCompressedPublicKey.key_data_uncompressed), typesPublicKey);
+
+        Log.i("eNotes", typesPublicKey.toString());
         if (cardManager.getTransactionPinStatus() == 0) {
             setLoginPublicKey(card.getCurrencyPubKey());
+            setPublicKeyFromCard(mapForPublicKeyFromEnotes);
             Log.e("pinStatus", "noPin");
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -262,6 +280,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                             map.put(card.getId(), cardPassword);
                                             SpUtil.putMap(BaseActivity.this, "eNotesCardMap", map);
                                             setLoginPublicKey(card.getCurrencyPubKey());
+                                            setPublicKeyFromCard(mapForPublicKeyFromEnotes);
                                             new Handler().postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -290,6 +309,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 String cardPasswordFromSp = cardIdToCardPasswordMap.get(card.getId());
                 if (cardManager.verifyTransactionPin(cardPasswordFromSp)) {
                     setLoginPublicKey(card.getCurrencyPubKey());
+                    setPublicKeyFromCard(mapForPublicKeyFromEnotes);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -393,6 +413,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    protected Map<String, Types.public_key_type> getPublicKeyFromCard() {
+        return SpUtil.getMap(this, "publicKeyFromEnotes");
+    }
+
+    protected void setPublicKeyFromCard(Map<String, Types.public_key_type> map) {
+        SpUtil.putMap(this, "publicKeyFromEnotes", map);
+    }
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);

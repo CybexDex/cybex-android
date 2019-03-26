@@ -40,10 +40,9 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.http.entity.EtoProject;
 import com.cybex.provider.http.entity.EtoUserCurrentStatus;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
-import com.cybex.provider.websocket.WebSocketClient;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

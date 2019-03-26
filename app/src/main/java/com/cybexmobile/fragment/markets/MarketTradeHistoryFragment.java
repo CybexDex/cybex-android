@@ -17,7 +17,7 @@ import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.MarketTrade;
 import com.cybex.provider.market.WatchlistData;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;

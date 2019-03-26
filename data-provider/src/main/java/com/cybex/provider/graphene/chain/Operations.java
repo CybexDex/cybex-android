@@ -1004,7 +1004,9 @@ public class Operations {
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(fee.asset_id.get_instance()));
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(deposit_to_account.get_instance()));
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(balance_to_claim.get_instance()));
-            baseEncoder.write(balance_owner_key.key_data);
+            if (balance_owner_key != null) {
+                baseEncoder.write(balance_owner_key.key_data);
+            }
             baseEncoder.write(rawObject.get_byte_array(total_claimed.amount));
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(total_claimed.asset_id.get_instance()));
         }

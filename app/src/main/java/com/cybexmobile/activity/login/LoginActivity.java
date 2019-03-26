@@ -40,22 +40,17 @@ import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.activity.register.RegisterActivity;
 import com.cybexmobile.activity.setting.SettingActivity;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybexmobile.R;
-import com.cybex.provider.websocket.WebSocketClient;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 
-import org.ethereum.util.ByteUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import io.enotes.sdk.repository.card.Command;
-import io.enotes.sdk.repository.card.CommandException;
-import io.enotes.sdk.repository.card.TLVBox;
 import io.enotes.sdk.repository.db.entity.Card;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;

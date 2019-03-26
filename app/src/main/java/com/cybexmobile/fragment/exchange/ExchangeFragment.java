@@ -32,7 +32,7 @@ import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.websocket.rte.RxRteWebSocket;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.markets.MarketsActivity;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.http.entity.AssetRmbPrice;
 import com.cybexmobile.activity.orders.ExchangeOrdersHistoryActivity;
 import com.cybexmobile.dialog.WatchlistSelectDialog;

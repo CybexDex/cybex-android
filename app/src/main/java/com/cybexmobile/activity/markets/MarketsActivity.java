@@ -31,7 +31,7 @@ import com.cybex.provider.market.HistoryPrice;
 import com.cybex.provider.market.WatchlistData;
 import com.cybex.provider.utils.MyUtils;
 import com.cybex.provider.utils.PriceUtil;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;

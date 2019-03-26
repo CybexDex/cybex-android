@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.R;
 import com.cybex.basemodule.R2;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.graphene.chain.AccountObject;
 
 import butterknife.BindView;
