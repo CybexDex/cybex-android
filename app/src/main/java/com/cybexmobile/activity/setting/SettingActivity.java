@@ -38,13 +38,20 @@ import com.cybexmobile.activity.setting.help.HelpActivity;
 import com.cybexmobile.activity.setting.language.ChooseLanguageActivity;
 import com.cybexmobile.activity.setting.theme.ChooseThemeActivity;
 import com.cybexmobile.activity.splash.SplashActivity;
+import com.cybexmobile.data.item.AccountBalanceObjectItem;
+import com.cybexmobile.dialog.CommonSelectDialog;
 import com.cybexmobile.dialog.FrequencyModeDialog;
 import com.cybexmobile.dialog.UnlockMethodSelectorDialog;
+import com.cybexmobile.dialog.UnlockTimeSelectDialog;
 import com.cybexmobile.shake.AntiShake;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +66,10 @@ import io.reactivex.schedulers.Schedulers;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_ORDINARY_MARKET;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET;
 import static com.cybex.basemodule.constant.Constant.FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOAD_MODE;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
+import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_UNLOCK_WALLET_PERIOD;
 import static com.cybex.basemodule.constant.Constant.PREF_ADDRESS_TO_PUB_MAP;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_CARD_PASSWORD_SET;
 import static com.cybex.basemodule.constant.Constant.PREF_IS_LOGIN_IN;
@@ -68,10 +78,12 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.basemodule.constant.Constant.PREF_PARAM_UNLOCK_BY_CARDS;
 import static com.cybex.basemodule.constant.Constant.PREF_PASSWORD;
 import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.PREF_UNLOCK_WALLET_PERIOD;
 import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 import static com.cybex.basemodule.constant.Constant.SERVER_TEST;
 
-public class SettingActivity extends BaseActivity implements FrequencyModeDialog.OnFrequencyModeSelectedListener, UnlockMethodSelectorDialog.OnUnlockMethodSelectedListener {
+public class SettingActivity extends BaseActivity implements FrequencyModeDialog.OnFrequencyModeSelectedListener,
+        UnlockMethodSelectorDialog.OnUnlockMethodSelectedListener, UnlockTimeSelectDialog.OnUnlockWalletPeriodSelectedListener{
 
     @BindView(R.id.setting_layout_log_in_by_card)
     LinearLayout mLogInByEnotesLayout;
@@ -85,6 +97,8 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     TextView mTvLanguage;
     @BindView(R.id.setting_tv_frequency)
     TextView mTvFrequency;
+    @BindView(R.id.setting_tv_lock_time)
+    TextView mTvLockTime;
     @BindView(R.id.setting_tv_version)
     TextView mTvVersion;
     @BindView(R.id.setting_tv_theme)
@@ -103,6 +117,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
     private SharedPreferences mSharedPreference;
     private Unbinder mUnbinder;
     private int mMode;
+    private int mSelectedUnlockPeriod;
     private String mName;
     private boolean mIsCardPasswordSet;
     private WebSocketService mWebSocketService;
@@ -138,6 +153,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(SettingActivity.this);
         mName = mSharedPreference.getString(PREF_NAME, "");
         mMode = mSharedPreference.getInt(PREF_LOAD_MODE, FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI);
+        mSelectedUnlockPeriod = mSharedPreference.getInt(PREF_UNLOCK_WALLET_PERIOD, 5);
         setSupportActionBar(mToolbar);
         if (isLoginFromENotes()) {
             Intent intent = new Intent(this, WebSocketService.class);
@@ -148,6 +164,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         }
         displayLanguage();
         displayFrequency();
+        displayUnlockWalletPeriod();
         displayTheme();
         displayVersionNumber();
         displayLogOutButton();
@@ -300,6 +317,19 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         dialog.setOnFrequencyModeSelectedListener(this);
     }
 
+    @OnClick(R.id.setting_layout_lock_time)
+    public void onLockTimeClick(View view) {
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
+        UnlockTimeSelectDialog dialog = new UnlockTimeSelectDialog();
+        Bundle bundle = new Bundle();
+        bundle.putInt(INTENT_PARAM_UNLOCK_WALLET_PERIOD, mSelectedUnlockPeriod);
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), UnlockTimeSelectDialog.class.getSimpleName());
+        dialog.setUnlockWalletPeriodSelectedListener(this);
+    }
+
     @OnCheckedChanged(R.id.setting_sc_switch_server)
     public void onChangeServerClick(CompoundButton button, boolean isChecked) {
         if (!button.isPressed()) {
@@ -387,6 +417,16 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         }
     }
 
+    private void displayUnlockWalletPeriod() {
+        if (mSelectedUnlockPeriod == 5) {
+            mTvLockTime.setText(getResources().getString(R.string.setting_lock_wallet_time_5min));
+        } else if (mSelectedUnlockPeriod == 20) {
+            mTvLockTime.setText(getResources().getString(R.string.setting_lock_wallet_time_20min));
+        } else if (mSelectedUnlockPeriod == 60) {
+            mTvLockTime.setText(getResources().getString(R.string.setting_lock_wallet_time_60min));
+        }
+    }
+
     private void displayTheme() {
         boolean isNight = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("night_mode", false);
         if (isNight) {
@@ -464,6 +504,18 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
                 });
     }
 
+    private String getSelectedPeriod(int period) {
+        switch (period) {
+            case 5:
+                return getResources().getString(R.string.setting_lock_wallet_time_5min);
+            case 20:
+                return getResources().getString(R.string.setting_lock_wallet_time_20min);
+            case 60:
+                return getResources().getString(R.string.setting_lock_wallet_time_60min);
+        }
+        return getResources().getString(R.string.setting_lock_wallet_time_5min);
+    }
+
     @Override
     public void onNetWorkStateChanged(boolean isAvailable) {
 
@@ -488,5 +540,18 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         editor.putBoolean(PREF_PARAM_UNLOCK_BY_CARDS, isUnlockByCard);
         editor.apply();
         displayDefaultUnlockSetting();
+    }
+
+    @Override
+    public void onUnlockWalletPeriodSelected(int period) {
+        if (mSelectedUnlockPeriod == period) {
+            return;
+        }
+        mSelectedUnlockPeriod = period;
+        SharedPreferences.Editor editor = mSharedPreference.edit();
+        editor.putInt(PREF_UNLOCK_WALLET_PERIOD, mSelectedUnlockPeriod);
+        editor.apply();
+        EventBus.getDefault().post(new Event.onChangeUnlockWalletPeriod(mSelectedUnlockPeriod));
+        displayUnlockWalletPeriod();
     }
 }

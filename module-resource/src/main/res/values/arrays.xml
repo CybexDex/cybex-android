@@ -27,6 +27,12 @@
         <item>@string/text_buy_orders</item>
         <item>@string/text_sell_orders</item>
     </string-array>
+
+    <string-array name="setting_lock_wallet_period">
+        <item>@string/setting_lock_wallet_time_5min</item>
+        <item>@string/setting_lock_wallet_time_20min</item>
+        <item>@string/setting_lock_wallet_time_60min</item>
+    </string-array>
 </resources>
 
 

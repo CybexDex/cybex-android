@@ -86,6 +86,8 @@ public class CommonSelectRecyclerViewAdapter<T> extends RecyclerView.Adapter<Rec
         } else if (item instanceof Types.public_key_type) {
             Types.public_key_type public_key_type = (Types.public_key_type) item;
             viewHolder.mTvSymbol.setText(public_key_type.toString());
+        } else {
+            viewHolder.mTvSymbol.setText((String)item);
         }
 
     }

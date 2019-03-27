@@ -196,6 +196,36 @@
                     android:background="@color/colorPrimary"/>
 
                 <RelativeLayout
+                    android:id="@+id/setting_layout_lock_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/activity_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_white_dark_large"
+                        android:text="@string/setting_lock_time"
+                        android:layout_centerVertical="true" />
+
+                    <TextView
+                        android:id="@+id/setting_tv_lock_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerHorizontal="true"
+                        android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
+                        android:drawablePadding="@dimen/padding_3"
+                        style="@style/font_grey_medium" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:background="@color/colorPrimary"/>
+
+                <RelativeLayout
                     android:id="@+id/setting_layout_version"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

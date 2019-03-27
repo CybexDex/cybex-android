@@ -393,7 +393,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected boolean isLoginFromENotes() {
         SharedPreferences sharedPreferences = getSharedPreferences("enotes", Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("from", true);
+        return sharedPreferences.getBoolean("from", false);
     }
 
     protected void setLoginFrom(boolean flag) {

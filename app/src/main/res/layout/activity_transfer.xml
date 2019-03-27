@@ -59,6 +59,7 @@
                     android:background="@android:color/transparent"
                     android:layout_gravity="end|center_vertical"
                     android:layout_toStartOf="@+id/transfer_layout_select_account"
+                    android:importantForAutofill="no"
                     android:singleLine="true"/>
 
                 <LinearLayout
@@ -147,6 +148,7 @@
                     style="@style/font_white_dark_large"
                     android:inputType="numberDecimal"
                     android:background="@android:color/transparent"
+                    android:importantForAutofill="no"
                     android:maxLines="1"/>
 
                 <TextView
@@ -276,6 +278,7 @@
                 android:layout_marginTop="@dimen/margin_6"
                 android:background="@android:color/transparent"
                 android:lineSpacingExtra="@dimen/line_spacing_extra_4"
+                android:importantForAutofill="no"
                 android:lines="4"/>
 
         </LinearLayout>

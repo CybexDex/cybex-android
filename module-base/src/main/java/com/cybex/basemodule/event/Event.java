@@ -499,6 +499,21 @@ public class Event {
     }
 
     /**
+     * 解锁钱包时间改变
+     */
+    public static class onChangeUnlockWalletPeriod {
+        private int period;
+
+        public onChangeUnlockWalletPeriod(int period) {
+            this.period = period;
+        }
+
+        public int getPeriod() {
+            return period;
+        }
+    }
+
+    /**
      * ETO项目刷新
      */
     public static class OnRefreshEtoProject {

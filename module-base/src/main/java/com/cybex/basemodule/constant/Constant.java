@@ -29,6 +29,7 @@ public class Constant {
     public static final String INTENT_PARAM_TRANSFER_FEE_ASSET = "intent_param_transfer_fee_asset";
     public static final String INTENT_PARAM_TRANSFER_ASSET = "intent_param_transfer_asset";
     public static final String INTENT_PARAM_LOAD_MODE = "intent_param_load_mode";
+    public static final String INTENT_PARAM_UNLOCK_WALLET_PERIOD = "intent_param_unlock_wallet_period";
     public static final String INTENT_PARAM_ACCOUNT_BALANCE_ITEMS = "intent_param_account_balance_items";
     public static final String INTENT_PARAM_ETO_PROJECT_DETAILS = "intent_param_eto_project_details";
     public static final String INTENT_PARAM_ETO_ATTEND_ETO = "intent_param_eto_attend_eto";
@@ -70,6 +71,7 @@ public class Constant {
     public static final String PREF_NAME = "name";
     public static final String PREF_PASSWORD = "password";
     public static final String PREF_LOAD_MODE = "load_mode";
+    public static final String PREF_UNLOCK_WALLET_PERIOD = "pref_unlock_wallet_period";
     public static final String PREF_SERVER = "pref_server";
     public static final String PREF_GAME_INVITATION = "pref_game_invitation";
     public static final String PREF_HISTORY_URL = "pref_history_url";

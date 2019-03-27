@@ -8,6 +8,7 @@ import android.util.Log;
 import com.alibaba.android.arouter.utils.MapUtils;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.Asset;
@@ -33,6 +34,10 @@ import com.cybex.provider.utils.SpUtil;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.WalletApi;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.text.ParseException;
@@ -67,14 +72,23 @@ public class BitsharesWalletWraper {
     private List<String> addressListFromPublicKey = new ArrayList<>();
     private String password;
     private Disposable lockWalletDisposable;
+    private int mUnlockWalletPeriod;
 
     private BitsharesWalletWraper() {
         //mstrWalletFilePath = BitsharesApplication.getInstance().getFilesDir().getPath();
         mstrWalletFilePath += "/wallet.json";
+        mUnlockWalletPeriod = PreferenceManager.getDefaultSharedPreferences(BaseActivity.getContext()).getInt(Constant.PREF_UNLOCK_WALLET_PERIOD, 5);
+        EventBus.getDefault().register(this);
     }
 
     public static BitsharesWalletWraper getInstance() {
         return bitsharesWalletWraper;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLockWalletPeriod(Event.onChangeUnlockWalletPeriod event) {
+        mUnlockWalletPeriod = event.getPeriod();
+        startLockWalletTimer();
     }
 
     public void reset() {
@@ -266,7 +280,7 @@ public class BitsharesWalletWraper {
     }
 
     private void startLockWalletTimer() {
-        lockWalletDisposable = Flowable.intervalRange(0, 0, 10, 0, TimeUnit.MINUTES)
+        lockWalletDisposable = Flowable.intervalRange(0, 0, mUnlockWalletPeriod, 0, TimeUnit.MINUTES)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(this::lock)
                 .doOnCancel(new Action() {

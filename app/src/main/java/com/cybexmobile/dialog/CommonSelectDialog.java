@@ -90,8 +90,8 @@ public class CommonSelectDialog<T> extends DialogFragment implements CommonSelec
     }
 
     @OnClick(R.id.dialog_asset_select_tv_confirm)
-    public void onSelectedConfirm(View view){
-        if(mAssetSelectedListener != null){
+    public void onSelectedConfirm(View view) {
+        if (mAssetSelectedListener != null) {
             mAssetSelectedListener.onAssetSelected(mSelectedItem);
         }
         this.dismiss();

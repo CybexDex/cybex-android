@@ -104,6 +104,7 @@
     <string name="setting_test_server">Test Server</string>
     <string name="setting_version">Version</string>
     <string name="setting_frequency">Frequency</string>
+    <string name="setting_lock_time">Unlock time</string>
     <string name="setting_help_feedback">Help&amp;Feedback</string>
     <string name="setting_theme_dark">Dark</string>
     <string name="setting_theme_light">Light</string>
@@ -116,7 +117,9 @@
     <string name="setting_frequency_real_time_market">Real-time Market</string>
     <string name="setting_frequency_real_time_market_only_wifi">Real-time Market(WiFi Only)</string>
     <string name="text_cancel">Cancel</string>
-
+    <string name="setting_lock_wallet_time_5min">5min</string>
+    <string name="setting_lock_wallet_time_20min">20min</string>
+    <string name="setting_lock_wallet_time_60min">60min</string>
     <!-- Strings related to login -->
     <string name="create_account">Create Account</string>
     <string name="create_account_register">Sign Up</string>
