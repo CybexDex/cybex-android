@@ -6,7 +6,7 @@ android {
     resourcePrefix 'ms__'
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion 27
     }
 
