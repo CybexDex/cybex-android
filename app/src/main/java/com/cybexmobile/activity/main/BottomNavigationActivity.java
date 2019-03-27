@@ -609,6 +609,7 @@ public class BottomNavigationActivity extends BaseActivity implements
                 return true;
             }
         }
+
         return false;
     }
 
