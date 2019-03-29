@@ -876,7 +876,7 @@ public class WalletApi {
         return operation;
     }
 
-    Operations.gateway_login_operation getGatewayLoginOperation(String user, Date expiration) {
+    public Operations.gateway_login_operation getGatewayLoginOperation(String user, Date expiration) {
         Operations.gateway_login_operation gateway_login_operation = new Operations.gateway_login_operation();
         gateway_login_operation.expirationDate = expiration;
         gateway_login_operation.expiration = String.valueOf(expiration.getTime());

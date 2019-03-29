@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
@@ -40,7 +41,6 @@ import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.gateway.entity.Data;
 import com.cybex.provider.http.gateway.entity.GatewayNewAssetListResponse;
 import com.cybex.provider.utils.NetworkUtils;
-import com.cybex.provider.websocket.BitsharesWalletWraper;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositAndWithdrawTotalActivity;
 import com.cybexmobile.data.GatewayLogInRecordRequest;
