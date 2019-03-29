@@ -50,6 +50,7 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
     private List<Address> mAddressList = new ArrayList<>();
     private List<BlockerExplorer> mBlockerExplorerList = new ArrayList<>();
     private List<String> mAssetList = new ArrayList<>();
+    private String mToken;
 
 
     @Inject
@@ -62,7 +63,7 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
                         .apiGateway()
                         .getAssetInfo(
                                 "application/json",
-                                "bearer " + mSignature,
+                                "bearer " + mToken,
                                 userName
                         )
                         .map(gatewayNewAssetsInfoResponse -> {
@@ -98,7 +99,7 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
         );
     }
 
-    public void loadRecords(int loadMode, Context context, WebSocketService webSocketService, AccountObject accountObject, String userName, int size, int offset, String assetName, String fundType, boolean isGroupByAsset, boolean isGroupByFundType) {
+    public void loadRecords(int loadMode, Context context, WebSocketService webSocketService, AccountObject accountObject, String userName, int size, Integer lastid, String assetName, String fundType, boolean isGroupByAsset, boolean isGroupByFundType) {
         mCompositeDisposable.add(
                 DBManager.getDbProvider(context).getAddress(userName, Address.TYPE_WITHDRAW)
 //                RetrofitFactory.getInstance()
@@ -119,35 +120,28 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
 //                                    .getAddress(userName, Address.TYPE_WITHDRAW);
 //                        })
 
-                        .concatMap((Function<List<Address>, ObservableSource<Operations.gateway_login_operation>>) addresses -> {
+                        .concatMap((Function<List<Address>, ObservableSource<String>>) addresses -> {
                             mAddressList.addAll(addresses);
-                            return Observable.create((ObservableOnSubscribe<Operations.gateway_login_operation>) emitter -> {
-                                Date expiration = getExpiration();
-                                Operations.gateway_login_operation operation = BitsharesWalletWraper.getInstance().getGatewayLoginOperation(userName, expiration);
-                                mSignature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(accountObject, operation);
+                            return Observable.create(emitter -> {
+                                String expiration = String.valueOf(new Date().getTime() / 1000);
+                                String message = expiration + userName;
+                                mSignature = BitsharesWalletWraper.getInstance().getChatMessageSignature(accountObject, message);
+                                mToken = expiration + "." + userName + "." + mSignature;
                                 if (!emitter.isDisposed()) {
-                                    emitter.onNext(operation);
+                                    emitter.onNext(mToken);
                                     emitter.onComplete();
                                 }
                             });
                         })
-                        .concatMap(operation -> {
-                            GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(operation, mSignature);
-                            Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                            Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
-                            return RetrofitFactory.getInstance()
-                                    .apiGateway()
-                                    .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
-                        })
-                        .concatMap(responseBody ->
+                        .concatMap(token ->
                                 RetrofitFactory.getInstance()
                               .apiGateway()
                               .getDepositWithdrawRecordNewGateway(
                                       "application/json",
-                                      "bearer " + mSignature,
+                                      "bearer " + token,
                                       userName,
                                       size,
-                                      offset,
+                                      lastid,
                                       assetName,
                                       fundType))
                         .map(gateWayRecordsResponse -> {

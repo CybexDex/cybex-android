@@ -78,6 +78,7 @@ import com.cybex.basemodule.utils.SoftKeyBoardListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -113,7 +114,11 @@ import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_TAG;
+import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 import static com.cybex.basemodule.constant.Constant.PREF_ADDRESS_TO_PUB_MAP;
+import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_CRYPTO_ID;
@@ -218,6 +223,10 @@ public class WithdrawActivity extends BaseActivity {
         mCnMsg = intent.getStringExtra("cnMsg");
         mAvailableAmount = intent.getDoubleExtra("availableAmount", 0);
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
+        mGatewayFee = Double.parseDouble(intent.getStringExtra("withdrawFee"));
+        mMinValue = Double.parseDouble(intent.getStringExtra("minWithdraw"));
+        mAssetPrecision = !intent.getStringExtra("precision").isEmpty() ? NumberUtils.createInteger(intent.getStringExtra("precision")) : null;
+        mToAccountId = intent.getStringExtra("gatewayAccount");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_withdraw), mAssetName));
         if (mIsTag) {
             mWithdrawMemoEosLayout.setVisibility(View.VISIBLE);
@@ -706,6 +715,22 @@ public class WithdrawActivity extends BaseActivity {
         return "withdraw:" + "CybexGateway:" + assetName + ":" + address;
     }
 
+//    private String getMemo(String address, String assetName, String memo) {
+//        if (mAssetName.equals(EOS) || mAssetName.equals(XRP)) {
+//            return "withdraw:" + getCybexGatewayMemoName() + assetName + ":" + address + "[" + memo + "]";
+//        }
+//        return "withdraw:" + getCybexGatewayMemoName() + assetName + ":" + address;
+//    }
+
+    private String getCybexGatewayMemoName() {
+        String server = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_SERVER, SERVER_OFFICIAL);
+        if (server.equals(SERVER_OFFICIAL)) {
+            return "CybexGateway:";
+        } else {
+            return "CybexGatewayDev:";
+        }
+    }
+
     private void getNoneCybFee(String memo) {
         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo,
                 mWithdrawAmountEditText.getText().toString().trim(), mAssetObject.id.toString(), 0);
@@ -756,31 +781,13 @@ public class WithdrawActivity extends BaseActivity {
             return;
         }
         mCompositeDisposable.add(
-                Observable.create((ObservableOnSubscribe<Operations.gateway_login_operation>) emitter -> {
-                    Date expiration = getExpiration();
-                    Operations.gateway_login_operation operation = BitsharesWalletWraper.getInstance().getGatewayLoginOperation(mUserName, expiration);
-                    mSignature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
-                    if (!emitter.isDisposed()) {
-                        emitter.onNext(operation);
-                        emitter.onComplete();
-                    }
-                })
-                        .concatMap((Function<Operations.gateway_login_operation, ObservableSource<ResponseBody>>) gatewayLoginOperation -> {
-                            GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(gatewayLoginOperation, mSignature);
-                            Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                            Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
-                            return RetrofitFactory.getInstance()
-                                    .apiGateway()
-                                    .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
-                        })
-                        .concatMap((Function<ResponseBody, Observable<JsonObject>>) responseBody ->
-                                RetrofitFactory.getInstance()
-                                        .apiGateway()
-                                        .verifyAddress(
-                                                "application/json",
-                                                "bearer " + mSignature,
-                                                mAssetName,
-                                                address))
+                RetrofitFactory.getInstance()
+                        .apiGateway()
+                        .verifyAddress(
+                                "application/json",
+                                "bearer " + mSignature,
+                                mAssetName,
+                                address)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -898,36 +905,42 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void setMinWithdrawAmountAndGateWayFee() {
-        ApolloQueryCall<GetWithdrawInfo.Data> apolloQueryCall = ApolloClientApi.getInstance().client()
-                .query(GetWithdrawInfo.builder().type(mAssetName).build());
-        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryCall)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Response<GetWithdrawInfo.Data>>() {
-                    @Override
-                    public void accept(Response<GetWithdrawInfo.Data> response) throws Exception {
-                        GetWithdrawInfo.Data withdrawInfoData = response.data();
-                        if (withdrawInfoData == null) {
-                            return;
-                        }
-                        if (withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject() != null) {
-                            WithdrawinfoObject withdrawinfoObject = withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject();
-                            mMinValue = withdrawinfoObject.minValue();
-                            mGatewayFee = withdrawinfoObject.fee();
-                            mToAccountId = withdrawinfoObject.gatewayAccount();
-                            mAssetPrecision = withdrawinfoObject.precision();
-                            getToAccountMemoKey(mToAccountId);
-                            mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
-                            mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
-                            mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+        getToAccountMemoKey(mToAccountId);
+        mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
+        mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
+        mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
 
-                    }
-                }));
+
+//        ApolloQueryCall<GetWithdrawInfo.Data> apolloQueryCall = ApolloClientApi.getInstance().client()
+//                .query(GetWithdrawInfo.builder().type(mAssetName).build());
+//        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryCall)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<Response<GetWithdrawInfo.Data>>() {
+//                    @Override
+//                    public void accept(Response<GetWithdrawInfo.Data> response) throws Exception {
+//                        GetWithdrawInfo.Data withdrawInfoData = response.data();
+//                        if(withdrawInfoData == null){
+//                            return;
+//                        }
+//                        if (withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject() != null) {
+//                            WithdrawinfoObject withdrawinfoObject = withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject();
+//                            mMinValue = withdrawinfoObject.minValue();
+//                            mGatewayFee = withdrawinfoObject.fee();
+//                            mToAccountId = withdrawinfoObject.gatewayAccount();
+//                            mAssetPrecision = withdrawinfoObject.precision();
+//                            getToAccountMemoKey(mToAccountId);
+//                            mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
+//                            mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
+//                            mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
+//                        }
+//                    }
+//                }, new Consumer<Throwable>() {
+//                    @Override
+//                    public void accept(Throwable throwable) throws Exception {
+//
+//                    }
+//                }));
     }
 
     private void getToAccountMemoKey(String accountId) {

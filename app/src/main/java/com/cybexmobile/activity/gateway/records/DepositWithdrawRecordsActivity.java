@@ -257,33 +257,25 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         }
 
         mCompositeDisposable.add(
-                Observable.create((ObservableOnSubscribe<Operations.gateway_login_operation>) emitter -> {
-                    Date expiration = getExpiration();
-                    Operations.gateway_login_operation operation = BitsharesWalletWraper.getInstance().getGatewayLoginOperation(mAccountName, expiration);
-                    mSignature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
+                Observable.create((ObservableOnSubscribe<String>) emitter -> {
+                    String expiration = String.valueOf(new Date().getTime() / 1000);
+                    String message = expiration + mAccountName;
+                    mSignature = BitsharesWalletWraper.getInstance().getChatMessageSignature(mAccountObject, message);
+                    String mToken = expiration + "." + mAccountName + "." + mSignature;
                     if (!emitter.isDisposed()) {
-                        emitter.onNext(operation);
+                        emitter.onNext(mToken);
                         emitter.onComplete();
                     }
                 })
-                .concatMap((Function<Operations.gateway_login_operation, ObservableSource<ResponseBody>>) operation -> {
-                    GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(operation, mSignature);
-                    Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                    Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
-                    return RetrofitFactory.getInstance()
-                            .apiGateway()
-                            .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
-
-                })
-                .concatMap((Function<ResponseBody, ObservableSource<GatewayNewRecordsResponse>>) responseBody -> {
+                .concatMap((Function<String, ObservableSource<GatewayNewRecordsResponse>>) token -> {
                     return RetrofitFactory.getInstance()
                             .apiGateway()
                             .getDepositWithdrawRecordNewGateway(
                                     "application/json",
-                                    "bearer " + mSignature,
+                                    "bearer " + token,
                                     mAccountName,
                                     mIsRefresh && mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT,
-                                    mIsRefresh ? 0 : mRecordsItems.size(),
+                                    mIsRefresh ? null : mRecordsItems.get(mRecordsItems.size() - 1).getRecord().getId(),
                                     mAssetObject.symbol,
                                     mFundType);
                 })

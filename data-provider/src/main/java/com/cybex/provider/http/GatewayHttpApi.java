@@ -50,7 +50,7 @@ public interface GatewayHttpApi {
             @Header("Authorization") String authorization,
             @Path("user") String user,
             @Query("size") int size,
-            @Query("offset") int offset,
+            @Query("lastid") Integer lastid,
             @Query("asset") String assetName,
             @Query("fundType") String fundType);
 

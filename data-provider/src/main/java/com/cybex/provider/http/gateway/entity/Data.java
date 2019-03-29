@@ -19,6 +19,10 @@ public class Data {
 
     private String cybid;
 
+    private String gatewayAccount;
+
+    private String precision;
+
     private String withdrawFee;
 
     private String cybOrder;
@@ -44,6 +48,10 @@ public class Data {
     private String decimal;
 
     private String blockchainID;
+
+    private String minWithdraw;
+
+    private String minDeposit;
 
     public String getAddresses() {
         return addresses;
@@ -219,6 +227,38 @@ public class Data {
 
     public void setBlockchainID(String blockchainID) {
         this.blockchainID = blockchainID;
+    }
+
+    public String getGatewayAccount() {
+        return gatewayAccount;
+    }
+
+    public void setGatewayAccount(String gatewayAccount) {
+        this.gatewayAccount = gatewayAccount;
+    }
+
+    public String getMinDeposit() {
+        return minDeposit;
+    }
+
+    public void setMinDeposit(String minDeposit) {
+        this.minDeposit = minDeposit;
+    }
+
+    public String getMinWithdraw() {
+        return minWithdraw;
+    }
+
+    public void setMinWithdraw(String minWithdraw) {
+        this.minWithdraw = minWithdraw;
+    }
+
+    public String getPrecision() {
+        return precision;
+    }
+
+    public void setPrecision(String precision) {
+        this.precision = precision;
     }
 
     class DataInside {

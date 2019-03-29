@@ -11,6 +11,10 @@ public class DepositAndWithdrawObject {
     private String enInfo;
     private String cnInfo;
     private String projectName;
+    private String gatewayAccount;
+    private String minWithdraw;
+    private String precision;
+    private String withdrawFee;
     private boolean tag;
     private long count;
     public AssetObject assetObject;
@@ -102,5 +106,37 @@ public class DepositAndWithdrawObject {
 
     public void setCount(long count) {
         this.count = count;
+    }
+
+    public String getPrecision() {
+        return precision;
+    }
+
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    public String getMinWithdraw() {
+        return minWithdraw;
+    }
+
+    public void setMinWithdraw(String minWithdraw) {
+        this.minWithdraw = minWithdraw;
+    }
+
+    public String getGatewayAccount() {
+        return gatewayAccount;
+    }
+
+    public void setGatewayAccount(String gatewayAccount) {
+        this.gatewayAccount = gatewayAccount;
+    }
+
+    public String getWithdrawFee() {
+        return withdrawFee;
+    }
+
+    public void setWithdrawFee(String withdrawFee) {
+        this.withdrawFee = withdrawFee;
     }
 }

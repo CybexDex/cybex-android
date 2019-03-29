@@ -28,6 +28,8 @@ public class GatewayNewRecord {
 
     private String status;
 
+    private int id;
+
     public String getAmount() {
         return amount;
     }
@@ -130,5 +132,13 @@ public class GatewayNewRecord {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

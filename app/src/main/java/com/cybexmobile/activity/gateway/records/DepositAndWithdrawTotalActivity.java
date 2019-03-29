@@ -127,13 +127,13 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                         @Override
                         public void onUnLocked(String password) {
                             mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                                    mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                                    mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
 
                         }
                     });
                 } else {
                     mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                            mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                            mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
 
                 }
             }
@@ -215,13 +215,13 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                         @Override
                         public void onUnLocked(String password) {
                             mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                                    mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                                    mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
 
                         }
                     });
                 } else {
                     mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                            mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                            mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
 
                 }
             }
@@ -313,7 +313,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
         }
         int size = mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT;
         mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, this, mWebSocketService, mAccountObject, mUserName,
-                size, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                size, null, mCurrentCurrency, mCurrentFundType, false, false);
     }
 
     private void loadMoreData() {
@@ -329,7 +329,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
         }
 
         mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_MORE, this, mWebSocketService, mAccountObject, mUserName,
-                LOAD_COUNT, mRecordsItems.size(), mCurrentCurrency, mCurrentFundType, false, false);
+                LOAD_COUNT, mRecordsItems.get(mRecordsItems.size() - 1).getRecord().getId(), mCurrentCurrency, mCurrentFundType, false, false);
 
     }
 

@@ -379,6 +379,69 @@ public class DepositActivity extends BaseActivity {
                 }));
     }
 
+    private void getAddress1(String userName, String assetName) {
+        showLoadDialog(true);
+        mCompositeDisposable.add(Observable.create((ObservableOnSubscribe<String>) e -> {
+                    String expiration = String.valueOf(new Date().getTime() / 1000);
+                    String message = expiration + userName;
+                    mSignature = BitsharesWalletWraper.getInstance().getChatMessageSignature(mAccountObject, message);
+                    String mToken = expiration + "." + userName + "." + mSignature;
+                    if (!e.isDisposed()) {
+                        e.onNext(mToken);
+                        e.onComplete();
+                    }
+                })
+                        .concatMap((Function<String, Observable<JsonObject>>) token ->
+                                RetrofitFactory.getInstance()
+                                        .apiGateway()
+                                        .getDepositAddress(
+                                                "application/json",
+                                                "bearer " + token,
+                                                mUserName,
+                                                mAssetName
+                                        ))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                jsonObject -> {
+                                    if (jsonObject == null) {
+                                        ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
+                                        hideLoadDialog();
+                                        return;
+                                    }
+                                    String address = jsonObject.get("address").getAsString();
+                                    if (address == null) {
+                                        hideLoadDialog();
+                                        return;
+                                    }
+
+                                    if (assetName.equals(EOS_NAME)) {
+                                        String eosAccountName = address.substring(0, address.indexOf("["));
+                                        String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
+                                        mEosAccountNameTv.setText(eosAccountName);
+                                        mQRAddressView.setText(verificationCode);
+                                    } else if (assetName.equals(XRP_NAME)) {
+                                        String xrpAddress = address.substring(0, address.indexOf("["));
+                                        String xrpTag = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
+                                        mXrpAddressTv.setText(xrpAddress);
+                                        mQRAddressView.setText(xrpTag);
+                                        generateBarCode(xrpAddress);
+                                    } else {
+                                        mQRAddressView.setText(address);
+                                        generateBarCode(address);
+                                    }
+                                    hideLoadDialog();
+
+
+                                },
+                                throwable -> {
+                                    hideLoadDialog();
+                                }
+                        )
+        );
+    }
+
+
     private void getAddress(String userName, String assetName) {
         showLoadDialog(true);
         mCompositeDisposable.add(Observable.create((ObservableOnSubscribe<Operations.gateway_login_operation>) e -> {
@@ -442,15 +505,11 @@ public class DepositActivity extends BaseActivity {
                         )
         );
     }
-
-
-//    private void getAddress(String userName, String assetName) {
-//        showLoadDialog(true);
-//        /**
-//         * fix online bug
-//         * java.lang.NullPointerException: Attempt to invoke virtual method
-//         * 'void android.widget.TextView.setText(java.lang.CharSequence)' on a null object reference
-//         */
+        /**
+         * fix online bug
+         * java.lang.NullPointerException: Attempt to invoke virtual method
+         * 'void android.widget.TextView.setText(java.lang.CharSequence)' on a null object reference
+         */
 //        ApolloQueryWatcher<GetDepositAddress.Data> watcher = ApolloClientApi.getInstance().client()
 //                .query(GetDepositAddress.builder().accountName(userName).asset(assetName).build())
 //                .watcher()
@@ -492,7 +551,7 @@ public class DepositActivity extends BaseActivity {
 //                        hideLoadDialog();
 //                    }
 //                }));
-//    }
+    //}
 
     private void generateBarCode(String barcode) {
         Bitmap bitmap = QRCode.createQRCodeWithLogo(barcode, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
@@ -547,7 +606,7 @@ public class DepositActivity extends BaseActivity {
                 mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_xrp_tag_warning_message));
                 mCopyAddressTv.setText(getResources().getString(R.string.deposit_xrp_copy_tag));
             }
-            getAddress(mUserName, mAssetName);
+            getAddress1(mUserName, mAssetName);
             requestDetailMessage();
         } else {
             if (Locale.getDefault().getLanguage().equals("zh")) {

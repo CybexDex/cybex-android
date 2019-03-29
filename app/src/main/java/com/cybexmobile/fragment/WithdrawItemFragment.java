@@ -374,6 +374,10 @@ public class WithdrawItemFragment extends BaseFragment implements DepositAndWith
             intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
             intent.putExtra("assetId", depositAndWithdrawObject.getId());
             intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
+            intent.putExtra("withdrawFee", depositAndWithdrawObject.getWithdrawFee());
+            intent.putExtra("minWithdraw", depositAndWithdrawObject.getMinWithdraw());
+            intent.putExtra("precision", depositAndWithdrawObject.getPrecision());
+            intent.putExtra("gatewayAccount", depositAndWithdrawObject.getGatewayAccount());
 //            intent.putExtra("enMsg", depositAndWithdrawObject.getEnMsg());
 //            intent.putExtra("cnMsg", depositAndWithdrawObject.getCnMsg());
             intent.putExtra("tag", depositAndWithdrawObject.isTag());

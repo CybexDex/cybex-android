@@ -130,12 +130,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
             if (mDepositAndWithdrawAssetList.size() == 0) {
                 showLoadDialog(true);
                 if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
-                    if (BitsharesWalletWraper.getInstance().is_locked()) {
-                        CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mAccountName,
-                                password -> loadList());
-                    } else {
-                        loadList();
-                    }
+                    loadList1();
                 }
             }
         }
@@ -172,7 +167,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     public void onFinishLoadAssetObjects(Event.LoadAssets event) {
         if (event.getData() != null && event.getData().size() > 0) {
             loadData(mWebSocketService.getFullAccount(mAccountName));
-            loadList();
+            loadList1();
         }
     }
 
@@ -379,6 +374,72 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                                 }
                                 depositAndWithdrawObject.setId(data.getCybid());
                                 depositAndWithdrawObject.setEnable(data.getWithdrawSwith());
+//                        depositAndWithdrawObject.setEnMsg(jsonObject.getString("enMsg"));
+//                        depositAndWithdrawObject.setCnMsg(jsonObject.getString("cnMsg"));
+                                depositAndWithdrawObject.setProjectName(data.getBlockchain().getName());
+                                depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(data.getCybid()));
+                                depositAndWithdrawObjectList.add(depositAndWithdrawObject);
+                            }
+                            return depositAndWithdrawObjectList;
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                depositAndWithdrawObjects -> {
+                                    mDepositAndWithdrawAssetList.clear();
+                                    mDepositAndWithdrawAssetList.addAll(depositAndWithdrawObjects);
+                                    Collections.sort(mDepositAndWithdrawAssetList, new Comparator<DepositAndWithdrawObject>() {
+                                        @Override
+                                        public int compare(DepositAndWithdrawObject o1, DepositAndWithdrawObject o2) {
+                                            if (o1.getAccountBalanceObject() == null && o2.getAccountBalanceObject() != null) {
+                                                return 1;
+                                            } else if (o1.getAccountBalanceObject() != null && o2.getAccountBalanceObject() == null) {
+                                                return -1;
+                                            } else if (o1.getAccountBalanceObject() != null && o2.getAccountBalanceObject() != null) {
+                                                return o1.getAccountBalanceObject().balance > o2.getAccountBalanceObject().balance ? -1 : 1;
+                                            } else {
+                                                return 0;
+                                            }
+                                        }
+
+                                    });
+                                    if (mDepositItemFragment != null && mDepositItemFragment.isResumed()) {
+                                        mDepositItemFragment.notifyListDataSetChange(mDepositAndWithdrawAssetList);
+                                    }
+                                    if (mWithdrawItemFragment != null && mWithdrawItemFragment.isResumed()) {
+                                        mWithdrawItemFragment.notifyListDataSetChange(mDepositAndWithdrawAssetList);
+                                    }
+                                    hideLoadDialog();
+                                },
+                                throwable -> hideLoadDialog()
+                        )
+        );
+    }
+
+    private void loadList1() {
+        mCompositeDisposable.add(
+                RetrofitFactory.getInstance()
+                        .apiGateway()
+                        .getAssetList(
+                                "application/json",
+                                null
+                        )
+                        .map(gatewayNewAssetListResponse -> {
+                            List<DepositAndWithdrawObject> depositAndWithdrawObjectList = new ArrayList<>();
+                            for (Data data : gatewayNewAssetListResponse.getData()) {
+                                DepositAndWithdrawObject depositAndWithdrawObject = new DepositAndWithdrawObject();
+                                for (int j = 0; j < mAccountBalanceObjectItemList.size(); j++) {
+                                    if (mAccountBalanceObjectItemList.get(j).assetObject.id.toString().equals(data.getCybid())) {
+                                        depositAndWithdrawObject.setAccountBalanceObject(mAccountBalanceObjectItemList.get(j).accountBalanceObject);
+                                        break;
+                                    }
+                                }
+                                depositAndWithdrawObject.setId(data.getCybid());
+                                depositAndWithdrawObject.setEnable(data.getWithdrawSwith());
+                                depositAndWithdrawObject.setGatewayAccount(data.getGatewayAccount());
+                                depositAndWithdrawObject.setMinWithdraw(data.getMinWithdraw());
+                                depositAndWithdrawObject.setPrecision(data.getPrecision());
+                                depositAndWithdrawObject.setWithdrawFee(data.getWithdrawFee());
 //                        depositAndWithdrawObject.setEnMsg(jsonObject.getString("enMsg"));
 //                        depositAndWithdrawObject.setCnMsg(jsonObject.getString("cnMsg"));
                                 depositAndWithdrawObject.setProjectName(data.getBlockchain().getName());
