@@ -428,10 +428,12 @@ public class WithdrawActivity extends BaseActivity {
             mErrorLinearLayout.setVisibility(View.VISIBLE);
             mErrorTextView.setText(getResources().getString(R.string.withdraw_error_not_enough));
             mWithdrawButton.setEnabled(false);
+            mReceiveAmountTextView.setText(getResources().getString(R.string.text_empty));
         } else if (amount < mMinValue) {
             mErrorLinearLayout.setVisibility(View.VISIBLE);
             mErrorTextView.setText(getResources().getString(R.string.withdraw_error_less_than_minimum));
             mWithdrawButton.setEnabled(false);
+            mReceiveAmountTextView.setText(getResources().getString(R.string.text_empty));
         } else {
             mErrorLinearLayout.setVisibility(View.GONE);
             mWithdrawButton.setEnabled(true);
