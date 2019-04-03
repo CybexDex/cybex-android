@@ -299,7 +299,9 @@ public class WithdrawActivity extends BaseActivity {
 
     @OnClick(R.id.withdraw_tv_select_address)
     public void onSelectAddressClick(View view) {
-        if (AntiShake.check(view.getId())) { return; }
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         if (mAddresses == null || mAddresses.size() == 0) {
             Intent intent = new Intent(this, AddTransferAccountActivity.class);
             intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mAssetName);
@@ -390,6 +392,7 @@ public class WithdrawActivity extends BaseActivity {
             mIvAddressCheck.setVisibility(View.INVISIBLE);
             mErrorLinearLayout.setVisibility(View.GONE);
         }
+        resetWithdrawBtnState();
     }
 
     @OnTextChanged(value = R.id.withdraw_amount, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -442,7 +445,9 @@ public class WithdrawActivity extends BaseActivity {
 
     @OnClick(value = R.id.withdraw_button)
     public void onWithdrawButtonClicked(View view) {
-        if (AntiShake.check(view.getId())) { return; }
+        if (AntiShake.check(view.getId())) {
+            return;
+        }
         CybexDialog.showConfirmationDialog(this, new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
                     public void onClick(Dialog dialog) {
@@ -760,7 +765,7 @@ public class WithdrawActivity extends BaseActivity {
                     @Override
                     public void accept(Response<VerifyAddress.Data> response) throws Exception {
                         VerifyAddress.Data verifyAddressData = response.data();
-                        if(verifyAddressData == null){
+                        if (verifyAddressData == null) {
                             return;
                         }
                         if (!verifyAddressData.verifyAddress().fragments().withdrawAddressInfo().valid()) {
@@ -842,7 +847,7 @@ public class WithdrawActivity extends BaseActivity {
                     @Override
                     public void accept(Response<GetWithdrawInfo.Data> response) throws Exception {
                         GetWithdrawInfo.Data withdrawInfoData = response.data();
-                        if(withdrawInfoData == null){
+                        if (withdrawInfoData == null) {
                             return;
                         }
                         if (withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject() != null) {
@@ -972,7 +977,9 @@ public class WithdrawActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (AntiShake.check(item.getItemId())) { return false; }
+        if (AntiShake.check(item.getItemId())) {
+            return false;
+        }
         switch (item.getItemId()) {
             case R.id.action_records:
                 Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
@@ -991,7 +998,7 @@ public class WithdrawActivity extends BaseActivity {
         unbindService(mConnection);
         mHandler.removeCallbacksAndMessages(null);
         mHandler = null;
-        if(!mCompositeDisposable.isDisposed()){
+        if (!mCompositeDisposable.isDisposed()) {
             mCompositeDisposable.dispose();
         }
     }
