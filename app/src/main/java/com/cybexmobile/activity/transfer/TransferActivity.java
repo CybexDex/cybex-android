@@ -801,6 +801,7 @@ public class TransferActivity extends BaseActivity implements
                 }
             }
         }
+        mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
     }
 
     private void loadAddress() {
