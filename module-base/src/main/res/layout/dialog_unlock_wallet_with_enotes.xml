@@ -118,7 +118,7 @@
                 style="@style/font_gray_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="eNotes卡暂不支持转账附言，请输入云密码"
+                android:text="@string/nfc_dialog_unlock_memo_support_text"
                 android:visibility="gone"/>
 
             <FrameLayout

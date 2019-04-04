@@ -638,6 +638,7 @@
     <string name="nfc_dialog_add_cloud_password_button">去添加</string>
     <string name="nfc_dialog_unlock_title_by_card">eNotes解锁</string>
     <string name="nfc_dialog_unlock_title_by_cloud">云密码解锁</string>
+    <string name="nfc_dialog_unlock_memo_support_text">eNotes卡暂不支持转账附言，请输入云密码</string>
 
     <!-- Nfc Toast Message -->
     <string name="nfc_toast_message_already_logged_in">已经用eNotes登陆</string>

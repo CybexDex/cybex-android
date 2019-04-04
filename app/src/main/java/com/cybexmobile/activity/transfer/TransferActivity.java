@@ -881,7 +881,7 @@ public class TransferActivity extends BaseActivity implements
     protected void readCardOnSuccess(Card card) {
         mCard = card;
         if (unlockDialog != null) { unlockDialog.dismiss(); }
-        if (unlockDialogWithEnotes != null) {
+        if (TextUtils.isEmpty(mEtRemark.getText().toString().trim()) && unlockDialogWithEnotes != null) {
             try {
                 if (cardManager.getTransactionPinStatus() == 0) {
                     if (!TextUtils.isEmpty(mEtRemark.getText().toString())) {
@@ -910,14 +910,14 @@ public class TransferActivity extends BaseActivity implements
     @Override
     protected void readCardError(int code, String message) {
         super.readCardError(code, message);
-        if (unlockDialogWithEnotes != null) {
+        if (TextUtils.isEmpty(mEtRemark.getText().toString().trim()) && unlockDialogWithEnotes != null) {
             unlockDialogWithEnotes.hideProgress();
         }
     }
 
     @Override
     protected void nfcStartReadCard() {
-        if(unlockDialogWithEnotes != null) {
+        if(TextUtils.isEmpty(mEtRemark.getText().toString().trim())&& unlockDialogWithEnotes != null) {
             unlockDialogWithEnotes.showProgress();
             unlockDialogWithEnotes.showNormalText();
         } else {

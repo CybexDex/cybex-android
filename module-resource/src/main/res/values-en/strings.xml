@@ -635,10 +635,11 @@ To ensure fairness, please help us in the prevention of cheating in any form.</s
     <!-- Nfc Dialog Message -->
     <string name="nfc_dialog_change_account_content">Change Account to %1$s? Please do not move card</string>
     <string name="nfc_dialog_verify_enotes_password_titile">Verify Enotes password</string>
-    <string name="nfc_dialog_add_cloud_password_content">Add cloud password to unlock this function</string>
+    <string name="nfc_dialog_add_cloud_password_content">The function is not accessible until cloud wallet password is added and used to unlock the account. Add password now?</string>
     <string name="nfc_dialog_add_cloud_password_button">Add</string>
     <string name="nfc_dialog_unlock_title_by_card">unlock</string>
     <string name="nfc_dialog_unlock_title_by_cloud">unlock</string>
+    <string name="nfc_dialog_unlock_memo_support_text">Enotes card does not support memo now. Please enter cloud password.</string>
     <!-- Nfc Toast Message -->
     <string name="nfc_toast_message_already_logged_in">Already Logged in by eNotes</string>
     <string name="nfc_toast_message_logged_in_successful_by_eNotes">Logged in successfully by eNotes</string>
