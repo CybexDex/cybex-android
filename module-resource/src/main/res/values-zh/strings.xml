@@ -94,10 +94,10 @@
 
     <!-- Setting page -->
     <string name="setting_default_unlock_method">默认解锁方式</string>
-    <string name="setting_default_unlock_method_enotes">enotes解锁</string>
+    <string name="setting_default_unlock_method_enotes">CybKey解锁</string>
     <string name="setting_default_unlock_method_password">云密码解锁</string>
     <string name="setting_set_cloud_password">设置云密码</string>
-    <string name="setting_set_enotes_card_password">设置eNotes卡密码</string>
+    <string name="setting_set_enotes_card_password">设置CybKey卡密码</string>
     <string name="setting_has_already_set">已设置</string>
     <string name="setting_not_set">未设置</string>
     <string name="setting_language">语言</string>
@@ -325,6 +325,7 @@
     <!-- Toast Message -->
     <string name="toast_message_can_not_deposit">暂不支持充值</string>
     <string name="toast_message_can_not_withdraw">您没有权限提现</string>
+    <string name="toast_message_can_not_transfer">您没有权限转帐</string>
     <string name="toast_message_withdraw_sent">提现申请成功</string>
     <string name="toast_message_withdraw_failed">提现申请失败</string>
     <string name="toast_message_place_order_successfully">挂单成功</string>
@@ -585,7 +586,7 @@
     <string name="text_ticket_internet_wrong_message">网络连接错误</string>
     <string name="text_ticket_wrong_message">票务上链不成功</string>
     <string name="text_camera_permission">请同意打开照相机权限</string>
-    <string name="text_ticket_toast_sign_failed_enotes">请不要移动eNotes卡</string>
+    <string name="text_ticket_toast_sign_failed_enotes">请不要移动CybKey卡</string>
 
     <string name="text_trade_history">历史成交</string>
     <string name="text_order_history">历史委托</string>
@@ -611,37 +612,37 @@
 
     <!-- Nfc Related -->
     <string name="bluetooth_connect_fail">蓝牙连接已断开！</string>
-    <string name="invalid_card">无效的eNotes！</string>
-    <string name="not_support_card">当前软件版本不支持该eNotes，请升级到最新版本。</string>
-    <string name="can_not_find_card">没有发现eNotes</string>
-    <string name="tag_connection_lost">正在读取，请勿移动eNotes！</string>
+    <string name="invalid_card">无效的CybKey！</string>
+    <string name="not_support_card">当前软件版本不支持该CybKey，请升级到最新版本。</string>
+    <string name="can_not_find_card">没有发现CybKey</string>
+    <string name="tag_connection_lost">正在读取，请勿移动CybKey！</string>
     <string name="network_unavailable">网络连接不可用，请检查网络设置！</string>
-    <string name="error_connect_card">请将eNotes靠近手机。请勿移动eNotes直至成功弹框出现。</string>
-    <string name="error_connect_card_ble">请将eNotes靠近蓝牙NFC读卡器。</string>
-    <string name="please_right_card">请放置正确的eNotes！</string>
+    <string name="error_connect_card">请将CybKey靠近手机。请勿移动CybKey直至成功弹框出现。</string>
+    <string name="error_connect_card_ble">请将CybKey靠近蓝牙NFC读卡器。</string>
+    <string name="please_right_card">请放置正确的CybKey！</string>
 
     <string name="title_set_cloud_pass">设置云密码</string>
-    <string name="tip_set_cloud_pass">云密码能够让您没有随身携带eNotes
+    <string name="tip_set_cloud_pass">云密码能够让您没有随身携带CybKey
         卡时，也可以对账户进行操作。一旦设定不可更改、不可找回，请您务必牢记。我们强烈建议您使用长密码，确保资产安全。</string>
-    <string name="title_set_enotes_pass">设置eNotes卡密码</string>
-    <string name="tip_set_enotes_pass">eNotes卡密码能够提供更高级别的安全性，一旦设定不可更改、不可找回，请您务必牢记。</string>
+    <string name="title_set_enotes_pass">设置CybKey卡密码</string>
+    <string name="tip_set_enotes_pass">CybKey卡密码能够提供更高级别的安全性，一旦设定不可更改、不可找回，请您务必牢记。</string>
     <string name="set_enotes_password_error">密码需为6位数字</string>
     <string name="error_unlock_enotes">解锁失败，请重试！</string>
-    <string name="title_use_enotes">使用eNotes</string>
+    <string name="title_use_enotes">使用CybKey</string>
     <string name="title_use_password">使用密码</string>
-    <string name="tip_no_memo_use_cloud_pass">eNotes卡暂不支持Memo功能，如需添加Memo，请使用云密码解锁</string>
+    <string name="tip_no_memo_use_cloud_pass">CybKey卡暂不支持Memo功能，如需添加Memo，请使用云密码解锁</string>
 
     <!-- Nfc Dialog Message -->
     <string name="nfc_dialog_change_account_content"> 切换帐号至 %1$s? 请不要移动卡片</string>
-    <string name="nfc_dialog_verify_enotes_password_titile">验证eNotes卡密码</string>
+    <string name="nfc_dialog_verify_enotes_password_titile">验证CybKey卡密码</string>
     <string name="nfc_dialog_add_cloud_password_content">使用该功能，必须添加云密码并使用云密码解锁账户，是否现在添加？</string>
     <string name="nfc_dialog_add_cloud_password_button">去添加</string>
-    <string name="nfc_dialog_unlock_title_by_card">eNotes解锁</string>
+    <string name="nfc_dialog_unlock_title_by_card">CybKey解锁</string>
     <string name="nfc_dialog_unlock_title_by_cloud">云密码解锁</string>
-    <string name="nfc_dialog_unlock_memo_support_text">eNotes卡暂不支持转账附言，请输入云密码</string>
+    <string name="nfc_dialog_unlock_memo_support_text">CybKey卡暂不支持转账附言，请输入云密码</string>
 
     <!-- Nfc Toast Message -->
-    <string name="nfc_toast_message_already_logged_in">已经用eNotes登陆</string>
-    <string name="nfc_toast_message_logged_in_successful_by_eNotes">eNotes登陆成功</string>
+    <string name="nfc_toast_message_already_logged_in">已经用CybKey登陆</string>
+    <string name="nfc_toast_message_logged_in_successful_by_eNotes">CybKey登陆成功</string>
 
 </resources>

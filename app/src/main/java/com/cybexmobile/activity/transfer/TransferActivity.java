@@ -98,6 +98,7 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACCOUNT_BALANC
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ADDRESS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
+import static com.cybex.basemodule.constant.Constant.PREF_ADDRESS_TO_PUB_MAP;
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
@@ -991,7 +992,9 @@ public class TransferActivity extends BaseActivity implements
                         } else {
                             //其他方式登陆
                             Log.d("status", "eNotes : false");
-                            toTransfer();
+                            if (checkTransferAuthority(mFromAccountObject)) {
+                                toTransfer();
+                            }
                         }
                     }
                 });
@@ -1010,7 +1013,9 @@ public class TransferActivity extends BaseActivity implements
                     public void onUnLocked(String password) {
                         if(password != null) {
                             mIsUsedCloudPassword = true;
-                            toTransfer();
+                            if (checkTransferAuthority(mFromAccountObject)) {
+                                toTransfer();
+                            }
                         }
                      }
                 },
@@ -1037,7 +1042,9 @@ public class TransferActivity extends BaseActivity implements
                     public void onUnLocked(String password) {
                         if (password != null) {
                             mIsUsedCloudPassword = true;
-                            toTransfer();
+                            if (checkTransferAuthority(mFromAccountObject)) {
+                                toTransfer();
+                            }
                         }
                     }
                 },
@@ -1259,6 +1266,21 @@ public class TransferActivity extends BaseActivity implements
             e.printStackTrace();
             mBtnTransfer.setEnabled(false);
         }
+    }
+
+    private boolean checkTransferAuthority(AccountObject accountObject) {
+        if (TextUtils.isEmpty(mEtRemark.getText().toString().trim())) {
+            return true;
+        }
+        Map<String, Types.public_key_type> map = SpUtil.getMap(this, PREF_ADDRESS_TO_PUB_MAP);
+        Types.public_key_type memoKey = accountObject.options.memo_key;
+        for (Map.Entry<String, Types.public_key_type> entry : map.entrySet()) {
+            if (memoKey.equals(entry.getValue())) {
+                return true;
+            }
+        }
+        ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_transfer), R.drawable.ic_error_16px);
+        return false;
     }
 
     /**

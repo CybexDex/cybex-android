@@ -84,7 +84,7 @@ public abstract class BaseFragment extends Fragment{
 
     protected boolean isLoginFromENotes() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("enotes", Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("from", true);
+        return sharedPreferences.getBoolean("from", false);
     }
 
     protected String getLoginPublicKey() {

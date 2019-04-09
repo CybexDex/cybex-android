@@ -685,6 +685,10 @@ public class WalletApi {
             } else {
                 privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
             }
+
+            if (privateKeyType == null) {
+                privateKeyType = mMemoPrivateKey;
+            }
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -737,6 +741,10 @@ public class WalletApi {
                 privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
             } else {
                 privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+            }
+
+            if (privateKeyType == null) {
+                privateKeyType = mMemoPrivateKey;
             }
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),

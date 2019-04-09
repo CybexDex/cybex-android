@@ -90,7 +90,7 @@
 
     <!-- Setting Strings -->
     <string name="setting_default_unlock_method">Set default unlock method</string>
-    <string name="setting_default_unlock_method_enotes">Unlock by enotes</string>
+    <string name="setting_default_unlock_method_enotes">Unlock by CybKey</string>
     <string name="setting_default_unlock_method_password">Unlock by password</string>
     <string name="setting_set_cloud_password">Set cloud password</string>
     <string name="setting_set_enotes_card_password">Set card password</string>
@@ -322,6 +322,7 @@
     <!-- Toast Message -->
     <string name="toast_message_can_not_deposit">Missing authority for deposit</string>
     <string name="toast_message_can_not_withdraw">Missing authority for withdrawal</string>
+    <string name="toast_message_can_not_transfer">Missing authority for transfer</string>
     <string name="toast_message_withdraw_sent">Withdrawal request has been sent</string>
     <string name="toast_message_withdraw_failed">Withdrawal request failed</string>
     <string name="toast_message_place_order_successfully">Place order successfully</string>
@@ -608,39 +609,39 @@ To ensure fairness, please help us in the prevention of cheating in any form.</s
 
     <!-- Nfc related -->
     <string name="bluetooth_connect_fail">Bluetooth connection lost!</string>
-    <string name="invalid_card">Invalid eNotes!</string>
+    <string name="invalid_card">Invalid CybKey!</string>
     <string name="not_support_card">No support for the card. Please upgrade the client.</string>
     <string name="can_not_find_card">Can not find card</string>
-    <string name="tag_connection_lost">Scan failed, please do not move your eNotes when scanning.</string>
+    <string name="tag_connection_lost">Scan failed, please do not move your CybKey when scanning.</string>
     <string name="network_unavailable">The network connection is not available, please check the network setting.</string>
     <string name="error_connect_card_ble">Please connect the bluetooth NFC reader.</string>
-    <string name="error_connect_card">Please scan your eNotes with the phone. And DO NOT move your card until you see
+    <string name="error_connect_card">Please scan your CybKey with the phone. And DO NOT move your card until you see
        a status dialog.</string>
     <string name="please_right_card">Please scan the correct card!</string>
 
     <string name="title_set_cloud_pass">Set Cloud Password</string>
-    <string name="tip_set_cloud_pass">When you not having your eNotes with you, the cloud password allows you to
+    <string name="tip_set_cloud_pass">When you not having your CybKey with you, the cloud password allows you to
         manipulate your account. Once set, it is uneditable and we can not assist you to get it back in any form,
         please do remember it. Long password is highly recommended. </string>
-    <string name="title_set_enotes_pass">Set eNotes Password</string>
-    <string name="tip_set_enotes_pass">eNotes password can provider a higher security level protection. Once set, it
+    <string name="title_set_enotes_pass">Set CybKey Password</string>
+    <string name="tip_set_enotes_pass">CybKey password can provider a higher security level protection. Once set, it
         is uneditable and we can not assist you to get it back in any form, please do remember it.</string>
     <string name="set_enotes_password_error">Password should be 6 digits precisely.</string>
     <string name="error_unlock_enotes">Unlock fail, please try again</string>
-    <string name="title_use_enotes">Use eNotes</string>
+    <string name="title_use_enotes">Use CybKey</string>
     <string name="title_use_password">Use Password</string>
-    <string name="tip_no_memo_use_cloud_pass">eNotes does not support memo yet, if you want to use it, please
+    <string name="tip_no_memo_use_cloud_pass">CybKey does not support memo yet, if you want to use it, please
         use cloud password to unlock</string>
 
     <!-- Nfc Dialog Message -->
     <string name="nfc_dialog_change_account_content">Change Account to %1$s? Please do not move card</string>
-    <string name="nfc_dialog_verify_enotes_password_titile">Verify Enotes password</string>
+    <string name="nfc_dialog_verify_enotes_password_titile">Verify CybKey password</string>
     <string name="nfc_dialog_add_cloud_password_content">The function is not accessible until cloud wallet password is added and used to unlock the account. Add password now?</string>
     <string name="nfc_dialog_add_cloud_password_button">Add</string>
     <string name="nfc_dialog_unlock_title_by_card">unlock</string>
     <string name="nfc_dialog_unlock_title_by_cloud">unlock</string>
-    <string name="nfc_dialog_unlock_memo_support_text">Enotes card does not support memo now. Please enter cloud password.</string>
+    <string name="nfc_dialog_unlock_memo_support_text">CybKey card does not support memo now. Please enter cloud password.</string>
     <!-- Nfc Toast Message -->
-    <string name="nfc_toast_message_already_logged_in">Already Logged in by eNotes</string>
-    <string name="nfc_toast_message_logged_in_successful_by_eNotes">Logged in successfully by eNotes</string>
+    <string name="nfc_toast_message_already_logged_in">Already Logged in by CybKey</string>
+    <string name="nfc_toast_message_logged_in_successful_by_eNotes">Logged in successfully by CybKey</string>
 </resources>
