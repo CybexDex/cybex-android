@@ -80,6 +80,8 @@ public class DepositActivity extends BaseActivity {
     private static int REQUEST_PERMISSION = 1;
     private static String EOS_NAME = "EOS";
     private static String XRP_NAME = "XRP";
+    private static String ATOM_NAME = "ATOM";
+    private static String IRIS_NAME = "IRIS";
 
     private Unbinder mUnbinder;
     private Context mContext;
@@ -172,7 +174,7 @@ public class DepositActivity extends BaseActivity {
                 mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_eos_verification_code));
                 mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_eos_alert_message));
                 mCopyAddressTv.setText(getResources().getString(R.string.deposit_eos_copy_code));
-            } else if (mAssetName.equals(XRP_NAME)) {
+            } else if (mAssetName.equals(XRP_NAME) || mAssetName.equals(ATOM_NAME) || mAssetName.equals(IRIS_NAME)) {
                 mXrpCopyAddressLinearLayout.setVisibility(View.VISIBLE);
                 mEosXrpTextLayout.setVisibility(View.VISIBLE);
                 mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_xrp_tag_text));
@@ -387,7 +389,7 @@ public class DepositActivity extends BaseActivity {
                             String verificationCode = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
                             mEosAccountNameTv.setText(eosAccountName);
                             mQRAddressView.setText(verificationCode);
-                        } else if (assetName.equals(XRP_NAME)) {
+                        } else if (assetName.equals(XRP_NAME) || assetName.equals(ATOM_NAME) || assetName.equals(IRIS_NAME)) {
                             String xrpAddress = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
                             String xrpTag = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
                             mXrpAddressTv.setText(xrpAddress);

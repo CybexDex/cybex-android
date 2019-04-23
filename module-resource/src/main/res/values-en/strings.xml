@@ -265,8 +265,8 @@
     <string name="deposit_save_qr_code">Save QR Code</string>
     <string name="deposit_copy_address">Copy Address</string>
     <string name="deposit_get_new_address">Get New Address</string>
-    <string name="deposit_xrp_tag_text">XRP deposit Tag</string>
-    <string name="deposit_xrp_tag_warning_message">(Please send your XRP with the tag displayed below. please do not put any other information on Tag)</string>
+    <string name="deposit_xrp_tag_text">Deposit Tag</string>
+    <string name="deposit_xrp_tag_warning_message">(Please send the tag displayed below. please do not put any other information on Tag)</string>
     <string name="deposit_xrp_copy_tag">Copy Tag</string>
     <string name="deposit_eos_copy_account_name">Copy Account Name</string>
     <string name="deposit_eos_copy_code">Copy Code</string>
