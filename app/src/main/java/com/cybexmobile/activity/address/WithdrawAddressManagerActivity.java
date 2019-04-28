@@ -10,7 +10,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
+import com.cybex.basemodule.event.Event;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.utils.MyUtils;
@@ -21,6 +23,8 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybex.basemodule.service.WebSocketService;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -104,6 +108,13 @@ public class WithdrawAddressManagerActivity extends BaseActivity implements Depo
         }
     };
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFinishLoadAssetObjects(Event.LoadAssets event) {
+        if (event.getData() != null && event.getData().size() > 0) {
+            requestWithdrawList();
+        }
+    }
+
     private void loadAddressCount(List<DepositAndWithdrawObject> depositAndWithdrawObjectList, DepositAndWithdrawObject depositAndWithdrawObject, int i) {
         if (mUserName.isEmpty()) {
             return;
@@ -144,6 +155,7 @@ public class WithdrawAddressManagerActivity extends BaseActivity implements Depo
                             DepositAndWithdrawObject depositAndWithdrawObject = new DepositAndWithdrawObject();
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             depositAndWithdrawObject.setId(jsonObject.getString("id"));
+                            depositAndWithdrawObject.setTag(jsonObject.getBoolean("tag"));
                             depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(jsonObject.getString("id")));
                             depositAndWithdrawObjectList.add(depositAndWithdrawObject);
 
@@ -168,6 +180,7 @@ public class WithdrawAddressManagerActivity extends BaseActivity implements Depo
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.e("error",e.getLocalizedMessage());
 
                     }
 
@@ -188,6 +201,7 @@ public class WithdrawAddressManagerActivity extends BaseActivity implements Depo
         Intent intent = new Intent(this, WithdrawAddressManageListActivity.class);
         intent.putExtra("assetName", MyUtils.removeJadePrefix(depositAndWithdrawObject.getAssetObject().symbol));
         intent.putExtra("assetId", depositAndWithdrawObject.getId());
+        intent.putExtra("tag", depositAndWithdrawObject.isTag());
         startActivity(intent);
     }
 }

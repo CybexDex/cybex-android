@@ -110,33 +110,6 @@
                     android:visibility="invisible" />
 
             </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_1"
-                android:background="@color/colorPrimary" />
-
-            <TextView
-                style="@style/font_grey_medium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_margin"
-                android:text="@string/text_note" />
-
-            <EditText
-                android:id="@+id/add_transfer_account_et_label"
-                style="@style/font_white_dark_large"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:maxLength="15"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:paddingBottom="@dimen/activity_padding"
-                android:paddingTop="@dimen/activity_padding"
-                android:textColorHint="@color/text_hint_color"
-                android:hint="@string/text_less_than_15_characters"/>
-
             <LinearLayout
                 android:id="@+id/add_transfer_account_memo_layout"
                 android:layout_width="match_parent"
@@ -168,6 +141,32 @@
                     android:textColorHint="@color/text_hint_color" />
 
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_1"
+                android:background="@color/colorPrimary" />
+
+            <TextView
+                style="@style/font_grey_medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:text="@string/text_note" />
+
+            <EditText
+                android:id="@+id/add_transfer_account_et_label"
+                style="@style/font_white_dark_large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:paddingBottom="@dimen/activity_padding"
+                android:paddingTop="@dimen/activity_padding"
+                android:textColorHint="@color/text_hint_color"
+                android:hint="@string/text_less_than_15_characters"/>
 
         </LinearLayout>
 

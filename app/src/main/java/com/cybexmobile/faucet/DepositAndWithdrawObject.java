@@ -11,6 +11,7 @@ public class DepositAndWithdrawObject {
     private String enInfo;
     private String cnInfo;
     private String projectName;
+    private boolean tag;
     private long count;
     public AssetObject assetObject;
     private AccountBalanceObject accountBalanceObject;
@@ -69,6 +70,14 @@ public class DepositAndWithdrawObject {
 
     public boolean isEnable() {
         return enable;
+    }
+
+    public void setTag(boolean tag) {
+        this.tag = tag;
+    }
+
+    public boolean isTag() {
+        return tag;
     }
 
     public AssetObject getAssetObject() {

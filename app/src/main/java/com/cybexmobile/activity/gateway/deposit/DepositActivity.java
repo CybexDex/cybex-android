@@ -92,9 +92,8 @@ public class DepositActivity extends BaseActivity {
     private String mAssetId;
     private String mEnMsg;
     private String mCnMsg;
-    private String mEnInfo;
-    private String mCnInfo;
     private boolean mIsEnabled;
+    private boolean mIsTag;
 
 
     @BindView(R.id.deposit_linear_layout)
@@ -161,26 +160,32 @@ public class DepositActivity extends BaseActivity {
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
         mEnMsg = intent.getStringExtra("enMsg");
         mCnMsg = intent.getStringExtra("cnMsg");
-        mEnInfo = intent.getStringExtra("enInfo");
-        mCnInfo = intent.getStringExtra("cnInfo");
+        mIsTag = intent.getBooleanExtra("tag", false);
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_deposit), mAssetName));
         mTvProtocolAddress.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         if (mIsEnabled) {
-            if (mAssetName.equals(EOS_NAME)) {
-                mEosLinearLayout.setVisibility(View.VISIBLE);
-                mEosXrpTextLayout.setVisibility(View.VISIBLE);
-                mNormalLinearLayout.setVisibility(View.GONE);
-                mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_eos_verification_code));
-                mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_eos_alert_message));
-                mCopyAddressTv.setText(getResources().getString(R.string.deposit_eos_copy_code));
-            } else if (mAssetName.equals(XRP_NAME) || mAssetName.equals(ATOM_NAME) || mAssetName.equals(IRIS_NAME)) {
+            if (mIsTag) {
                 mXrpCopyAddressLinearLayout.setVisibility(View.VISIBLE);
                 mEosXrpTextLayout.setVisibility(View.VISIBLE);
                 mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_xrp_tag_text));
                 mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_xrp_tag_warning_message));
                 mCopyAddressTv.setText(getResources().getString(R.string.deposit_xrp_copy_tag));
             }
+//            if (mAssetName.equals(EOS_NAME)) {
+//                mEosLinearLayout.setVisibility(View.VISIBLE);
+//                mEosXrpTextLayout.setVisibility(View.VISIBLE);
+//                mNormalLinearLayout.setVisibility(View.GONE);
+//                mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_eos_verification_code));
+//                mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_eos_alert_message));
+//                mCopyAddressTv.setText(getResources().getString(R.string.deposit_eos_copy_code));
+//            } else if (mAssetName.equals(XRP_NAME) || mAssetName.equals(ATOM_NAME) || mAssetName.equals(IRIS_NAME)) {
+//                mXrpCopyAddressLinearLayout.setVisibility(View.VISIBLE);
+//                mEosXrpTextLayout.setVisibility(View.VISIBLE);
+//                mEosXrpVerificationCodeTagTv.setText(getResources().getString(R.string.deposit_xrp_tag_text));
+//                mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_xrp_tag_warning_message));
+//                mCopyAddressTv.setText(getResources().getString(R.string.deposit_xrp_copy_tag));
+//            }
             getAddress(mUserName, mAssetName);
             requestDetailMessage();
         } else {
@@ -239,10 +244,9 @@ public class DepositActivity extends BaseActivity {
             if (mQRAddressView.getText() != null) {
                 copyAddress(mQRAddressView.getText().toString());
             }
-            if (mAssetName.equals(EOS_NAME)) {
-                ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_eos_code_copied), R.drawable.ic_check_circle_green);
-            } else if (mAssetName.equals(XRP_NAME)) {
+            if (mIsTag) {
                 ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_xrp_tag_copied), R.drawable.ic_check_circle_green);
+
             } else {
                 ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.snack_bar_copied), R.drawable.ic_check_circle_green);
             }
@@ -384,12 +388,7 @@ public class DepositActivity extends BaseActivity {
                             return;
                         }
                         AccountAddressRecord accountAddressRecord = depositAddress.fragments().accountAddressRecord();
-                        if (assetName.equals(EOS_NAME)) {
-                            String eosAccountName = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
-                            String verificationCode = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
-                            mEosAccountNameTv.setText(eosAccountName);
-                            mQRAddressView.setText(verificationCode);
-                        } else if (assetName.equals(XRP_NAME) || assetName.equals(ATOM_NAME) || assetName.equals(IRIS_NAME)) {
+                        if (mIsTag) {
                             String xrpAddress = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
                             String xrpTag = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
                             mXrpAddressTv.setText(xrpAddress);

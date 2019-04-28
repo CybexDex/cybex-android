@@ -61,7 +61,6 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class AddTransferAccountActivity extends BaseActivity implements SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
     private static String EOS = "EOS";
-    private static String XRP = "XRP";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -94,6 +93,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
 
     private boolean mIsAccountValid;
     private boolean mIsAccountExist;
+    private boolean mIsTag;
     private String mTokenName;
     private String mTokenId;
 
@@ -106,10 +106,10 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         SoftKeyBoardListener.setListener(this, this);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         String address = getIntent().getStringExtra(INTENT_PARAM_ADDRESS);
-        String eosMemo = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_MEMO);
         String xrpTag = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_TAG);
         mTokenName = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_NAME);
         mTokenId = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_ID);
+        mIsTag = getIntent().getBooleanExtra("tag", false);
         if(!TextUtils.isEmpty(address)){
             mEtAccount.setText(address);
             onAccountNameFocusChanged(mEtAccount, false);
@@ -118,14 +118,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         if (mTokenName != null) {
             mLinearLayoutCrypto.setVisibility(View.VISIBLE);
             mTvCrypto.setText(mTokenName);
-            if (mTokenName.equals(EOS)) {
-                mLinearLayoutMemo.setVisibility(View.VISIBLE);
-                mTvToolbarTitle.setText(getResources().getString(R.string.text_add_withdraw_account));
-                mTvMemoTag.setText(getResources().getString(R.string.text_memo));
-                if (!TextUtils.isEmpty(eosMemo)) {
-                    mEtMemo.setText(eosMemo);
-                }
-            } else if (mTokenName.equals(XRP)) {
+            if (mIsTag) {
                 mLinearLayoutMemo.setVisibility(View.VISIBLE);
                 mTvAccountAddress.setText(getResources().getString(R.string.text_address));
                 mTvMemoTag.setText(getResources().getString(R.string.text_tag));
@@ -307,9 +300,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
             address.setAddress(mEtAccount.getText().toString().trim());
             address.setAccount(mUserName);
             address.setCreateTime(System.currentTimeMillis());
-            if (mTokenName.equals(EOS)) {
-                address.setMemo(mEtMemo.getText().toString().trim());
-            } else if (mTokenName.equals(XRP)) {
+            if (mIsTag) {
                 address.setTag(mEtMemo.getText().toString().trim());
             }
             addTransferAccount(address);

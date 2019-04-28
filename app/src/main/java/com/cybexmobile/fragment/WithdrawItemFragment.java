@@ -162,9 +162,8 @@ public class WithdrawItemFragment extends BaseFragment implements DepositAndWith
                             depositAndWithdrawObject.setEnable(jsonObject.getBoolean("enable"));
                             depositAndWithdrawObject.setEnMsg(jsonObject.getString("enMsg"));
                             depositAndWithdrawObject.setCnMsg(jsonObject.getString("cnMsg"));
-                            depositAndWithdrawObject.setEnInfo(jsonObject.getString("enInfo"));
-                            depositAndWithdrawObject.setCnInfo(jsonObject.getString("cnInfo"));
                             depositAndWithdrawObject.setProjectName(jsonObject.getString("projectName"));
+                            depositAndWithdrawObject.setTag(jsonObject.getBoolean("tag"));
                             depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(jsonObject.getString("id")));
                             depositAndWithdrawObjectList.add(depositAndWithdrawObject);
 
@@ -268,8 +267,7 @@ public class WithdrawItemFragment extends BaseFragment implements DepositAndWith
             intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
             intent.putExtra("enMsg", depositAndWithdrawObject.getEnMsg());
             intent.putExtra("cnMsg", depositAndWithdrawObject.getCnMsg());
-            intent.putExtra("enInfo", depositAndWithdrawObject.getEnInfo());
-            intent.putExtra("cnInfo", depositAndWithdrawObject.getCnInfo());
+            intent.putExtra("tag", depositAndWithdrawObject.isTag());
             intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
             AccountBalanceObject accountBalanceObject = depositAndWithdrawObject.getAccountBalanceObject();
             if (accountBalanceObject != null) {

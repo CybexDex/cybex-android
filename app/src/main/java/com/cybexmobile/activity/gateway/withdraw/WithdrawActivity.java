@@ -111,17 +111,14 @@ import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ITEMS;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_SELECTED_ITEM;
 
 public class WithdrawActivity extends BaseActivity {
-    private static String EOS = "EOS";
-    private static String XRP = "XRP";
 
     public Unbinder mUnbinder;
     private String mAssetName;
     private String mAssetId;
     private boolean mIsEnabled;
+    private boolean mIsTag;
     private String mEnMsg;
     private String mCnMsg;
-    private String mEnInfo;
-    private String mCnInfo;
     private String mUserName;
     private double mAvailableAmount;
     private double mMinValue;
@@ -203,19 +200,13 @@ public class WithdrawActivity extends BaseActivity {
         mAssetName = intent.getStringExtra("assetName");
         mAssetId = intent.getStringExtra("assetId");
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
+        mIsTag = intent.getBooleanExtra("tag", false);
         mEnMsg = intent.getStringExtra("enMsg");
         mCnMsg = intent.getStringExtra("cnMsg");
-        mEnInfo = intent.getStringExtra("enInfo");
-        mCnInfo = intent.getStringExtra("cnInfo");
         mAvailableAmount = intent.getDoubleExtra("availableAmount", 0);
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_withdraw), mAssetName));
-        if (mAssetName.equals(EOS)) {
-            mWithdrawAddressTv.setText(getResources().getString(R.string.withdraw_account_eos));
-            mWithdrawAddress.setHint(getResources().getString(R.string.withdraw_enter_or_paste_account_hint_eos));
-            mWithdrawMemoEosLayout.setVisibility(View.VISIBLE);
-            mWithdrawEosXrpTagMemoTitleTv.setText(getResources().getString(R.string.withdraw_memo_eos));
-        } else if (mAssetName.equals(XRP)) {
+        if (mIsTag) {
             mWithdrawMemoEosLayout.setVisibility(View.VISIBLE);
             mWithdrawEosXrpTagMemoTitleTv.setText(getResources().getString(R.string.withdraw_xrp_tag));
         }
@@ -307,9 +298,8 @@ public class WithdrawActivity extends BaseActivity {
             intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mAssetName);
             intent.putExtra(INTENT_PARAM_CRYPTO_ID, mAssetObject.id.toString());
             intent.putExtra(INTENT_PARAM_ADDRESS, mWithdrawAddress.getText().toString().trim());
-            if (mAssetName.equals(EOS)) {
-                intent.putExtra(INTENT_PARAM_CRYPTO_MEMO, mWithdrawMemoEosEditText.getText().toString().trim());
-            } else if (mAssetName.equals(XRP)) {
+            intent.putExtra("tag", mIsTag);
+            if (mIsTag) {
                 intent.putExtra(INTENT_PARAM_CRYPTO_TAG, mWithdrawMemoEosEditText.getText().toString().trim());
             }
             startActivity(intent);
@@ -328,14 +318,8 @@ public class WithdrawActivity extends BaseActivity {
                     return;
                 }
                 mWithdrawAddress.setText(address.getAddress());
-                if (address.getToken().equals("1.3.4")) {
-                    if (!address.getMemo().isEmpty()) {
-                        mWithdrawMemoEosEditText.setText(address.getMemo());
-                    }
-                }
-
-                if (address.getToken().equals("1.3.999")) {
-                    if (!address.getTag().isEmpty()) {
+                if (mIsTag) {
+                    if (address.getTag() != null && !address.getTag().isEmpty()) {
                         mWithdrawMemoEosEditText.setText(address.getTag());
                     }
                 }
@@ -571,10 +555,9 @@ public class WithdrawActivity extends BaseActivity {
                         intent.putExtra(INTENT_PARAM_ADDRESS, mWithdrawAddress.getText().toString().trim());
                         intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mAssetName);
                         intent.putExtra(INTENT_PARAM_CRYPTO_ID, mAssetObject.id.toString());
-                        if (mAssetName.equals(EOS)) {
-                            intent.putExtra(INTENT_PARAM_CRYPTO_MEMO, mWithdrawMemoEosEditText.getText().toString().trim());
-                        } else if (mAssetName.equals(XRP)) {
+                        if (mIsTag) {
                             intent.putExtra(INTENT_PARAM_CRYPTO_TAG, mWithdrawMemoEosEditText.getText().toString().trim());
+                            intent.putExtra("tag", mIsTag);
                         }
                         startActivity(intent);
                         finish();
@@ -700,7 +683,7 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private String getMemo(String address, String assetName, String memo) {
-        if (mAssetName.equals(EOS) || mAssetName.equals(XRP)) {
+        if (mIsTag) {
             return "withdraw:" + "CybexGateway:" + assetName + ":" + address + "[" + memo + "]";
         }
         return "withdraw:" + "CybexGateway:" + assetName + ":" + address;
@@ -948,17 +931,9 @@ public class WithdrawActivity extends BaseActivity {
                     public void accept(List<Address> addresses) throws Exception {
                         mAddresses = addresses;
                         if (mAddresses == null || mAddresses.size() == 0) {
-                            if (mAssetName.equals(EOS)) {
-                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_add_account));
-                            } else {
-                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_add_address));
-                            }
+                            mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_add_address));
                         } else {
-                            if (mAssetName.equals(EOS)) {
-                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_select_account));
-                            } else {
-                                mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_select_address));
-                            }
+                            mTvWithdrawSelectAddress.setText(getResources().getString(R.string.text_select_address));
                         }
                     }
                 }, new Consumer<Throwable>() {

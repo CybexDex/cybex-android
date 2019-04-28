@@ -362,7 +362,7 @@
     <string name="dialog_withdraw_confirmation_gateway_fee">Gateway Fee:</string>
     <string name="dialog_withdraw_confirmation_transfer_fee">Transfer Fee:</string>
     <string name="dialog_withdraw_confirmation_receive_amount">Receive Amount:</string>
-    <string name="dialog_withdraw_confirmation_memo_eos">Memo:</string>
+    <string name="dialog_withdraw_confirmation_memo_eos">Tag:</string>
 
     <!-- Dialog transfer confirmation -->
     <string name="dialog_text_account">Account:</string>

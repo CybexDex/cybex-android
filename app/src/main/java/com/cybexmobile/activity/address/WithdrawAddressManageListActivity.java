@@ -43,8 +43,6 @@ import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
 public class WithdrawAddressManageListActivity extends BaseActivity implements TransferAccountManagerRecyclerViewAdapter.OnItemClickListener,
         AddressOperationSelectDialog.OnAddressOperationSelectedListener {
-    private static String EOS = "EOS";
-    private static String XRP = "XRP";
 
     private Unbinder mUnbinder;
     private TransferAccountManagerRecyclerViewAdapter mWithdrawAddressManagerAdapter;
@@ -56,6 +54,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
     private String mUserName;
     private String mTokenName;
     private String mTokenId;
+    private boolean mIsTag;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -77,12 +76,8 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mTokenName = getIntent().getStringExtra("assetName");
         mTokenId = getIntent().getStringExtra("assetId");
-        if (mTokenName.equals(EOS)) {
-            mTvSubtitleMemo.setVisibility(View.VISIBLE);
-            mTvSubtitleMemo.setText(getResources().getString(R.string.withdraw_memo_eos));
-            mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_account_title)));
-            mTvNoteAddressAccount.setText(getResources().getString(R.string.withdraw_address_note_account));
-        } else if (mTokenName.equals(XRP)) {
+        mIsTag = getIntent().getBooleanExtra("tag", false);
+        if (mIsTag) {
             mTvSubtitleMemo.setVisibility(View.VISIBLE);
             mTvSubtitleMemo.setText(getResources().getString(R.string.withdraw_xrp_tag));
             mTvToolbarTitle.setText(String.format("%s %s", mTokenName, getResources().getString(R.string.withdraw_address_title)));
@@ -131,6 +126,7 @@ public class WithdrawAddressManageListActivity extends BaseActivity implements T
                 Intent intent = new Intent(this, AddTransferAccountActivity.class);
                 intent.putExtra(INTENT_PARAM_CRYPTO_NAME, mTokenName);
                 intent.putExtra(INTENT_PARAM_CRYPTO_ID, mTokenId);
+                intent.putExtra("tag", mIsTag);
                 startActivity(intent);
                 break;
         }
