@@ -7,6 +7,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.CoinAgeObject;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.websocket.Call;
@@ -378,6 +379,18 @@ public class ApihkWebSocketClient extends WebSocketListener {
         sendForReply(callObject, replyObjectProcess);
     }
 
+    public void get_account_token_age(String accountId, MessageCallback<Reply<List<CoinAgeObject>>> callback) {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "get_account_token_age";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(accountId);
+
+        ReplyProcessImpl<Reply<List<CoinAgeObject>>> replyObject = new ReplyProcessImpl<>(new TypeToken<Reply<List<CoinAgeObject>>> () {}.getType(), callback);
+        sendForReply(callObject, replyObject);
+    }
+
+
     private <T> void sendForReply(Call callObject, ReplyProcessImpl<Reply<T>> replyObjectProcess) {
         if(mWebSocket != null && mConnectStatus == WebSocketStatus.LOGIN){
             sendForReplyImpl(callObject, replyObjectProcess);
@@ -406,7 +419,9 @@ public class ApihkWebSocketClient extends WebSocketListener {
         Iterator<DelayCall> iterator = delayCalls.iterator();
         while (iterator.hasNext()){
             DelayCall<Reply<T>> delayCall = iterator.next();
-            delayCall.call.params.set(0, mStatusId);
+            if(delayCall.call.params.size() > 1) {
+                delayCall.call.params.set(0, mStatusId);
+            }
             iterator.remove();
             sendForReply(delayCall.call, delayCall.replyProcess);
         }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -79,8 +80,9 @@ public class CybexDialog {
         Button dialogButton = dialog.findViewById(R.id.account_balance_dialog_button);
         TextView dialogTitle = dialog.findViewById(R.id.notify_dialog_title_tv);
         TextView dialogContent = dialog.findViewById(R.id.notify_dialog_content_tv);
+        dialogContent.setMovementMethod(new ScrollingMovementMethod());
         dialogTitle.setText(title);
-        dialogContent.setText(content);
+        dialogContent.setText(Html.fromHtml(content));
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

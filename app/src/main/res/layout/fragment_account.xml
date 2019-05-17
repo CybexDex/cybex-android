@@ -45,6 +45,33 @@
                 android:ellipsize="end"/>
 
             <LinearLayout
+                android:id="@+id/account_coin_age_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/font_gray_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_coin_age_with_colon"
+                    android:layout_gravity="center_vertical"/>
+                <TextView
+                    android:id="@+id/account_coin_age"
+                    style="@style/font_gray_bold_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_6"
+                    android:layout_gravity="center_vertical"/>
+                <ImageView
+                    android:id="@+id/account_coin_age_question_marker"
+                    android:src="@drawable/ic_cloud_wallet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_8" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/account_layout_item_my_portfolio"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_60"

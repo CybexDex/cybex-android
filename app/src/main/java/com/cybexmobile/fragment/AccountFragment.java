@@ -1,25 +1,40 @@
 package com.cybexmobile.fragment;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.basemodule.base.BaseFragment;
+import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
+import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.crypto.Sha256Object;
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.CoinAgeObject;
+import com.cybex.provider.websocket.MessageCallback;
+import com.cybex.provider.websocket.Reply;
+import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.R;
+import com.cybexmobile.SettingConfig;
 import com.cybexmobile.activity.address.AddressManagerActivity;
 import com.cybexmobile.activity.balance.AccountBalanceActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
@@ -34,6 +49,8 @@ import com.pixplicity.sharp.Sharp;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +75,25 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     private boolean mIsLoginIn;
     private String mName;
+    private AccountObject mAccountObject;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
+            WebSocketService mWebSocketService = binder.getService();
+            if (mWebSocketService != null) {
+                mAccountObject = mWebSocketService.getFullAccount(mName).account;
+                if (mAccountObject != null) {
+                    loadCoinAge();
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -65,6 +101,12 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     TextView mTvName;
     @BindView(R.id.account_iv_avatar)
     ImageView mIvAvatar;
+    @BindView(R.id.account_coin_age_layout)
+    LinearLayout mLlCoinAge;
+    @BindView(R.id.account_coin_age)
+    TextView mTvCoinAge;
+    @BindView(R.id.account_coin_age_question_marker)
+    ImageView mIvCoinAge;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +116,10 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mIsLoginIn = preferences.getBoolean(PREF_IS_LOGIN_IN, false);
         mName = preferences.getString(PREF_NAME, "");
+        if (mIsLoginIn) {
+            Intent intent = new Intent(getActivity(), WebSocketService.class);
+            getActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
@@ -116,6 +162,15 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mIsLoginIn) {
+            getActivity().unbindService(mServiceConnection);
+        }
+    }
+
+    @OnClick(R.id.account_coin_age_question_marker)
+    public void onBalanceInfoClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
+        CybexDialog.showBalanceDialog(getContext(), getResources().getString(R.string.text_coin_age), getResources().getString(R.string.text_coin_age_dialog_content));
     }
 
     @OnClick(R.id.account_tv_name)
@@ -197,6 +252,35 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
         setViewData();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateAccount(Event.UpdateFullAccount event) {
+        mAccountObject = event.getFullAccount().account;
+        loadCoinAge();
+    }
+
+    private void loadCoinAge() {
+        Log.e("testAccount", mAccountObject.id.toString());
+        LimitOrderWrapper.getInstance().get_account_token_age(mAccountObject.id.toString(), new MessageCallback<Reply<List<CoinAgeObject>>>() {
+            @Override
+            public void onMessage(Reply<List<CoinAgeObject>> reply) {
+                if (reply != null && reply.result != null && reply.result.size() > 0) {
+                    double score = reply.result.get(0).score;
+                    double factor = SettingConfig.getInstance().getAgeRate();
+                    Log.e("test", String.valueOf(reply.result.get(0).score));
+                    Log.e("testFactor", String.valueOf(SettingConfig.getInstance().getAgeRate()));
+                    int coinAge = (int) ((score / Math.pow(10,5)) * (1 - factor));
+                    mLlCoinAge.setVisibility(View.VISIBLE);
+                    mTvCoinAge.setText(String.valueOf(coinAge));
+                }
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+    }
+
     private void toLogin(){
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivityForResult(intent, REQUEST_CODE_LOGIN);
@@ -206,8 +290,12 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
         mTvName.setText(mIsLoginIn ? getResources().getString(R.string.account_hello) + " " + mName : getResources().getString(R.string.log_in_cybex));
         if (mIsLoginIn) {
             loadAvatar(mIvAvatar, 56);
+            if(mAccountObject != null) {
+                loadCoinAge();
+            }
         } else {
             mIvAvatar.setImageResource(R.drawable.ic_account_avatar);
+            mLlCoinAge.setVisibility(View.GONE);
         }
     }
 

@@ -5,11 +5,13 @@ public class AppConfigResponse {
     private boolean isETOEnabled;
     private boolean isShareEnabled;
     private boolean contestEnabled;
+    private double ageRate;
 
-    public AppConfigResponse(boolean isETOEnabled, boolean isShareEnabled, boolean contestEnabled) {
+    public AppConfigResponse(boolean isETOEnabled, boolean isShareEnabled, boolean contestEnabled, int ageRate) {
         this.isETOEnabled = isETOEnabled;
         this.isShareEnabled = isShareEnabled;
         this.contestEnabled = contestEnabled;
+        this.ageRate = ageRate;
     }
 
     public boolean isETOEnabled() {
@@ -34,5 +36,13 @@ public class AppConfigResponse {
 
     public boolean isContestEnabled() {
         return contestEnabled;
+    }
+
+    public double getAgeRate() {
+        return ageRate;
+    }
+
+    public void setAgeRate(double ageRate) {
+        this.ageRate = ageRate;
     }
 }

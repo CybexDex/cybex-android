@@ -1,5 +1,7 @@
 package com.cybex.provider.websocket.apihk;
 
+import com.cybex.provider.exception.NetworkStatusException;
+import com.cybex.provider.graphene.chain.CoinAgeObject;
 import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
@@ -112,5 +114,15 @@ public class LimitOrderWrapper {
      */
     public void get_limit_order_id_by_time(String timestamp, MessageCallback<Reply<String>> callback) {
         mApihkWebSocketClient.get_limit_order_id_by_time(timestamp, callback);
+    }
+
+    /**
+     * 获取币龄
+     * @param accountId 当前账号ID
+     * @param callback
+     */
+
+    public void get_account_token_age(String accountId, MessageCallback<Reply<List<CoinAgeObject>>> callback) {
+        mApihkWebSocketClient.get_account_token_age(accountId, callback);
     }
 }

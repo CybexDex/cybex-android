@@ -32,10 +32,10 @@ public class FullNodeServerSelect {
 
     //正式节点
     private List<String> mListNode = Arrays.asList(
+            "wss://hongkong.cybex.io/",
             "wss://singapore-01.cybex.io/",
             "wss://tokyo-01.cybex.io/",
             "wss://korea-01.cybex.io/",
-            "wss://hongkong.cybex.io/",
             "wss://hkbak.cybex.io/"
     );
     //测试节点

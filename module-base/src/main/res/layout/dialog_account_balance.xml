@@ -26,6 +26,8 @@
             android:layout_height="wrap_content"
             style="@style/font_white_dark_medium"
             android:text="@string/text_empty"
+            android:maxLines="6"
+            android:scrollbars="vertical"
             android:lineSpacingExtra="@dimen/line_spacing_extra_10" />
 
         <Button
