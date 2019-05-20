@@ -49,9 +49,32 @@
     <string name="text_address_management">地址管理</string>
     <string name="text_coin_age">币龄</string>
     <string name="text_coin_age_with_colon">币龄:</string>
-    <string name="text_coin_age_dialog_content"><Data><![CDATA[
-    基于Cybex账户中的CYB持币历史情况，计算得出账户币龄，每天的UTC0点更新。<br><font color="#fe9b55">计算规则</font><br>以Cybex交易所上线为起始日期<br>币龄=前一天的币龄*折旧系数（X=0.975）+当天CYB持仓量<br>第一天币龄=CYB持仓量<br>为了方便展示，显示币龄=币龄*（1–折旧系数）<br><br>注意<br>委托单和锁定中的CYB不计入<br>当持币量过小。或折旧过大时由于精度问题，币龄为0<br><br>样例<br>用户A一年前前购入10000CYB持有至今，币龄（A）=10000*（1+0.975+……+0.975^364）=399960<br>显示币龄（A）=399960*（1–0.975）=9999<br>用户B想要和A有同样的币龄则需要购入A持币量的40倍<br>用户C今天购买10000CYB并卖出，此时C的币龄=10000 ，28天后C的币龄=10000*（1+0.975……+0.975^27）=4951 ，此时币龄为初始时的一半<br><br>
-    ]]></Data></string>
+    <string name="text_coin_age_dialog_content"><Data><![CDATA[基于Cybex账户中的CYB持币历史情况，计算得出账户币龄，每天的UTC0点更新。<br>
+
+<font color="#fe9b55">计算规则</font><br>
+以Cybex交易所上线为起始日期；<br>
+
+币龄=前一天的币龄*折旧系数（X=0.975）+当天CYB持仓量；<br>
+
+第一天币龄=CYB持仓量；<br>
+
+为了方便展示，显示币龄=币龄*（1-折旧系数）。<br>
+
+注意：<br>
+
+委托单和锁定中的CYB不计入；<br>
+
+当持币量过小或折旧过大时由于精度问题，币龄为0。<br>
+
+样例：<br>
+
+用户A一年前购入10000CYB持有至今，币龄（A）=10000*（1+0.975+……+0.975^364）=399960；<br>
+
+显示币龄（A）=399960*（1-0.975）=9999；<br>
+
+用户B想要和A有同样的币龄则需要购入A持币量的40倍；<br>
+
+用户C今天购买10000CYB并卖出，此时C的币龄=10000 ，28天后C的币龄=10000*0.975^27=5048 ，此时币龄为初始时的一半。]]></Data></string>
 
 
     <!-- Balance Page -->

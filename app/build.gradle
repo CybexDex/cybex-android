@@ -53,8 +53,8 @@ android {
         applicationId "com.cybexmobile"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 103
-        versionName "1.10.3"
+        versionCode 104
+        versionName "1.10.4"
         multiDexEnabled true
 
         javaCompileOptions {
