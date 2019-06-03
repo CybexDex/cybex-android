@@ -269,7 +269,11 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
                     Log.e("test", String.valueOf(reply.result.get(0).score));
                     Log.e("testFactor", String.valueOf(SettingConfig.getInstance().getAgeRate()));
                     int coinAge = (int) ((score / Math.pow(10,5)) * (1 - factor));
-                    mLlCoinAge.setVisibility(View.VISIBLE);
+                    if (score == 0 || factor == 0) {
+                        mLlCoinAge.setVisibility(View.GONE);
+                    } else {
+                        mLlCoinAge.setVisibility(View.VISIBLE);
+                    }
                     mTvCoinAge.setText(String.valueOf(coinAge));
                 }
             }

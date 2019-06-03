@@ -530,7 +530,7 @@ public class WithdrawActivity extends BaseActivity {
                     } else {
                         mTransferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, mMemo, getSubmitAmount(mFeeAmountObject), mFeeAmountObject.asset_id, mFeeAmountObject.amount);
                     }
-                    mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, 0, mDynamicGlobalPropertyObject);
+                    mSignedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(mAccountObject, mTransferOperation, ID_TRANSER_OPERATION, mDynamicGlobalPropertyObject);
                     broadCastTransaction(mSignedTransaction);
                 }
 
@@ -886,7 +886,6 @@ public class WithdrawActivity extends BaseActivity {
         Types.public_key_type memoKey = accountObject.options.memo_key;
         for (Map.Entry<String, Types.public_key_type> entry : map.entrySet()) {
             if (memoKey.equals(entry.getValue())) {
-                displayFee();
                 return;
             }
         }
