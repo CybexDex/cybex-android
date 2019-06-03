@@ -16,6 +16,7 @@ import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.FullNodeServerSelect;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
@@ -743,7 +744,39 @@ public class WebSocketClient extends WebSocketListener {
 
     }
 
+    public void get_key_references(Set<String> pubKeys, MessageCallback<Reply<List<List<String>>>> callback) throws NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nDatabaseId);
+        callObject.params.add("get_key_references");
 
+        List<Object> listObjectParams = new ArrayList<>();
+        listObjectParams.add(pubKeys);
+        callObject.params.add(listObjectParams);
+        ReplyProcessImpl<Reply<List<List<String>>>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<List<String>>>>() {
+                }.getType(), callback);
+        sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
+    }
+
+    public void get_account_objects(Set<String> objectIds, MessageCallback<Reply<List<AccountObject>>> callback) throws NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nDatabaseId);
+        callObject.params.add("get_objects");
+
+        List<Object> listObjectParams = new ArrayList<>();
+        listObjectParams.add(objectIds);
+        callObject.params.add(listObjectParams);
+        ReplyProcessImpl<Reply<List<AccountObject>>> replyObjectProcess =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<AccountObject>>>() {
+                }.getType(), callback);
+        sendForReply(FLAG_DATABASE, callObject, replyObjectProcess);
+    }
 
     private <T> void sendForReply(String flag, Call callObject, ReplyProcessImpl<Reply<T>> replyObjectProcess) throws NetworkStatusException {
         if(mWebSocket != null && mConnectStatus == WebSocketStatus.LOGIN){

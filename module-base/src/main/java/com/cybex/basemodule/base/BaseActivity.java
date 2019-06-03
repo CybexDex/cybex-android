@@ -47,6 +47,8 @@ import com.cybex.basemodule.receiver.NetworkChangedCallback;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.PublicKey;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.utils.NetworkUtils;
@@ -191,6 +193,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             dialog.dismiss();
         }
         if (mIsLoggedIn) {
+            BitsharesWalletWraper.getInstance()
             if (!card.getAccount().equals(mUserName)) {
                 CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), card.getAccount()), null,
                         new CybexDialog.ConfirmationDialogClickListener() {
@@ -256,7 +259,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    loginByENotes(card.getAccount(), "123456789");
+                    loginByENotes(typesPublicKey.toString());
+//                    loginByENotes(card.getAccount(), "123456789");
                 }
             }, 500);
         } else {
@@ -284,7 +288,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                                             new Handler().postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    loginByENotes(card.getAccount(), "123456789");
+//                                                    loginByENotes(card.getAccount(), "123456789");
+                                                    loginByENotes(typesPublicKey.toString());
                                                 }
                                             }, 500);
                                         } else {
@@ -313,7 +318,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            loginByENotes(card.getAccount(), "123456789");
+                            loginByENotes(typesPublicKey.toString());
+//                            loginByENotes(card.getAccount(), "123456789");
                         }
                     }, 500);
                 }
@@ -346,6 +352,62 @@ public abstract class BaseActivity extends AppCompatActivity {
                         }
                     });
 
+                }
+
+                @Override
+                public void onFailure() {
+                    hideLoadDialog();
+                }
+            });
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loginByENotes(final String pubKey) {
+        if (TextUtils.isEmpty(pubKey)) {
+            return;
+        }
+        showLoadDialog(true);
+        try {
+            Set<String> pubKeys = new HashSet<>();
+            pubKeys.add(pubKey);
+            BitsharesWalletWraper.getInstance().get_key_references(pubKeys, new MessageCallback<Reply<List<List<String>>>>() {
+                @Override
+                public void onMessage(Reply<List<List<String>>> reply) {
+                    try {
+                        Log.e("keyRef", reply.toString());
+                        Set<String> accountIds = new HashSet<String>(reply.result.get(0));
+
+                        BitsharesWalletWraper.getInstance().get_account_objects(accountIds, new MessageCallback<Reply<List<AccountObject>>>() {
+                            @Override
+                            public void onMessage(Reply<List<AccountObject>> reply) {
+                                AccountObject accountObject = reply.result.get(0);
+                                int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, accountObject.name, "");
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hideLoadDialog();
+                                        setLoginFrom(true);
+                                        EventBus.getDefault().post(new Event.LoginIn(accountObject.name));
+                                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                        sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                                        sharedPreferences.edit().putString(PREF_NAME, accountObject.name).apply();
+                                        ToastMessage.showNotEnableDepositToastMessage(BaseActivity.this, getResources().getString(R.string.nfc_toast_message_logged_in_successful_by_eNotes), R.drawable.ic_check_circle_green);
+                                        mEnotesPasswordDialog = null;
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                hideLoadDialog();
+                            }
+                        });
+                    } catch (NetworkStatusException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

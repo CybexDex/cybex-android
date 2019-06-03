@@ -18,6 +18,7 @@ import com.cybex.provider.graphene.chain.BlockHeader;
 import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.DynamicGlobalPropertyObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
@@ -765,6 +766,16 @@ public class BitsharesWalletWraper {
                                   MessageCallback<Reply<List<FeeAmountObject>>> callback)
             throws NetworkStatusException {
         mWalletApi.get_required_fees(assetId, operationId, operation, callback);
+    }
+
+    public void get_key_references(Set<String> pubKeys,
+                            MessageCallback<Reply<List<List<String>>>> callback) throws NetworkStatusException {
+        mWalletApi.get_key_references(pubKeys, callback);
+    }
+
+    public void get_account_objects(Set<String> objectIds,
+                            MessageCallback<Reply<List<AccountObject>>> callback) throws NetworkStatusException {
+        mWalletApi.get_account_objects(objectIds, callback);
     }
 
     public void broadcast_transaction_with_callback(SignedTransaction signedTransaction,
