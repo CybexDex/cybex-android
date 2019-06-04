@@ -192,9 +192,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
+        Types.public_key_type typesPublicKey = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
+
         if (mIsLoggedIn) {
-            BitsharesWalletWraper.getInstance()
-            if (!card.getAccount().equals(mUserName)) {
+            if (!typesPublicKey.toString().equals(getLoginCybPublicKey())) {
                 CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), card.getAccount()), null,
                         new CybexDialog.ConfirmationDialogClickListener() {
                             @Override
@@ -384,20 +385,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                             public void onMessage(Reply<List<AccountObject>> reply) {
                                 AccountObject accountObject = reply.result.get(0);
                                 int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, accountObject.name, "");
+                                hideLoadDialog();
+                                setLoginFrom(true);
+                                EventBus.getDefault().post(new Event.LoginIn(accountObject.name));
+                                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                                sharedPreferences.edit().putString(PREF_NAME, accountObject.name).apply();
+                                ToastMessage.showNotEnableDepositToastMessage(BaseActivity.this, getResources().getString(R.string.nfc_toast_message_logged_in_successful_by_eNotes), R.drawable.ic_check_circle_green);
+                                mEnotesPasswordDialog = null;
+                                setLoginCybPublicKey(pubKey);
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        hideLoadDialog();
-                                        setLoginFrom(true);
-                                        EventBus.getDefault().post(new Event.LoginIn(accountObject.name));
-                                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                                        sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
-                                        sharedPreferences.edit().putString(PREF_NAME, accountObject.name).apply();
-                                        ToastMessage.showNotEnableDepositToastMessage(BaseActivity.this, getResources().getString(R.string.nfc_toast_message_logged_in_successful_by_eNotes), R.drawable.ic_check_circle_green);
-                                        mEnotesPasswordDialog = null;
-                                    }
-                                });
                             }
 
                             @Override
@@ -482,6 +479,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setPublicKeyFromCard(Map<String, Types.public_key_type> map) {
         SpUtil.putMap(this, "publicKeyFromEnotes", map);
     }
+
+    protected void setLoginCybPublicKey(String cybKey) {
+        SharedPreferences.Editor editor = getSharedPreferences("enotes", Context.MODE_PRIVATE).edit();
+        editor.putString("cybKey", cybKey);
+        editor.apply();
+    }
+
+    protected String getLoginCybPublicKey() {
+        SharedPreferences sharedPreferences = getSharedPreferences("enotes", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("cybKey", "");
+    }
+
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);

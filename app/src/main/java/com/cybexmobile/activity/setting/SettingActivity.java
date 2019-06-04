@@ -295,6 +295,7 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         setLoginFrom(false);
         setLoginPublicKey("");
         setPublicKeyFromCard(null);
+        setLoginCybPublicKey("");
         /**
          * fix bug:CYM-558
          * 转账存在锁定期，在锁定期页面没有显示出来
