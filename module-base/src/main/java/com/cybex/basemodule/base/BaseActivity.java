@@ -196,7 +196,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         if (mIsLoggedIn) {
             if (!typesPublicKey.toString().equals(getLoginCybPublicKey())) {
-                CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), card.getAccount()), null,
+                CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), typesPublicKey.toString()), null,
                         new CybexDialog.ConfirmationDialogClickListener() {
                             @Override
                             public void onClick(Dialog dialog) {
