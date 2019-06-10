@@ -16,6 +16,7 @@ import com.cybex.provider.websocket.IReplyProcess;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.ReplyProcessImpl;
+import com.cybex.provider.websocket.WebSocketNodeConfig;
 import com.cybex.provider.websocket.WebSocketStatus;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
@@ -149,7 +150,7 @@ public class ApihkWebSocketClient extends WebSocketListener {
                 || mConnectStatus == WebSocketStatus.LOGIN){
             return;
         }
-        Request request = new Request.Builder().url(APIHK_SERVER).build();
+        Request request = new Request.Builder().url(WebSocketNodeConfig.getInstance().getLimit_order() != null ? WebSocketNodeConfig.getInstance().getLimit_order() : APIHK_SERVER).build();
         mOkHttpClient = new OkHttpClient();
         mOkHttpClient.newWebSocket(request, this);
         mConnectStatus = WebSocketStatus.OPENING;

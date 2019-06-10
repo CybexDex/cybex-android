@@ -5,6 +5,7 @@ import com.cybex.provider.http.response.AppConfigResponse;
 import com.cybex.provider.http.response.AssetsPairResponse;
 import com.cybex.provider.http.response.AssetsPairToppingResponse;
 import com.cybex.provider.http.response.CnyResponse;
+import com.cybex.provider.http.response.WebSocketNodeResponse;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -62,4 +63,7 @@ public interface CybexHttpApi {
 
     @GET("json/validticket.json")
     Observable<JsonObject> getValidTickets();
+
+    @GET("json/nodes_config.json")
+    Observable<WebSocketNodeResponse> getWebSocketNodes();
 }

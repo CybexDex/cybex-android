@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.cybex.provider.websocket.WebSocketNodeConfig;
 import com.cybex.basemodule.cache.AssetPairCache;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.utils.AssetUtil;
@@ -20,6 +21,7 @@ import com.cybex.provider.graphene.chain.BucketObject;
 import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
+import com.cybex.provider.graphene.chain.FullNodeServerSelect;
 import com.cybex.provider.graphene.chain.MarketTicker;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.http.RetrofitFactory;
@@ -153,12 +155,35 @@ public class WebSocketService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v("WebSocketClient", "WebSocketService");
         //连接websocket
-        BitsharesWalletWraper.getInstance().build_connect();
+        getWebsocketNode();
         loadAssetsRmbPrice();
         startFullAccountWorkerSchedule();
         loadEvaProjectNames();
         loadTicketInfo();
         return START_NOT_STICKY;
+    }
+
+    private void getWebsocketNode() {
+        compositeDisposable.add(
+                RetrofitFactory.getInstance().api().getWebSocketNodes()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .retry()
+                .subscribe(
+                        webSocketNodeResponse -> {
+                            if (webSocketNodeResponse != null) {
+                                FullNodeServerSelect.getInstance().setmListNode(webSocketNodeResponse.getNodes());
+                                WebSocketNodeConfig.getInstance().setLimit_order(webSocketNodeResponse.getLimitOrder());
+                                WebSocketNodeConfig.getInstance().setMdp(webSocketNodeResponse.getMdp());
+                                BitsharesWalletWraper.getInstance().build_connect();
+                            }
+                        },
+                        throwable -> {
+                            Log.e("NodeError: --", throwable.getMessage());
+                        }
+                )
+        );
+
     }
 
 

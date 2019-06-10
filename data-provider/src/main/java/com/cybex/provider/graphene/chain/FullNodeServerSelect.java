@@ -17,13 +17,7 @@ public class FullNodeServerSelect {
     private boolean isOfficialServer = true;
 
     //正式节点
-    private List<String> mListNode = Arrays.asList(
-            "wss://hongkong.cybex.io/",
-            "wss://singapore-01.cybex.io/",
-            "wss://tokyo-01.cybex.io/",
-            "wss://korea-01.cybex.io/",
-            "wss://hkbak.cybex.io/"
-    );
+    private List<String> mListNode = new ArrayList<>();
     //测试节点
     private List<String> mListNode_test = Arrays.asList(
         "wss://hangzhou.51nebula.com/",
@@ -117,5 +111,9 @@ public class FullNodeServerSelect {
 
     public void setOfficialServer(boolean officialServer) {
         isOfficialServer = officialServer;
+    }
+
+    public void setmListNode(List<String> mListNode) {
+        this.mListNode = mListNode;
     }
 }

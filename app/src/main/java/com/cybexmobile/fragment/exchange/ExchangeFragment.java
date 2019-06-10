@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 
+import com.cybex.provider.websocket.WebSocketNodeConfig;
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.provider.graphene.rte.RteRequest;
@@ -179,7 +180,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void initRTEWebSocket() {
-        mRxRteWebSocket = new RxRteWebSocket(RxRteWebSocket.RTE_URL);
+        mRxRteWebSocket = new RxRteWebSocket(WebSocketNodeConfig.getInstance().getMdp() != null ? WebSocketNodeConfig.getInstance().getMdp() : RxRteWebSocket.RTE_URL);
         mCompositeDisposable.add(mRxRteWebSocket.onOpen()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

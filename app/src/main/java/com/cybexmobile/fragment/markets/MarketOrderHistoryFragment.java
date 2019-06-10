@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cybex.provider.websocket.WebSocketNodeConfig;
 import com.cybex.basemodule.base.BaseFragment;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.graphene.rte.RteRequest;
@@ -117,7 +118,7 @@ public class MarketOrderHistoryFragment extends BaseFragment {
     }
 
     private void initRTEWebSocket() {
-        mRxRteWebSocket = new RxRteWebSocket(RxRteWebSocket.RTE_URL);
+        mRxRteWebSocket = new RxRteWebSocket(WebSocketNodeConfig.getInstance().getMdp() != null ? WebSocketNodeConfig.getInstance().getMdp() : RxRteWebSocket.RTE_URL);
         mCompositeDisposable.add(mRxRteWebSocket.onOpen()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
