@@ -16,20 +16,6 @@ public class FullNodeServerSelect {
     //是否是正式服务器环境
     private boolean isOfficialServer = true;
 
-//    private List<String> mListNode = Arrays.asList(
-//            "wss://bitshares.openledger.info/ws",
-//            "wss://eu.openledger.info/ws",
-//            "wss://bit.btsabc.org/ws",
-//            "wss://bts.transwiser.com/ws",
-//            "wss://bitshares.dacplay.org/ws",
-//            "wss://bitshares-api.wancloud.io/ws",
-//            "wss://openledger.hk/ws",
-//            "wss://secure.freedomledger.com/ws",
-//            "wss://dexnode.net/ws",
-//            "wss://altcap.io/ws",
-//            "wss://bitshares.crypto.fans/ws"
-//    );
-
     //正式节点
     private List<String> mListNode = Arrays.asList(
             "wss://hongkong.cybex.io/",

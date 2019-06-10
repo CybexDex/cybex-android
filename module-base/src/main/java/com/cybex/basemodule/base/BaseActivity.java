@@ -195,29 +195,57 @@ public abstract class BaseActivity extends AppCompatActivity {
         Types.public_key_type typesPublicKey = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
 
         if (mIsLoggedIn) {
-            if (!typesPublicKey.toString().equals(getLoginCybPublicKey())) {
-                CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), typesPublicKey.toString()), null,
-                        new CybexDialog.ConfirmationDialogClickListener() {
-                            @Override
-                            public void onClick(Dialog dialog) {
-                                try {
-                                    dialog.dismiss();
-                                    checkeNotesPassword(card);
-                                } catch (CommandException e) {
-                                    e.printStackTrace();
+            if (TextUtils.isEmpty(card.getAccount())) {
+                if (!typesPublicKey.toString().equals(getLoginCybPublicKey())) {
+                    CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), typesPublicKey.toString()), null,
+                            new CybexDialog.ConfirmationDialogClickListener() {
+                                @Override
+                                public void onClick(Dialog dialog) {
+                                    try {
+                                        dialog.dismiss();
+                                        checkeNotesPassword(card);
+                                    } catch (CommandException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
-                        });
-            } else {
-                if (!isLoginFromENotes()) {
-
-                    try {
-                        checkeNotesPassword(card);
-                    } catch (CommandException e) {
-                        e.printStackTrace();
-                    }
+                            });
                 } else {
-                    ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.nfc_toast_message_already_logged_in), R.drawable.ic_check_circle_green);
+                    if (!isLoginFromENotes()) {
+
+                        try {
+                            checkeNotesPassword(card);
+                        } catch (CommandException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.nfc_toast_message_already_logged_in), R.drawable.ic_check_circle_green);
+                    }
+                }
+            } else {
+                if (!card.getAccount().equals(mUserName)) {
+                    CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), typesPublicKey.toString()), null,
+                            new CybexDialog.ConfirmationDialogClickListener() {
+                                @Override
+                                public void onClick(Dialog dialog) {
+                                    try {
+                                        dialog.dismiss();
+                                        checkeNotesPassword(card);
+                                    } catch (CommandException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                } else {
+                    if (!isLoginFromENotes()) {
+
+                        try {
+                            checkeNotesPassword(card);
+                        } catch (CommandException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.nfc_toast_message_already_logged_in), R.drawable.ic_check_circle_green);
+                    }
                 }
             }
         } else {
