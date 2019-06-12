@@ -452,8 +452,10 @@ public class WithdrawActivity extends BaseActivity {
                                 CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
                                     @Override
                                     public void onUnLocked(String password) {
-                                        checkWithdrawAuthority(mAccountObject, password);
-                                        toWithdraw();
+                                        if (checkWithdrawAuthority(mAccountObject, password)) {
+                                            toWithdraw();
+                                        }
+
                                     }
                                 });
                             }
@@ -462,13 +464,15 @@ public class WithdrawActivity extends BaseActivity {
                                 CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
                                     @Override
                                     public void onUnLocked(String password) {
-                                        checkWithdrawAuthority(mAccountObject, password);
-                                        toWithdraw();
+                                        if (checkWithdrawAuthority(mAccountObject, password)) {
+                                            toWithdraw();
+                                        }
                                     }
                                 });
                             } else {
-                                checkWithdrawAuthority(mAccountObject, BitsharesWalletWraper.getInstance().getPassword());
-                                toWithdraw();
+                                if (checkWithdrawAuthority(mAccountObject, BitsharesWalletWraper.getInstance().getPassword())) {
+                                    toWithdraw();
+                                }
                             }
                         }
 
@@ -693,7 +697,7 @@ public class WithdrawActivity extends BaseActivity {
         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, memo,
                 mWithdrawAmountEditText.getText().toString().trim(), mAssetObject.id.toString(), 0);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(mAssetObject.id.toString(), 0, transferOperation, new MessageCallback<Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(mAssetObject.id.toString(), ID_TRANSER_OPERATION, transferOperation, new MessageCallback<Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(Reply<List<FeeAmountObject>> reply) {
                     if (mHandler == null) {
@@ -881,16 +885,16 @@ public class WithdrawActivity extends BaseActivity {
         }
     }
 
-    private void checkWithdrawAuthority(AccountObject accountObject, String password) {
+    private boolean checkWithdrawAuthority(AccountObject accountObject, String password) {
         Map<String, Types.public_key_type> map = SpUtil.getMap(this, PREF_ADDRESS_TO_PUB_MAP);
         Types.public_key_type memoKey = accountObject.options.memo_key;
         for (Map.Entry<String, Types.public_key_type> entry : map.entrySet()) {
             if (memoKey.equals(entry.getValue())) {
-                return;
+                return true;
             }
         }
         ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
-
+        return false;
 
 //        PrivateKey privateMemoKey = PrivateKey.from_seed(mUserName + "memo" + password);
 //        PrivateKey privateActiveKey = PrivateKey.from_seed(mUserName + "active" + password);

@@ -552,7 +552,7 @@ public class ExchangeFragment extends BaseFragment implements View.OnClickListen
                 if (getTag().equals(CYBEX_CONTEST_FLAG)) {
                     notifyWatchlistDataChange(mWebSocketService.getWatchlist(ASSET_ID_ARENA_USDT, ASSET_ID_ARENA_ETH));
                 } else {
-                    notifyWatchlistDataChange(mWebSocketService.getWatchlist(Constant.ASSET_ID_ETH, Constant.ASSET_ID_CYB));
+                    notifyWatchlistDataChange(mWebSocketService.getWatchlist(Constant.ASSET_ID_USDT, Constant.ASSET_ID_CYB));
                 }
                 setTitleData();
             } else {

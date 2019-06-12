@@ -7,7 +7,9 @@ import com.cybex.provider.http.entity.EtoUserCurrentStatus;
 import com.cybex.provider.http.entity.EtoProjectStatus;
 import com.cybex.provider.http.entity.EtoUserStatus;
 import com.cybex.provider.http.entity.EtoRecordPage;
+import com.cybex.provider.http.entity.NewEtoRecord;
 import com.cybex.provider.http.response.EtoBaseResponse;
+import com.squareup.okhttp.ResponseBody;
 
 import java.util.List;
 
@@ -22,7 +24,7 @@ import retrofit2.http.Query;
 public interface EtoHttpApi {
 
     @GET("cybex/projects")
-    Observable<EtoBaseResponse<List<EtoProject>>> getEtoProjects(@Query("limit") int limit,
+    Flowable<EtoBaseResponse<List<EtoProject>>> getEtoProjects(@Query("limit") int limit,
                                                      @Query("offset") int offset,
                                                      @Query("type") String type);
 
@@ -30,9 +32,9 @@ public interface EtoHttpApi {
     Observable<EtoBaseResponse<List<EtoBanner>>> getEtoBanner(@Query("client") String client);
 
     @GET("cybex/trade/list")
-    Observable<EtoBaseResponse<EtoRecordPage>> getEtoRecords(@Query("cybex_name") String account,
-                                                             @Query("page") int page,
-                                                             @Query("limit") int limit);
+    Observable<EtoBaseResponse<List<NewEtoRecord>>> getEtoRecords(@Query("cybex_name") String account,
+                                                            @Query("page") int page,
+                                                            @Query("limit") int limit);
 
     @GET("cybex/project/detail")
     Observable<EtoBaseResponse<EtoProject>> getEtoProjectDetails(@Query("project") String id);

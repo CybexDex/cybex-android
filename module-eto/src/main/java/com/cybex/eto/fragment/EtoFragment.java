@@ -52,6 +52,7 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
     private EtoRecyclerViewAdapter mEtoRecyclerViewAdapter;
 
     private Unbinder mUnbinder;
+    private int mCallCount;
 
     public static EtoFragment getInstance(){
         EtoFragment etoFragment = new EtoFragment();
@@ -86,7 +87,7 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        showLoadDialog();
+        showLoadDialog(true);
         mEtoPresenter.loadEtoProjects();
         mEtoPresenter.loadEtoBanner();
     }
@@ -110,14 +111,17 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
 
     @Override
     public void onLoadEtoProjects(List<EtoProject> etoProjects) {
-        for(EtoProject etoProject : etoProjects){
-            if(etoProject.getStatus().equals(EtoProject.Status.OK) ||
-                    etoProject.getStatus().equals(EtoProject.Status.PRE)){
-                mEtoPresenter.refreshProjectStatusOk(etoProject);
+        if (mCallCount <= etoProjects.size()) {
+            for (EtoProject etoProject : etoProjects) {
+                if (etoProject.getStatus().equals(EtoProject.Status.OK) ||
+                        etoProject.getStatus().equals(EtoProject.Status.PRE)) {
+                    mEtoPresenter.refreshProjectStatusOk(etoProject);
+                }
             }
+            mCallCount ++;
         }
         hideLoadDialog();
-        if(mEtoRecyclerViewAdapter == null){
+        if (mEtoRecyclerViewAdapter == null) {
             mEtoRecyclerViewAdapter = new EtoRecyclerViewAdapter(getContext(), etoProjects, null);
             mEtoRecyclerViewAdapter.setOnItemClickListener(this);
             mEtoRv.setAdapter(mEtoRecyclerViewAdapter);
@@ -149,13 +153,13 @@ public class EtoFragment extends EtoBaseFragment implements EtoMvpView,
 
     @Override
     public void onError() {
-
+        hideLoadDialog();
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId() == R.id.action_eto_record){
-            Intent intent = new Intent(getContext(), EtoRecordActivity.class);
+            Intent intent = new Intent(getActivity(), EtoRecordActivity.class);
             startActivity(intent);
         }
         return false;

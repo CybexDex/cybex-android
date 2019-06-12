@@ -44,6 +44,7 @@ public class Operations {
     public static final int ID_WITHDRAW_DEPOSIT_OPERATION = 7;
     public static final int ID_BALANCE_CLAIM_OPERATION = 37;
     public static final int ID_CANCEL_ALL_OPERATION = 52;
+    public static final int ID_PARTICIPATE_EXCHANGE_OPERATION = 63;
 
     public static operation_id_map operations_map = new operation_id_map();
 
@@ -63,6 +64,7 @@ public class Operations {
             mHashId2Operation.put(ID_WITHDRAW_DEPOSIT_OPERATION, withdraw_deposit_history_operation.class);
             mHashId2Operation.put(ID_BALANCE_CLAIM_OPERATION, balance_claim_operation.class);
             mHashId2Operation.put(ID_CANCEL_ALL_OPERATION, cancel_all_operation.class);
+            mHashId2Operation.put(ID_PARTICIPATE_EXCHANGE_OPERATION, exchange_participate_operation.class);
 
             mHashId2OperationFee.put(ID_TRANSER_OPERATION, transfer_operation.fee_parameters_type.class);
             mHashId2OperationFee.put(ID_CREATE_LIMIT_ORDER_OPERATION, limit_order_create_operation.fee_parameters_type.class);
@@ -184,7 +186,7 @@ public class Operations {
         ;
 
         public Asset fee;
-        public ObjectId<AccountObject> from;
+        public ObjectId from;
         public ObjectId<AccountObject> to;
         public Asset amount;
         public MemoData memo;
@@ -1009,6 +1011,67 @@ public class Operations {
             }
             baseEncoder.write(rawObject.get_byte_array(total_claimed.amount));
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(total_claimed.asset_id.get_instance()));
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
+        }
+    }
+
+    public static class exchange_participate_operation implements base_operation {
+
+        public Asset fee;
+        public ObjectId<AccountObject> payer;
+        public ObjectId exchange_to_pay;
+        public Asset amount;
+        public Set<Types.void_t> extensions;
+
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawType = new RawType();
+            baseEncoder.write(rawType.get_byte_array(fee.amount));
+            rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(fee.asset_id.get_instance()));
+            rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(payer.get_instance()));
+            rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(exchange_to_pay.get_instance()));
+            baseEncoder.write(rawType.get_byte_array(amount.amount));
+            rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(amount.asset_id.get_instance()));
+            rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(extensions.size()));
         }
 
         @Override

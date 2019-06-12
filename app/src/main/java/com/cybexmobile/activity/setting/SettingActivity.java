@@ -52,6 +52,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -290,8 +291,9 @@ public class SettingActivity extends BaseActivity implements FrequencyModeDialog
         mSharedPreference.edit().putBoolean(PREF_IS_LOGIN_IN, false).apply();
         mSharedPreference.edit().putString(PREF_NAME, null).apply();
         mSharedPreference.edit().putString(PREF_PASSWORD, null).apply();
-        SpUtil.putMap(this,PREF_ADDRESS_TO_PUB_MAP, null);
-        SpUtil.putMap(this, "eNotesCardMap", null);
+        mSharedPreference.edit().putBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true).apply();
+        SpUtil.putMap(this, PREF_ADDRESS_TO_PUB_MAP, new HashMap<>());
+        SpUtil.putMap(this, "eNotesCardMap", new HashMap<>());
         setLoginFrom(false);
         setLoginPublicKey("");
         setPublicKeyFromCard(null);

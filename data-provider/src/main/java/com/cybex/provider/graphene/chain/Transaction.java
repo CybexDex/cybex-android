@@ -30,7 +30,7 @@ public class Transaction {
      */
     public transient UnsignedShort unsign_ref_block_num = UnsignedShort.ZERO;
 
-    long ref_block_num;
+    public long ref_block_num;
     /**
      * The first non-block-number 32-bits of the reference block ID. Recall that block IDs have 32 bits of block
      * number followed by the actual block hash, so this field should be set using the second 32 bits in the
@@ -39,7 +39,7 @@ public class Transaction {
      */
     public transient UnsignedInteger unsign_ref_block_prefix = UnsignedInteger.ZERO;
 
-    long ref_block_prefix;
+    public long ref_block_prefix;
     /**
      * This field specifies the absolute expiration for this transaction.
      */
@@ -138,5 +138,13 @@ public class Transaction {
 
     public long getRef_block_prefix() {
         return ref_block_prefix;
+    }
+
+    public void setRef_block_num(long ref_block_num) {
+        this.ref_block_num = ref_block_num;
+    }
+
+    public void setRef_block_prefix(long ref_block_prefix) {
+        this.ref_block_prefix = ref_block_prefix;
     }
 }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -83,6 +85,7 @@ import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_ETH;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_USDT;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
 import static com.cybex.basemodule.constant.Constant.PREF_ADDRESS_TO_PUB_MAP;
+import static com.cybex.basemodule.constant.Constant.PREF_PARAM_UNLOCK_BY_CARDS;
 import static com.cybex.provider.graphene.chain.Operations.ID_BALANCE_CLAIM_OPERATION;
 
 public class LockAssetsActivity extends BaseActivity implements CommonRecyclerViewAdapter.OnClickLockAssetItemListener {
@@ -109,11 +112,13 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
     private LockAssetItem mCurrentLockAssetItem;
     private boolean mIsUsedCloudPassword = false;
     private boolean mIsClaim = false;
+    private boolean mIsUnlockMethodCard;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_assets);
         mName = getIntent().getStringExtra(INTENT_PARAM_NAME);
+        mIsUnlockMethodCard = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(PREF_PARAM_UNLOCK_BY_CARDS, true);
         Intent serviceIntent = new Intent(this, WebSocketService.class);
         bindService(serviceIntent, mConnection, BIND_AUTO_CREATE);
         initViews();
@@ -216,7 +221,11 @@ public class LockAssetsActivity extends BaseActivity implements CommonRecyclerVi
             return;
         }
         if (isLoginFromENotes()) {
-            loadData(getPublicKeyFromCard());
+            if (mIsUnlockMethodCard) {
+                loadData(getPublicKeyFromCard());
+            } else {
+                loadData(new HashMap<>());
+            }
         } else {
             loadData(SpUtil.getMap(this,PREF_ADDRESS_TO_PUB_MAP));
         }

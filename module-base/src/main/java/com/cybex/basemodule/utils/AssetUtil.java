@@ -3,6 +3,7 @@ package com.cybex.basemodule.utils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 public class AssetUtil {
 
@@ -231,6 +232,19 @@ public class AssetUtil {
         BigDecimal bigDecimal1 = new BigDecimal(num1);
         BigDecimal bigDecimal2 = new BigDecimal(num2);
         return bigDecimal1.divide(bigDecimal2, 16, RoundingMode.DOWN).doubleValue();
+    }
+
+    /**
+     * Format Double
+     * @param d
+     * @return
+     */
+    public static String fmt(double d)
+    {
+        if(d == (long) d)
+            return String.format(Locale.US,"%d",(long)d);
+        else
+            return String.format("%s",d);
     }
 
 }

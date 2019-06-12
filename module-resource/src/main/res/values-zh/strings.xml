@@ -534,12 +534,15 @@
     <string name="ETO_details_dialog_no_invitation_code_error">必须要有邀请码</string>
     <string name="ETO_details_dialog_message_success">预约成功，请耐心等待审核结果</string>
     <string name="ETO_details_dialog_success">OK</string>
+    <string name="ETO_details_log_in">请登录后参与</string>
+    <string name="ETO_details_not_qualified">无参与资格</string>
 
     <!-- Attend Eto Activity -->
     <string name="attend_eto_personal_cap">单帐号限额</string>
     <string name="attend_eto_subscription_unit">最小认购单位</string>
     <string name="attend_eto_remaining">剩余可认购额度</string>
     <string name="attend_eto_min_subscription">单笔最低限额</string>
+    <string name="attend_eto_current_remain_quote">本轮剩余额度</string>
     <string name="attend_eto_subscribed">已认购额度</string>
     <string name="attend_eto_quantity">金额</string>
     <string name="attend_eto_fee">手续费</string>
@@ -553,6 +556,10 @@
     <string name="attend_eto_dialog_message">您将参与 %s 的ETO</string>
     <string name="attend_eto_dialog_loading_verifying">转账待确认中</string>
     <string name="attend_eto_dialog_loading_repeat">请勿重复转账</string>
+    <string name="attend_eto_toast_message_success">认购成功</string>
+    <string name="attend_eto_toast_message_failed">认购失败</string>
+    <string name="attend_eto_hint_et">请输入认购数量</string>
+
 
     <!-- EtoRecordActivity -->
     <string name="text_title_eto_records">ETO 记录</string>
@@ -562,6 +569,9 @@
     <string name="text_invalid_subscription">无效认购</string>
     <string name="text_subscription_partly_valid">部分有效</string>
     <string name="text_received_success">到账成功</string>
+    <string name="text_eto_record_participate">参与ETO</string>
+    <string name="text_eto_record_receive_token">收到Token</string>
+    <string name="text_eto_record_time">时间</string>
 
     <!-- Terms and Conditions -->
     <string name="text_tool_bar_title_terms">服务条款与协议</string>

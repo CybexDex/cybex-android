@@ -6,6 +6,7 @@ public class WebSocketNodeResponse {
     private String mdp;
     private List<String> nodes;
     private String limitOrder;
+    private String eto;
 
 
     public List<String> getNodes() {
@@ -30,5 +31,13 @@ public class WebSocketNodeResponse {
 
     public void setMdp(String mdp) {
         this.mdp = mdp;
+    }
+
+    public String getEto() {
+        return eto;
+    }
+
+    public void setEto(String eto) {
+        this.eto = eto;
     }
 }

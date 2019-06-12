@@ -30,6 +30,7 @@ import com.cybex.provider.crypto.Sha256Object;
 import com.cybex.provider.exception.NetworkStatusException;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.CoinAgeObject;
+import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
@@ -82,9 +83,12 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             WebSocketService mWebSocketService = binder.getService();
             if (mWebSocketService != null) {
-                mAccountObject = mWebSocketService.getFullAccount(mName).account;
-                if (mAccountObject != null) {
-                    loadCoinAge();
+                FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
+                if (fullAccountObject != null) {
+                    mAccountObject = fullAccountObject.account;
+                    if (mAccountObject != null) {
+                        loadCoinAge();
+                    }
                 }
             }
         }

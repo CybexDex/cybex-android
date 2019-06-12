@@ -8,9 +8,11 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -49,6 +51,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,6 +60,7 @@ import javax.inject.Inject;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_CYB;
 import static com.cybex.basemodule.constant.Constant.ASSET_SYMBOL_CYB;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ETO_ATTEND_ETO;
+import static com.cybex.provider.graphene.chain.Operations.ID_PARTICIPATE_EXCHANGE_OPERATION;
 import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
 
 public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
@@ -69,15 +73,18 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     private AssetObject mBaseToken;
     private WebSocketService mWebSocketService;
     private AccountObject mFromAccountObject;
-    private AccountObject mToAccountObject;
-    private Operations.transfer_operation mTransferOperationFee;
+    private Operations.exchange_participate_operation mParticipateOperation;
     private FeeAmountObject mCybFeeAmountObject;
     private FeeAmountObject mCurrAssetFeeAmountObject;
     private AccountBalanceObject mCybAccountBalanceObject;
+    private String mValue;
 
     private boolean mIsCybEnough;//cyb余额是否足够
     private boolean mIsBalanceEnough;//选择币种余额是否足够
     private double mRemainingAmount;
+    private boolean mIsUseBaseToken = true;
+    private float mRate;
+    private double mUnit;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -89,7 +96,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
             mFromAccountObject = fullAccountObject == null ? null : fullAccountObject.account;
             if (fullAccountObject != null) {
                 showAvailableAmount(fullAccountObject);
-                checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false, fullAccountObject.account);
+                loadTransferFee(ASSET_ID_CYB, false);
             }
         }
 
@@ -113,6 +120,9 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     TextView mFeeTv;
     Button mJoinETOButton;
     TextView mEtoTransferDescriptionTv;
+    TextView mEtoCalculateFormatTv;
+    TextView mEtoInputUnitTv;
+    TextView mEtoTotalRemainingTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,13 +133,16 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         SoftKeyBoardListener.setListener(this, this);
         mEtoProject = (EtoProject) getIntent().getSerializableExtra(INTENT_PARAM_ETO_ATTEND_ETO);
         mUserName = mAttendETOPresenter.getUserName(this);
+        mIsUseBaseToken = mEtoProject.getBase_token().equals(mEtoProject.getUser_buy_token());
+        mRate = mEtoProject.getBase_token_count() / mEtoProject.getQuote_token_count();
         initViews();
         setListener();
         setSupportActionBar(mToolbar);
         showDataFromEtoProject(mEtoProject);
         mAttendETOPresenter.getUserCurrent(mUserName, mEtoProject.getId());
         mQuantityEt.setFilters(new InputFilter[]{mQuantityFilter});
-        getReceiveAccountObject(mEtoProject);
+        mEtoCalculateFormatTv.setText(String.format("= 0 %s", mIsUseBaseToken ? AssetUtil.parseSymbol(mEtoProject.getUser_buy_token()) : mEtoProject.getBase_token_name()));
+
     }
 
     @Override
@@ -161,6 +174,11 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
 
     }
 
+    @Override
+    public void onNoUserError(String message) {
+        ToastMessage.showNotEnableDepositToastMessage(this, message, R.drawable.ic_error_16px);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUpdateFullAccount(Event.UpdateFullAccount event) {
 
@@ -168,17 +186,19 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         if (fullAccountObject == null) {
             return;
         }
-        if (mFromAccountObject == null) {
-            checkIsLockAndLoadTransferFee(ASSET_ID_CYB, false, fullAccountObject.account);
-        }
         mFromAccountObject = fullAccountObject.account;
 
         showAvailableAmount(fullAccountObject);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadAccountObject(Event.LoadAccountObject event) {
-        mToAccountObject = event.getAccountObject();
+    public void onRefreshProjectStatus(Event.OnRefreshEtoProject refreshEtoProject) {
+        EtoProject etoProject = refreshEtoProject.getEtoProject();
+        if (!etoProject.getId().equals(mEtoProject.getId())) {
+            return;
+        }
+        mEtoProject = etoProject;
+        showDataFromEtoProject(mEtoProject);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -197,7 +217,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
             } else {
                 if (mCybAccountBalanceObject == null || mCybAccountBalanceObject.balance < fee.amount) {
                     mIsCybEnough = false;
-                    checkIsLockAndLoadTransferFee(mBaseToken.id.toString(), event.isToTransfer(), mFromAccountObject);
+                    loadTransferFee(mBaseToken.id.toString(), event.isToTransfer());
                 } else {
                     mIsCybEnough = true;
                     mFeeTv.setText(String.format("%s %s",
@@ -227,11 +247,16 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
              * fix bug:CYM-505
              * 转账成功和失败清除数据
              */
-            CybexDialog.showAttendEtoLoadingDialog(this, null);
-            clearTransferData();
+            CybexDialog.showAttendEtoLoadingDialog(this, new CybexDialog.ConfirmationDialogClickListener() {
+                @Override
+                public void onClick(Dialog dialog) {
+                    ToastMessage.showNotEnableDepositToastMessage(AttendETOActivity.this, getResources().getString(R.string.attend_eto_toast_message_success), R.drawable.ic_check_circle_green);
+                    clearTransferData();
+                }
+            });
         } else {
             ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(
-                    R.string.toast_message_transfer_failed), R.drawable.ic_error_16px);
+                    R.string.attend_eto_toast_message_failed), R.drawable.ic_error_16px);
         }
     }
 
@@ -262,6 +287,9 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         mFeeTv = findViewById(R.id.attend_eto_final_fee);
         mJoinETOButton = findViewById(R.id.attend_eto_button);
         mEtoTransferDescriptionTv = findViewById(R.id.attend_eto_transfer_description_tv);
+        mEtoCalculateFormatTv = findViewById(R.id.attend_eto_calculate_format_tv);
+        mEtoInputUnitTv = findViewById(R.id.attend_eto_edit_text_unit);
+        mEtoTotalRemainingTv = findViewById(R.id.attend_eto_current_remain_tv);
     }
 
     private void setListener() {
@@ -277,9 +305,35 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
                     return;
                 }
 
-                mQuantityEt.setText(String.format(String.format(Locale.US, "%%.%df",
-                        mEtoProject.getBase_accuracy()), Double.parseDouble(amountStr)));
+//                mQuantityEt.setText(String.format(String.format(Locale.US, "%%.%df",
+//                        mEtoProject.getBase_accuracy()), Double.parseDouble(amountStr)));
                 checkBalanceEnough(mQuantityEt.getText().toString().trim());
+            }
+        });
+
+        mQuantityEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String message = s.toString().trim();
+                if (message.length() == 0) {
+                    mEtoCalculateFormatTv.setText(String.format("= 0 %s", mIsUseBaseToken ? AssetUtil.parseSymbol(mEtoProject.getUser_buy_token()) : mEtoProject.getBase_token_name()));
+                } else {
+                    BigDecimal bigDecimal = new BigDecimal(message);
+                    String value = mIsUseBaseToken ? String.valueOf(Double.parseDouble(message) / mRate) : String.valueOf(new BigDecimal(message).multiply(new BigDecimal(mRate)));
+                    mEtoCalculateFormatTv.setText(String.format("=%s %s", value, mIsUseBaseToken ? AssetUtil.parseSymbol(mEtoProject.getUser_buy_token()) : mEtoProject.getBase_token_name()));
+                    mValue = value;
+                }
+
             }
         });
 
@@ -293,21 +347,24 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
 
     private void showDataFromEtoProject(EtoProject etoProject) {
         mToolbarTitleTv.setText(String.format("%s %s", etoProject.getName(), "ETO"));
-        mPersonalCapTv.setText(String.format(Locale.US, "%s %s", etoProject.getBase_max_quote(), etoProject.getBase_token_name()));
-        mSubscribeUnitTv.setText(String.format("%." + etoProject.getBase_accuracy() + "f %s", 1 / Math.pow(10, etoProject.getBase_accuracy()), etoProject.getBase_token_name()));
-        mMinSubscriptionTv.setText(String.format(Locale.US, "%s %s", etoProject.getBase_min_quote(), etoProject.getBase_token_name()));
+        mPersonalCapTv.setText(String.format(Locale.US, "%s %s", mIsUseBaseToken ? etoProject.getBase_max_quote() : etoProject.getBase_max_quote() / mRate, AssetUtil.parseSymbol(etoProject.getUser_buy_token())));
+        mSubscribeUnitTv.setText(String.format("%." + (mIsUseBaseToken ? etoProject.getBase_accuracy() : 1) + "f %s", mIsUseBaseToken ? 1 / Math.pow(10, etoProject.getBase_accuracy()) : etoProject.getQuote_accuracy(), AssetUtil.parseSymbol(etoProject.getUser_buy_token())));
+        mMinSubscriptionTv.setText(String.format(Locale.US, "%s %s", mIsUseBaseToken ? etoProject.getBase_min_quote() : etoProject.getBase_min_quote() / mRate, AssetUtil.parseSymbol(etoProject.getUser_buy_token())));
         if (Locale.getDefault().getLanguage().equals("zh")) {
             mEtoTransferDescriptionTv.setText(etoProject.getAdds_buy_desc());
         } else {
             mEtoTransferDescriptionTv.setText(etoProject.getAdds_buy_desc__lang_en());
         }
+        mEtoInputUnitTv.setText(AssetUtil.parseSymbol(etoProject.getUser_buy_token()));
+        mEtoTotalRemainingTv.setText(String.format(Locale.US, "%s %s", mIsUseBaseToken ? etoProject.getCurrent_remain_quota_count() * mRate : etoProject.getCurrent_remain_quota_count(), AssetUtil.parseSymbol(mEtoProject.getUser_buy_token()) ));
+        mUnit = mIsUseBaseToken ? 1 / Math.pow(10, etoProject.getBase_accuracy()) : etoProject.getQuote_accuracy();
     }
 
     private void showSubscribedAmount(EtoUserCurrentStatus etoUserCurrentStatus) {
-        BigDecimal baseMax = new BigDecimal(String.valueOf(mEtoProject.getBase_max_quote()));
-        BigDecimal currentToken = new BigDecimal(String.valueOf(etoUserCurrentStatus.getCurrent_base_token_count()));
-        mSubscribeTv.setText(String.format(Locale.US, "%s %s", etoUserCurrentStatus.getCurrent_base_token_count(), mEtoProject.getBase_token_name()));
-        mRemainingTv.setText(String.format("%s %s", baseMax.subtract(currentToken).toString(), mEtoProject.getBase_token_name()));
+        BigDecimal baseMax = new BigDecimal(String.valueOf(mIsUseBaseToken ? mEtoProject.getBase_max_quote() : mEtoProject.getBase_max_quote() / mRate));
+        BigDecimal currentToken = new BigDecimal(String.valueOf(mIsUseBaseToken ? etoUserCurrentStatus.getCurrent_base_token_count() : etoUserCurrentStatus.getCurrent_base_token_count() / mRate));
+        mSubscribeTv.setText(String.format(Locale.US, "%s %s", mIsUseBaseToken ? etoUserCurrentStatus.getCurrent_base_token_count() : etoUserCurrentStatus.getCurrent_base_token_count() / mRate, AssetUtil.parseSymbol(mEtoProject.getUser_buy_token())));
+        mRemainingTv.setText(String.format("%s %s", baseMax.subtract(currentToken).toString(), AssetUtil.parseSymbol(mEtoProject.getUser_buy_token())));
         mRemainingAmount = baseMax.subtract(currentToken).doubleValue();
     }
 
@@ -315,15 +372,17 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         List<AccountBalanceObject> accountBalanceObjectList = fullAccountObject.balances;
         for (AccountBalanceObject accountBalanceObject : accountBalanceObjectList) {
             AssetObject assetObject = mWebSocketService.getAssetObject(accountBalanceObject.asset_type.toString());
-            if (assetObject.symbol.equals(ASSET_SYMBOL_CYB)) {
-                mCybAccountBalanceObject = accountBalanceObject;
-            }
-            if (assetObject.symbol.equals(mEtoProject.getBase_token())) {
-                mAvailableTv.setText(String.format("%s %s %s", getResources().getString(R.string.text_available),
-                        AssetUtil.formatNumberRounding(accountBalanceObject.balance /
-                                Math.pow(10, assetObject.precision), assetObject.precision),
-                        AssetUtil.parseSymbol(assetObject.symbol)));
-                break;
+            if (assetObject != null) {
+                if (assetObject.symbol.equals(ASSET_SYMBOL_CYB)) {
+                    mCybAccountBalanceObject = accountBalanceObject;
+                }
+                if (assetObject.symbol.equals(mEtoProject.getBase_token())) {
+                    mAvailableTv.setText(String.format("%s %s %s", getResources().getString(R.string.text_available),
+                            AssetUtil.formatNumberRounding(accountBalanceObject.balance /
+                                    Math.pow(10, assetObject.precision), assetObject.precision),
+                            AssetUtil.parseSymbol(assetObject.symbol)));
+                    break;
+                }
             }
         }
         if (mAvailableTv.getText().toString().isEmpty()) {
@@ -361,18 +420,15 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         if (mFromAccountObject == null) {
             return;
         }
-        mTransferOperationFee = BitsharesWalletWraper.getInstance().getTransferOperation(
-                mFromAccountObject.id,
-                mFromAccountObject.id,
+        mParticipateOperation = BitsharesWalletWraper.getInstance().getParticipateOperatin(
+                0,
                 ObjectId.<AssetObject>create_from_string(ASSET_ID_CYB),
                 0,
                 ObjectId.<AssetObject>create_from_string(feeAssetId),
-                0,
-                null,
-                mFromAccountObject.options.memo_key,
-                mFromAccountObject.options.memo_key);
+                ObjectId.create_from_string(mEtoProject.getId()),
+                mFromAccountObject.id);
         try {
-            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_TRANSER_OPERATION, mTransferOperationFee, new MessageCallback<Reply<List<FeeAmountObject>>>() {
+            BitsharesWalletWraper.getInstance().get_required_fees(feeAssetId, ID_PARTICIPATE_EXCHANGE_OPERATION, mParticipateOperation, new MessageCallback<Reply<List<FeeAmountObject>>>() {
                 @Override
                 public void onMessage(Reply<List<FeeAmountObject>> reply) {
                     EventBus.getDefault().post(new Event.LoadTransferFee(reply.result.get(0), isLoadFeeToTransfer));
@@ -393,7 +449,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
      */
     private void showTransferConfirmationDialog() {
         CybexDialog.showAttendETOConfirmDialog(this, getResources().getString(R.string.attend_eto_dialog_title), String.format(getResources().getString(R.string.attend_eto_dialog_message), mEtoProject.getName()),
-                String.format("%s %s", mQuantityEt.getText().toString().trim(),
+                String.format("%s %s", mIsUseBaseToken ? mQuantityEt.getText().toString().trim() : mValue,
                         AssetUtil.parseSymbol(mBaseToken.symbol)), mFeeTv.getText().toString().trim(),
                 new CybexDialog.ConfirmationDialogClickListener() {
                     @Override
@@ -407,28 +463,28 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
      * 转账
      */
     private void toTransfer() {
-        if (mFromAccountObject == null || mToAccountObject == null) {
+        if (mFromAccountObject == null) {
             return;
         }
         showLoadDialog();
-        final Operations.base_operation transferOperation = BitsharesWalletWraper.getInstance().getTransferOperation(
-                mFromAccountObject.id,
-                mToAccountObject.id,
-                mBaseToken.id,
+
+        final Operations.exchange_participate_operation participateOperation = BitsharesWalletWraper.getInstance().getParticipateOperatin(
                 mIsCybEnough ? mCybFeeAmountObject.amount : mCurrAssetFeeAmountObject.amount,
                 ObjectId.<AssetObject>create_from_string(mIsCybEnough ? mCybFeeAmountObject.asset_id : mCurrAssetFeeAmountObject.asset_id),
-                (long) (Double.parseDouble(mQuantityEt.getText().toString().trim()) * Math.pow(10, mBaseToken.precision)),
-                null,
-                mFromAccountObject.options.memo_key,
-                mToAccountObject.options.memo_key);
+                mIsUseBaseToken ? (long) (Double.parseDouble(mQuantityEt.getText().toString().trim()) * Math.pow(10, mBaseToken.precision)) : (long) (((Double.parseDouble(mQuantityEt.getText().toString().trim()))) * mRate * Math.pow(10, mBaseToken.precision)),
+                mBaseToken.id,
+                ObjectId.create_from_string(mEtoProject.getId()),
+                mFromAccountObject.id);
+
         try {
             BitsharesWalletWraper.getInstance().get_dynamic_global_properties(new MessageCallback<Reply<DynamicGlobalPropertyObject>>() {
                 @Override
                 public void onMessage(Reply<DynamicGlobalPropertyObject> reply) {
                     SignedTransaction signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
-                            mFromAccountObject, transferOperation, ID_TRANSER_OPERATION, reply.result);
+                            mFromAccountObject, participateOperation, ID_PARTICIPATE_EXCHANGE_OPERATION, reply.result);
                     try {
                         BitsharesWalletWraper.getInstance().broadcast_transaction_with_callback(signedTransaction, mTransferCallback);
+                        showLoadDialog(true);
                     } catch (NetworkStatusException e) {
                         e.printStackTrace();
                     }
@@ -447,7 +503,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
     /**
      * 转账callback
      */
-    private MessageCallback mTransferCallback = new MessageCallback<Reply<String>>() {
+    private MessageCallback<Reply<String>> mTransferCallback = new MessageCallback<Reply<String>>() {
 
         @Override
         public void onMessage(Reply<String> reply) {
@@ -460,28 +516,6 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
         }
     };
 
-    /**
-     * 获取转账地址
-     */
-    private void getReceiveAccountObject(EtoProject etoProject) {
-        try {
-            BitsharesWalletWraper.getInstance().get_account_object(etoProject.getReceive_address(), new MessageCallback<Reply<AccountObject>>() {
-                @Override
-                public void onMessage(Reply<AccountObject> reply) {
-                    AccountObject accountObject = reply.result;
-                    EventBus.getDefault().post(new Event.LoadAccountObject(accountObject));
-                }
-
-                @Override
-                public void onFailure() {
-
-                }
-            });
-        } catch (NetworkStatusException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void clearTransferData() {
         mIsCybEnough = false;
         mIsBalanceEnough = false;
@@ -491,6 +525,7 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
          * 重置按钮状态
          */
         resetTransferButtonState();
+        recreate();
     }
 
 
@@ -504,7 +539,6 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
          */
         try {
             mJoinETOButton.setEnabled(
-                    mToAccountObject != null &&
                             Double.parseDouble(mQuantityEt.getText().toString()) > 0 &&
                             mIsBalanceEnough);
         } catch (Exception e) {
@@ -547,11 +581,11 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
             return;
         }
         BigDecimal amount = new BigDecimal(amountStr);
-        if (amount.floatValue() > mEtoProject.getBase_max_quote()) {
+        if (amount.floatValue() > (mIsUseBaseToken ? mEtoProject.getBase_max_quote() : mEtoProject.getBase_max_quote() / mRate)) {
             mIsBalanceEnough = false;
             mErrorLinearLayout.setVisibility(View.VISIBLE);
             mErrorTv.setText(getResources().getString(R.string.attend_eto_beyond_personal_cap));
-        } else if (amount.floatValue() < (double) mEtoProject.getBase_min_quote()) {
+        } else if (amount.floatValue() < (mIsUseBaseToken ? ((double) mEtoProject.getBase_min_quote()) : ((double) mEtoProject.getBase_min_quote() / mRate))){
             mIsBalanceEnough = false;
             mErrorLinearLayout.setVisibility(View.VISIBLE);
             mErrorTv.setText(getResources().getString(R.string.attend_eto_must_beyond_minimum_purchasing_unit));
@@ -559,6 +593,9 @@ public class AttendETOActivity extends EtoBaseActivity implements AttendETOView,
             mIsBalanceEnough = false;
             mErrorLinearLayout.setVisibility(View.VISIBLE);
             mErrorTv.setText(getResources().getString(R.string.attend_eto_insufficient_remaining_quota));
+        } else if (amount.doubleValue() % mUnit != 0) {
+            mErrorLinearLayout.setVisibility(View.VISIBLE);
+            mErrorTv.setText(getResources().getString(R.string.attend_eto_must_purchase_an_integer_multiple));
         } else {
             mErrorLinearLayout.setVisibility(View.GONE);
             mIsBalanceEnough = true;

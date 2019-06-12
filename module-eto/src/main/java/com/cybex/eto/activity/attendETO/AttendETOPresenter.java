@@ -7,9 +7,12 @@ import com.cybex.basemodule.base.BasePresenter;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.entity.EtoUserCurrentStatus;
 import com.cybex.provider.http.response.EtoBaseResponse;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.reactivestreams.Publisher;
 
+import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -19,6 +22,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 
@@ -59,7 +64,15 @@ public class AttendETOPresenter<V extends AttendETOView> extends BasePresenter<V
                         }, new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-                                getMvpView().onError();
+                                String message = throwable.getMessage();
+                                if (throwable instanceof HttpException) {
+                                    ResponseBody responseBody = ((HttpException) throwable).response().errorBody();
+                                    Gson gson = new Gson();
+                                    Type typeToken = new TypeToken<EtoBaseResponse<String>>(){}.getType();
+                                    EtoBaseResponse<String> response = gson.fromJson(responseBody.string(), typeToken);
+                                    message = response.getResult();
+                                }
+                                getMvpView().onNoUserError(message);
                             }
                         })
         );

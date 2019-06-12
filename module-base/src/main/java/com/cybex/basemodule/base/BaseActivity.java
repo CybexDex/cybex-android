@@ -193,7 +193,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             dialog.dismiss();
         }
         Types.public_key_type typesPublicKey = new Types.public_key_type(new PublicKey(card.getBitCoinECKey().getPubKeyPoint().getEncoded(true), true), true);
-
+        Log.e("cardName", card.getAccount());
         if (mIsLoggedIn) {
             if (TextUtils.isEmpty(card.getAccount())) {
                 if (!typesPublicKey.toString().equals(getLoginCybPublicKey())) {
@@ -223,7 +223,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             } else {
                 if (!card.getAccount().equals(mUserName)) {
-                    CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), typesPublicKey.toString()), null,
+                    CybexDialog.showLimitOrderCancelConfirmationDialog(this, String.format(getResources().getString(R.string.nfc_dialog_change_account_content), card.getAccount()), null,
                             new CybexDialog.ConfirmationDialogClickListener() {
                                 @Override
                                 public void onClick(Dialog dialog) {
@@ -411,17 +411,21 @@ public abstract class BaseActivity extends AppCompatActivity {
                         BitsharesWalletWraper.getInstance().get_account_objects(accountIds, new MessageCallback<Reply<List<AccountObject>>>() {
                             @Override
                             public void onMessage(Reply<List<AccountObject>> reply) {
-                                AccountObject accountObject = reply.result.get(0);
-                                int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, accountObject.name, "");
-                                hideLoadDialog();
-                                setLoginFrom(true);
-                                EventBus.getDefault().post(new Event.LoginIn(accountObject.name));
-                                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                                sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
-                                sharedPreferences.edit().putString(PREF_NAME, accountObject.name).apply();
-                                ToastMessage.showNotEnableDepositToastMessage(BaseActivity.this, getResources().getString(R.string.nfc_toast_message_logged_in_successful_by_eNotes), R.drawable.ic_check_circle_green);
-                                mEnotesPasswordDialog = null;
-                                setLoginCybPublicKey(pubKey);
+                                if (reply.result != null && reply.result.size() > 0) {
+                                    AccountObject accountObject = reply.result.get(0);
+                                    int result = BitsharesWalletWraper.getInstance().import_account_password(accountObject, accountObject.name, "");
+                                    Log.e("importPassword", Integer.toString(result));
+                                    hideLoadDialog();
+                                    setLoginFrom(true);
+                                    EventBus.getDefault().post(new Event.LoginIn(accountObject.name));
+                                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                    sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
+                                    sharedPreferences.edit().putString(PREF_NAME, accountObject.name).apply();
+                                    ToastMessage.showNotEnableDepositToastMessage(BaseActivity.this, getResources().getString(R.string.nfc_toast_message_logged_in_successful_by_eNotes), R.drawable.ic_check_circle_green);
+                                    mEnotesPasswordDialog = null;
+                                    setLoginCybPublicKey(pubKey);
+                                    EventBus.getDefault().post(new Event.EnotesLoginFromLoginPage(true));
+                                }
 
                             }
 

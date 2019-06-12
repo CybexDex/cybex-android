@@ -1,6 +1,7 @@
 package com.cybex.provider.http;
 
 import com.cybex.provider.utils.SSLSocketFactoryUtils;
+import com.cybex.provider.websocket.WebSocketNodeConfig;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,7 +16,7 @@ public class RetrofitFactory {
     //cybex正式服务器
     private static final String cybex_base_url = "https://app.cybex.io/";
     //cybex测试服务器
-    private static final String cybex_base_url_test = "http://47.91.242.71:3039/";
+    private static final String cybex_base_url_test = "http://47.100.98.113:3039/";
     //faucet正式服务器
     private static final String faucet_base_url = "https://faucet.cybex.io/";
     //faucet测试服务器
@@ -25,9 +26,9 @@ public class RetrofitFactory {
     //网关测试测试服务器 暂无
     private static final String gateway_base_url_test = "https://gateway-query.cybex.io/";
     //Eto正式服务器
-    private static final String eto_base_url = "https://eto.cybex.io/api/";
+    private static final String eto_base_url = "https://etoapi.cybex.io/api/";
     //Eto测试服务器
-    private static final String eto_base_url_test = "https://ieo-apitest.cybex.io/api/";
+    private static final String eto_base_url_test = "https://etoapi.cybex.io/api/";
     //Chat正式服务器
     private static final String chat_base_url = "https://chat.cybex.io/";
     //Chat测式服务器
@@ -145,7 +146,7 @@ public class RetrofitFactory {
         }
         if(etoHttpApi == null){
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(isOfficialServer ? eto_base_url : eto_base_url_test)
+                    .baseUrl(isOfficialServer ? WebSocketNodeConfig.getInstance().getEto() != null ? WebSocketNodeConfig.getInstance().getEto() : eto_base_url : eto_base_url_test)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

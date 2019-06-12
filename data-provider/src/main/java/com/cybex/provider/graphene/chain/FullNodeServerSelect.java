@@ -20,6 +20,7 @@ public class FullNodeServerSelect {
     private List<String> mListNode = new ArrayList<>();
     //测试节点
     private List<String> mListNode_test = Arrays.asList(
+            "ws://47.100.98.113:38090",
         "wss://hangzhou.51nebula.com/",
         "wss://shenzhen.51nebula.com/"
     );

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
 import com.cybex.basemodule.transform.CircleTransform;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
 import com.cybex.eto.utils.PicassoImageLoader;
@@ -26,6 +27,7 @@ import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerListener;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 
@@ -106,6 +108,9 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                             return;
                         }
                         for(EtoProject etoProject : mEtoProjects){
+                            if (etoBanner.getId() == null) {
+                                continue;
+                            }
                             if(!etoProject.getId().equals(etoBanner.getId())){
                                 continue;
                             }
@@ -138,15 +143,27 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_coming));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_start_of_distance));
             viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getStart_at()))/1000), false));
+            viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
         } else if(status.equals(EtoProject.Status.OK)){
             viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_in_progress));
             viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_end_of_distance));
             viewHolder.mTvTime.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getEnd_at()))/1000), false));
+            viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
+            viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_bar));
+            viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.primary_color_orange));
         } else if(status.equals(EtoProject.Status.FINISH)){
-            viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
-            viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
-            viewHolder.mTvTime.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
-                    (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at())/1000) : Integer.parseInt(etoProject.getT_total_time()), true));
+            if (TextUtils.isEmpty(etoProject.getT_total_time()) && TextUtils.isEmpty(etoProject.getFinish_at())) {
+                viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
+                viewHolder.mTvTimeLabel.setText("");
+                viewHolder.mTvTime.setText("");
+                viewHolder.mIvProgress.setVisibility(View.GONE);
+            } else {
+                viewHolder.mTvStatus.setText(mContext.getResources().getString(R.string.text_ended));
+                viewHolder.mTvTimeLabel.setText(mContext.getResources().getString(R.string.text_finish_of_distance));
+                viewHolder.mTvTime.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
+                        (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000) : Integer.parseInt(etoProject.getT_total_time()), true));
+                viewHolder.mIvProgress.setVisibility(View.VISIBLE);
+            }
             viewHolder.mTvProgress.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
             viewHolder.mPb.setProgressDrawable(mContext.getResources().getDrawable(R.drawable.bg_progress_full));
             viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
@@ -160,9 +177,14 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             viewHolder.mTvStatus.setTextColor(mContext.getResources().getColor(R.color.font_color_white_dark));
         }
         float progress = new BigDecimal(String.valueOf(etoProject.getCurrent_percent()))
-                .multiply(new BigDecimal(String.valueOf(100))).floatValue();
-        viewHolder.mPb.setProgress((int) progress);
-        viewHolder.mTvProgress.setText(String.format(Locale.US, "%.2f%%", progress));
+                .multiply(new BigDecimal(String.valueOf(1000))).floatValue();
+        if (progress > 1000) {
+            viewHolder.mPb.setProgress(1000);
+            progress = 1000;
+        } else {
+            viewHolder.mPb.setProgress((int) progress);
+        }
+        viewHolder.mTvProgress.setText(String.format(Locale.US, "%s%%", AssetUtil.formatNumberRounding(progress / 10, 2, RoundingMode.DOWN)));
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,6 +218,7 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         TextView mTvTime;
         ProgressBar mPb;
         TextView mTvProgress;
+        ImageView mIvProgress;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -207,6 +230,7 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             mTvTime = itemView.findViewById(R.id.item_eto_tv_time);
             mPb = itemView.findViewById(R.id.item_eto_pb);
             mTvProgress = itemView.findViewById(R.id.item_eto_tv_progress);
+            mIvProgress = itemView.findViewById(R.id.item_eto_iv_progress);
         }
     }
 

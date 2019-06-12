@@ -182,6 +182,28 @@
                             android:text="@string/text_empty" />
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/activity_padding">
+
+                        <TextView
+                            style="@style/font_gray_medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/attend_eto_current_remain_quote" />
+
+                        <TextView
+                            android:id="@+id/attend_eto_current_remain_tv"
+                            style="@style/font_white_dark_bold_large"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/text_empty" />
+
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -192,11 +214,23 @@
                 android:background="@drawable/bg_item"
                 android:layout_marginTop="@dimen/margin_14"
                 android:padding="@dimen/activity_padding">
-                <TextView
-                    style="@style/font_gray_medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/attend_eto_quantity"/>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        style="@style/font_gray_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/attend_eto_quantity"/>
+
+                    <TextView
+                        android:id="@+id/attend_eto_available_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/font_grey_medium"
+                        android:textColor="@color/text_hint_color"
+                        android:layout_gravity="end" />
+                </FrameLayout>
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -210,18 +244,38 @@
                         android:textColorHint="@color/text_hint_color"
                         style="@style/font_white_dark_large"
                         android:inputType="numberDecimal"
+                        android:hint="@string/attend_eto_hint_et"
                         android:background="@android:color/transparent"
                         android:maxLines="1"/>
-
                     <TextView
-                        android:id="@+id/attend_eto_available_tv"
+                        android:id="@+id/attend_eto_edit_text_unit"
+                        style="@style/font_white_dark_bold_large"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/font_grey_medium"
-                        android:textColor="@color/text_hint_color"
-                        android:layout_gravity="end" />
-
+                        android:layout_gravity="end"/>
                 </FrameLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_1"
+                    android:layout_marginTop="@dimen/activity_margin"
+                    android:background="@color/colorPrimary" />
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_14"
+                    android:layout_marginBottom="@dimen/margin_14"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/attend_eto_calculate_format_tv"
+                        style="@style/font_gray_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
 
             </LinearLayout>
 

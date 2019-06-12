@@ -115,11 +115,13 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                 .subscribe(new Consumer<List<SubLink>>() {
                     @Override
                     public void accept(List<SubLink> subLinks) throws Exception {
+                        Log.e("ssss", subLinks.get(1).getDesc());
                         getMvpView().onLoadSubLinks(subLinks);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        Log.e("sss", throwable.getMessage());
                         getMvpView().onError();
                     }
                 }));

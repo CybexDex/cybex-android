@@ -29,6 +29,7 @@ import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.toastmessage.ToastMessage;
 import com.cybex.basemodule.transform.CircleTransform;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.utils.DateUtils;
 import com.cybex.eto.R;
 import com.cybex.eto.activity.TermsAndConditionsActivity;
@@ -45,6 +46,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -97,6 +99,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
     TextView mProjectExchangeRatioTv;
     ExpandableTextView mProjectIntroductionExpandTv;
     ExpandableTextView mProjectWebsiteExpandTv;
+    ImageView mProjectPbIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +163,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectExchangeRatioTv = findViewById(R.id.eto_details_exchange_ratio_tv);
         mProjectIntroductionExpandTv = findViewById(R.id.eto_details_expand_tv);
         mProjectWebsiteExpandTv = findViewById(R.id.eto_website_expand_tv);
+        mProjectPbIv = findViewById(R.id.eto_details_progress_iv);
     }
 
     private void setOnclickListener() {
@@ -286,6 +290,11 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     }
 
+    @Override
+    public void onErrorUser(String message) {
+//        ToastMessage.showNotEnableDepositToastMessage(this, message, R.drawable.ic_error_16px);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshProjectStatus(Event.OnRefreshEtoProject refreshEtoProject) {
         EtoProject etoProject = refreshEtoProject.getEtoProject();
@@ -300,10 +309,14 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     private void setProgress() {
         float progress = new BigDecimal(String.valueOf(mEtoProject.getCurrent_percent()))
-                .multiply(new BigDecimal(String.valueOf(100))).floatValue();
-
-        mProjectPb.setProgress((int) (progress));
-        mProgressPercentTv.setText(String.format(Locale.US, "%.2f%%", progress));
+                .multiply(new BigDecimal(String.valueOf(1000))).floatValue();
+        if (progress > 1000) {
+            progress = 1000;
+            mProjectPb.setProgress(1000);
+        } else {
+            mProjectPb.setProgress((int) (progress));
+        }
+        mProgressPercentTv.setText(String.format(Locale.US, "%s%%", AssetUtil.formatNumberRounding(progress / 10, 2, RoundingMode.DOWN)));
     }
 
     private void showDetails(EtoProject etoProject) {
@@ -372,7 +385,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         mProjectTitleTv.setText(etoProject.getName());
         setProgress();
         showProjectTime(etoProject);
-        mProjectNameTv.setText(etoProject.getName());
+        mProjectNameTv.setText(etoProject.getProject());
         mProjectTokenNameTv.setText(etoProject.getToken_name());
         if (etoProject.getAdds_token_total() != null || etoProject.getAdds_token_total__lang_en() != null) {
             if (Locale.getDefault().getLanguage().equals("zh")) {
@@ -396,12 +409,13 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mProjectTokenReleasingTimeTv.setText(getResources().getString(R.string.ETO_details_text_token_releasing_immediately));
         }
         mProjectCurrencyTv.setText(etoProject.getBase_token_name());
-        mProjectExchangeRatioTv.setText(String.format(getResources().getString(R.string.ETO_details_text_currency_ratio), etoProject.getBase_token_name(), etoProject.getRate(), etoProject.getToken_name()));
+//        mProjectExchangeRatioTv.setText(String.format(getResources().getString(R.string.ETO_details_text_currency_ratio), AssetUtil.parseSymbol(etoProject.getUser_buy_token()), (etoProject.getUser_buy_token().equals(etoProject.getBase_token()) ? (etoProject.getQuote_token_count() / etoProject.getBase_token_count()) : (etoProject.getBase_token_count() / etoProject.getQuote_token_count())), ((etoProject.getUser_buy_token().equals(etoProject.getBase_token())) ? AssetUtil.parseSymbol(etoProject.getUser_buy_token()) : etoProject.getBase_token_name())));
+        mProjectExchangeRatioTv.setText(etoProject.getEto_rate());
         if (Locale.getDefault().getLanguage().equals("zh")) {
             mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage());
             String text = getResources().getString(R.string.ETO_details_project_official_website) + " <a href=\'" + etoProject.getAdds_website() + "\'>" + etoProject.getAdds_website() + "</a>"
                     + "<br>" + getResources().getString(R.string.ETO_details_project_whitepaper) + " <a href=\'" + etoProject.getAdds_whitepaper() + "\'>" + etoProject.getAdds_whitepaper() + "</a>"
-                    + "<br>" + (etoProject.getAdds_detail() != null ? getResources().getString(R.string.ETO_details_project_details) + etoProject.getAdds_detail() : "");
+                    + "<br>" + (!TextUtils.isEmpty(etoProject.getAdds_detail()) ? getResources().getString(R.string.ETO_details_project_details) + etoProject.getAdds_detail() : "");
             mProjectWebsiteExpandTv.setText(Html.fromHtml(text));
             TextView textView = mProjectWebsiteExpandTv.findViewById(R.id.expandable_text);
             textView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -410,7 +424,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mProjectIntroductionExpandTv.setText(etoProject.getAdds_advantage__lang_en());
             String text = getResources().getString(R.string.ETO_details_project_official_website) + " <a href=\'" + etoProject.getAdds_website__lang_en() + "\'>" + etoProject.getAdds_website__lang_en() + "</a>"
                     + "<br>" + getResources().getString(R.string.ETO_details_project_whitepaper) + " <a href=\'" + etoProject.getAdds_whitepaper__lang_en() + "\'>" + etoProject.getAdds_whitepaper__lang_en() + "</a>"
-                    + "<br>" + (etoProject.getAdds_detail__lang_en() != null ? getResources().getString(R.string.ETO_details_project_details) + etoProject.getAdds_detail__lang_en() : "");
+                    + "<br>" + (!TextUtils.isEmpty(etoProject.getAdds_detail__lang_en()) ? getResources().getString(R.string.ETO_details_project_details) + etoProject.getAdds_detail__lang_en() : "");
             mProjectWebsiteExpandTv.setText(Html.fromHtml(text));
         }
     }
@@ -425,9 +439,16 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
             mProjectTimeLabelTv.setText(getResources().getString(R.string.text_end_of_distance));
             mProjectTimeTv.setText(parseTime((int) (DateUtils.timeDistance(System.currentTimeMillis(), DateUtils.formatToMillsETO(etoProject.getEnd_at())) / 1000), false));
         } else if (status.equals(EtoProject.Status.FINISH)) {
-            mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
-            mProjectTimeTv.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
-                    (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000) : Integer.parseInt(etoProject.getT_total_time()), true));
+            if (TextUtils.isEmpty(etoProject.getT_total_time()) && TextUtils.isEmpty(etoProject.getFinish_at())) {
+                mProjectTimeLabelTv.setText("");
+                mProjectTimeTv.setText("");
+                mProjectPbIv.setVisibility(View.GONE);
+            } else {
+                mProjectPbIv.setVisibility(View.VISIBLE);
+                mProjectTimeLabelTv.setText(getResources().getString(R.string.text_finish_of_distance));
+                mProjectTimeTv.setText(parseTime(TextUtils.isEmpty(etoProject.getT_total_time()) ?
+                        (int) (DateUtils.timeDistance(etoProject.getStart_at(), etoProject.getFinish_at()) / 1000) : Integer.parseInt(etoProject.getT_total_time()), true));
+            }
             mProjectPb.setProgressDrawable(getResources().getDrawable(R.drawable.bg_progress_full));
             mProgressPercentTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
         } else {
@@ -469,73 +490,50 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
 
     private void showAgreementStatus(EtoProject etoProject, EtoUserStatus etoUserStatus, boolean isLogin) {
         if (isLogin) {
-            String userKycStatus = etoUserStatus.getKyc_status();
             String userStatus = etoUserStatus.getStatus();
-            //判断是否通过kyc
-            if (userKycStatus.equals(EtoUserStatus.KycStatus.NOT_STARTED)) {
-                mProjectAgreementLl.setVisibility(View.GONE);
-                mAppointmentStatusTv.setVisibility(View.INVISIBLE);
-                mAppointmentButton.setVisibility(View.VISIBLE);
-                mAppointmentButton.setText(getResources().getString(R.string.ETO_details_kyc_verification));
-                mAppointmentButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://icoape.com"));
-                        startActivity(browserIntent);
-                    }
-                });
+            if (userStatus.equals(EtoUserStatus.Status.OK)) {
+                showStatusUserPassVerifying(etoProject);
             } else {
-                //用户是否预约
-                if (userStatus.equals(EtoUserStatus.Status.UNSTART)) {
-                    //项目是否可预约
-                    if (etoProject.isIs_user_in().equals("1")) {
-                        showStatusUserNotMakeAppointment(etoProject);
-                    } else {
-                        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
-                            mProjectAppointmentRl.setVisibility(View.GONE);
-                        } else {
-                            mProjectAgreementLl.setVisibility(View.GONE);
-                            mAppointmentStatusTv.setVisibility(View.INVISIBLE);
-                            mAppointmentButton.setVisibility(View.VISIBLE);
-                            mAppointmentButton.setText(getResources().getString(R.string.ETO_details_stop_reserve));
-                            mAppointmentButton.setEnabled(false);
-                        }
-                    }
+                if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+                    mProjectAppointmentRl.setVisibility(View.GONE);
                 } else {
-                    if (userStatus.equals(EtoUserStatus.Status.OK)) {
-                        showStatusUserPassVerifying(etoProject);
-
-                    } else if (userStatus.equals(EtoUserStatus.Status.WAITING)) {
-                        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
-                            mProjectAppointmentRl.setVisibility(View.GONE);
-                        } else {
-                            mProjectAgreementLl.setVisibility(View.VISIBLE);
-                            mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
-                            mAgreementSelectionCheckbox.setChecked(true);
-                            mAgreementSelectionCheckbox.setEnabled(false);
-                            mAppointmentButton.setVisibility(View.INVISIBLE);
-                            mAppointmentStatusTv.setVisibility(View.VISIBLE);
-                            mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_verifying));
-                            mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
-                        }
-                    } else if (userStatus.equals(EtoUserStatus.Status.REJECT)) {
-                        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
-                            mProjectAppointmentRl.setVisibility(View.GONE);
-                        } else {
-                            mProjectAgreementLl.setVisibility(View.VISIBLE);
-                            mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
-                            mAgreementSelectionCheckbox.setChecked(true);
-                            mAgreementSelectionCheckbox.setEnabled(false);
-                            mAppointmentButton.setVisibility(View.INVISIBLE);
-                            mAppointmentStatusTv.setVisibility(View.VISIBLE);
-                            mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_rejected));
-                            mAppointmentStatusTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
-                            mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board_grey));
-                        }
-
-                    }
+                    mProjectAgreementLl.setVisibility(View.GONE);
+                    mAppointmentButton.setVisibility(View.VISIBLE);
+                    mAppointmentButton.setEnabled(false);
+                    mAppointmentButton.setText(getResources().getString(R.string.ETO_details_not_qualified));
                 }
             }
+
+
+
+//            else if (userStatus.equals(EtoUserStatus.Status.WAITING)) {
+//                if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+//                    mProjectAppointmentRl.setVisibility(View.GONE);
+//                } else {
+//                    mProjectAgreementLl.setVisibility(View.VISIBLE);
+//                    mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
+//                    mAgreementSelectionCheckbox.setChecked(true);
+//                    mAgreementSelectionCheckbox.setEnabled(false);
+//                    mAppointmentButton.setVisibility(View.INVISIBLE);
+//                    mAppointmentStatusTv.setVisibility(View.VISIBLE);
+//                    mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_verifying));
+//                    mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
+//                }
+//            } else if (userStatus.equals(EtoUserStatus.Status.REJECT)) {
+//                if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+//                    mProjectAppointmentRl.setVisibility(View.GONE);
+//                } else {
+//                    mProjectAgreementLl.setVisibility(View.VISIBLE);
+//                    mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
+//                    mAgreementSelectionCheckbox.setChecked(true);
+//                    mAgreementSelectionCheckbox.setEnabled(false);
+//                    mAppointmentButton.setVisibility(View.INVISIBLE);
+//                    mAppointmentStatusTv.setVisibility(View.VISIBLE);
+//                    mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_rejected));
+//                    mAppointmentStatusTv.setTextColor(getResources().getColor(R.color.font_color_white_dark));
+//                    mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board_grey));
+//                }
+//            }
 
         } else {
             if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
@@ -544,7 +542,7 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
                 mProjectAgreementLl.setVisibility(View.GONE);
                 mAppointmentStatusTv.setVisibility(View.INVISIBLE);
                 mAppointmentButton.setVisibility(View.VISIBLE);
-                mAppointmentButton.setText(getResources().getString(R.string.action_sign_in));
+                mAppointmentButton.setText(getResources().getString(R.string.ETO_details_log_in));
                 mAppointmentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -555,47 +553,47 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         }
     }
 
-    private void showStatusUserNotMakeAppointment(final EtoProject etoProject) {
-        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
-            mProjectAppointmentRl.setVisibility(View.GONE);
-        } else {
-            if (mDialog == null) {
-                mDialog = new Dialog(EtoDetailsActivity.this);
-            }
-
-            mProjectAgreementLl.setVisibility(View.VISIBLE);
-            mAppointmentStatusTv.setVisibility(View.INVISIBLE);
-            mAppointmentButton.setVisibility(View.VISIBLE);
-            mAppointmentButton.setText(getResources().getString(R.string.ETO_details_reserve_now));
-            mAppointmentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!mAgreementSelectionCheckbox.isChecked()) {
-                        ToastMessage.showNotEnableDepositToastMessage(EtoDetailsActivity.this, getResources().getString(R.string.ETO_details_toast_message), R.drawable.ic_error_16px);
-                    } else {
-                        CybexDialog.showVerifyPinCodeETODialog(mDialog, getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
-                            @Override
-                            public void onClick(final Dialog dialog, final Button button, EditText editText, TextView textView) {
-                                String inputCode = editText.getText().toString().trim();
-                                if (inputCode.isEmpty()) {
-                                    textView.setVisibility(View.VISIBLE);
-                                    textView.setText(getResources().getString(R.string.ETO_details_dialog_no_invitation_code_error));
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                    mEtoDetailsPresenter.registerETO(mUserName, etoProject.getId(), inputCode, textView, button, dialog);
-                                }
-                            }
-                        }, new CybexDialog.ConfirmationDialogCancelListener() {
-                            @Override
-                            public void onCancel(Dialog dialog) {
-
-                            }
-                        }, mHandler, mRunnable);
-                    }
-                }
-            });
-        }
-    }
+//    private void showStatusUserNotMakeAppointment(final EtoProject etoProject) {
+//        if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
+//            mProjectAppointmentRl.setVisibility(View.GONE);
+//        } else {
+//            if (mDialog == null) {
+//                mDialog = new Dialog(EtoDetailsActivity.this);
+//            }
+//
+//            mProjectAgreementLl.setVisibility(View.VISIBLE);
+//            mAppointmentStatusTv.setVisibility(View.INVISIBLE);
+//            mAppointmentButton.setVisibility(View.VISIBLE);
+//            mAppointmentButton.setText(getResources().getString(R.string.ETO_details_reserve_now));
+//            mAppointmentButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (!mAgreementSelectionCheckbox.isChecked()) {
+//                        ToastMessage.showNotEnableDepositToastMessage(EtoDetailsActivity.this, getResources().getString(R.string.ETO_details_toast_message), R.drawable.ic_error_16px);
+//                    } else {
+//                        CybexDialog.showVerifyPinCodeETODialog(mDialog, getResources().getString(R.string.ETO_details_dialog_invitation_code), new CybexDialog.ConfirmationDialogClickWithButtonTimerListener() {
+//                            @Override
+//                            public void onClick(final Dialog dialog, final Button button, EditText editText, TextView textView) {
+//                                String inputCode = editText.getText().toString().trim();
+//                                if (inputCode.isEmpty()) {
+//                                    textView.setVisibility(View.VISIBLE);
+//                                    textView.setText(getResources().getString(R.string.ETO_details_dialog_no_invitation_code_error));
+//                                } else {
+//                                    textView.setVisibility(View.GONE);
+//                                    mEtoDetailsPresenter.registerETO(mUserName, etoProject.getId(), inputCode, textView, button, dialog);
+//                                }
+//                            }
+//                        }, new CybexDialog.ConfirmationDialogCancelListener() {
+//                            @Override
+//                            public void onCancel(Dialog dialog) {
+//
+//                            }
+//                        }, mHandler, mRunnable);
+//                    }
+//                }
+//            });
+//        }
+//    }
 
     private void showStatusUserPassVerifying(final EtoProject etoProject) {
         if (etoProject.getStatus().equals(EtoProject.Status.FINISH)) {
@@ -603,26 +601,30 @@ public class EtoDetailsActivity extends EtoBaseActivity implements EtoDetailsVie
         } else if (etoProject.getStatus().equals(EtoProject.Status.PRE)) {
             mProjectAgreementLl.setVisibility(View.VISIBLE);
             mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
-            mAgreementSelectionCheckbox.setChecked(true);
+            mAgreementSelectionCheckbox.setChecked(false);
             mAgreementSelectionCheckbox.setEnabled(false);
             mAppointmentButton.setVisibility(View.INVISIBLE);
             mAppointmentStatusTv.setVisibility(View.VISIBLE);
             mAppointmentStatusTv.setText(getResources().getString(R.string.ETO_details_waiting_for_ETO));
             mAppointmentStatusTv.setBackground(getResources().getDrawable(R.drawable.rect_board));
+            mAppointmentButton.setEnabled(false);
         } else if (etoProject.getStatus().equals(EtoProject.Status.OK)) {
             mProjectAgreementLl.setVisibility(View.VISIBLE);
-            mAgreementSelectionCheckbox.setBackground(getResources().getDrawable(R.drawable.ic_selected_agreement_grey));
-            mAgreementSelectionCheckbox.setChecked(true);
-            mAgreementSelectionCheckbox.setEnabled(false);
+            mAgreementSelectionCheckbox.setEnabled(true);
             mAppointmentStatusTv.setVisibility(View.INVISIBLE);
             mAppointmentButton.setVisibility(View.VISIBLE);
             mAppointmentButton.setText(getResources().getString(R.string.ETO_details_join_eto_now));
             mAppointmentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(EtoDetailsActivity.this, AttendETOActivity.class);
-                    intent.putExtra(Constant.INTENT_PARAM_ETO_ATTEND_ETO, etoProject);
-                    startActivity(intent);
+                    if (mAgreementSelectionCheckbox.isChecked()) {
+                        Intent intent = new Intent(EtoDetailsActivity.this, AttendETOActivity.class);
+                        intent.putExtra(Constant.INTENT_PARAM_ETO_ATTEND_ETO, etoProject);
+                        startActivity(intent);
+                    } else {
+                        ToastMessage.showNotEnableDepositToastMessage(EtoDetailsActivity.this, getResources().getString(R.string.ETO_details_toast_message), R.drawable.ic_error_16px);
+
+                    }
                 }
             });
         }

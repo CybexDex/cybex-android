@@ -5,5 +5,6 @@ import com.cybex.provider.http.entity.EtoUserCurrentStatus;
 
 public interface AttendETOView extends IMvpView {
     void refreshUserSubscribedToken(EtoUserCurrentStatus etoUserCurrentStatus);
+    void onNoUserError(String message);
 
 }

@@ -45,14 +45,19 @@ public class EtoProject implements Serializable {
     private String base_token_name;
     //精度（接受最小单位）
     private int base_accuracy;
+
+    private int quote_accuracy;
+
     //个人最大总额度
-    private float base_max_quota;
+    private double base_max_quota;
     //个人单次最小额度
-    private float base_min_quota;
+    private double base_min_quota;
     //项目软顶
     private String base_soft_cap;
     //项目base总额度
     private float base_token_count;
+    //项目quote总额度
+    private float quote_token_count;
     //项目base当前额度
     private float current_base_token_count;
     //当前参投用户
@@ -132,10 +137,16 @@ public class EtoProject implements Serializable {
     //
     private int index;
 
+    private String user_buy_token;
+
+    private String eto_rate;
+
+    private float current_remain_quota_count;
+
     public EtoProject(String id, String name, String status, String control_status, String start_at,
                       String end_at, String finish_at, String close_at, String offer_at, String lock_at,
                       float rate, int token_count, String token, String token_name, String base_token,
-                      String base_token_name, int base_accuracy, float base_max_quota, float base_min_quota,
+                      String base_token_name, int base_accuracy, double base_max_quota, double base_min_quota,
                       String base_soft_cap, float base_token_count, float current_base_token_count,
                       int current_user_count, String type, int deleted, String created_at, String update_at,
                       String receive_address, int score, String control, int banner, String is_user_in,
@@ -147,7 +158,8 @@ public class EtoProject implements Serializable {
                       String adds_banner__lang_en, String adds_logo, String adds_logo__lang_en,
                       String adds_logo_mobile, String adds_logo_mobile__lang_en,
                       String adds_whitepaper, String adds_whitepaper__lang_en, String adds_detail,
-                      String adds_detail__lang_en,String adds_buy_desc, String adds_buy_desc__lang_en, float current_percent, int index) {
+                      String adds_detail__lang_en,String adds_buy_desc, String adds_buy_desc__lang_en, float current_percent, int index,
+                      String user_buy_token, int quote_accuracy, float quote_token_count, String eto_rate, float current_remain_quota_count) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -214,6 +226,11 @@ public class EtoProject implements Serializable {
         this.adds_buy_desc__lang_en = adds_buy_desc__lang_en;
         this.current_percent = current_percent;
         this.index = index;
+        this.user_buy_token = user_buy_token;
+        this.quote_accuracy = quote_accuracy;
+        this.quote_token_count = quote_token_count;
+        this.eto_rate = eto_rate;
+        this.current_remain_quota_count = current_remain_quota_count;
     }
 
     public String getId() {
@@ -352,19 +369,19 @@ public class EtoProject implements Serializable {
         this.base_accuracy = base_accuracy;
     }
 
-    public float getBase_max_quote() {
+    public double getBase_max_quote() {
         return base_max_quota;
     }
 
-    public void setBase_max_quote(float base_max_quote) {
+    public void setBase_max_quote(double base_max_quote) {
         this.base_max_quota = base_max_quote;
     }
 
-    public float getBase_min_quote() {
+    public double getBase_min_quote() {
         return base_min_quota;
     }
 
-    public void setBase_min_quote(float base_min_quote) {
+    public void setBase_min_quote(double base_min_quote) {
         this.base_min_quota = base_min_quote;
     }
 
@@ -742,5 +759,45 @@ public class EtoProject implements Serializable {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public String getUser_buy_token() {
+        return user_buy_token;
+    }
+
+    public void setUser_buy_token(String user_buy_token) {
+        this.user_buy_token = user_buy_token;
+    }
+
+    public int getQuote_accuracy() {
+        return quote_accuracy;
+    }
+
+    public void setQuote_accuracy(int quote_accuracy) {
+        this.quote_accuracy = quote_accuracy;
+    }
+
+    public float getQuote_token_count() {
+        return quote_token_count;
+    }
+
+    public void setQuote_token_count(float quote_token_count) {
+        this.quote_token_count = quote_token_count;
+    }
+
+    public String getEto_rate() {
+        return eto_rate;
+    }
+
+    public void setEto_rate(String eto_rate) {
+        this.eto_rate = eto_rate;
+    }
+
+    public float getCurrent_remain_quota_count() {
+        return current_remain_quota_count;
+    }
+
+    public void setCurrent_remain_quota_count(float current_remain_quota_count) {
+        this.current_remain_quota_count = current_remain_quota_count;
     }
 }

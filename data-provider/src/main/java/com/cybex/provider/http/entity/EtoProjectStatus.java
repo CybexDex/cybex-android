@@ -9,6 +9,8 @@ public class EtoProjectStatus {
     private float current_percent;
     //项目当前额度
     private float current_base_token_count;
+    //项目当前quote额度
+    private float current_remain_quota_count;
     //项目当前参投用户数
     private int current_user_count;
     //项目当前状态
@@ -17,11 +19,13 @@ public class EtoProjectStatus {
     private String finish_at;
 
     public EtoProjectStatus(String id, boolean real, float current_percent, float current_base_token_count,
+                            float current_remain_quota_count,
                             int current_user_count, String status, String finish_at) {
         this.id = id;
         this.real = real;
         this.current_percent = current_percent;
         this.current_base_token_count = current_base_token_count;
+        this.current_remain_quota_count = current_remain_quota_count;
         this.current_user_count = current_user_count;
         this.status = status;
         this.finish_at = finish_at;
@@ -81,5 +85,13 @@ public class EtoProjectStatus {
 
     public void setFinish_at(String finish_at) {
         this.finish_at = finish_at;
+    }
+
+    public float getCurrent_remain_quota_count() {
+        return current_remain_quota_count;
+    }
+
+    public void setCurrent_remain_quota_count(float current_remain_quota_count) {
+        this.current_remain_quota_count = current_remain_quota_count;
     }
 }

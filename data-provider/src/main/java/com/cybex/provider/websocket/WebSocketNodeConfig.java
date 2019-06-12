@@ -4,6 +4,7 @@ public class WebSocketNodeConfig {
 
     private String mdp;
     private String limit_order;
+    private String eto;
 
     public static WebSocketNodeConfig getInstance() {
         return WebSocketNodeConfigProvider.factory;
@@ -27,5 +28,13 @@ public class WebSocketNodeConfig {
 
     public void setLimit_order(String limit_order) {
         this.limit_order = limit_order;
+    }
+
+    public String getEto() {
+        return eto + "/";
+    }
+
+    public void setEto(String eto) {
+        this.eto = eto + "/";
     }
 }

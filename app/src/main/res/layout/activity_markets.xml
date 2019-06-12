@@ -162,7 +162,8 @@
                 android:layout_marginTop="@dimen/activity_margin"
                 android:paddingStart="@dimen/activity_padding"
                 android:paddingEnd="@dimen/activity_padding"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tv_comment_count"

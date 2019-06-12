@@ -186,7 +186,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     @Override
     protected void readCardOnSuccess(Card card) {
         super.readCardOnSuccess(card);
-        finish();
     }
 
     @Override
@@ -227,6 +226,13 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 break;
         }
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogInFromEnotes(Event.EnotesLoginFromLoginPage event) {
+        if (event.isLogin()) {
+            finish();
+        }
     }
 
     private void setLoginButtonEnable(boolean enabled){

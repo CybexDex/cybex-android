@@ -15,4 +15,5 @@ public interface EtoDetailsView extends IMvpView {
     void onRegisterError(String message, TextView textView, Button button, Dialog dialog);
     void onRegisterSuccess(Dialog dialog);
     void onLoadEtoProject(EtoProject etoProject);
+    void onErrorUser(String message);
 }

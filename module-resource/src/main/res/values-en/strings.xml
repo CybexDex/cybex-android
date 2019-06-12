@@ -528,12 +528,15 @@ If user C purchases 10,000 CYB and sells it the same day, coin age = 10000; Afte
     <string name="ETO_details_dialog_no_invitation_code_error">Invitation Code is required</string>
     <string name="ETO_details_dialog_message_success">Successful appointment, please wait for the audit result patiently</string>
     <string name="ETO_details_dialog_success">OK</string>
+    <string name="ETO_details_log_in">Log In</string>
+    <string name="ETO_details_not_qualified">Not Qualified</string>
 
     <!-- Attend Eto Activity -->
     <string name="attend_eto_personal_cap">Personal Cap</string>
     <string name="attend_eto_subscription_unit">Subscription Unit</string>
     <string name="attend_eto_remaining">Remaining</string>
     <string name="attend_eto_min_subscription">Min.Subscription</string>
+    <string name="attend_eto_current_remain_quote">Total Remaining</string>
     <string name="attend_eto_subscribed">Subscribed</string>
     <string name="attend_eto_quantity">Quantity</string>
     <string name="attend_eto_fee">Fee</string>
@@ -547,6 +550,10 @@ If user C purchases 10,000 CYB and sells it the same day, coin age = 10000; Afte
     <string name="attend_eto_dialog_message">You will join in ETO of %s</string>
     <string name="attend_eto_dialog_loading_verifying">Verifying</string>
     <string name="attend_eto_dialog_loading_repeat">Do not repeat transfers</string>
+    <string name="attend_eto_toast_message_success">Subscription success</string>
+    <string name="attend_eto_toast_message_failed">Subscription failed</string>
+    <string name="attend_eto_hint_et">Enter Purchase Amount</string>
+
 
     <!-- EtoRecordActivity -->
     <string name="text_title_eto_records">ETO Records</string>
@@ -556,6 +563,9 @@ If user C purchases 10,000 CYB and sells it the same day, coin age = 10000; Afte
     <string name="text_invalid_subscription">Invalid Subscription</string>
     <string name="text_subscription_partly_valid">Subscription partly valid</string>
     <string name="text_received_success">Received</string>
+    <string name="text_eto_record_participate">Join ETO</string>
+    <string name="text_eto_record_receive_token">Receive Token</string>
+    <string name="text_eto_record_time">Time</string>
 
     <!-- Terms and Conditions -->
     <string name="text_tool_bar_title_terms">Terms and Conditions</string>

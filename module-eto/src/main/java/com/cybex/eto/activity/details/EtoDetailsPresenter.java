@@ -95,24 +95,27 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
                         return RetrofitFactory.getInstance().apiEto().getEtoUserStatus(userName, etoProject.getId());
                     }
                 })
-                .map(new Function<EtoBaseResponse<EtoUserStatus>, EtoUserStatus>() {
-                    @Override
-                    public EtoUserStatus apply(EtoBaseResponse<EtoUserStatus> etoUserCurrentStatusEtoBaseResponse) throws Exception {
-                        return etoUserCurrentStatusEtoBaseResponse.getResult();
-                    }
-                })
-                .retry()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<EtoUserStatus>() {
+                .subscribe(new Consumer<EtoBaseResponse<EtoUserStatus>>() {
                     @Override
-                    public void accept(EtoUserStatus etoUserStatus) throws Exception {
-                        getMvpView().onLoadProjectDetailsAndUserStatus(etoProject, etoUserStatus);
+                    public void accept(EtoBaseResponse<EtoUserStatus> etoUserStatus) throws Exception {
+                        if (etoUserStatus.getCode() == 0) {
+                            getMvpView().onLoadProjectDetailsAndUserStatus(etoProject, etoUserStatus.getResult());
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        getMvpView().onError();
+                        String message = throwable.getMessage();
+                        if (throwable instanceof HttpException) {
+                            ResponseBody responseBody = ((HttpException) throwable).response().errorBody();
+                            Gson gson = new Gson();
+                            Type typeToken = new TypeToken<EtoBaseResponse<String>>(){}.getType();
+                            EtoBaseResponse<String> response = gson.fromJson(responseBody.string(), typeToken);
+                            message = response.getResult();
+                        }
+                        getMvpView().onErrorUser(message);
                     }
                 }));
     }
@@ -133,8 +136,8 @@ public class EtoDetailsPresenter<V extends EtoDetailsView> extends BasePresenter
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        String message = throwable.getMessage();
                         if (throwable instanceof HttpException) {
-                            String message;
                             ResponseBody body = ((HttpException) throwable).response().errorBody();
                             Gson gson = new Gson();
                             Type typeToken = new TypeToken<EtoBaseResponse<EtoErrorMsgResponse>>(){}.getType();

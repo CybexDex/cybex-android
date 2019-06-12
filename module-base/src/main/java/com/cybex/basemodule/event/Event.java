@@ -583,5 +583,17 @@ public class Event {
             return status;
         }
     }
+
+    public static class EnotesLoginFromLoginPage {
+        private boolean login;
+
+        public EnotesLoginFromLoginPage(boolean login) {
+            this.login = login;
+        }
+
+        public boolean isLogin() {
+            return login;
+        }
+    }
 }
 

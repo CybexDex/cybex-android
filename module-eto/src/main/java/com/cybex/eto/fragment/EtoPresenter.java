@@ -38,15 +38,21 @@ public class EtoPresenter<V extends EtoMvpView> extends BasePresenter<V> {
     }
 
     public void loadEtoProjects(){
-        mCompositeDisposable.add(RetrofitFactory.getInstance()
-                .apiEto()
-                .getEtoProjects(4, 0, "online")
+        mCompositeDisposable.add(
+                Flowable.interval(3, 3 , TimeUnit.SECONDS)
+                .flatMap(
+                        (Function<Long, Publisher<EtoBaseResponse<List<EtoProject>>>>) aLong -> RetrofitFactory.getInstance()
+                                .apiEto()
+                                .getEtoProjects(4, 0, "online")
+                )
+
                 .map(new Function<EtoBaseResponse<List<EtoProject>>, List<EtoProject>>() {
                     @Override
                     public List<EtoProject> apply(EtoBaseResponse<List<EtoProject>> etoBaseResponse) {
                         return etoBaseResponse.getResult();
                     }
                 })
+                .retry()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<EtoProject>>() {
@@ -95,6 +101,7 @@ public class EtoPresenter<V extends EtoMvpView> extends BasePresenter<V> {
                         if(etoProjectStatus != null){
                             etoProject.setCurrent_percent(etoProjectStatus.getCurrent_percent());
                             etoProject.setCurrent_base_token_count(etoProjectStatus.getCurrent_base_token_count());
+                            etoProject.setCurrent_remain_quota_count(etoProjectStatus.getCurrent_remain_quota_count());
                             etoProject.setCurrent_user_count(etoProjectStatus.getCurrent_user_count());
                             etoProject.setStatus(etoProjectStatus.getStatus());
                             etoProject.setFinish_at(etoProjectStatus.getFinish_at());
@@ -102,6 +109,7 @@ public class EtoPresenter<V extends EtoMvpView> extends BasePresenter<V> {
                         return etoProject;
                     }
                 })
+                .retry()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<EtoProject>() {

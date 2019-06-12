@@ -14,48 +14,68 @@
         style="@style/font_white_dark_bold_large"
         android:text="@string/text_empty"/>
 
-    <FrameLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3">
+        android:layout_marginTop="@dimen/margin_6"
+        android:weightSum="3">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                style="@style/font_gray_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_eto_record_participate"/>
+            <TextView
+                android:id="@+id/text_join_eto_amount"
+                style="@style/font_white_dark_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_empty"/>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/item_eto_records_tv_eto_operate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_small"
-            android:text="@string/text_empty"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                style="@style/font_gray_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_eto_record_receive_token"/>
+            <TextView
+                android:id="@+id/text_receive_token_amount"
+                style="@style/font_white_dark_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_empty"/>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/item_eto_records_tv_eto_asset_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_small"
-            android:layout_gravity="end"
-            android:text="@string/text_empty"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="end">
+            <TextView
+                style="@style/font_gray_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_eto_record_time"/>
+            <TextView
+                android:id="@+id/text_eto_record_time"
+                style="@style/font_white_dark_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_empty"/>
+        </LinearLayout>
 
-    </FrameLayout>
+    </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_3">
-
-        <TextView
-            android:id="@+id/item_eto_records_tv_eto_operate_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/font_gray_small"
-            android:text="@string/text_empty"/>
-
-        <TextView
-            android:id="@+id/item_eto_records_tv_eto_operate_result"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            style="@style/font_white_dark_small"
-            android:text="@string/text_empty"/>
-
-    </FrameLayout>
 
 </LinearLayout>

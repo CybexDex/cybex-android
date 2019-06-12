@@ -68,7 +68,7 @@ public class WatchlistFragment extends BaseFragment implements MultiStateRadioGr
     private MultiStateRadioButton mMultiStateRadioButton_price;
     private MultiStateRadioButton mMultiStateRadioButton_change;
 
-    private String[] mTabs = new String[]{"ETH", "CYB", "USDT", "BTC"};
+    private String[] mTabs = new String[]{"USDT", "ETH", "CYB", "BTC"};
     private String mCurrentTab;
     private String mCurrentBaseAssetId;
     private WatchListRecyclerViewAdapter mWatchListRecyclerViewAdapter;

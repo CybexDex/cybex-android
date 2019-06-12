@@ -175,6 +175,7 @@ public class WebSocketService extends Service {
                                 FullNodeServerSelect.getInstance().setmListNode(webSocketNodeResponse.getNodes());
                                 WebSocketNodeConfig.getInstance().setLimit_order(webSocketNodeResponse.getLimitOrder());
                                 WebSocketNodeConfig.getInstance().setMdp(webSocketNodeResponse.getMdp());
+                                WebSocketNodeConfig.getInstance().setEto(webSocketNodeResponse.getEto());
                                 BitsharesWalletWraper.getInstance().build_connect();
                             }
                         },
@@ -516,7 +517,7 @@ public class WebSocketService extends Service {
 
                 @Override
                 public void onNext(Map<String,List<AssetsPair>> assetsPairMap) {
-                    assetsPairMap.putAll(loadContestGameData());
+                    //assetsPairMap.putAll(loadContestGameData());
                     mAssetsPairHashMap.putAll(assetsPairMap);
                     Set<String> assetsIds = new HashSet<>();
                     for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
@@ -861,6 +862,7 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(Reply<List<AssetObject>> reply) {
             List<AssetObject> assetObjects = reply.result;
+            assetObjects.removeAll(Collections.singletonList(null));
             if (assetObjects == null || assetObjects.size() == 0) {
                 return;
             }
@@ -874,11 +876,13 @@ public class WebSocketService extends Service {
                 }
                 for (AssetObject assetObject : assetObjects) {
                     for (AssetsPair assetsPair : assetsPairs) {
-                        if (assetsPair.getBase().equals(assetObject.id.toString())) {
-                            assetsPair.setBaseAsset(assetObject);
-                        }
-                        if (assetsPair.getQuote().equals(assetObject.id.toString())) {
-                            assetsPair.setQuoteAsset(assetObject);
+                        if (assetObject != null) {
+                            if (assetsPair.getBase().equals(assetObject.id.toString())) {
+                                assetsPair.setBaseAsset(assetObject);
+                            }
+                            if (assetsPair.getQuote().equals(assetObject.id.toString())) {
+                                assetsPair.setQuoteAsset(assetObject);
+                            }
                         }
                     }
                 }

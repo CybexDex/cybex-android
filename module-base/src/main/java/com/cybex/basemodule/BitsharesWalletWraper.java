@@ -257,6 +257,10 @@ public class BitsharesWalletWraper {
 //        return nRet;
 //    }
 
+    public String getUserKey(String userName, String password) {
+        return mWalletApi.getUserKey(userName, password);
+    }
+
     public int import_account_password(AccountObject accountObject, String strAccountName, String strPassword) {
         mWalletApi.set_password(strPassword);
         int nRet = mWalletApi.import_account_password(accountObject, strAccountName, strPassword);
@@ -471,6 +475,15 @@ public class BitsharesWalletWraper {
                                                                        long totalClaimedAmount,
                                                                        ObjectId<AssetObject> totalClaimedAmountId) {
         return mWalletApi.getBalanceClaimOperation(fee, feeAssetId, depositToAccount, balanceToClaim, balanceOwnerKey, totalClaimedAmount, totalClaimedAmountId);
+    }
+
+    public Operations.exchange_participate_operation getParticipateOperatin(long fee,
+                                                                            ObjectId<AssetObject> feeAssetId,
+                                                                            long amount,
+                                                                            ObjectId<AssetObject> amountAssetId,
+                                                                            ObjectId exchangePayId,
+                                                                            ObjectId<AccountObject> payerId) {
+        return mWalletApi.getExchangeOperation(fee, feeAssetId, amount, amountAssetId, exchangePayId, payerId);
     }
 
     public Operations.account_update_operation getAccountUpdateOperation(ObjectId<AssetObject> feeAssetId,
