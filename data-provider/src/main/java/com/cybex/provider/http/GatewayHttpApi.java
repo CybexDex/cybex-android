@@ -1,11 +1,14 @@
 package com.cybex.provider.http;
 
+import com.cybex.provider.http.gateway.entity.GatewayAssetResponse;
 import com.cybex.provider.http.gateway.entity.GatewayNewAssetListResponse;
 import com.cybex.provider.http.gateway.entity.GatewayNewAssetsInfoResponse;
 import com.cybex.provider.http.gateway.entity.GatewayNewRecordsResponse;
 import com.cybex.provider.http.response.GateWayAssetInRecordsResponse;
 import com.cybex.provider.http.response.GateWayRecordsResponse;
 import com.google.gson.JsonObject;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -27,10 +30,13 @@ public interface GatewayHttpApi {
     Observable<GateWayRecordsResponse> gatewayRecords(@Body RequestBody body);
 
     @GET("v1/assets")
-    Observable<GatewayNewAssetListResponse> getAssetList(
+    Observable<List<GatewayAssetResponse>> getAssetList(
             @Header("Content-Type") String contentType,
             @Header("Authorization") String authorization
     );
+    @GET("assets")
+    Observable<GatewayNewAssetListResponse> getAssetList2(@Header("Content-Type") String contentType,
+                                                         @Header("Authorization") String authorization);
 
     @GET("records/{userAccount}")
     Observable<GateWayRecordsResponse> getDepositWithdrawRecords(

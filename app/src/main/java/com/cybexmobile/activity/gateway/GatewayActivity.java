@@ -39,6 +39,7 @@ import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.http.gateway.entity.Data;
+import com.cybex.provider.http.gateway.entity.GatewayAssetResponse;
 import com.cybex.provider.http.gateway.entity.GatewayNewAssetListResponse;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
@@ -357,7 +358,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                         .concatMap((Function<ResponseBody, ObservableSource<GatewayNewAssetListResponse>>) responseBody -> {
                             return RetrofitFactory.getInstance()
                                     .apiGateway()
-                                    .getAssetList(
+                                    .getAssetList2(
                                             "application/json",
                                             "bearer " + mSignature
                                     );
@@ -426,7 +427,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                         )
                         .map(gatewayNewAssetListResponse -> {
                             List<DepositAndWithdrawObject> depositAndWithdrawObjectList = new ArrayList<>();
-                            for (Data data : gatewayNewAssetListResponse.getData()) {
+                            for (GatewayAssetResponse data : gatewayNewAssetListResponse) {
                                 DepositAndWithdrawObject depositAndWithdrawObject = new DepositAndWithdrawObject();
                                 for (int j = 0; j < mAccountBalanceObjectItemList.size(); j++) {
                                     if (mAccountBalanceObjectItemList.get(j).assetObject.id.toString().equals(data.getCybid())) {
@@ -435,14 +436,14 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                                     }
                                 }
                                 depositAndWithdrawObject.setId(data.getCybid());
-                                depositAndWithdrawObject.setEnable(data.getWithdrawSwith());
+                                depositAndWithdrawObject.setEnable(data.getWithdrawSwitch());
                                 depositAndWithdrawObject.setGatewayAccount(data.getGatewayAccount());
                                 depositAndWithdrawObject.setMinWithdraw(data.getMinWithdraw());
                                 depositAndWithdrawObject.setPrecision(data.getPrecision());
                                 depositAndWithdrawObject.setWithdrawFee(data.getWithdrawFee());
 //                        depositAndWithdrawObject.setEnMsg(jsonObject.getString("enMsg"));
 //                        depositAndWithdrawObject.setCnMsg(jsonObject.getString("cnMsg"));
-                                depositAndWithdrawObject.setProjectName(data.getBlockchain().getName());
+                                depositAndWithdrawObject.setProjectName(data.getBlockchain());
                                 depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(data.getCybid()));
                                 depositAndWithdrawObjectList.add(depositAndWithdrawObject);
                             }
