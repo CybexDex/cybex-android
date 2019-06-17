@@ -977,7 +977,7 @@ public class WalletApi {
         return signedTransaction;
     }
 
-    public String getLimitOrderSignedTransaction(long refBlockNum, long refBlockPrefix, long txExpiration,
+    public String getLimitOrderSignedTransaction(long refBlockNum, long refBlockPrefix, long txExpiration, long limitOrderExpiration,
                                                  String chainId, String seller, String feeAssetId, String amountToSellAssetId,
                                                  String receiveAssetId, long feeAmount, long amountToSellAmount, long receiveAmount, int fill_or_kill) {
         SignedTransaction signedTransaction = new SignedTransaction();
@@ -989,6 +989,7 @@ public class WalletApi {
                 feeAmount,
                 amountToSellAmount,
                 receiveAmount);
+        limit_order_create_operation.expiration = new Date(limitOrderExpiration * 1000);
         limit_order_create_operation.fill_or_kill = fill_or_kill == 1;
         Operations.operation_type operationType = new Operations.operation_type();
         operationType.nOperationType = ID_CREATE_LIMIT_ORDER_OPERATION;
@@ -1006,13 +1007,14 @@ public class WalletApi {
         signedTransaction.setRef_block_num(refBlockNum);
         signedTransaction.unsign_ref_block_prefix = UnsignedInteger.fromIntBits((int) refBlockPrefix);
         signedTransaction.setRef_block_prefix(refBlockPrefix);
-        Date date = new Date(txExpiration);
+        Date date = new Date(txExpiration * 1000);
         signedTransaction.set_expiration(date);
         Gson gson1 = GlobalConfigObject.getInstance().getGsonBuilder().create();
         String privateKey = mHashMapPub2PrivString.get(mDefaultPublicKey);
         if (privateKey == null) {
             return "did not log in";
         }
+        Log.e("privateKey", privateKey);
         Log.e("hashMap", gson1.toJson(mHashMapPub2PrivString));
         Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
         signedTransaction.sign(private_key_type, Sha256Object.create_from_string(chainId));
@@ -1055,7 +1057,7 @@ public class WalletApi {
         signedTransaction.setRef_block_num(refBlockNum);
         signedTransaction.unsign_ref_block_prefix = UnsignedInteger.fromIntBits((int) refBlockPrefix);
         signedTransaction.setRef_block_prefix(refBlockPrefix);
-        Date date = new Date(txExpiration);
+        Date date = new Date(txExpiration * 1000);
         signedTransaction.set_expiration(date);
         String privateKey = mHashMapPub2PrivString.get(mDefaultPublicKey);
         if (privateKey == null) {
