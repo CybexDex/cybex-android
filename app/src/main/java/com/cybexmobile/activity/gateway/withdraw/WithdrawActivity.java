@@ -38,6 +38,7 @@ import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.fragment.WithdrawinfoObject;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.provider.SettingConfig;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
@@ -154,6 +155,7 @@ public class WithdrawActivity extends BaseActivity {
     private List<Address> mAddresses;
     private FeeAmountObject mFeeAmountObject;
     private String mMemo;
+    private String mWithdrawPrefix;
     private String mSignature;
 
     //private boolean
@@ -223,10 +225,13 @@ public class WithdrawActivity extends BaseActivity {
         mCnMsg = intent.getStringExtra("cnMsg");
         mAvailableAmount = intent.getDoubleExtra("availableAmount", 0);
         mAssetObject = (AssetObject) intent.getSerializableExtra("assetObject");
-        mGatewayFee = Double.parseDouble(intent.getStringExtra("withdrawFee"));
-        mMinValue = Double.parseDouble(intent.getStringExtra("minWithdraw"));
-        mAssetPrecision = !intent.getStringExtra("precision").isEmpty() ? NumberUtils.createInteger(intent.getStringExtra("precision")) : null;
-        mToAccountId = intent.getStringExtra("gatewayAccount");
+        if (SettingConfig.getInstance().isGateway2()) {
+            mGatewayFee = Double.parseDouble(intent.getStringExtra("withdrawFee"));
+            mMinValue = Double.parseDouble(intent.getStringExtra("minWithdraw"));
+            mAssetPrecision = !intent.getStringExtra("precision").isEmpty() ? NumberUtils.createInteger(intent.getStringExtra("precision")) : null;
+            mToAccountId = intent.getStringExtra("gatewayAccount");
+            mWithdrawPrefix = intent.getStringExtra("withdrawPrefix");
+        }
         mToolbarTextView.setText(String.format("%s " + getResources().getString(R.string.gate_way_withdraw), mAssetName));
         if (mIsTag) {
             mWithdrawMemoEosLayout.setVisibility(View.VISIBLE);
@@ -293,7 +298,7 @@ public class WithdrawActivity extends BaseActivity {
                                 }
                             });
                 } else {
-                    checkIfLocked();
+                    displayFee();
                 }
             } else {
                 if (Locale.getDefault().getLanguage().equals("zh")) {
@@ -627,7 +632,7 @@ public class WithdrawActivity extends BaseActivity {
                 mAccountObject == null || mToAccountObject == null) {
             return;
         }
-        mMemo = getMemo(address, mAssetName, eosMemo);
+        mMemo = SettingConfig.getInstance().isGateway2() ? getMemoNew(address, mAssetName, eosMemo) : getMemo(address, mAssetName, eosMemo);
         Log.e("memo", mMemo);
         Operations.base_operation transferOperation = getTransferOperation(mAccountObject, mToAccountObject, mAssetObject, mMemo, amount, ASSET_ID_CYB, 0);
         double cybBalance = getBalance(mFullAccountObject, ASSET_ID_CYB);
@@ -715,20 +720,11 @@ public class WithdrawActivity extends BaseActivity {
         return "withdraw:" + "CybexGateway:" + assetName + ":" + address;
     }
 
-//    private String getMemo(String address, String assetName, String memo) {
-//        if (mAssetName.equals(EOS) || mAssetName.equals(XRP)) {
-//            return "withdraw:" + getCybexGatewayMemoName() + assetName + ":" + address + "[" + memo + "]";
-//        }
-//        return "withdraw:" + getCybexGatewayMemoName() + assetName + ":" + address;
-//    }
-
-    private String getCybexGatewayMemoName() {
-        String server = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_SERVER, SERVER_OFFICIAL);
-        if (server.equals(SERVER_OFFICIAL)) {
-            return "CybexGateway:";
-        } else {
-            return "CybexGatewayDev:";
+    private String getMemoNew(String address, String assetName, String memo) {
+        if (mIsTag) {
+            return mWithdrawPrefix + ":" + assetName + ":" + address + "[" + memo + "]";
         }
+        return mWithdrawPrefix + ":" + assetName + ":" + address;
     }
 
     private void getNoneCybFee(String memo) {
@@ -780,82 +776,83 @@ public class WithdrawActivity extends BaseActivity {
         if (TextUtils.isEmpty(address)) {
             return;
         }
-        mCompositeDisposable.add(
-                RetrofitFactory.getInstance()
-                        .apiGateway()
-                        .verifyAddress(
-                                "application/json",
-                                "bearer " + mSignature,
-                                mAssetName,
-                                address)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                jsonObject -> {
-                                    if (jsonObject == null) {
-                                        return;
-                                    }
-                                    if (jsonObject.get("valid").getAsBoolean()) {
-                                        mIsAddressInvalidate = true;
-                                        mPbLoading.setVisibility(View.INVISIBLE);
-                                        mIvAddressCheck.setVisibility(View.VISIBLE);
-                                        mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
-                                        resetWithdrawBtnState();
-                                        displayFee();
-                                    } else {
+        if (SettingConfig.getInstance().isGateway2()) {
+            mCompositeDisposable.add(
+                    RetrofitFactory.getInstance()
+                            .apiGateway()
+                            .verifyAddress(
+                                    "application/json",
+                                    "bearer " + mSignature,
+                                    mAssetName,
+                                    address)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    jsonObject -> {
+                                        if (jsonObject == null) {
+                                            return;
+                                        }
+                                        if (jsonObject.get("valid").getAsBoolean()) {
+                                            mIsAddressInvalidate = true;
+                                            mPbLoading.setVisibility(View.INVISIBLE);
+                                            mIvAddressCheck.setVisibility(View.VISIBLE);
+                                            mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
+                                            resetWithdrawBtnState();
+                                            displayFee();
+                                        } else {
+                                            mIsAddressInvalidate = false;
+                                            mPbLoading.setVisibility(View.INVISIBLE);
+                                            mIvAddressCheck.setVisibility(View.VISIBLE);
+                                            mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
+                                            resetWithdrawBtnState();
+                                        }
+                                    },
+                                    throwable -> {
                                         mIsAddressInvalidate = false;
                                         mPbLoading.setVisibility(View.INVISIBLE);
                                         mIvAddressCheck.setVisibility(View.VISIBLE);
                                         mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
                                         resetWithdrawBtnState();
                                     }
-                                },
-                                throwable -> {
-                                    mIsAddressInvalidate = false;
-                                    mPbLoading.setVisibility(View.INVISIBLE);
-                                    mIvAddressCheck.setVisibility(View.VISIBLE);
-                                    mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
-                                    resetWithdrawBtnState();
-                                }
-                        )
+                            )
 
-        );
+            );
+        } else {
+            ApolloQueryWatcher<VerifyAddress.Data> apolloQueryWatcher = ApolloClientApi.getInstance().client()
+                    .query(VerifyAddress.builder().address(address).asset(mAssetName).accountName(mUserName).build())
+                    .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST);
+            mCompositeDisposable.add(Rx2Apollo.from(apolloQueryWatcher)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Response<VerifyAddress.Data>>() {
+                        @Override
+                        public void accept(Response<VerifyAddress.Data> response) throws Exception {
+                            VerifyAddress.Data verifyAddressData = response.data();
+                            if (verifyAddressData == null) {
+                                return;
+                            }
+                            if (!verifyAddressData.verifyAddress().fragments().withdrawAddressInfo().valid()) {
+                                mIsAddressInvalidate = false;
+                                mPbLoading.setVisibility(View.INVISIBLE);
+                                mIvAddressCheck.setVisibility(View.VISIBLE);
+                                mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
+                                resetWithdrawBtnState();
+                            } else {
+                                mIsAddressInvalidate = true;
+                                mPbLoading.setVisibility(View.INVISIBLE);
+                                mIvAddressCheck.setVisibility(View.VISIBLE);
+                                mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
+                                resetWithdrawBtnState();
+                                displayFee();
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
 
-
-//        ApolloQueryWatcher<VerifyAddress.Data> apolloQueryWatcher = ApolloClientApi.getInstance().client()
-//                .query(VerifyAddress.builder().address(address).asset(mAssetName).accountName(mUserName).build())
-//                .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST);
-//        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryWatcher)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Consumer<Response<VerifyAddress.Data>>() {
-//                    @Override
-//                    public void accept(Response<VerifyAddress.Data> response) throws Exception {
-//                        VerifyAddress.Data verifyAddressData = response.data();
-//                        if (verifyAddressData == null) {
-//                            return;
-//                        }
-//                        if (!verifyAddressData.verifyAddress().fragments().withdrawAddressInfo().valid()) {
-//                            mIsAddressInvalidate = false;
-//                            mPbLoading.setVisibility(View.INVISIBLE);
-//                            mIvAddressCheck.setVisibility(View.VISIBLE);
-//                            mIvAddressCheck.setImageResource(R.drawable.ic_close_red_24_px);
-//                            resetWithdrawBtnState();
-//                        } else {
-//                            mIsAddressInvalidate = true;
-//                            mPbLoading.setVisibility(View.INVISIBLE);
-//                            mIvAddressCheck.setVisibility(View.VISIBLE);
-//                            mIvAddressCheck.setImageResource(R.drawable.ic_check_success);
-//                            resetWithdrawBtnState();
-//                            displayFee();
-//                        }
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//
-//                    }
-//                }));
+                        }
+                    }));
+        }
     }
 
     private void setAvailableAmount(double availableAmount, String assetName) {
@@ -905,42 +902,44 @@ public class WithdrawActivity extends BaseActivity {
     }
 
     private void setMinWithdrawAmountAndGateWayFee() {
-        getToAccountMemoKey(mToAccountId);
-        mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
-        mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
-        mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
+        if (SettingConfig.getInstance().isGateway2()) {
+            getToAccountMemoKey(mToAccountId);
+            mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
+            mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
+            mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
+        } else {
+            ApolloQueryCall<GetWithdrawInfo.Data> apolloQueryCall = ApolloClientApi.getInstance().client()
+                    .query(GetWithdrawInfo.builder().type(mAssetName).build());
+            mCompositeDisposable.add(Rx2Apollo.from(apolloQueryCall)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Response<GetWithdrawInfo.Data>>() {
+                        @Override
+                        public void accept(Response<GetWithdrawInfo.Data> response) throws Exception {
+                            GetWithdrawInfo.Data withdrawInfoData = response.data();
+                            if (withdrawInfoData == null) {
+                                return;
+                            }
+                            if (withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject() != null) {
+                                WithdrawinfoObject withdrawinfoObject = withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject();
+                                mMinValue = withdrawinfoObject.minValue();
+                                mGatewayFee = withdrawinfoObject.fee();
+                                mToAccountId = withdrawinfoObject.gatewayAccount();
+                                mAssetPrecision = withdrawinfoObject.precision();
+                                getToAccountMemoKey(mToAccountId);
+                                mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
+                                mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
+                                mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
 
+                        }
+                    }));
+        }
 
-//        ApolloQueryCall<GetWithdrawInfo.Data> apolloQueryCall = ApolloClientApi.getInstance().client()
-//                .query(GetWithdrawInfo.builder().type(mAssetName).build());
-//        mCompositeDisposable.add(Rx2Apollo.from(apolloQueryCall)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Consumer<Response<GetWithdrawInfo.Data>>() {
-//                    @Override
-//                    public void accept(Response<GetWithdrawInfo.Data> response) throws Exception {
-//                        GetWithdrawInfo.Data withdrawInfoData = response.data();
-//                        if(withdrawInfoData == null){
-//                            return;
-//                        }
-//                        if (withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject() != null) {
-//                            WithdrawinfoObject withdrawinfoObject = withdrawInfoData.withdrawInfo().fragments().withdrawinfoObject();
-//                            mMinValue = withdrawinfoObject.minValue();
-//                            mGatewayFee = withdrawinfoObject.fee();
-//                            mToAccountId = withdrawinfoObject.gatewayAccount();
-//                            mAssetPrecision = withdrawinfoObject.precision();
-//                            getToAccountMemoKey(mToAccountId);
-//                            mWithdrawAmountEditText.setHint(getResources().getString(R.string.withdraw_minimum_hint) + String.valueOf(mMinValue));
-//                            mGateWayFeeTextView.setText(String.format(Locale.US, "%." + (mAssetPrecision != null ? mAssetPrecision : mAssetObject.precision) + "f %s", mGatewayFee, mAssetName));
-//                            mWithdrawAmountEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(mAssetPrecision != null ? mAssetPrecision.intValue() : mAssetObject.precision)});
-//                        }
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//
-//                    }
-//                }));
     }
 
     private void getToAccountMemoKey(String accountId) {
@@ -981,18 +980,6 @@ public class WithdrawActivity extends BaseActivity {
         }
         ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
         return false;
-
-//        PrivateKey privateMemoKey = PrivateKey.from_seed(mUserName + "memo" + password);
-//        PrivateKey privateActiveKey = PrivateKey.from_seed(mUserName + "active" + password);
-//        PrivateKey privateOwnerKey = PrivateKey.from_seed(mUserName + "owner" + password);
-//        Types.public_key_type publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true);
-//        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
-//        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
-//        if (!memoKey.toString().equals(publicMemoKeyType.toString()) && !accountObject.active.is_public_key_type_exist(publicActiveKeyType) &&
-//                !accountObject.active.is_public_key_type_exist(publicOwnerKeyType)) {
-//            ToastMessage.showNotEnableDepositToastMessage(this, getResources().getString(R.string.toast_message_can_not_withdraw), R.drawable.ic_error_16px);
-//        }
-
     }
 
     private Operations.transfer_operation getTransferOperation(AccountObject accountObject, FullAccountObject toAccountObject, AssetObject assetObject, String memo, String amount, String feeAssetId, long feeAmount) {
@@ -1031,20 +1018,6 @@ public class WithdrawActivity extends BaseActivity {
 
                     }
                 }));
-    }
-
-    private Date getExpiration() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MINUTE, 20);
-        return calendar.getTime();
-    }
-
-    private GatewayLogInRecordRequest createLogInRequest(Operations.gateway_login_operation operation, String signature) {
-        GatewayLogInRecordRequest gatewayLogInRecordRequest = new GatewayLogInRecordRequest();
-        gatewayLogInRecordRequest.setOp(operation);
-        gatewayLogInRecordRequest.setSigner(signature);
-        return gatewayLogInRecordRequest;
     }
 
     @Override

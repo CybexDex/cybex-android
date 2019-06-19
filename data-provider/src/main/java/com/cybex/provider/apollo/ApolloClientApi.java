@@ -2,6 +2,7 @@ package com.cybex.provider.apollo;
 
 import com.apollographql.apollo.ApolloClient;
 import com.cybex.provider.utils.SSLSocketFactoryUtils;
+import com.cybex.provider.websocket.WebSocketNodeConfig;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +43,7 @@ public class ApolloClientApi {
         }
         if(apolloClient == null){
             apolloClient = ApolloClient.builder()
-                    .serverUrl(isOfficialServer ? BASE_URL : BASE_URL_TEST)
+                    .serverUrl(WebSocketNodeConfig.getInstance().getGateway1() != null ? WebSocketNodeConfig.getInstance().getGateway1() : (isOfficialServer ? BASE_URL : BASE_URL_TEST))
                     .okHttpClient(okHttpClient)
                     .build();
         }

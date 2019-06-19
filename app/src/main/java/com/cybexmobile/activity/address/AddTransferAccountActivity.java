@@ -21,8 +21,10 @@ import com.apollographql.apollo.VerifyAddress;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.cache.normalized.CacheControl;
 import com.apollographql.apollo.exception.ApolloException;
+import com.cybex.provider.SettingConfig;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.http.RetrofitFactory;
 import com.cybex.provider.websocket.MessageCallback;
 import com.cybex.provider.websocket.Reply;
 import com.cybexmobile.R;
@@ -48,6 +50,7 @@ import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -90,6 +93,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
     private String mUserName;
     private Unbinder mUnbinder;
     private Disposable mAddTransferAccountDisposable;
+    private CompositeDisposable mVerifyAddressDisposable = new CompositeDisposable();
 
     private boolean mIsAccountValid;
     private boolean mIsAccountExist;
@@ -110,7 +114,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         mTokenName = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_NAME);
         mTokenId = getIntent().getStringExtra(INTENT_PARAM_CRYPTO_ID);
         mIsTag = getIntent().getBooleanExtra("tag", false);
-        if(!TextUtils.isEmpty(address)){
+        if (!TextUtils.isEmpty(address)) {
             mEtAccount.setText(address);
             onAccountNameFocusChanged(mEtAccount, false);
         }
@@ -152,6 +156,9 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         mUnbinder.unbind();
         if (mAddTransferAccountDisposable != null && !mAddTransferAccountDisposable.isDisposed()) {
             mAddTransferAccountDisposable.dispose();
+        }
+        if (mVerifyAddressDisposable != null && !mVerifyAddressDisposable.isDisposed()) {
+            mVerifyAddressDisposable.dispose();
         }
     }
 
@@ -250,26 +257,52 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
             return;
         }
         if (mTokenName != null) {
-            ApolloClientApi.getInstance().client().query(VerifyAddress
-                    .builder()
-                    .address(accountName)
-                    .asset(mTokenName)
-                    .accountName(mUserName)
-                    .build())
-                    .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST)
-                    .enqueueAndWatch(new ApolloCall.Callback<VerifyAddress.Data>() {
-                        @Override
-                        public void onResponse(@Nonnull Response<VerifyAddress.Data> response) {
-                            if (response.data() != null) {
-                                EventBus.getDefault().post(new Event.VerifyAddress(response.data().verifyAddress().fragments().withdrawAddressInfo().valid()));
+            if (SettingConfig.getInstance().isGateway2()) {
+
+                mVerifyAddressDisposable.add(RetrofitFactory.getInstance()
+                        .apiGateway()
+                        .verifyAddress(
+                                "application/json",
+                                "bearer ",
+                                mTokenName,
+                                accountName)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                jsonObject -> {
+                                    if (jsonObject == null) {
+                                        return;
+                                    }
+
+                                    EventBus.getDefault().post(new Event.VerifyAddress(jsonObject.get("valid").getAsBoolean()));
+                                },
+                                throwable -> {
+                                }
+                        ));
+
+
+            } else {
+                ApolloClientApi.getInstance().client().query(VerifyAddress
+                        .builder()
+                        .address(accountName)
+                        .asset(mTokenName)
+                        .accountName(mUserName)
+                        .build())
+                        .watcher().refetchCacheControl(CacheControl.NETWORK_FIRST)
+                        .enqueueAndWatch(new ApolloCall.Callback<VerifyAddress.Data>() {
+                            @Override
+                            public void onResponse(@Nonnull Response<VerifyAddress.Data> response) {
+                                if (response.data() != null) {
+                                    EventBus.getDefault().post(new Event.VerifyAddress(response.data().verifyAddress().fragments().withdrawAddressInfo().valid()));
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(@Nonnull ApolloException e) {
+                            @Override
+                            public void onFailure(@Nonnull ApolloException e) {
 
-                        }
-                    });
+                            }
+                        });
+            }
         } else {
             try {
                 BitsharesWalletWraper.getInstance().get_account_object(accountName, new MessageCallback<Reply<AccountObject>>() {
@@ -397,7 +430,7 @@ public class AddTransferAccountActivity extends BaseActivity implements SoftKeyB
         }
     }
 
-    private void resetBtnState(){
+    private void resetBtnState() {
         mBtnAdd.setEnabled(mIsAccountValid && !mIsAccountExist && !TextUtils.isEmpty(mEtLabel.getText().toString()));
     }
 

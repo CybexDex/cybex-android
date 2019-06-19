@@ -50,6 +50,7 @@ import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.SettingConfig;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
@@ -101,10 +102,6 @@ import okhttp3.ResponseBody;
 
 public class DepositActivity extends BaseActivity {
     private static int REQUEST_PERMISSION = 1;
-    private static String EOS_NAME = "EOS";
-    private static String XRP_NAME = "XRP";
-    private static String ATOM_NAME = "ATOM";
-    private static String IRIS_NAME = "IRIS";
 
     private Unbinder mUnbinder;
     private Context mContext;
@@ -180,7 +177,7 @@ public class DepositActivity extends BaseActivity {
             if (fullAccountObject != null) {
                 mAccountObject = fullAccountObject.account;
             }
-            if (BitsharesWalletWraper.getInstance().is_locked()) {
+            if (BitsharesWalletWraper.getInstance().is_locked() && SettingConfig.getInstance().isGateway2()) {
                 CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName,
                         (UnlockDialog.UnLockDialogClickListener) password -> setDepositInfo());
             } else {
@@ -379,7 +376,7 @@ public class DepositActivity extends BaseActivity {
                 }));
     }
 
-    private void getAddress1(String userName, String assetName) {
+    private void getAddress1(String userName) {
         showLoadDialog(true);
         mCompositeDisposable.add(Observable.create((ObservableOnSubscribe<String>) e -> {
                     String expiration = String.valueOf(new Date().getTime() / 1000);
@@ -397,76 +394,6 @@ public class DepositActivity extends BaseActivity {
                                         .getDepositAddress(
                                                 "application/json",
                                                 "bearer " + token,
-                                                mUserName,
-                                                mAssetName
-                                        ))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                jsonObject -> {
-                                    if (jsonObject == null) {
-                                        ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
-                                        hideLoadDialog();
-                                        return;
-                                    }
-                                    String address = jsonObject.get("address").getAsString();
-                                    if (address == null) {
-                                        hideLoadDialog();
-                                        return;
-                                    }
-
-                                    if (assetName.equals(EOS_NAME)) {
-                                        String eosAccountName = address.substring(0, address.indexOf("["));
-                                        String verificationCode = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
-                                        mEosAccountNameTv.setText(eosAccountName);
-                                        mQRAddressView.setText(verificationCode);
-                                    } else if (assetName.equals(XRP_NAME)) {
-                                        String xrpAddress = address.substring(0, address.indexOf("["));
-                                        String xrpTag = address.substring(address.indexOf("[") + 1, address.indexOf("]"));
-                                        mXrpAddressTv.setText(xrpAddress);
-                                        mQRAddressView.setText(xrpTag);
-                                        generateBarCode(xrpAddress);
-                                    } else {
-                                        mQRAddressView.setText(address);
-                                        generateBarCode(address);
-                                    }
-                                    hideLoadDialog();
-
-
-                                },
-                                throwable -> {
-                                    hideLoadDialog();
-                                }
-                        )
-        );
-    }
-
-
-    private void getAddress(String userName, String assetName) {
-        showLoadDialog(true);
-        mCompositeDisposable.add(Observable.create((ObservableOnSubscribe<Operations.gateway_login_operation>) e -> {
-                    Date expiration = getExpiration();
-                    Operations.gateway_login_operation operation = BitsharesWalletWraper.getInstance().getGatewayLoginOperation(userName, expiration);
-                    mSignature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
-                    if (!e.isDisposed()) {
-                        e.onNext(operation);
-                        e.onComplete();
-                    }
-                })
-                        .concatMap((Function<Operations.gateway_login_operation, ObservableSource<ResponseBody>>) gateway_login_operation -> {
-                            GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(gateway_login_operation, mSignature);
-                            Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                            Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
-                            return RetrofitFactory.getInstance()
-                                    .apiGateway()
-                                    .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
-                        })
-                        .concatMap((Function<ResponseBody, Observable<JsonObject>>) responseBody ->
-                                RetrofitFactory.getInstance()
-                                        .apiGateway()
-                                        .getDepositAddress(
-                                                "application/json",
-                                                "bearer " + mSignature,
                                                 mUserName,
                                                 mAssetName
                                         ))
@@ -505,53 +432,57 @@ public class DepositActivity extends BaseActivity {
                         )
         );
     }
+
+
+    private void getAddress(String userName, String assetName) {
+        showLoadDialog(true);
         /**
          * fix online bug
          * java.lang.NullPointerException: Attempt to invoke virtual method
          * 'void android.widget.TextView.setText(java.lang.CharSequence)' on a null object reference
          */
-//        ApolloQueryWatcher<GetDepositAddress.Data> watcher = ApolloClientApi.getInstance().client()
-//                .query(GetDepositAddress.builder().accountName(userName).asset(assetName).build())
-//                .watcher()
-//                .refetchCacheControl(CacheControl.NETWORK_FIRST);
-//        mCompositeDisposable.add(Rx2Apollo.from(watcher)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Consumer<Response<GetDepositAddress.Data>>() {
-//                    @Override
-//                    public void accept(Response<GetDepositAddress.Data> response) throws Exception {
-//                        GetDepositAddress.Data depositAddressData = response.data();
-//                        if(depositAddressData == null){
-//                            ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
-//                            hideLoadDialog();
-//                            return;
-//                        }
-//                        GetDepositAddress.GetDepositAddress1 depositAddress = depositAddressData.getDepositAddress();
-//                        if(depositAddress == null){
-//                            hideLoadDialog();
-//                            return;
-//                        }
-//                        AccountAddressRecord accountAddressRecord = depositAddress.fragments().accountAddressRecord();
-//                        if (mIsTag) {
-//                            String xrpAddress = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
-//                            String xrpTag = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
-//                            mXrpAddressTv.setText(xrpAddress);
-//                            mQRAddressView.setText(xrpTag);
-//                            generateBarCode(xrpAddress);
-//                        } else {
-//                            mQRAddressView.setText(accountAddressRecord.address());
-//                            generateBarCode(accountAddressRecord.address());
-//                        }
-//                        AccountAddressRecord.ProjectInfo projectInfo = accountAddressRecord.projectInfo();
-//                        hideLoadDialog();
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//                        hideLoadDialog();
-//                    }
-//                }));
-    //}
+        ApolloQueryWatcher<GetDepositAddress.Data> watcher = ApolloClientApi.getInstance().client()
+                .query(GetDepositAddress.builder().accountName(userName).asset(assetName).build())
+                .watcher()
+                .refetchCacheControl(CacheControl.NETWORK_FIRST);
+        mCompositeDisposable.add(Rx2Apollo.from(watcher)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Response<GetDepositAddress.Data>>() {
+                    @Override
+                    public void accept(Response<GetDepositAddress.Data> response) throws Exception {
+                        GetDepositAddress.Data depositAddressData = response.data();
+                        if(depositAddressData == null){
+                            ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
+                            hideLoadDialog();
+                            return;
+                        }
+                        GetDepositAddress.GetDepositAddress1 depositAddress = depositAddressData.getDepositAddress();
+                        if(depositAddress == null){
+                            hideLoadDialog();
+                            return;
+                        }
+                        AccountAddressRecord accountAddressRecord = depositAddress.fragments().accountAddressRecord();
+                        if (mIsTag) {
+                            String xrpAddress = accountAddressRecord.address().substring(0, accountAddressRecord.address().indexOf("["));
+                            String xrpTag = accountAddressRecord.address().substring(accountAddressRecord.address().indexOf("[") + 1, accountAddressRecord.address().indexOf("]"));
+                            mXrpAddressTv.setText(xrpAddress);
+                            mQRAddressView.setText(xrpTag);
+                            generateBarCode(xrpAddress);
+                        } else {
+                            mQRAddressView.setText(accountAddressRecord.address());
+                            generateBarCode(accountAddressRecord.address());
+                        }
+                        AccountAddressRecord.ProjectInfo projectInfo = accountAddressRecord.projectInfo();
+                        hideLoadDialog();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        hideLoadDialog();
+                    }
+                }));
+    }
 
     private void generateBarCode(String barcode) {
         Bitmap bitmap = QRCode.createQRCodeWithLogo(barcode, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
@@ -583,20 +514,6 @@ public class DepositActivity extends BaseActivity {
         }
     }
 
-    private Date getExpiration() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MINUTE, 15);
-        return calendar.getTime();
-    }
-
-    private GatewayLogInRecordRequest createLogInRequest(Operations.gateway_login_operation operation, String signature) {
-        GatewayLogInRecordRequest gatewayLogInRecordRequest = new GatewayLogInRecordRequest();
-        gatewayLogInRecordRequest.setOp(operation);
-        gatewayLogInRecordRequest.setSigner(signature);
-        return gatewayLogInRecordRequest;
-    }
-
     private void setDepositInfo() {
         if (mIsEnabled) {
             if (mIsTag) {
@@ -606,7 +523,11 @@ public class DepositActivity extends BaseActivity {
                 mEosXrpWarningRedTv.setText(getResources().getString(R.string.deposit_xrp_tag_warning_message));
                 mCopyAddressTv.setText(getResources().getString(R.string.deposit_xrp_copy_tag));
             }
-            getAddress1(mUserName, mAssetName);
+            if (SettingConfig.getInstance().isGateway2()) {
+                getAddress1(mUserName);
+            } else {
+                getAddress(mUserName, mAssetName);
+            }
             requestDetailMessage();
         } else {
             if (Locale.getDefault().getLanguage().equals("zh")) {

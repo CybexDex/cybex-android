@@ -1,8 +1,9 @@
-package com.cybexmobile;
+package com.cybex.provider;
 
 public class SettingConfig {
 
     private double ageRate;
+    private boolean isGateway2;
 
 
     private SettingConfig() {
@@ -23,5 +24,13 @@ public class SettingConfig {
 
     public void setAgeRate(double ageRate) {
         this.ageRate = ageRate;
+    }
+
+    public void setGateway2(boolean gateway2) {
+        isGateway2 = gateway2;
+    }
+
+    public boolean isGateway2() {
+        return isGateway2;
     }
 }

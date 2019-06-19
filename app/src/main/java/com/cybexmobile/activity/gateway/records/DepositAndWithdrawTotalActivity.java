@@ -17,6 +17,7 @@ import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
 import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.SettingConfig;
 import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.http.gateway.entity.GatewayNewDepositWithdrawRecordItem;
@@ -56,7 +57,9 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
     private WebSocketService mWebSocketService;
     private AccountObject mAccountObject;
     private List<GatewayNewDepositWithdrawRecordItem> mRecordsItems = new ArrayList<>();
+    private List<GatewayDepositWithdrawRecordsItem> mRecordsOldItems = new ArrayList<>();
     private DepositWithdrawRecordAdapter mDepositWithdrawRecordAdapter;
+    private DepositWithdrawRecordOldAdapter mDepositWithdrawRecordOldAdapter;
 
     private String mUserName;
     private String mCurrentFundType;
@@ -126,14 +129,24 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                     CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
                         @Override
                         public void onUnLocked(String password) {
-                            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                                    mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
+                            if (SettingConfig.getInstance().isGateway2()) {
+                                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                        mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
+                            } else {
+                                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                        mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                            }
 
                         }
                     });
                 } else {
-                    mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                            mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
+                    if (SettingConfig.getInstance().isGateway2()) {
+                        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
+                    } else {
+                        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                    }
 
                 }
             }
@@ -214,15 +227,23 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                     CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
                         @Override
                         public void onUnLocked(String password) {
-                            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                                    mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
-
+                            if (SettingConfig.getInstance().isGateway2()) {
+                                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                        mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
+                            } else {
+                                mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                        mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                            }
                         }
                     });
                 } else {
-                    mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
-                            mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
-
+                    if (SettingConfig.getInstance().isGateway2()) {
+                        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                mAccountObject, mUserName, LOAD_COUNT, null, mCurrentCurrency, mCurrentFundType, false, false);
+                    } else {
+                        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, DepositAndWithdrawTotalActivity.this, mWebSocketService,
+                                mAccountObject, mUserName, LOAD_COUNT, 0, mCurrentCurrency, mCurrentFundType, false, false);
+                    }
                 }
             }
         });
@@ -246,6 +267,25 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
             mDepositWithdrawRecordAdapter.setData(mRecordsItems);
         }
 
+    }
+
+    @Override
+    public void onLoadRecordsDataOld(int loadMode, List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems) {
+        hideLoadDialog();
+        if (loadMode == LOAD_REFRESH) {
+            mRecordsOldItems = gatewayDepositWithdrawRecordsItems;
+            mRefreshLayout.finishRefresh();
+        } else {
+            mRecordsOldItems.addAll(gatewayDepositWithdrawRecordsItems);
+            mRefreshLayout.finishLoadMore();
+        }
+
+        if (mDepositWithdrawRecordOldAdapter == null) {
+            mDepositWithdrawRecordOldAdapter = new DepositWithdrawRecordOldAdapter(this, mRecordsOldItems);
+            mRecyclerView.setAdapter(mDepositWithdrawRecordOldAdapter);
+        } else {
+            mDepositWithdrawRecordOldAdapter.setData(mRecordsOldItems);
+        }
     }
 
     @Override
@@ -307,13 +347,23 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
     private void refreshRecords() {
         if (TextUtils.isEmpty(mUserName)) {
             mRefreshLayout.finishRefresh();
-            mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(this, mRecordsItems);
-            mRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
+            if (SettingConfig.getInstance().isGateway2()) {
+                mDepositWithdrawRecordAdapter = new DepositWithdrawRecordAdapter(this, mRecordsItems);
+                mRecyclerView.setAdapter(mDepositWithdrawRecordAdapter);
+            } else {
+                mDepositWithdrawRecordOldAdapter = new DepositWithdrawRecordOldAdapter(this, mRecordsOldItems);
+                mRecyclerView.setAdapter(mDepositWithdrawRecordOldAdapter);
+            }
             return;
         }
-        int size = mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT;
-        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, this, mWebSocketService, mAccountObject, mUserName,
-                size, null, mCurrentCurrency, mCurrentFundType, false, false);
+        int size = SettingConfig.getInstance().isGateway2() ? (mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT) : (mRecordsOldItems.size() > LOAD_COUNT ? mRecordsOldItems.size() : LOAD_COUNT);
+        if (SettingConfig.getInstance().isGateway2()) {
+            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, this, mWebSocketService, mAccountObject, mUserName,
+                    size, null, mCurrentCurrency, mCurrentFundType, false, false);
+        } else {
+            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_REFRESH, this, mWebSocketService, mAccountObject, mUserName,
+                    size, 0, mCurrentCurrency, mCurrentFundType, false, false);
+        }
     }
 
     private void loadMoreData() {
@@ -321,16 +371,26 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
             mRefreshLayout.finishLoadMore();
             return;
         }
-
-        if (mRecordsItems == null || mRecordsItems.size() == 0 || mRecordsItems.size() % LOAD_COUNT != 0) {
-            mRefreshLayout.finishLoadMore();
-            mRefreshLayout.setNoMoreData(true);
-            return;
+        if (SettingConfig.getInstance().isGateway2()) {
+            if (mRecordsItems == null || mRecordsItems.size() == 0 || mRecordsItems.size() % LOAD_COUNT != 0) {
+                mRefreshLayout.finishLoadMore();
+                mRefreshLayout.setNoMoreData(true);
+                return;
+            }
+        } else {
+            if (mRecordsOldItems == null || mRecordsOldItems.size() == 0 || mRecordsOldItems.size() % LOAD_COUNT != 0) {
+                mRefreshLayout.finishLoadMore();
+                mRefreshLayout.setNoMoreData(true);
+                return;
+            }
         }
-
-        mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_MORE, this, mWebSocketService, mAccountObject, mUserName,
-                LOAD_COUNT, mRecordsItems.get(mRecordsItems.size() - 1).getRecord().getId(), mCurrentCurrency, mCurrentFundType, false, false);
-
+        if (SettingConfig.getInstance().isGateway2()) {
+            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_MORE, this, mWebSocketService, mAccountObject, mUserName,
+                    LOAD_COUNT, mRecordsItems.get(mRecordsItems.size() - 1).getRecord().getId(), mCurrentCurrency, mCurrentFundType, false, false);
+        } else {
+            mDepositAndWithdrawTotalPresenter.loadRecords(LOAD_MORE, this, mWebSocketService, mAccountObject, mUserName,
+                    LOAD_COUNT, mRecordsOldItems.size(), mCurrentCurrency, mCurrentFundType, false, false);
+        }
     }
 
     private String mapFundTypes(String fundType) {

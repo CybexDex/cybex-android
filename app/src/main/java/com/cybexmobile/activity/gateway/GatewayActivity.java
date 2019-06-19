@@ -3,7 +3,6 @@ package com.cybexmobile.activity.gateway;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -13,7 +12,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,34 +23,22 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.basemodule.base.BaseActivity;
-import com.cybex.basemodule.dialog.CybexDialog;
-import com.cybex.basemodule.dialog.UnlockDialog;
-import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
+import com.cybex.provider.SettingConfig;
 import com.cybex.provider.graphene.chain.AccountBalanceObject;
-import com.cybex.provider.graphene.chain.AccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
-import com.cybex.provider.graphene.chain.GlobalConfigObject;
-import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.http.RetrofitFactory;
-import com.cybex.provider.http.gateway.entity.Data;
 import com.cybex.provider.http.gateway.entity.GatewayAssetResponse;
-import com.cybex.provider.http.gateway.entity.GatewayNewAssetListResponse;
 import com.cybex.provider.utils.NetworkUtils;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositAndWithdrawTotalActivity;
-import com.cybexmobile.data.GatewayLogInRecordRequest;
 import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.fragment.WithdrawItemFragment;
-import com.cybexmobile.fragment.dummy.DummyContent;
 import com.cybexmobile.shake.AntiShake;
-import com.cybexmobile.utils.GatewayUtils;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -61,29 +47,19 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 import info.hoang8f.android.segmented.SegmentedGroup;
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
 import static com.cybex.provider.utils.NetworkUtils.TYPE_NOT_CONNECTED;
-import static com.cybexmobile.utils.GatewayUtils.createLogInRequest;
 
 public class GatewayActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -106,7 +82,6 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     SearchView mSearchView;
 
     private String mAccountName;
-    private String mSignature;
 
     private DepositItemFragment mDepositItemFragment;
     private WithdrawItemFragment mWithdrawItemFragment;
@@ -115,7 +90,6 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     private List<DepositAndWithdrawObject> mDepositAndWithdrawAssetList = new ArrayList<>();
     private WebSocketService mWebSocketService;
     private ScreenSlidePagerAdapter mScreenSlidePagerAdapter;
-    private AccountObject mAccountObject;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -123,15 +97,16 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
-            mAccountObject = mWebSocketService.getFullAccount(mAccountName).account;
             if (mAccountBalanceObjectItemList == null) {
                 mAccountBalanceObjectItemList = new ArrayList<>();
                 loadData(mWebSocketService.getFullAccount(mAccountName));
             }
-            if (mDepositAndWithdrawAssetList.size() == 0) {
-                showLoadDialog(true);
-                if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
-                    loadList1();
+            if (SettingConfig.getInstance().isGateway2()) {
+                if (mDepositAndWithdrawAssetList.size() == 0) {
+                    showLoadDialog(true);
+                    if (mWebSocketService.getAssetObjectsList() != null && mWebSocketService.getAssetObjectsList().size() > 0) {
+                        loadList1();
+                    }
                 }
             }
         }
@@ -168,7 +143,9 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
     public void onFinishLoadAssetObjects(Event.LoadAssets event) {
         if (event.getData() != null && event.getData().size() > 0) {
             loadData(mWebSocketService.getFullAccount(mAccountName));
-            loadList1();
+            if (SettingConfig.getInstance().isGateway2()) {
+                loadList1();
+            }
         }
     }
 
@@ -334,89 +311,6 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
         }
         mScreenSlidePagerAdapter.notifyDataSetChanged();
     }
-
-    private void loadList() {
-        mCompositeDisposable.add(
-                Observable.create((ObservableOnSubscribe<Operations.gateway_login_operation>) e -> {
-                    Date expiration = GatewayUtils.getExpiration();
-                    Operations.gateway_login_operation operation = BitsharesWalletWraper.getInstance().getGatewayLoginOperation(mAccountName, expiration);
-                    mSignature = BitsharesWalletWraper.getInstance().getWithdrawDepositSignature(mAccountObject, operation);
-                    if (!e.isDisposed()) {
-                        e.onNext(operation);
-                        e.onComplete();
-                    }
-                })
-                        .concatMap((Function<Operations.gateway_login_operation, ObservableSource<ResponseBody>>) operation -> {
-                            GatewayLogInRecordRequest gatewayLogInRecordRequest = createLogInRequest(operation, mSignature);
-                            Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-                            Log.v("loginRequestBody", gson.toJson(gatewayLogInRecordRequest));
-                            return RetrofitFactory.getInstance()
-                                    .apiGateway()
-                                    .gatewayLogIn(RequestBody.create(MediaType.parse("application/json"), gson.toJson(gatewayLogInRecordRequest)));
-
-                        })
-                        .concatMap((Function<ResponseBody, ObservableSource<GatewayNewAssetListResponse>>) responseBody -> {
-                            return RetrofitFactory.getInstance()
-                                    .apiGateway()
-                                    .getAssetList2(
-                                            "application/json",
-                                            "bearer " + mSignature
-                                    );
-                        })
-                        .map((Function<GatewayNewAssetListResponse, List<DepositAndWithdrawObject>>) gatewayNewAssetListResponse -> {
-                            List<DepositAndWithdrawObject> depositAndWithdrawObjectList = new ArrayList<>();
-                            for (Data data : gatewayNewAssetListResponse.getData()) {
-                                DepositAndWithdrawObject depositAndWithdrawObject = new DepositAndWithdrawObject();
-                                for (int j = 0; j < mAccountBalanceObjectItemList.size(); j++) {
-                                    if (mAccountBalanceObjectItemList.get(j).assetObject.id.toString().equals(data.getCybid())) {
-                                        depositAndWithdrawObject.setAccountBalanceObject(mAccountBalanceObjectItemList.get(j).accountBalanceObject);
-                                        break;
-                                    }
-                                }
-                                depositAndWithdrawObject.setId(data.getCybid());
-                                depositAndWithdrawObject.setEnable(data.getWithdrawSwith());
-//                        depositAndWithdrawObject.setEnMsg(jsonObject.getString("enMsg"));
-//                        depositAndWithdrawObject.setCnMsg(jsonObject.getString("cnMsg"));
-                                depositAndWithdrawObject.setProjectName(data.getBlockchain().getName());
-                                depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(data.getCybid()));
-                                depositAndWithdrawObjectList.add(depositAndWithdrawObject);
-                            }
-                            return depositAndWithdrawObjectList;
-                        })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                depositAndWithdrawObjects -> {
-                                    mDepositAndWithdrawAssetList.clear();
-                                    mDepositAndWithdrawAssetList.addAll(depositAndWithdrawObjects);
-                                    Collections.sort(mDepositAndWithdrawAssetList, new Comparator<DepositAndWithdrawObject>() {
-                                        @Override
-                                        public int compare(DepositAndWithdrawObject o1, DepositAndWithdrawObject o2) {
-                                            if (o1.getAccountBalanceObject() == null && o2.getAccountBalanceObject() != null) {
-                                                return 1;
-                                            } else if (o1.getAccountBalanceObject() != null && o2.getAccountBalanceObject() == null) {
-                                                return -1;
-                                            } else if (o1.getAccountBalanceObject() != null && o2.getAccountBalanceObject() != null) {
-                                                return o1.getAccountBalanceObject().balance > o2.getAccountBalanceObject().balance ? -1 : 1;
-                                            } else {
-                                                return 0;
-                                            }
-                                        }
-
-                                    });
-                                    if (mDepositItemFragment != null && mDepositItemFragment.isResumed()) {
-                                        mDepositItemFragment.notifyListDataSetChange(mDepositAndWithdrawAssetList);
-                                    }
-                                    if (mWithdrawItemFragment != null && mWithdrawItemFragment.isResumed()) {
-                                        mWithdrawItemFragment.notifyListDataSetChange(mDepositAndWithdrawAssetList);
-                                    }
-                                    hideLoadDialog();
-                                },
-                                throwable -> hideLoadDialog()
-                        )
-        );
-    }
-
     private void loadList1() {
         mCompositeDisposable.add(
                 RetrofitFactory.getInstance()
@@ -441,9 +335,13 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                                 depositAndWithdrawObject.setMinWithdraw(data.getMinWithdraw());
                                 depositAndWithdrawObject.setPrecision(data.getPrecision());
                                 depositAndWithdrawObject.setWithdrawFee(data.getWithdrawFee());
-//                        depositAndWithdrawObject.setEnMsg(jsonObject.getString("enMsg"));
-//                        depositAndWithdrawObject.setCnMsg(jsonObject.getString("cnMsg"));
                                 depositAndWithdrawObject.setProjectName(data.getBlockchain());
+                                depositAndWithdrawObject.setTag(data.isUseMemo());
+                                depositAndWithdrawObject.setWithdrawPrefix(data.getWithdrawPrefix());
+                                depositAndWithdrawObject.setWithdrawCnMsg(data.getInfo() == null ? "" : data.getInfo().getWithdraw().getCNMsg());
+                                depositAndWithdrawObject.setWithdrawEnMsg(data.getInfo() == null ? "" : data.getInfo().getWithdraw().getEnMsg());
+                                depositAndWithdrawObject.setDepositCnMsg(data.getInfo() == null ? "" : data.getInfo().getDeposit().getCNMsg());
+                                depositAndWithdrawObject.setDepositEnMsg(data.getInfo() == null ? "" : data.getInfo().getDeposit().getEnMsg());
                                 depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(data.getCybid()));
                                 depositAndWithdrawObjectList.add(depositAndWithdrawObject);
                             }

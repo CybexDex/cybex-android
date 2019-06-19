@@ -1,8 +1,6 @@
-package com.cybexmobile.adapter;
+package com.cybexmobile.activity.gateway.records;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,33 +10,31 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cybex.basemodule.constant.Constant;
-import com.cybex.provider.http.gateway.entity.GatewayNewDepositWithdrawRecordItem;
-import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
-import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
-import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.utils.DateUtils;
+import com.cybex.provider.graphene.chain.AssetObject;
+import com.cybexmobile.R;
+import com.cybexmobile.data.item.GatewayDepositWithdrawRecordsItem;
 import com.cybexmobile.intent.IntentFactory;
 import com.cybexmobile.shake.AntiShake;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.cybex.basemodule.utils.DateUtils.PATTERN_MM_dd_HH_mm_ss;
 
-public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DepositWithdrawRecordOldAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final static int TYPE_EMPTY = 0;
     private final static int TYPE_CONTENT = 1;
 
     Context mContext;
-    private List<GatewayNewDepositWithdrawRecordItem> mGatewayDepositWithdrawRecordsItem = new ArrayList<>();
+    private List<GatewayDepositWithdrawRecordsItem> mGatewayDepositWithdrawRecordsItem = new ArrayList<>();
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -65,12 +61,12 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         }
     }
 
-    public DepositWithdrawRecordAdapter(Context context, List<GatewayNewDepositWithdrawRecordItem> gatewayDepositWithdrawRecordsItemList) {
+    public DepositWithdrawRecordOldAdapter(Context context, List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
         mContext = context;
         mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
     }
 
-    public void setData(List<GatewayNewDepositWithdrawRecordItem> gatewayDepositWithdrawRecordsItemList) {
+    public void setData(List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItemList) {
         mGatewayDepositWithdrawRecordsItem = gatewayDepositWithdrawRecordsItemList;
         notifyDataSetChanged();
     }
@@ -106,15 +102,14 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
             return;
         }
         ViewHolder viewHolder = (ViewHolder) holder;
-        GatewayNewDepositWithdrawRecordItem item = mGatewayDepositWithdrawRecordsItem.get(position);
+        GatewayDepositWithdrawRecordsItem item = mGatewayDepositWithdrawRecordsItem.get(position);
         AssetObject itemAssetObject = item.getItemAsset();
         loadImage(itemAssetObject.id.toString(), viewHolder.mAssetIcon);
-        viewHolder.mAssetSymbol.setText(item.getRecord().getAsset());
-//        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getRecord().getTotalAmount() / Math.pow(10, itemAssetObject.precision), item.getRecord().getAsset()));
-        viewHolder.mAssetAmount.setText(item.getRecord().getTotalAmount());
-        viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getCreatedAt())));
-        viewHolder.mAssetStatus.setText(item.getRecord().getStatus());
-        viewHolder.mAssetAddress.setText(item.getRecord().getOutAddr());
+        viewHolder.mAssetSymbol.setText(item.getRecord().getCoinType());
+        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getRecord().getAmount() / Math.pow(10, itemAssetObject.precision), item.getRecord().getCoinType()));
+        viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getUpdateAt())));
+        viewHolder.mAssetStatus.setText(getStateString(item.getRecord().getState()));
+        viewHolder.mAssetAddress.setText(item.getRecord().getAddress());
         if (TextUtils.isEmpty(item.getNote())) {
             viewHolder.mAssetNote.setVisibility(View.GONE);
         } else {
@@ -122,7 +117,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
             viewHolder.mAssetNote.setText(item.getNote());
         }
 
-        if (item.getRecord().getType().equals(Constant.WITHDRAW)) {
+        if (item.getRecord().getFundType().equals(Constant.WITHDRAW)) {
             viewHolder.mInOutSymbol.setImageResource(R.drawable.ic_sent_40_px);
         } else {
             viewHolder.mInOutSymbol.setImageResource(R.drawable.ic_income_40_px);

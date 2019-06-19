@@ -15,6 +15,11 @@ public class DepositAndWithdrawObject {
     private String minWithdraw;
     private String precision;
     private String withdrawFee;
+    private String withdrawPrefix;
+    private String withdrawEnMsg;
+    private String withdrawCnMsg;
+    private String depositEnMsg;
+    private String depositCnMsg;
     private boolean tag;
     private long count;
     public AssetObject assetObject;
@@ -138,5 +143,45 @@ public class DepositAndWithdrawObject {
 
     public void setWithdrawFee(String withdrawFee) {
         this.withdrawFee = withdrawFee;
+    }
+
+    public String getWithdrawPrefix() {
+        return withdrawPrefix;
+    }
+
+    public void setWithdrawPrefix(String withdrawPrefix) {
+        this.withdrawPrefix = withdrawPrefix;
+    }
+
+    public String getDepositCnMsg() {
+        return depositCnMsg;
+    }
+
+    public void setDepositCnMsg(String depositCnMsg) {
+        this.depositCnMsg = depositCnMsg;
+    }
+
+    public String getDepositEnMsg() {
+        return depositEnMsg;
+    }
+
+    public void setDepositEnMsg(String depositEnMsg) {
+        this.depositEnMsg = depositEnMsg;
+    }
+
+    public String getWithdrawCnMsg() {
+        return withdrawCnMsg;
+    }
+
+    public void setWithdrawCnMsg(String withdrawCnMsg) {
+        this.withdrawCnMsg = withdrawCnMsg;
+    }
+
+    public String getWithdrawEnMsg() {
+        return withdrawEnMsg;
+    }
+
+    public void setWithdrawEnMsg(String withdrawEnMsg) {
+        this.withdrawEnMsg = withdrawEnMsg;
     }
 }

@@ -14,8 +14,10 @@ import android.util.Log;
 
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.utils.AssetUtil;
+import com.cybex.provider.SettingConfig;
 import com.cybex.provider.db.DBManager;
 import com.cybex.provider.db.entity.Address;
+import com.cybex.provider.http.gateway.entity.GatewayAssetResponse;
 import com.cybex.provider.utils.MyUtils;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.DepositAndWithdrawAdapter;
@@ -36,6 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -142,54 +145,101 @@ public class WithdrawAddressManagerActivity extends BaseActivity implements Depo
                 });
     }
 
-    private void requestWithdrawList() {
-        RetrofitFactory.getInstance()
-                .api()
-                .getWithdrawList()
-                .map(new Function<ResponseBody, List<DepositAndWithdrawObject>>() {
-                    @Override
-                    public List<DepositAndWithdrawObject> apply(ResponseBody responseBody) throws Exception {
-                        List<DepositAndWithdrawObject> depositAndWithdrawObjectList = new ArrayList<>();
-                        JSONArray jsonArray = null;
-                        jsonArray = new JSONArray(responseBody.string());
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            DepositAndWithdrawObject depositAndWithdrawObject = new DepositAndWithdrawObject();
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            depositAndWithdrawObject.setId(jsonObject.getString("id"));
-                            depositAndWithdrawObject.setTag(jsonObject.getBoolean("tag"));
-                            depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(jsonObject.getString("id")));
-                            depositAndWithdrawObjectList.add(depositAndWithdrawObject);
 
+    private void requestWithdrawList() {
+        if (SettingConfig.getInstance().isGateway2()) {
+            RetrofitFactory.getInstance()
+                    .apiGateway()
+                    .getAssetList(
+                            "application/json",
+                            null
+                    )
+                    .map(gatewayAssetResponses -> {
+                        List<DepositAndWithdrawObject> depositAndWithdrawObjectList = new ArrayList<>();
+                        for (GatewayAssetResponse data : gatewayAssetResponses) {
+                            DepositAndWithdrawObject depositAndWithdrawObject = new DepositAndWithdrawObject();
+                            depositAndWithdrawObject.setId(data.getCybid());
+                            depositAndWithdrawObject.setTag(data.isUseMemo());
+                            depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(data.getCybid()));
+                            depositAndWithdrawObjectList.add(depositAndWithdrawObject);
                         }
                         return depositAndWithdrawObjectList;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<DepositAndWithdrawObject>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<DepositAndWithdrawObject>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-                    }
-
-                    @Override
-                    public void onNext(List<DepositAndWithdrawObject> depositAndWithdrawObjects) {
-                        for (int i = 0; i < depositAndWithdrawObjects.size(); i++) {
-                            loadAddressCount(depositAndWithdrawObjects, depositAndWithdrawObjects.get(i), i);
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("error",e.getLocalizedMessage());
+                        @Override
+                        public void onNext(List<DepositAndWithdrawObject> depositAndWithdrawObjects) {
+                            for (int i = 0; i < depositAndWithdrawObjects.size(); i++) {
+                                loadAddressCount(depositAndWithdrawObjects, depositAndWithdrawObjects.get(i), i);
+                            }
+                        }
 
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("error", e.getLocalizedMessage());
 
-                    @Override
-                    public void onComplete() {
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        } else {
+            RetrofitFactory.getInstance()
+                    .api()
+                    .getWithdrawList()
+                    .map(new Function<ResponseBody, List<DepositAndWithdrawObject>>() {
+                        @Override
+                        public List<DepositAndWithdrawObject> apply(ResponseBody responseBody) throws Exception {
+                            List<DepositAndWithdrawObject> depositAndWithdrawObjectList = new ArrayList<>();
+                            JSONArray jsonArray = null;
+                            jsonArray = new JSONArray(responseBody.string());
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                DepositAndWithdrawObject depositAndWithdrawObject = new DepositAndWithdrawObject();
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                depositAndWithdrawObject.setId(jsonObject.getString("id"));
+                                depositAndWithdrawObject.setTag(jsonObject.getBoolean("tag"));
+                                depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(jsonObject.getString("id")));
+                                depositAndWithdrawObjectList.add(depositAndWithdrawObject);
+
+                            }
+                            return depositAndWithdrawObjectList;
+                        }
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<DepositAndWithdrawObject>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(List<DepositAndWithdrawObject> depositAndWithdrawObjects) {
+                            for (int i = 0; i < depositAndWithdrawObjects.size(); i++) {
+                                loadAddressCount(depositAndWithdrawObjects, depositAndWithdrawObjects.get(i), i);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("error", e.getLocalizedMessage());
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
     }
 
     @Override

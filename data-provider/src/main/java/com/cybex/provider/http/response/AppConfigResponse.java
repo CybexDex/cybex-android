@@ -6,6 +6,7 @@ public class AppConfigResponse {
     private boolean isShareEnabled;
     private boolean contestEnabled;
     private double ageRate;
+    private boolean gateWay2;
 
     public AppConfigResponse(boolean isETOEnabled, boolean isShareEnabled, boolean contestEnabled, int ageRate) {
         this.isETOEnabled = isETOEnabled;
@@ -44,5 +45,12 @@ public class AppConfigResponse {
 
     public void setAgeRate(double ageRate) {
         this.ageRate = ageRate;
+    }
+
+    public void setGateWay2(boolean gateWay2) {
+        this.gateWay2 = gateWay2;
+    }
+    public boolean isGateWay2() {
+        return gateWay2;
     }
 }

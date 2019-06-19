@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface DepositAndWithdrawTotalView extends IMvpView {
     void onLoadRecordsData(int loadMode, List<GatewayNewDepositWithdrawRecordItem> gatewayDepositWithdrawRecordsItems);
+    void onLoadRecordsDataOld(int loadMode, List<GatewayDepositWithdrawRecordsItem> gatewayDepositWithdrawRecordsItems);
     void onLoadAsset(List<String> assetList);
 }

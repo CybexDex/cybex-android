@@ -34,7 +34,7 @@ import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.provider.websocket.apihk.LimitOrderWrapper;
 import com.cybexmobile.BuildConfig;
 import com.cybexmobile.R;
-import com.cybexmobile.SettingConfig;
+import com.cybex.provider.SettingConfig;
 import com.cybexmobile.activity.markets.MarketsActivity;
 import com.cybexmobile.fragment.AccountFragment;
 import com.cybexmobile.fragment.WatchlistFragment;
@@ -444,6 +444,7 @@ public class BottomNavigationActivity extends BaseActivity implements
                     @Override
                     public void accept(AppConfigResponse appConfigResponse) throws Exception {
                         SettingConfig.getInstance().setAgeRate(appConfigResponse.getAgeRate());
+                        SettingConfig.getInstance().setGateway2(appConfigResponse.isGateWay2());
                         if (appConfigResponse.isETOEnabled()) {
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_main);
                             mBottomNavigationView.getMenu().removeItem(R.id.navigation_watchlist);

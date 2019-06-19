@@ -182,6 +182,9 @@ public class WebSocketService extends Service {
                                 WebSocketNodeConfig.getInstance().setLimit_order(webSocketNodeResponse.getLimitOrder());
                                 WebSocketNodeConfig.getInstance().setMdp(webSocketNodeResponse.getMdp());
                                 WebSocketNodeConfig.getInstance().setEto(webSocketNodeResponse.getEto());
+                                WebSocketNodeConfig.getInstance().setGateway1(webSocketNodeResponse.getGateway1());
+                                WebSocketNodeConfig.getInstance().setGateway1_query(webSocketNodeResponse.getGateway1_query());
+                                WebSocketNodeConfig.getInstance().setGateway2(webSocketNodeResponse.getGateway2());
                                 BitsharesWalletWraper.getInstance().build_connect();
                             }
                         },

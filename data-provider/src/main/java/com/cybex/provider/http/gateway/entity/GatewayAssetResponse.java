@@ -22,7 +22,8 @@ public class GatewayAssetResponse {
     private String precision;
     private String imgURL;
     private String hashLink;
-    private Object info;
+    private Info info;
+    private boolean useMemo;
 
     public long getID() { return id; }
     public void setID(long value) { this.id = value; }
@@ -92,6 +93,51 @@ public class GatewayAssetResponse {
     public String getHashLink() { return hashLink; }
     public void setHashLink(String value) { this.hashLink = value; }
 
-    public Object getInfo() { return info; }
-    public void setInfo(Object value) { this.info = value; }
+    public Info getInfo() { return info; }
+    public void setInfo(Info value) { this.info = value; }
+
+    public boolean isUseMemo() {
+        return useMemo;
+    }
+
+    public void setUseMemo(boolean useMemo) {
+        this.useMemo = useMemo;
+    }
+
+    public class Info {
+        private Deposit deposit;
+        private Withdraw withdraw;
+
+        public Deposit getDeposit() { return deposit; }
+        public void setDeposit(Deposit value) { this.deposit = value; }
+
+        public Withdraw getWithdraw() { return withdraw; }
+        public void setWithdraw(Withdraw value) { this.withdraw = value; }
+    }
+
+    public class Deposit {
+        private String cnMsg;
+        private String enMsg;
+        private String projectName;
+
+        public String getCNMsg() { return cnMsg; }
+        public void setCNMsg(String value) { this.cnMsg = value; }
+
+        public String getEnMsg() { return enMsg; }
+        public void setEnMsg(String value) { this.enMsg = value; }
+
+        public String getProjectName() { return projectName; }
+        public void setProjectName(String value) { this.projectName = value; }
+    }
+
+    public class Withdraw {
+        private String cnMsg;
+        private String enMsg;
+
+        public String getCNMsg() { return cnMsg; }
+        public void setCNMsg(String value) { this.cnMsg = value; }
+
+        public String getEnMsg() { return enMsg; }
+        public void setEnMsg(String value) { this.enMsg = value; }
+    }
 }
