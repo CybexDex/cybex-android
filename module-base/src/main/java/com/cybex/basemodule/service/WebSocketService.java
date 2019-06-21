@@ -73,6 +73,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Function7;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
+import io.sentry.Sentry;
+import io.sentry.event.UserBuilder;
 
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_BTC;
 import static com.cybex.basemodule.constant.Constant.ASSET_ID_ARENA_EOS;
@@ -701,6 +703,7 @@ public class WebSocketService extends Service {
         if(mFullAccountWorker == null){
             mFullAccountWorker = new FullAccountWorker();
         }
+        Sentry.getContext().setUser(new UserBuilder().setId(mName).build());
         mFullAccountFuture = mScheduled.scheduleAtFixedRate(mFullAccountWorker, 0,
                 mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
                     (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&

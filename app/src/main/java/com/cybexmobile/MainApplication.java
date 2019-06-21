@@ -21,8 +21,11 @@ import com.squareup.picasso.Picasso;
 import java.util.Locale;
 
 import io.enotes.sdk.core.ENotesSDK;
+import io.sentry.Sentry;
+import io.sentry.android.AndroidSentryClientFactory;
 
 import static com.cybex.basemodule.constant.Constant.PREF_SERVER;
+import static com.cybex.basemodule.constant.Constant.SENTRY_DSN;
 import static com.cybex.basemodule.constant.Constant.SERVER_OFFICIAL;
 
 public class MainApplication extends Application {
@@ -44,6 +47,10 @@ public class MainApplication extends Application {
         }
         Picasso picasso = PicassoUtils.getPicassoInstance(this);
         Picasso.setSingletonInstance(picasso);
+
+        //Sentry Integration
+        Sentry.init(SENTRY_DSN, new AndroidSentryClientFactory(getApplicationContext()));
+
 //        if(!LeakCanary.isInAnalyzerProcess(this)){
 //            LeakCanary.install(this);
 //        }

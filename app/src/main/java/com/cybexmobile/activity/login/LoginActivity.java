@@ -52,6 +52,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import io.enotes.sdk.repository.db.entity.Card;
+import io.sentry.Sentry;
+import io.sentry.event.User;
+import io.sentry.event.UserBuilder;
 
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_LOGIN_IN;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_NAME;
@@ -276,6 +279,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                                 sharedPreferences.edit().putBoolean(PREF_IS_LOGIN_IN, true).apply();
                                 sharedPreferences.edit().putString(PREF_NAME, email).apply();
+                                Sentry.getContext().setUser(new UserBuilder().setId(email).build());
                                 finish();
                             } else {
                                 Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_incorrect_password), Toast.LENGTH_SHORT);

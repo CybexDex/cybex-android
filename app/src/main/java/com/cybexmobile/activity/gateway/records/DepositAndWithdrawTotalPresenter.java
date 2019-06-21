@@ -187,16 +187,28 @@ public class DepositAndWithdrawTotalPresenter<V extends DepositAndWithdrawTotalV
                                                     fundType))
                             .map(gateWayRecordsResponse -> {
                                 List<GatewayNewDepositWithdrawRecordItem> gatewayNewDepositWithdrawRecordItemList = new ArrayList<>();
+                                String exploreETH = "";
                                 if (gateWayRecordsResponse.getRecords() != null && gateWayRecordsResponse.getRecords().size() > 0) {
                                     for (GatewayNewRecord record : gateWayRecordsResponse.getRecords()) {
                                         GatewayNewDepositWithdrawRecordItem gatewayNewDepositWithdrawRecordItem = new GatewayNewDepositWithdrawRecordItem();
                                         gatewayNewDepositWithdrawRecordItem.setItemAsset(webSocketService.getAssetObjectBySymbol(record.getAsset()));
                                         gatewayNewDepositWithdrawRecordItem.setRecord(record);
                                         for (BlockerExplorer blockerExplorer : mBlockerExplorerList) {
+                                            if (blockerExplorer.getAsset().equals("ETH")) {
+                                                exploreETH = blockerExplorer.getExpolorerLink();
+                                            }
                                             if (blockerExplorer.getAsset().equals(record.getAsset())) {
                                                 gatewayNewDepositWithdrawRecordItem.setExplorerLink(blockerExplorer.getExpolorerLink() + record.getOutHash());
+                                                break;
                                             }
                                         }
+
+                                        if (gatewayNewDepositWithdrawRecordItem.getExplorerLink() == null) {
+                                            gatewayNewDepositWithdrawRecordItem.setExplorerLink(exploreETH + record.getOutHash());
+
+                                        }
+
+
                                         for (Address address : mAddressList) {
                                             if (address.getAddress().equals(record.getOutAddr())) {
                                                 gatewayNewDepositWithdrawRecordItem.setNote(address.getNote());

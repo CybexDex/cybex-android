@@ -183,4 +183,9 @@ public class Constant {
      *  scan Result
      */
     public static final String SCAN_RESULT = "scan_result";
+
+    /**
+     * Sentry DSN
+     */
+    public static final String SENTRY_DSN = "http://c2f37801e6c94a8099cba56390a4409b@120.27.16.142:9000/16";
 }

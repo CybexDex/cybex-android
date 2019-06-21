@@ -50,6 +50,19 @@ public class Sha256Object {
         return sha256Object;
     }
 
+    public static Sha256Object create_from_string_flutter(String strContent) {
+        Sha256Object sha256Object = new Sha256Object();
+        BaseEncoding encoding = BaseEncoding.base16().lowerCase();
+        byte[] byteContent = encoding.decode(strContent);
+        if (byteContent.length != 32) {
+            throw new JsonParseException("Sha256Object size not correct.");
+
+        }
+        System.arraycopy(byteContent, 0, sha256Object.hash, 0, sha256Object.hash.length);
+        sha256Object.hash = byteContent;
+        return sha256Object;
+    }
+
     public static class sha256_object_deserializer implements JsonDeserializer<Sha256Object> {
 
         @Override

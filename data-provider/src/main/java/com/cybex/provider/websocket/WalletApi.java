@@ -1017,7 +1017,7 @@ public class WalletApi {
         Log.e("privateKey", privateKey);
         Log.e("hashMap", gson1.toJson(mHashMapPub2PrivString));
         Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
-        signedTransaction.sign(private_key_type, Sha256Object.create_from_string(chainId));
+        signedTransaction.sign(private_key_type, Sha256Object.create_from_string_flutter(chainId));
         mHashMapJsonStringToSignedTransaction.put(gson1.toJson(signedTransaction), signedTransaction);
         return gson1.toJson(signedTransaction);
 
@@ -1065,7 +1065,7 @@ public class WalletApi {
         }
         Log.e("hashMap", gson.toJson(mHashMapPub2PrivString));
         Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
-        signedTransaction.sign(private_key_type, Sha256Object.create_from_string(chainId));
+        signedTransaction.sign(private_key_type, Sha256Object.create_from_string_flutter(chainId));
         mHashMapJsonStringToSignedTransaction.put(gson.toJson(signedTransaction), signedTransaction);
         return gson.toJson(signedTransaction);
 

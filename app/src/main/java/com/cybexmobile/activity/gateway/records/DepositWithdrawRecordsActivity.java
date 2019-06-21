@@ -327,15 +327,24 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                         .map((Function<GatewayNewRecordsResponse, List<GatewayNewDepositWithdrawRecordItem>>) gatewayRecordsResponse -> {
                             mTotalItemAmount = gatewayRecordsResponse.getTotal();
                             List<GatewayNewDepositWithdrawRecordItem> gatewayDepositWithdrawRecordsItemList = new ArrayList<>();
+                            String exploreETH = "";
                             if (gatewayRecordsResponse.getRecords() != null && gatewayRecordsResponse.getRecords().size() > 0) {
                                 for (GatewayNewRecord record : gatewayRecordsResponse.getRecords()) {
                                     GatewayNewDepositWithdrawRecordItem gatewayNewDepositWithdrawRecordItem = new GatewayNewDepositWithdrawRecordItem();
                                     gatewayNewDepositWithdrawRecordItem.setItemAsset(mAssetObject);
                                     gatewayNewDepositWithdrawRecordItem.setRecord(record);
                                     for (BlockerExplorer blockerExplorer : mBlockerExplorerList) {
+                                        if (blockerExplorer.getAsset().equals("ETH")) {
+                                            exploreETH = blockerExplorer.getExpolorerLink();
+                                        }
                                         if (blockerExplorer.getAsset().equals(record.getAsset())) {
                                             gatewayNewDepositWithdrawRecordItem.setExplorerLink(blockerExplorer.getExpolorerLink() + record.getOutHash());
+                                            break;
                                         }
+                                    }
+                                    if (gatewayNewDepositWithdrawRecordItem.getExplorerLink() == null) {
+                                        gatewayNewDepositWithdrawRecordItem.setExplorerLink(exploreETH + record.getOutHash());
+
                                     }
                                     for (Address address : mAddressList) {
                                         if (address.getAddress().equals(record.getOutAddr())) {

@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -110,8 +111,7 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         AssetObject itemAssetObject = item.getItemAsset();
         loadImage(itemAssetObject.id.toString(), viewHolder.mAssetIcon);
         viewHolder.mAssetSymbol.setText(item.getRecord().getAsset());
-//        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getRecord().getTotalAmount() / Math.pow(10, itemAssetObject.precision), item.getRecord().getAsset()));
-        viewHolder.mAssetAmount.setText(item.getRecord().getTotalAmount());
+        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", Float.parseFloat(item.getRecord().getTotalAmount()), item.getRecord().getAsset()));
         viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getCreatedAt())));
         viewHolder.mAssetStatus.setText(item.getRecord().getStatus());
         viewHolder.mAssetAddress.setText(item.getRecord().getOutAddr());

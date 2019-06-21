@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.sentry.Sentry;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -132,6 +133,9 @@ public class WebSocketClient extends WebSocketListener {
             if (mJsonParser.parse(text).getAsJsonObject().get("id") == null) {
                 Log.v("lsf", String.format("onMessage: %s", text));
                 return;
+            }
+            if (mJsonParser.parse(text).getAsJsonObject().get("error") != null) {
+                Sentry.capture(text);
             }
             int callId = mJsonParser.parse(text).getAsJsonObject().get("id").getAsInt();
             IReplyProcess iReplyProcess = mHashMapIdToProcess.remove(callId);
