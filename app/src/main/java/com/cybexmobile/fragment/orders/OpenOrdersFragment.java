@@ -222,14 +222,14 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
 
     @OnClick(R.id.open_orders_cancel_all)
     public void onCancelAllClicked(View view) {
-        showLoadDialog();
+        showLoadDialog(true);
         mCancelOperationId = ID_CANCEL_ALL_OPERATION;
         loadLimitOrderCancelFee(ASSET_ID_CYB, mCancelOperationId);
     }
 
     @Override
     public void onItemClick(OpenOrderItem itemValue) {
-        showLoadDialog();
+        showLoadDialog(true);
         mCancelOperationId = ID_CANCEL_LMMIT_ORDER_OPERATION;
         mCurrOpenOrderItem = itemValue;
         loadLimitOrderCancelFee(ASSET_ID_CYB, mCancelOperationId);
@@ -394,14 +394,14 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                     });
         } else {
             if (!BitsharesWalletWraper.getInstance().is_locked()) {
-                showLoadDialog();
+                showLoadDialog(true);
                 toCancelLimitOrder();
                 return;
             }
             CybexDialog.showUnlockWalletDialog(getFragmentManager(), mFullAccount.account, userName, new UnlockDialog.UnLockDialogClickListener() {
                 @Override
                 public void onUnLocked(String password) {
-                    showLoadDialog();
+                    showLoadDialog(true);
                     toCancelLimitOrder();
                 }
             });

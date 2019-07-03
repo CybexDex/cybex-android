@@ -177,6 +177,7 @@ public class DepositActivity extends BaseActivity {
             if (fullAccountObject != null) {
                 mAccountObject = fullAccountObject.account;
             }
+            requestDetailMessage();
             if (BitsharesWalletWraper.getInstance().is_locked() && SettingConfig.getInstance().isGateway2()) {
                 CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName,
                         (UnlockDialog.UnLockDialogClickListener) password -> setDepositInfo());
@@ -528,7 +529,6 @@ public class DepositActivity extends BaseActivity {
             } else {
                 getAddress(mUserName, mAssetName);
             }
-            requestDetailMessage();
         } else {
             if (Locale.getDefault().getLanguage().equals("zh")) {
                 ToastMessage.showNotEnableDepositToastMessage(DepositActivity.this, mCnMsg, R.drawable.ic_error_16px);
