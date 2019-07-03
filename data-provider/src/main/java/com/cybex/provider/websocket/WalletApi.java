@@ -27,6 +27,7 @@ import com.cybex.provider.graphene.chain.FeeAmountObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.FullAccountObjectReply;
 import com.cybex.provider.graphene.chain.GlobalConfigObject;
+import com.cybex.provider.graphene.chain.Key;
 import com.cybex.provider.graphene.chain.LimitOrder;
 import com.cybex.provider.graphene.chain.LimitOrderObject;
 import com.cybex.provider.graphene.chain.LockAssetObject;
@@ -42,10 +43,12 @@ import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.store.MySQLFullPrunedBlockStore;
 
 import java.io.ByteArrayInputStream;
@@ -73,6 +76,7 @@ import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import de.bitsharesmunich.graphenej.Util;
 import io.enotes.sdk.core.CardManager;
 import io.enotes.sdk.repository.db.entity.Card;
 
@@ -567,21 +571,41 @@ public class WalletApi {
         PrivateKey privateActiveKey = PrivateKey.from_seed(userName + "active" + password);
         PrivateKey privateOwnerKey = PrivateKey.from_seed(userName + "owner" + password);
         PrivateKey privateMemoKey = PrivateKey.from_seed(userName + "memo" + password);
+
+        Types.public_key_type publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true);
+        Types.public_key_type publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true);
+        Types.public_key_type publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true);
+
+        Types.public_key_type publicActiveKeyTypeUnCompressed = new Types.public_key_type(privateActiveKey.get_public_key(false), false);
+        Types.public_key_type publicOwnerKeyTypeUnCompressed = new Types.public_key_type(privateOwnerKey.get_public_key(false), false);
+        Types.public_key_type publicMemoKeyTypeUnCompressed = new Types.public_key_type(privateMemoKey.get_public_key(false), false);
+
+        String address = publicActiveKeyType.getAddress();
+        String ownerAddress = publicOwnerKeyType.getAddress();
+        String memoAddress = publicMemoKeyType.getAddress();
+        String PTSAddress = publicActiveKeyType.getPTSAddress(publicActiveKeyType.key_data);
+        String ownerPtsAddress = publicOwnerKeyType.getPTSAddress(publicOwnerKeyType.key_data);
+        String memoPtsAddress = publicMemoKeyType.getPTSAddress(publicMemoKeyType.key_data);
+        String uncompressedPts = publicActiveKeyTypeUnCompressed.getPTSAddress(publicActiveKeyTypeUnCompressed.key_data_uncompressed);
+        String unCompressedOwnerKey = publicOwnerKeyTypeUnCompressed.getPTSAddress(publicOwnerKeyTypeUnCompressed.key_data_uncompressed);
+        String unCompressedMemo = publicMemoKeyTypeUnCompressed.getPTSAddress(publicMemoKeyTypeUnCompressed.key_data_uncompressed);
+
+
         String privateActiveKeyString = new Types.private_key_type(privateActiveKey).toString();
         String privateOwnerKeyString = new Types.private_key_type(privateOwnerKey).toString();
         String privateMemoKeyString = new Types.private_key_type(privateMemoKey).toString();
-        String publicActiveKeyType = new Types.public_key_type(privateActiveKey.get_public_key(true), true).toString();
-        String publicOwnerKeyType = new Types.public_key_type(privateOwnerKey.get_public_key(true), true).toString();
-        String publicMemoKeyType = new Types.public_key_type(privateMemoKey.get_public_key(true), true).toString();
 
-        mHashMapPub2PrivString.put(publicActiveKeyType, privateActiveKeyString);
-        mHashMapPub2PrivString.put(publicOwnerKeyType, privateOwnerKeyString);
-        mHashMapPub2PrivString.put(publicMemoKeyType, privateMemoKeyString);
-        mDefaultPublicKey = publicActiveKeyType;
-        HashMap<String, String> pubKeyCtgMap = new HashMap();
-        pubKeyCtgMap.put("active", publicActiveKeyType);
-        pubKeyCtgMap.put("owner", publicOwnerKeyType);
-        pubKeyCtgMap.put("memo", publicMemoKeyType);
+        mHashMapPub2PrivString.put(publicActiveKeyType.toString(), privateActiveKeyString);
+        mHashMapPub2PrivString.put(publicOwnerKeyType.toString(), privateOwnerKeyString);
+        mHashMapPub2PrivString.put(publicMemoKeyType.toString(), privateMemoKeyString);
+        mDefaultPublicKey = publicActiveKeyType.toString();
+        HashMap<String, Key> pubKeyCtgMap = new HashMap();
+        Key activeKey = new Key(PTSAddress, uncompressedPts, privateActiveKeyString, publicActiveKeyType.toString(), address);
+        Key ownerKey = new Key(ownerPtsAddress, unCompressedOwnerKey, privateOwnerKeyString, publicOwnerKeyType.toString(), ownerAddress);
+        Key memoKey = new Key(memoPtsAddress, unCompressedMemo, privateMemoKeyString, publicMemoKeyType.toString(), memoAddress);
+        pubKeyCtgMap.put("active-key", activeKey);
+        pubKeyCtgMap.put("owner-key", ownerKey);
+        pubKeyCtgMap.put("memo-key", memoKey);
 
         Gson gson = new Gson();
         return gson.toJson(pubKeyCtgMap);
@@ -858,6 +882,50 @@ public class WalletApi {
         return operation;
     }
 
+    public Operations.limit_order_create_operation getLimitOrderCreateOperationWithExtensions(ObjectId<AccountObject> accountId,
+                                                                                              ObjectId<AssetObject> assetFeeId,
+                                                                                              ObjectId<AssetObject> assetSellId,
+                                                                                              ObjectId<AssetObject> assetReceiveId,
+                                                                                              long amountFee,
+                                                                                              long amountSell,
+                                                                                              long amountReceive,
+                                                                                              boolean isBuy) {
+        Operations.limit_order_create_operation operation = new Operations.limit_order_create_operation();
+        operation.fee = new Asset(amountFee, assetFeeId);
+        operation.seller = accountId;
+        operation.amount_to_sell = new Asset(amountSell, assetSellId);
+        operation.min_to_receive = new Asset(amountReceive, assetReceiveId);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.YEAR, 5);
+        operation.expiration = calendar.getTime();
+        operation.fill_or_kill = false;
+        List<Object> extensionObjectList = new ArrayList<>();
+        extensionObjectList.add(7);
+        HashMap<String, Boolean> isBuyMap = new HashMap<>();
+        isBuyMap.put("is_buy", isBuy);
+        extensionObjectList.add(isBuyMap);
+        operation.extensions = new HashSet<>();
+        operation.extensions.add(extensionObjectList);
+        return operation;
+    }
+
+    public Operations.amend_operation getAmendOperation(String refBuyOrderTxId,
+                                                        String cutLossPx,
+                                                        String takeProfitPx,
+                                                        String execNowPx,
+                                                        String expiration,
+                                                        String seller) {
+        Operations.amend_operation operation = new Operations.amend_operation();
+        operation.refBuyOrderTxId = refBuyOrderTxId;
+        operation.cutLossPx = cutLossPx;
+        operation.takeProfitPx = takeProfitPx;
+        operation.execNowPx = execNowPx;
+        operation.expiration = expiration;
+        operation.seller = seller;
+        return operation;
+    }
+
     public Operations.withdraw_deposit_history_operation getWithdrawDepositOperation(String accountName, int offset, int size, String fundType, String asset, Date expiration) {
         Operations.withdraw_deposit_history_operation operation = new Operations.withdraw_deposit_history_operation();
         operation.accountName = accountName;
@@ -979,16 +1047,17 @@ public class WalletApi {
 
     public String getLimitOrderSignedTransaction(long refBlockNum, long refBlockPrefix, long txExpiration, long limitOrderExpiration,
                                                  String chainId, String seller, String feeAssetId, String amountToSellAssetId,
-                                                 String receiveAssetId, long feeAmount, long amountToSellAmount, long receiveAmount, int fill_or_kill) {
+                                                 String receiveAssetId, long feeAmount, long amountToSellAmount, long receiveAmount, int fill_or_kill, boolean is_buy) {
         SignedTransaction signedTransaction = new SignedTransaction();
-        Operations.limit_order_create_operation limit_order_create_operation = getLimitOrderCreateOperation(
+        Operations.limit_order_create_operation limit_order_create_operation = getLimitOrderCreateOperationWithExtensions(
                 ObjectId.create_from_string(seller),
                 ObjectId.create_from_string(feeAssetId),
                 ObjectId.create_from_string(amountToSellAssetId),
                 ObjectId.create_from_string(receiveAssetId),
                 feeAmount,
                 amountToSellAmount,
-                receiveAmount);
+                receiveAmount,
+                is_buy);
         limit_order_create_operation.expiration = new Date(limitOrderExpiration * 1000);
         limit_order_create_operation.fill_or_kill = fill_or_kill == 1;
         Operations.operation_type operationType = new Operations.operation_type();
@@ -1232,6 +1301,27 @@ public class WalletApi {
         return null;
     }
 
+    public String getAmendSignature(String refBuyOrderTxId, String cutLossPx,
+                                    String takeProfitPx,
+                                    String execNowPx,
+                                    String expiration,
+                                    String seller) {
+        Operations.amend_operation amend_operation = getAmendOperation(
+                refBuyOrderTxId, cutLossPx, takeProfitPx,
+                execNowPx, expiration, seller);
+        SignedTransaction signedTransaction = new SignedTransaction();
+        Gson gson = new Gson();
+        signedTransaction.operation = amend_operation;
+
+        String privateKey = mHashMapPub2PrivString.get(mDefaultPublicKey);
+        if (privateKey == null) {
+            return "did not log in";
+        }
+        Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
+        signedTransaction.sign(private_key_type);
+        return gson.toJson(signedTransaction);
+    }
+
     public String getMemoMessage(MemoData memoData) {
         try {
             if (memoData != null) {
@@ -1250,11 +1340,19 @@ public class WalletApi {
     }
 
     public String getTransactionId(String singedTransaction) {
-        if (!mHashMapJsonStringToSignedTransaction.isEmpty()) {
-            SignedTransaction signedTransaction = mHashMapJsonStringToSignedTransaction.get(singedTransaction);
-            return signedTransaction.getTransactionID();
-        }
-        return null;
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(singedTransaction, JsonObject.class);
+        String signature = jsonObject.get("signatures").getAsJsonArray().get(0).getAsString();
+        return Sha256Hash.wrap(Sha256Hash.hash(Util.hexToBytes(signature))).toString().substring(0, 40);
+//        if (!mHashMapJsonStringToSignedTransaction.isEmpty()) {
+//            SignedTransaction signedTransaction = mHashMapJsonStringToSignedTransaction.get(singedTransaction);
+//            return signedTransaction.getTransactionID();
+//        }
+//        return null;
+    }
+
+    public String getTransactionIdFromSignature(String signature) {
+        return Sha256Hash.wrap(Sha256Hash.hash(Util.hexToBytes(signature))).toString().substring(0, 40);
     }
 
 

@@ -7,6 +7,7 @@ public class GatewayAssetResponse {
     private Object deletedAt;
     private String name;
     private String blockchain;
+    private String projectname;
     private String cybname;
     private String cybid;
     private String confirmation;
@@ -50,6 +51,14 @@ public class GatewayAssetResponse {
 
     public String getBlockchain() { return blockchain; }
     public void setBlockchain(String value) { this.blockchain = value; }
+
+    public String getProjectname() {
+        return projectname;
+    }
+
+    public void setProjectname(String projectname) {
+        this.projectname = projectname;
+    }
 
     public String getCybname() { return cybname; }
     public void setCybname(String value) { this.cybname = value; }

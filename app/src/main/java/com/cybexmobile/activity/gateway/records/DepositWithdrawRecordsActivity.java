@@ -194,7 +194,9 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                 public void onUnLocked(String password) {
                     loadAddress();
                 }
-            });
+            }, (result) ->
+                mRefreshLayout.finishRefresh()
+            );
         } else {
             loadAddress();
         }

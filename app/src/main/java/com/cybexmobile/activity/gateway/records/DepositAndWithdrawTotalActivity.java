@@ -214,7 +214,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                 view.setTextColor(getResources().getColor(R.color.btn_orange_end));
                 view.setArrowColor(getResources().getColor(R.color.btn_orange_end));
                 if (!item.equals(getResources().getString(R.string.withdraw_all))) {
-                    mCurrentCurrency = "JADE." + item;
+                    mCurrentCurrency = item;
                 } else {
                     mCurrentCurrency = null;
                 }
@@ -319,7 +319,7 @@ public class DepositAndWithdrawTotalActivity extends AppBaseActivity implements 
                     public void onUnLocked(String password) {
                         refreshRecords();
                     }
-                });
+                }, (result -> mRefreshLayout.finishRefresh()));
             } else {
                 refreshRecords();
             }

@@ -311,7 +311,8 @@ public class Operations {
 
         /// If this flag is set the entire order must be filled or the operation is rejected
         public boolean fill_or_kill = false;
-        public Set<Types.void_t> extensions;
+
+        public Set<List<Object>> extensions;
 
         @Override
         public List<Authority> get_required_authorities() {
@@ -359,6 +360,16 @@ public class Operations {
 
             // extensions
             rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(extensions.size()));
+
+            // bbb only
+            if (extensions.size() > 0) {
+                List<Object> list = extensions.iterator().next();
+                int type = (int) list.get(0);
+                rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(type));
+                boolean isbuy = ((HashMap<String, Boolean>) list.get(1)).get("is_buy");
+                baseEncoder.write(rawObject.get_byte(isbuy));
+            }
+
         }
 
         @Override
@@ -1126,6 +1137,78 @@ public class Operations {
             baseEncoder.write(rawType.get_byte_array(amount.amount));
             rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(amount.asset_id.get_instance()));
             rawType.pack(baseEncoder, UnsignedInteger.fromIntBits(extensions.size()));
+        }
+
+        @Override
+        public long calculate_fee(Object objectFeeParameter) {
+            return 0;
+        }
+
+        @Override
+        public void set_fee(Asset fee) {
+
+        }
+
+        @Override
+        public ObjectId<AccountObject> fee_payer() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_account_id_list() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AssetObject>> get_asset_id_list() {
+            return null;
+        }
+    }
+
+    public static class amend_operation implements base_operation {
+        public String refBuyOrderTxId;
+        public String cutLossPx;
+        public String takeProfitPx;
+        public String execNowPx;
+        public String expiration;
+        public String seller;
+
+        @Override
+        public List<Authority> get_required_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_active_authorities() {
+            return null;
+        }
+
+        @Override
+        public List<ObjectId<AccountObject>> get_required_owner_authorities() {
+            return null;
+        }
+
+        @Override
+        public void write_to_encoder(BaseEncoder baseEncoder) {
+            RawType rawObject = new RawType();
+            byte[] refBuyOrderTxIdByte = refBuyOrderTxId.getBytes();
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(refBuyOrderTxIdByte.length));
+            baseEncoder.write(refBuyOrderTxIdByte);
+            byte[] cutLossPxByte = cutLossPx.getBytes();
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(cutLossPxByte.length));
+            baseEncoder.write(cutLossPxByte);
+            byte[] takeProfitPxByte = takeProfitPx.getBytes();
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(takeProfitPxByte.length));
+            baseEncoder.write(takeProfitPxByte);
+            byte[] execNowPxByte = execNowPx.getBytes();
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(execNowPxByte.length));
+            baseEncoder.write(execNowPxByte);
+            byte[] expirationByte = expiration.getBytes();
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(expirationByte.length));
+            baseEncoder.write(expirationByte);
+            byte[] sellerByte = seller.getBytes();
+            rawObject.pack(baseEncoder, UnsignedInteger.fromIntBits(sellerByte.length));
+            baseEncoder.write(sellerByte);
         }
 
         @Override

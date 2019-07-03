@@ -335,7 +335,7 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                                 depositAndWithdrawObject.setMinWithdraw(data.getMinWithdraw());
                                 depositAndWithdrawObject.setPrecision(data.getPrecision());
                                 depositAndWithdrawObject.setWithdrawFee(data.getWithdrawFee());
-                                depositAndWithdrawObject.setProjectName(data.getBlockchain());
+                                depositAndWithdrawObject.setProjectName(data.getProjectname());
                                 depositAndWithdrawObject.setTag(data.isUseMemo());
                                 depositAndWithdrawObject.setWithdrawPrefix(data.getWithdrawPrefix());
                                 depositAndWithdrawObject.setWithdrawCnMsg(data.getInfo() == null ? "" : data.getInfo().getWithdraw().getCNMsg());

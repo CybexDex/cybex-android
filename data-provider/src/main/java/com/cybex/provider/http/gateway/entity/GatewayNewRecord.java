@@ -8,6 +8,8 @@ public class GatewayNewRecord {
 
     private String outHash;
 
+    private String updatedAt;
+
     private String fee;
 
     private String link;
@@ -68,6 +70,14 @@ public class GatewayNewRecord {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getCybexName() {

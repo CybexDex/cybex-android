@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cybex.basemodule.constant.Constant;
+import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.http.gateway.entity.GatewayNewDepositWithdrawRecordItem;
 import com.cybexmobile.R;
 import com.cybex.basemodule.adapter.viewholder.EmptyViewHolder;
@@ -111,9 +112,9 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
         AssetObject itemAssetObject = item.getItemAsset();
         loadImage(itemAssetObject.id.toString(), viewHolder.mAssetIcon);
         viewHolder.mAssetSymbol.setText(item.getRecord().getAsset());
-        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", Float.parseFloat(item.getRecord().getTotalAmount()), item.getRecord().getAsset()));
-        viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getCreatedAt())));
-        viewHolder.mAssetStatus.setText(item.getRecord().getStatus());
+        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", Double.parseDouble(item.getRecord().getTotalAmount()), item.getRecord().getAsset()));
+        viewHolder.mAssetUpdateTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getRecord().getUpdatedAt())));
+        viewHolder.mAssetStatus.setText(getStateString(item.getRecord().getStatus()));
         viewHolder.mAssetAddress.setText(item.getRecord().getOutAddr());
         if (TextUtils.isEmpty(item.getNote())) {
             viewHolder.mAssetNote.setVisibility(View.GONE);
@@ -147,15 +148,15 @@ public class DepositWithdrawRecordAdapter extends RecyclerView.Adapter<RecyclerV
 
     private String getStateString(String state) {
         switch (state) {
-            case "done":
+            case "DONE":
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_done);
-            case "failed":
+            case "FAILED":
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_failed);
-            case "pending":
+            case "PENDING":
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_pending);
-            case "init":
+            case "INIT":
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_init);
-            case "new":
+            case "NEW":
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_new);
             default:
                 return mContext.getResources().getString(R.string.deposit_withdraw_state_init);
