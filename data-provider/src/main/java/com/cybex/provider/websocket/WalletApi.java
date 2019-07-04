@@ -1300,6 +1300,17 @@ public class WalletApi {
         }
         return null;
     }
+    public String signMessage(String message) {
+        Sha256Object.encoder encoder = new Sha256Object.encoder();
+        if(message != null){
+            byte[] assetByte = message.getBytes();
+            encoder.write(assetByte);
+        }
+        Types.private_key_type privateKey = new Types.private_key_type(mHashMapPub2PrivString.get(mDefaultPublicKey));
+        CompactSignature signature;
+        signature = privateKey.getPrivateKey().sign_compact(encoder.result(), true);
+        return MyUtils.bytesToHex(signature.data);
+    }
 
     public String getAmendSignature(String refBuyOrderTxId, String cutLossPx,
                                     String takeProfitPx,
