@@ -132,6 +132,7 @@ public class WithdrawActivity extends BaseActivity {
 
     public Unbinder mUnbinder;
     private String mAssetName;
+    private String mAssetNameForGatewayRequest;
     private String mAssetId;
     private boolean mIsEnabled;
     private boolean mIsTag;
@@ -217,6 +218,7 @@ public class WithdrawActivity extends BaseActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mUserName = sharedPreferences.getString("name", null);
         Intent intent = getIntent();
+        mAssetNameForGatewayRequest = intent.getStringExtra("assetNameForGatewayRequest");
         mAssetName = intent.getStringExtra("assetName");
         mAssetId = intent.getStringExtra("assetId");
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
@@ -1036,6 +1038,7 @@ public class WithdrawActivity extends BaseActivity {
                 Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
                 intent.putExtra("assetObject", mAssetObject);
                 intent.putExtra("fundType", "WITHDRAW");
+                intent.putExtra("assetNameForGatewayRequest", mAssetNameForGatewayRequest);
                 startActivity(intent);
                 break;
         }

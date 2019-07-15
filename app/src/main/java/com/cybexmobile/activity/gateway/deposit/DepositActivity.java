@@ -109,6 +109,7 @@ public class DepositActivity extends BaseActivity {
 
     private String mUserName;
     private String mAssetName;
+    private String mAssetNameForGatewayRequest;
     private String mAssetId;
     private String mEnMsg;
     private String mCnMsg;
@@ -205,6 +206,7 @@ public class DepositActivity extends BaseActivity {
         mUserName = sharedPreferences.getString("name", "");
         Intent intent = getIntent();
         mAssetName = intent.getStringExtra("assetName");
+        mAssetNameForGatewayRequest = intent.getStringExtra("assetNameForGatewayRequest");
         mAssetId = intent.getStringExtra("assetId");
         mIsEnabled = intent.getBooleanExtra("isEnabled", true);
         mEnMsg = intent.getStringExtra("enMsg");
@@ -241,6 +243,7 @@ public class DepositActivity extends BaseActivity {
                 Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
                 intent.putExtra("assetObject", mAssetObject);
                 intent.putExtra("fundType", "DEPOSIT");
+                intent.putExtra("assetNameForGatewayRequest", mAssetNameForGatewayRequest);
                 startActivity(intent);
                 break;
         }
@@ -396,7 +399,7 @@ public class DepositActivity extends BaseActivity {
                                                 "application/json",
                                                 "bearer " + token,
                                                 mUserName,
-                                                mAssetName
+                                                mAssetNameForGatewayRequest
                                         ))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

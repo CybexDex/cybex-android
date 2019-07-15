@@ -338,10 +338,11 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                                 depositAndWithdrawObject.setProjectName(data.getProjectname());
                                 depositAndWithdrawObject.setTag(data.isUseMemo());
                                 depositAndWithdrawObject.setWithdrawPrefix(data.getWithdrawPrefix());
-                                depositAndWithdrawObject.setWithdrawCnMsg(data.getInfo() == null ? "" : data.getInfo().getWithdraw().getCNMsg());
-                                depositAndWithdrawObject.setWithdrawEnMsg(data.getInfo() == null ? "" : data.getInfo().getWithdraw().getEnMsg());
-                                depositAndWithdrawObject.setDepositCnMsg(data.getInfo() == null ? "" : data.getInfo().getDeposit().getCNMsg());
-                                depositAndWithdrawObject.setDepositEnMsg(data.getInfo() == null ? "" : data.getInfo().getDeposit().getEnMsg());
+                                depositAndWithdrawObject.setWithdrawCnMsg(data.getInfo() == null || data.getInfo().getWithdraw() == null ? "" : data.getInfo().getWithdraw().getCNMsg());
+                                depositAndWithdrawObject.setWithdrawEnMsg(data.getInfo() == null || data.getInfo().getWithdraw()== null ? "" : data.getInfo().getWithdraw().getEnMsg());
+                                depositAndWithdrawObject.setDepositCnMsg(data.getInfo() == null || data.getInfo().getDeposit() == null ? "" : data.getInfo().getDeposit().getCNMsg());
+                                depositAndWithdrawObject.setDepositEnMsg(data.getInfo() == null || data.getInfo().getDeposit() == null ? "" : data.getInfo().getDeposit().getEnMsg());
+                                depositAndWithdrawObject.setAssetName(data.getName());
                                 depositAndWithdrawObject.setAssetObject(mWebSocketService.getAssetObject(data.getCybid()));
                                 depositAndWithdrawObjectList.add(depositAndWithdrawObject);
                             }

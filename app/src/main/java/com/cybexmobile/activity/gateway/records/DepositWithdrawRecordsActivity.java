@@ -85,6 +85,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
     private String mFundType;
     private int mTotalItemAmount = 0;
     private boolean mIsRefresh;
+    private String mAssetNameForGatewayRequest;
 
     private Unbinder mUnbinder;
     private AccountObject mAccountObject;
@@ -140,6 +141,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
         mAccountName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, "");
         mAssetObject = (AssetObject) getIntent().getSerializableExtra("assetObject");
         mFundType = getIntent().getStringExtra("fundType");
+        mAssetNameForGatewayRequest = getIntent().getStringExtra("assetNameForGatewayRequest");
         if (mFundType.equals("DEPOSIT")) {
             mTvTitle.setText(getResources().getString(R.string.title_deposit_records));
         } else if (mFundType.equals("WITHDRAW")) {
@@ -323,7 +325,7 @@ public class DepositWithdrawRecordsActivity extends BaseActivity implements OnRe
                                             mAccountName,
                                             mIsRefresh && mRecordsItems.size() > LOAD_COUNT ? mRecordsItems.size() : LOAD_COUNT,
                                             mIsRefresh ? null : mRecordsItems.get(mRecordsItems.size() - 1).getRecord().getId(),
-                                            AssetUtil.parseSymbol(mAssetObject.symbol),
+                                            mAssetNameForGatewayRequest,
                                             mFundType);
                         })
                         .map((Function<GatewayNewRecordsResponse, List<GatewayNewDepositWithdrawRecordItem>>) gatewayRecordsResponse -> {

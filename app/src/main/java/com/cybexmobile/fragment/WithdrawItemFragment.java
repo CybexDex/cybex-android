@@ -269,6 +269,7 @@ public class WithdrawItemFragment extends BaseFragment implements DepositAndWith
     public void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject) {
         if (depositAndWithdrawObject.isEnable()) {
             Intent intent = new Intent(getContext(), WithdrawActivity.class);
+            intent.putExtra("assetNameForGatewayRequest", depositAndWithdrawObject.getAssetName());
             intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
             intent.putExtra("assetId", depositAndWithdrawObject.getId());
             intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());

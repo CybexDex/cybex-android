@@ -22,6 +22,7 @@ public class DepositAndWithdrawObject {
     private String depositCnMsg;
     private boolean tag;
     private long count;
+    private String assetName;
     public AssetObject assetObject;
     private AccountBalanceObject accountBalanceObject;
 
@@ -183,5 +184,13 @@ public class DepositAndWithdrawObject {
 
     public void setWithdrawEnMsg(String withdrawEnMsg) {
         this.withdrawEnMsg = withdrawEnMsg;
+    }
+
+    public String getAssetName() {
+        return assetName;
+    }
+
+    public void setAssetName(String assetName) {
+        this.assetName = assetName;
     }
 }
