@@ -38,6 +38,7 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
+import com.cybex.provider.graphene.chain.Utils;
 import com.cybex.provider.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
@@ -123,6 +124,7 @@ public class WalletApi {
     private Sha512Object mCheckSum = new Sha512Object();
     private Context mContext;
     private String mDefaultPublicKey;
+    private String mDefaultPrivateKey = "";
     static class plain_keys {
         Map<Types.public_key_type, String> keys;
         Sha512Object checksum;
@@ -611,6 +613,10 @@ public class WalletApi {
         return gson.toJson(pubKeyCtgMap);
     }
 
+    public void setDefaultPrivateKey(String privateKey) {
+        mDefaultPrivateKey = privateKey;
+    }
+
     public boolean resetDefaultPublicKey(String publicKey) {
         if (mHashMapPub2PrivString.get(publicKey) != null) {
             mDefaultPublicKey = publicKey;
@@ -1079,7 +1085,7 @@ public class WalletApi {
         Date date = new Date(txExpiration * 1000);
         signedTransaction.set_expiration(date);
         Gson gson1 = GlobalConfigObject.getInstance().getGsonBuilder().create();
-        String privateKey = mHashMapPub2PrivString.get(mDefaultPublicKey);
+        String privateKey = !mDefaultPrivateKey.equals("") ? mDefaultPrivateKey : mHashMapPub2PrivString.get(mDefaultPublicKey);
         if (privateKey == null) {
             return "did not log in";
         }
@@ -1088,6 +1094,7 @@ public class WalletApi {
         Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
         signedTransaction.sign(private_key_type, Sha256Object.create_from_string_flutter(chainId));
         mHashMapJsonStringToSignedTransaction.put(gson1.toJson(signedTransaction), signedTransaction);
+        setDefaultPrivateKey("");
         return gson1.toJson(signedTransaction);
 
     }
@@ -1128,7 +1135,7 @@ public class WalletApi {
         signedTransaction.setRef_block_prefix(refBlockPrefix);
         Date date = new Date(txExpiration * 1000);
         signedTransaction.set_expiration(date);
-        String privateKey = mHashMapPub2PrivString.get(mDefaultPublicKey);
+        String privateKey = !mDefaultPrivateKey.equals("") ? mDefaultPrivateKey : mHashMapPub2PrivString.get(mDefaultPublicKey);
         if (privateKey == null) {
             return "did not log in";
         }
@@ -1136,6 +1143,7 @@ public class WalletApi {
         Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
         signedTransaction.sign(private_key_type, Sha256Object.create_from_string_flutter(chainId));
         mHashMapJsonStringToSignedTransaction.put(gson.toJson(signedTransaction), signedTransaction);
+        setDefaultPrivateKey("");
         return gson.toJson(signedTransaction);
 
 
@@ -1306,7 +1314,22 @@ public class WalletApi {
             byte[] assetByte = message.getBytes();
             encoder.write(assetByte);
         }
-        Types.private_key_type privateKey = new Types.private_key_type(mHashMapPub2PrivString.get(mDefaultPublicKey));
+        Types.private_key_type privateKey = new Types.private_key_type(!mDefaultPrivateKey.equals("") ? mDefaultPrivateKey : mHashMapPub2PrivString.get(mDefaultPublicKey));
+        setDefaultPrivateKey("");
+        CompactSignature signature;
+        signature = privateKey.getPrivateKey().sign_compact(encoder.result(), true);
+        return MyUtils.bytesToHex(signature.data);
+    }
+
+
+    public String signMessageStream(String hex) {
+        byte[] stream = MyUtils.hexToBytes(hex);
+        Sha256Object.encoder encoder = new Sha256Object.encoder();
+        if(stream.length != 0){
+            encoder.write(stream);
+        }
+        Types.private_key_type privateKey = new Types.private_key_type(!mDefaultPrivateKey.equals("") ? mDefaultPrivateKey : mHashMapPub2PrivString.get(mDefaultPublicKey));
+        setDefaultPrivateKey("");
         CompactSignature signature;
         signature = privateKey.getPrivateKey().sign_compact(encoder.result(), true);
         return MyUtils.bytesToHex(signature.data);

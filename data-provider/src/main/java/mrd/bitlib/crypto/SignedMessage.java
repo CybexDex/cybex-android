@@ -232,7 +232,7 @@ public class SignedMessage implements Serializable {
    public byte[] bitcoinEncodingOfSignature() {
       if (recId == -1)
          throw new RuntimeException("Could not construct a recoverable key. This should never happen.");
-      int headerByte = recId + 27 + (getPublicKey().isCompressed() ? 4 : 0);
+      int headerByte = recId + 27 + 4;
       byte[] sigData = new byte[65]; // 1 header + 32 bytes for R + 32 bytes for
       // S
       sigData[0] = (byte) headerByte;

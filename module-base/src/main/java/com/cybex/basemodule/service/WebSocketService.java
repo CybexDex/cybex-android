@@ -704,7 +704,7 @@ public class WebSocketService extends Service {
             mFullAccountWorker = new FullAccountWorker();
         }
         Sentry.getContext().setUser(new UserBuilder().setId(mName).build());
-        mFullAccountFuture = mScheduled.scheduleAtFixedRate(mFullAccountWorker, 0,
+        mFullAccountFuture = mScheduled.scheduleAtFixedRate(mFullAccountWorker, 1,
                 mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
                     (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
                         mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS);
