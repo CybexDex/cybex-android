@@ -149,6 +149,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private Unbinder mUnbinder;
 
     private double mAssetRmbPrice;
+    //当前实时价
+    private double mMarketPrice;
     //成交额
     private double mAssetTotal;
     //已经精确的余额
@@ -157,6 +159,8 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
     private boolean mIsCybBalanceEnough;
     //交易资产是否足够
     private boolean mIsExchangeBalanceEnough;
+    //交易额是否大于最小值
+    private boolean mIsAmountGraterThanMinValue;
 
     private boolean mIsViewCreated;
 
@@ -448,18 +452,33 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                 TextUtils.isEmpty(amount) || Double.parseDouble(amount) == 0){
             return;
         }
-        if(mIsExchangeBalanceEnough){
-            CybexDialog.showLimitOrderCreateConfirmationDialog(getContext(), mCurrentAction.equals(ACTION_BUY),
-                    String.format("%s %s", price, AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
-                    String.format("%s %s", amount, AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
-                    mTvAssetTotal.getText().toString(),
-                    new CybexDialog.ConfirmationDialogClickListener() {
-                @Override
-                public void onClick(Dialog dialog) {
-                    mIsUsedCloudPassword = false;
-                    checkIfLocked(mName);
-                }
-            });
+        if(mIsExchangeBalanceEnough && mIsAmountGraterThanMinValue) {
+            if (((mCurrentAction.equals(ACTION_BUY) && Double.parseDouble(price) > 1.2 * mMarketPrice) ||
+                    (mCurrentAction.equals(ACTION_SELL) && Double.parseDouble(price) < 0.8 * mMarketPrice)) && mMarketPrice != 0) {
+                CybexDialog.showLimitOrderCancelConfirmationDialog(getContext(),getResources().getString(R.string.text_price_vibrate_waring), null, (dialog -> CybexDialog.showLimitOrderCreateConfirmationDialog(getContext(), mCurrentAction.equals(ACTION_BUY),
+                        String.format("%s %s", price, AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
+                        String.format("%s %s", amount, AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
+                        mTvAssetTotal.getText().toString(),
+                        new CybexDialog.ConfirmationDialogClickListener() {
+                            @Override
+                            public void onClick(Dialog dialog) {
+                                mIsUsedCloudPassword = false;
+                                checkIfLocked(mName);
+                            }
+                        })));
+            } else {
+                CybexDialog.showLimitOrderCreateConfirmationDialog(getContext(), mCurrentAction.equals(ACTION_BUY),
+                        String.format("%s %s", price, AssetUtil.parseSymbol(mWatchlistData.getBaseSymbol())),
+                        String.format("%s %s", amount, AssetUtil.parseSymbol(mWatchlistData.getQuoteSymbol())),
+                        mTvAssetTotal.getText().toString(),
+                        new CybexDialog.ConfirmationDialogClickListener() {
+                            @Override
+                            public void onClick(Dialog dialog) {
+                                mIsUsedCloudPassword = false;
+                                checkIfLocked(mName);
+                            }
+                        });
+            }
         }
     }
 
@@ -522,7 +541,9 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                 mIsExchangeBalanceEnough = mBalanceAvailable - AssetUtil.divide(mBaseOrQuoteExchangeFee.amount, Math.pow(10, mWatchlistData.getQuotePrecision())) >= amount;
             }
         }
-        mTvNotEnough.setVisibility(mIsExchangeBalanceEnough ? View.INVISIBLE : View.VISIBLE);
+        mIsAmountGraterThanMinValue = mAssetTotal >= mWatchlistData.getMinTotalAmount();
+        mTvNotEnough.setText(!mIsAmountGraterThanMinValue ? String.format(getResources().getString(R.string.text_less_than_min), String.valueOf(mWatchlistData.getMinTotalAmount())) : getResources().getString(R.string.text_not_enough));
+        mTvNotEnough.setVisibility(mIsExchangeBalanceEnough && mIsAmountGraterThanMinValue ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void initFragment(Bundle savedInstanceState){
@@ -913,6 +934,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
     public void notifyMarketPriceDataChanged(double price) {
         mExchangeLimitOrderFragment.notifyMarketPriceDataChanged(price);
+        mMarketPrice = price;
     }
 
     private MessageCallback<Reply<String>> mLimitOrderCreateCallback = new MessageCallback<Reply<String>>(){

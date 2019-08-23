@@ -8,6 +8,7 @@ public class FullAccountObject implements Serializable {
     public AccountObject account;
     public List<LimitOrderObject> limit_orders;
     public List<AccountBalanceObject> balances;
+    public List<HtlcObject> htlcs;
 
 
 //    public static class deserializer implements JsonDeserializer<FullAccountObject> {

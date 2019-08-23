@@ -2,6 +2,7 @@ package com.cybex.provider.market;
 
 import android.support.annotation.NonNull;
 
+import com.cybex.provider.graphene.chain.Asset;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.AssetsPair;
 import com.cybex.provider.graphene.chain.MarketTicker;
@@ -61,6 +62,8 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
     private int rmbPrecision;
     //24H成交量精度
     private int dayAmountPrecision;
+    //最小成交额
+    private double minTotalAmount;
 
     public WatchlistData() {
 
@@ -270,6 +273,18 @@ public class WatchlistData implements Serializable, Comparable<WatchlistData> {
 
     public void setDayAmountPrecision(int dayAmountPrecision) {
         this.dayAmountPrecision = dayAmountPrecision;
+    }
+
+    public double getMinTotalAmount() {
+        return minTotalAmount;
+    }
+
+    public void setMinTotalAmount(double minTotalAmount) {
+        this.minTotalAmount = minTotalAmount;
+    }
+
+    public void setAssetPairForm(AssetsPair.Form assetPairForm) {
+        this.minTotalAmount = Double.parseDouble(assetPairForm.min_order_value);
     }
 
     public void setAssetPairConfig(AssetsPair.Config assetPairConfig) {

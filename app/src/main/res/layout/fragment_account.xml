@@ -239,6 +239,40 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/account_layout_item_hash_lock"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_60">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_hash_locks_assets_24_px"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/activity_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/ic_arrow_forward_right_16_px"
+                        android:layout_centerVertical="true"
+                        style="@style/font_white_dark_large"
+                        android:text="@string/text_hash_lockup"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_1"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/divider_color"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <ImageView

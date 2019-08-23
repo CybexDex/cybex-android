@@ -45,6 +45,7 @@
     <string name="account_balance_dialog_button">我知道了</string>
     <string name="text_my_balance">我的资产</string>
     <string name="text_lockup_assets">锁定期资产</string>
+    <string name="text_hash_lockup">哈希锁定资产</string>
     <string name="text_deposit_withdraw">充值提现</string>
     <string name="text_address_management">地址管理</string>
     <string name="text_coin_age">币龄</string>
@@ -254,6 +255,8 @@
     <string name="text_buy">买入</string>
     <string name="text_sell">卖出</string>
     <string name="text_not_enough">余额不足</string>
+    <string name="text_less_than_min">成交额必须高于%s</string>
+
     <string name="text_login_in_to_exchange">请登录</string>
     <string name="text_hint_price">价格</string>
     <string name="text_hint_amount">数量</string>
@@ -264,6 +267,8 @@
     <string name="text_no_open_order">暂无委单</string>
     <string name="text_no_order_history">暂无历史委托</string>
     <string name="text_decimals">位小数</string>
+    <string name="text_price_vibrate_waring">挂单价格偏离最新成交价，是否继续挂单？</string>
+
 
     <!-- Order History Activity -->
     <string name="text_pair">市场</string>
@@ -572,6 +577,13 @@
     <string name="text_eto_record_participate">参与ETO</string>
     <string name="text_eto_record_receive_token">收到Token</string>
     <string name="text_eto_record_time">时间</string>
+
+    <!-- Hash Lockup Activity -->
+    <string name="text_initiator">发起人:&#032;&#032;</string>
+    <string name="text_receiver">接收人:&#032;&#032;</string>
+    <string name="text_end_time">锁定期到期时间:&#032;&#032;</string>
+    <string name="text_hash_algorithm">哈希算法:&#032;&#032;</string>
+    <string name="text_hash">哈希值:&#032;&#032;</string>
 
     <!-- Terms and Conditions -->
     <string name="text_tool_bar_title_terms">服务条款与协议</string>

@@ -41,6 +41,7 @@
     <string name="account_balance_dialog_button">OK</string>
     <string name="text_my_balance">My Balance</string>
     <string name="text_lockup_assets">Lockup Assets</string>
+    <string name="text_hash_lockup">Hash Lockup Assets</string>
     <string name="text_deposit_withdraw">Deposit/Withdraw</string>
     <string name="text_address_management">Address Management</string>
     <string name="text_coin_age">Coin Age</string>
@@ -246,9 +247,11 @@ If user C purchases 10,000 CYB and sells it the same day, coin age = 10000; Afte
     <string name="text_buy">Buy</string>
     <string name="text_sell">Sell</string>
     <string name="text_not_enough">Not enough</string>
+    <string name="text_less_than_min">Total must be greater than %s</string>
     <string name="text_login_in_to_exchange">Login in to exchange</string>
     <string name="text_hint_price">Price</string>
     <string name="text_hint_amount">Amount</string>
+    <string name="text_price_vibrate_waring">The price of your order is far from the last traded price. Are you sure to continue?</string>
 
     <string name="item_text_open_order_price">Price:</string>
     <string name="item_text_open_order_amount">Amount:</string>
@@ -566,6 +569,13 @@ If user C purchases 10,000 CYB and sells it the same day, coin age = 10000; Afte
     <string name="text_eto_record_participate">Join ETO</string>
     <string name="text_eto_record_receive_token">Receive Token</string>
     <string name="text_eto_record_time">Time</string>
+    
+    <!-- Hash Lockup Activity -->
+    <string name="text_initiator">initiator:&#032;&#032;</string>
+    <string name="text_receiver">Receiver:&#032;&#032;</string>
+    <string name="text_end_time">End Time of Locking:&#032;&#032;</string>
+    <string name="text_hash_algorithm">Hash Algorithm:&#032;&#032;</string>
+    <string name="text_hash">Hash:&#032;&#032;</string>
 
     <!-- Terms and Conditions -->
     <string name="text_tool_bar_title_terms">Terms and Conditions</string>

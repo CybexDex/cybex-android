@@ -37,6 +37,7 @@ import com.cybex.provider.SettingConfig;
 import com.cybexmobile.activity.address.AddressManagerActivity;
 import com.cybexmobile.activity.balance.AccountBalanceActivity;
 import com.cybexmobile.activity.gateway.GatewayActivity;
+import com.cybexmobile.activity.hashlockup.HashLockupActivity;
 import com.cybexmobile.activity.lockassets.LockAssetsActivity;
 import com.cybexmobile.activity.login.LoginActivity;
 import com.cybexmobile.activity.orders.OrdersHistoryActivity;
@@ -236,6 +237,18 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
             return;
         }
         Intent intent = new Intent(getContext(), LockAssetsActivity.class);
+        intent.putExtra(INTENT_PARAM_NAME, mName);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.account_layout_item_hash_lock)
+    public void onHashLockupClick(View view) {
+        if (AntiShake.check(view.getId())) { return; }
+        if(!mIsLoginIn){
+            toLogin();
+            return;
+        }
+        Intent intent = new Intent(getContext(), HashLockupActivity.class);
         intent.putExtra(INTENT_PARAM_NAME, mName);
         startActivity(intent);
     }

@@ -3,6 +3,7 @@ package com.cybexmobile.injection.component;
 import com.cybex.basemodule.injection.annotation.PerActivity;
 import com.cybex.basemodule.injection.component.BaseActivityComponent;
 import com.cybexmobile.activity.gateway.records.DepositAndWithdrawTotalActivity;
+import com.cybexmobile.activity.hashlockup.HashLockupActivity;
 import com.cybexmobile.fragment.main.CybexMainFragment;
 import com.cybexmobile.injection.module.AppActivityModule;
 
@@ -14,4 +15,6 @@ public interface AppActivityComponent {
     void inject(DepositAndWithdrawTotalActivity depositAndWithdrawTotalActivity);
 
     void inject(CybexMainFragment cybexMainFragment);
+
+    void inject(HashLockupActivity hashLockupActivity);
 }

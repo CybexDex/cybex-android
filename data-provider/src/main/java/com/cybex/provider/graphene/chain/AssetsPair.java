@@ -9,6 +9,7 @@ public class AssetsPair {
     private AssetObject baseAsset;
     private AssetObject quoteAsset;
     private Config config;
+    private Form form;
 
     public AssetsPair(String base, String quote) {
         this.base = base;
@@ -63,9 +64,25 @@ public class AssetsPair {
         this.config = config;
     }
 
+    public void setForm(Form form) {
+        this.form = form;
+    }
+
+    public Form getForm() {
+        return form;
+    }
+
     public class Config {
         public String last_price;
         public String amount;
         public String total;
+    }
+
+    public class Form {
+        public String min_trade_amount;
+        public String amount_step;
+        public String price_step;
+        public String min_order_value;
+        public String total_step;
     }
 }

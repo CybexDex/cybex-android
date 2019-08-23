@@ -482,41 +482,29 @@ public class WebSocketService extends Service {
     private void loadAllAssetsPairData(){
         Observable.zip(loadToppingAssetsPair(), loadAssetsPairData(ASSET_ID_ETH), loadAssetsPairData(ASSET_ID_CYB),
                 loadAssetsPairData(ASSET_ID_USDT), loadAssetsPairData(ASSET_ID_BTC), loadPairsConfig(), loadAssetWhiteList(),
-                new Function7<List<AssetsPairToppingResponse>, Map<String,List<AssetsPair>>,
-                                                        Map<String,List<AssetsPair>>, Map<String,List<AssetsPair>>,
-                                                        Map<String,List<AssetsPair>>, JsonObject,
-                                                        List<String>, Map<String,List<AssetsPair>>>() {
-                    @Override
-                    public Map<String,List<AssetsPair>> apply(List<AssetsPairToppingResponse> assetsPairToppingResponses,
-                                                              Map<String, List<AssetsPair>> assetsPairs1,
-                                                              Map<String, List<AssetsPair>> assetsPairs2,
-                                                              Map<String, List<AssetsPair>> assetsPairs3,
-                                                              Map<String, List<AssetsPair>> assetsPairs4,
-                                                              JsonObject assetPairsConfig,
-                                                              List<String> assetWhites) {
-                        mAssetWhiteList.addAll(assetWhites);
-                        mAssetPairsConfig = assetPairsConfig;
-                        assetsPairs1.putAll(assetsPairs2);
-                        assetsPairs1.putAll(assetsPairs3);
-                        assetsPairs1.putAll(assetsPairs4);
-                        if(assetsPairToppingResponses != null && assetsPairToppingResponses.size() > 0){
-                            for(AssetsPairToppingResponse toppingResponse : assetsPairToppingResponses){
-                                List<String> quotes = toppingResponse.getQuotes();
-                                List<AssetsPair> assetsPairs = assetsPairs1.get(toppingResponse.getBase());
-                                if(assetsPairs == null){
-                                    continue;
-                                }
-                                for(int i=0; i<quotes.size(); i++){
-                                    for(AssetsPair assetsPair : assetsPairs){
-                                        if(quotes.get(i).equals(assetsPair.getQuote())){
-                                            assetsPair.setOrder(quotes.size() - i);
-                                        }
+                (assetsPairToppingResponses, assetsPairs1, assetsPairs2, assetsPairs3, assetsPairs4, assetPairsConfig, assetWhites) -> {
+                    mAssetWhiteList.addAll(assetWhites);
+                    mAssetPairsConfig = assetPairsConfig;
+                    assetsPairs1.putAll(assetsPairs2);
+                    assetsPairs1.putAll(assetsPairs3);
+                    assetsPairs1.putAll(assetsPairs4);
+                    if(assetsPairToppingResponses != null && assetsPairToppingResponses.size() > 0){
+                        for(AssetsPairToppingResponse toppingResponse : assetsPairToppingResponses){
+                            List<String> quotes = toppingResponse.getQuotes();
+                            List<AssetsPair> assetsPairs = assetsPairs1.get(toppingResponse.getBase());
+                            if(assetsPairs == null){
+                                continue;
+                            }
+                            for(int i=0; i<quotes.size(); i++){
+                                for(AssetsPair assetsPair : assetsPairs){
+                                    if(quotes.get(i).equals(assetsPair.getQuote())){
+                                        assetsPair.setOrder(quotes.size() - i);
                                     }
                                 }
                             }
                         }
-                        return assetsPairs1;
                     }
+                    return assetsPairs1;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -915,6 +903,7 @@ public class WebSocketService extends Service {
                         JsonElement element = jsonElement.getAsJsonObject().get(AssetUtil.parseSymbolWithTransactionTest(assetsPair.getQuoteAsset().symbol));
                         if(element != null) {
                             assetsPair.setConfig(gson.fromJson(element.getAsJsonObject().get("book").getAsJsonObject(), AssetsPair.Config.class));
+                            assetsPair.setForm(gson.fromJson(element.getAsJsonObject().get("form").getAsJsonObject(), AssetsPair.Form.class));
                         }
                     }
                     WatchlistData watchlist = new WatchlistData(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset());
@@ -922,6 +911,7 @@ public class WebSocketService extends Service {
                     watchlist.setSubscribeId(id.getAndIncrement());
                     watchlist.setOrder(assetsPair.getOrder());
                     watchlist.setAssetPairConfig(assetsPair.getConfig());
+                    watchlist.setAssetPairForm(assetsPair.getForm());
                     watchlistData.add(watchlist);
                 }
                 mWatchlistHashMap.put(entry.getKey(), watchlistData);
