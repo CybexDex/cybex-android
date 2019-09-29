@@ -110,21 +110,18 @@ public class Sha256Object {
 
         @Override
         public void write(byte[] data) {
-            Log.e("writeData", MyUtils.bytesToHex(data));
             digest.update(data, 0, data.length);
             messageDigest.update(data);
         }
 
         @Override
         public void write(byte[] data, int off, int len) {
-            Log.e("writeDatalength", MyUtils.bytesToHex(data));
             digest.update(data, off, len);
             messageDigest.update(data, off, len);
         }
 
         @Override
         public void write(byte data) {
-            Log.e("writeDatabyte", MyUtils.bytesToHex(new byte[] {data}));
             digest.update(data);
             messageDigest.update(data);
         }

@@ -119,7 +119,7 @@ public class PrivateKey {
                 signature = new CompactSignature(byteCompact);
 
                 boolean bResult = PublicKey.is_canonical(signature);
-                if (bResult == true) {
+                if (bResult) {
                     break;
                 }
             }

@@ -56,7 +56,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import io.sentry.Sentry;
 
 import static com.cybex.basemodule.constant.Constant.CYBEX_CONTEST_FLAG;
 import static com.cybex.basemodule.constant.Constant.INTENT_PARAM_ACTION;

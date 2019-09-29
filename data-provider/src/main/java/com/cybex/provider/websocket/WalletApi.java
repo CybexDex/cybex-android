@@ -69,6 +69,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1374,15 +1375,12 @@ public class WalletApi {
     }
 
     public String getTransactionId(String singedTransaction) {
-        Gson gson = new Gson();
-        JsonObject jsonObject = gson.fromJson(singedTransaction, JsonObject.class);
-        String signature = jsonObject.get("signatures").getAsJsonArray().get(0).getAsString();
-        return Sha256Hash.wrap(Sha256Hash.hash(Util.hexToBytes(signature))).toString().substring(0, 40);
-//        if (!mHashMapJsonStringToSignedTransaction.isEmpty()) {
-//            SignedTransaction signedTransaction = mHashMapJsonStringToSignedTransaction.get(singedTransaction);
-//            return signedTransaction.getTransactionID();
-//        }
-//        return null;
+        if (!mHashMapJsonStringToSignedTransaction.isEmpty()) {
+            SignedTransaction signedTransactionObj = mHashMapJsonStringToSignedTransaction.get(singedTransaction);
+            mHashMapJsonStringToSignedTransaction.clear();
+            return signedTransactionObj.getTransactionID();
+        }
+        return null;
     }
 
     public String getTransactionIdFromSignature(String signature) {
