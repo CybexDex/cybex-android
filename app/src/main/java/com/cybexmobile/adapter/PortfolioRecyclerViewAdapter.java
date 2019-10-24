@@ -70,11 +70,7 @@ public class PortfolioRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT;
             layoutParams.width = RecyclerView.LayoutParams.WRAP_CONTENT;
             holder.itemView.setVisibility(View.VISIBLE);
-            if (assetObject.symbol.contains("JADE")) {
-                viewHolder.mAssetSymbol.setText(assetObject.symbol.substring(5, assetObject.symbol.length()));
-            } else {
-                viewHolder.mAssetSymbol.setText(assetObject.symbol);
-            }
+            viewHolder.mAssetSymbol.setText(AssetUtil.parseSymbol(assetObject.symbol));
             double price = AssetUtil.divide(accountBalanceObject.balance, Math.pow(10, assetObject.precision));
             viewHolder.mAssetCybAmount.setText(AssetUtil.formatNumberRounding(price, assetObject.precision));
             viewHolder.mAssetFrozenAmount.setText(item.frozenAmount == 0 ? mContext.getResources().getString(R.string.balance_page_frozen_no_asset) : mContext.getResources().getString(R.string.balance_page_frozen_asset) + AssetUtil.formatNumberRounding(item.frozenAmount, assetObject.precision));

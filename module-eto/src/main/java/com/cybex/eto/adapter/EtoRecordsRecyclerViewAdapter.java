@@ -76,8 +76,8 @@ public class EtoRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         ViewHolder viewHolder = (ViewHolder) holder;
         NewEtoRecord etoRecord = mEtoRecords.get(position);
         viewHolder.mTvEtoName.setText(etoRecord.getExchangeName());
-        viewHolder.mTvJoinAmount.setText(String.format("%s%s", AssetUtil.fmt(etoRecord.getPayAmount() / Math.pow(10, etoRecord.getPayAssetObject().precision)), AssetUtil.parseSymbol(etoRecord.getPayAssetObject().symbol)));
-        viewHolder.mTvReceiveAmount.setText(String.format("%s%s", AssetUtil.fmt(etoRecord.getReceiveAmount() / Math.pow(10, etoRecord.getReceiveAssetObject().precision)), AssetUtil.parseSymbol(etoRecord.getReceiveAssetObject().symbol)));
+        viewHolder.mTvJoinAmount.setText(etoRecord.getPayAssetObject() == null ? mContext.getResources().getString(R.string.text_empty) : String.format("%s%s", AssetUtil.fmt(etoRecord.getPayAmount() / Math.pow(10, etoRecord.getPayAssetObject().precision)), AssetUtil.parseSymbol(etoRecord.getPayAssetObject().symbol)));
+        viewHolder.mTvReceiveAmount.setText(etoRecord.getReceiveAssetObject() == null ? mContext.getResources().getString(R.string.text_empty) : String.format("%s%s", AssetUtil.fmt(etoRecord.getReceiveAmount() / Math.pow(10, etoRecord.getReceiveAssetObject().precision)), AssetUtil.parseSymbol(etoRecord.getReceiveAssetObject().symbol)));
         viewHolder.mTvTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm, DateUtils.formatToMillis(etoRecord.getOccurence())));
 //        if(TextUtils.isEmpty(etoRecord.getReason())){
 //            viewHolder.mTvEtoOperateResult.setText(mContext.getResources().getString(R.string.text_received_success));

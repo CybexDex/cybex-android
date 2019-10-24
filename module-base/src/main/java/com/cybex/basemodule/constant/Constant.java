@@ -116,6 +116,7 @@ public class Constant {
     public static final String ASSET_SYMBOL_CYB = "CYB";
     public static final String ASSET_SYMBOL_USDT = "USDT";
     public static final String ASSET_SYMBOL_BTC = "BTC";
+    public static final String ASSET_SYMBOL_JADE = "JADE";
 
     /**
      * intent request and result code

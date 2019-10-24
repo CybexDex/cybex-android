@@ -86,11 +86,11 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
             return;
         }
         if (mName.equals(WithdrawAddressManagerActivity.class.getName())) {
-            holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
+            holder.mAssetName.setText(AssetUtil.parseSymbol(assetObject.symbol));
             holder.mAssetPrice.setText(String.valueOf(depositAndWithdrawObject.getCount()));
             loadImage(mDataList.get(position).getId(), holder.mAssetIcon);
         } else {
-            holder.mAssetName.setText(MyUtils.removeJadePrefix(assetObject.symbol));
+            holder.mAssetName.setText(AssetUtil.parseSymbol(assetObject.symbol));
             holder.mAssetFullName.setText(String.format(" (%s)", depositAndWithdrawObject.getProjectName()));
             holder.mAssetPrice.setText(depositAndWithdrawObject.isEnable() ? "" : mContext.getResources().getString(R.string.gate_way_suspended));
             loadImage(depositAndWithdrawObject.getId(), holder.mAssetIcon);

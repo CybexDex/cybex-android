@@ -1,0 +1,1622 @@
+{
+  "USDT": {
+    "CYB": {
+      "info": {
+        "last_price": "5",
+        "change": "5",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "5",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "5",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "ETH": {
+      "info": {
+        "last_price": "2",
+        "change": "2",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "2",
+        "amount": "5",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "2",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00001",
+        "amount_step": "0.00001",
+        "price_step": "0.01",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "BTC": {
+      "info": {
+        "last_price": "2",
+        "change": "2",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "2",
+        "amount": "5",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "2",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00001",
+        "amount_step": "0.00001",
+        "price_step": "0.01",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "EOS": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "LTC": {
+      "info": {
+        "last_price": "2",
+        "change": "2",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "2",
+        "amount": "5",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "2",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00001",
+        "amount_step": "0.00001",
+        "price_step": "0.01",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "XRP": {
+      "info": {
+        "last_price": "5",
+        "change": "5",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "5",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "5",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "MXC": {
+      "info": {
+        "last_price": "5",
+        "change": "5",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "5",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "5",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "RING": {
+      "info": {
+        "last_price": "5",
+        "change": "5",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "5",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "5",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "NWT": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "ATOM": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "LC": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00000001",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "DOT": {
+      "info": {
+        "last_price": "3",
+        "change": "3",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "3",
+        "amount": "4",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "3",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.0001",
+        "amount_step": "0.0001",
+        "price_step": "0.001",
+        "min_order_value": "1",
+        "total_step": "0.000001"
+      }
+    },
+    "QLC": {
+      "info": {
+        "last_price": "5",
+        "change": "5",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "5",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "5",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "ZEC": {
+      "info": {
+        "last_price": "2",
+        "change": "2",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "2",
+        "amount": "5",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "2",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00001",
+        "amount_step": "0.00001",
+        "price_step": "0.01",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "PCX": {
+      "info": {
+        "last_price": "2",
+        "change": "2",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "2",
+        "amount": "4",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "2",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.01",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "TOMO": {
+      "info": {
+        "last_price": "5",
+        "change": "5",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "5",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "5",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "KSM": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "CTK": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "EON": {
+      "info": {
+        "last_price": "5",
+        "change": "5",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "5",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "5",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "QGAS": {
+      "info": {
+        "last_price": "3",
+        "change": "3",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "3",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "3",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.001",
+        "min_order_value": "0.02",
+        "total_step": "0.000001"
+      }
+    },
+    "DFN": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    }
+  },
+  "ETH": {
+    "JCT": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "BAT": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "CYB": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "EOS": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "4",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.0001",
+        "amount_step": "0.0001",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "MKR": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "4",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.0001",
+        "amount_step": "0.0001",
+        "price_step": "0.0001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "MVP": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "LHT": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "VET": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "MT": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "1",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.1",
+        "amount_step": "0.1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "BTC": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "4",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.0001",
+        "amount_step": "0.0001",
+        "price_step": "0.0001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "FUN": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "TCT": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "GNX": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "DPY": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "PPT": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "CTXC": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "XRP": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "POLY": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "CENNZ": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "NES": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "OMG": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "NASH": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "RING": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "ATOM": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "4",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.0001",
+        "amount_step": "0.0001",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "IRIS": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    },
+    "LC": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00000001",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "CTK": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "4",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.0001",
+        "amount_step": "0.0001",
+        "price_step": "0.0001",
+        "min_order_value": "0.00001",
+        "total_step": "0.000001"
+      }
+    }
+  },
+  "BTC": {
+    "LTC": {
+      "info": {
+        "last_price": "6",
+        "change": "6",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "6",
+        "amount": "2",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "6",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.01",
+        "amount_step": "0.01",
+        "price_step": "0.000001",
+        "min_order_value": "0.000002",
+        "total_step": "0.000001"
+      }
+    },
+    "MXC": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.000002",
+        "total_step": "0.000001"
+      }
+    },
+    "NASH": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.000002",
+        "total_step": "0.000001"
+      }
+    },
+    "QLC": {
+      "info": {
+        "last_price": "8",
+        "change": "8",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "8",
+        "amount": "0",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "8",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "1",
+        "amount_step": "1",
+        "price_step": "0.00000001",
+        "min_order_value": "0.000002",
+        "total_step": "0.000001"
+      }
+    }
+  },
+  "CYB": {
+    "NAS": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "INK": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "MT": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "GNX": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "CTXC": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "SNT": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "EOS": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "BAT": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "PAY": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "TCT": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "DPY": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "XRP": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "KEY": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "RING": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    },
+    "NASH": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "5"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "10",
+        "total_step": "0.00001"
+      }
+    }
+  },
+  "ARENA.USDT": {
+    "ARENA.ETH": {
+      "info": {
+        "last_price": "2",
+        "change": "2",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "2",
+        "amount": "5",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "2",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00001",
+        "amount_step": "0.00001",
+        "price_step": "0.01",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "CANDY.BTC": {
+      "info": {
+        "last_price": "2",
+        "change": "2",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "2",
+        "amount": "5",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "2",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.00001",
+        "amount_step": "0.00001",
+        "price_step": "0.01",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    },
+    "ARENA.EOS": {
+      "info": {
+        "last_price": "4",
+        "change": "4",
+        "volume": "2"
+      },
+      "book": {
+        "last_price": "4",
+        "amount": "3",
+        "total": "6"
+      },
+      "choose": {
+        "last_price": "4",
+        "volume": "2"
+      },
+      "form": {
+        "min_trade_amount": "0.001",
+        "amount_step": "0.001",
+        "price_step": "0.0001",
+        "min_order_value": "0.002",
+        "total_step": "0.000001"
+      }
+    }
+  }
+}

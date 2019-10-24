@@ -1,5 +1,7 @@
 package com.cybex.basemodule.utils;
 
+import com.cybex.basemodule.constant.Constant;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -20,10 +22,10 @@ public class AssetUtil {
         if(symbolArr.length == 1){
             return symbolArr[0];
         }
-        if(symbolArr.length == 2){
+        if(assetSymbol.contains(Constant.ASSET_SYMBOL_JADE) && symbolArr.length == 2){
             return symbolArr[1];
         }
-        return "";
+        return assetSymbol;
     }
 
     public static String parseSymbolWithTransactionTest(String assetSymbol){

@@ -1,6 +1,7 @@
 package com.cybex.basemodule.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -48,6 +49,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.reactivestreams.Publisher;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -551,6 +554,31 @@ public class WebSocketService extends Service {
                 .getAssetPairsConfig();
     }
 
+    public String loadJSONFromAsset(Context context) {
+        String json = null;
+        try {
+            InputStream is = context.getAssets().open("test.json");
+
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+
+            is.read(buffer);
+
+            is.close();
+
+            json = new String(buffer, "UTF-8");
+
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+
+    }
+
+
     //加载交易对数据
     private Observable<Map<String, List<AssetsPair>>> loadAssetsPairData(final String baseAsset) {
         return RetrofitFactory.getInstance()
@@ -898,13 +926,17 @@ public class WebSocketService extends Service {
                 }
                 List<WatchlistData> watchlistData = new ArrayList<>();
                 for (AssetsPair assetsPair : assetsPairs) {
-                    JsonElement jsonElement = mAssetPairsConfig.get(AssetUtil.parseSymbolWithTransactionTest(assetsPair.getBaseAsset().symbol));
+                    JsonElement jsonElement = mAssetPairsConfig.get(AssetUtil.parseSymbol(assetsPair.getBaseAsset().symbol));
                     if(jsonElement != null) {
-                        JsonElement element = jsonElement.getAsJsonObject().get(AssetUtil.parseSymbolWithTransactionTest(assetsPair.getQuoteAsset().symbol));
+                        JsonElement element = jsonElement.getAsJsonObject().get(AssetUtil.parseSymbol(assetsPair.getQuoteAsset().symbol));
                         if(element != null) {
                             assetsPair.setConfig(gson.fromJson(element.getAsJsonObject().get("book").getAsJsonObject(), AssetsPair.Config.class));
                             assetsPair.setForm(gson.fromJson(element.getAsJsonObject().get("form").getAsJsonObject(), AssetsPair.Form.class));
+                        } else {
+                            continue;
                         }
+                    } else {
+                        continue;
                     }
                     WatchlistData watchlist = new WatchlistData(assetsPair.getBaseAsset(), assetsPair.getQuoteAsset());
                     AtomicInteger id = BitsharesWalletWraper.getInstance().get_call_id();

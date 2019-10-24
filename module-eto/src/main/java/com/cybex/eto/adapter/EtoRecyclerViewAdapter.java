@@ -52,7 +52,7 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void setData(List<EtoProject> etoProjects){
         mEtoProjects = etoProjects;
-        notifyDataSetChanged();
+        notifyItemRangeChanged(1, etoProjects.size());
     }
 
     public void setHeaderData(List<EtoBanner> etoBanners){
@@ -65,7 +65,7 @@ public class EtoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void notifyProjectItem(EtoProject etoProject){
-        notifyItemChanged(mEtoProjects.indexOf(etoProject) + 1, etoProject);
+//        notifyItemChanged(mEtoProjects.indexOf(etoProject) + 1, etoProject);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){

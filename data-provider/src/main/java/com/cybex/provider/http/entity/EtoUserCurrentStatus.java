@@ -2,14 +2,14 @@ package com.cybex.provider.http.entity;
 
 public class EtoUserCurrentStatus {
     private boolean real;
-    private float current_base_token_count;
+    private double current_base_token_count;
 
     public EtoUserCurrentStatus(boolean real, int current_base_token_count) {
         this.real = real;
         this.current_base_token_count = current_base_token_count;
     }
 
-    public float getCurrent_base_token_count() {
+    public double getCurrent_base_token_count() {
         return current_base_token_count;
     }
 
