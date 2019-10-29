@@ -28,6 +28,7 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.http.RetrofitFactory;
 import com.cybexmobile.R;
 import com.cybexmobile.adapter.TransferRecordsRecyclerViewAdapter;
+import com.cybexmobile.data.item.AccountBalanceObjectItem;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -73,6 +74,7 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
 
     private boolean mIsLoginIn;
     private String mName;
+    private List<String> mWhiteList;
     private List<TransferHistoryItem> mTransferHistoryItems = new ArrayList<>();
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
@@ -203,11 +205,28 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                 }));
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadAsset(Event.LoadAsset event) {
+        AssetObject assetObject = event.getData();
+        if (assetObject == null) {
+            return;
+        }
+        for (int i = 0; i < mTransferHistoryItems.size(); i++) {
+            TransferHistoryItem item = mTransferHistoryItems.get(i);
+            if (assetObject.id.toString().equals(item.transferOperation.amount.asset_id.toString()) && item.transferAsset == null) {
+                item.transferAsset = assetObject;
+                mTransferRecordsAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            mWhiteList = mWebSocketService.getAssetWhiteList();
             if(mIsLoginIn){
                 FullAccountObject fullAccountObject = mWebSocketService.getFullAccount(mName);
                 if(fullAccountObject != null){
@@ -251,13 +270,14 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
                             item = new TransferHistoryItem();
                             item.accountHistoryObject = accountHistoryObject;
                             item.transferOperation = gson.fromJson(accountHistoryObject.op.get(1), Operations.transfer_operation.class);
-                            if(!mAccountObject.id.toString().equals("1.2.4733") &&
-                                    (item.transferOperation.to.toString().equals("1.2.4733") ||
-                                            item.transferOperation.from.toString().equals("1.2.4733"))){
-                                continue;
-                            }
+//                            if(!mAccountObject.id.toString().equals("1.2.4733") &&
+//                                    (item.transferOperation.to.toString().equals("1.2.4733") ||
+//                                            item.transferOperation.from.toString().equals("1.2.4733"))){
+//                                continue;
+//                            }
                             item.transferAsset = mWebSocketService.getAssetObject(item.transferOperation.amount.asset_id.toString());
                             item.feeAsset = mWebSocketService.getAssetObject(item.transferOperation.fee.asset_id.toString());
+                            item.isContainedInWhiteList = mWhiteList.contains(item.transferOperation.amount.asset_id.toString());
                             if(item.transferOperation.from.equals(mAccountObject.id)){
                                 item.fromAccount = mAccountObject;
                             }
@@ -288,5 +308,6 @@ public class TransferRecordsActivity extends BaseActivity implements TransferRec
         public AssetObject feeAsset;
         public AssetObject transferAsset;
         public Address address;
+        public boolean isContainedInWhiteList;
     }
 }

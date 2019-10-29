@@ -75,6 +75,14 @@ public class TransferRecordsRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         AccountObject toAccount = transferHistoryItem.toAccount;
         AssetObject transferAsset = transferHistoryItem.transferAsset;
         Address address = transferHistoryItem.address;
+
+
+        viewHolder.mTvAccountName.setAlpha(transferHistoryItem.isContainedInWhiteList ? 1 : 0.3f);
+        viewHolder.mTvAmount.setAlpha(transferHistoryItem.isContainedInWhiteList ? 1 : 0.3f);
+        viewHolder.mTvStatus.setAlpha(transferHistoryItem.isContainedInWhiteList ? 1 : 0.3f);
+        viewHolder.mIvTransferAction.setAlpha(transferHistoryItem.isContainedInWhiteList ? 1 : 0.3f);
+        viewHolder.mTvDate.setAlpha(transferHistoryItem.isContainedInWhiteList ? 1 : 0.3f);
+
         /**
          * fix bug：CYM-518
          * 解决转入转出状态错误
