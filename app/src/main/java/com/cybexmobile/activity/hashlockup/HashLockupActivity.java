@@ -16,10 +16,12 @@ import com.cybex.basemodule.base.BaseActivity;
 import com.cybex.basemodule.event.Event;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.graphene.chain.AccountObject;
+import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.provider.graphene.chain.FullAccountObject;
 import com.cybex.provider.graphene.chain.HtlcAdapterItemObject;
 import com.cybex.provider.graphene.chain.HtlcObject;
 import com.cybexmobile.R;
+import com.cybexmobile.activity.lockassets.LockAssetsActivity;
 import com.cybexmobile.injection.base.AppBaseActivity;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -125,6 +127,22 @@ public class HashLockupActivity extends BaseActivity implements HashLockUpView, 
                 break;
             }
 
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadAsset(Event.LoadAsset event) {
+        AssetObject assetObject = event.getData();
+        if (assetObject == null) {
+            return;
+        }
+        for (int i = 0; i < mHtlcList.size(); i++) {
+            HtlcAdapterItemObject item = mHtlcList.get(i);
+            if (item.getHtlcObject().transfer.asset_id.toString().equals(assetObject.id.toString()) && item.getAssetObject() == null) {
+                item.setAssetObject(assetObject);
+                mHashLockUpAdapter.notifyItemChanged(i);
+                break;
+            }
         }
     }
 

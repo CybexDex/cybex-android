@@ -94,9 +94,11 @@ public class HashLockUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         HashLockUpAdapter.ViewHolder viewHolder = (HashLockUpAdapter.ViewHolder) holder;
         HtlcAdapterItemObject item = mItems.get(position);
         AssetObject itemAssetObject = item.getAssetObject();
-        loadImage(itemAssetObject.id.toString(), viewHolder.mAssetIcon);
-        viewHolder.mAssetSymbol.setText(AssetUtil.parseSymbol(itemAssetObject.symbol));
-        viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getHtlcObject().transfer.amount / Math.pow(10, itemAssetObject.precision), AssetUtil.parseSymbol(itemAssetObject.symbol)));
+        if (itemAssetObject != null) {
+            loadImage(itemAssetObject.id.toString(), viewHolder.mAssetIcon);
+            viewHolder.mAssetSymbol.setText(AssetUtil.parseSymbol(itemAssetObject.symbol));
+            viewHolder.mAssetAmount.setText(String.format("%." + itemAssetObject.precision + "f %s", item.getHtlcObject().transfer.amount / Math.pow(10, itemAssetObject.precision), AssetUtil.parseSymbol(itemAssetObject.symbol)));
+        }
         viewHolder.mEndTime.setText(DateUtils.formatToDate(PATTERN_MM_dd_HH_mm_ss, DateUtils.formatToMillis(item.getHtlcObject().conditions.time_lock.expiration)));
         viewHolder.mHash.setText((String) item.getHtlcObject().conditions.hash_lock.preimage_hash.get(1));
         viewHolder.mInitiator.setText(item.getFrom());

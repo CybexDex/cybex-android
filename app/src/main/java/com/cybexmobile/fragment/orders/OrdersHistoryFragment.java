@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,6 +74,8 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
     private OrdersHistoryRecyclerViewAdapter mOrdersHistoryRecyclerViewAdapter;
 
     private List<OpenOrderItem> mOrderHistoryItems = new ArrayList<>();
+    private Map<String, List<AssetsPair>> mAssetPairsMap;
+
 
     private Unbinder mUnbinder;
 
@@ -172,6 +175,7 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            mAssetPairsMap = mWebSocketService.getAssetPairHashMap();
             mFullAccount = mWebSocketService.getFullAccount(mName);
             loadLastOrderId();
         }
@@ -250,7 +254,7 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
                                     mFullAccount.account.id.toString(),
                                     mLastOrderId,
                                     MAX_PAGE_COUNT,
-                                    false,
+                                    true,
                                     new MessageCallback<Reply<List<LimitOrder>>>() {
                                         @Override
                                         public void onMessage(Reply<List<LimitOrder>> reply) {
@@ -317,10 +321,16 @@ public class OrdersHistoryFragment extends BaseFragment implements OnRefreshList
     }
 
     private List<List<String>> getFilteredOrders() {
-        List<String> pairs1 = new ArrayList<>(Arrays.asList("1.3.1148", "1.3.1149"));
-        List<String> pairs2 = new ArrayList<>(Arrays.asList("1.3.1148", "1.3.1150"));
-        List<String> pairs3 = new ArrayList<>(Arrays.asList("1.3.1148", "1.3.1151"));
-        return new ArrayList<>(Arrays.asList(pairs1, pairs2, pairs3));
+        List<List<String>> result = new ArrayList<>();
+        for(Map.Entry<String, List<AssetsPair>> entry : mAssetPairsMap.entrySet()) {
+            for (AssetsPair assetsPairs : entry.getValue()) {
+                List<String> pairs = new ArrayList<>();
+                pairs.add(assetsPairs.getBase());
+                pairs.add(assetsPairs.getQuote());
+                result.add(pairs);
+            }
+        }
+        return result;
     }
 
 }

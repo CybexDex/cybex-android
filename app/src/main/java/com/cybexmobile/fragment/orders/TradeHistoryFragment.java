@@ -96,6 +96,8 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
     private int mCurrPage;
     private int mCount = 0;
 
+    private  Map<String, List<AssetsPair>> mAssetPairsMap;
+
     public static TradeHistoryFragment getInstance(WatchlistData watchlistData, boolean isLoadAll) {
         TradeHistoryFragment fragment = new TradeHistoryFragment();
         Bundle bundle = new Bundle();
@@ -209,6 +211,7 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
         public void onServiceConnected(ComponentName name, IBinder service) {
             WebSocketService.WebSocketBinder binder = (WebSocketService.WebSocketBinder) service;
             mWebSocketService = binder.getService();
+            mAssetPairsMap = mWebSocketService.getAssetPairHashMap();
             mFullAccountObject = mWebSocketService.getFullAccount(mName);
             loadExchangeHistory(mCurrPage, MAX_PAGE_COUNT, true);
         }
@@ -236,8 +239,8 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
                         limit,
                         "null",
                         "null",
-                        mIsLoadAll ? "null" : mWatchlistData.getBaseId() + "_" + mWatchlistData.getQuoteId() + "," + mWatchlistData.getQuoteId() + "_" + mWatchlistData.getBaseId(),
-                        mIsLoadAll ? "1.3.1148_1.3.1149,1.3.1149_1.3.1148,1.3.1148_1.3.1150,1.3.1150_1.3.1148,1.3.1148_1.3.1151,1.3.1151_1.3.1148" : "null")
+                        mIsLoadAll ? constructFilterInParam(mAssetPairsMap) : mWatchlistData.getBaseId() + "_" + mWatchlistData.getQuoteId() + "," + mWatchlistData.getQuoteId() + "_" + mWatchlistData.getBaseId(),
+                        mIsLoadAll ? "null" : "null")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(objectList -> {
@@ -273,6 +276,23 @@ public class TradeHistoryFragment extends BaseFragment implements OnRefreshListe
                     mRefreshLayout.finishLoadMore();
                 }));
 
+    }
+
+    private String constructFilterInParam(Map<String, List<AssetsPair>> assetParis) {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, List<AssetsPair>> item : assetParis.entrySet()) {
+            for (AssetsPair pairs : item.getValue()) {
+                builder.append(pairs.getBase());
+                builder.append("_");
+                builder.append(pairs.getQuote());
+                builder.append(",");
+                builder.append(pairs.getQuote());
+                builder.append("_");
+                builder.append(pairs.getBase());
+                builder.append(",");
+            }
+        }
+        return builder.toString().substring(0, builder.toString().length() - 1);
     }
 
     public class TradeHistoryItem {
