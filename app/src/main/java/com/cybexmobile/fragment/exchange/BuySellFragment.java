@@ -852,6 +852,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
      */
     public void toExchange(){
         BaseActivity activity = (BaseActivity) getActivity();
+        showLoadDialog(true);
         try {
 
             if (isLoginFromENotes() && !mIsUsedCloudPassword) {
@@ -941,11 +942,13 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
 
         @Override
         public void onMessage(Reply<String> reply) {
+            hideLoadDialog();
             EventBus.getDefault().post(new Event.LimitOrderCreate(reply.result == null && reply.error == null));
         }
 
         @Override
         public void onFailure() {
+            hideLoadDialog();
             EventBus.getDefault().post(new Event.LimitOrderCreate(false));
         }
     };

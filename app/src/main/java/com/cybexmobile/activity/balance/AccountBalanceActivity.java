@@ -387,7 +387,6 @@ public class AccountBalanceActivity extends BaseActivity {
                     if (mAccountBalanceRecyclerView.getVisibility() != View.VISIBLE) {
                         mAccountBalanceRecyclerView.setVisibility(View.VISIBLE);
                     }
-                    Log.e("adapterChange", "adapterChange");
                     mBalanceRecyclerAdapter.notifyDataSetChanged();
 
                     break;

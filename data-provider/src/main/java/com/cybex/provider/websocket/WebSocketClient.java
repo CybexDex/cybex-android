@@ -654,6 +654,25 @@ public class WebSocketClient extends WebSocketListener {
         sendForReply(FLAG_DATABASE, callObject, replyObject);
     }
 
+    public void get_ticker_batch(List<List<String>> tickerBatch, MessageCallback<Reply<List<MarketTicker>>> callback) throws  NetworkStatusException {
+        Call callObject = new Call();
+        callObject.id = mCallId.getAndIncrement();
+        callObject.method = "call";
+        callObject.params = new ArrayList<>();
+        callObject.params.add(_nDatabaseId);
+        callObject.params.add("get_ticker_batch");
+
+        List<Object> paramList = new ArrayList<>();
+        paramList.add(tickerBatch);
+        callObject.params.add(paramList);
+
+        ReplyProcessImpl<Reply<List<MarketTicker>>> replyObject =
+                new ReplyProcessImpl<>(new TypeToken<Reply<List<MarketTicker>>>() {
+                }.getType(), callback);
+        sendForReply(FLAG_DATABASE, callObject, replyObject);
+    }
+
+
     public void get_trade_history(String base, String quote, Date start, Date end, int limit,
                                                MessageCallback<Reply<List<MarketTrade>>> callback) throws NetworkStatusException {
         Call callObject = new Call();

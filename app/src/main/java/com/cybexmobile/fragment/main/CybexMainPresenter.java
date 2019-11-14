@@ -77,13 +77,11 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                 .subscribe(new Consumer<List<HotAssetPair>>() {
                     @Override
                     public void accept(List<HotAssetPair> hotAssetPairs) throws Exception {
-                        Log.e("serviceLi", hotAssetPairs.get(0).getBase());
                         getMvpView().onLoadHotAssetPairs(hotAssetPairs);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.e("serviceLi", throwable.getMessage());
                         getMvpView().onError();
                     }
                 }));
@@ -115,13 +113,11 @@ public class CybexMainPresenter<T extends CybexMainMvpView> extends BasePresente
                 .subscribe(new Consumer<List<SubLink>>() {
                     @Override
                     public void accept(List<SubLink> subLinks) throws Exception {
-                        Log.e("ssss", subLinks.get(1).getDesc());
                         getMvpView().onLoadSubLinks(subLinks);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.e("sss", throwable.getMessage());
                         getMvpView().onError();
                     }
                 }));

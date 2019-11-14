@@ -78,7 +78,7 @@ public class BitsharesWalletWraper {
     private BitsharesWalletWraper() {
         //mstrWalletFilePath = BitsharesApplication.getInstance().getFilesDir().getPath();
         mstrWalletFilePath += "/wallet.json";
-        mUnlockWalletPeriod = PreferenceManager.getDefaultSharedPreferences(BaseActivity.getContext()).getInt(Constant.PREF_UNLOCK_WALLET_PERIOD, 1);
+        mUnlockWalletPeriod = PreferenceManager.getDefaultSharedPreferences(BaseActivity.getContext()).getInt(Constant.PREF_UNLOCK_WALLET_PERIOD, 5);
         EventBus.getDefault().register(this);
     }
 
@@ -282,10 +282,12 @@ public class BitsharesWalletWraper {
     }
 
     public int lock() {
+        Log.e("lockWallet", "lock");
         return mWalletApi.lock();
     }
 
     private void startLockWalletTimer() {
+        Log.e("lockWallet", "unLock");
         lockWalletDisposable = Flowable.intervalRange(0, 0, mUnlockWalletPeriod, 0, TimeUnit.MINUTES)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(this::lock)
@@ -685,6 +687,12 @@ public class BitsharesWalletWraper {
                            MessageCallback<Reply<MarketTicker>> callback) throws NetworkStatusException {
         mWalletApi.get_ticker(base, quote, callback);
     }
+
+    public void get_ticker_batch(List<List<String>> tickerBatch, MessageCallback<Reply<List<MarketTicker>>> callback) throws NetworkStatusException {
+        mWalletApi.get_ticker_batch(tickerBatch, callback);
+    }
+
+
 
 //    public List<MarketTrade> get_trade_history(String base, String quote, Date start, Date end, int limit)
 //            throws NetworkStatusException {

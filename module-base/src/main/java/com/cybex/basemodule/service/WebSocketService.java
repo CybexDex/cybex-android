@@ -177,26 +177,26 @@ public class WebSocketService extends Service {
     private void getWebsocketNode() {
         compositeDisposable.add(
                 RetrofitFactory.getInstance().api().getWebSocketNodes()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .retry()
-                .subscribe(
-                        webSocketNodeResponse -> {
-                            if (webSocketNodeResponse != null) {
-                                FullNodeServerSelect.getInstance().setmListNode(webSocketNodeResponse.getNodes());
-                                WebSocketNodeConfig.getInstance().setLimit_order(webSocketNodeResponse.getLimitOrder());
-                                WebSocketNodeConfig.getInstance().setMdp(webSocketNodeResponse.getMdp());
-                                WebSocketNodeConfig.getInstance().setEto(webSocketNodeResponse.getEto());
-                                WebSocketNodeConfig.getInstance().setGateway1(webSocketNodeResponse.getGateway1());
-                                WebSocketNodeConfig.getInstance().setGateway1_query(webSocketNodeResponse.getGateway1_query());
-                                WebSocketNodeConfig.getInstance().setGateway2(webSocketNodeResponse.getGateway2());
-                                BitsharesWalletWraper.getInstance().build_connect();
-                            }
-                        },
-                        throwable -> {
-                            Log.e("NodeError: --", throwable.getMessage());
-                        }
-                )
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .retry()
+                        .subscribe(
+                                webSocketNodeResponse -> {
+                                    if (webSocketNodeResponse != null) {
+                                        FullNodeServerSelect.getInstance().setmListNode(webSocketNodeResponse.getNodes());
+                                        WebSocketNodeConfig.getInstance().setLimit_order(webSocketNodeResponse.getLimitOrder());
+                                        WebSocketNodeConfig.getInstance().setMdp(webSocketNodeResponse.getMdp());
+                                        WebSocketNodeConfig.getInstance().setEto(webSocketNodeResponse.getEto());
+                                        WebSocketNodeConfig.getInstance().setGateway1(webSocketNodeResponse.getGateway1());
+                                        WebSocketNodeConfig.getInstance().setGateway1_query(webSocketNodeResponse.getGateway1_query());
+                                        WebSocketNodeConfig.getInstance().setGateway2(webSocketNodeResponse.getGateway2());
+                                        BitsharesWalletWraper.getInstance().build_connect();
+                                    }
+                                },
+                                throwable -> {
+                                    Log.e("NodeError: --", throwable.getMessage());
+                                }
+                        )
         );
 
     }
@@ -211,7 +211,8 @@ public class WebSocketService extends Service {
                     @Override
                     public void accept(JsonObject jsonObject) throws Exception {
                         Gson gson = new Gson();
-                        Map<String, String> result = gson.fromJson(jsonObject, new TypeToken<Map<String, String>>(){}.getType());
+                        Map<String, String> result = gson.fromJson(jsonObject, new TypeToken<Map<String, String>>() {
+                        }.getType());
                         AssetPairCache.getInstance().setEvaProjectNames(result);
                     }
                 }, new Consumer<Throwable>() {
@@ -258,7 +259,7 @@ public class WebSocketService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e( TAG, "OnDestroyService");
+        Log.e(TAG, "OnDestroyService");
         cancelRMBSubscription();
         cancelWatchlistWorkerSchedule();
         cancelFullAccountWorkerSchedule();
@@ -270,7 +271,7 @@ public class WebSocketService extends Service {
     //加载行情数据
     public void loadWatchlistData(String baseAssetId) {
         mCurrentBaseAssetId = baseAssetId;
-        if(mNetworkState == TYPE_NOT_CONNECTED){
+        if (mNetworkState == TYPE_NOT_CONNECTED) {
             return;
         }
         List<WatchlistData> watchlistDatas = mWatchlistHashMap.get(baseAssetId);
@@ -283,15 +284,16 @@ public class WebSocketService extends Service {
 
     /**
      * 加载热点行情数据
+     *
      * @param hotAssetPairs
      */
-    public void loadHotWatchlistData(List<HotAssetPair> hotAssetPairs){
-        if(hotAssetPairs == null || hotAssetPairs.size() == 0 || mNetworkState == TYPE_NOT_CONNECTED){
+    public void loadHotWatchlistData(List<HotAssetPair> hotAssetPairs) {
+        if (hotAssetPairs == null || hotAssetPairs.size() == 0 || mNetworkState == TYPE_NOT_CONNECTED) {
             return;
         }
         mHotAssetPair = hotAssetPairs;
         List<WatchlistData> allWatchlistDatas = getAllWatchlistData();
-        if(allWatchlistDatas != null){
+        if (allWatchlistDatas != null) {
             List<WatchlistData> hotWatchlistDatas = getHotWatchlistData(hotAssetPairs, allWatchlistDatas);
             EventBus.getDefault().post(new Event.UpdateHotWatchlists(hotWatchlistDatas, allWatchlistDatas));
             return;
@@ -299,16 +301,16 @@ public class WebSocketService extends Service {
         loadAllAssetsPairData();
     }
 
-    private List<WatchlistData> getHotWatchlistData(List<HotAssetPair> hotAssetPairs, List<WatchlistData> allWatchlistDatas){
-        if(hotAssetPairs == null || hotAssetPairs.size() == 0 ||
-                allWatchlistDatas == null || allWatchlistDatas.size() == 0){
+    private List<WatchlistData> getHotWatchlistData(List<HotAssetPair> hotAssetPairs, List<WatchlistData> allWatchlistDatas) {
+        if (hotAssetPairs == null || hotAssetPairs.size() == 0 ||
+                allWatchlistDatas == null || allWatchlistDatas.size() == 0) {
             return null;
         }
         List<WatchlistData> watchlistDatas = new ArrayList<>();
-        for(HotAssetPair hotAssetPair : hotAssetPairs){
-            for(WatchlistData watchlistData : allWatchlistDatas){
-                if(!watchlistData.getQuoteId().equals(hotAssetPair.getQuote()) ||
-                        !watchlistData.getBaseId().equals(hotAssetPair.getBase())){
+        for (HotAssetPair hotAssetPair : hotAssetPairs) {
+            for (WatchlistData watchlistData : allWatchlistDatas) {
+                if (!watchlistData.getQuoteId().equals(hotAssetPair.getQuote()) ||
+                        !watchlistData.getBaseId().equals(hotAssetPair.getBase())) {
                     continue;
                 }
                 watchlistDatas.add(watchlistData);
@@ -328,14 +330,14 @@ public class WebSocketService extends Service {
         return watchlistDatas;
     }
 
-    public void loadLimitOrderCreateFee(String assetId, int operationId, Operations.base_operation operation){
-        if(mLimitOrderCreateFees == null){
+    public void loadLimitOrderCreateFee(String assetId, int operationId, Operations.base_operation operation) {
+        if (mLimitOrderCreateFees == null) {
             mLimitOrderCreateFees = Collections.synchronizedList(new ArrayList<FeeAmountObject>());
         }
-        if(mLimitOrderCreateFees.size() > 0){
-            for(FeeAmountObject fee : mLimitOrderCreateFees){
-                if(!assetId.equals(fee.asset_id)){
-                   continue;
+        if (mLimitOrderCreateFees.size() > 0) {
+            for (FeeAmountObject fee : mLimitOrderCreateFees) {
+                if (!assetId.equals(fee.asset_id)) {
+                    continue;
                 }
                 EventBus.getDefault().post(new Event.LoadRequiredFee(fee));
                 return;
@@ -348,13 +350,13 @@ public class WebSocketService extends Service {
         }
     }
 
-    public void loadLimitOrderCancelFee(String assetId, int operationId, Operations.base_operation operation){
-        if(mLimitOrderCancelFees == null){
+    public void loadLimitOrderCancelFee(String assetId, int operationId, Operations.base_operation operation) {
+        if (mLimitOrderCancelFees == null) {
             mLimitOrderCancelFees = Collections.synchronizedList(new ArrayList<FeeAmountObject>());
         }
-        if(mLimitOrderCancelFees.size() > 0){
-            for(FeeAmountObject fee : mLimitOrderCancelFees){
-                if(!assetId.equals(fee.asset_id)){
+        if (mLimitOrderCancelFees.size() > 0) {
+            for (FeeAmountObject fee : mLimitOrderCancelFees) {
+                if (!assetId.equals(fee.asset_id)) {
                     continue;
                 }
                 EventBus.getDefault().post(new Event.LoadRequiredCancelFee(fee));
@@ -389,25 +391,25 @@ public class WebSocketService extends Service {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadModeChanged(Event.LoadModeChanged event){
+    public void onLoadModeChanged(Event.LoadModeChanged event) {
         int mode = event.getMode();
-        if(mMode == FREQUENCY_MODE_ORDINARY_MARKET && mode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
-                mNetworkState == TYPE_MOBILE){
+        if (mMode == FREQUENCY_MODE_ORDINARY_MARKET && mode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                mNetworkState == TYPE_MOBILE) {
             mMode = event.getMode();
             return;
         }
-        if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET && mode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
-                mNetworkState == NetworkUtils.TYPE_WIFI){
+        if (mMode == FREQUENCY_MODE_REAL_TIME_MARKET && mode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                mNetworkState == NetworkUtils.TYPE_WIFI) {
             mMode = event.getMode();
             return;
         }
-        if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI && mode == FREQUENCY_MODE_ORDINARY_MARKET &&
-                mNetworkState == TYPE_MOBILE){
+        if (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI && mode == FREQUENCY_MODE_ORDINARY_MARKET &&
+                mNetworkState == TYPE_MOBILE) {
             mMode = event.getMode();
             return;
         }
-        if(mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI && mode == FREQUENCY_MODE_REAL_TIME_MARKET &&
-                mNetworkState == NetworkUtils.TYPE_WIFI){
+        if (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI && mode == FREQUENCY_MODE_REAL_TIME_MARKET &&
+                mNetworkState == NetworkUtils.TYPE_WIFI) {
             mMode = event.getMode();
             return;
         }
@@ -429,17 +431,17 @@ public class WebSocketService extends Service {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLogin(Event.LoginIn event){
+    public void onLogin(Event.LoginIn event) {
         mName = event.getName();
         startFullAccountWorkerSchedule();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNetWorkStateChanged(Event.NetWorkStateChanged event){
-        if(mNetworkState == event.getState()){
+    public void onNetWorkStateChanged(Event.NetWorkStateChanged event) {
+        if (mNetworkState == event.getState()) {
             return;
         }
-        if(mMode != FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI){
+        if (mMode != FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI) {
             mNetworkState = event.getState();
             return;
         }
@@ -452,7 +454,7 @@ public class WebSocketService extends Service {
         startFullAccountWorkerSchedule();
         loadAssetsRmbPrice();
 
-        if(mWatchlistHashMap.isEmpty()){
+        if (mWatchlistHashMap.isEmpty()) {
             loadWatchlistData(mCurrentBaseAssetId == null ? ASSET_ID_CYB : mCurrentBaseAssetId);
         } else {
             startWatchlistWorkerSchedule();
@@ -482,7 +484,7 @@ public class WebSocketService extends Service {
      * 加载交易对配置信息
      * 加载币种白名单
      */
-    private void loadAllAssetsPairData(){
+    private void loadAllAssetsPairData() {
         Observable.zip(loadToppingAssetsPair(), loadAssetsPairData(ASSET_ID_ETH), loadAssetsPairData(ASSET_ID_CYB),
                 loadAssetsPairData(ASSET_ID_USDT), loadAssetsPairData(ASSET_ID_BTC), loadPairsConfig(), loadAssetWhiteList(),
                 (assetsPairToppingResponses, assetsPairs1, assetsPairs2, assetsPairs3, assetsPairs4, assetPairsConfig, assetWhites) -> {
@@ -491,16 +493,16 @@ public class WebSocketService extends Service {
                     assetsPairs1.putAll(assetsPairs2);
                     assetsPairs1.putAll(assetsPairs3);
                     assetsPairs1.putAll(assetsPairs4);
-                    if(assetsPairToppingResponses != null && assetsPairToppingResponses.size() > 0){
-                        for(AssetsPairToppingResponse toppingResponse : assetsPairToppingResponses){
+                    if (assetsPairToppingResponses != null && assetsPairToppingResponses.size() > 0) {
+                        for (AssetsPairToppingResponse toppingResponse : assetsPairToppingResponses) {
                             List<String> quotes = toppingResponse.getQuotes();
                             List<AssetsPair> assetsPairs = assetsPairs1.get(toppingResponse.getBase());
-                            if(assetsPairs == null){
+                            if (assetsPairs == null) {
                                 continue;
                             }
-                            for(int i=0; i<quotes.size(); i++){
-                                for(AssetsPair assetsPair : assetsPairs){
-                                    if(quotes.get(i).equals(assetsPair.getQuote())){
+                            for (int i = 0; i < quotes.size(); i++) {
+                                for (AssetsPair assetsPair : assetsPairs) {
+                                    if (quotes.get(i).equals(assetsPair.getQuote())) {
                                         assetsPair.setOrder(quotes.size() - i);
                                     }
                                 }
@@ -511,45 +513,45 @@ public class WebSocketService extends Service {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Map<String,List<AssetsPair>>>() {
-                @Override
-                public void onSubscribe(Disposable d) {
+                .subscribe(new Observer<Map<String, List<AssetsPair>>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-                }
-
-                @Override
-                public void onNext(Map<String,List<AssetsPair>> assetsPairMap) {
-                    if (mIsOfficialServer) {
-                        assetsPairMap.putAll(loadContestGameData());
                     }
-                    mAssetsPairHashMap.putAll(assetsPairMap);
-                    Set<String> assetsIds = new HashSet<>();
-                    for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
-                        List<AssetsPair> assetsPairs = entry.getValue();
-                        for(AssetsPair assetsPair : assetsPairs){
-                            assetsIds.add(assetsPair.getBase());
-                            assetsIds.add(assetsPair.getQuote());
+
+                    @Override
+                    public void onNext(Map<String, List<AssetsPair>> assetsPairMap) {
+                        if (mIsOfficialServer) {
+                            assetsPairMap.putAll(loadContestGameData());
                         }
-                        assetsIds.addAll(mAssetWhiteList);
+                        mAssetsPairHashMap.putAll(assetsPairMap);
+                        Set<String> assetsIds = new HashSet<>();
+                        for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()) {
+                            List<AssetsPair> assetsPairs = entry.getValue();
+                            for (AssetsPair assetsPair : assetsPairs) {
+                                assetsIds.add(assetsPair.getBase());
+                                assetsIds.add(assetsPair.getQuote());
+                            }
+                            assetsIds.addAll(mAssetWhiteList);
+                        }
+                        loadAllAssetObjectData(assetsIds);
+
                     }
-                    loadAllAssetObjectData(assetsIds);
 
-                }
+                    @Override
+                    public void onError(Throwable e) {
 
-                @Override
-                public void onError(Throwable e) {
+                    }
 
-                }
+                    @Override
+                    public void onComplete() {
 
-                @Override
-                public void onComplete() {
-
-                }
-        });
+                    }
+                });
     }
 
     private Observable<JsonObject> loadPairsConfig() {
-         return RetrofitFactory.getInstance()
+        return RetrofitFactory.getInstance()
                 .api()
                 .getAssetPairsConfig();
     }
@@ -591,7 +593,7 @@ public class WebSocketService extends Service {
                         List<AssetsPair> assetsPairs = new ArrayList<>();
                         if (assetsPairResponse.getData() != null && assetsPairResponse.getData().size() > 0) {
                             for (String quote : assetsPairResponse.getData()) {
-                                if(!TextUtils.isEmpty(quote)){
+                                if (!TextUtils.isEmpty(quote)) {
                                     assetsPairs.add(new AssetsPair(baseAsset, quote));
                                 }
                             }
@@ -602,7 +604,7 @@ public class WebSocketService extends Service {
                 });
     }
 
-    private Map<String, List<AssetsPair>> loadContestGameData () {
+    private Map<String, List<AssetsPair>> loadContestGameData() {
         Map<String, List<AssetsPair>> assetsPairMap = new HashMap<>();
         List<AssetsPair> assetsPairs = new ArrayList<>();
         assetsPairs.add(new AssetsPair(ASSET_ID_ARENA_USDT, ASSET_ID_ARENA_ETH));
@@ -611,7 +613,6 @@ public class WebSocketService extends Service {
         assetsPairMap.put(ASSET_ID_ARENA_USDT, assetsPairs);
         return assetsPairMap;
     }
-
 
 
     //加载置顶交易对
@@ -626,14 +627,13 @@ public class WebSocketService extends Service {
      *
      * @param assetsIds 币种id
      */
-    private void loadAllAssetObjectData(Set<String> assetsIds){
+    private void loadAllAssetObjectData(Set<String> assetsIds) {
         try {
             BitsharesWalletWraper.getInstance().get_objects(assetsIds, mAssetMultiCallback);
         } catch (NetworkStatusException e) {
             e.printStackTrace();
         }
     }
-
 
 
     /**
@@ -660,7 +660,7 @@ public class WebSocketService extends Service {
 
     //加载所有交易对的价格
     private void loadMarketTickers() {
-        for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+        for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()) {
             for (AssetsPair assetsPair : entry.getValue()) {
                 if (assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null) {
                     loadMarketTicker(assetsPair.getBase(), assetsPair.getQuote());
@@ -669,68 +669,84 @@ public class WebSocketService extends Service {
         }
     }
 
-    private void shutdownSchedule(){
+    private void loadMarketTickerBatch() {
+        List<List<String>> tickerBatch = new ArrayList<>();
+        for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()) {
+            for (AssetsPair assetsPair : entry.getValue()) {
+                if (assetsPair.getBaseAsset() != null && assetsPair.getQuoteAsset() != null) {
+                    List<String> tickerPair = new ArrayList<>();
+                    tickerPair.add(assetsPair.getBase());
+                    tickerPair.add(assetsPair.getQuote());
+                    tickerBatch.add(tickerPair);
+                }
+            }
+        }
+        loadMarketTickerBatch(tickerBatch);
+    }
+
+
+    private void shutdownSchedule() {
         mScheduled.shutdownNow();
     }
 
-    private void startWatchlistWorkerSchedule(){
-        if(mNetworkState == TYPE_NOT_CONNECTED){
+    private void startWatchlistWorkerSchedule() {
+        if (mNetworkState == TYPE_NOT_CONNECTED) {
             return;
         }
-        if(mWatchlistFuture != null && !mWatchlistFuture.isCancelled()){
+        if (mWatchlistFuture != null && !mWatchlistFuture.isCancelled()) {
             mWatchlistFuture.cancel(true);
         }
         if (mScheduled.isShutdown() || mScheduled.isTerminated()) {
             mScheduled = Executors.newScheduledThreadPool(2);
         }
-        if(mWatchlistWorker == null){
+        if (mWatchlistWorker == null) {
             mWatchlistWorker = new WatchlistWorker();
         }
         mWatchlistFuture = mScheduled.scheduleAtFixedRate(mWatchlistWorker, 0,
                 mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
-                    (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
-                        mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS);
+                        (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                                mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS);
     }
 
-    private void cancelWatchlistWorkerSchedule(){
-        if(mWatchlistFuture == null){
+    private void cancelWatchlistWorkerSchedule() {
+        if (mWatchlistFuture == null) {
             return;
         }
-        if(mWatchlistFuture.isCancelled()){
+        if (mWatchlistFuture.isCancelled()) {
             return;
         }
         mWatchlistFuture.cancel(true);
         mWatchlistFuture = null;
     }
 
-    private void startFullAccountWorkerSchedule(){
-        if(mNetworkState == TYPE_NOT_CONNECTED){
+    private void startFullAccountWorkerSchedule() {
+        if (mNetworkState == TYPE_NOT_CONNECTED) {
             return;
         }
-        if(TextUtils.isEmpty(mName)){
+        if (TextUtils.isEmpty(mName)) {
             return;
         }
-        if(mFullAccountFuture != null && !mFullAccountFuture.isCancelled()){
+        if (mFullAccountFuture != null && !mFullAccountFuture.isCancelled()) {
             mFullAccountFuture.cancel(true);
         }
         if (mScheduled.isShutdown() || mScheduled.isTerminated()) {
             mScheduled = Executors.newScheduledThreadPool(2);
         }
-        if(mFullAccountWorker == null){
+        if (mFullAccountWorker == null) {
             mFullAccountWorker = new FullAccountWorker();
         }
         Sentry.getContext().setUser(new UserBuilder().setId(mName).build());
         mFullAccountFuture = mScheduled.scheduleAtFixedRate(mFullAccountWorker, 1,
                 mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
-                    (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
-                        mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS);
+                        (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                                mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS);
     }
 
-    private void cancelFullAccountWorkerSchedule(){
-        if(mFullAccountFuture == null){
+    private void cancelFullAccountWorkerSchedule() {
+        if (mFullAccountFuture == null) {
             return;
         }
-        if(mFullAccountFuture.isCancelled()){
+        if (mFullAccountFuture.isCancelled()) {
             return;
         }
         mFullAccountFuture.cancel(true);
@@ -745,8 +761,17 @@ public class WebSocketService extends Service {
         }
     }
 
-    public void loadAccountObject(String accountId){
-        if(mAccountHashMap.containsKey(accountId)){
+    private void loadMarketTickerBatch(List<List<String>> tickerBatch) {
+        try {
+            BitsharesWalletWraper.getInstance().get_ticker_batch(tickerBatch, mMarketTickerListCallback);
+        } catch (NetworkStatusException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void loadAccountObject(String accountId) {
+        if (mAccountHashMap.containsKey(accountId)) {
             EventBus.getDefault().post(new Event.LoadAccountObject(mAccountHashMap.get(accountId)));
             return;
         }
@@ -763,7 +788,7 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
-            if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
+            if (feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null) {
                 return;
             }
             mLimitOrderCreateFees.add(feeAmountObjects.get(0));
@@ -780,7 +805,7 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
-            if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
+            if (feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null) {
                 return;
             }
             mLimitOrderCancelFees.add(feeAmountObjects.get(0));
@@ -797,7 +822,7 @@ public class WebSocketService extends Service {
         @Override
         public void onMessage(Reply<List<FeeAmountObject>> reply) {
             List<FeeAmountObject> feeAmountObjects = reply.result;
-            if(feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null){
+            if (feeAmountObjects == null || feeAmountObjects.size() == 0 || feeAmountObjects.get(0) == null) {
                 return;
             }
             mLimitOrderCancelAllFee.add(feeAmountObjects.get(0));
@@ -811,7 +836,7 @@ public class WebSocketService extends Service {
     };
 
     //get market ticker callback
-    private MessageCallback mMarketTickerCallback = new MessageCallback<Reply<MarketTicker>>() {
+    private MessageCallback<Reply<MarketTicker>> mMarketTickerCallback = new MessageCallback<Reply<MarketTicker>>() {
 
         @Override
         public void onMessage(Reply<MarketTicker> reply) {
@@ -838,7 +863,32 @@ public class WebSocketService extends Service {
         }
     };
 
-    private MessageCallback mAccountObjectCallback = new MessageCallback<Reply<List<AccountObject>>>() {
+    //get market ticker list callback
+    private MessageCallback<Reply<List<MarketTicker>>> mMarketTickerListCallback = new MessageCallback<Reply<List<MarketTicker>>>() {
+        @Override
+        public void onMessage(Reply<List<MarketTicker>> reply) {
+            List<MarketTicker> marketTickerList = reply.result;
+            if (marketTickerList == null || marketTickerList.isEmpty()) {
+                return;
+            }
+            for (MarketTicker marketTicker : marketTickerList) {
+                for (WatchlistData watchlistData : mWatchlistHashMap.get(marketTicker.base)) {
+                    if (watchlistData.getQuoteId().equals(marketTicker.quote)) {
+                        watchlistData.setMarketTicker(marketTicker);
+                        break;
+                    }
+                }
+            }
+            EventBus.getDefault().post(new Event.UpdateRmbPrice(mAssetRmbPrices));
+        }
+
+        @Override
+        public void onFailure() {
+
+        }
+    };
+
+    private MessageCallback<Reply<List<AccountObject>>> mAccountObjectCallback = new MessageCallback<Reply<List<AccountObject>>>() {
 
         @Override
         public void onMessage(Reply<List<AccountObject>> reply) {
@@ -899,9 +949,9 @@ public class WebSocketService extends Service {
             EventBus.getDefault().post(new Event.LoadAssets(assetObjects));
             mAssetObjects.addAll(assetObjects);
             //币信息对应交易对
-            for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+            for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()) {
                 List<AssetsPair> assetsPairs = entry.getValue();
-                if(assetsPairs == null || assetsPairs.size() == 0){
+                if (assetsPairs == null || assetsPairs.size() == 0) {
                     continue;
                 }
                 for (AssetObject assetObject : assetObjects) {
@@ -919,17 +969,17 @@ public class WebSocketService extends Service {
             }
             Gson gson = new GsonBuilder().create();
             //创建交易对数据
-            for(Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()){
+            for (Map.Entry<String, List<AssetsPair>> entry : mAssetsPairHashMap.entrySet()) {
                 List<AssetsPair> assetsPairs = entry.getValue();
-                if(assetsPairs == null || assetsPairs.size() == 0){
+                if (assetsPairs == null || assetsPairs.size() == 0) {
                     continue;
                 }
                 List<WatchlistData> watchlistData = new ArrayList<>();
                 for (AssetsPair assetsPair : assetsPairs) {
                     JsonElement jsonElement = mAssetPairsConfig.get(AssetUtil.parseSymbol(assetsPair.getBaseAsset().symbol));
-                    if(jsonElement != null) {
+                    if (jsonElement != null) {
                         JsonElement element = jsonElement.getAsJsonObject().get(AssetUtil.parseSymbol(assetsPair.getQuoteAsset().symbol));
-                        if(element != null) {
+                        if (element != null) {
                             assetsPair.setConfig(gson.fromJson(element.getAsJsonObject().get("book").getAsJsonObject(), AssetsPair.Config.class));
                             assetsPair.setForm(gson.fromJson(element.getAsJsonObject().get("form").getAsJsonObject(), AssetsPair.Form.class));
                         } else {
@@ -950,7 +1000,7 @@ public class WebSocketService extends Service {
             }
             //缓存交易对
             AssetPairCache.getInstance().setAssetPairCache(mAssetsPairHashMap);
-            if(!TextUtils.isEmpty(mCurrentBaseAssetId)){
+            if (!TextUtils.isEmpty(mCurrentBaseAssetId)) {
                 //更新行情
                 List<WatchlistData> watchlistData = mWatchlistHashMap.get(mCurrentBaseAssetId);
                 EventBus.getDefault().post(new Event.UpdateWatchlists(mCurrentBaseAssetId, watchlistData));
@@ -970,7 +1020,7 @@ public class WebSocketService extends Service {
     };
 
     //get asset object callback
-    private MessageCallback mAssetOneCallback = new MessageCallback<Reply<List<AssetObject>>>() {
+    private MessageCallback<Reply<List<AssetObject>>> mAssetOneCallback = new MessageCallback<Reply<List<AssetObject>>>() {
         @Override
         public void onMessage(Reply<List<AssetObject>> reply) {
             AssetObject assetObject = reply.result.get(0);
@@ -1024,7 +1074,7 @@ public class WebSocketService extends Service {
     }
 
     public void cancelRMBSubscription() {
-        if(mDisposable != null && !mDisposable.isDisposed()){
+        if (mDisposable != null && !mDisposable.isDisposed()) {
             mDisposable.dispose();
             mDisposable = null;
         }
@@ -1037,7 +1087,7 @@ public class WebSocketService extends Service {
     }
 
     public void loadAssetsRmbPrice() {
-        if(mNetworkState == TYPE_NOT_CONNECTED){
+        if (mNetworkState == TYPE_NOT_CONNECTED) {
             return;
         }
         //防止多次执行
@@ -1050,8 +1100,8 @@ public class WebSocketService extends Service {
          */
         mDisposable = Flowable.interval(0,
                 mMode == FREQUENCY_MODE_ORDINARY_MARKET ||
-                    (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
-                        mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS)
+                        (mMode == FREQUENCY_MODE_REAL_TIME_MARKET_ONLY_WIFI &&
+                                mNetworkState == TYPE_MOBILE) ? 6 : 3, TimeUnit.SECONDS)
                 .flatMap(new Function<Long, Publisher<CnyResponse>>() {
                     @Override
                     public Publisher<CnyResponse> apply(Long aLong) {
@@ -1165,21 +1215,22 @@ public class WebSocketService extends Service {
 
     /**
      * 获取交易对WatchlistData
+     *
      * @param baseId
      * @param quoteId
      * @return
      */
-    public WatchlistData getWatchlist(String baseId, String quoteId){
-        if(mWatchlistHashMap == null || mWatchlistHashMap.isEmpty()){
+    public WatchlistData getWatchlist(String baseId, String quoteId) {
+        if (mWatchlistHashMap == null || mWatchlistHashMap.isEmpty()) {
             return null;
         }
         List<WatchlistData> watchlists = mWatchlistHashMap.get(baseId);
-        if(watchlists == null || watchlists.size() == 0){
+        if (watchlists == null || watchlists.size() == 0) {
             return null;
         }
-        for(WatchlistData watchlist : watchlists){
+        for (WatchlistData watchlist : watchlists) {
             AssetObject quoteAsset = watchlist.getQuoteAsset();
-            if(quoteAsset != null && quoteAsset.id.toString().equals(quoteId)){
+            if (quoteAsset != null && quoteAsset.id.toString().equals(quoteId)) {
                 return watchlist;
             }
         }
@@ -1189,7 +1240,7 @@ public class WebSocketService extends Service {
     /**
      * 获取所有交易对信息
      */
-    public Map<String, List<AssetsPair>> getAssetPairHashMap(){
+    public Map<String, List<AssetsPair>> getAssetPairHashMap() {
         return mAssetsPairHashMap;
     }
 
@@ -1216,7 +1267,7 @@ public class WebSocketService extends Service {
 
         @Override
         public void run() {
-            loadMarketTickers();
+            loadMarketTickerBatch();
         }
     }
 

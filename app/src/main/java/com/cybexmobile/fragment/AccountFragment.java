@@ -274,15 +274,12 @@ public class AccountFragment extends BaseFragment implements Toolbar.OnMenuItemC
     }
 
     private void loadCoinAge() {
-        Log.e("testAccount", mAccountObject.id.toString());
         LimitOrderWrapper.getInstance().get_account_token_age(mAccountObject.id.toString(), new MessageCallback<Reply<List<CoinAgeObject>>>() {
             @Override
             public void onMessage(Reply<List<CoinAgeObject>> reply) {
                 if (reply != null && reply.result != null && reply.result.size() > 0) {
                     double score = reply.result.get(0).score;
                     double factor = SettingConfig.getInstance().getAgeRate();
-                    Log.e("test", String.valueOf(reply.result.get(0).score));
-                    Log.e("testFactor", String.valueOf(SettingConfig.getInstance().getAgeRate()));
                     int coinAge = (int) ((score / Math.pow(10,5)) * (1 - factor));
                     if (score == 0 || factor == 0) {
                         mLlCoinAge.setVisibility(View.GONE);
