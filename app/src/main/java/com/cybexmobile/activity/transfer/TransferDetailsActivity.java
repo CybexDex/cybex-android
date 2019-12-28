@@ -1,5 +1,6 @@
 package com.cybexmobile.activity.transfer;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,6 +23,8 @@ import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.utils.DateUtils;
+import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
+import com.cybexmobile.activity.setting.enotes.SetCloudPasswordActivity;
 
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +36,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static com.cybex.basemodule.constant.Constant.PREF_NAME;
+import static com.cybex.basemodule.constant.Constant.REQUEST_CODE_UPDATE_ACCOUNT;
 
 public class TransferDetailsActivity extends BaseActivity {
 
@@ -113,6 +117,24 @@ public class TransferDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.transfer_details_tv_click_to_view)
     public void onClickToViewClick(View view){
+        if (isLoginFromENotes() && mAccountObject.active.key_auths.size() < 2) {
+            CybexDialog.showLimitOrderCancelConfirmationDialog(
+                    this,
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_content),
+                    getResources().getString(R.string.nfc_dialog_add_cloud_password_button),
+                    new CybexDialog.ConfirmationDialogClickListener() {
+                        @Override
+                        public void onClick(Dialog dialog) {
+                            Intent intent = new Intent(TransferDetailsActivity.this, SetCloudPasswordActivity.class);
+                            startActivityForResult(intent, REQUEST_CODE_UPDATE_ACCOUNT);
+                        }
+                    });
+        } else {
+           checkLockStatus();
+        }
+    }
+
+    private void checkLockStatus() {
         if (BitsharesWalletWraper.getInstance().is_locked()) {
             CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, new UnlockDialog.UnLockDialogClickListener() {
                 @Override

@@ -331,6 +331,8 @@ public class GatewayActivity extends BaseActivity implements RadioGroup.OnChecke
                                 }
                                 depositAndWithdrawObject.setId(data.getCybid());
                                 depositAndWithdrawObject.setEnable(data.getWithdrawSwitch());
+                                depositAndWithdrawObject.setDepositEnable(data.getDepositSwitch());
+                                depositAndWithdrawObject.setWithdrawEnable(data.getWithdrawSwitch());
                                 depositAndWithdrawObject.setGatewayAccount(data.getGatewayAccount());
                                 depositAndWithdrawObject.setMinWithdraw(data.getMinWithdraw());
                                 depositAndWithdrawObject.setPrecision(data.getPrecision());

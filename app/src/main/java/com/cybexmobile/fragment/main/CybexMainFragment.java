@@ -191,7 +191,7 @@ public class CybexMainFragment extends AppBaseFragment implements CybexMainMvpVi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPresenter.loadAnnounces(StoreLanguageHelper.getLanguageLocal(getContext()));
-        mPresenter.loadSubLinks(StoreLanguageHelper.getLanguageLocal(getContext()),"pro", getContext());
+        mPresenter.loadSubLinks(StoreLanguageHelper.getLanguageLocal(getContext()),null, getContext());
         mPresenter.loadBanners(StoreLanguageHelper.getLanguageLocal(getContext()));
     }
 

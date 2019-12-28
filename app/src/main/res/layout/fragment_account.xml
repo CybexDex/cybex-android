@@ -245,10 +245,10 @@
                 android:layout_height="@dimen/height_60">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_hash_locks_assets_24_px"/>
+                    android:src="@drawable/ic_hash_locks_assets_24_px" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"

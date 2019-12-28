@@ -267,26 +267,28 @@ public class WithdrawItemFragment extends BaseFragment implements DepositAndWith
 
     @Override
     public void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject) {
-        if (depositAndWithdrawObject.isEnable()) {
-            Intent intent = new Intent(getContext(), WithdrawActivity.class);
-            intent.putExtra("assetNameForGatewayRequest", depositAndWithdrawObject.getAssetName());
-            intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
-            intent.putExtra("assetId", depositAndWithdrawObject.getId());
-            intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
-            intent.putExtra("withdrawFee", depositAndWithdrawObject.getWithdrawFee());
-            intent.putExtra("minWithdraw", depositAndWithdrawObject.getMinWithdraw());
-            intent.putExtra("precision", depositAndWithdrawObject.getPrecision());
-            intent.putExtra("gatewayAccount", depositAndWithdrawObject.getGatewayAccount());
-            intent.putExtra("withdrawPrefix", depositAndWithdrawObject.getWithdrawPrefix());
-            intent.putExtra("tag", depositAndWithdrawObject.isTag());
-            intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
-            AccountBalanceObject accountBalanceObject = depositAndWithdrawObject.getAccountBalanceObject();
-            if (accountBalanceObject != null) {
-                intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, depositAndWithdrawObject.getAssetObject().precision));
-            }
-            getContext().startActivity(intent);
-        } else {
-            if (SettingConfig.getInstance().isGateway2()) {
+        if (SettingConfig.getInstance().isGateway2()) {
+            if (depositAndWithdrawObject.isWithdrawEnable()) {
+                Intent intent = new Intent(getContext(), WithdrawActivity.class);
+                intent.putExtra("assetNameForGatewayRequest", depositAndWithdrawObject.getAssetName());
+                intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
+                intent.putExtra("assetId", depositAndWithdrawObject.getId());
+                intent.putExtra("isEnabled", depositAndWithdrawObject.isWithdrawEnable());
+                intent.putExtra("withdrawFee", depositAndWithdrawObject.getWithdrawFee());
+                intent.putExtra("minWithdraw", depositAndWithdrawObject.getMinWithdraw());
+                intent.putExtra("precision", depositAndWithdrawObject.getPrecision());
+                intent.putExtra("gatewayAccount", depositAndWithdrawObject.getGatewayAccount());
+                intent.putExtra("withdrawPrefix", depositAndWithdrawObject.getWithdrawPrefix());
+                intent.putExtra("tag", depositAndWithdrawObject.isTag());
+                intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
+                AccountBalanceObject accountBalanceObject = depositAndWithdrawObject.getAccountBalanceObject();
+                if (accountBalanceObject != null) {
+                    intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, depositAndWithdrawObject.getAssetObject().precision));
+                }
+                getContext().startActivity(intent);
+
+            } else {
+
                 if (!depositAndWithdrawObject.getWithdrawCnMsg().equals("") && !depositAndWithdrawObject.getWithdrawEnMsg().equals("")) {
                     if (Locale.getDefault().getLanguage().equals("zh")) {
                         ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getWithdrawCnMsg());
@@ -294,6 +296,26 @@ public class WithdrawItemFragment extends BaseFragment implements DepositAndWith
                         ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getWithdrawEnMsg());
                     }
                 }
+            }
+        } else {
+            if (depositAndWithdrawObject.isEnable()) {
+                Intent intent = new Intent(getContext(), WithdrawActivity.class);
+                intent.putExtra("assetNameForGatewayRequest", depositAndWithdrawObject.getAssetName());
+                intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
+                intent.putExtra("assetId", depositAndWithdrawObject.getId());
+                intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
+                intent.putExtra("withdrawFee", depositAndWithdrawObject.getWithdrawFee());
+                intent.putExtra("minWithdraw", depositAndWithdrawObject.getMinWithdraw());
+                intent.putExtra("precision", depositAndWithdrawObject.getPrecision());
+                intent.putExtra("gatewayAccount", depositAndWithdrawObject.getGatewayAccount());
+                intent.putExtra("withdrawPrefix", depositAndWithdrawObject.getWithdrawPrefix());
+                intent.putExtra("tag", depositAndWithdrawObject.isTag());
+                intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
+                AccountBalanceObject accountBalanceObject = depositAndWithdrawObject.getAccountBalanceObject();
+                if (accountBalanceObject != null) {
+                    intent.putExtra("availableAmount", accountBalanceObject.balance / Math.pow(10, depositAndWithdrawObject.getAssetObject().precision));
+                }
+                getContext().startActivity(intent);
             } else {
                 if (!depositAndWithdrawObject.getCnMsg().equals("") && !depositAndWithdrawObject.getEnMsg().equals("")) {
                     if (Locale.getDefault().getLanguage().equals("zh")) {
@@ -304,6 +326,7 @@ public class WithdrawItemFragment extends BaseFragment implements DepositAndWith
                 }
             }
         }
+
     }
 
     public void notifyListDataSetChange(List<DepositAndWithdrawObject> assetList) {

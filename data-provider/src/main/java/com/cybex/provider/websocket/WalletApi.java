@@ -39,6 +39,7 @@ import com.cybex.provider.graphene.chain.PrivateKey;
 import com.cybex.provider.graphene.chain.SignedTransaction;
 import com.cybex.provider.graphene.chain.Types;
 import com.cybex.provider.graphene.chain.Utils;
+import com.cybex.provider.utils.EnotesSignHelp;
 import com.cybex.provider.utils.MyUtils;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.gson.Gson;
@@ -1289,6 +1290,18 @@ public class WalletApi {
 
         return null;
     }
+
+    public String getStringSignedByEnotes(String message, CardManager manager, Card card) {
+        Sha256Object.encoder encoder = new Sha256Object.encoder();
+        if(message != null){
+            byte[] assetByte = message.getBytes();
+            encoder.write(assetByte);
+        }
+        CompactSignature signature;
+        signature = EnotesSignHelp.sign_compactByENotes(manager, card, encoder.result());
+        return MyUtils.bytesToHex(signature.data);
+    }
+
 
     public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
         SignedTransaction signedTransaction = new SignedTransaction();

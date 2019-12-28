@@ -266,17 +266,17 @@ public class DepositItemFragment extends BaseFragment implements DepositAndWithd
 
     @Override
     public void onItemClick(DepositAndWithdrawObject depositAndWithdrawObject) {
-        if (depositAndWithdrawObject.isEnable()) {
-            Intent intent = new Intent(getContext(), DepositActivity.class);
-            intent.putExtra("assetNameForGatewayRequest", depositAndWithdrawObject.getAssetName());
-            intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
-            intent.putExtra("assetId", depositAndWithdrawObject.getId());
-            intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
-            intent.putExtra("tag", depositAndWithdrawObject.isTag());
-            intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
-            getContext().startActivity(intent);
-        } else {
-            if (SettingConfig.getInstance().isGateway2()) {
+        if (SettingConfig.getInstance().isGateway2()) {
+            if (depositAndWithdrawObject.isDepositEnable()) {
+                Intent intent = new Intent(getContext(), DepositActivity.class);
+                intent.putExtra("assetNameForGatewayRequest", depositAndWithdrawObject.getAssetName());
+                intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
+                intent.putExtra("assetId", depositAndWithdrawObject.getId());
+                intent.putExtra("isEnabled", depositAndWithdrawObject.isDepositEnable());
+                intent.putExtra("tag", depositAndWithdrawObject.isTag());
+                intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
+                getContext().startActivity(intent);
+            } else {
                 if (!depositAndWithdrawObject.getDepositCnMsg().equals("") && !depositAndWithdrawObject.getDepositEnMsg().equals("")) {
                     if (Locale.getDefault().getLanguage().equals("zh")) {
                         ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getDepositCnMsg());
@@ -284,6 +284,17 @@ public class DepositItemFragment extends BaseFragment implements DepositAndWithd
                         ToastMessage.showDepositWithdrawToastMessage(getActivity(), depositAndWithdrawObject.getDepositEnMsg());
                     }
                 }
+            }
+        } else {
+            if (depositAndWithdrawObject.isEnable()) {
+                Intent intent = new Intent(getContext(), DepositActivity.class);
+                intent.putExtra("assetNameForGatewayRequest", depositAndWithdrawObject.getAssetName());
+                intent.putExtra("assetName", AssetUtil.parseSymbol(depositAndWithdrawObject.getAssetObject().symbol));
+                intent.putExtra("assetId", depositAndWithdrawObject.getId());
+                intent.putExtra("isEnabled", depositAndWithdrawObject.isEnable());
+                intent.putExtra("tag", depositAndWithdrawObject.isTag());
+                intent.putExtra("assetObject", depositAndWithdrawObject.getAssetObject());
+                getContext().startActivity(intent);
             } else {
                 if (!depositAndWithdrawObject.getCnMsg().equals("") && !depositAndWithdrawObject.getEnMsg().equals("")) {
                     if (Locale.getDefault().getLanguage().equals("zh")) {

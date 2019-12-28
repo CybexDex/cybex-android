@@ -19,6 +19,7 @@ import com.cybexmobile.faucet.DepositAndWithdrawObject;
 import com.cybex.provider.graphene.chain.AssetObject;
 import com.cybex.basemodule.utils.AssetUtil;
 import com.cybex.provider.utils.MyUtils;
+import com.cybexmobile.fragment.DepositItemFragment;
 import com.cybexmobile.shake.AntiShake;
 import com.squareup.picasso.Picasso;
 
@@ -92,7 +93,11 @@ public class DepositAndWithdrawAdapter extends RecyclerView.Adapter<RecyclerView
         } else {
             holder.mAssetName.setText(AssetUtil.parseSymbol(assetObject.symbol));
             holder.mAssetFullName.setText(String.format(" (%s)", depositAndWithdrawObject.getProjectName()));
-            holder.mAssetPrice.setText(depositAndWithdrawObject.isEnable() ? "" : mContext.getResources().getString(R.string.gate_way_suspended));
+            if (mName.equals(DepositItemFragment.class.getName())) {
+                holder.mAssetPrice.setText(depositAndWithdrawObject.isDepositEnable() ? "" : mContext.getResources().getString(R.string.gate_way_suspended));
+            } else {
+                holder.mAssetPrice.setText(depositAndWithdrawObject.isWithdrawEnable() ? "" : mContext.getResources().getString(R.string.gate_way_suspended));
+            }
             loadImage(depositAndWithdrawObject.getId(), holder.mAssetIcon);
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {

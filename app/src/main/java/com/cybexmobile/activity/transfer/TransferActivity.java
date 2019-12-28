@@ -187,8 +187,7 @@ public class TransferActivity extends BaseActivity implements
         setSupportActionBar(mToolbar);
         mUserName = PreferenceManager.getDefaultSharedPreferences(this).getString(PREF_NAME, null);
         mEtQuantity.setFilters(new InputFilter[] {mQuantityFilter});
-        mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(
-                INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
+        mAccountBalanceObjectItems = (List<AccountBalanceObjectItem>) getIntent().getSerializableExtra(INTENT_PARAM_ACCOUNT_BALANCE_ITEMS);
         if (mAccountBalanceObjectItems != null) {
             mCybAccountBalanceObjectItem = findAccountBalanceObjectItem(ASSET_ID_CYB, mAccountBalanceObjectItems);
             /**

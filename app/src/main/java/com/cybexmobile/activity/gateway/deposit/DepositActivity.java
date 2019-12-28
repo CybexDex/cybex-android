@@ -49,6 +49,7 @@ import com.cybex.basemodule.BitsharesWalletWraper;
 import com.cybex.basemodule.constant.Constant;
 import com.cybex.basemodule.dialog.CybexDialog;
 import com.cybex.basemodule.dialog.UnlockDialog;
+import com.cybex.basemodule.dialog.UnlockDialogWithEnotes;
 import com.cybex.basemodule.service.WebSocketService;
 import com.cybex.provider.SettingConfig;
 import com.cybex.provider.graphene.chain.AccountObject;
@@ -57,6 +58,7 @@ import com.cybex.provider.graphene.chain.GlobalConfigObject;
 import com.cybex.provider.graphene.chain.Operations;
 import com.cybex.provider.http.GatewayHttpApi;
 import com.cybex.provider.http.RetrofitFactory;
+import com.cybex.provider.utils.SpUtil;
 import com.cybexmobile.R;
 import com.cybexmobile.activity.gateway.records.DepositWithdrawRecordsActivity;
 import com.cybex.provider.apollo.ApolloClientApi;
@@ -79,12 +81,16 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.enotes.sdk.repository.card.CommandException;
+import io.enotes.sdk.repository.db.entity.Card;
+import io.enotes.sdk.utils.ReaderUtils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -99,6 +105,8 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
+import static com.cybex.provider.graphene.chain.Operations.ID_TRANSER_OPERATION;
+
 
 public class DepositActivity extends BaseActivity {
     private static int REQUEST_PERMISSION = 1;
@@ -106,6 +114,8 @@ public class DepositActivity extends BaseActivity {
     private Unbinder mUnbinder;
     private Context mContext;
     private AssetObject mAssetObject;
+    private UnlockDialogWithEnotes mEnotesUnlockDialog;
+    private Card mCard;
 
     private String mUserName;
     private String mAssetName;
@@ -116,6 +126,7 @@ public class DepositActivity extends BaseActivity {
     private boolean mIsEnabled;
     private String mSignature;
     private boolean mIsTag;
+    private boolean mIsUsedCloudPassword = false;
 
 
     @BindView(R.id.deposit_linear_layout)
@@ -179,9 +190,22 @@ public class DepositActivity extends BaseActivity {
                 mAccountObject = fullAccountObject.account;
             }
             requestDetailMessage();
-            if (BitsharesWalletWraper.getInstance().is_locked() && SettingConfig.getInstance().isGateway2()) {
-                CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName,
-                        (UnlockDialog.UnLockDialogClickListener) password -> setDepositInfo());
+
+            if (SettingConfig.getInstance().isGateway2()) {
+                if (isLoginFromENotes()) {
+                    mEnotesUnlockDialog = CybexDialog.showUnlockWithEnotesWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, password -> {
+                        mIsUsedCloudPassword = true;
+                        setDepositInfo();
+                    }, result -> {
+                        mEnotesUnlockDialog = null;
+                    });
+                } else {
+                    if (BitsharesWalletWraper.getInstance().is_locked()) {
+                        CybexDialog.showUnlockWalletDialog(getSupportFragmentManager(), mAccountObject, mUserName, password -> setDepositInfo());
+                    } else {
+                        setDepositInfo();
+                    }
+                }
             } else {
                 setDepositInfo();
             }
@@ -237,7 +261,9 @@ public class DepositActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (AntiShake.check(item.getItemId())) { return false; }
+        if (AntiShake.check(item.getItemId())) {
+            return false;
+        }
         switch (item.getItemId()) {
             case R.id.action_records:
                 Intent intent = new Intent(this, DepositWithdrawRecordsActivity.class);
@@ -255,11 +281,51 @@ public class DepositActivity extends BaseActivity {
         super.onDestroy();
         mUnbinder.unbind();
         unbindService(mConnection);
-        if(!mCompositeDisposable.isDisposed()){
+        if (!mCompositeDisposable.isDisposed()) {
             mCompositeDisposable.dispose();
         }
     }
 
+    @Override
+    protected void nfcStartReadCard() {
+        if (mEnotesUnlockDialog != null) {
+            mEnotesUnlockDialog.showProgress();
+            mEnotesUnlockDialog.showNormalText();
+        } else {
+            super.nfcStartReadCard();
+        }
+    }
+
+    @Override
+    protected void readCardOnSuccess(Card card) {
+        mCard = card;
+        if (mEnotesUnlockDialog != null) {
+            try {
+                if (cardManager.getTransactionPinStatus() == 0) {
+                    mEnotesUnlockDialog.dismiss();
+                    setDepositInfo();
+                } else {
+                    final Map<Long, String> cardIdToCardPasswordMap = SpUtil.getMap(this, "eNotesCardMap");
+                    if (cardManager.verifyTransactionPin(cardIdToCardPasswordMap.get(card.getId()))) {
+                        mEnotesUnlockDialog.dismiss();
+                        setDepositInfo();
+                    }
+                }
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
+        } else {
+            super.readCardOnSuccess(card);
+        }
+    }
+
+    @Override
+    protected void readCardError(int code, String message) {
+        super.readCardError(code, message);
+        if (mEnotesUnlockDialog != null) {
+            mEnotesUnlockDialog.hideProgress();
+        }
+    }
     @OnClick(R.id.deposit_copy_address)
     public void onClickCopyAddress(View view) {
         if (AntiMultiClick.isFastClick()) {
@@ -279,7 +345,7 @@ public class DepositActivity extends BaseActivity {
     public void onProtocolAddressClick(View view) {
         String contractAddress = mTvProtocolAddress.getText().toString();
         String contractExplorerUrl = (String) mTvProtocolAddress.getTag();
-        if(TextUtils.isEmpty(contractAddress) || TextUtils.isEmpty(contractExplorerUrl)){
+        if (TextUtils.isEmpty(contractAddress) || TextUtils.isEmpty(contractExplorerUrl)) {
             return;
         }
         Intent intent = new Intent(this, WebActivity.class);
@@ -382,10 +448,10 @@ public class DepositActivity extends BaseActivity {
 
     private void getAddress1(String userName) {
         showLoadDialog(true);
+        String expiration = String.valueOf(new Date().getTime() / 1000);
+        String message = expiration + userName;
+        mSignature = getSignature(message);
         mCompositeDisposable.add(Observable.create((ObservableOnSubscribe<String>) e -> {
-                    String expiration = String.valueOf(new Date().getTime() / 1000);
-                    String message = expiration + userName;
-                    mSignature = BitsharesWalletWraper.getInstance().getChatMessageSignature(mAccountObject, message);
                     String mToken = expiration + "." + userName + "." + mSignature;
                     if (!e.isDisposed()) {
                         e.onNext(mToken);
@@ -422,7 +488,7 @@ public class DepositActivity extends BaseActivity {
                                         mXrpAddressTv.setText(xrpAddress);
                                         mQRAddressView.setText(xrpTag);
                                         generateBarCode(xrpAddress);
-                                    }  else {
+                                    } else {
                                         mQRAddressView.setText(address);
                                         generateBarCode(address);
                                     }
@@ -435,6 +501,39 @@ public class DepositActivity extends BaseActivity {
                                 }
                         )
         );
+    }
+
+    private String getSignature(String message) {
+        if (isLoginFromENotes() && ! mIsUsedCloudPassword) {
+            if (!cardManager.isConnected()) {
+                if (ReaderUtils.supportNfc(this)) {
+                    showToast(this, getResources().getString(R.string.error_connect_card));
+                } else {
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                }
+                return null;
+            }
+            if (!cardManager.isPresent()) {
+                if (ReaderUtils.supportNfc(this)) { showToast(this, getString(R.string.error_connect_card)); } else {
+                    showToast(this, getString(R.string.error_connect_card_ble));
+                }
+                return null;
+            }
+            if (mCard != null && !mCard.getCurrencyPubKey().equals(getLoginPublicKey())) {
+                showToast(this, getString(R.string.please_right_card));
+                Log.e("card error", "error");
+                return null;
+            }
+            if (BaseActivity.cardApp != null) {
+                mCard = BaseActivity.cardApp;
+            }
+        }
+
+        if (mCard == null || mIsUsedCloudPassword) {
+            return BitsharesWalletWraper.getInstance().getChatMessageSignature(mAccountObject, message);
+        } else {
+            return BitsharesWalletWraper.getInstance().getStringSignedByEnotes(message, cardManager, mCard);
+        }
     }
 
 
@@ -456,13 +555,13 @@ public class DepositActivity extends BaseActivity {
                     @Override
                     public void accept(Response<GetDepositAddress.Data> response) throws Exception {
                         GetDepositAddress.Data depositAddressData = response.data();
-                        if(depositAddressData == null){
+                        if (depositAddressData == null) {
                             ToastMessage.showNotEnableDepositToastMessage((Activity) mContext, getResources().getString(R.string.snack_bar_please_retry), R.drawable.ic_error_16px);
                             hideLoadDialog();
                             return;
                         }
                         GetDepositAddress.GetDepositAddress1 depositAddress = depositAddressData.getDepositAddress();
-                        if(depositAddress == null){
+                        if (depositAddress == null) {
                             hideLoadDialog();
                             return;
                         }

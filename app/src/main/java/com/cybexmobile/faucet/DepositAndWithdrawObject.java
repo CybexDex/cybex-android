@@ -6,6 +6,8 @@ import com.cybex.provider.graphene.chain.AssetObject;
 public class DepositAndWithdrawObject {
     private String id;
     private boolean enable;
+    private boolean depositEnable;
+    private boolean withdrawEnable;
     private String enMsg;
     private String cnMsg;
     private String enInfo;
@@ -80,6 +82,22 @@ public class DepositAndWithdrawObject {
 
     public boolean isEnable() {
         return enable;
+    }
+
+    public void setDepositEnable(boolean depositEnable) {
+        this.depositEnable = depositEnable;
+    }
+
+    public boolean isDepositEnable() {
+        return depositEnable;
+    }
+
+    public void setWithdrawEnable(boolean withdrawEnable) {
+        this.withdrawEnable = withdrawEnable;
+    }
+
+    public boolean isWithdrawEnable() {
+        return withdrawEnable;
     }
 
     public void setTag(boolean tag) {

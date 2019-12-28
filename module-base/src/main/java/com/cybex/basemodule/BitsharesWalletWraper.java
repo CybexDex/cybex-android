@@ -517,6 +517,9 @@ public class BitsharesWalletWraper {
     public String getChatMessageSignature(AccountObject accountObject, String message){
         return mWalletApi.getChatMessageSignature(accountObject, message);
     }
+    public String getStringSignedByEnotes(String message, CardManager cardManager, Card card) {
+        return mWalletApi.getStringSignedByEnotes(message, cardManager, card);
+    }
 
     public String getWithdrawDepositSignature(AccountObject accountObject, Operations.base_operation operation) {
         return mWalletApi.getWithdrawDepositSignature(accountObject, operation);
