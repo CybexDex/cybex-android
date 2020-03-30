@@ -158,11 +158,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 public void onCallBack(Resource<Card> resource) {
                     if (resource.status == Status.SUCCESS) {
-                        BaseActivity.this.readCardOnSuccess(resource.data);
+                        readCardOnSuccess(resource.data);
                     } else if (resource.status == Status.NFC_CONNECTED) {
-                        BaseActivity.this.nfcStartReadCard();
+                        nfcStartReadCard();
                     } else if (resource.status == Status.ERROR) {
-                        BaseActivity.this.readCardError(resource.errorCode, resource.message);
+                        readCardError(resource.errorCode, resource.message);
                     } else if (resource.status == Status.BLUETOOTH_PARSING) {
                     }
                 }
@@ -693,7 +693,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (!canWriteSetting()) {
                 finish();
             } else {
-                this.onLazyLoad();
+                onLazyLoad();
             }
         }
     }
@@ -751,7 +751,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //show load dialog
     public final void showLoadDialog() {
-        this.showLoadDialog(false);
+        showLoadDialog(false);
 
     }
 

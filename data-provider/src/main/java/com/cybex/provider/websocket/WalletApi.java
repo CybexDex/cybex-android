@@ -127,6 +127,7 @@ public class WalletApi {
     private Context mContext;
     private String mDefaultPublicKey;
     private String mDefaultPrivateKey = "";
+    private String mBBBAccountMemoPubKey;
     static class plain_keys {
         Map<Types.public_key_type, String> keys;
         Sha512Object checksum;
@@ -603,6 +604,7 @@ public class WalletApi {
         mHashMapPub2PrivString.put(publicOwnerKeyType.toString(), privateOwnerKeyString);
         mHashMapPub2PrivString.put(publicMemoKeyType.toString(), privateMemoKeyString);
         mDefaultPublicKey = publicActiveKeyType.toString();
+        mBBBAccountMemoPubKey = publicMemoKeyType.toString();
         HashMap<String, Key> pubKeyCtgMap = new HashMap();
         Key activeKey = new Key(PTSAddress, uncompressedPts, privateActiveKeyString, publicActiveKeyType.toString(), address);
         Key ownerKey = new Key(ownerPtsAddress, unCompressedOwnerKey, privateOwnerKeyString, publicOwnerKeyType.toString(), ownerAddress);
@@ -763,15 +765,20 @@ public class WalletApi {
             transferOperation.memo.from = fromMemoKey;
             transferOperation.memo.to = toMemoKey;
             Types.private_key_type  privateKeyType;
+            String privateString =  mHashMapPub2PrivString.get(fromMemoKey.toString());
             if (feeAmount == 0) {
                 privateKeyType = mMemoPrivateKey;//使用随意一个私钥来避免空指针问题
             } else {
-                privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+                if (privateString != null) {
+                    privateKeyType = new Types.private_key_type(privateString);
+                } else {
+                    privateKeyType = mHashMapPub2Priv.get(fromMemoKey);
+                }
             }
 
-            if (privateKeyType == null) {
-                privateKeyType = mMemoPrivateKey;
-            }
+//            if (privateKeyType == null) {
+//                privateKeyType = mMemoPrivateKey;
+//            }
             transferOperation.memo.set_message(
                     privateKeyType.getPrivateKey(),
                     toMemoKey.getPublicKey(),
@@ -1102,52 +1109,103 @@ public class WalletApi {
     }
 
 
-    public String getTransferSignedTransaction( long refBlockNum, long refBlockPrefix, long txExpiration,
+    public String getTransferSignedTransaction(long refBlockNum, long txExpiration, String refBlockId,
                                                String chainId, String fromUserId, String toUserId, String assetId, String feeAssetId,
-                                                long amount, long feeAmount, String memo, String toMemoKey, String fromMemoKey) {
+                                                long amount, long feeAmount, String memo, String toMemoKey, String fromMemoKey, String bbbassetId, boolean isTwo, String gatewayId, String gatewayMemoKey) {
         SignedTransaction signedTransaction = new SignedTransaction();
         Gson gson = GlobalConfigObject.getInstance().getGsonBuilder().create();
-
-        Operations.transfer_operation transfer_operation = getTransferOperation(
-                ObjectId.create_from_string(fromUserId),
-                ObjectId.create_from_string(toUserId),
-                ObjectId.create_from_string(assetId),
-                feeAmount,
-                ObjectId.create_from_string(feeAssetId),
-                amount,
-                null,
-                null,
-                null
+        try {
+            if (isTwo) {
+                Operations.transfer_operation transfer_operation = getTransferOperation(
+                        ObjectId.create_from_string(fromUserId),
+                        ObjectId.create_from_string(toUserId),
+                        ObjectId.create_from_string(assetId),
+                        feeAmount,
+                        ObjectId.create_from_string(feeAssetId),
+                        amount,
+                        memo,
+                        fromMemoKey != null ? new Types.public_key_type(fromMemoKey) : null,
+                        toMemoKey != null ? new Types.public_key_type(toMemoKey) : null
                 );
-        Operations.operation_type operationType = new Operations.operation_type();
-        operationType.nOperationType = ID_TRANSER_OPERATION;
-        operationType.operationContent = transfer_operation;
-        signedTransaction.operationTypes = new ArrayList<>();
-        signedTransaction.operationTypes.add(operationType);
-        signedTransaction.operations = new ArrayList<>();
-        List<Object> listInOperations = new ArrayList<>();
-        listInOperations.add(ID_TRANSER_OPERATION);
-        listInOperations.add(transfer_operation);
-        signedTransaction.operations.add(listInOperations);
-        signedTransaction.extensions = new HashSet<>();
+                Operations.transfer_operation transferOperation2 = getTransferOperation(
+                        ObjectId.create_from_string(toUserId),
+                        ObjectId.create_from_string(gatewayId != null ? gatewayId : fromUserId),
+                        ObjectId.create_from_string(assetId.equals(bbbassetId) ? "1.3.27" : bbbassetId),
+                        feeAmount,
+                        ObjectId.create_from_string(feeAssetId),
+                        amount,
+                        memo,
+                        fromMemoKey != null ? new Types.public_key_type(fromMemoKey) : null,
+                        gatewayMemoKey != null ? new Types.public_key_type(gatewayMemoKey) : null
+                );
 
-        signedTransaction.unsign_ref_block_num = new UnsignedShort((short) refBlockNum);
-        signedTransaction.setRef_block_num(refBlockNum);
-        signedTransaction.unsign_ref_block_prefix = UnsignedInteger.fromIntBits((int) refBlockPrefix);
-        signedTransaction.setRef_block_prefix(refBlockPrefix);
-        Date date = new Date(txExpiration * 1000);
-        signedTransaction.set_expiration(date);
-        String privateKey = !mDefaultPrivateKey.equals("") ? mDefaultPrivateKey : mHashMapPub2PrivString.get(mDefaultPublicKey);
-        if (privateKey == null) {
-            return "did not log in";
+                Operations.operation_type operationType = new Operations.operation_type();
+                operationType.nOperationType = ID_TRANSER_OPERATION;
+                operationType.operationContent = transfer_operation;
+                Operations.operation_type operationType2 = new Operations.operation_type();
+                operationType2.nOperationType = ID_TRANSER_OPERATION;
+                operationType2.operationContent = transferOperation2;
+                signedTransaction.operationTypes = new ArrayList<>();
+                signedTransaction.operationTypes.add(operationType);
+                signedTransaction.operationTypes.add(operationType2);
+                signedTransaction.operations = new ArrayList<>();
+                List<Object> listInOperations = new ArrayList<>();
+                listInOperations.add(ID_TRANSER_OPERATION);
+                listInOperations.add(transfer_operation);
+                List<Object> listInOperations2 = new ArrayList<>();
+                listInOperations2.add(ID_TRANSER_OPERATION);
+                listInOperations2.add(transferOperation2);
+                signedTransaction.operations.add(listInOperations);
+                signedTransaction.operations.add(listInOperations2);
+
+            } else {
+                Operations.transfer_operation transfer_operation = getTransferOperation(
+                        ObjectId.create_from_string(fromUserId),
+                        ObjectId.create_from_string(toUserId),
+                        ObjectId.create_from_string(assetId),
+                        feeAmount,
+                        ObjectId.create_from_string(feeAssetId),
+                        amount,
+                        null,
+                        null,
+                        null
+                );
+                Operations.operation_type operationType = new Operations.operation_type();
+                operationType.nOperationType = ID_TRANSER_OPERATION;
+                operationType.operationContent = transfer_operation;
+                signedTransaction.operationTypes = new ArrayList<>();
+                signedTransaction.operationTypes.add(operationType);
+                signedTransaction.operations = new ArrayList<>();
+                List<Object> listInOperations = new ArrayList<>();
+                listInOperations.add(ID_TRANSER_OPERATION);
+                listInOperations.add(transfer_operation);
+                signedTransaction.operations.add(listInOperations);
+            }
+
+            signedTransaction.extensions = new HashSet<>();
+
+
+            long blockPrefix = MyUtils.blockIdToBlockPre(refBlockId);
+            signedTransaction.unsign_ref_block_num = new UnsignedShort((short) refBlockNum);
+            signedTransaction.setRef_block_num(signedTransaction.unsign_ref_block_num.intValue());
+            signedTransaction.unsign_ref_block_prefix = UnsignedInteger.fromIntBits((int) blockPrefix);
+            signedTransaction.setRef_block_prefix(blockPrefix);
+            Date date = new Date(txExpiration * 1000);
+            signedTransaction.set_expiration(date);
+            String privateKey = !mDefaultPrivateKey.equals("") ? mDefaultPrivateKey : mHashMapPub2PrivString.get(mDefaultPublicKey);
+            if (privateKey == null) {
+                return "did not log in";
+            }
+            Log.e("hashMap", gson.toJson(mHashMapPub2PrivString));
+            Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
+            signedTransaction.sign(private_key_type, Sha256Object.create_from_string_flutter(chainId));
+            mHashMapJsonStringToSignedTransaction.put(gson.toJson(signedTransaction), signedTransaction);
+            setDefaultPrivateKey("");
+            return gson.toJson(signedTransaction);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-        Log.e("hashMap", gson.toJson(mHashMapPub2PrivString));
-        Types.private_key_type private_key_type = new Types.private_key_type(privateKey);
-        signedTransaction.sign(private_key_type, Sha256Object.create_from_string_flutter(chainId));
-        mHashMapJsonStringToSignedTransaction.put(gson.toJson(signedTransaction), signedTransaction);
-        setDefaultPrivateKey("");
-        return gson.toJson(signedTransaction);
-
+        return null;
 
     }
 

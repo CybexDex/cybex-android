@@ -59,6 +59,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 
+import static com.cybex.basemodule.base.BaseActivity.getContext;
+
 public class BitsharesWalletWraper {
 
     private static BitsharesWalletWraper bitsharesWalletWraper = new BitsharesWalletWraper();
@@ -78,7 +80,7 @@ public class BitsharesWalletWraper {
     private BitsharesWalletWraper() {
         //mstrWalletFilePath = BitsharesApplication.getInstance().getFilesDir().getPath();
         mstrWalletFilePath += "/wallet.json";
-        mUnlockWalletPeriod = PreferenceManager.getDefaultSharedPreferences(BaseActivity.getContext()).getInt(Constant.PREF_UNLOCK_WALLET_PERIOD, 5);
+        mUnlockWalletPeriod = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(Constant.PREF_UNLOCK_WALLET_PERIOD, 5);
         EventBus.getDefault().register(this);
     }
 
@@ -268,7 +270,7 @@ public class BitsharesWalletWraper {
             for (AccountObject account : list_my_accounts()) {
                 mMapAccountId2Object.put(account.id, account);
             }
-            SpUtil.putMap(BaseActivity.getContext(), Constant.PREF_ADDRESS_TO_PUB_MAP, mWalletApi.getMapAddress2Pub());
+            SpUtil.putMap(getContext(), Constant.PREF_ADDRESS_TO_PUB_MAP, mWalletApi.getMapAddress2Pub());
             password = strPassword;
             unlock(strPassword);
             startLockWalletTimer();

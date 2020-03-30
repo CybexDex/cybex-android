@@ -26,6 +26,7 @@
             android:layout_alignParentBottom="true"
             android:background="?android:attr/windowBackground"
             app:itemTextColor="@color/bottom_nav_button_selector"
+            app:labelVisibilityMode="labeled"
             app:menu="@menu/navigation" />
 
     </RelativeLayout>

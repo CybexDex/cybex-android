@@ -444,7 +444,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                         Operations.limit_order_cancel_operation operation = BitsharesWalletWraper.getInstance().
                                 getLimitOrderCancelOperation(mFullAccount.account.id, ObjectId.create_from_string(mCancelLimitOrderFeeObject.asset_id),
                                         mCurrOpenOrderItem.limitOrder.order_id, mCancelLimitOrderFeeObject.amount);
-                        if (activity.currentCard == null || mIsUsedCloudPassword) {
+                        if (!isLoginFromENotes() || mIsUsedCloudPassword) {
                             signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                                     mFullAccount.account, operation, ID_CANCEL_LMMIT_ORDER_OPERATION, reply.result);
                         } else {
@@ -461,7 +461,7 @@ public class OpenOrdersFragment extends BaseFragment implements OpenOrderRecycle
                                 getLimitOrderCancelAllOperation(ObjectId.create_from_string(mCancelAllOrderFeeObject.asset_id), mCancelAllOrderFeeObject.amount, mFullAccount.account.id,
                                         mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getQuoteId()),
                                         mIsLoadAll ? ObjectId.create_from_string(ASSET_ID_CYB) : ObjectId.create_from_string(mWatchlistData.getBaseId()));
-                        if (activity.currentCard == null || mIsUsedCloudPassword) {
+                        if (!isLoginFromENotes() || mIsUsedCloudPassword) {
                             signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                                     mFullAccount.account, operation, ID_CANCEL_ALL_OPERATION, reply.result);
                         } else {

@@ -2,15 +2,15 @@ ext {
 
     //sdk and tools
     android = [
-        compileSdkVersion : 27,
+        compileSdkVersion : 28,
         buildToolsVersion : '28.0.2',
         minSdkVersion : 22,
-        targetSdkVersion : 27,
+        targetSdkVersion : 28,
     ]
 
     // app dependencies
     dependencies = [
-        support_version : '27.1.1'
+        support_version : '28.0.0'
     ]
 
 

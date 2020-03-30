@@ -1,6 +1,8 @@
 package com.cybex.provider.utils;
 
 
+import com.google.common.io.BaseEncoding;
+
 import java.text.DecimalFormat;
 
 public class MyUtils {
@@ -61,5 +63,14 @@ public class MyUtils {
             retbuf[i / 2] = (byte) ((top << 4) + bot);
         }
         return retbuf;
+    }
+
+    public static long blockIdToBlockPre(String blockId) {
+        String blockIdSub = blockId.substring(8, 16);
+        BaseEncoding encoding = BaseEncoding.base16().lowerCase();
+        byte[] byteContent = encoding.decode(blockIdSub);
+        int result = ((byteContent[3] & 0xff) << 24) | ((byteContent[2] & 0xff) << 16) | ((byteContent[1] & 0xff) << 8) | (byteContent[0] & 0xff);
+        String a = Integer.toHexString(result);
+        return Long.parseLong(a, 16);
     }
 }

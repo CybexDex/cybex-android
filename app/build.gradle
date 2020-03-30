@@ -53,8 +53,8 @@ android {
         applicationId "com.cybexmobile"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 1010
-        versionName "1.10.10"
+        versionCode 1011
+        versionName "1.10.11"
         multiDexEnabled true
 
         javaCompileOptions {
@@ -117,7 +117,7 @@ dependencies {
     implementation "com.android.support:exifinterface:$rootProject.ext.dependencies.support_version"
     implementation 'com.android.support:multidex:1.0.3'
     implementation "com.android.support:support-v4:$rootProject.ext.dependencies.support_version"
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:support-v4:28.0.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
@@ -158,7 +158,9 @@ dependencies {
 
     implementation 'com.caverock:androidsvg-aar:1.3'
     //eNotes
-    implementation 'io.enotes.sdk:library:1.0.8'
+//    implementation 'io.enotes.sdk:library:1.0.8'
+    implementation project(':core')
+
     //Flutter
     implementation project(':flutter')
 }

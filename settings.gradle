@@ -1,5 +1,5 @@
 rootProject.name = 'cybexMobile'
-include ':MPChartLib', ':ui-smart-refresh', ':module-eto', ':data-provider', ':module-base', ':module-resource', ':material-spinner', ':js-bridge'
+include ':MPChartLib', ':ui-smart-refresh', ':module-eto', ':data-provider', ':module-base', ':module-resource', ':material-spinner', ':js-bridge', ':core'
 include ':app'
 setBinding(new Binding([gradle: this]))                                 // new
 evaluate(new File(                                                      // new

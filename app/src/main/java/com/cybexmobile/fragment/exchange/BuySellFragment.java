@@ -899,7 +899,7 @@ public class BuySellFragment extends BaseFragment implements SoftKeyBoardListene
                             mIsCybBalanceEnough ? mCybExchangeFee.amount : mBaseOrQuoteExchangeFee.amount,
                             amountSell, amountReceive);
                     SignedTransaction signedTransaction;
-                    if (activity.currentCard == null || mIsUsedCloudPassword) {
+                    if (!isLoginFromENotes() || mIsUsedCloudPassword) {
                         signedTransaction = BitsharesWalletWraper.getInstance().getSignedTransaction(
                                 mFullAccountObject.account, operation, ID_CREATE_LIMIT_ORDER_OPERATION, reply.result);
                     } else {

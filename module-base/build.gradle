@@ -41,7 +41,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.dependencies.support_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -69,7 +69,9 @@ dependencies {
     api 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
 
     //eNotes
-    api 'io.enotes.sdk:library:1.0.8'
+//    api 'io.enotes.sdk:library:1.0.8'
+    api project(':core')
+
 
     api 'com.github.jakob-grabner:Circle-Progress-View:1.4'
 }

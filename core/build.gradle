@@ -1,0 +1,109 @@
+apply plugin: 'com.android.library'
+//apply plugin: 'com.novoda.bintray-release'
+
+//publish {
+//    def groupProjectID = 'io.enotes.sdk'
+//    def artifactProjectID = 'library'
+//    def publishVersionID = '1.2.0'
+//
+//    userOrg = 'cryptoenotes'
+//    repoName = 'eNotes'
+//    groupId = groupProjectID
+//    artifactId = artifactProjectID
+//    publishVersion = publishVersionID
+//    desc = 'Android library for based on cryptography and NFC technology'
+//    website = 'http://www.enotes.io'
+//}
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        minSdkVersion 22
+        targetSdkVersion 27
+        versionCode 9
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    // config for ethereumj start
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:2.0.1'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/spring.tooling'
+        exclude 'META-INF/spring.handlers'
+        exclude 'META-INF/spring.schemas'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'native/**'
+        exclude 'genesis/**'
+        exclude 'version.properties'
+        exclude 'test.conf'
+        exclude 'morden.conf'
+        exclude 'ropsten.conf'
+        exclude 'log4j.properties'
+        exclude 'log4j-detailed.properties'
+        exclude 'ethereumj.conf'
+        exclude 'build-info.properties'
+        exclude 'META-INF/native/**'
+        exclude 'META-INF/services/**'
+    }
+    // config for ethereumj end
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    //livedata
+    implementation "android.arch.lifecycle:runtime:1.1.0"
+    implementation "android.arch.lifecycle:common-java8:1.1.0"
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
+    //For Room
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+
+    implementation "io.reactivex.rxjava2:rxjava:2.1.7"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    api 'org.bitcoinj:bitcoinj-core:0.14.7'
+    implementation 'com.madgag.spongycastle:core:1.53.0.0'
+    implementation 'com.madgag.spongycastle:prov:1.53.0.0'
+    implementation 'com.madgag.spongycastle:pkix:1.53.0.0'
+    api 'org.apache.commons:commons-lang3:3.4'
+    implementation 'javax.money:money-api-bp:1.0.3'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}

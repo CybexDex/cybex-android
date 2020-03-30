@@ -1,5 +1,9 @@
 package com.cybexmobile;
 
+import com.cybex.provider.common.UnsignedShort;
+import com.cybex.provider.graphene.chain.Utils;
+import com.cybex.provider.utils.MyUtils;
+import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -25,7 +29,28 @@ import java.util.Locale;
 
 public class TestSort {
 
+//    public static byte toHH(int n) {
+//
+//    }
+
     public static void main(String[] args) throws Exception {
+
+        System.out.println(new UnsignedShort((short) 20488161).intValue());
+        System.out.println((short) 20488161);
+
+
+
+//        String blockId = "0104572b7cfc27bacfd43f9400fbe9f5c10b255e";
+//        String blockIdSub = blockId.substring(8, 16);
+//        System.out.println(blockIdSub);
+//        BaseEncoding encoding = BaseEncoding.base16().lowerCase();
+//        byte[] byteContent = encoding.decode(blockIdSub);
+//        System.out.println(byteContent);
+//        int result = ((byteContent[3] & 0xff) << 24) | ((byteContent[2] & 0xff) << 16) | ((byteContent[1] & 0xff) << 8) | (byteContent[0] & 0xff);
+//        String a = Integer.toHexString(result);
+//        System.out.println(a);
+//        System.out.println(Long.parseLong(a, 16));
+//
 
 //        String str = "        \t\r\n3";
 //        System.out.println(str.matches("[\\s]*"));
@@ -86,9 +111,9 @@ public class TestSort {
 //        Integer value = map.remove(4);
 //        System.out.println(value);
 
-        BigDecimal bigDecimal1 = new BigDecimal("123456789");
-        BigDecimal bigDecimal2 = new BigDecimal("100000");
-        System.out.println(bigDecimal1.divide(bigDecimal2, 16, RoundingMode.DOWN).doubleValue());
+//        BigDecimal bigDecimal1 = new BigDecimal("123456789");
+//        BigDecimal bigDecimal2 = new BigDecimal("100000");
+//        System.out.println(bigDecimal1.divide(bigDecimal2, 16, RoundingMode.DOWN).doubleValue());
 
 
 //        NumberFormat format = NumberFormat.getInstance();
