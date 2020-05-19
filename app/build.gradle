@@ -53,8 +53,8 @@ android {
         applicationId "com.cybexmobile"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 1011
-        versionName "1.10.11"
+        versionCode 1012
+        versionName "1.10.12"
         multiDexEnabled true
 
         javaCompileOptions {
@@ -162,5 +162,5 @@ dependencies {
     implementation project(':core')
 
     //Flutter
-    implementation project(':flutter')
+//    implementation project(':flutter')
 }

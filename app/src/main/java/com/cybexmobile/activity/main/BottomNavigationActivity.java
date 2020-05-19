@@ -391,7 +391,7 @@ public class BottomNavigationActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSavedInstance != null && !mAccountFragment.isHidden()) {
+        if (mSavedInstance != null && (mAccountFragment != null && !mAccountFragment.isHidden())) {
             mBottomNavigationView.setSelectedItemId(mSelectedId);
         } else {
             mSavedInstance = null;
